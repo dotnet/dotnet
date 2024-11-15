@@ -95,19 +95,28 @@ namespace Microsoft.DotNet.Helix.Sdk
                             Log.LogWarning($"Work item {workItemName} in Job {JobId} did not upload a result file with path '{file}' ");
                             continue;
                         }
-                        
+
+                        // Default timeout for blob operations is 100 seconds, this might not be enough for large result files or low end machines.
+                        var blobClientOptions = new BlobClientOptions
+                        {
+                            Retry =
+                            {
+                                NetworkTimeout = TimeSpan.FromMinutes(5)
+                            }
+                        };
+
                         BlobClient blob;
                         // If we have no read SAS token from the build, make a best-effort attempt using the URL from the Helix API.
                         // For restricted queues, there will be no read SAS token available to use in the Helix API's result
                         // (but hopefully the 'else' branch will be hit in this case)
                         if (string.IsNullOrEmpty(ResultsContainerReadSAS)) 
                         {
-                            blob = new BlobClient(new Uri(fileAvailableForDownload.Link));
+                            blob = new BlobClient(new Uri(fileAvailableForDownload.Link), blobClientOptions);
                         }
                         else 
                         {
                             var strippedFileUri = new Uri(fileAvailableForDownload.Link.Substring(0, fileAvailableForDownload.Link.LastIndexOf('?')));
-                            blob = new BlobClient(strippedFileUri, new AzureSasCredential(ResultsContainerReadSAS));
+                            blob = new BlobClient(strippedFileUri, new AzureSasCredential(ResultsContainerReadSAS), blobClientOptions);
                         }
                         await blob.DownloadToAsync(destinationFile);
                     }

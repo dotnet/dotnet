@@ -85,7 +85,7 @@
     
       <PortableRid>$(SourceBuildTargetPortableOSPlatform)-$(SourceBuildTargetArchitecture)</PortableRid>
 
-      <TargetRid Condition="'$(SourceBuildNonPortable)' == 'true' and '$(TargetRid)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</TargetRid>
+      <TargetRid Condition="'$(PortableBuild)' == 'false' and '$(TargetRid)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</TargetRid>
       <!-- Default to building for the portable OS platform with host machine architecture. -->
       <TargetRid Condition="'$(TargetRid)' == ''">$(PortableRid)</TargetRid>
     

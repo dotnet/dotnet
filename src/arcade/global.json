@@ -1,14 +1,14 @@
 {
   "sdk": {
-    "version": "9.0.100-rc.2.24474.11",
+    "version": "9.0.100",
     "rollForward": "latestFeature"
   },
   "tools": {
-    "dotnet": "9.0.100-rc.2.24474.11"
+    "dotnet": "9.0.100"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.24530.1",
-    "Microsoft.DotNet.Helix.Sdk": "10.0.0-beta.24530.1",
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.24562.15",
+    "Microsoft.DotNet.Helix.Sdk": "10.0.0-beta.24562.15",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }

@@ -25,6 +25,8 @@
     <PackageReference Include="Microsoft.ApplicationInsights" />
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 

@@ -4,11 +4,4 @@
   <!-- Set up build infra for the acquire-* projects. -->
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-
-  <PropertyGroup>
-    <GenerateInstallers>true</GenerateInstallers>
-  </PropertyGroup>
-
-  <Import Project="$(MSBuildThisFileDirectory)..\installer.singlerid.targets" Condition="'$(_InstallerTargetsImported)' != 'true'" />
-
 </Project>

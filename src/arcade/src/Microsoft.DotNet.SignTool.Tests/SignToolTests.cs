@@ -31,6 +31,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             {".psm1",  new List<SignInfo>{ new SignInfo("PSMCertificate") } },
             {".psc1",   new List<SignInfo>{ new SignInfo("PSCCertificate") } },
             {".dylib", new List<SignInfo>{ new SignInfo("DylibCertificate") } },
+            {".deb", new List<SignInfo>{ new SignInfo("LinuxSign") } },
             {".dll",  new List<SignInfo>{ new SignInfo("Microsoft400") } }, // lgtm [cs/common-default-passwords] Safe, these are certificate names
             {".exe",  new List<SignInfo>{ new SignInfo("Microsoft400") } }, // lgtm [cs/common-default-passwords] Safe, these are certificate names
             {".msi",  new List<SignInfo>{ new SignInfo("Microsoft400") } }, // lgtm [cs/common-default-passwords] Safe, these are certificate names
@@ -51,6 +52,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             { ".psm1", new List<SignInfo>{ new SignInfo("PSMCertificate", collisionPriorityId: "123") } },
             { ".psc1", new List<SignInfo>{ new SignInfo("PSCCertificate", collisionPriorityId: "123") } },
             { ".dylib", new List<SignInfo>{ new SignInfo("DylibCertificate", collisionPriorityId: "123") } },
+            { ".deb", new List<SignInfo>{ new SignInfo("LinuxSign", collisionPriorityId: "123") } },
             { ".dll", new List<SignInfo>
                 { 
                     new SignInfo("Microsoft400", collisionPriorityId: "123"), // lgtm [cs/common-default-passwords] Safe, these are certificate names
@@ -95,6 +97,10 @@ namespace Microsoft.DotNet.SignTool.Tests
             }),
             new TaskItem(".dylib", new Dictionary<string, string> {
                 { "CertificateName", "DylibCertificate" },
+                { SignToolConstants.CollisionPriorityId, "123" }
+            }),
+            new TaskItem(".deb", new Dictionary<string, string> {
+                { "CertificateName", "LinuxSign" },
                 { SignToolConstants.CollisionPriorityId, "123" }
             }),
             new TaskItem(".dll", new Dictionary<string, string> {
@@ -231,7 +237,9 @@ namespace Microsoft.DotNet.SignTool.Tests
             ".esd",
 
             ".py",
-            ".pyd"
+            ".pyd",
+
+            ".deb",
         };
 
         public static IEnumerable<object[]> GetSignableExtensions()
@@ -1201,6 +1209,36 @@ $@"
 </FilesToSign>
 <FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "3", "this_is_a_big_folder_name_look/this_is_an_even_more_longer_folder_name/but_this_one_is_ever_longer_than_the_previous_other_two/Nested.SOS.NETCore.dll"))}"">
   <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+"
+            });
+        }
+
+        [Fact]
+        public void CheckDebSigning()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new ITaskItem[]
+            {
+                new TaskItem(GetResourcePath("test.deb"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>();
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>();
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'test.deb' Certificate='LinuxSign'"
+            });
+
+            ValidateGeneratedProject(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+$@"
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"))}"">
+  <Authenticode>LinuxSign</Authenticode>
 </FilesToSign>
 "
             });

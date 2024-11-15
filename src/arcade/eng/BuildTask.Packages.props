@@ -15,6 +15,7 @@
     <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageVersion Update="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
 

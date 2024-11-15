@@ -11,37 +11,26 @@
   <!--
     Acquire WiX tools, if not present.
   -->
-  <Target Name="AcquireWix"
-          DependsOnTargets="GetAcquireWixProperties">
+  <Target Name="_AcquireWix">
     <MSBuild
-      Projects="$(AcquireWixProjectFile)"
+      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-wix\acquire-wix.proj"
       Targets="AcquireWixCore"
       Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)" />
-  </Target>
-
-  <Target Name="GetAcquireWixProperties"> 
+                  RepoRoot=$(RepoRoot)">
+      <Output TaskParameter="TargetOutputs" PropertyName="WixToolsDir" />
+    </MSBuild>
   
     <PropertyGroup>
       <_WixIntermediateOutputPath>$(BaseIntermediateOutputPath)wix</_WixIntermediateOutputPath>
     </PropertyGroup>
 
     <PropertyGroup>
-      <WixVersion>3.14.1-9323.2545153</WixVersion>
-      <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
-      <!-- Used in WiX targets to locate files. -->
       <WixInstallPath>$(WixToolsDir)</WixInstallPath>
       <WixTargetsPath>$(WixToolsDir)wix.targets</WixTargetsPath>
       <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
       <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
       <LightCommandObjDir>$(IntermediateOutputPath)/lightcommand/</LightCommandObjDir>
       <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
-
-      <AcquireWixProjectFile>$(MSBuildThisFileDirectory)..\acquisition\acquire-wix\acquire-wix.proj</AcquireWixProjectFile>
-      <WixDownloadFilename>Microsoft.Signed.Wix-$(WixVersion).zip</WixDownloadFilename>
-      <WixDownloadUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/wix/$(WixDownloadFilename)</WixDownloadUrl>
-      <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
-      <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
     </PropertyGroup>
   </Target>
 
@@ -206,7 +195,7 @@
   <!-- Set up information to pass to WiX, depending on the type of installer being created. -->
   <Target Name="GetWixBuildConfiguration"
           DependsOnTargets="
-            AcquireWix;
+            _AcquireWix;
             _GetInstallerProperties;
             _GenerateMsiVersionString;
             GetInstallerWixConfiguration;
@@ -447,29 +436,20 @@
   <!--
     Acquire NuGet.exe, if not present.
   -->
-  <Target Name="_AcquireNuGetExe"
-          DependsOnTargets="_GetAcquireNuGetExeProperties">
+  <Target Name="_AcquireNuGetExe">
     <MSBuild
-      Projects="$(AcquireNuGetExeProjectFile)"
+      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj"
       Targets="AcquireNuGetExeCore"
       Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)" />
-  </Target>
-
-  <Target Name="_GetAcquireNuGetExeProperties">
-    <PropertyGroup>
-      <AcquireNuGetExeProjectFile>$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj</AcquireNuGetExeProjectFile>
-      <!-- Using 3.5.0 to workaround https://github.com/NuGet/Home/issues/5016 -->
-      <NuGetExeDownloadUrl>https://dist.nuget.org/win-x86-commandline/v3.5.0/nuget.exe</NuGetExeDownloadUrl>
-      <NuGetExeToolDir>$(BaseIntermediateOutputPath)nuget\</NuGetExeToolDir>
-      <NuGetExeFile>$(NuGetExeToolDir)NuGet.exe</NuGetExeFile>
-    </PropertyGroup>
+                  RepoRoot=$(RepoRoot)">
+      <Output TaskParameter="TargetOutputs" PropertyName="NuGetExeFile" />
+    </MSBuild>
   </Target>
   
   <Target Name="GenerateVSInsertionNupkgCore"
           DependsOnTargets="
             _GetTargetOSArchInfo;
-            GetAcquireWixProperties;
+            _AcquireWix;
             _AcquireNuGetExe;
             _GetInstallerProperties;
             GetWixBuildConfiguration">

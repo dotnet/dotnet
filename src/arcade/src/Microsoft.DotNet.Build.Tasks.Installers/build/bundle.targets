@@ -1,6 +1,8 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <Import Project="$(MSBuildThisFileDirectory)installer.targetos.targets" />
+
   <Target Name="GetBundleGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo" Condition="'$(SkipInstallerBuild)' != 'true'">
     <Error
       Text="Unable to build a bundle installer for a non-Windows, non-macOS platform."
@@ -78,14 +80,14 @@
     <ItemGroup Condition="'$(GenerateExeBundle)' == 'true'">
       <BundleComponentReference>
         <Targets>CreateWixInstaller</Targets>
-        <AdditionalProperties>GenerateMSI=true</AdditionalProperties>
+        <AdditionalProperties>_IsIndividualInstallerBuild=true;GenerateMSI=true</AdditionalProperties>
         <RemoveProperties>GenerateExeBundle</RemoveProperties>
       </BundleComponentReference>
     </ItemGroup>
     <ItemGroup Condition="'$(GeneratePkgBundle)' == 'true'">
       <BundleComponentReference>
         <Targets>CreatePkg</Targets>
-        <AdditionalProperties>GeneratePkg=true</AdditionalProperties>
+        <AdditionalProperties>_IsIndividualInstallerBuild=true;GeneratePkg=true</AdditionalProperties>
         <RemoveProperties>GeneratePkgBundle</RemoveProperties>
       </BundleComponentReference>
     </ItemGroup>

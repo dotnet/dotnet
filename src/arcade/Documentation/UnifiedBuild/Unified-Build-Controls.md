@@ -158,6 +158,7 @@ In addition to these default high level controls, there may be additional compon
 | ShortStack | "true", "false", "" | "" | If true, the build is a 'short stack' (runtime and its dependencies only). Other repo builds are skipped. |
 | ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true".<br/>This control applies to project properties. |
 | ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
+| PortableBuild | "true", "false", "" | "" | When "false", the build is non-portable. |
 
 ### Organizational Controls
 

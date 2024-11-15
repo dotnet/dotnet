@@ -21,6 +21,9 @@ namespace Microsoft.DotNet.SignTool
         // optional file information that allows to disambiguate among multiple files with the same name:
         internal readonly string TargetFramework;
 
+        internal static bool IsDeb(string path)
+            => Path.GetExtension(path) == ".deb";
+
         internal static bool IsPEFile(string path)
             => Path.GetExtension(path) == ".exe" || Path.GetExtension(path) == ".dll";
 
@@ -58,6 +61,8 @@ namespace Microsoft.DotNet.SignTool
 
         internal static bool IsZipContainer(string path)
             => IsPackage(path) || IsMPack(path) || IsZip(path) || IsTarGZip(path);
+
+        internal bool IsDeb() => IsDeb(FileName);
 
         internal bool IsPEFile() => IsPEFile(FileName);
 

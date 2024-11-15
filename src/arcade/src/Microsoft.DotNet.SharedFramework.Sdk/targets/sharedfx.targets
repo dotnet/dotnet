@@ -597,6 +597,11 @@
                       Condition="'%(_PackagedFilesToPublish.TargetPath)' != ''"
                       TargetPath="packs/$(PackageId)/$(Version)/%(_PackagedFilesToPublish.TargetPath)/"/>
     </ItemGroup>
+    <ItemGroup Condition="'$(PlatformPackageType)' == 'ToolPack'">
+      <FilesToPublish Include="@(_PackagedFilesToPublish)"
+                      Condition="$([System.String]::new('%(_PackagedFilesToPublish.TargetPath)').StartsWith('tools/')) or '%(_PackagedFilesToPublish.PublishOnly)' == 'true'"
+                      TargetPath="" />
+    </ItemGroup>
   </Target>
 
   <Target Name="PublishToDisk"
