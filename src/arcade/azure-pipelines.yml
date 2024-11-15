@@ -43,7 +43,11 @@ extends:
       name: $(DncEngInternalBuildPool)
       image: windows.vs2019.amd64
       os: windows
-
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
     stages:
     - stage: build
       displayName: Build
