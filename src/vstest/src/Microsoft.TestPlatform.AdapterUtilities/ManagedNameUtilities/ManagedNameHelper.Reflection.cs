@@ -22,12 +22,12 @@ public static partial class ManagedNameHelper
     /// <param name="managedTypeName">
     /// When this method returns, contains the fully qualified managed type name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// When this method returns, contains the fully qualified managed method name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="method"/> is null.
@@ -40,7 +40,7 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static void GetManagedName(MethodBase method, out string managedTypeName, out string managedMethodName)
      => GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out _);
@@ -54,12 +54,12 @@ public static partial class ManagedNameHelper
     /// <param name="managedTypeName">
     /// When this method returns, contains the fully qualified managed type name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// When this method returns, contains the fully qualified managed method name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <param name="hierarchyValues">
     /// When this method returns, contains the default test hierarchy values of the <paramref name="method"/>.
@@ -76,7 +76,7 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static void GetManagedName(MethodBase method, out string managedTypeName, out string managedMethodName, out string?[] hierarchyValues)
     {
@@ -213,11 +213,11 @@ public static partial class ManagedNameHelper
     /// </param>
     /// <param name="managedTypeName">
     /// The fully qualified managed name of the type.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// The fully qualified managed name of the method.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <returns>
     /// A <see cref="MethodBase" /> object that represents specified parameters, throws if null.
@@ -228,7 +228,7 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static MethodBase GetMethod(Assembly assembly, string managedTypeName, string managedMethodName)
     {

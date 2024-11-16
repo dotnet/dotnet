@@ -37,10 +37,10 @@
       "commitSha": "4d818b1bfd1cf450492eb8ab3877eb3875488642"
     },
     {
-      "packageVersion": "8.0.0-preview.24520.1",
+      "packageVersion": "9.0.0-preview.24560.1",
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "335c0c013c3a761792bfa83c0dbaadd1f0545f07"
+      "commitSha": "141a406a4c74d9ff6d6452dc999f78c08eee49a0"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24531.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f59274ebfb17af588bf22be255fa3ec94d65e95f"
+      "commitSha": "d87b1e4f5a0142bb84560196f4b2568816066beb"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24554.1",
@@ -145,10 +145,10 @@
       "commitSha": "9f284e00c920d6ffc37a9efe35838b8730076098"
     },
     {
-      "packageVersion": "17.13.0-preview-24523-01",
+      "packageVersion": "17.13.0-preview-24563-01",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "eb00b269d6b8734597b8ea888219e105144e7794"
+      "commitSha": "7892673cf1302662e4aee495628a25dd6e32ef0d"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24563.2",
