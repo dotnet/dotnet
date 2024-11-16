@@ -18,6 +18,8 @@
     <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host.linux-x64/8.0.*" />
+    <UsagePattern IdentityGlob="Microsoft.Extensions.FileSystemGlobbing/2.0.0" />
+    <UsagePattern IdentityGlob="System.Text.Json/4.7.0" />
     <UsagePattern IdentityGlob="Microsoft.Extensions.DependencyModel/3.1.0*" />
   </IgnorePatterns>
 </UsageData>

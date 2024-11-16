@@ -84,7 +84,7 @@ function Verify-Nuget-Packages {
             $packageKey = $packageBaseName.Replace([string]".$version", [string]"")
             Write-Host "Verifying package '$packageBaseName'."
 
-            $actualNumOfFiles = (Get-ChildItem -Recurse -File -Path $unzipNugetPackageDir).Count
+            $actualNumOfFiles = (Get-ChildItem -Recurse -File -Path $unzipNugetPackageDir | Where-Object { $_.Name -ne '.signature.p7s' }).Count
             if (-not $expectedNumOfFiles.ContainsKey($packageKey)) {
                 $errors += "Package '$packageKey' is not present in file expectedNumOfFiles table. Is that package known?"
                 continue
