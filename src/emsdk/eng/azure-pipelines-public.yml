@@ -37,7 +37,7 @@ stages:
         displayName: macOS
         timeoutInMinutes: 120
         pool:
-          vmImage: macOS-12
+          vmImage: macOS-13
         strategy:
           matrix:
             x64:

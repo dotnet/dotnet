@@ -15,7 +15,7 @@ variables:
 - name: WindowsImage
   value: windows.vs2022.amd64
 - name: MacImage
-  value: macOS-12
+  value: macOS-13
 - name: CheckNuGetSizesScript
   value: >-
     $nupkgs_large=(Get-ChildItem artifacts/packages/$(_BuildConfig)/Shipping -recurse -include "*.nupkg" | Select-Object Name,Length | Where-Object { $_.Length -gt 250*1MB });
