@@ -1,16 +1,5 @@
-<Project DefaultTargets="Restore;Build">
+<Project>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-
-  <PropertyGroup>
-    <MicrosoftDotNetBuildTasksInstallersTaskTargetFramework>$(NetToolCurrent)</MicrosoftDotNetBuildTasksInstallersTaskTargetFramework>
-    <MicrosoftDotNetBuildTasksInstallersPath>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.installers\$(MicrosoftDotNetBuildTasksInstallersPackageVersion)</MicrosoftDotNetBuildTasksInstallersPath>
-    <MicrosoftDotNetBuildTasksInstallersTaskAssembly>$(MicrosoftDotNetBuildTasksInstallersPath)\tools\$(MicrosoftDotNetBuildTasksInstallersTaskTargetFramework)\Microsoft.DotNet.Build.Tasks.Installers.dll</MicrosoftDotNetBuildTasksInstallersTaskAssembly>
-  </PropertyGroup>
-
-  <UsingTask AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Workloads)\tools\net472\Microsoft.DotNet.Build.Tasks.Workloads.dll" TaskName="GenerateManifestMsi" />
-  <UsingTask AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Workloads)\tools\net472\Microsoft.DotNet.Build.Tasks.Workloads.dll" TaskName="GenerateVisualStudioWorkload" />
-  <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateLightCommandPackageDrop" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -44,10 +33,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Workloads" Version="$(MicrosoftDotNetBuildTasksWorkloadsPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Workloads" Version="$(MicrosoftDotNetBuildTasksWorkloadsPackageVersion)" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" GeneratePathProperty="true" />
     <PackageReference Include="MicroBuild.Plugins.SwixBuild.Dotnet" Version="$(SwixPackageVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersPackageVersion)" GeneratePathProperty="True" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersPackageVersion)" />
   </ItemGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
