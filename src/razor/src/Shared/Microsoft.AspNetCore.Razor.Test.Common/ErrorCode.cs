@@ -15,6 +15,7 @@ public enum ErrorCode
     ERR_ObjectRequired = 120,
     WRN_UnreferencedField = 169,
     ERR_IllegalStatement = 201,
+    WRN_UnreferencedVarAssg = 219,
     ERR_DottedTypeNameNotFoundInNS = 234,
     ERR_SingleTypeNameNotFound = 246,
     ERR_CantInferMethTypeArgs = 411,

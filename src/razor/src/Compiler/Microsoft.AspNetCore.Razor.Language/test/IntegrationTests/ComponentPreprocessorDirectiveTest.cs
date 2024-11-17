@@ -221,24 +221,18 @@ public class ComponentPreprocessorDirectiveTest(bool designTime = false)
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(2,9): error CS1040: Preprocessor directives must appear as the first non-whitespace character on a line
+            // x:\dir\subdir\Test\TestComponent.razor(2,9): error CS1040: Preprocessor directives must appear as the first non-whitespace character on a line
             // var x = #if true;
             Diagnostic(ErrorCode.ERR_BadDirectivePlacement, "#").WithLocation(2, 9),
-            // x:\dir\subdir\Test\TestComponent.cshtml(2,17): error CS1025: Single-line comment or end-of-line expected
-            // var x = #if true;
-            Diagnostic(ErrorCode.ERR_EndOfPPLineExpected, ";").WithLocation(2, 17),
-            // x:\dir\subdir\Test\TestComponent.cshtml(5,1): error CS0841: Cannot use local variable 'x' before it is declared
+            // x:\dir\subdir\Test\TestComponent.razor(5,1): error CS0841: Cannot use local variable 'x' before it is declared
             // x #endif;
             Diagnostic(ErrorCode.ERR_VariableUsedBeforeDeclaration, "x").WithArguments("x").WithLocation(5, 1),
-            // x:\dir\subdir\Test\TestComponent.cshtml(5,2): error CS1002: ; expected
+            // x:\dir\subdir\Test\TestComponent.razor(5,2): error CS1002: ; expected
             // x #endif;
             Diagnostic(ErrorCode.ERR_SemicolonExpected, "").WithLocation(5, 2),
-            // x:\dir\subdir\Test\TestComponent.cshtml(5,3): error CS1040: Preprocessor directives must appear as the first non-whitespace character on a line
+            // x:\dir\subdir\Test\TestComponent.razor(5,3): error CS1040: Preprocessor directives must appear as the first non-whitespace character on a line
             // x #endif;
-            Diagnostic(ErrorCode.ERR_BadDirectivePlacement, "#").WithLocation(5, 3),
-            // x:\dir\subdir\Test\TestComponent.cshtml(5,9): error CS1025: Single-line comment or end-of-line expected
-            // x #endif;
-            Diagnostic(ErrorCode.ERR_EndOfPPLineExpected, ";").WithLocation(5, 9));
+            Diagnostic(ErrorCode.ERR_BadDirectivePlacement, "#").WithLocation(5, 3));
     }
 
     [IntegrationTestFact]
@@ -363,6 +357,25 @@ public class ComponentPreprocessorDirectiveTest(bool designTime = false)
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void StartOfLine_12()
+    {
+        var generated = CompileToCSharp("""
+            @{ #if true
+                var x = 1;
+                #endif
+            }
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated,
+            // x:\dir\subdir\Test\TestComponent.razor(2,9): warning CS0219: The variable 'x' is assigned but its value is never used
+            //     var x = 1;
+            Diagnostic(ErrorCode.WRN_UnreferencedVarAssg, "x").WithArguments("x").WithLocation(2, 9)
+        );
     }
 
     [IntegrationTestFact]

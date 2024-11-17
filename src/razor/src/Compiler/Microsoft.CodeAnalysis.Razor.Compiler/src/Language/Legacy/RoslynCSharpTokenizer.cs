@@ -509,6 +509,25 @@ internal sealed class RoslynCSharpTokenizer : CSharpTokenizer
                 tokenType = SyntaxKind.NewLine;
                 _isOnlyWhitespaceOnLine = true;
                 break;
+            case CSharpSyntaxKind.SkippedTokensTrivia:
+                // We treat skipped tokens as comments because they're tokens that were skipped over by roslyn,
+                // and we want to keep them in the output so that the final C# ends up failing due to their presence.
+                // We also don't want them to cause loops over comments and other trivia to break.
+                tokenType = SyntaxKind.CSharpComment;
+
+                // SkippedTokenTrivia is used for trailing directives; they can consume the trailing newline, so we need to reset _isOnlyWhitespaceOnLine if the trivia ends with one
+                _isOnlyWhitespaceOnLine = triviaString.EndsWith('\n');
+
+                // Look for any misplaced directives in the skipped tokens and error if we find them
+                if (triviaString.Contains('#'))
+                {
+                    CurrentErrors.Add(
+                        RazorDiagnosticFactory.CreateParsing_PreprocessorDirectivesMustBeAtTheStartOfLine(
+                            // Won't be quite precise, but it's close enough
+                            new SourceSpan(CurrentStart, contentLength: trivia.FullSpan.Length)));
+                }
+
+                break;
             case CSharpSyntaxKind.SingleLineCommentTrivia or
                  CSharpSyntaxKind.MultiLineCommentTrivia or
                  CSharpSyntaxKind.MultiLineDocumentationCommentTrivia or
