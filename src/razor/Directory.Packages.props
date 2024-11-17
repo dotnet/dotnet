@@ -6,8 +6,8 @@
   -->
   <PropertyGroup>
     <_MicrosoftWebToolsPackageVersion>17.11.11-preview-0001</_MicrosoftWebToolsPackageVersion>
-    <_MicrosoftVisualStudioShellPackagesVersion>17.11.39721</_MicrosoftVisualStudioShellPackagesVersion>
-    <_MicrosoftVisualStudioPackagesVersion>17.11.191</_MicrosoftVisualStudioPackagesVersion>
+    <_MicrosoftVisualStudioShellPackagesVersion>17.12.39557-preview.2.1</_MicrosoftVisualStudioShellPackagesVersion>
+    <_MicrosoftVisualStudioPackagesVersion>17.12.145-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>8.0.0</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
@@ -17,7 +17,7 @@
     <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.6.6</_XunitPackageVersion>
-    <_MicrosoftBuildPackageVersion>17.11.0-preview-24309-01</_MicrosoftBuildPackageVersion>
+    <_MicrosoftBuildPackageVersion>17.12.0-preview-24426-07</_MicrosoftBuildPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -85,14 +85,14 @@
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" Version="$(_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LiveShare" Version="0.3.1074" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.SDK" Version="17.7.294-pre" />
-    <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.11.8" />
+    <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.12.11-preview" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.13.14" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.11.20" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.12.13-preview" />
     <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Web" Version="16.10.0-preview-1-31008-014" />
     <PackageVersion Include="Microsoft.WebTools.Languages.Html" Version="$(_MicrosoftWebToolsPackageVersion)" />
@@ -104,12 +104,12 @@
     <PackageVersion Include="Microsoft.WebTools.Shared" Version="$(_MicrosoftWebToolsPackageVersion)" />
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="Nerdbank.Streams" Version="2.11.74" />
+    <PackageVersion Include="Nerdbank.Streams" Version="2.11.79" />
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_RoslynDiagnosticAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
     <PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
-    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="7.0.1" />

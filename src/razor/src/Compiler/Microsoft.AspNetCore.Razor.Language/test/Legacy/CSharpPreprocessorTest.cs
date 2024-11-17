@@ -396,4 +396,92 @@ public class CSharpPreprocessorTest() : ParserTestBase(layer: TestProject.Layer.
             }
             """);
     }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_01()
+    {
+        ParseDocumentTest("""
+            @{
+                var x = #if true
+                var y = 1;
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_02()
+    {
+        ParseDocumentTest("""
+            @{
+                var x = #if true
+                <div>Test</div>
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_03()
+    {
+        ParseDocumentTest("""
+            @{
+                var x = #if true;
+                var y = 1;
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_04()
+    {
+        ParseDocumentTest("""
+            @{
+                var x = #if true;
+                <div>Test</div>
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_05()
+    {
+        ParseDocumentTest("""
+            @{
+                if (true) #if true
+                    var y = 1;
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_06()
+    {
+        ParseDocumentTest("""
+            @{
+                if (true) #if true
+                    <div>Test</div>
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_07()
+    {
+        ParseDocumentTest("""
+            @{
+                if (true #if true)
+                    var y = 1;
+            }
+            """);
+    }
+
+    [Fact]
+    public void DirectiveAfterCSharpCode_08()
+    {
+        ParseDocumentTest("""
+            @{
+                if (true #if true)
+                    <div>Test</div>
+            }
+            """);
+    }
 }

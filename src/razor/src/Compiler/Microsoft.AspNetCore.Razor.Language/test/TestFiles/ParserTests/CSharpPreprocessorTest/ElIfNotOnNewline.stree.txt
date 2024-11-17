@@ -53,14 +53,57 @@
                 CSharpStatementBody - [53..119)::66
                     RazorMetaCode - [53..54)::1 - Gen<None>
                         LeftBrace;[{];
-                    CSharpCodeBlock - [54..118)::64
-                        CSharpStatementLiteral - [54..118)::64 - [ #elif false }LF<div>LF    <p>Content2</p>LF</div>LF@{LF#endifLF] - Gen<Stmt>
+                    CSharpCodeBlock - [54..119)::65
+                        CSharpStatementLiteral - [54..70)::16 - [ #elif false }LF] - Gen<Stmt>
                             Whitespace;[ ];
-                            CSharpDirective;[#elif false }LF];RZ1043(55:6,3 [15] )
-                            CSharpDisabledText;[<div>LF    <p>Content2</p>LF</div>LF@{LF];
-                            CSharpDirective;[#endifLF];
-                    RazorMetaCode - [118..119)::1 - Gen<None>
-                        RightBrace;[}];
-        MarkupTextLiteral - [119..119)::0 - [] - Gen<Markup>
-            Marker;[];
+                            CSharpComment;[#elif false }LF];RZ1043(55:6,3 [15] )
+                        MarkupBlock - [70..106)::36
+                            MarkupElement - [70..104)::34
+                                MarkupStartTag - [70..75)::5 - [<div>] - Gen<Markup>
+                                    OpenAngle;[<];
+                                    Text;[div];
+                                    CloseAngle;[>];
+                                MarkupTextLiteral - [75..81)::6 - [LF    ] - Gen<Markup>
+                                    NewLine;[LF];
+                                    Whitespace;[    ];
+                                MarkupElement - [81..96)::15
+                                    MarkupStartTag - [81..84)::3 - [<p>] - Gen<Markup>
+                                        OpenAngle;[<];
+                                        Text;[p];
+                                        CloseAngle;[>];
+                                    MarkupTextLiteral - [84..92)::8 - [Content2] - Gen<Markup>
+                                        Text;[Content2];
+                                    MarkupEndTag - [92..96)::4 - [</p>] - Gen<Markup>
+                                        OpenAngle;[<];
+                                        ForwardSlash;[/];
+                                        Text;[p];
+                                        CloseAngle;[>];
+                                MarkupTextLiteral - [96..98)::2 - [LF] - Gen<Markup>
+                                    NewLine;[LF];
+                                MarkupEndTag - [98..104)::6 - [</div>] - Gen<Markup>
+                                    OpenAngle;[<];
+                                    ForwardSlash;[/];
+                                    Text;[div];
+                                    CloseAngle;[>];
+                            MarkupTextLiteral - [104..106)::2 - [LF] - Gen<Markup>
+                                NewLine;[LF];
+                        CSharpStatementLiteral - [106..106)::0 - [] - Gen<Stmt>
+                            Marker;[];
+                        CSharpCodeBlock - [106..119)::13
+                            CSharpStatement - [106..119)::13
+                                CSharpTransition - [106..107)::1 - Gen<None>
+                                    Transition;[@];
+                                CSharpStatementBody - [107..119)::12
+                                    RazorMetaCode - [107..108)::1 - Gen<None>
+                                        LeftBrace;[{];
+                                    CSharpCodeBlock - [108..118)::10
+                                        CSharpStatementLiteral - [108..118)::10 - [LF#endifLF] - Gen<Stmt>
+                                            NewLine;[LF];
+                                            CSharpDirective;[#endifLF];
+                                    RazorMetaCode - [118..119)::1 - Gen<None>
+                                        RightBrace;[}];
+                        CSharpStatementLiteral - [119..119)::0 - [] - Gen<Stmt>
+                            Marker;[];
+                    RazorMetaCode - [119..119)::0 - Gen<None>
+                        RightBrace;[<Missing>];
     EndOfFile;[];
