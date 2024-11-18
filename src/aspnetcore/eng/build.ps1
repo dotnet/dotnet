@@ -480,14 +480,6 @@ try {
 
             MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments
         }
-
-        if ($performDotnetBuild) {
-            Write-Host
-            Remove-Item variable:global:_BuildTool -ErrorAction Ignore
-            $msbuildEngine = 'dotnet'
-
-            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @dotnetBuildArguments
-        }
     }
 }
 catch {
