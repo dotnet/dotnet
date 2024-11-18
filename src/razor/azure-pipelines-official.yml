@@ -49,6 +49,18 @@ pr:
     include:
       - '*'
 
+schedules:
+  - cron: "0 8 23-29 * 0" # Fourth Sunday of each month at 8:00 UTC
+    displayName: "Monthly smoke test"
+    branches:
+      include:
+        - main
+        - release/*
+      exclude:
+        - ""
+    always: true # Run even if there have been no source code changes since the last successful scheduled run
+    batch: false # Do not run the pipeline if the previously scheduled run is in-progress
+
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -203,8 +215,9 @@ extends:
                 -sign
                 $(_BuildArgs)
                 $(_PublishArgs)
+                /p:DeployExtension=false
               name: Build
-              displayName: Build and Deploy
+              displayName: Build
               condition: succeeded()
 
             - script: eng\CIBuild.cmd
