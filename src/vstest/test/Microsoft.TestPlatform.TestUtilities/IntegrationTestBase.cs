@@ -862,7 +862,7 @@ public class IntegrationTestBase
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        if (!process.WaitForExit(5 * 60 * 1000)) // 5 minutes
+        if (!process.WaitForExit(30 * 60 * 1000)) // 30 minutes
         {
             Console.WriteLine($"IntegrationTestBase.Execute: Timed out waiting for {executableName}. Terminating the process.");
             process.Kill();

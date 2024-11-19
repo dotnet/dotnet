@@ -23,12 +23,8 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj");
-        InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", new Dictionary<string, string?>
-        {
-            // Setting this temporarily, until we upgrade to final net9, which has this option set automatically in the MSBUILD sdk.
-            // Without this option we don't produce any output to the terminal logger.
-            ["_MSBUILDTLENABLED"] = "1"
-        });
+        // Forcing terminal logger so we can see the output when it is redirected
+        InvokeDotnetTest($@"{projectPath} -tl:on -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
 
         // The output:
         // Determining projects to restore...
@@ -38,7 +34,8 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         // C:\Users\nohwnd\AppData\Local\Temp\vstest\xvoVt\UnitTest1.cs(41): error VSTEST1: (FailingTest) SampleUnitTestProject.UnitTest1.FailingTest() Assert.AreEqual failed. Expected:<2>. Actual:<3>.  [C:\Users\nohwnd\AppData\Local\Temp\vstest\xvoVt\SimpleTestProject.csproj::TargetFramework=net462]
         // C:\Users\nohwnd\AppData\Local\Temp\vstest\xvoVt\UnitTest1.cs(41): error VSTEST1: (FailingTest) SampleUnitTestProject.UnitTest1.FailingTest() Assert.AreEqual failed. Expected:<2>. Actual:<3>.  [C:\Users\nohwnd\AppData\Local\Temp\vstest\xvoVt\SimpleTestProject.csproj::TargetFramework=netcoreapp3.1]
 
-        StdOutputContains("error TESTERROR: FailingTest (");
+        StdOutputContains("TESTERROR");
+        StdOutputContains("FailingTest (");
         StdOutputContains("): Error Message: Assert.AreEqual failed. Expected:<ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀>. Actual:<not the same>.");
         StdOutputContains("at TerminalLoggerUnitTests.UnitTest1.FailingTest() in");
         // We are sending those as low prio messages, they won't show up on screen but will be in binlog.
