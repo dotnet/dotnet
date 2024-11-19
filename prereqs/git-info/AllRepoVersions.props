@@ -12,7 +12,7 @@
     <commandlineapiGitCommitHash>feb61c7f328a2401d74f4317b39d02126cfdfe24</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.552801</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>4d818b1bfd1cf450492eb8ab3877eb3875488642</deploymenttoolsGitCommitHash>
-    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24528.1</deploymenttoolsOutputPackageVersion>
+    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24562.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>141a406a4c74d9ff6d6452dc999f78c08eee49a0</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>9.0.0-preview.24560.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>507e7f196a11aebaf26d1cf34e5d6a3e7044bb52</efcoreGitCommitHash>
