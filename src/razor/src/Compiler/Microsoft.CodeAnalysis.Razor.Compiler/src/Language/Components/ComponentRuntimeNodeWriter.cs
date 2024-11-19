@@ -593,6 +593,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         if (node.IsDesignTimePropertyAccessHelper())
         {
+            WriteDesignTimePropertyAccessor(context, node);
             return;
         }
 
@@ -623,6 +624,17 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         context.CodeWriter.Write(");");
         context.CodeWriter.WriteLine();
+    }
+
+    private static void WriteDesignTimePropertyAccessor(CodeRenderingContext context, ComponentAttributeIntermediateNode attribute)
+    {
+        // These attributes don't really exist in the emitted code, but have a representation in the razor document.
+        // We emit a small piece of empty code that is elided by the compiler, so that the IDE has something to reference
+        // for Find All References etc.
+        Debug.Assert(attribute.BoundAttribute?.ContainingType is not null);
+        context.CodeWriter.Write(" _ = ");
+        WriteComponentAttributeName(context, attribute);
+        context.CodeWriter.WriteLine(";");
     }
 
     private void WriteComponentAttributeInnards(CodeRenderingContext context, ComponentAttributeIntermediateNode node, bool canTypeCheck)

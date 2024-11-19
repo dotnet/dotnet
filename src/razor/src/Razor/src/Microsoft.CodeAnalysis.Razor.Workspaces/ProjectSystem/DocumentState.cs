@@ -150,6 +150,15 @@ internal partial class DocumentState
         return false;
     }
 
+    public virtual DocumentState WithConfigurationChange()
+    {
+        var state = new DocumentState(HostDocument, Version + 1, _textAndVersion, _textLoader);
+
+        // Do not cache computed state
+
+        return state;
+    }
+
     public virtual DocumentState WithImportsChange()
     {
         var state = new DocumentState(HostDocument, Version + 1, _textAndVersion, _textLoader);
@@ -160,14 +169,12 @@ internal partial class DocumentState
         return state;
     }
 
-    public virtual DocumentState WithProjectChange(bool cacheComputedState)
+    public virtual DocumentState WithProjectWorkspaceStateChange()
     {
         var state = new DocumentState(HostDocument, Version + 1, _textAndVersion, _textLoader);
 
-        if (cacheComputedState)
-        {
-            state._computedState = new ComputedStateTracker(_computedState);
-        }
+        // Optimistically cache the computed state
+        state._computedState = new ComputedStateTracker(_computedState);
 
         return state;
     }

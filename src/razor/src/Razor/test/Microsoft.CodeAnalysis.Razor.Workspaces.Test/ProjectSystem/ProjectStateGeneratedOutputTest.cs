@@ -154,7 +154,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
         var changed = ProjectWorkspaceState.Default;
 
         // Act
-        var state = original.WithHostProjectAndWorkspaceState(original.HostProject, changed);
+        var state = original.WithProjectWorkspaceState(changed);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -175,7 +175,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
         var changed = ProjectWorkspaceState.Create(_someTagHelpers);
 
         // Act
-        var state = original.WithHostProjectAndWorkspaceState(original.HostProject, changed);
+        var state = original.WithProjectWorkspaceState(changed);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -199,7 +199,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithHostProjectAndWorkspaceState(original.HostProject, changedWorkspaceState);
+        var state = original.WithProjectWorkspaceState(changedWorkspaceState);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -219,7 +219,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithHostProjectAndWorkspaceState(_hostProjectWithConfigurationChange, original.ProjectWorkspaceState);
+        var state = original.WithHostProject(_hostProjectWithConfigurationChange);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
