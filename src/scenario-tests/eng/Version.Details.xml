@@ -13,30 +13,30 @@
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24511.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24564.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
+      <Sha>c1852b9ac37df9a86630c2f078dbee43f7b186e7</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24511.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24564.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
+      <Sha>c1852b9ac37df9a86630c2f078dbee43f7b186e7</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24511.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24564.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
+      <Sha>c1852b9ac37df9a86630c2f078dbee43f7b186e7</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24511.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24561.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>76c417253f5b3890997a3ef4b0613c2eab73d156</Sha>
+      <Sha>92a51d1379daa1fa7892a9d06840ba833fcd6298</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24516.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24561.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>d22c9e818d40d0b36874f8db31550b1ea7f66c72</Sha>
+      <Sha>b4c6488eecb5011a4c7fc363d96c9c77f461a5fe</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
