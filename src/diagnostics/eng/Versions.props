@@ -55,12 +55,12 @@
     <SystemTextEncodingsWebVersion>8.0.0</SystemTextEncodingsWebVersion>
     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
     <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
-    <MicrosoftDotNetCodeAnalysisVersion>10.0.0-beta.24551.1</MicrosoftDotNetCodeAnalysisVersion>
+    <MicrosoftDotNetCodeAnalysisVersion>10.0.0-beta.24560.1</MicrosoftDotNetCodeAnalysisVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.406</StyleCopAnalyzersVersion>
     <MicrosoftDotNetRemoteExecutorVersion>7.0.0-beta.22316.2</MicrosoftDotNetRemoteExecutorVersion>
     <cdbsosversion>10.0.26100.1</cdbsosversion>
     <NewtonSoftJsonVersion>13.0.1</NewtonSoftJsonVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>10.0.0-alpha.1.24558.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>10.0.0-alpha.1.24561.2</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <!-- Roslyn and analyzers -->
     <!-- dotnet/roslyn dependencies -->
     <!--
