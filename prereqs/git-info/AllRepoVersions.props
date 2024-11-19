@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-rtm.24528.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>f47a3ceafd377fe0f255544207c35652528761e0</sdkGitCommitHash>
+    <sdkGitCommitHash>fe863e8ace35f71f28b59d43c8cb7508ebe2aeeb</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>4df883d781a4290873b3b968afc0ff0df7132507</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24516.3</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>a2ad736b86ce484df4d2dfc967bd29cd9d1b5de9</sourcebuildreferencepackagesGitCommitHash>
@@ -44,10 +44,10 @@
     <sourcelinkOutputPackageVersion>9.0.0-beta.24568.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>b699ff195f37e5039d378be3be64ccf7512df50a</templatingGitCommitHash>
-    <templatingOutputPackageVersion>9.0.101-servicing.24556.3</templatingOutputPackageVersion>
-    <testtemplatesGitCommitHash>282a2113ba98fd9c9dc18021d5c79d446ef7d45d</testtemplatesGitCommitHash>
-    <testtemplatesOutputPackageVersion>1.1.0-rtm.24561.1</testtemplatesOutputPackageVersion>
+    <templatingGitCommitHash>e660cd905cc907f7167c0826e2c30eb57a87e4da</templatingGitCommitHash>
+    <templatingOutputPackageVersion>9.0.101-servicing.24565.5</templatingOutputPackageVersion>
+    <testtemplatesGitCommitHash>25628d789b54ec56a8648d02847c1ad1b0ea31df</testtemplatesGitCommitHash>
+    <testtemplatesOutputPackageVersion>1.1.0-rtm.24568.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>308dc7955704be60afc72ec00902cc18e028c3c2</windowsdesktopGitCommitHash>
