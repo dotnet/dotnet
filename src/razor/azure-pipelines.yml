@@ -182,7 +182,7 @@ stages:
         - publish: artifacts\packages\$(_BuildConfig)
           artifact: Packages_$(Agent.Os)_$(_BuildConfig)
           displayName: Publish package artifacts
-          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+          condition: succeeded()
 
   # Unix jobs done as a group since they share the same test results format.
   - template: /eng/common/templates/jobs/jobs.yml
