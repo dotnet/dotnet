@@ -1,4 +1,14 @@
-# Branches that trigger builds on PR
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
 pr:
   branches:
     include:
