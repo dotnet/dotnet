@@ -306,7 +306,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         }
     }
 
-    private void ProjectChanged(HostProject hostProject, ProjectWorkspaceState projectWorkspaceState)
+    private void ProjectConfigurationChanged(HostProject hostProject)
     {
         if (_initialized)
         {
@@ -316,7 +316,25 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         if (TryUpdate(
             hostProject.Key,
             documentFilePath: null,
-            new ProjectChangeAction(hostProject, projectWorkspaceState),
+            new HostProjectUpdatedAction(hostProject),
+            out var oldSnapshot,
+            out var newSnapshot))
+        {
+            NotifyListeners(oldSnapshot, newSnapshot, documentFilePath: null, ProjectChangeKind.ProjectChanged);
+        }
+    }
+
+    private void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState)
+    {
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
+
+        if (TryUpdate(
+            projectKey,
+            documentFilePath: null,
+            new ProjectWorkspaceStateChangedAction(projectWorkspaceState),
             out var oldSnapshot,
             out var newSnapshot))
         {
@@ -573,8 +591,11 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
                     }
                 }
 
-            case ProjectChangeAction(var hostProject, var workspaceState):
-                return new Entry(originalEntry.State.WithHostProjectAndWorkspaceState(hostProject, workspaceState));
+            case ProjectWorkspaceStateChangedAction(var workspaceState):
+                return new Entry(originalEntry.State.WithProjectWorkspaceState(workspaceState));
+
+            case HostProjectUpdatedAction(var hostProject):
+                return new Entry(originalEntry.State.WithHostProject(hostProject));
 
             default:
                 throw new InvalidOperationException($"Unexpected action type {action.GetType()}");

@@ -56,7 +56,7 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject);
-            updater.ProjectChanged(hostProject, projectWorkspaceState);
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
             updater.DocumentAdded(hostProject.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
@@ -101,11 +101,11 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject1);
-            updater.ProjectChanged(hostProject1, projectWorkspaceState);
+            updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
             updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
             updater.ProjectAdded(hostProject2);
-            updater.ProjectChanged(hostProject2, projectWorkspaceState);
+            updater.ProjectWorkspaceStateChanged(hostProject2.Key, projectWorkspaceState);
             updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
@@ -150,7 +150,7 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject1);
-            updater.ProjectChanged(hostProject1, projectWorkspaceState);
+            updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
             updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
             updater.ProjectAdded(hostProject2);

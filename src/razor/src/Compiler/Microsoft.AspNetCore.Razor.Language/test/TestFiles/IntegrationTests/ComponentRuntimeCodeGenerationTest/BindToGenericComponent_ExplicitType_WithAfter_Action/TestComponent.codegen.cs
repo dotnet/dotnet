@@ -44,6 +44,15 @@ Update
 #line hidden
 #nullable disable
             ); }));
+             _ = nameof(global::Test.MyComponent<int>.
+#nullable restore
+#line (1,63)-(1,68) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

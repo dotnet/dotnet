@@ -52,6 +52,15 @@ UpdateValue
 #line hidden
 #nullable disable
             , ParentValue))));
+             _ = nameof(global::Test.MyComponent<TParam>.
+#nullable restore
+#line (2,66)-(2,71) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

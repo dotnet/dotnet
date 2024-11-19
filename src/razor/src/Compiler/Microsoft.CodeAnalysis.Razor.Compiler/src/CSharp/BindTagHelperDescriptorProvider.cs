@@ -667,6 +667,7 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     attribute.Name = "@bind-" + valueAttribute.Name;
                     attribute.TypeName = changeAttribute.TypeName;
                     attribute.IsEnum = valueAttribute.IsEnum;
+                    attribute.ContainingType = valueAttribute.ContainingType;
 
                     attribute.SetMetadata(
                         PropertyName(valueAttribute.GetPropertyName()),
