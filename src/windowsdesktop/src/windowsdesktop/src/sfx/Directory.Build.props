@@ -75,6 +75,7 @@
     <FrameworkListFileClass Include="System.Windows.Controls.Ribbon.dll" Profile="WPF" />
     <FrameworkListFileClass Include="System.Windows.Input.Manipulations.dll" Profile="WPF" />
     <FrameworkListFileClass Include="System.Windows.Presentation.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Primitives.dll" Profile="WPF" />
     <FrameworkListFileClass Include="System.Xaml.dll" Profile="WPF" />
     <FrameworkListFileClass Include="UIAutomationClient.dll" Profile="WPF" />
     <FrameworkListFileClass Include="UIAutomationClientSideProviders.dll" Profile="WPF" />
