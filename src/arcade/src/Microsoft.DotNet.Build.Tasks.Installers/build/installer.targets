@@ -84,15 +84,7 @@
     <_GlobalPropertiesToRemoveForPublish Include="$(_GlobalPropertiesToRemoveForPublish)" />
   </ItemGroup>
 
-  <Target Name="_GetVersionInfo">
-    <PropertyGroup>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(DotNetFinalVersionKind)' != 'release'">true</IncludePreReleaseLabelInPackageVersion>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(SuppressFinalPackageVersion)' == 'true'">true</IncludePreReleaseLabelInPackageVersion>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(IsShipping)' != 'true'">true</IncludePreReleaseLabelInPackageVersion>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_GetProductBrandName" DependsOnTargets="_GetVersionInfo">
+  <Target Name="_GetProductBrandName">
     <PropertyGroup
       Condition="
         '$(ReleaseBrandSuffix)' == '' and

@@ -3,7 +3,7 @@
 
   <!--  This file sets properties that enable skipping of a project build if desired.
         Cases where we might skip include:
-        - Source-build mode and "ExcludeFromSourceBuild" is set.
+        - Source-build mode and "ExcludeFromSourceOnlyBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
         - .NET product build (DotNetBuild) and "ExcludeFromDotNetBuild" is set.
@@ -30,7 +30,6 @@
   <!-- Exclude test and test utility projects from source-only and .NET non-source only product builds by default. -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
     <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceOnlyBuild>
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceBuild>
 
     <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromDotNetBuild>
   </PropertyGroup>

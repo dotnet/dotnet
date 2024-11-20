@@ -13,80 +13,8 @@
   <Target Name="GenerateCrossArchMsi" DependsOnTargets="CreateCrossArchWixInstaller" />
   <Target Name="GeneratePkg" DependsOnTargets="CreatePkg" />
 
-  <!-- Set up property defaults for installer generation-->
   <PropertyGroup>
     <LinuxInstallRoot Condition="'$(LinuxInstallRoot)' == ''">/usr/share/dotnet</LinuxInstallRoot>
-    <VersionedInstallerName Condition="'$(VersionInstallerName)' == 'true'">$(InstallerName)-$(MajorVersion).$(MinorVersion)</VersionedInstallerName>
-    <VersionedInstallerName Condition="'$(VersionInstallerName)' != 'true'">$(InstallerName)</VersionedInstallerName>
-    <VersionedInstallerName>$(VersionedInstallerName.ToLowerInvariant())</VersionedInstallerName>
-    <InstallerPackageRelease>1</InstallerPackageRelease>
-    <InstallerPackageVersion>$(VersionPrefix)</InstallerPackageVersion>
-  </PropertyGroup>
-  
-  <!-- Distinguish the cross-arch installer filename. -->
-  <PropertyGroup Condition="'$(CrossArchContentsArch)' != ''">
-    <CrossArchContentsBuildPart>_$(CrossArchContentsArch)</CrossArchContentsBuildPart>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <InstallerExtension Condition="'$(GenerateMsi)' == 'true' or '$(GenerateCrossArchMsi)' == 'true'">.msi</InstallerExtension>
-    <InstallerExtension Condition="'$(GeneratePkg)' == 'true'">.pkg</InstallerExtension>
-    <InstallerExtension Condition="'$(GenerateDeb)' == 'true'">.deb</InstallerExtension>
-    <InstallerExtension Condition="'$(GenerateRpm)' == 'true'">.rpm</InstallerExtension>
-    <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' == 'win'">.exe</CombinedInstallerExtension>
-    <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' != 'win'">$(InstallerExtension)</CombinedInstallerExtension>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(GenerateDeb)' == 'true'">
-    <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)~$(VersionSuffix)</InstallerPackageVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
-    <InstallerPackageRelease Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">0.1.$(VersionSuffix)</InstallerPackageRelease>
-    <InstallerPackageRelease>$([System.String]::Copy('$(InstallerPackageRelease)').Replace('-', '_'))</InstallerPackageRelease>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(GeneratePkg)' == 'true'">
-    <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)-$(VersionSuffix)</InstallerPackageVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <_InstallerIntermediatesDir>$(IntermediateOutputPath)$(InstallerName)/$(InstallerPackageVersion)/</_InstallerIntermediatesDir>
-    <InstallerBuildPart>$(Version)-$(TargetRuntimeOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
-    <_InstallerArchSuffix>$(InstallerTargetArchitecture)</_InstallerArchSuffix>
-    <_InstallerArchSuffix Condition="'$(BuildRpmPackage)' == 'true' and '$(InstallerTargetArchitecture)' == 'arm64'">aarch64</_InstallerArchSuffix>
-    <InstallerBuildPart>$(Version)-$(_InstallerArchSuffix)</InstallerBuildPart>
-    <InstallerBuildPart Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_InstallerArchSuffix)</InstallerBuildPart>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Location to place the installer, in artifacts. -->
-    <InstallerFileNameWithoutExtension>$(InstallerName)-$(InstallerBuildPart)$(CrossArchContentsBuildPart)</InstallerFileNameWithoutExtension>
-    <_InstallerFile Condition="'$(_InstallerFile)' == ''">$(PackageOutputPath)$(InstallerFileNameWithoutExtension)$(InstallerExtension)</_InstallerFile>
-    <ExeBundleInstallerFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).exe</ExeBundleInstallerFile>
-    <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
-    <CreateRPMForCblMariner>true</CreateRPMForCblMariner>
-    <!-- PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for CBL Mariner.
-         We do not want to create additional CBL Mariner named RPMs of those packages. -->
-    <CreateRPMForCblMariner Condition="'$(PackageTargetOS)' != ''">false</CreateRPMForCblMariner>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(CreateRPMForCblMariner)' == 'true'">
-    <!-- CBL-Mariner 1.0 -->
-    <_CblMarinerVersionSuffix>cm.1</_CblMarinerVersionSuffix>
-    <_InstallerBuildPartCblMariner>$(Version)-$(_CblMarinerVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartCblMariner>
-    <_InstallerFileNameWithoutExtensionCblMariner>$(InstallerName)-$(_InstallerBuildPartCblMariner)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner>
-    <_InstallerFileCblMariner>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner)$(InstallerExtension)</_InstallerFileCblMariner>
-    <!-- CBL-Mariner 2.0 -->
-    <_CblMariner2VersionSuffix>cm.2</_CblMariner2VersionSuffix>
-    <_InstallerBuildPartCblMariner2>$(Version)-$(_CblMariner2VersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartCblMariner2>
-    <_InstallerFileNameWithoutExtensionCblMariner2>$(InstallerName)-$(_InstallerBuildPartCblMariner2)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner2>
-    <_InstallerFileCblMariner2>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner2)$(InstallerExtension)</_InstallerFileCblMariner2>
   </PropertyGroup>
 
   <!--
@@ -95,6 +23,88 @@
   <Target Name="_GetInstallerProperties"
           DependsOnTargets="_GetTargetOSArchInfo;
                             _GetProductBrandName">
+    <!-- Set up property defaults for installer generation-->
+    <PropertyGroup>
+      <LinuxInstallRoot Condition="'$(LinuxInstallRoot)' == ''">/usr/share/dotnet</LinuxInstallRoot>
+      <VersionedInstallerName Condition="'$(VersionInstallerName)' == 'true'">$(InstallerName)-$(MajorVersion).$(MinorVersion)</VersionedInstallerName>
+      <VersionedInstallerName Condition="'$(VersionInstallerName)' != 'true'">$(InstallerName)</VersionedInstallerName>
+      <VersionedInstallerName>$(VersionedInstallerName.ToLowerInvariant())</VersionedInstallerName>
+      <InstallerPackageRelease>1</InstallerPackageRelease>
+      <InstallerPackageVersion>$(VersionPrefix)</InstallerPackageVersion>
+    </PropertyGroup>
+    
+    <!-- Distinguish the cross-arch installer filename. -->
+    <PropertyGroup Condition="'$(CrossArchContentsArch)' != ''">
+      <CrossArchContentsBuildPart>_$(CrossArchContentsArch)</CrossArchContentsBuildPart>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <InstallerExtension Condition="'$(GenerateMsi)' == 'true' or '$(GenerateCrossArchMsi)' == 'true'">.msi</InstallerExtension>
+      <InstallerExtension Condition="'$(GeneratePkg)' == 'true'">.pkg</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateDeb)' == 'true'">.deb</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateRpm)' == 'true'">.rpm</InstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' == 'win'">.exe</CombinedInstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' != 'win'">$(InstallerExtension)</CombinedInstallerExtension>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(DotNetFinalVersionKind)' != 'release'">true</IncludePreReleaseLabelInPackageVersion>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(SuppressFinalPackageVersion)' == 'true'">true</IncludePreReleaseLabelInPackageVersion>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(IsShipping)' != 'true'">true</IncludePreReleaseLabelInPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateDeb)' == 'true'">
+      <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)~$(VersionSuffix)</InstallerPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
+      <InstallerPackageRelease Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">0.1.$(VersionSuffix)</InstallerPackageRelease>
+      <InstallerPackageRelease>$([System.String]::Copy('$(InstallerPackageRelease)').Replace('-', '_'))</InstallerPackageRelease>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GeneratePkg)' == 'true'">
+      <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)-$(VersionSuffix)</InstallerPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_InstallerIntermediatesDir>$(IntermediateOutputPath)$(InstallerName)/$(InstallerPackageVersion)/</_InstallerIntermediatesDir>
+      <InstallerBuildPart>$(Version)-$(TargetRuntimeOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
+      <_InstallerArchSuffix>$(InstallerTargetArchitecture)</_InstallerArchSuffix>
+      <_InstallerArchSuffix Condition="'$(BuildRpmPackage)' == 'true' and '$(InstallerTargetArchitecture)' == 'arm64'">aarch64</_InstallerArchSuffix>
+      <InstallerBuildPart>$(Version)-$(_InstallerArchSuffix)</InstallerBuildPart>
+      <InstallerBuildPart Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_InstallerArchSuffix)</InstallerBuildPart>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <!-- Location to place the installer, in artifacts. -->
+      <InstallerFileNameWithoutExtension>$(InstallerName)-$(InstallerBuildPart)$(CrossArchContentsBuildPart)</InstallerFileNameWithoutExtension>
+      <_InstallerFile Condition="'$(_InstallerFile)' == ''">$(PackageOutputPath)$(InstallerFileNameWithoutExtension)$(InstallerExtension)</_InstallerFile>
+      <ExeBundleInstallerFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).exe</ExeBundleInstallerFile>
+      <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
+      <CreateRPMForCblMariner>true</CreateRPMForCblMariner>
+      <!-- PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for CBL Mariner.
+          We do not want to create additional CBL Mariner named RPMs of those packages. -->
+      <CreateRPMForCblMariner Condition="'$(PackageTargetOS)' != ''">false</CreateRPMForCblMariner>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(CreateRPMForCblMariner)' == 'true'">
+      <!-- CBL-Mariner 1.0 -->
+      <_CblMarinerVersionSuffix>cm.1</_CblMarinerVersionSuffix>
+      <_InstallerBuildPartCblMariner>$(Version)-$(_CblMarinerVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartCblMariner>
+      <_InstallerFileNameWithoutExtensionCblMariner>$(InstallerName)-$(_InstallerBuildPartCblMariner)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner>
+      <_InstallerFileCblMariner>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner)$(InstallerExtension)</_InstallerFileCblMariner>
+      <!-- CBL-Mariner 2.0 -->
+      <_CblMariner2VersionSuffix>cm.2</_CblMariner2VersionSuffix>
+      <_InstallerBuildPartCblMariner2>$(Version)-$(_CblMariner2VersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartCblMariner2>
+      <_InstallerFileNameWithoutExtensionCblMariner2>$(InstallerName)-$(_InstallerBuildPartCblMariner2)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner2>
+      <_InstallerFileCblMariner2>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner2)$(InstallerExtension)</_InstallerFileCblMariner2>
+    </PropertyGroup>
   </Target>
 
   <!--

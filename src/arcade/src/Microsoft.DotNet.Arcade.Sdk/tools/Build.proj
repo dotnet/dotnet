@@ -137,7 +137,7 @@
       <_CommonProps Include="VersionsPropsPath=$(VersionsPropsPath)"/>
 
       <!--
-        When building in source-only or product scenarios, some projects may have set ExcludeFromSourceBuild=true or ExcludeFromDotNetBuild.
+        When building in source-only or product scenarios, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
         NuGet Restore task reports a warning for such projects, which we suppress here.
       -->
       <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
@@ -298,7 +298,7 @@
     <MSBuild Projects="Sign.proj"
              Properties="@(_CommonProps)"
              Targets="Sign"
-             Condition="'$(Sign)' == 'true'"/>
+             Condition="'$(Sign)' == 'true' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')"/>
 
     <MSBuild Projects="AfterSigning.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
