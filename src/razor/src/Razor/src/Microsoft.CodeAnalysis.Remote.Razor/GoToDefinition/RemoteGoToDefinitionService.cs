@@ -3,7 +3,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -76,12 +75,6 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
             return CallHtml;
         }
 
-        if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out var mappedPosition, out _))
-        {
-            // If we can't map to the generated C# file, we're done.
-            return NoFurtherHandling;
-        }
-
         // Finally, call into C#.
         var generatedDocument = await context.Snapshot
             .GetGeneratedDocumentAsync(cancellationToken)
@@ -92,7 +85,7 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
                 RemoteWorkspaceAccessor.GetWorkspace(),
                 generatedDocument,
                 typeOnly: false,
-                mappedPosition,
+                positionInfo.Position.ToLinePosition(),
                 cancellationToken)
             .ConfigureAwait(false);
 

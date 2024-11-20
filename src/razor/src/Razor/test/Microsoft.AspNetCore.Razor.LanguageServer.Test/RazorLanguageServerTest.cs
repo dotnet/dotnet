@@ -8,8 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Logging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -124,8 +124,10 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
             {
                 s.AddSingleton<IRazorProjectInfoDriver, TestProjectInfoDriver>();
 
-                // VS Code only handler is added by rzls, but add here for testing purposes
+                // VS Code only handlers are added by rzls, but add here for testing purposes
                 s.AddHandler<RazorNamedPipeConnectEndpoint>();
+                s.AddSingleton(new LogLevelProvider(CodeAnalysis.Razor.Logging.LogLevel.None));
+                s.AddHandler<UpdateLogLevelEndpoint>();
             });
     }
 
