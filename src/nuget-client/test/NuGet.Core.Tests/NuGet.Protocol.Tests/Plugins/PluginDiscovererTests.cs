@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using NuGet.Common;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -21,26 +23,27 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData(" ")]
         public void Constructor_AcceptsAnyString(string rawPluginPaths)
         {
-            using (new PluginDiscoverer(rawPluginPaths, Mock.Of<EmbeddedSignatureVerifier>()))
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(rawPluginPaths);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(rawPluginPaths);
+
+            Exception exception = Record.Exception(() =>
             {
-            }
-        }
+                using (new PluginDiscoverer())
+                {
+                }
+            });
 
-        [Fact]
-        public void DiscoverAsync_ThrowsForNullVerifier()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(
-                () => new PluginDiscoverer(rawPluginPaths: "", verifier: null));
-
-            Assert.Equal("verifier", exception.ParamName);
+            Assert.Null(exception);
         }
 
         [Fact]
         public async Task DiscoverAsync_ThrowsIfCancelled()
         {
-            using (var discoverer = new PluginDiscoverer(
-                rawPluginPaths: "",
-                verifier: Mock.Of<EmbeddedSignatureVerifier>()))
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns("");
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns("");
+            using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
             {
                 await Assert.ThrowsAsync<OperationCanceledException>(
                     () => discoverer.DiscoverAsync(new CancellationToken(canceled: true)));
@@ -48,29 +51,12 @@ namespace NuGet.Protocol.Plugins.Tests
         }
 
         [Fact]
-        public async Task DiscoverAsync_ThrowsPlatformNotSupportedIfEmbeddedSignatureVerifierIsRequired()
-        {
-            using (var testDirectory = TestDirectory.Create())
-            {
-                var pluginPath = Path.Combine(testDirectory.Path, "a");
-
-                File.WriteAllText(pluginPath, string.Empty);
-
-                using (var discoverer = new PluginDiscoverer(pluginPath, new FallbackEmbeddedSignatureVerifier()))
-                {
-                    var plugins = await discoverer.DiscoverAsync(CancellationToken.None);
-                    Assert.Throws<PlatformNotSupportedException>(
-                        () => plugins.SingleOrDefault().PluginFile.State.Value);
-                }
-            }
-        }
-
-        [Fact]
         public async Task DiscoverAsync_DoesNotThrowIfNoValidFilePathsAndFallbackEmbeddedSignatureVerifier()
         {
-            using (var discoverer = new PluginDiscoverer(
-                rawPluginPaths: ";",
-                verifier: new FallbackEmbeddedSignatureVerifier()))
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(Path.PathSeparator.ToString());
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(Path.PathSeparator.ToString());
+            using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
             {
                 var pluginFiles = await discoverer.DiscoverAsync(CancellationToken.None);
 
@@ -86,14 +72,11 @@ namespace NuGet.Protocol.Plugins.Tests
                 var pluginPath = Path.Combine(testDirectory.Path, "a");
 
                 File.WriteAllText(pluginPath, string.Empty);
+                var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(pluginPath);
 
-                var responses = new Dictionary<string, bool>()
-                {
-                    { pluginPath, true }
-                };
-                var verifierStub = new EmbeddedSignatureVerifierStub(responses);
-
-                using (var discoverer = new PluginDiscoverer(pluginPath, verifierStub))
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
                 {
                     var results = (await discoverer.DiscoverAsync(CancellationToken.None)).ToArray();
 
@@ -103,41 +86,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     }
 
                     Assert.Equal(1, results.Length);
-                    Assert.Equal(1, verifierStub.IsValidCallCount);
 
                     results = (await discoverer.DiscoverAsync(CancellationToken.None)).ToArray();
 
                     Assert.Equal(1, results.Length);
-                    Assert.Equal(1, verifierStub.IsValidCallCount);
-                }
-            }
-        }
-
-        [Fact]
-        public async Task DiscoverAsync_SignatureIsVerifiedLazily()
-        {
-            using (var testDirectory = TestDirectory.Create())
-            {
-                var pluginPath = Path.Combine(testDirectory.Path, "a");
-
-                File.WriteAllText(pluginPath, string.Empty);
-
-                var responses = new Dictionary<string, bool>()
-                {
-                    { pluginPath, true }
-                };
-                var verifierStub = new EmbeddedSignatureVerifierStub(responses);
-
-                using (var discoverer = new PluginDiscoverer(pluginPath, verifierStub))
-                {
-                    var results = (await discoverer.DiscoverAsync(CancellationToken.None)).ToArray();
-
-                    Assert.Equal(1, results.Length);
-                    Assert.Equal(0, verifierStub.IsValidCallCount);
-
-                    var pluginState = results.SingleOrDefault().PluginFile.State.Value;
-
-                    Assert.Equal(1, verifierStub.IsValidCallCount);
                 }
             }
         }
@@ -147,49 +99,34 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             using (var testDirectory = TestDirectory.Create())
             {
-                var pluginPaths = new[] { "a", "b", "c", "d" }
+                var pluginPaths = new[] { "a", "b", }
                     .Select(fileName => Path.Combine(testDirectory.Path, fileName))
                     .ToArray();
 
                 File.WriteAllText(pluginPaths[1], string.Empty);
-                File.WriteAllText(pluginPaths[2], string.Empty);
 
-                var responses = new Dictionary<string, bool>()
-                {
-                    { pluginPaths[0], false },
-                    { pluginPaths[1], false },
-                    { pluginPaths[2], true },
-                    { pluginPaths[3], false },
-                    { "e", true }
-                };
-                var verifierStub = new EmbeddedSignatureVerifierStub(responses);
-                var rawPluginPaths = string.Join(";", responses.Keys);
-
-                using (var discoverer = new PluginDiscoverer(rawPluginPaths, verifierStub))
+                string rawPluginPaths =
+                    $"{pluginPaths[0]}{Path.PathSeparator}{pluginPaths[1]}{Path.PathSeparator}c";
+                var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(rawPluginPaths);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(rawPluginPaths);
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
                 {
                     var results = (await discoverer.DiscoverAsync(CancellationToken.None)).ToArray();
 
-                    Assert.Equal(5, results.Length);
+                    Assert.Equal(3, results.Length);
 
                     Assert.Equal(pluginPaths[0], results[0].PluginFile.Path);
                     Assert.Equal(PluginFileState.NotFound, results[0].PluginFile.State.Value);
                     Assert.Equal($"A plugin was not found at path '{pluginPaths[0]}'.", results[0].Message);
 
                     Assert.Equal(pluginPaths[1], results[1].PluginFile.Path);
-                    Assert.Equal(PluginFileState.InvalidEmbeddedSignature, results[1].PluginFile.State.Value);
-                    Assert.Equal($"The plugin at '{pluginPaths[1]}' did not have a valid embedded signature.", results[1].Message);
+                    Assert.Equal(PluginFileState.Valid, results[1].PluginFile.State.Value);
+                    Assert.Null(results[1].Message);
 
-                    Assert.Equal(pluginPaths[2], results[2].PluginFile.Path);
-                    Assert.Equal(PluginFileState.Valid, results[2].PluginFile.State.Value);
-                    Assert.Null(results[2].Message);
-
-                    Assert.Equal(pluginPaths[3], results[3].PluginFile.Path);
-                    Assert.Equal(PluginFileState.NotFound, results[3].PluginFile.State.Value);
-                    Assert.Equal($"A plugin was not found at path '{pluginPaths[3]}'.", results[3].Message);
-
-                    Assert.Equal("e", results[4].PluginFile.Path);
-                    Assert.Equal(PluginFileState.InvalidFilePath, results[4].PluginFile.State.Value);
-                    Assert.Equal($"The plugin file path 'e' is invalid.", results[4].Message);
+                    Assert.Equal("c", results[2].PluginFile.Path);
+                    Assert.Equal(PluginFileState.InvalidFilePath, results[2].PluginFile.State.Value);
+                    Assert.Equal($"The plugin file path 'c' is invalid.", results[2].Message);
                 }
             }
         }
@@ -202,9 +139,10 @@ namespace NuGet.Protocol.Plugins.Tests
         public async Task DiscoverAsync_DisallowsNonRootedFilePaths(string pluginPath)
         {
             var responses = new Dictionary<string, bool>() { { pluginPath, true } };
-            var verifierStub = new EmbeddedSignatureVerifierStub(responses);
-
-            using (var discoverer = new PluginDiscoverer(pluginPath, verifierStub))
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(pluginPath);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(pluginPath);
+            using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
             {
                 var results = (await discoverer.DiscoverAsync(CancellationToken.None)).ToArray();
 
@@ -222,52 +160,559 @@ namespace NuGet.Protocol.Plugins.Tests
                 var pluginPath = Path.Combine(testDirectory.Path, "a");
 
                 File.WriteAllText(pluginPath, string.Empty);
+                var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths)).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.CorePluginPaths)).Returns(pluginPath);
 
-                var verifierSpy = new Mock<EmbeddedSignatureVerifier>();
-
-                verifierSpy.Setup(spy => spy.IsValid(It.IsAny<string>()))
-                    .Returns(true);
-
-                using (var discoverer = new PluginDiscoverer(pluginPath, verifierSpy.Object))
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
                 {
                     var firstResult = await discoverer.DiscoverAsync(CancellationToken.None);
                     var firstState = firstResult.SingleOrDefault().PluginFile.State.Value;
 
-                    verifierSpy.Verify(spy => spy.IsValid(It.IsAny<string>()),
-                        Times.Once);
-
                     var secondResult = await discoverer.DiscoverAsync(CancellationToken.None);
                     var secondState = secondResult.SingleOrDefault().PluginFile.State.Value;
-
-                    verifierSpy.Verify(spy => spy.IsValid(It.IsAny<string>()),
-                        Times.Once);
 
                     Assert.Same(firstResult, secondResult);
                 }
             }
         }
 
-        private sealed class EmbeddedSignatureVerifierStub : EmbeddedSignatureVerifier
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("nuget-plugin-myPlugin.exe")]
+        [InlineData("nuget-plugin-myPlugin.bat")]
+        public async Task DiscoverAsync_withValidDotNetToolsPluginWindows_FindsThePlugin(string fileName)
         {
-            private readonly Dictionary<string, bool> _responses;
-
-            internal int IsValidCallCount { get; private set; }
-
-            public EmbeddedSignatureVerifierStub(Dictionary<string, bool> responses)
+            using (var testDirectory = TestDirectory.Create())
             {
-                _responses = responses;
-            }
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugin");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, fileName);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginPath);
 
-            public override bool IsValid(string filePath)
-            {
-                ++IsValidCallCount;
+                File.WriteAllText(myPlugin, string.Empty);
 
-                bool value;
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                {
+                    // Act
+                    var result = await discoverer.DiscoverAsync(CancellationToken.None);
 
-                Assert.True(_responses.TryGetValue(filePath, out value));
+                    // Assert
+                    var discovered = false;
 
-                return value;
+                    foreach (PluginDiscoveryResult discoveryResult in result)
+                    {
+                        if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                    }
+
+                    Assert.True(discovered);
+                }
             }
         }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("nuget-plugin-myPlugin.exe")]
+        [InlineData("nuget-plugin-myPlugin.bat")]
+        public async Task DiscoverAsync_WithPluginPathSpecifiedInNuGetPluginPathsEnvVariableWindows_FindsThePlugin(string fileName)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugin");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, fileName);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("NUGET_PLUGIN_PATHS")).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATHS")).Returns("");
+                File.WriteAllText(myPlugin, string.Empty);
+
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                {
+                    // Act
+                    var result = await discoverer.DiscoverAsync(CancellationToken.None);
+
+                    // Assert
+                    var discovered = false;
+
+                    foreach (PluginDiscoveryResult discoveryResult in result)
+                    {
+                        if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                    }
+
+                    Assert.True(discovered);
+                }
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("nugetplugin-myPlugin.exe")]
+        [InlineData("nugetplugin-myPlugin.bat")]
+        public async Task DiscoverAsync_withInValidDotNetToolsPluginNameWindows_DoesNotFindThePlugin(string fileName)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugin");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, fileName);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(It.IsAny<string>())).Returns(pluginPath);
+
+                File.WriteAllText(myPlugin, string.Empty);
+
+                using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                {
+                    // Act
+                    var result = await discoverer.DiscoverAsync(CancellationToken.None);
+
+                    // Assert
+                    var discovered = false;
+
+                    foreach (PluginDiscoveryResult discoveryResult in result)
+                    {
+                        if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                    }
+
+                    Assert.False(discovered);
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public async Task DiscoverAsync_withValidDotNetToolsPluginLinux_FindsThePlugin()
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugins");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, "nuget-plugin-MyPlugin");
+                File.WriteAllText(myPlugin, string.Empty);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginPath);
+
+                using (var process = new Process())
+                {
+                    // Use a shell command to make the file executable
+                    process.StartInfo.FileName = "/bin/bash";
+                    process.StartInfo.Arguments = $"-c \"chmod +x {myPlugin}\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0)
+                    {
+                        using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                        {
+                            // Act
+                            var result = await discoverer.DiscoverAsync(CancellationToken.None);
+
+                            // Assert
+                            var discovered = false;
+
+                            foreach (PluginDiscoveryResult discoveryResult in result)
+                            {
+                                if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                            }
+
+                            Assert.True(discovered);
+                        }
+                    }
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public async Task DiscoverAsync_WithPluginPathSpecifiedInNuGetPluginPathsEnvVariableLinux_FindsThePlugin()
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugins");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, "nuget-plugin-MyPlugin");
+                File.WriteAllText(myPlugin, string.Empty);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATHS")).Returns("");
+
+                using (var process = new Process())
+                {
+                    // Use a shell command to make the file executable
+                    process.StartInfo.FileName = "/bin/bash";
+                    process.StartInfo.Arguments = $"-c \"chmod +x {myPlugin}\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0)
+                    {
+                        using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                        {
+                            // Act
+                            var result = await discoverer.DiscoverAsync(CancellationToken.None);
+
+                            // Assert
+                            var discovered = false;
+
+                            foreach (PluginDiscoveryResult discoveryResult in result)
+                            {
+                                if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                            }
+
+                            Assert.True(discovered);
+                        }
+                    }
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public async Task DiscoverAsync_withNoExecutableValidDotNetToolsPluginLinux_DoesNotFindThePlugin()
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                var pluginPath = Path.Combine(testDirectory.Path, "myPlugins");
+                Directory.CreateDirectory(pluginPath);
+                var myPlugin = Path.Combine(pluginPath, "nuget-plugin-MyPlugin");
+                File.WriteAllText(myPlugin, string.Empty);
+                Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginPath);
+
+                using (var process = new Process())
+                {
+                    // Use a shell command to make the file not executable
+                    process.StartInfo.FileName = "/bin/bash";
+                    process.StartInfo.Arguments = $"-c \"chmod -x {myPlugin}\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0)
+                    {
+                        using (var discoverer = new PluginDiscoverer(environmentalVariableReader.Object))
+                        {
+                            // Act
+                            var result = await discoverer.DiscoverAsync(CancellationToken.None);
+
+                            // Assert
+                            var discovered = false;
+
+                            foreach (PluginDiscoveryResult discoveryResult in result)
+                            {
+                                if (myPlugin == discoveryResult.PluginFile.Path) discovered = true;
+                            }
+
+                            Assert.False(discovered);
+                        }
+                    }
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInNuGetPluginPaths_WithNuGetPluginPathsSet_ReturnsPluginsInNuGetPluginPathOnly()
+        {
+            // Arrange
+            using TestDirectory pluginPathDirectory = TestDirectory.Create();
+            using TestDirectory pathDirectory = TestDirectory.Create();
+            var pluginInNuGetPluginPathDirectoryFilePath = Path.Combine(pluginPathDirectory.Path, "nuget-plugin-auth.exe");
+            var pluginInPathDirectoryFilePath = Path.Combine(pathDirectory.Path, "nuget-plugin-in-path-directory.exe");
+            File.Create(pluginInNuGetPluginPathDirectoryFilePath);
+            File.Create(pluginInPathDirectoryFilePath);
+            Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(Directory.GetParent(pluginInNuGetPluginPathDirectoryFilePath).FullName);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(Directory.GetParent(pluginInPathDirectoryFilePath).FullName);
+            PluginDiscoverer pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInNuGetPluginPaths();
+
+            // Assert
+            Assert.Single(plugins);
+            Assert.Equal(pluginInNuGetPluginPathDirectoryFilePath, plugins[0].Path);
+            Assert.False(plugins[0].RequiresDotnetHost);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInNuGetPluginPaths_WithoutNuGetPluginPaths_ReturnsEmpty()
+        {
+            // Arrange
+            using var pathDirectory = TestDirectory.Create();
+            var pluginFilePath = Path.Combine(pathDirectory.Path, "nuget-plugin-fallback.exe");
+            File.Create(pluginFilePath);
+
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(pathDirectory.Path);
+
+            var pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInNuGetPluginPaths();
+
+            // Assert
+            Assert.Empty(plugins);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInPATH_WithPATHSet_ReturnsPlugin()
+        {
+            // Arrange
+            using TestDirectory pluginPathDirectory = TestDirectory.Create();
+            using TestDirectory pathDirectory = TestDirectory.Create();
+            var pluginInNuGetPluginPathDirectoryFilePath = Path.Combine(pluginPathDirectory.Path, "nuget-plugin-auth.exe");
+            var pluginInPathDirectoryFilePath = Path.Combine(pathDirectory.Path, "nuget-plugin-in-path-directory.exe");
+            File.Create(pluginInNuGetPluginPathDirectoryFilePath);
+            File.Create(pluginInPathDirectoryFilePath);
+            Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(Directory.GetParent(pluginInNuGetPluginPathDirectoryFilePath).FullName);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(Directory.GetParent(pluginInPathDirectoryFilePath).FullName);
+            PluginDiscoverer pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInPath();
+
+            // Assert
+            Assert.Single(plugins);
+            Assert.Equal(pluginInPathDirectoryFilePath, plugins[0].Path);
+            Assert.False(plugins[0].RequiresDotnetHost);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInNuGetPluginPaths_NuGetPluginPathsPointsToAFile_TreatsAsPlugin()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var pluginFilePath = Path.Combine(testDirectory.Path, "nuget-plugin-auth.exe");
+            File.Create(pluginFilePath);
+
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginFilePath);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(string.Empty);
+
+            var pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInNuGetPluginPaths();
+
+            // Assert
+            Assert.Single(plugins);
+            Assert.Equal(pluginFilePath, plugins[0].Path);
+            Assert.False(plugins[0].RequiresDotnetHost);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInNuGetPluginPaths_NuGetPluginPathsPointsToAFileThatDoesNotStartWithNugetPlugin_ReturnsNonDotnetPlugin()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var pluginFilePath = Path.Combine(testDirectory.Path, "other-plugin.exe");
+            File.Create(pluginFilePath);
+
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns(pluginFilePath);
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(string.Empty);
+
+            var pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInNuGetPluginPaths();
+
+            // Assert
+            Assert.Single(plugins);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInPATH_PATHPointsToADirectory_ContainsValidPluginFiles()
+        {
+            // Arrange
+            using var pluginPathDirectory = TestDirectory.Create();
+            var validPluginFile = Path.Combine(pluginPathDirectory.Path, "nuget-plugin-auth.exe");
+            var invalidPluginFile = Path.Combine(pluginPathDirectory.Path, "not-a-nuget-plugin.exe");
+            File.Create(validPluginFile);
+            File.Create(invalidPluginFile);
+
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATH")).Returns(pluginPathDirectory.Path);
+
+            var pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInPath();
+
+            // Assert
+            Assert.Single(plugins);
+            Assert.Equal(validPluginFile, plugins[0].Path);
+            Assert.False(plugins[0].RequiresDotnetHost);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void GetPluginsInNuGetPluginPaths_NoEnvironmentVariables_ReturnsNoPlugins()
+        {
+            // Arrange
+            var environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
+            var pluginDiscoverer = new PluginDiscoverer(environmentalVariableReader.Object);
+
+            // Act
+            var plugins = pluginDiscoverer.GetPluginsInNuGetPluginPaths();
+
+            // Assert
+            Assert.Empty(plugins);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void IsValidPluginFile_ExeFile_ReturnsTrue()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, "plugin.exe");
+            File.Create(pluginFilePath);
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsValidPluginFile(fileInfo);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void IsValidPluginFile_Windows_NonExecutableFile_ReturnsFalse()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var nonPluginFilePath = Path.Combine(workingPath, "plugin.txt");
+            File.Create(nonPluginFilePath);
+            var fileInfo = new FileInfo(nonPluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsValidPluginFile(fileInfo);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public void IsValidPluginFile_Unix_ExecutableFile_ReturnsTrue()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            File.Create(pluginFilePath).Dispose();
+
+#if NET8_0_OR_GREATER
+            // Set execute permissions
+            File.SetUnixFileMode(pluginFilePath, UnixFileMode.UserExecute | UnixFileMode.UserRead);
+#else
+            // Use chmod to set execute permissions
+            var process = new Process();
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"chmod +x {pluginFilePath}\"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+            process.WaitForExit();
+#endif
+
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsValidPluginFile(fileInfo);
+
+            // Assert
+            Assert.True(result);
+        }
+
+#if !NET8_0_OR_GREATER
+        [PlatformFact(Platform.Linux)]
+        public void IsExecutable_FileIsExecutable_ReturnsTrue()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            File.Create(pluginFilePath);
+
+            // Set execute permissions
+            var process = new Process();
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"chmod +x {pluginFilePath}\"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+            process.WaitForExit();
+
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsExecutable(fileInfo);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public void IsExecutable_FileIsNotExecutable_ReturnsFalse()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            File.Create(pluginFilePath);
+
+            // Remove execute permissions
+            var process = new Process();
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"chmod -x {pluginFilePath}\"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+            process.WaitForExit();
+
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsExecutable(fileInfo);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public void IsExecutable_FileWithSpace_ReturnsTrue()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, "plugin with space");
+            File.Create(pluginFilePath).Dispose();
+
+            // Set execute permissions
+            var process = new Process();
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"chmod +x '{pluginFilePath}'\"";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+            process.WaitForExit();
+
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsExecutable(fileInfo);
+
+            // Assert
+            Assert.True(result);
+        }
+
+#endif
     }
 }

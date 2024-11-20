@@ -4,6 +4,8 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using NuGet.Common;
 
@@ -17,7 +19,17 @@ namespace NuGet.Packaging
         private const string HashProperty = "contentHash";
         private const string SourceProperty = "source";
 
-        private static readonly JsonSerializer JsonSerializer = JsonSerializer.Create(GetSerializerSettings());
+        private static readonly Newtonsoft.Json.JsonSerializer JsonSerializer = Newtonsoft.Json.JsonSerializer.Create(GetSerializerSettings());
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            // This file is not intended to be parsed in javascript, and the contentHash property contains a Base64 encoded string that
+            // can contain characters such as + that has not been encoded in the past.
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
 
         public static NupkgMetadataFile Read(string filePath)
         {
@@ -31,12 +43,37 @@ namespace NuGet.Packaging
 
         public static NupkgMetadataFile Read(Stream stream, ILogger log, string path)
         {
-            using (var textReader = new StreamReader(stream))
+            if (stream is null) { throw new ArgumentNullException(nameof(stream)); }
+
+            try
             {
-                return Read(textReader, log, path);
+                NupkgMetadataFile nupkgMetadata = System.Text.Json.JsonSerializer.Deserialize<NupkgMetadataFile>(stream, JsonSerializerOptions);
+                if (nupkgMetadata == null)
+                {
+                    throw new InvalidDataException();
+                }
+                return nupkgMetadata;
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                LogMessage(log, path, ex);
+                throw new InvalidDataException(ex.Message, ex);
+            }
+            catch (Exception ex)
+            {
+                LogMessage(log, path, ex);
+                throw;
+            }
+
+            static void LogMessage(ILogger log, string path, Exception ex)
+            {
+                log.LogWarning(string.Format(CultureInfo.CurrentCulture,
+                    Strings.Error_LoadingHashFile,
+                    path, ex.Message));
             }
         }
 
+        [Obsolete("Use a different overload for better performance. This overload will get deleted in the future.")]
         public static NupkgMetadataFile Read(TextReader reader, ILogger log, string path)
         {
             try
@@ -75,12 +112,12 @@ namespace NuGet.Packaging
 
         public static void Write(Stream stream, NupkgMetadataFile hashFile)
         {
-            using (var textWriter = new StreamWriter(stream))
-            {
-                Write(textWriter, hashFile);
-            }
+            if (stream is null) { throw new ArgumentNullException(nameof(stream)); }
+
+            System.Text.Json.JsonSerializer.Serialize(stream, hashFile, JsonSerializerOptions);
         }
 
+        [Obsolete("Use a different overload for better performance. This overload will get deleted in the future.")]
         public static void Write(TextWriter textWriter, NupkgMetadataFile hashFile)
         {
             using (var jsonWriter = new JsonTextWriter(textWriter))
@@ -101,7 +138,7 @@ namespace NuGet.Packaging
             return settings;
         }
 
-        private class NupkgMetadataConverter : JsonConverter
+        private class NupkgMetadataConverter : Newtonsoft.Json.JsonConverter
         {
             internal static NupkgMetadataConverter Default { get; } = new NupkgMetadataConverter();
 
@@ -111,7 +148,7 @@ namespace NuGet.Packaging
                 return objectType == TargetType;
             }
 
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
             {
                 NupkgMetadataFile nupkgMetadataFile = existingValue as NupkgMetadataFile;
                 if (nupkgMetadataFile == null)
@@ -161,7 +198,7 @@ namespace NuGet.Packaging
                 throw new JsonReaderException();
             }
 
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
             {
                 if (!(value is NupkgMetadataFile nupkgMetadataFile))
                 {

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NuGet.CommandLine.XPlat;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -73,7 +74,7 @@ namespace NuGet.XPlat.FuncTest
             var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
-            var exitCode = Program.MainInternal(args.ToArray(), log);
+            var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
             Console.SetOut(originalConsoleOut);
 
             // Assert
@@ -93,7 +94,7 @@ namespace NuGet.XPlat.FuncTest
             var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
-            var exitCode = Program.MainInternal(args.ToArray(), log);
+            var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
             Console.SetOut(originalConsoleOut);
 
             // Assert
@@ -112,7 +113,7 @@ namespace NuGet.XPlat.FuncTest
             var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
-            var exitCode = Program.MainInternal(Array.Empty<string>(), log);
+            var exitCode = Program.MainInternal(Array.Empty<string>(), log, TestEnvironmentVariableReader.EmptyInstance);
             Console.SetOut(originalConsoleOut);
 
             // Assert

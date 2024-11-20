@@ -11,12 +11,12 @@ namespace NuGet.Protocol.Plugins
     /// <summary>
     /// A plugin factory.
     /// </summary>
-    public interface IPluginFactory : IDisposable
+    internal interface IPluginFactory : IDisposable
     {
         /// <summary>
         /// Asynchronously gets an existing plugin instance or creates a new instance and connects to it.
         /// </summary>
-        /// <param name="filePath">The file path of the plugin.</param>
+        /// <param name="pluginFile">A plugin file.</param>
         /// <param name="arguments">Command-line arguments to be supplied to the plugin.</param>
         /// <param name="requestHandlers">Request handlers.</param>
         /// <param name="options">Connection options.</param>
@@ -24,7 +24,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="Plugin" />
         /// instance.</returns>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="filePath" />
+        /// <exception cref="ArgumentException">Thrown if <paramref name="pluginFile.Path" />
         /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="arguments" />
         /// is <see langword="null" />.</exception>
@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         /// <remarks>This is intended to be called by NuGet client tools.</remarks>
         Task<IPlugin> GetOrCreateAsync(
-            string filePath,
+            PluginFile pluginFile,
             IEnumerable<string> arguments,
             IRequestHandlers requestHandlers,
             ConnectionOptions options,

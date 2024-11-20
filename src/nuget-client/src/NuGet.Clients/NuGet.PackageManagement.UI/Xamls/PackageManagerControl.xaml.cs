@@ -67,6 +67,8 @@ namespace NuGet.PackageManagement.UI
         private IServiceBroker _serviceBroker;
         private bool _disposed = false;
         private IPackageVulnerabilityService _packageVulnerabilityService;
+        private INuGetPackageFileService _nugetPackageFileService;
+
 
         private PackageManagerInstalledTabData _installedTabTelemetryData;
 
@@ -141,6 +143,12 @@ namespace NuGet.PackageManagement.UI
             _settingsKey = await GetSettingsKeyAsync(CancellationToken.None);
             UserSettings settings = LoadSettings();
             InitializeFilterList(settings);
+
+            _nugetPackageFileService?.Dispose();
+            _nugetPackageFileService = await _serviceBroker.GetProxyAsync<INuGetPackageFileService>(NuGetServices.PackageFileService, CancellationToken.None);
+
+            await _packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.InitializeAsync(_detailModel, _nugetPackageFileService, _topPanel.Filter, settings.SelectedPackageMetadataTab);
+
             await InitPackageSourcesAsync(settings, CancellationToken.None);
             ApplySettings(settings, Settings);
             _initialized = true;
@@ -678,7 +686,8 @@ namespace NuGet.PackageManagement.UI
                 FileConflictAction = _detailModel.Options.SelectedFileConflictAction.Action,
                 IncludePrerelease = _topPanel.CheckboxPrerelease.IsChecked == true,
                 SelectedFilter = _topPanel.Filter,
-                OptionsExpanded = _packageDetail._optionsControl.IsExpanded
+                OptionsExpanded = _packageDetail._optionsControl.IsExpanded,
+                SelectedPackageMetadataTab = PackageDetailsTabViewModel.ConvertFromTabType(_packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.SelectedTab)
             };
             _packageDetail._solutionView.SaveSettings(settings);
 
@@ -1269,6 +1278,7 @@ namespace NuGet.PackageManagement.UI
 
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 {
+                    await _packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.ReadmePreviewViewModel.ItemFilterChangedAsync(ActiveFilter);
                     await RunAndEmitRefreshAsync(async () =>
                     {
                         await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -1836,6 +1846,7 @@ namespace NuGet.PackageManagement.UI
 
             if (disposing)
             {
+                _nugetPackageFileService.Dispose();
                 CleanUp();
             }
 

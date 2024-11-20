@@ -24,7 +24,6 @@ namespace NuGet.Tests.Apex.Daily
         public async Task VerifyCacheFileInsideObjFolder(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 simpleTestPathContext.Settings.SetPackageFormatToPackageReference();
@@ -60,7 +59,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UpdateAllPackagesInPMC(ProjectTemplate projectTemplate, string packageName1, string packageVersion1, string packageVersion2, string packageName2, string packageVersion3, string packageVersion4)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -106,7 +104,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageForPRInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -141,7 +138,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UpdatePackageForPRInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -183,7 +179,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UninstallPackageForPRInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -224,7 +219,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageForPCInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -257,7 +251,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UpdatePackageForPCInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -296,7 +289,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UninstallPackageForPCInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -333,7 +325,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task InstallLatestPackageInPMC(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -373,7 +364,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public void VerifyInitScriptsExecution(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 // Arrange
@@ -409,7 +399,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task VerifyCmdFindPackageExactMatchInPMC()
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -437,7 +426,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task VerifyCmdGetPackageUpdateInPMC()
         {
-            EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())
             {
                 // Arrange
@@ -472,7 +460,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public void VerifyCmdGetProjectInPMC()
         {
-            EnsureVisualStudioHost();
             using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger))
             {
                 // Arrange

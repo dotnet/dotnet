@@ -34,10 +34,11 @@ namespace NuGet.Commands.Test
                 };
 
                 var spec1 = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
-                spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("projectA", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 var specs = new[] { spec1 };
 
@@ -127,10 +128,11 @@ namespace NuGet.Commands.Test
                 };
 
                 var spec1 = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
-                spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("x", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 var specs = new[] { spec1 };
 
@@ -178,10 +180,11 @@ namespace NuGet.Commands.Test
                 };
 
                 var spec1 = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
-                spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("x", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 var specs = new[] { spec1 };
 
@@ -232,10 +235,11 @@ namespace NuGet.Commands.Test
                 };
 
                 var spec1 = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
-                spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec1.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("X", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 var specs = new[] { spec1 };
 
@@ -292,10 +296,11 @@ namespace NuGet.Commands.Test
                 var spec1 = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
                 var spec2 = NETCoreRestoreTestUtility.GetProject(projectName: "projectB", framework: "netstandard1.6");
 
-                spec2.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec2.TargetFrameworks[0].Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange(packageId, VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec2.TargetFrameworks[0] = new TargetFrameworkInformation(spec2.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 var specs = new[] { spec1, spec2 };
 

@@ -15,9 +15,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public void CreateNetCoreProject_RestoresNewProject(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 VisualStudio.AssertNoErrors();
@@ -30,9 +27,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public void CreateNetCoreProject_AddProjectReference(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject2");
@@ -55,8 +49,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallPackageFromPMUIFromExpectedSource_Succeeds(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");
@@ -121,8 +113,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallAndUpdatePackageFromPMUIFromExpectedSource_Succeeds(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");
@@ -191,8 +181,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallPackageFromPMUIAndNoSourcesFound_Fails(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");

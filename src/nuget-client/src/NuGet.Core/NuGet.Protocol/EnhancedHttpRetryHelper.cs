@@ -80,7 +80,7 @@ namespace NuGet.Protocol
 
         private Lazy<bool> _observeRetryAfter;
 
-        private Lazy<TimeSpan> _maxRetyAfterDelay;
+        private Lazy<TimeSpan> _maxRetryAfterDelay;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnhancedHttpRetryHelper" /> class.
@@ -95,7 +95,7 @@ namespace NuGet.Protocol
             _delayInMilliseconds = new Lazy<int>(() => GetIntFromEnvironmentVariable(DelayInMillisecondsEnvironmentVariableName, defaultValue: DefaultDelayMilliseconds, _environmentVariableReader));
             _retry429 = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: true, _environmentVariableReader));
             _observeRetryAfter = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(ObserveRetryAfterEnvironmentVariableName, defaultValue: DefaultObserveRetryAfter, _environmentVariableReader));
-            _maxRetyAfterDelay = new Lazy<TimeSpan>(() =>
+            _maxRetryAfterDelay = new Lazy<TimeSpan>(() =>
             {
                 int maxRetryAfterDelay = GetIntFromEnvironmentVariable(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: (int)TimeSpan.FromHours(1).TotalSeconds, _environmentVariableReader);
                 return TimeSpan.FromSeconds(maxRetryAfterDelay);
@@ -127,7 +127,7 @@ namespace NuGet.Protocol
         /// </summary>
         internal bool ObserveRetryAfter => _observeRetryAfter.Value;
 
-        internal TimeSpan MaxRetryAfterDelay => _maxRetyAfterDelay.Value;
+        internal TimeSpan MaxRetryAfterDelay => _maxRetryAfterDelay.Value;
 
         /// <summary>
         /// Gets a <see cref="bool" /> value from the specified environment variable.

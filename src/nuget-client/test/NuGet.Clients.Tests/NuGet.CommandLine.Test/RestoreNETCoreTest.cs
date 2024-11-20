@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -6787,7 +6789,7 @@ namespace NuGet.CommandLine.Test
                 var lockFile = LockFileUtilities.GetLockFile(projectA.AssetsFileOutputPath, Common.NullLogger.Instance);
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 Assert.True(Directory.Exists(Path.Combine(pathContext.UserPackagesFolder, packageX.Identity.Id, packageX.Version)), $"{packageX.ToString()} is not installed");
             }
@@ -6841,7 +6843,7 @@ namespace NuGet.CommandLine.Test
                 var lockFile = LockFileUtilities.GetLockFile(projectA.AssetsFileOutputPath, Common.NullLogger.Instance);
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks[0].DownloadDependencies.Count);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks[0].DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks[0].DownloadDependencies[0].Name);
                 Assert.Equal($"[{packageX1.Version}, {packageX1.Version}]", lockFile.PackageSpec.TargetFrameworks[0].DownloadDependencies[0].VersionRange.ToNormalizedString());
 
@@ -6910,7 +6912,7 @@ namespace NuGet.CommandLine.Test
                 var lockFile = LockFileUtilities.GetLockFile(projectA.AssetsFileOutputPath, Common.NullLogger.Instance);
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 Assert.Equal($"[{packageX1.Version}, {packageX1.Version}]", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().VersionRange.ToNormalizedString());
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Last().Name);
@@ -6971,8 +6973,8 @@ namespace NuGet.CommandLine.Test
 
                 Assert.Equal(1, lockFile.Libraries.Count);
                 Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().Dependencies.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().Dependencies.Length);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 Assert.Equal($"[{packageX2.Version}, {packageX2.Version}]",
                     lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().VersionRange.ToNormalizedString());
@@ -7036,10 +7038,10 @@ namespace NuGet.CommandLine.Test
 
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().Dependencies.Count);
-                Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.Last().Dependencies.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().Dependencies.Length);
+                Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.Last().Dependencies.Length);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
 
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 Assert.Equal($"[{packageX2.Version}, {packageX2.Version}]",
@@ -7146,7 +7148,7 @@ namespace NuGet.CommandLine.Test
                 var lockFile = LockFileUtilities.GetLockFile(projectA.AssetsFileOutputPath, Common.NullLogger.Instance);
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 var packagePath = Path.Combine(pathContext.UserPackagesFolder, packageX.Identity.Id, packageX.Version);
                 Assert.True(Directory.Exists(packagePath), $"{packageX.ToString()} is not installed");
@@ -7204,7 +7206,7 @@ namespace NuGet.CommandLine.Test
                 var lockFile = LockFileUtilities.GetLockFile(projectA.AssetsFileOutputPath, Common.NullLogger.Instance);
                 Assert.Equal(0, lockFile.Libraries.Count);
                 Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                 Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
                 var packagePath = Path.Combine(pathContext.UserPackagesFolder, packageX.Identity.Id, packageX.Version);
                 Assert.True(Directory.Exists(packagePath), $"{packageX.ToString()} is not installed");
@@ -7498,8 +7500,8 @@ namespace NuGet.CommandLine.Test
                 Assert.Equal(1, lockFile.Targets.First().Libraries.Count);
                 Assert.Equal("FrameworkRef", string.Join(",", lockFile.Targets.First().Libraries.First().FrameworkReferences));
                 Assert.True(Directory.Exists(Path.Combine(pathContext.UserPackagesFolder, packageX.Identity.Id, packageX.Version)), $"{packageX.ToString()} is not installed");
-                Assert.Equal("all", FrameworkDependencyFlagsUtils.GetFlagString(lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.First().PrivateAssets));
-                Assert.Equal("none", FrameworkDependencyFlagsUtils.GetFlagString(lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Last().PrivateAssets));
+                Assert.True(1 == lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "all"));
+                Assert.True(1 == lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "none"));
 
                 // Assert 2
                 Assert.True(File.Exists(projectB.AssetsFileOutputPath), r.AllOutput);
@@ -11575,7 +11577,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         private static byte[] GetTestUtilityResource(string name)
         {
             return ResourceTestUtility.GetResourceBytes(
-                $"Test.Utility.compiler.resources.{name}",
+                $"Microsoft.Internal.NuGet.Testing.SignedPackages.compiler.resources.{name}",
                 typeof(ResourceTestUtility));
         }
     }

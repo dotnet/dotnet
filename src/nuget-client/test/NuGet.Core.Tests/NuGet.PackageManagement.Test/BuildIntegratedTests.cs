@@ -130,7 +130,7 @@ namespace NuGet.Test
                     var reference2 = new TestExternalProjectReference(buildIntegratedProjects[2], buildIntegratedProjects[3]);
                     var reference3 = new TestExternalProjectReference(buildIntegratedProjects[3]);
 
-                    var myProjDirectory = TestDirectory.Create();
+                    using var myProjDirectory = TestDirectory.Create();
                     projectDirectories.Add(myProjDirectory);
 
                     var myProjPath = Path.Combine(myProjDirectory, "myproj.csproj");

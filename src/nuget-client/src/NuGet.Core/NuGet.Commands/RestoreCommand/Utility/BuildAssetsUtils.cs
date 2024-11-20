@@ -94,11 +94,11 @@ namespace NuGet.Commands
             return files;
         }
 
-        private static string ReplacePathsWithMacros(string path)
+        private static string ReplacePathsWithMacros(string path, IEnvironmentVariableReader environmentVariableReader)
         {
             foreach (var macroName in MacroCandidates)
             {
-                string macroValue = Environment.GetEnvironmentVariable(macroName);
+                string macroValue = environmentVariableReader.GetEnvironmentVariable(macroName);
                 if (!string.IsNullOrEmpty(macroValue)
                     && path.StartsWith(macroValue, StringComparison.OrdinalIgnoreCase))
                 {
@@ -164,6 +164,17 @@ namespace NuGet.Commands
             string assetsFilePath,
             bool success)
         {
+            AddNuGetProperties(doc, packageFolders, repositoryRoot, projectStyle, assetsFilePath, success, EnvironmentVariableWrapper.Instance);
+        }
+        internal static void AddNuGetProperties(
+            XDocument doc,
+            IEnumerable<string> packageFolders,
+            string repositoryRoot,
+            ProjectStyle projectStyle,
+            string assetsFilePath,
+            bool success,
+            IEnvironmentVariableReader environmentVariableReader)
+        {
 
             doc.Root.AddFirst(
                 new XElement(Namespace + "PropertyGroup",
@@ -171,7 +182,7 @@ namespace NuGet.Commands
                             GenerateProperty("RestoreSuccess", success.ToString(CultureInfo.CurrentCulture)),
                             GenerateProperty("RestoreTool", "NuGet"),
                             GenerateProperty("ProjectAssetsFile", assetsFilePath),
-                            GenerateProperty("NuGetPackageRoot", ReplacePathsWithMacros(repositoryRoot)),
+                            GenerateProperty("NuGetPackageRoot", ReplacePathsWithMacros(repositoryRoot, environmentVariableReader)),
                             GenerateProperty("NuGetPackageFolders", string.Join(";", packageFolders)),
                             GenerateProperty("NuGetProjectStyle", projectStyle.ToString()),
                             GenerateProperty("NuGetToolVersion", MinClientVersionUtility.GetNuGetClientVersion().ToFullString())),
@@ -315,6 +326,10 @@ namespace NuGet.Commands
 
         public static string GetPathWithMacros(string absolutePath, string repositoryRoot)
         {
+            return GetPathWithMacros(absolutePath, repositoryRoot, EnvironmentVariableWrapper.Instance);
+        }
+        internal static string GetPathWithMacros(string absolutePath, string repositoryRoot, IEnvironmentVariableReader environmentVariableReader)
+        {
             var path = absolutePath;
 
             if (absolutePath.StartsWith(repositoryRoot, StringComparison.Ordinal))
@@ -323,7 +338,7 @@ namespace NuGet.Commands
             }
             else
             {
-                path = ReplacePathsWithMacros(absolutePath);
+                path = ReplacePathsWithMacros(absolutePath, environmentVariableReader);
             }
 
             return path;

@@ -10,6 +10,9 @@ using System.Text;
 #endif
 using System.Threading;
 using System.Threading.Tasks;
+#if IS_SIGNING_SUPPORTED
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+#endif
 using Moq;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -1026,7 +1029,7 @@ namespace NuGet.Packaging.Test
                     using (var packageStream = File.OpenRead(packageFileInfo.FullName))
                     using (var packageReader = new PackageArchiveReader(packageStream))
                     {
-                        // Act & Assert                         
+                        // Act & Assert
                         var files = await packageReader.CopyFilesAsync(
                             destination.Path.ToUpper(),
                             new[] { @"readme~.txt" },
@@ -1911,7 +1914,7 @@ namespace NuGet.Packaging.Test
                 }
             }
         }
-#endif 
+#endif
 
         private static Zip CreateZipWithNestedStoredZipArchives()
         {

@@ -23,6 +23,7 @@
     <MergeInclude Include="$(OutputPath)NuGet.Versioning.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.Core.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.MSSigning.Extensions.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Collections.Immutable.dll"/>
     <MergeInclude Include="$(OutputPath)System.Memory.dll"/>
     <MergeInclude Include="$(OutputPath)System.Numerics.Vectors.dll"/>
     <MergeInclude Include="$(OutputPath)System.Runtime.CompilerServices.Unsafe.dll"/>

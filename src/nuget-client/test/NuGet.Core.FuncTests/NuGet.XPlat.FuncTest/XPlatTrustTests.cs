@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.CommandLine.XPlat;
 using NuGet.Common;
@@ -114,7 +115,7 @@ namespace NuGet.XPlat.FuncTest
             TrustCommandArgs(
                 (testApp, getLogLevel) =>
                 {
-                    // Arrange                   
+                    // Arrange
                     var argList = new List<string> { "trust", "list", option, verbosity };
 
                     // Act

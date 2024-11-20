@@ -158,7 +158,7 @@ namespace Test.Utility
                         return new Action<HttpListenerResponse>(response =>
                         {
                             response.ContentType = "application/json";
-                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilitiesJson(Uri + "/vulnerability/vulnerability.json");
+                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilitiesJson(Uri + "vulnerability/vulnerability.json");
                             SetResponseContent(response, vulnerabilityJson.ToString());
                         });
                     }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if !NET5_0_OR_GREATER
-
 using System.Diagnostics;
 
 namespace System.Runtime.CompilerServices;
@@ -13,5 +11,3 @@ namespace System.Runtime.CompilerServices;
 internal static class IsExternalInit
 {
 }
-
-#endif

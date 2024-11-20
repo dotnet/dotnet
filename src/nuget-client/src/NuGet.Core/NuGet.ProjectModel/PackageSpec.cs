@@ -258,12 +258,12 @@ namespace NuGet.ProjectModel
             else
             {
                 targetFrameworks = new List<TargetFrameworkInformation>(TargetFrameworks.Count);
-                targetFrameworks.AddRange(TargetFrameworks.Select(item => item.Clone()));
+                targetFrameworks.AddRange(TargetFrameworks);
             }
 
             return new PackageSpec(
                 targetFrameworks,
-                Dependencies?.Select(item => item.Clone()).ToList(),
+                Dependencies?.ToList(),
                 RuntimeGraph?.Clone(),
                 RestoreSettings?.Clone(),
 #pragma warning disable CS0612 // Type or member is obsolete

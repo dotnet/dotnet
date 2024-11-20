@@ -21,6 +21,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         public Uri? IconUrl { get; internal set; }
         public string? Tags { get; internal set; }
         public Uri? LicenseUrl { get; internal set; }
+        public string? ReadmeFileUrl { get; internal set; }
         public Uri? ReadmeUrl { get; internal set; }
         public Uri? ProjectUrl { get; internal set; }
         public DateTimeOffset? Published { get; internal set; }
@@ -44,16 +45,12 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata)
         {
-            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, knownOwners: null);
+            return Create(packageSearchMetadata, knownOwners: null);
         }
 
         public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, IReadOnlyList<KnownOwner>? knownOwners)
         {
-            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, knownOwners);
-        }
-
-        public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, bool isRecommended, (string, string)? recommenderVersion, IReadOnlyList<KnownOwner>? knownOwners)
-        {
+            var recommendedPackageSearchMetadata = packageSearchMetadata as RecommendedPackageSearchMetadata;
             return new PackageSearchMetadataContextInfo()
             {
                 Title = packageSearchMetadata.Title,
@@ -63,10 +60,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 Tags = packageSearchMetadata.Tags,
                 Identity = packageSearchMetadata.Identity,
                 LicenseUrl = packageSearchMetadata.LicenseUrl,
+                ReadmeFileUrl = packageSearchMetadata.ReadmeFileUrl,
                 ReadmeUrl = packageSearchMetadata.ReadmeUrl,
                 LicenseMetadata = packageSearchMetadata.LicenseMetadata,
-                IsRecommended = isRecommended,
-                RecommenderVersion = recommenderVersion,
+                IsRecommended = recommendedPackageSearchMetadata?.IsRecommended ?? false,
+                RecommenderVersion = recommendedPackageSearchMetadata?.RecommenderVersion,
                 ProjectUrl = packageSearchMetadata.ProjectUrl,
                 Published = packageSearchMetadata.Published,
                 OwnersList = packageSearchMetadata.OwnersList,

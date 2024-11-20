@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>A functional (end-to-end) test suite for NuGet.CommandLine. Contains tests for every nuget.exe command.</Description>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
+    <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
 
   <ItemGroup>

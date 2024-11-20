@@ -25,6 +25,7 @@ namespace NuGet.Test.Utility
                 .WithPackageId(pkgId.Id)
                 .WithPackageVersion(pkgId.Version.ToNormalizedString())
                 .WithIcon("icon.png")
+                .WithReadme("readme.md")
                 .Build();
             pkg.Nuspec = XDocument.Parse(nuspec.ToString());
 

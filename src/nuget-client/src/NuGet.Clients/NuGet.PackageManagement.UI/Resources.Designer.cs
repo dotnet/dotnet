@@ -808,6 +808,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while trying to load the README..
+        /// </summary>
+        public static string Error_UnableToLoadReadme {
+            get {
+                return ResourceManager.GetString("Error_UnableToLoadReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Operation failed.
         /// </summary>
         public static string ErrorDialogBoxTitle {
@@ -1231,6 +1240,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package Details.
+        /// </summary>
+        public static string Label_PackageDetails {
+            get {
+                return ResourceManager.GetString("Label_PackageDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NuGet Package Manager: {0}.
         /// </summary>
         public static string Label_PackageManager {
@@ -1281,6 +1299,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Label_Readme {
             get {
                 return ResourceManager.GetString("Label_Readme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to README.
+        /// </summary>
+        public static string Label_Readme_Tab {
+            get {
+                return ResourceManager.GetString("Label_Readme_Tab", resourceCulture);
             }
         }
         
@@ -2048,6 +2075,19 @@ namespace NuGet.PackageManagement.UI {
         public static string Text_NoPackagesFound {
             get {
                 return ResourceManager.GetString("Text_NoPackagesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not read package README from selected package.
+        ///
+        ///Only the package maintainer can add a README. If you are not the maintainer, please consider filing an issue or contacting the maintainer to request a README.
+        ///
+        ///For instructions on how to add a README, please visit [aka.ms/nuget/readme](https://aka.ms/nuget/readme).
+        /// </summary>
+        public static string Text_NoReadme {
+            get {
+                return ResourceManager.GetString("Text_NoReadme", resourceCulture);
             }
         }
         

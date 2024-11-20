@@ -8,7 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing;
 using Xunit;
 using GeneralName = NuGet.Packaging.Signing.GeneralName;
-using TestGeneralName = Test.Utility.Signing.GeneralName;
+using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
 
 namespace NuGet.Packaging.Test
 {

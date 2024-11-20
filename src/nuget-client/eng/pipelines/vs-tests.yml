@@ -84,6 +84,13 @@ stages:
     - template: vs-test/build.yml
       parameters:
         NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
+        GitHubChecksToInitialize:
+        - name: "VS tests - E2E part 1"
+          enabled: "ne(variables['RunEndToEndTests'], 'false')"
+        - name: "VS tests - E2E part 2"
+          enabled: "ne(variables['RunEndToEndTests'], 'false')"
+        - name: "VS tests - Apex"
+          enabled: "ne(variables['RunApexTests'], 'false')"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
@@ -112,6 +119,7 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
     testMachineCleanUpStrategy: ${{parameters.E2EPart1AgentCleanup}}
+    GitHubStatusName: "VS tests - E2E part 1"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
@@ -140,6 +148,7 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
     testMachineCleanUpStrategy: ${{parameters.E2EPart2AgentCleanup}}
+    GitHubStatusName: "VS tests - E2E part 2"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/apex.yml
@@ -166,3 +175,4 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 150
     testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}
+    GitHubStatusName: "VS tests - Apex"

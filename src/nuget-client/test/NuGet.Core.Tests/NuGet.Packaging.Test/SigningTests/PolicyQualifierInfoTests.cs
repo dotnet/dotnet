@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
 using Xunit;
 using PolicyQualifierInfo = NuGet.Packaging.Signing.PolicyQualifierInfo;
-using TestPolicyQualifierInfo = Test.Utility.Signing.PolicyQualifierInfo;
+using TestPolicyQualifierInfo = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.PolicyQualifierInfo;
 
 namespace NuGet.Packaging.Test
 {

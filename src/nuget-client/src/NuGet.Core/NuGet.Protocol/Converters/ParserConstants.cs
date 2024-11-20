@@ -37,6 +37,7 @@ namespace NuGet.Protocol
         public const string LicenseExpressionVersion = "licenseExpressionVersion";
         public const string ProjectUrl = "projectUrl";
         public const string ReadmeUrl = "readmeUrl";
+        public const string ReadmeFileUrl = "readmeFileUrl";
         public const string Tags = "tags";
         public const string DownloadCount = "totalDownloads";
         public const string Created = "created";

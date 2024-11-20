@@ -19,6 +19,17 @@ namespace NuGet.CommandLine.XPlat
             VerbosityLevel = logLevel;
         }
 
+        /// <summary>
+        /// Create a CommandOutputLogger for commands invoked by the .NET CLI
+        /// </summary>
+        /// <returns></returns>
+        public static CommandOutputLogger Create()
+        {
+            var logger = new CommandOutputLogger(LogLevel.Information);
+            logger.HidePrefixForInfoAndMinimal = true;
+            return logger;
+        }
+
         public override void LogDebug(string data)
         {
             LogInternal(LogLevel.Debug, data);

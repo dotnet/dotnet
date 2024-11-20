@@ -229,12 +229,12 @@ namespace NuGet.Commands
 
             async Task<DownloadDependencyResolutionResult> ResolveDownloadDependenciesAsync(RemoteWalkContext context, TargetFrameworkInformation targetFrameworkInformation, CancellationToken token)
             {
-                if (targetFrameworkInformation.DownloadDependencies.Count == 0)
+                if (targetFrameworkInformation.DownloadDependencies.Length == 0)
                 {
                     return DownloadDependencyResolutionResult.Create(targetFrameworkInformation.FrameworkName, Array.Empty<Tuple<LibraryRange, RemoteMatch>>(), context.RemoteLibraryProviders);
                 }
 
-                List<Task<Tuple<LibraryRange, RemoteMatch>>> packageDownloadTasks = new(capacity: targetFrameworkInformation.DownloadDependencies.Count);
+                List<Task<Tuple<LibraryRange, RemoteMatch>>> packageDownloadTasks = new(capacity: targetFrameworkInformation.DownloadDependencies.Length);
 
                 foreach (var downloadDependency in targetFrameworkInformation.DownloadDependencies.NoAllocEnumerate())
                 {

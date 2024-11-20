@@ -723,8 +723,8 @@ namespace NuGet.ProjectModel.Test
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
                         TargetAlias = "netcoreapp10",
-                        Dependencies = new[]
-                        {
+                        Dependencies =
+                        [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -744,7 +744,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                 {
@@ -2465,14 +2465,13 @@ namespace NuGet.ProjectModel.Test
                         libraryRange: new LibraryRange("Newtonsoft.Json", VersionRange.Parse("[12.0.3, )"), LibraryDependencyTarget.Package),
                         includeType: LibraryIncludeFlags.Compile | LibraryIncludeFlags.BuildTransitive | LibraryIncludeFlags.Native,
                         suppressParent: LibraryIncludeFlags.All,
-                        noWarn: new List<NuGetLogCode>(),
+                        noWarn: [],
                         autoReferenced: true,
                         generatePathProperty: false,
-                        versionCentrallyManaged: false,
+                        versionCentrallyManaged: true,
                         LibraryDependencyReferenceType.Direct,
                         aliases: null,
                         versionOverride: null);
-            newtonSoftDependency.VersionCentrallyManaged = true;
 
             lockFile.CentralTransitiveDependencyGroups
                 .Add(new CentralTransitiveDependencyGroup(framework, new List<LibraryDependency>() { newtonSoftDependency }));

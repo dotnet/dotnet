@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -376,7 +378,7 @@ namespace NuGet.ProjectModel
                     var dependencyIncludeFlagsValue = LibraryIncludeFlags.All;
                     var dependencyExcludeFlagsValue = LibraryIncludeFlags.None;
                     var suppressParentFlagsValue = LibraryIncludeFlagUtils.DefaultSuppressParent;
-                    IList<NuGetLogCode> noWarn = Array.Empty<NuGetLogCode>();
+                    ImmutableArray<NuGetLogCode> noWarn = [];
 
                     // This method handles both the dependencies and framework assembly sections.
                     // Framework references should be limited to references.
@@ -510,7 +512,7 @@ namespace NuGet.ProjectModel
 
                     // the dependency flags are: Include flags - Exclude flags
                     var includeFlags = dependencyIncludeFlagsValue & ~dependencyExcludeFlagsValue;
-                    var libraryDependency = new LibraryDependency(noWarn)
+                    var libraryDependency = new LibraryDependency()
                     {
                         LibraryRange = new LibraryRange()
                         {
@@ -527,7 +529,8 @@ namespace NuGet.ProjectModel
                         // The ReferenceType is not persisted to the assets file
                         // Default to LibraryDependencyReferenceType.Direct on Read
                         ReferenceType = LibraryDependencyReferenceType.Direct,
-                        VersionOverride = versionOverride
+                        VersionOverride = versionOverride,
+                        NoWarn = noWarn
                     };
 
                     results.Add(libraryDependency);
@@ -638,7 +641,7 @@ namespace NuGet.ProjectModel
 
                     // the dependency flags are: Include flags - Exclude flags
                     var includeFlags = dependencyIncludeFlagsValue & ~dependencyExcludeFlagsValue;
-                    var libraryDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                    var libraryDependency = new LibraryDependency()
                     {
                         LibraryRange = new LibraryRange()
                         {
@@ -813,7 +816,7 @@ namespace NuGet.ProjectModel
         }
 
         [Obsolete]
-        private static void ReadImports(PackageSpec packageSpec, JsonTextReader jsonReader, TargetFrameworkInformation targetFrameworkInformation)
+        private static void ReadImports(PackageSpec packageSpec, JsonTextReader jsonReader, List<NuGetFramework> importFrameworks)
         {
             int lineNumber = jsonReader.LineNumber;
             int linePosition = jsonReader.LinePosition;
@@ -839,7 +842,7 @@ namespace NuGet.ProjectModel
                             packageSpec.FilePath);
                     }
 
-                    targetFrameworkInformation.Imports.Add(framework);
+                    importFrameworks.Add(framework);
                 }
             }
         }
@@ -1331,9 +1334,10 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private static IList<NuGetLogCode> ReadNuGetLogCodesList(JsonTextReader jsonReader)
+        private static ImmutableArray<NuGetLogCode> ReadNuGetLogCodesList(JsonTextReader jsonReader)
         {
-            IList<NuGetLogCode> items = null;
+            NuGetLogCode[] items = null;
+            var index = 0;
 
             if (jsonReader.ReadNextToken() && jsonReader.TokenType == JsonToken.StartArray)
             {
@@ -1341,14 +1345,34 @@ namespace NuGet.ProjectModel
                 {
                     if (jsonReader.TokenType == JsonToken.String && Enum.TryParse((string)jsonReader.Value, out NuGetLogCode code))
                     {
-                        items = items ?? new List<NuGetLogCode>();
+                        if (items == null)
+                        {
+                            items = ArrayPool<NuGetLogCode>.Shared.Rent(16);
+                        }
+                        else if (items.Length == index)
+                        {
+                            var oldItems = items;
 
-                        items.Add(code);
+                            items = ArrayPool<NuGetLogCode>.Shared.Rent(items.Length * 2);
+                            oldItems.CopyTo(items, index: 0);
+
+                            ArrayPool<NuGetLogCode>.Shared.Return(oldItems);
+                        }
+
+                        items[index++] = code;
                     }
                 }
             }
 
-            return items ?? Array.Empty<NuGetLogCode>();
+            if (items == null)
+            {
+                return [];
+            }
+
+            var retVal = items.AsSpan(0, index).ToImmutableArray();
+            ArrayPool<NuGetLogCode>.Shared.Return(items);
+
+            return retVal;
         }
 
         [Obsolete]
@@ -1788,14 +1812,24 @@ namespace NuGet.ProjectModel
 
             NuGetFramework frameworkName = NuGetFramework.Parse((string)jsonReader.Value);
 
-            var targetFrameworkInformation = new TargetFrameworkInformation();
+            bool assetTargetFallback = false;
+            Dictionary<string, CentralPackageVersion> centralPackageVersions = null;
+            List<LibraryDependency> dependencies = null;
+            List<DownloadDependency> downloadDependencies = null;
+            HashSet<FrameworkDependency> frameworkReferences = null;
+            List<NuGetFramework> imports = null;
+            string runtimeIdentifierGraphPath = null;
+            string targetAlias = string.Empty;
+            bool warn = false;
+
             NuGetFramework secondaryFramework = default;
+
             jsonReader.ReadObject(propertyName =>
             {
                 switch (propertyName)
                 {
                     case "assetTargetFallback":
-                        targetFrameworkInformation.AssetTargetFallback = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
+                        assetTargetFallback = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
                         break;
 
                     case "secondaryFramework":
@@ -1807,59 +1841,78 @@ namespace NuGet.ProjectModel
                         break;
 
                     case "centralPackageVersions":
+                        centralPackageVersions ??= new Dictionary<string, CentralPackageVersion>();
                         ReadCentralPackageVersions(
                             jsonReader,
-                            targetFrameworkInformation.CentralPackageVersions,
+                            centralPackageVersions,
                             packageSpec.FilePath);
                         break;
 
                     case "dependencies":
+                        dependencies ??= new List<LibraryDependency>();
                         ReadDependencies(
                             jsonReader,
-                            targetFrameworkInformation.Dependencies,
+                            dependencies,
                             packageSpec.FilePath,
                             isGacOrFrameworkReference: false);
                         break;
 
                     case "downloadDependencies":
+                        downloadDependencies ??= new List<DownloadDependency>();
                         ReadDownloadDependencies(
                             jsonReader,
-                            targetFrameworkInformation.DownloadDependencies,
+                            downloadDependencies,
                             packageSpec.FilePath);
                         break;
 
                     case "frameworkAssemblies":
+                        dependencies ??= new List<LibraryDependency>();
                         ReadDependencies(
                             jsonReader,
-                            targetFrameworkInformation.Dependencies,
+                            dependencies,
                             packageSpec.FilePath,
                             isGacOrFrameworkReference: true);
                         break;
 
                     case "frameworkReferences":
+                        frameworkReferences ??= new HashSet<FrameworkDependency>();
                         ReadFrameworkReferences(
                             jsonReader,
-                            targetFrameworkInformation.FrameworkReferences,
+                            frameworkReferences,
                             packageSpec.FilePath);
                         break;
 
                     case "imports":
-                        ReadImports(packageSpec, jsonReader, targetFrameworkInformation);
+                        imports ??= new List<NuGetFramework>();
+                        ReadImports(packageSpec, jsonReader, imports);
                         break;
 
                     case "runtimeIdentifierGraphPath":
-                        targetFrameworkInformation.RuntimeIdentifierGraphPath = jsonReader.ReadNextTokenAsString();
+                        runtimeIdentifierGraphPath = jsonReader.ReadNextTokenAsString();
                         break;
 
                     case "targetAlias":
-                        targetFrameworkInformation.TargetAlias = jsonReader.ReadNextTokenAsString();
+                        targetAlias = jsonReader.ReadNextTokenAsString();
                         break;
 
                     case "warn":
-                        targetFrameworkInformation.Warn = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
+                        warn = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
                         break;
                 }
             }, out frameworkLine, out frameworkColumn);
+
+            var targetFrameworkInformation = new TargetFrameworkInformation()
+            {
+                AssetTargetFallback = assetTargetFallback,
+                CentralPackageVersions = centralPackageVersions,
+                Dependencies = dependencies != null ? dependencies.ToImmutableArray() : [],
+                DownloadDependencies = downloadDependencies != null ? downloadDependencies.ToImmutableArray() : [],
+                FrameworkReferences = frameworkReferences,
+                Imports = imports != null ? imports.ToImmutableArray() : [],
+                RuntimeIdentifierGraphPath = runtimeIdentifierGraphPath,
+                TargetAlias = targetAlias,
+                Warn = warn
+            };
 
             AddTargetFramework(packageSpec, frameworkName, secondaryFramework, targetFrameworkInformation);
         }
@@ -1869,7 +1922,7 @@ namespace NuGet.ProjectModel
         {
             NuGetFramework updatedFramework = frameworkName;
 
-            if (targetFrameworkInformation.Imports.Count > 0)
+            if (targetFrameworkInformation.Imports.Length > 0)
             {
                 NuGetFramework[] imports = targetFrameworkInformation.Imports.ToArray();
 
@@ -1887,7 +1940,7 @@ namespace NuGet.ProjectModel
                 updatedFramework = GetDualCompatibilityFrameworkIfNeeded(frameworkName, secondaryFramework);
             }
 
-            targetFrameworkInformation.FrameworkName = updatedFramework;
+            targetFrameworkInformation = new TargetFrameworkInformation(targetFrameworkInformation) { FrameworkName = updatedFramework };
 
             packageSpec.TargetFrameworks.Add(targetFrameworkInformation);
         }

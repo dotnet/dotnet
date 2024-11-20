@@ -69,7 +69,7 @@
       "test\\TestExtensions\\SampleCommandLineExtensions\\SampleCommandLineExtensions.csproj",
       "test\\TestExtensions\\TestablePluginCredentialProvider\\TestableCredentialProvider.csproj",
       "test\\TestExtensions\\TestablePlugin\\TestablePlugin.csproj",
-      "test\\TestExtensions\\TestableVSCredentialProvider\\TestableVSCredentialProvider.csproj",
+      "test\\TestUtilities\\Microsoft.Internal.NuGet.Testing.SignedPackages\\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj",
       "test\\TestUtilities\\Test.Utility\\Test.Utility.csproj"
     ]
   }

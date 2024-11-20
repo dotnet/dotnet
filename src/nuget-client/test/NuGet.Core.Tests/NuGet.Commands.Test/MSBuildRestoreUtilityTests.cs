@@ -963,7 +963,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 // Dependency counts
-                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("netcoreapp1.0")).Dependencies.Count);
+                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("netcoreapp1.0")).Dependencies.Length);
             }
         }
 
@@ -1458,8 +1458,8 @@ namespace NuGet.Commands.Test
                 var netTFM = project1Spec.GetTargetFramework(NuGetFramework.Parse("net46"));
 
                 // Assert
-                Assert.Equal(2, nsTFM.Imports.Count);
-                Assert.Equal(0, netTFM.Imports.Count);
+                Assert.Equal(2, nsTFM.Imports.Length);
+                Assert.Equal(0, netTFM.Imports.Length);
 
                 Assert.Equal(NuGetFramework.Parse("portable-net45+win8"), nsTFM.Imports[0]);
                 Assert.Equal(NuGetFramework.Parse("dnxcore50"), nsTFM.Imports[1]);
@@ -1550,8 +1550,8 @@ namespace NuGet.Commands.Test
                 var netTFM = project1Spec.GetTargetFramework(NuGetFramework.Parse("net46"));
 
                 // Assert
-                Assert.Equal(0, nsTFM.Imports.Count);
-                Assert.Equal(0, netTFM.Imports.Count);
+                Assert.Equal(0, nsTFM.Imports.Length);
+                Assert.Equal(0, netTFM.Imports.Length);
 
                 // Verify no fallback frameworks
                 var fallbackFrameworks = project1Spec.TargetFrameworks.Select(e => e.FrameworkName as FallbackFramework);
@@ -1628,8 +1628,8 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal("a", project1Spec.RestoreMetadata.ProjectName);
-                Assert.Equal(2, nsTFM.Imports.Count);
-                Assert.Equal(0, netTFM.Imports.Count);
+                Assert.Equal(2, nsTFM.Imports.Length);
+                Assert.Equal(0, netTFM.Imports.Length);
 
                 Assert.Equal(NuGetFramework.Parse("portable-net45+win8"), nsTFM.Imports[0]);
                 Assert.Equal(NuGetFramework.Parse("dnxcore50"), nsTFM.Imports[1]);
@@ -1975,11 +1975,11 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, project1Spec.Dependencies.Count);
                 Assert.Equal(0, project2Spec.Dependencies.Count);
 
-                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("net46")).Dependencies.Count);
-                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("netstandard1.6")).Dependencies.Count);
+                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("net46")).Dependencies.Length);
+                Assert.Equal(1, project1Spec.GetTargetFramework(NuGetFramework.Parse("netstandard1.6")).Dependencies.Length);
 
-                Assert.Equal(1, project2Spec.GetTargetFramework(NuGetFramework.Parse("net45")).Dependencies.Count);
-                Assert.Equal(1, project2Spec.GetTargetFramework(NuGetFramework.Parse("netstandard1.0")).Dependencies.Count);
+                Assert.Equal(1, project2Spec.GetTargetFramework(NuGetFramework.Parse("net45")).Dependencies.Length);
+                Assert.Equal(1, project2Spec.GetTargetFramework(NuGetFramework.Parse("netstandard1.0")).Dependencies.Length);
 
                 // Verify dependencies
                 var xDep = project1Spec.GetTargetFramework(NuGetFramework.Parse("net46")).Dependencies.Single(e => e.Name == "x");
@@ -3282,7 +3282,7 @@ namespace NuGet.Commands.Test
 
             // Assert
             var framework = spec.GetTargetFramework(targetFramework);
-            Assert.Equal(1, framework.DownloadDependencies.Count);
+            Assert.Equal(1, framework.DownloadDependencies.Length);
             Assert.Equal("x", framework.DownloadDependencies[0].Name);
             Assert.Equal("[1.0.0]", framework.DownloadDependencies[0].VersionRange.ToShortString());
         }
@@ -3338,7 +3338,7 @@ namespace NuGet.Commands.Test
 
             // Assert
             var framework = spec.GetTargetFramework(targetFramework);
-            Assert.Equal(2, framework.DownloadDependencies.Count);
+            Assert.Equal(2, framework.DownloadDependencies.Length);
             Assert.Equal(1, framework.DownloadDependencies.Count(d => d.Name == "x" && d.VersionRange.ToShortString() == "[1.0.0]"));
             Assert.Equal(1, framework.DownloadDependencies.Count(d => d.Name == "x" && d.VersionRange.ToShortString() == "[2.0.0]"));
         }
@@ -3515,7 +3515,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(2, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(2, project1Spec.TargetFrameworks.First().Dependencies.Length);
                 Assert.Equal(3, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
 
                 var dependencyX = project1Spec.TargetFrameworks.First().Dependencies.Where(d => d.Name == "x").First();
@@ -3615,7 +3615,7 @@ namespace NuGet.Commands.Test
 
             // Assert
             Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-            Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+            Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Length);
             Assert.Equal(1, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
 
             var dependencyX = project1Spec.TargetFrameworks.First().Dependencies.Where(d => d.Name == "x").First();
@@ -3705,7 +3705,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Length);
                 Assert.Equal(2, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
 
                 Assert.Equal("[1.0.0, )", project1Spec.TargetFrameworks.First().Dependencies[0].LibraryRange.VersionRange.ToNormalizedString());
@@ -3801,7 +3801,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Length);
                 Assert.Equal(2, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
 
                 Assert.Equal("[1.0.0, )", project1Spec.TargetFrameworks.First().Dependencies[0].LibraryRange.VersionRange.ToNormalizedString());
@@ -3906,7 +3906,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Length);
                 Assert.Equal(2, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
 
                 Assert.Equal("[1.0.0, )", project1Spec.TargetFrameworks.First().Dependencies[0].LibraryRange.VersionRange.ToNormalizedString());
@@ -4041,7 +4041,7 @@ namespace NuGet.Commands.Test
                 // Assert
                 // Dependency counts
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Length);
                 Assert.Equal(0, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
                 Assert.Equal("(, )", project1Spec.TargetFrameworks.First().Dependencies.First().LibraryRange.VersionRange.ToNormalizedString());
             }
@@ -4296,7 +4296,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
                 Assert.Equal(1, project1Spec.TargetFrameworks.Count());
-                Assert.Equal(3, targetFrameworkInformation.Dependencies.Count);
+                Assert.Equal(3, targetFrameworkInformation.Dependencies.Length);
                 Assert.Equal(isCentralPackageManagementEnabled ? 3 : 0, targetFrameworkInformation.CentralPackageVersions.Count);
 
                 var dependencyX = targetFrameworkInformation.Dependencies.First(d => d.Name == "x");

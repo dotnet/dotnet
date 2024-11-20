@@ -877,7 +877,6 @@ override NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.GetHashCode(
 override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.AddClientCertRunner.Run(NuGet.Commands.AddClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AddSourceRunner.Run(NuGet.Commands.AddSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
-~static NuGet.Commands.AssetTargetFallbackUtility.ApplyFramework(NuGet.ProjectModel.TargetFrameworkInformation targetFrameworkInfo, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.EnsureValidFallback(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback, string filePath) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.GetFallbackFramework(NuGet.Frameworks.NuGetFramework projectFramework, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Commands.AssetTargetFallbackUtility.GetInvalidFallbackCombinationMessage(string path) -> NuGet.Common.RestoreLogMessage
@@ -944,7 +943,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFrameworks(System.Collections.Generic.IEnumerable<string> frameworkStrings) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
 ~static NuGet.Commands.MSBuildRestoreItemGroup.Create(string rootName, System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> items, int position, System.Collections.Generic.IEnumerable<string> conditions) -> NuGet.Commands.MSBuildRestoreItemGroup
 ~static NuGet.Commands.MSBuildRestoreUtility.AggregateSources(System.Collections.Generic.IEnumerable<string> values, System.Collections.Generic.IEnumerable<string> excludeValues) -> System.Collections.Generic.IEnumerable<string>
-~static NuGet.Commands.MSBuildRestoreUtility.ApplyIncludeFlags(NuGet.LibraryModel.LibraryDependency dependency, string includeAssets, string excludeAssets, string privateAssets) -> void
 ~static NuGet.Commands.MSBuildRestoreUtility.ApplyIncludeFlags(NuGet.ProjectModel.ProjectRestoreReference dependency, string includeAssets, string excludeAssets, string privateAssets) -> void
 ~static NuGet.Commands.MSBuildRestoreUtility.ContainsClearKeyword(System.Collections.Generic.IEnumerable<string> values) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.Dump(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, NuGet.Common.ILogger log) -> void

@@ -1,0 +1,2 @@
+NuGet.CommandLine.XPlat.Commands.Why.WhyCommand
+static NuGet.CommandLine.XPlat.Commands.Why.WhyCommand.GetWhyCommand(System.CommandLine.CliCommand rootCommand) -> void

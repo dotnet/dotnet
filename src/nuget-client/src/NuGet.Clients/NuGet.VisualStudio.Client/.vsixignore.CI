@@ -1,0 +1,31 @@
+# Similar to .vsixignore but only when building in CI
+# Our localized assemblies are added manually so ignore them from being automatically included
+Microsoft.Build.NuGetSdkResolver.resources.dll
+NuGet.Build.Tasks.resources.dll
+NuGet.Commands.resources.dll
+NuGet.Common.resources.dll
+NuGet.Configuration.resources.dll
+NuGet.Console.resources.dll
+NuGet.Credentials.resources.dll
+NuGet.DependencyResolver.Core.resources.dll
+NuGet.Frameworks.resources.dll
+NuGet.Indexing.resources.dll
+NuGet.LibraryModel.resources.dll
+NuGet.PackageManagement.PowerShellCmdlets.resources.dll
+NuGet.PackageManagement.UI.resources.dll
+NuGet.PackageManagement.VisualStudio.resources.dll
+NuGet.PackageManagement.resources.dll
+NuGet.Packaging.resources.dll
+NuGet.ProjectModel.resources.dll
+NuGet.Protocol.resources.dll
+NuGet.Resolver.resources.dll
+NuGet.SolutionRestoreManager.resources.dll
+NuGet.Tools.resources.dll
+NuGet.Versioning.resources.dll
+NuGet.VisualStudio.Common.resources.dll
+NuGet.VisualStudio.Contracts.resources.dll
+NuGet.VisualStudio.Implementation.resources.dll
+NuGet.VisualStudio.Internal.Contracts.resources.dll
+NuGet.VisualStudio.Interop.resources.dll
+NuGet.VisualStudio.OnlineEnvironment.Client.resources.dll
+NuGet.VisualStudio.resources.dll

@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
 {
-    using X509StorePurpose = global::Test.Utility.Signing.X509StorePurpose;
+    using X509StorePurpose = Microsoft.Internal.NuGet.Testing.SignedPackages.X509StorePurpose;
 
     [Collection(DotnetIntegrationCollection.Name)]
     public class X509TrustStoreTests

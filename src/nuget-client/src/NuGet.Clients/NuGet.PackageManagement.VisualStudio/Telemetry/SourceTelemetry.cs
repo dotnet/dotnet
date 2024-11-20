@@ -187,6 +187,7 @@ namespace NuGet.PackageManagement.Telemetry
                 this["protocol.requests"] = protocolDiagnosticTotals.Requests;
                 this["protocol.bytes"] = protocolDiagnosticTotals.Bytes;
                 this["protocol.duration"] = protocolDiagnosticTotals.Duration.TotalMilliseconds;
+                this["NumHTTPSSourcesWithAnHTTPResource"] = protocolDiagnosticTotals.NumberOfSourcesWithAnHttpResource;
             }
         }
     }

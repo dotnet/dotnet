@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -25,7 +26,9 @@ using NuGet.Packaging.Signing;
 using NuGet.Protocol.Plugins;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
+#endif
 using Xunit;
 
 namespace NuGet.Packaging.Test

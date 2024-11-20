@@ -234,9 +234,7 @@ namespace NuGet.Commands
                         {
                             importRefItem.LibraryRangeIndex = currentRefRangeIndex = libraryRangeInterningTable.Intern(libraryRange);
 
-                            currentRef = currentRef.Clone();
-
-                            currentRef.LibraryRange = libraryRange;
+                            currentRef = new LibraryDependency(currentRef) { LibraryRange = libraryRange };
 
                             importRefItem.LibraryDependency = currentRef;
 
@@ -273,6 +271,15 @@ namespace NuGet.Commands
                             continue;
                         }
 
+                        // A project reference should always win over a package reference.  In this case, a project has already been added to the graph
+                        // with the same name as a transitive package reference.  FindLibraryEntryAsync() will return the project and not the package.
+                        if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject
+                            && currentRef.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)
+                            && refItemResult.Item.Key.Type == LibraryType.Project)
+                        {
+                            continue;
+                        }
+
                         // We should evict on type constraint if the type constraint of the current ref is more stringent than the chosen ref.
                         // This happens when a previous type constraint is broader (e.g. PackageProjectExternal) than the current type constraint (e.g. Package).
                         bool evictOnTypeConstraint = false;
@@ -285,6 +292,13 @@ namespace NuGet.Commands
                                 // We need to evict the chosen item because this one has a more stringent type constraint.
                                 evictOnTypeConstraint = resolvedItem.Item.Key.Type == LibraryType.Project;
                             }
+                        }
+
+                        // We should also evict if a package was chosen and a project is being considered since projects always in over packages
+                        if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.PackageProjectExternal
+                            && currentRef.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject)
+                        {
+                            evictOnTypeConstraint = true;
                         }
 
                         // TODO: Handle null version ranges
@@ -654,9 +668,10 @@ namespace NuGet.Commands
 
                         if (isCentrallyPinnedTransitiveDependency)
                         {
-                            actualLibraryDependency = dep.Clone();
-
-                            actualLibraryDependency.LibraryRange.VersionRange = pinnedVersionRange;
+                            actualLibraryDependency = new LibraryDependency(dep)
+                            {
+                                LibraryRange = new LibraryRange(actualLibraryDependency.LibraryRange) { VersionRange = pinnedVersionRange },
+                            };
 
                             isCentrallyPinnedTransitiveDependency = true;
 

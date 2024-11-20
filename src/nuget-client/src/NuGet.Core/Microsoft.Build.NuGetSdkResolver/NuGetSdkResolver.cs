@@ -31,7 +31,7 @@ namespace Microsoft.Build.NuGetSdkResolver
     /// </summary>
     public sealed class NuGetSdkResolver : SdkResolver
     {
-        private static readonly Lazy<bool> DisableNuGetSdkResolver = new Lazy<bool>(() => Environment.GetEnvironmentVariable("MSBUILDDISABLENUGETSDKRESOLVER") == "1");
+        private readonly bool _disableNuGetSdkResolver;
 
         private static readonly Lazy<object> SettingsLoadContext = new Lazy<object>(() => new SettingsLoadingContext());
 
@@ -43,7 +43,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// Initializes a new instance of the NuGetSdkResolver class.
         /// </summary>
         public NuGetSdkResolver()
-            : this(GlobalJsonReader.Instance)
+            : this(GlobalJsonReader.Instance, EnvironmentVariableWrapper.Instance)
         {
         }
 
@@ -51,9 +51,12 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// Initializes a new instance of the NuGetSdkResolver class with the specified <see cref="IGlobalJsonReader" />.
         /// </summary>
         /// <param name="globalJsonReader">An <see cref="IGlobalJsonReader" /> to use when reading a global.json file.</param>
-        internal NuGetSdkResolver(IGlobalJsonReader globalJsonReader)
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> to use when reading environment variables.</param>
+        internal NuGetSdkResolver(IGlobalJsonReader globalJsonReader, IEnvironmentVariableReader environmentVariableReader)
         {
             _globalJsonReader = globalJsonReader;
+
+            _disableNuGetSdkResolver = environmentVariableReader.GetEnvironmentVariable("MSBUILDDISABLENUGETSDKRESOLVER") == "1";
         }
 
         /// <inheritdoc />
@@ -74,7 +77,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         public override SdkResult Resolve(SdkReference sdkReference, SdkResolverContext resolverContext, SdkResultFactory factory)
         {
             // Escape hatch to disable this resolver
-            if (DisableNuGetSdkResolver.Value)
+            if (_disableNuGetSdkResolver)
             {
                 // Errors returned to MSBuild aren't logged if another SDK resolver succeeds.  Returning errors on non-succcess is
                 // what all SDK resolvers should be doing and if no SDK resolver succeeds then MSBuild logs all of the errors as

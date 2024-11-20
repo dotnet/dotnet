@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using NuGet.Common;
 
 namespace NuGet.Packaging.PackageExtraction
 {
@@ -9,6 +10,8 @@ namespace NuGet.Packaging.PackageExtraction
     {
         private const string XmlDocFileSaveModeEnvironmentKey = "NUGET_XMLDOC_MODE";
         private static XmlDocFileSaveMode? _xmlDocFileSaveMode;
+
+        internal static IEnvironmentVariableReader environmentVariableReader { get; set; } = EnvironmentVariableWrapper.Instance;
 
         /// <summary>
         /// Gets or sets the <see cref="PackageExtraction.XmlDocFileSaveMode"/>.
@@ -19,7 +22,7 @@ namespace NuGet.Packaging.PackageExtraction
             {
                 if (_xmlDocFileSaveMode == null)
                 {
-                    var xmlDocFileMode = Environment.GetEnvironmentVariable(XmlDocFileSaveModeEnvironmentKey);
+                    var xmlDocFileMode = environmentVariableReader.GetEnvironmentVariable(XmlDocFileSaveModeEnvironmentKey);
                     if (string.Equals(xmlDocFileMode, XmlDocFileSaveMode.Compress.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         _xmlDocFileSaveMode = XmlDocFileSaveMode.Compress;

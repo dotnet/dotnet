@@ -56,15 +56,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ]
                         }
                     })
                     .Build();
@@ -75,15 +73,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ]
                         }
                     })
                     .Build();
@@ -176,15 +172,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net5.0"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ]
                         }
                     })
                     .Build();
@@ -197,15 +191,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                             FrameworkName = withFallbackFramework
                                 ? new AssetTargetFallbackFramework(NuGetFramework.Parse("net5.0"), new[] {NuGetFramework.Parse("net461")})
                                 : NuGetFramework.Parse("net5.0"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ]
                         }
                     })
                     .Build();
@@ -313,15 +305,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net5.0"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                }),
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ],
                             RuntimeIdentifierGraphPath = runtimeJson1,
                         },
                     })
@@ -342,15 +332,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net5.0"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                }),
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ],
                             RuntimeIdentifierGraphPath = runtimeJson2,
                         }
                     })
@@ -477,15 +465,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
-                                            LibraryDependencyTarget.All)
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"),
+                                        LibraryDependencyTarget.All)
+                                },
+                            ]
                         }
                     })
                     .Build();
@@ -496,17 +482,15 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse(framework),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
+                            Dependencies = [
+                                new LibraryDependency
                                 {
-                                    new LibraryDependency
-                                    {
-                                        LibraryRange = new LibraryRange("PackageA", VersionRange.Parse(version),
-                                            LibraryDependencyTarget.All),
-                                        Aliases = aliases,
-                                        IncludeType = includeFlags,
-                                    },
-                                })
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse(version),
+                                        LibraryDependencyTarget.All),
+                                    Aliases = aliases,
+                                    IncludeType = includeFlags,
+                                },
+                            ]
                         }
                     })
                     .Build();

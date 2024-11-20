@@ -47,7 +47,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return CreateResult(searchItems);
         }
 
-        internal async Task<IPackageSearchMetadata[]> GetMetadataForPackagesAsync<T>(T[] packages, bool includePrerelease, CancellationToken cancellationToken) where T : PackageIdentity
+        internal async Task<IPackageSearchMetadata[]> GetMetadataForPackagesAsync(PackageIdentity[] packages, bool includePrerelease, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -88,7 +88,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return result;
         }
 
-        internal virtual async Task<IPackageSearchMetadata> GetPackageMetadataAsync<T>(T identity, bool includePrerelease, CancellationToken cancellationToken) where T : PackageIdentity
+        internal virtual async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

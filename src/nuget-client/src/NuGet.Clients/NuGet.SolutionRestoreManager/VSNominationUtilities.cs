@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -92,11 +93,7 @@ namespace NuGet.SolutionRestoreManager
         internal static TargetFrameworkInformation ToTargetFrameworkInformation(
             IVsTargetFrameworkInfo4 targetFrameworkInfo, bool cpvmEnabled, string projectFullPath)
         {
-            var tfi = new TargetFrameworkInformation
-            {
-                FrameworkName = GetTargetFramework(targetFrameworkInfo.Properties, projectFullPath),
-                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework)
-            };
+            var frameworkName = GetTargetFramework(targetFrameworkInfo.Properties, projectFullPath);
 
             string? ptfString = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.PackageTargetFallback);
             List<NuGetFramework>? ptf = ptfString is not null
@@ -108,42 +105,53 @@ namespace NuGet.SolutionRestoreManager
                 ? MSBuildStringUtility.Split(atfString).Select(NuGetFramework.Parse).ToList()
                 : null;
 
-            // Update TFI with fallback properties
-            AssetTargetFallbackUtility.ApplyFramework(tfi, ptf, atf);
+            // Get fallback properties
+            (frameworkName, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(frameworkName, ptf, atf);
 
-            tfi.RuntimeIdentifierGraphPath = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RuntimeIdentifierGraphPath);
+            ImmutableArray<LibraryDependency> dependencies = [];
+            ImmutableArray<DownloadDependency> downloadDependencies = [];
+            IReadOnlyDictionary<string, CentralPackageVersion>? centralPackageVersions = null;
+            IReadOnlyCollection<FrameworkDependency>? frameworkReferences = null;
 
-            if (targetFrameworkInfo.Items is null)
+            if (targetFrameworkInfo.Items is not null)
             {
-                return tfi;
+                if (cpvmEnabled && targetFrameworkInfo.Items.TryGetValue("PackageVersion", out var packageVersions))
+                {
+                    centralPackageVersions = packageVersions
+                        .Select(ToCentralPackageVersion)
+                        .Distinct(CentralPackageVersionNameComparer.Default)
+                        .ToDictionary(cpv => cpv.Name, StringComparer.OrdinalIgnoreCase);
+                }
+
+                if (targetFrameworkInfo.Items.TryGetValue(ProjectItems.PackageReference, out var packageReferences))
+                {
+                    dependencies = packageReferences.Select(pr => ToPackageLibraryDependency(pr, cpvmEnabled, centralPackageVersions)).ToImmutableArray();
+                }
+
+                if (targetFrameworkInfo.Items.TryGetValue("PackageDownload", out var packageDownloads))
+                {
+                    downloadDependencies = packageDownloads.SelectMany(ToPackageDownloadDependency).ToImmutableArray();
+                }
+
+                if (targetFrameworkInfo.Items.TryGetValue("FrameworkReference", out var frameworkReference))
+                {
+                    frameworkReferences = PopulateFrameworkDependencies(frameworkReference);
+                }
             }
 
-            if (targetFrameworkInfo.Items.TryGetValue(ProjectItems.PackageReference, out var packageReferences))
+            var tfi = new TargetFrameworkInformation
             {
-                tfi.Dependencies.AddRange(packageReferences.Select(pr => ToPackageLibraryDependency(pr, cpvmEnabled)));
-            }
-
-            if (targetFrameworkInfo.Items.TryGetValue("PackageDownload", out var packageDownloads))
-            {
-                tfi.DownloadDependencies.AddRange(packageDownloads.SelectMany(ToPackageDownloadDependency));
-            }
-
-            if (cpvmEnabled && targetFrameworkInfo.Items.TryGetValue("PackageVersion", out var centralPackageVersions))
-            {
-                tfi.CentralPackageVersions.AddRange(
-                    centralPackageVersions
-                       .Select(ToCentralPackageVersion)
-                       .Distinct(CentralPackageVersionNameComparer.Default)
-                       .ToDictionary(cpv => cpv.Name));
-
-                // Merge the central version information to the package information
-                LibraryDependency.ApplyCentralVersionInformation(tfi.Dependencies, tfi.CentralPackageVersions);
-            }
-
-            if (targetFrameworkInfo.Items.TryGetValue("FrameworkReference", out var frameworkReferences))
-            {
-                PopulateFrameworkDependencies(tfi, frameworkReferences);
-            }
+                AssetTargetFallback = assetTargetFallback,
+                CentralPackageVersions = centralPackageVersions,
+                Dependencies = dependencies,
+                DownloadDependencies = downloadDependencies,
+                FrameworkName = frameworkName,
+                FrameworkReferences = frameworkReferences,
+                Imports = imports,
+                RuntimeIdentifierGraphPath = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RuntimeIdentifierGraphPath),
+                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework),
+                Warn = warn
+            };
 
             return tfi;
         }
@@ -219,11 +227,15 @@ namespace NuGet.SolutionRestoreManager
 
         internal static WarningProperties GetProjectWideWarningProperties(IReadOnlyList<IVsTargetFrameworkInfo4> targetFrameworks)
         {
+            var warningsAsErrors = GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsAsErrors, MSBuildStringUtility.GetNuGetLogCodes);
+            var noWarn = GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.NoWarn, MSBuildStringUtility.GetNuGetLogCodes);
+            var warningsNotAsErrors = GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsNotAsErrors, MSBuildStringUtility.GetNuGetLogCodes);
+
             return WarningProperties.GetWarningProperties(
                         treatWarningsAsErrors: GetSingleOrDefaultPropertyValue(targetFrameworks, ProjectBuildProperties.TreatWarningsAsErrors, e => e),
-                        warningsAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsAsErrors, MSBuildStringUtility.GetNuGetLogCodes),
-                        noWarn: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.NoWarn, MSBuildStringUtility.GetNuGetLogCodes),
-                        warningsNotAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsNotAsErrors, MSBuildStringUtility.GetNuGetLogCodes));
+                        warningsAsErrors: warningsAsErrors.IsDefault ? [] : warningsAsErrors,
+                        noWarn: noWarn.IsDefault ? [] : noWarn,
+                        warningsNotAsErrors: warningsNotAsErrors.IsDefault ? [] : warningsNotAsErrors);
         }
 
         /// <summary>
@@ -408,21 +420,52 @@ namespace NuGet.SolutionRestoreManager
         {
             var properties = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory);
 
-            return properties.Count() > 1 ? default(TValue) : properties.SingleOrDefault();
+            return properties.Length > 1 ? default(TValue) : properties.SingleOrDefault();
         }
 
-        private static IEnumerable<NuGetLogCode> GetSingleOrDefaultNuGetLogCodes(
+        private static ImmutableArray<NuGetLogCode> GetSingleOrDefaultNuGetLogCodes(
             IReadOnlyList<IVsTargetFrameworkInfo4> values,
             string propertyName,
-            Func<string, IEnumerable<NuGetLogCode>> valueFactory)
+            Func<string, ImmutableArray<NuGetLogCode>> valueFactory)
         {
             var logCodeProperties = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory);
 
-            return logCodeProperties is not null ? MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(logCodeProperties) : Enumerable.Empty<NuGetLogCode>();
+            return GetDistinctNuGetLogCodesOrDefault(logCodeProperties);
+        }
+
+        /// <summary>
+        /// Return empty list of NuGetLogCode if all lists of NuGetLogCode are not the same.
+        /// </summary>
+        public static ImmutableArray<NuGetLogCode> GetDistinctNuGetLogCodesOrDefault(ImmutableArray<ImmutableArray<NuGetLogCode>> nugetLogCodeLists)
+        {
+            if (nugetLogCodeLists.Length == 0)
+            {
+                return [];
+            }
+
+            ImmutableArray<NuGetLogCode> result = [];
+            var first = true;
+
+            foreach (ImmutableArray<NuGetLogCode> logCodeList in nugetLogCodeLists)
+            {
+                // If this is first item, assign it to result
+                if (first)
+                {
+                    result = logCodeList;
+                    first = false;
+                }
+                // Compare the rest items to the first one.
+                else if (result == null || logCodeList == null || result.Length != logCodeList.Length || !result.All(logCodeList.Contains))
+                {
+                    return [];
+                }
+            }
+
+            return result;
         }
 
         // Trying to fetch a list of property value from all tfm property bags.
-        private static IEnumerable<TValue?> GetNonEvaluatedPropertyOrNull<TValue>(
+        private static ImmutableArray<TValue?> GetNonEvaluatedPropertyOrNull<TValue>(
             IReadOnlyList<IVsTargetFrameworkInfo4> values,
             string propertyName,
             Func<string, TValue> valueFactory)
@@ -433,7 +476,8 @@ namespace NuGet.SolutionRestoreManager
                     var val = tfm.Properties is not null ? GetPropertyValueOrNull(tfm.Properties, propertyName) : null;
                     return val != null ? valueFactory(val) : default(TValue);
                 })
-                .Distinct();
+                .Distinct()
+                .ToImmutableArray();
         }
 
         // Trying to fetch a property value from tfm property bags.
@@ -443,13 +487,13 @@ namespace NuGet.SolutionRestoreManager
             string propertyName,
             Func<string, TValue> valueFactory)
         {
-            var distinctValues = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory).ToList();
+            ImmutableArray<TValue?> distinctValues = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory);
 
-            if (distinctValues.Count == 0)
+            if (distinctValues.Length == 0)
             {
                 return default(TValue);
             }
-            else if (distinctValues.Count == 1)
+            else if (distinctValues.Length == 1)
             {
                 return distinctValues[0];
             }
@@ -482,9 +526,11 @@ namespace NuGet.SolutionRestoreManager
 
         #region IVSReferenceItemAPIs
 
-        private static LibraryDependency ToPackageLibraryDependency(IVsReferenceItem2 item, bool cpvmEnabled)
+        private static LibraryDependency ToPackageLibraryDependency(IVsReferenceItem2 item, bool cpvmEnabled, IReadOnlyDictionary<string, CentralPackageVersion>? centralPackageVersions)
         {
+            bool autoReferenced = GetPropertyBoolOrFalse(item, "IsImplicitlyDefined");
             VersionRange? versionRange = ParseVersionRange(item, "Version");
+            bool versionDefined = versionRange != null;
             if (versionRange == null && !cpvmEnabled)
             {
                 versionRange = VersionRange.All;
@@ -492,11 +538,25 @@ namespace NuGet.SolutionRestoreManager
 
             VersionRange? versionOverrideRange = ParseVersionRange(item, "VersionOverride");
 
+            CentralPackageVersion? centralPackageVersion = null;
+            bool isCentrallyManaged = !versionDefined && !autoReferenced && cpvmEnabled && versionOverrideRange == null && centralPackageVersions != null && centralPackageVersions.TryGetValue(item.Name, out centralPackageVersion);
+
+            if (centralPackageVersion != null)
+            {
+                versionRange = centralPackageVersion.VersionRange;
+            }
+            versionRange = versionOverrideRange ?? versionRange;
+
             // Get warning suppressions
             string? noWarnString = GetPropertyValueOrNull(item, ProjectBuildProperties.NoWarn);
-            IList<NuGetLogCode> noWarn = noWarnString is not null ? MSBuildStringUtility.GetNuGetLogCodes(noWarnString) : Array.Empty<NuGetLogCode>();
+            ImmutableArray<NuGetLogCode> noWarn = noWarnString is not null ? MSBuildStringUtility.GetNuGetLogCodes(noWarnString) : [];
 
-            var dependency = new LibraryDependency(noWarn)
+            (var includeType, var suppressParent) = MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(
+                includeAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.IncludeAssets),
+                excludeAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.ExcludeAssets),
+                privateAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.PrivateAssets));
+
+            var dependency = new LibraryDependency()
             {
                 LibraryRange = new LibraryRange(
                     name: item.Name,
@@ -507,14 +567,12 @@ namespace NuGet.SolutionRestoreManager
                 AutoReferenced = GetPropertyBoolOrFalse(item, "IsImplicitlyDefined"),
                 GeneratePathProperty = GetPropertyBoolOrFalse(item, "GeneratePathProperty"),
                 Aliases = GetPropertyValueOrNull(item, "Aliases"),
-                VersionOverride = versionOverrideRange
+                VersionOverride = versionOverrideRange,
+                NoWarn = noWarn,
+                IncludeType = includeType,
+                SuppressParent = suppressParent,
+                VersionCentrallyManaged = isCentrallyManaged,
             };
-
-            MSBuildRestoreUtility.ApplyIncludeFlags(
-                dependency,
-                includeAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.IncludeAssets),
-                excludeAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.ExcludeAssets),
-                privateAssets: GetPropertyValueOrNull(item, ProjectBuildProperties.PrivateAssets));
 
             return dependency;
         }
@@ -545,15 +603,19 @@ namespace NuGet.SolutionRestoreManager
             return centralPackageVersion;
         }
 
-        private static void PopulateFrameworkDependencies(TargetFrameworkInformation tfi, IReadOnlyList<IVsReferenceItem2> frameworkReferences)
+        private static IReadOnlyCollection<FrameworkDependency>? PopulateFrameworkDependencies(IReadOnlyList<IVsReferenceItem2> frameworkReferences)
         {
+            HashSet<FrameworkDependency>? newReferences = null;
             foreach (var item in frameworkReferences)
             {
-                if (!tfi.FrameworkReferences.Any(e => ComparisonUtility.FrameworkReferenceNameComparer.Equals(e.Name, item.Name)))
+                newReferences ??= new HashSet<FrameworkDependency>();
+                if (!newReferences.Any(e => ComparisonUtility.FrameworkReferenceNameComparer.Equals(e.Name, item.Name)))
                 {
-                    tfi.FrameworkReferences.Add(ToFrameworkDependency(item));
+                    newReferences.Add(ToFrameworkDependency(item));
                 }
             }
+
+            return newReferences;
         }
 
         private static FrameworkDependency ToFrameworkDependency(IVsReferenceItem2 item)

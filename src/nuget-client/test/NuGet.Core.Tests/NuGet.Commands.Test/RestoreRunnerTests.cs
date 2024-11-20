@@ -241,7 +241,7 @@ namespace NuGet.Commands.Test
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1);
-                spec1.TargetFrameworks.Single().TargetAlias = "net45";
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks.Single()) { TargetAlias = "net45" };
                 spec1.RestoreMetadata = new ProjectRestoreMetadata
                 {
                     OutputPath = Path.Combine(project1.FullName, "obj"),
@@ -462,7 +462,7 @@ namespace NuGet.Commands.Test
                 var lockPath2 = Path.Combine(objPath2, "project.assets.json");
 
                 // Link projects
-                spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
+                var spec1TargetFrameworkDependencies = spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange()
                     {
@@ -470,6 +470,7 @@ namespace NuGet.Commands.Test
                         TypeConstraint = LibraryDependencyTarget.ExternalProject
                     }
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = spec1TargetFrameworkDependencies };
 
                 spec1.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(NuGetFramework.Parse("net45")));
                 spec1.RestoreMetadata.TargetFrameworks
@@ -613,7 +614,7 @@ namespace NuGet.Commands.Test
                 var lockPath2 = Path.Combine(objPath2, "project.assets.json");
 
                 // Link projects
-                spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
+                var spec1TargetFrameworkDependencies = spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange()
                     {
@@ -621,6 +622,7 @@ namespace NuGet.Commands.Test
                         TypeConstraint = LibraryDependencyTarget.ExternalProject
                     }
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = spec1TargetFrameworkDependencies };
 
                 spec1.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(NuGetFramework.Parse("net45")) { TargetAlias = "net45" });
                 spec1.RestoreMetadata.TargetFrameworks
@@ -937,7 +939,7 @@ namespace NuGet.Commands.Test
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(0, lockFile.LogMessages.Count);
                     Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Last().Name);
                     Assert.True(Directory.Exists(Path.Combine(globalPackagesFolder.FullName, "y", "1.0.0"))); // Y 1.0.0 is installed
@@ -1230,8 +1232,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(0, lockFile.LogMessages.Count);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
 
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("z", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
@@ -1331,8 +1333,8 @@ namespace NuGet.Commands.Test
 
 
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
 
@@ -1440,8 +1442,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal(1, lockFile.Libraries.Count); // Only X is written in the libraries section.
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal(1, lockFile.LogMessages.Count);
 
                     var logMessage = lockFile.LogMessages.First();
@@ -1538,8 +1540,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal(1, lockFile.Libraries.Count);
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
 
                     Assert.Equal(1, lockFile.LogMessages.Count);

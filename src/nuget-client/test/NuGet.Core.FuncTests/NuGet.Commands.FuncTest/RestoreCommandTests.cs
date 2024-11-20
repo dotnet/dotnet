@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Newtonsoft.Json.Linq;
 using NuGet.Commands.Test;
 using NuGet.Common;
@@ -3505,20 +3506,18 @@ namespace NuGet.Commands.FuncTest
                 new TargetFrameworkInformation
                 {
                     FrameworkName = NuGetFramework.Parse("net5.0"),
-                    Dependencies = new List<LibraryDependency>(
-                        new[]
+                    Dependencies = [
+                        new LibraryDependency
                         {
-                            new LibraryDependency
-                            {
-                                LibraryRange = new LibraryRange(packageA, VersionRange.Parse(version),
-                                    LibraryDependencyTarget.Package)
-                            },
-                            new LibraryDependency
-                            {
-                                LibraryRange = new LibraryRange(packageB, VersionRange.Parse(version),
-                                    LibraryDependencyTarget.Package)
-                            },
-                        })
+                            LibraryRange = new LibraryRange(packageA, VersionRange.Parse(version),
+                                LibraryDependencyTarget.Package)
+                        },
+                        new LibraryDependency
+                        {
+                            LibraryRange = new LibraryRange(packageB, VersionRange.Parse(version),
+                                LibraryDependencyTarget.Package)
+                        },
+                    ]
                 }
             })
             .Build();
@@ -3595,20 +3594,18 @@ namespace NuGet.Commands.FuncTest
                 new TargetFrameworkInformation
                 {
                     FrameworkName = NuGetFramework.Parse("net5.0"),
-                    Dependencies = new List<LibraryDependency>(
-                        new[]
+                    Dependencies = [
+                        new LibraryDependency
                         {
-                            new LibraryDependency
-                            {
-                                LibraryRange = new LibraryRange(packageA, VersionRange.Parse(version),
-                                    LibraryDependencyTarget.Package)
-                            },
-                            new LibraryDependency
-                            {
-                                LibraryRange = new LibraryRange(packageB, VersionRange.Parse(version),
-                                    LibraryDependencyTarget.Package)
-                            },
-                        })
+                            LibraryRange = new LibraryRange(packageA, VersionRange.Parse(version),
+                                LibraryDependencyTarget.Package)
+                        },
+                        new LibraryDependency
+                        {
+                            LibraryRange = new LibraryRange(packageB, VersionRange.Parse(version),
+                                LibraryDependencyTarget.Package)
+                        },
+                    ]
                 }
             })
             .Build();
@@ -4289,7 +4286,7 @@ namespace NuGet.Commands.FuncTest
         private static byte[] GetTestUtilityResource(string name)
         {
             return ResourceTestUtility.GetResourceBytes(
-                $"Test.Utility.compiler.resources.{name}",
+                $"Microsoft.Internal.NuGet.Testing.SignedPackages.compiler.resources.{name}",
                 typeof(ResourceTestUtility));
         }
 

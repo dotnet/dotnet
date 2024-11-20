@@ -891,10 +891,6 @@ NuGet.Protocol.Plugins.CopyNupkgFileRequest
 NuGet.Protocol.Plugins.CopyNupkgFileResponse
 NuGet.Protocol.Plugins.CopyNupkgFileResponse.CopyNupkgFileResponse(NuGet.Protocol.Plugins.MessageResponseCode responseCode) -> void
 NuGet.Protocol.Plugins.CopyNupkgFileResponse.ResponseCode.get -> NuGet.Protocol.Plugins.MessageResponseCode
-NuGet.Protocol.Plugins.EmbeddedSignatureVerifier
-NuGet.Protocol.Plugins.EmbeddedSignatureVerifier.EmbeddedSignatureVerifier() -> void
-NuGet.Protocol.Plugins.FallbackEmbeddedSignatureVerifier
-NuGet.Protocol.Plugins.FallbackEmbeddedSignatureVerifier.FallbackEmbeddedSignatureVerifier() -> void
 NuGet.Protocol.Plugins.Fault
 ~NuGet.Protocol.Plugins.Fault.Fault(string message) -> void
 ~NuGet.Protocol.Plugins.Fault.Message.get -> string
@@ -1019,8 +1015,6 @@ NuGet.Protocol.Plugins.IPlugin.Closed -> System.EventHandler
 ~NuGet.Protocol.Plugins.IPlugin.Name.get -> string
 NuGet.Protocol.Plugins.IPluginDiscoverer
 ~NuGet.Protocol.Plugins.IPluginDiscoverer.DiscoverAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
-NuGet.Protocol.Plugins.IPluginFactory
-~NuGet.Protocol.Plugins.IPluginFactory.GetOrCreateAsync(string filePath, System.Collections.Generic.IEnumerable<string> arguments, NuGet.Protocol.Plugins.IRequestHandlers requestHandlers, NuGet.Protocol.Plugins.ConnectionOptions options, System.Threading.CancellationToken sessionCancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Plugins.IPlugin>
 NuGet.Protocol.Plugins.IPluginManager
 ~NuGet.Protocol.Plugins.IPluginManager.CreatePluginsAsync(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginCreationResult>>
 ~NuGet.Protocol.Plugins.IPluginManager.FindAvailablePluginsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
@@ -1203,7 +1197,6 @@ NuGet.Protocol.Plugins.PluginCreationResult
 NuGet.Protocol.Plugins.PluginDiscoverer
 ~NuGet.Protocol.Plugins.PluginDiscoverer.DiscoverAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
 NuGet.Protocol.Plugins.PluginDiscoverer.Dispose() -> void
-~NuGet.Protocol.Plugins.PluginDiscoverer.PluginDiscoverer(string rawPluginPaths, NuGet.Protocol.Plugins.EmbeddedSignatureVerifier verifier) -> void
 NuGet.Protocol.Plugins.PluginDiscoveryResult
 ~NuGet.Protocol.Plugins.PluginDiscoveryResult.Message.get -> string
 ~NuGet.Protocol.Plugins.PluginDiscoveryResult.PluginDiscoveryResult(NuGet.Protocol.Plugins.PluginFile pluginFile) -> void
@@ -1216,12 +1209,9 @@ NuGet.Protocol.Plugins.PluginException
 ~NuGet.Protocol.Plugins.PluginException.PluginException(string message) -> void
 ~NuGet.Protocol.Plugins.PluginException.PluginException(string message, System.Exception innerException) -> void
 NuGet.Protocol.Plugins.PluginFactory
-NuGet.Protocol.Plugins.PluginFactory.Dispose() -> void
-~NuGet.Protocol.Plugins.PluginFactory.GetOrCreateAsync(string filePath, System.Collections.Generic.IEnumerable<string> arguments, NuGet.Protocol.Plugins.IRequestHandlers requestHandlers, NuGet.Protocol.Plugins.ConnectionOptions options, System.Threading.CancellationToken sessionCancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Plugins.IPlugin>
 NuGet.Protocol.Plugins.PluginFactory.PluginFactory(System.TimeSpan pluginIdleTimeout) -> void
 NuGet.Protocol.Plugins.PluginFile
 ~NuGet.Protocol.Plugins.PluginFile.Path.get -> string
-~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state) -> void
 ~NuGet.Protocol.Plugins.PluginFile.State.get -> System.Lazy<NuGet.Protocol.Plugins.PluginFileState>
 NuGet.Protocol.Plugins.PluginFileState
 NuGet.Protocol.Plugins.PluginFileState.InvalidEmbeddedSignature = 3 -> NuGet.Protocol.Plugins.PluginFileState
@@ -1233,7 +1223,6 @@ NuGet.Protocol.Plugins.PluginManager
 NuGet.Protocol.Plugins.PluginManager.Dispose() -> void
 ~NuGet.Protocol.Plugins.PluginManager.EnvironmentVariableReader.get -> NuGet.Common.IEnvironmentVariableReader
 ~NuGet.Protocol.Plugins.PluginManager.FindAvailablePluginsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
-~NuGet.Protocol.Plugins.PluginManager.PluginManager(NuGet.Common.IEnvironmentVariableReader reader, System.Lazy<NuGet.Protocol.Plugins.IPluginDiscoverer> pluginDiscoverer, System.Func<System.TimeSpan, NuGet.Protocol.Plugins.IPluginFactory> pluginFactoryCreator, System.Lazy<string> pluginsCacheDirectoryPath) -> void
 ~NuGet.Protocol.Plugins.PluginManager.TryGetSourceAgnosticPluginAsync(NuGet.Protocol.Plugins.PluginDiscoveryResult pluginDiscoveryResult, NuGet.Protocol.Plugins.OperationClaim requestedOperationClaim, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Plugins.PluginCreationResult>>
 NuGet.Protocol.Plugins.PluginMulticlientUtilities
 ~NuGet.Protocol.Plugins.PluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(string key, System.Func<System.Threading.Tasks.Task> taskFunc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
@@ -1337,10 +1326,6 @@ NuGet.Protocol.Plugins.SymmetricHandshake.Dispose() -> void
 ~NuGet.Protocol.Plugins.SymmetricHandshake.HandshakeAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Versioning.SemanticVersion>
 ~NuGet.Protocol.Plugins.SymmetricHandshake.SymmetricHandshake(NuGet.Protocol.Plugins.IConnection connection, System.TimeSpan handshakeTimeout, NuGet.Versioning.SemanticVersion protocolVersion, NuGet.Versioning.SemanticVersion minimumProtocolVersion) -> void
 NuGet.Protocol.Plugins.TimeoutUtilities
-NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier
-NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.UnixAndMonoPlatformsEmbeddedSignatureVerifier() -> void
-NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier
-NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.WindowsEmbeddedSignatureVerifier() -> void
 NuGet.Protocol.ProtocolConstants
 NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider
 NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.OwnerDetailsUriResourceV3Provider() -> void
@@ -1568,7 +1553,6 @@ abstract NuGet.Protocol.Core.Types.ResourceProvider.TryCreate(NuGet.Protocol.Cor
 ~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
 ~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
 ~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~abstract NuGet.Protocol.Plugins.EmbeddedSignatureVerifier.IsValid(string filePath) -> bool
 abstract NuGet.Protocol.Plugins.OutboundRequestContext.Dispose(bool disposing) -> void
 abstract NuGet.Protocol.Plugins.OutboundRequestContext.HandleCancelResponse() -> void
 ~abstract NuGet.Protocol.Plugins.OutboundRequestContext.HandleFault(NuGet.Protocol.Plugins.Message fault) -> void
@@ -1787,7 +1771,6 @@ override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
 ~override NuGet.Protocol.PackageUpdateResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.PackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.PluginFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.Plugins.FallbackEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
 override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleCancelResponse() -> void
 ~override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleFault(NuGet.Protocol.Plugins.Message fault) -> void
 ~override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleProgress(NuGet.Protocol.Plugins.Message progress) -> void
@@ -1845,8 +1828,6 @@ override NuGet.Protocol.Plugins.PluginPackageReader.IsServiceable() -> bool
 override NuGet.Protocol.Plugins.StandardInputReceiver.Connect() -> void
 override NuGet.Protocol.Plugins.StandardOutputReceiver.Close() -> void
 override NuGet.Protocol.Plugins.StandardOutputReceiver.Connect() -> void
-~override NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
-~override NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
 override NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.ProxyAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
@@ -2008,7 +1989,6 @@ static NuGet.Protocol.Events.ProtocolDiagnostics.ResourceEvent -> NuGet.Protocol
 ~static NuGet.Protocol.PackageDetailsUriResourceV3.CreateOrNull(string uriTemplate) -> NuGet.Protocol.PackageDetailsUriResourceV3
 ~static NuGet.Protocol.Plugins.AutomaticProgressReporter.Create(NuGet.Protocol.Plugins.IConnection connection, NuGet.Protocol.Plugins.Message request, System.TimeSpan interval, System.Threading.CancellationToken cancellationToken) -> NuGet.Protocol.Plugins.AutomaticProgressReporter
 ~static NuGet.Protocol.Plugins.ConnectionOptions.CreateDefault(NuGet.Common.IEnvironmentVariableReader reader = null) -> NuGet.Protocol.Plugins.ConnectionOptions
-~static NuGet.Protocol.Plugins.EmbeddedSignatureVerifier.Create() -> NuGet.Protocol.Plugins.EmbeddedSignatureVerifier
 ~static NuGet.Protocol.Plugins.JsonSerializationUtilities.Deserialize<T>(string json) -> T
 ~static NuGet.Protocol.Plugins.JsonSerializationUtilities.FromObject(object value) -> Newtonsoft.Json.Linq.JObject
 ~static NuGet.Protocol.Plugins.JsonSerializationUtilities.Serialize(Newtonsoft.Json.JsonWriter writer, object value) -> void

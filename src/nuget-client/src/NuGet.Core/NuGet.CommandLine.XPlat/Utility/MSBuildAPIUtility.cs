@@ -434,7 +434,7 @@ namespace NuGet.CommandLine.XPlat
             // Only add the package reference information using the PACKAGE_REFERENCE_TYPE_TAG.
             ProjectItemElement item = itemGroup.AddItem(PACKAGE_REFERENCE_TYPE_TAG, libraryDependency.Name);
             AddExtraMetadataToProjectItemElement(libraryDependency, item);
-            Logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Info_AddPkgCPM, libraryDependency.Name, project.GetPropertyValue(DirectoryPackagesPropsPathPropertyName), itemGroup.ContainingProject.FullPath));
+            Logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Info_AddPkgCPM, libraryDependency.Name, itemGroup.ContainingProject.FullPath, project.GetPropertyValue(DirectoryPackagesPropsPathPropertyName)));
         }
 
         /// <summary>

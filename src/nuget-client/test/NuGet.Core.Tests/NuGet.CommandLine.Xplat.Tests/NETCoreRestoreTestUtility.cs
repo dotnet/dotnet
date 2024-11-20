@@ -64,8 +64,10 @@ namespace NuGet.CommandLine.XPlat.Tests
 
         public static PackageSpec GetProject(string projectName, string framework)
         {
-            var targetFrameworkInfo = new TargetFrameworkInformation();
-            targetFrameworkInfo.FrameworkName = NuGetFramework.Parse(framework);
+            var targetFrameworkInfo = new TargetFrameworkInformation()
+            {
+                FrameworkName = NuGetFramework.Parse(framework)
+            };
             var frameworks = new[] { targetFrameworkInfo };
 
             // Create two net45 projects

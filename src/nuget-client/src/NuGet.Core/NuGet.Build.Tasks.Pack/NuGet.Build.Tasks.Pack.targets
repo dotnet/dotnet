@@ -350,11 +350,16 @@ Copyright (c) .NET Foundation. All rights reserved.
   </Target>
 
   <Target Name="_WalkEachTargetPerFramework">
+    <ItemGroup>
+        <_ProjectsWithTFM Include="$(MSBuildProjectFullPath)" AdditionalProperties="TargetFramework=%(_TargetFrameworks.Identity)" />
+        <_ProjectsWithTFMNoBuild Include="$(MSBuildProjectFullPath)" AdditionalProperties="TargetFramework=%(_TargetFrameworks.Identity);BuildProjectReferences=false" />
+
+    </ItemGroup>
     <MSBuild
       Condition="'$(IncludeBuildOutput)' == 'true'"
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFM)"
       Targets="_GetBuildOutputFilesWithTfm"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"
@@ -363,9 +368,9 @@ Copyright (c) .NET Foundation. All rights reserved.
 
     <MSBuild
       Condition="'$(TargetsForTfmSpecificContentInPackage)' != ''"
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFM)"
       Targets="_GetTfmSpecificContentForPackage"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"
@@ -374,9 +379,9 @@ Copyright (c) .NET Foundation. All rights reserved.
 
     <MSBuild
       Condition="'$(IncludeBuildOutput)' == 'true'"
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFM)"
       Targets="_GetDebugSymbolsWithTfm"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"
@@ -385,10 +390,9 @@ Copyright (c) .NET Foundation. All rights reserved.
 
     <MSBuild
       Condition="'$(IncludeSource)' == 'true'"
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFMNoBuild)"
       Targets="SourceFilesProjectOutputGroup"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);
-                  BuildProjectReferences=false;">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"
@@ -396,10 +400,9 @@ Copyright (c) .NET Foundation. All rights reserved.
     </MSBuild>
 
     <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFMNoBuild)"
       Targets="_GetFrameworkAssemblyReferences"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);
-                  BuildProjectReferences=false;">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"
@@ -407,10 +410,9 @@ Copyright (c) .NET Foundation. All rights reserved.
     </MSBuild>
 
     <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
+      Projects="@(_ProjectsWithTFMNoBuild)"
       Targets="_GetFrameworksWithSuppressedDependencies"
-      Properties="TargetFramework=%(_TargetFrameworks.Identity);
-                  BuildProjectReferences=false;">
+      BuildInParallel="$(BuildInParallel)">
 
       <Output
           TaskParameter="TargetOutputs"

@@ -164,6 +164,23 @@ namespace NuGet.PackageManagement.VisualStudio
             return stream;
         }
 
+        public async ValueTask<Stream?> GetReadmeAsync(Uri readmeUri, CancellationToken cancellationToken)
+        {
+            Assumes.NotNull(readmeUri);
+
+            Stream? stream;
+            if (IsEmbeddedUri(readmeUri))
+            {
+                stream = await GetEmbeddedFileAsync(readmeUri, cancellationToken);
+            }
+            else
+            {
+                stream = await GetStream(readmeUri);
+            }
+
+            return stream;
+        }
+
         private async ValueTask<Stream?> GetEmbeddedFileAsync(Uri uri, CancellationToken cancellationToken)
         {
             string packagePath = uri.LocalPath;

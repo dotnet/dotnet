@@ -659,7 +659,7 @@ namespace NuGet.ProjectManagement
             {
                 packageSpec = new PackageSpec(new List<TargetFrameworkInformation>
                 {
-                    new TargetFrameworkInformation
+                    new TargetFrameworkInformation()
                     {
                         FrameworkName = ProjectSystem.TargetFramework
                     }

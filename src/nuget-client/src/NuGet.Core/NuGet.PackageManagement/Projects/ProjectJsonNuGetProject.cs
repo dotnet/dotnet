@@ -200,8 +200,8 @@ namespace NuGet.ProjectManagement.Projects
                         // Ensure the project json has only one target framework
                         if (packageSpec.TargetFrameworks != null && packageSpec.TargetFrameworks.Count == 1)
                         {
-                            var tfi = packageSpec.TargetFrameworks.First();
-                            if (tfi.Imports.Count > 0)
+                            var tfi = packageSpec.TargetFrameworks[0];
+                            if (tfi.Imports.Length > 0)
                             {
                                 if (tfi.AssetTargetFallback)
                                 {
@@ -212,7 +212,7 @@ namespace NuGet.ProjectManagement.Projects
                                     nuGetFramework = new FallbackFramework(nuGetFramework, tfi.Imports.AsList());
                                 }
                             }
-                            tfi.FrameworkName = nuGetFramework;
+                            packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(tfi) { FrameworkName = nuGetFramework };
                         }
                     }
                 }

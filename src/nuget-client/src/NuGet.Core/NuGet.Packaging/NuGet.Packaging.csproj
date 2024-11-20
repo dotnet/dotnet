@@ -35,6 +35,7 @@
     <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
     <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
     <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SimplePool.cs" />
     <Compile Include="$(SharedDirectory)\TaskResult.cs" />
     <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
   </ItemGroup>
@@ -53,6 +54,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Memory" Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'" />
+    <PackageReference Include="System.Text.Json" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">
@@ -116,6 +118,6 @@
     <InternalsVisibleTo Include="NuGet.Commands.Test" />
     <InternalsVisibleTo Include="NuGet.Packaging.FuncTest" />
     <InternalsVisibleTo Include="NuGet.Packaging.Test" />
-    <InternalsVisibleTo Include="Test.Utility" />
+    <InternalsVisibleTo Include="Microsoft.Internal.NuGet.Testing.SignedPackages" />
   </ItemGroup>
 </Project>

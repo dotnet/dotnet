@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1782,16 +1783,18 @@ namespace NuGet.Commands.Test
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(
-                                new[]
-                                {
+                            Dependencies =
+                                [
                                     new LibraryDependency
                                     {
                                         LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.All),
                                         VersionCentrallyManaged = true,
                                     },
-                                }),
-                            CentralPackageVersions = { new KeyValuePair<string, CentralPackageVersion>("PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0"))) },
+                                ],
+                            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { "PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0")) }
+                            }
                         }
                     })
                     .WithCentralPackageVersionsEnabled()
@@ -1805,8 +1808,11 @@ namespace NuGet.Commands.Test
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(),
-                            CentralPackageVersions = { new KeyValuePair<string, CentralPackageVersion>("PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0"))) },
+                            Dependencies = [],
+                            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { "PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0")) }
+                            }
                         }
                     })
                     .WithCentralPackageVersionsEnabled()
@@ -1822,9 +1828,11 @@ namespace NuGet.Commands.Test
                         new TargetFrameworkInformation
                         {
                             FrameworkName = NuGetFramework.Parse("net471"),
-                            Dependencies = new List<LibraryDependency>(),
-                            CentralPackageVersions = { new KeyValuePair<string, CentralPackageVersion>("PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0"))) },
-                        }
+                            Dependencies = [],
+                            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { "PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0")) }
+                            }                        }
                     })
                     .WithCentralPackageVersionsEnabled()
                     .WithCentralPackageTransitivePinningEnabled()

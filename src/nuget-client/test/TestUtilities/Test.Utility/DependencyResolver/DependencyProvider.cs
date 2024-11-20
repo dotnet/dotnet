@@ -153,6 +153,8 @@ namespace Test.Utility
 
             public TestPackage DependsOn(string id, string version, LibraryDependencyTarget target = LibraryDependencyTarget.All, bool versionCentrallyManaged = false, LibraryDependencyReferenceType? libraryDependencyReferenceType = null, LibraryIncludeFlags? privateAssets = null)
             {
+                var suppressParent = privateAssets != null ? privateAssets.Value : LibraryIncludeFlagUtils.DefaultSuppressParent;
+                var referenceType = libraryDependencyReferenceType != null ? libraryDependencyReferenceType.Value : LibraryDependencyReferenceType.Direct;
                 var libraryDependency = new LibraryDependency
                 {
                     LibraryRange =
@@ -162,18 +164,10 @@ namespace Test.Utility
                             VersionRange = VersionRange.Parse(version),
                             TypeConstraint = target
                         },
+                    ReferenceType = referenceType,
+                    SuppressParent = suppressParent,
                     VersionCentrallyManaged = versionCentrallyManaged,
                 };
-
-                if (privateAssets != null)
-                {
-                    libraryDependency.SuppressParent = privateAssets.Value;
-                }
-
-                if (libraryDependencyReferenceType != null)
-                {
-                    libraryDependency.ReferenceType = libraryDependencyReferenceType.Value;
-                }
 
                 _dependencies.Add(libraryDependency);
 

@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using FluentAssertions;
+using NuGet.Common;
 using NuGet.ProjectManagement;
 using NuGet.Versioning;
 using Xunit;
@@ -395,6 +397,94 @@ namespace NuGet.SolutionRestoreManager.Test
             // Act & Assert
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => VSNominationUtilities.GetUseLegacyDependencyResolver(targetFrameworks));
             exception.Message.Should().Contain(ProjectBuildProperties.RestoreUseLegacyDependencyResolver);
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_SameLogCodes()
+        {
+            // Arrange
+            ImmutableArray<NuGetLogCode> logCodes1 = [NuGetLogCode.NU1000, NuGetLogCode.NU1001];
+            ImmutableArray<NuGetLogCode> logCodes2 = [NuGetLogCode.NU1001, NuGetLogCode.NU1000];
+
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [logCodes1, logCodes2];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(2, result.Length);
+            Assert.True(result.All(logCodes2.Contains));
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_EmptyLogCodes()
+        {
+            // Arrange
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(0, result.Length);
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_DiffLogCodes()
+        {
+            // Arrange
+            ImmutableArray<NuGetLogCode> logCodes1 = [NuGetLogCode.NU1000];
+            ImmutableArray<NuGetLogCode> logCodes2 = [NuGetLogCode.NU1001, NuGetLogCode.NU1000];
+
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [logCodes1, logCodes2];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(0, result.Length);
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_OneDefaultCode()
+        {
+            // Arrange
+            ImmutableArray<NuGetLogCode> logCodes1 = [NuGetLogCode.NU1001, NuGetLogCode.NU1000];
+
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [default, logCodes1];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(0, result.Length);
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_AllDefaultCodes()
+        {
+            // Arrange
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [default, default];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(0, result.Length);
+        }
+
+        [Fact]
+        public void GetDistinctNuGetLogCodesOrDefault_DefaultCodesAfterFirst()
+        {
+            // Arrange
+            ImmutableArray<NuGetLogCode> logCodes1 = [NuGetLogCode.NU1001, NuGetLogCode.NU1000];
+            ImmutableArray<ImmutableArray<NuGetLogCode>> logCodesList = [logCodes1, default];
+
+            // Act
+            var result = VSNominationUtilities.GetDistinctNuGetLogCodesOrDefault(logCodesList);
+
+            // Assert
+            Assert.Equal(0, result.Length);
         }
     }
 }

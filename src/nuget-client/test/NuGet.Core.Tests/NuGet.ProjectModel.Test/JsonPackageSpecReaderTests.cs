@@ -533,10 +533,9 @@ namespace NuGet.ProjectModel.Test
             // Assert
             var dep = actual.Dependencies.FirstOrDefault(d => d.Name.Equals("packageA"));
             Assert.NotNull(dep);
-            Assert.NotNull(dep.NoWarn);
-            Assert.Equal(dep.NoWarn.Count, 2);
-            Assert.True(dep.NoWarn.Contains(NuGetLogCode.NU1500));
-            Assert.True(dep.NoWarn.Contains(NuGetLogCode.NU1107));
+            Assert.Equal(dep.NoWarn.Length, 2);
+            Assert.Contains(NuGetLogCode.NU1500, dep.NoWarn);
+            Assert.Contains(NuGetLogCode.NU1107, dep.NoWarn);
         }
 
         [Theory]
@@ -564,9 +563,8 @@ namespace NuGet.ProjectModel.Test
             // Assert
             var dep = actual.Dependencies.FirstOrDefault(d => d.Name.Equals("packageA"));
             Assert.NotNull(dep);
-            Assert.NotNull(dep.NoWarn);
-            Assert.Equal(dep.NoWarn.Count, 1);
-            Assert.True(dep.NoWarn.Contains(NuGetLogCode.NU1500));
+            Assert.Equal(dep.NoWarn.Length, 1);
+            Assert.Contains(NuGetLogCode.NU1500, dep.NoWarn);
         }
 
         [Theory]
@@ -593,8 +591,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             var dep = actual.Dependencies.FirstOrDefault(d => d.Name.Equals("packageA"));
             Assert.NotNull(dep);
-            Assert.NotNull(dep.NoWarn);
-            Assert.Equal(dep.NoWarn.Count, 0);
+            Assert.Equal(dep.NoWarn.Length, 0);
         }
 
         [Theory]
@@ -4106,7 +4103,7 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(isSdk, packageSpec.RestoreMetadata.UsingMicrosoftNETSdk);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/13849")]
         public void GetPackageSpec_WithInvalidUsingMicrosoftNetSdk_ThrowsAnException()
         {
             // Arrange

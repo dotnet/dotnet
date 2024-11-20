@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -131,13 +132,15 @@ namespace NuGet.Commands
         /// <summary>
         /// Insert asset flags into dependency, based on ;-delimited string args
         /// </summary>
-        public static void ApplyIncludeFlags(LibraryDependency dependency, string includeAssets, string excludeAssets, string privateAssets)
+        public static (LibraryIncludeFlags includeType, LibraryIncludeFlags suppressParent) GetLibraryDependencyIncludeFlags(string includeAssets, string excludeAssets, string privateAssets)
         {
             var includeFlags = GetIncludeFlags(includeAssets, LibraryIncludeFlags.All);
             var excludeFlags = GetIncludeFlags(excludeAssets, LibraryIncludeFlags.None);
 
-            dependency.IncludeType = includeFlags & ~excludeFlags;
-            dependency.SuppressParent = GetIncludeFlags(privateAssets, LibraryIncludeFlagUtils.DefaultSuppressParent);
+            var includeType = includeFlags & ~excludeFlags;
+            var suppressParent = GetIncludeFlags(privateAssets, LibraryIncludeFlagUtils.DefaultSuppressParent);
+
+            return (includeType, suppressParent);
         }
 
         /// <summary>
@@ -145,6 +148,7 @@ namespace NuGet.Commands
         /// </summary>
         public static void ApplyIncludeFlags(ProjectRestoreReference dependency, string includeAssets, string excludeAssets, string privateAssets)
         {
+            if (dependency == null) throw new ArgumentNullException(nameof(dependency));
             dependency.IncludeAssets = GetIncludeFlags(includeAssets, LibraryIncludeFlags.All);
             dependency.ExcludeAssets = GetIncludeFlags(excludeAssets, LibraryIncludeFlags.None);
             dependency.PrivateAssets = GetIncludeFlags(privateAssets, LibraryIncludeFlagUtils.DefaultSuppressParent);
@@ -474,11 +478,11 @@ namespace NuGet.Commands
                     clrSupport: clrSupport,
                     windowsTargetPlatformMinVersion: windowsTargetPlatformMinVersion);
 
-                var targetFrameworkInfo = new TargetFrameworkInformation()
-                {
-                    FrameworkName = targetFramework,
-                    TargetAlias = targetAlias
-                };
+                string runtimeIdentifierGraphPath = null;
+                ImmutableArray<NuGetFramework> imports = [];
+                bool assetTargetFallback = false;
+                bool warn = false;
+
                 if (restoreType == ProjectStyle.PackageReference ||
                     restoreType == ProjectStyle.Standalone ||
                     restoreType == ProjectStyle.DotnetToolReference)
@@ -487,18 +491,29 @@ namespace NuGet.Commands
                         .Select(NuGetFramework.Parse)
                         .ToList();
 
-                    var assetTargetFallback = MSBuildStringUtility.Split(item.GetProperty(AssetTargetFallbackUtility.AssetTargetFallback))
+                    var assetTargetFallbackList = MSBuildStringUtility.Split(item.GetProperty(AssetTargetFallbackUtility.AssetTargetFallback))
                         .Select(NuGetFramework.Parse)
                         .ToList();
 
                     // Throw if an invalid combination was used.
-                    AssetTargetFallbackUtility.EnsureValidFallback(packageTargetFallback, assetTargetFallback, filePath);
+                    AssetTargetFallbackUtility.EnsureValidFallback(packageTargetFallback, assetTargetFallbackList, filePath);
 
                     // Update the framework appropriately
-                    AssetTargetFallbackUtility.ApplyFramework(targetFrameworkInfo, packageTargetFallback, assetTargetFallback);
+                    (targetFramework, imports, assetTargetFallback, warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(targetFramework, packageTargetFallback, assetTargetFallbackList);
 
-                    targetFrameworkInfo.RuntimeIdentifierGraphPath = item.GetProperty("RuntimeIdentifierGraphPath");
+                    runtimeIdentifierGraphPath = item.GetProperty("RuntimeIdentifierGraphPath");
                 }
+
+                var targetFrameworkInfo = new TargetFrameworkInformation()
+                {
+                    AssetTargetFallback = assetTargetFallback,
+                    FrameworkName = targetFramework,
+                    Imports = imports,
+                    RuntimeIdentifierGraphPath = runtimeIdentifierGraphPath,
+                    TargetAlias = targetAlias,
+                    Warn = warn
+                };
+
                 yield return targetFrameworkInfo;
             }
         }
@@ -608,38 +623,31 @@ namespace NuGet.Commands
 
         private static bool AddDownloadDependencyIfNotExist(PackageSpec spec, string targetAlias, DownloadDependency dependency)
         {
-            TargetFrameworkInformation frameworkInfo = spec.TargetFrameworks.Single(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            var index = spec.TargetFrameworks.SingleIndex(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            var frameworkInfo = spec.TargetFrameworks[index];
 
             if (!frameworkInfo.DownloadDependencies.Contains(dependency))
             {
-                frameworkInfo.DownloadDependencies.Add(dependency);
+                var newDownloadDependencies = frameworkInfo.DownloadDependencies.Add(dependency);
+                spec.TargetFrameworks[index] = new TargetFrameworkInformation(frameworkInfo) { DownloadDependencies = newDownloadDependencies };
 
                 return true;
             }
             return false;
         }
 
-        private static bool AddDependencyIfNotExist(PackageSpec spec, LibraryDependency dependency)
-        {
-            foreach (var targetAlias in spec.TargetFrameworks.Select(e => e.TargetAlias))
-            {
-                AddDependencyIfNotExist(spec, targetAlias, dependency);
-            }
-
-            return false;
-        }
-
-
         private static bool AddDependencyIfNotExist(PackageSpec spec, string targetAlias, LibraryDependency dependency)
         {
-            var frameworkInfo = spec.TargetFrameworks.Single(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            var index = spec.TargetFrameworks.SingleIndex(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            var frameworkInfo = spec.TargetFrameworks[index];
+            var dependencies = frameworkInfo.Dependencies;
 
             if (!spec.Dependencies
-                            .Concat(frameworkInfo.Dependencies)
+                            .Concat(dependencies)
                             .Select(d => d.Name)
                             .Contains(dependency.Name, StringComparer.OrdinalIgnoreCase))
             {
-                frameworkInfo.Dependencies.Add(dependency);
+                spec.TargetFrameworks[index] = new TargetFrameworkInformation(frameworkInfo) { Dependencies = dependencies.Add(dependency) };
 
                 return true;
             }
@@ -649,44 +657,70 @@ namespace NuGet.Commands
 
         private static void AddPackageReferences(PackageSpec spec, IEnumerable<IMSBuildItem> items, bool isCpvmEnabled)
         {
-            foreach (var item in GetItemByType(items, "Dependency"))
-            {
-                // Get warning suppressions
-                IList<NuGetLogCode> noWarn = MSBuildStringUtility.GetNuGetLogCodes(item.GetProperty("NoWarn"));
-
-                var dependency = new LibraryDependency(noWarn)
-                {
-                    LibraryRange = new LibraryRange(
-                        name: item.GetProperty("Id"),
-                        versionRange: GetVersionRange(item, defaultValue: isCpvmEnabled ? null : VersionRange.All),
-                        typeConstraint: LibraryDependencyTarget.Package),
-
-                    AutoReferenced = IsPropertyTrue(item, "IsImplicitlyDefined"),
-                    GeneratePathProperty = IsPropertyTrue(item, "GeneratePathProperty"),
-                    Aliases = item.GetProperty("Aliases"),
-                    VersionOverride = GetVersionRange(item, defaultValue: null, "VersionOverride")
-                };
-
-                ApplyIncludeFlags(dependency, item);
-
-                var frameworks = GetFrameworks(item);
-
-                if (frameworks.Count == 0)
-                {
-                    AddDependencyIfNotExist(spec, dependency);
-                }
-                else
-                {
-                    foreach (var framework in frameworks)
-                    {
-                        AddDependencyIfNotExist(spec, framework, dependency);
-                    }
-                }
-            }
-
             if (isCpvmEnabled)
             {
                 AddCentralPackageVersions(spec, items);
+            }
+
+            var dict = new Dictionary<string, TargetFrameworkInformation>(StringComparer.OrdinalIgnoreCase);
+            foreach (var targetFramework in spec.TargetFrameworks)
+            {
+                dict.Add(targetFramework.TargetAlias, targetFramework);
+            }
+
+            foreach (var item in GetItemByType(items, "Dependency"))
+            {
+                // Get warning suppressions
+                var noWarn = MSBuildStringUtility.GetNuGetLogCodes(item.GetProperty("NoWarn"));
+                (var includeType, var suppressParent) = GetLibraryDependencyIncludeFlags(item);
+                IEnumerable<string> frameworks = GetFrameworks(item);
+                string name = item.GetProperty("Id");
+                bool autoReferenced = IsPropertyTrue(item, "IsImplicitlyDefined");
+                VersionRange versionOverrideRange = GetVersionRange(item, defaultValue: null, "VersionOverride");
+
+                VersionRange versionRange = GetVersionRange(item, defaultValue: isCpvmEnabled ? null : VersionRange.All);
+                bool versionDefined = versionRange != null;
+                if (versionRange == null && !isCpvmEnabled)
+                {
+                    versionRange = VersionRange.All;
+                }
+
+                if (!frameworks.Any())
+                {
+                    frameworks = dict.Keys;
+                }
+
+                foreach (var framework in frameworks)
+                {
+                    dict.TryGetValue(framework, out TargetFrameworkInformation frameworkInfo);
+                    CentralPackageVersion centralPackageVersion = null;
+                    bool isCentrallyManaged = !versionDefined && !autoReferenced && isCpvmEnabled && versionOverrideRange == null && frameworkInfo.CentralPackageVersions != null && frameworkInfo.CentralPackageVersions.TryGetValue(name, out centralPackageVersion);
+
+                    if (centralPackageVersion != null)
+                    {
+                        versionRange = centralPackageVersion.VersionRange;
+                    }
+                    versionRange = versionOverrideRange ?? versionRange;
+
+                    var dependency = new LibraryDependency()
+                    {
+                        LibraryRange = new LibraryRange(
+                            name: name,
+                            versionRange: versionRange,
+                            typeConstraint: LibraryDependencyTarget.Package),
+
+                        AutoReferenced = autoReferenced,
+                        GeneratePathProperty = IsPropertyTrue(item, "GeneratePathProperty"),
+                        Aliases = item.GetProperty("Aliases"),
+                        VersionOverride = versionOverrideRange,
+                        NoWarn = noWarn,
+                        IncludeType = includeType,
+                        SuppressParent = suppressParent,
+                        VersionCentrallyManaged = isCentrallyManaged,
+                    };
+
+                    AddDependencyIfNotExist(spec, framework, dependency);
+                }
             }
         }
 
@@ -725,9 +759,9 @@ namespace NuGet.Commands
             }
         }
 
-        private static void ApplyIncludeFlags(LibraryDependency dependency, IMSBuildItem item)
+        private static (LibraryIncludeFlags includeType, LibraryIncludeFlags suppressParent) GetLibraryDependencyIncludeFlags(IMSBuildItem item)
         {
-            ApplyIncludeFlags(dependency, item.GetProperty("IncludeAssets"), item.GetProperty("ExcludeAssets"), item.GetProperty("PrivateAssets"));
+            return GetLibraryDependencyIncludeFlags(item.GetProperty("IncludeAssets"), item.GetProperty("ExcludeAssets"), item.GetProperty("PrivateAssets"));
         }
 
         private static LibraryIncludeFlags GetIncludeFlags(string value, LibraryIncludeFlags defaultValue)
@@ -762,7 +796,8 @@ namespace NuGet.Commands
 
         private static bool AddFrameworkReferenceIfNotExists(PackageSpec spec, string targetAlias, string frameworkReference, string privateAssetsValue)
         {
-            var frameworkInfo = spec.TargetFrameworks.Single(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            var index = spec.TargetFrameworks.SingleIndex(e => e.TargetAlias.Equals(targetAlias, StringComparison.Ordinal));
+            TargetFrameworkInformation frameworkInfo = spec.TargetFrameworks[index];
 
             if (!frameworkInfo
                 .FrameworkReferences
@@ -770,7 +805,8 @@ namespace NuGet.Commands
                 .Contains(frameworkReference, ComparisonUtility.FrameworkReferenceNameComparer))
             {
                 var privateAssets = FrameworkDependencyFlagsUtils.GetFlags(MSBuildStringUtility.Split(privateAssetsValue));
-                frameworkInfo.FrameworkReferences.Add(new FrameworkDependency(frameworkReference, privateAssets));
+                FrameworkDependency[] newFrameworkReferences = [.. frameworkInfo.FrameworkReferences, new FrameworkDependency(frameworkReference, privateAssets)];
+                spec.TargetFrameworks[index] = new TargetFrameworkInformation(frameworkInfo) { FrameworkReferences = newFrameworkReferences };
                 return true;
             }
             return false;
@@ -1144,9 +1180,13 @@ namespace NuGet.Commands
             var centralVersionsDependencies = CreateCentralVersionDependencies(items, spec.TargetFrameworks);
             foreach ((var targetAlias, var versions) in centralVersionsDependencies)
             {
-                var frameworkInfo = spec.TargetFrameworks.FirstOrDefault(f => targetAlias.Equals(f.TargetAlias, StringComparison.OrdinalIgnoreCase));
-                frameworkInfo.CentralPackageVersions.AddRange(versions);
-                LibraryDependency.ApplyCentralVersionInformation(frameworkInfo.Dependencies, frameworkInfo.CentralPackageVersions);
+                var index = spec.TargetFrameworks.FirstIndex(f => targetAlias.Equals(f.TargetAlias, StringComparison.OrdinalIgnoreCase));
+                var frameworkInfo = spec.TargetFrameworks[index];
+
+                spec.TargetFrameworks[index] = new TargetFrameworkInformation(frameworkInfo)
+                {
+                    CentralPackageVersions = versions,
+                };
             }
         }
     }

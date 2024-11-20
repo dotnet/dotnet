@@ -34,7 +34,7 @@ namespace NuGet.SolutionRestoreManager.Test
         private const string NumHTTPSv3Feeds = "NumHTTPSv3Feeds";
 
         private static readonly Guid Parent = Guid.Parse("33411664-388A-4C48-A607-A2C554171FCE");
-        private static readonly PackageSourceTelemetry.Totals ProtocolDiagnosticTotals = new PackageSourceTelemetry.Totals(1, 2, TimeSpan.FromMilliseconds(3));
+        private static readonly PackageSourceTelemetry.Totals ProtocolDiagnosticTotals = new PackageSourceTelemetry.Totals(1, 2, TimeSpan.FromMilliseconds(3), numberOfSourcesWithAnHttpResource: 0);
 
         [Fact]
         public void GivenEmptySourcesVerifyEventNameForRestore()

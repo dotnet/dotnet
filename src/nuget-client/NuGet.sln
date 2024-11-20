@@ -208,8 +208,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestableCredentialProvider"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Test", "test\TestExtensions\API.Test\API.Test.csproj", "{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestableVSCredentialProvider", "test\TestExtensions\TestableVSCredentialProvider\TestableVSCredentialProvider.csproj", "{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestablePlugin", "test\TestExtensions\TestablePlugin\TestablePlugin.csproj", "{F4CA95DA-0045-4AC4-ABA0-560008CEB963}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Build.Tasks.Test", "test\NuGet.Core.Tests\NuGet.Build.Tasks.Test\NuGet.Build.Tasks.Test.csproj", "{F813268A-1EA1-41E6-A42C-01E7F937E257}"
@@ -342,6 +340,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ensure-nupkg-dependencies-on-source", "tools-local\ensure-nupkg-dependencies-on-source\ensure-nupkg-dependencies-on-source.csproj", "{719AC60C-59EF-4A63-AC9E-7841DF14179D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Tests.Apex.Daily", "test\NuGet.Tests.Apex\NuGet.Tests.Apex.Daily\NuGet.Tests.Apex.Daily.csproj", "{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Internal.NuGet.Testing.SignedPackages", "test\TestUtilities\Microsoft.Internal.NuGet.Testing.SignedPackages\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj", "{E41384AA-ED2D-4251-A571-F5C924CE2913}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -581,10 +581,6 @@ Global
 		{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4CA95DA-0045-4AC4-ABA0-560008CEB963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4CA95DA-0045-4AC4-ABA0-560008CEB963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4CA95DA-0045-4AC4-ABA0-560008CEB963}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -717,6 +713,10 @@ Global
 		{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -790,7 +790,6 @@ Global
 		{30D3D653-C936-40DD-B044-329980E156ED} = {01BC4531-1E25-48D7-A8FD-A47D6FEC47FB}
 		{E901BDC7-CB84-40FA-A2C0-03DB4F9AEA3C} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076} = {23CEFC88-9365-4464-A517-700224ECA033}
-		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{F4CA95DA-0045-4AC4-ABA0-560008CEB963} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{F813268A-1EA1-41E6-A42C-01E7F937E257} = {7323F93B-D141-4001-BB9E-7AF14031143E}
 		{96E9B926-60A1-48BD-9EC8-8ED1F6746ECD} = {01BC4531-1E25-48D7-A8FD-A47D6FEC47FB}
@@ -832,6 +831,7 @@ Global
 		{1BCC177E-D529-4015-93E2-4C254FA015AA} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{719AC60C-59EF-4A63-AC9E-7841DF14179D} = {CE4C7E1B-6883-49C3-A407-F807094777CC}
 		{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275} = {3150445A-C422-4D40-B341-DE5AD063C632}
+		{E41384AA-ED2D-4251-A571-F5C924CE2913} = {79266117-FEDD-45B3-B603-33A4B6E9F12F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3747A66A-00D1-41B8-A9C5-ED0D7BEA9D25}

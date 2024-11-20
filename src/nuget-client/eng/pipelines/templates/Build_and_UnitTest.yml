@@ -186,6 +186,13 @@ steps:
     configuration: "$(BuildConfiguration)"
     msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\10.Pack.binlog /property:MicroBuild_SigningEnabled=false"
 
+- task: PowerShell@1
+  displayName: "Check expected packages exist for publishing"
+  name: "EnsureAllPackagesExist"
+  inputs:
+    scriptName: "$(Build.Repository.LocalPath)\\scripts\\utils\\EnsureAllPackagesExist.ps1"
+    arguments: "-BuildRTM:$$(BuildRTM) -NupkgOutputPath '$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)'"
+
 - task: MSBuild@1
   displayName: "Ensure all Nupkgs and Symbols are created"
   inputs:

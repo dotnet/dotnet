@@ -12,6 +12,7 @@ using System.Reflection;
 #endif
 using System.Text;
 using System.Threading.Tasks;
+using NuGet.Common;
 
 namespace NuGet.Build.Tasks.Console
 {
@@ -34,14 +35,23 @@ namespace NuGet.Build.Tasks.Console
         /// The main entry point to the console application.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
-        /// <returns><code>0</code> if the application ran successfully with no errors, otherwise <code>1</code>.</returns>
+        /// <returns><c>0</c> if the application ran successfully with no errors, otherwise <c>1</c>.</returns>
         public static async Task<int> Main(string[] args)
+        {
+            return await MainInternal(args, EnvironmentVariableWrapper.Instance);
+        }
+
+        /// <summary>
+        /// The main entry point to the console application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> to use when reading environment variables.</param>
+        /// <returns><c>0</c> if the application ran successfully with no errors, otherwise <c>1</c>.</returns>
+        internal static async Task<int> MainInternal(string[] args, IEnvironmentVariableReader environmentVariableReader)
         {
             try
             {
-                var debug = IsDebug();
-
-                if (debug)
+                if (string.Equals(environmentVariableReader.GetEnvironmentVariable("DEBUG_RESTORE_TASK"), bool.TrueString, StringComparison.OrdinalIgnoreCase))
                 {
                     Debugger.Launch();
                 }
@@ -87,14 +97,14 @@ namespace NuGet.Build.Tasks.Console
                 // Check whether the ask is to generate the restore graph file.
                 if (MSBuildStaticGraphRestore.IsOptionTrue("GenerateRestoreGraphFile", arguments.Options))
                 {
-                    using (var dependencyGraphSpecGenerator = new MSBuildStaticGraphRestore(debug: debug))
+                    using (var dependencyGraphSpecGenerator = new MSBuildStaticGraphRestore())
                     {
                         return dependencyGraphSpecGenerator.WriteDependencyGraphSpec(arguments.EntryProjectFilePath, arguments.MSBuildGlobalProperties, arguments.Options) ? 0 : 1;
                     }
                 }
 
                 // Otherwise run restore!
-                using (var dependencyGraphSpecGenerator = new MSBuildStaticGraphRestore(debug: debug))
+                using (var dependencyGraphSpecGenerator = new MSBuildStaticGraphRestore())
                 {
                     return await dependencyGraphSpecGenerator.RestoreAsync(arguments.EntryProjectFilePath, arguments.MSBuildGlobalProperties, arguments.Options) ? 0 : 1;
                 }
@@ -111,15 +121,6 @@ namespace NuGet.Build.Tasks.Console
 
                 return -1;
             }
-        }
-
-        /// <summary>
-        /// Determines if a user specified that the current process is being debugged.
-        /// </summary>
-        /// <returns><code>true</code> if the user specified to debug the current process, otherwise <code>false</code>.</returns>
-        private static bool IsDebug()
-        {
-            return string.Equals(Environment.GetEnvironmentVariable("DEBUG_RESTORE_TASK"), bool.TrueString, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

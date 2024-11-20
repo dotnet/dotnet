@@ -17,7 +17,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Allows a user to enable the legacy SHA512 hash function for dgSpec files which is used by no-op.
         /// </summary>
-        private static readonly bool UseLegacyHashFunction = string.Equals(Environment.GetEnvironmentVariable("NUGET_ENABLE_LEGACY_DGSPEC_HASH_FUNCTION"), bool.TrueString, StringComparison.OrdinalIgnoreCase);
+        private static bool? UseLegacyHashFunction;
 
         private const string DGSpecFileNameExtension = "{0}.nuget.dgspec.json";
 
@@ -39,8 +39,14 @@ namespace NuGet.ProjectModel
         }
 
         public DependencyGraphSpec(bool isReadOnly)
+            : this(isReadOnly, EnvironmentVariableWrapper.Instance)
+        {
+        }
+
+        internal DependencyGraphSpec(bool isReadOnly, IEnvironmentVariableReader environmentVariableReader)
         {
             _isReadOnly = isReadOnly;
+            UseLegacyHashFunction ??= string.Equals(environmentVariableReader.GetEnvironmentVariable("NUGET_ENABLE_LEGACY_DGSPEC_HASH_FUNCTION"), bool.TrueString, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -310,7 +316,7 @@ namespace NuGet.ProjectModel
         public string GetHash()
         {
             // Use the faster FNV hash function for hashing unless the user has specified to use the legacy SHA512 hash function
-            using (IHashFunction hashFunc = UseLegacyHashFunction ? new Sha512HashFunction() : new FnvHash64Function())
+            using (IHashFunction hashFunc = UseLegacyHashFunction == true ? new Sha512HashFunction() : new FnvHash64Function())
             using (var writer = new HashObjectWriter(hashFunc))
             {
                 Write(writer, hashing: true, PackageSpecWriter.Write);

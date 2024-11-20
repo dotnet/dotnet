@@ -3,16 +3,13 @@
     <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <NoWarn Condition=" $(TargetFramework.StartsWith('netcoreapp')) ">$(NoWarn);CS1998</NoWarn>
-    <PackProject>true</PackProject>
-    <Shipping>true</Shipping>
-    <IsPackable>true</IsPackable>
     <SkipShared>true</SkipShared>
     <TestProject>false</TestProject>
+    <SignWithTestKey>true</SignWithTestKey>
     <NoWarn>$(NoWarn);VSTHRD001;VSTHRD002;VSTHRD110</NoWarn>
     <Description>A collection of test utilities, such as generating packages, mocking servers, stub implementations of interfaces, etc.</Description>
     <SkipAnalyzers>true</SkipAnalyzers>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
-    <SignWithNuGetKey>true</SignWithNuGetKey>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,39 +23,17 @@
     <InternalsVisibleTo Include="NuGet.Signing.CrossFramework.Test" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="compiler\resources\*" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="compiler\resources\.signature.p7s" />
-    <None Remove="compiler\resources\CentralDirectoryHeaderWithZip64ExtraField.zip" />
-    <None Remove="compiler\resources\EmptyZip64.zip" />
-    <None Remove="compiler\resources\intermediate.crt" />
-    <None Remove="compiler\resources\leaf.crt" />
-    <None Remove="compiler\resources\LocalFileHeaderWithZip64ExtraField.zip" />
-    <None Remove="compiler\resources\root.crt" />
-    <None Remove="compiler\resources\runtime.json" />
-    <None Remove="compiler\resources\SignatureFileEntry.zip" />
-    <None Remove="compiler\resources\SignatureFileWithDeflateCompressionMethodAndDefaultCompressionLevel.zip" />
-    <None Remove="compiler\resources\SignatureFileWithFakeContent.zip" />
-    <None Remove="compiler\resources\SignatureFileWithUppercaseFileName.zip" />
-    <None Remove="compiler\resources\SignedPackage.1.0.0.nupkg" />
-    <None Remove="compiler\resources\Test.RepoCountersigned.1.0.0.nupkg" />
-    <None Remove="compiler\resources\Test.Reposigned.1.0.0.nupkg" />
-    <None Remove="compiler\resources\TestPackage.AuthorSigned.1.0.0.nupkg" />
-  </ItemGroup>
-
  <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\Microsoft.Internal.NuGet.Testing.SignedPackages\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -98,19 +73,5 @@
     <Compile Remove="ProjectManagement\TestProjectThreadingService.cs" />
     <Compile Remove="Threading\*.cs" />
     <Compile Remove="VisualStudio\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Signing\Asn.1\SR.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Signing\Asn.1\SR.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <CustomToolNamespace>Test.Utility.Signing</CustomToolNamespace>
-      <LastGenOutput>SR.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ namespace NuGet.PackageManagement.UI
     /// The base class of PackageDetailControlModel and PackageSolutionDetailControlModel.
     /// When user selects an action, this triggers version list update.
     /// </summary>
-    public abstract class DetailControlModel : INotifyPropertyChanged, IDisposable
+    public abstract class DetailControlModel : TitledPageViewModelBase, IDisposable
     {
         private static readonly string StarAll = VersionRangeFormatter.Instance.Format("p", VersionRange.Parse("*"), VersionRangeFormatter.Instance);
         private static readonly string StarAllFloating = VersionRangeFormatter.Instance.Format("p", VersionRange.Parse("*-*"), VersionRangeFormatter.Instance);
@@ -70,6 +70,9 @@ namespace NuGet.PackageManagement.UI
             _options.SelectedChanged += DependencyBehavior_SelectedChanged;
 
             _versions = new ItemsChangeObservableCollection<DisplayVersion>();
+
+            Title = Resources.Label_PackageDetails;
+            IsVisible = true;
         }
 
         /// <summary>
@@ -385,11 +388,9 @@ namespace NuGet.PackageManagement.UI
         // Called after package install/uninstall.
         public abstract Task RefreshAsync(CancellationToken cancellationToken);
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RaisePropertyChanged(propertyName);
         }
 
         public string Id => _searchResultPackage?.Id;

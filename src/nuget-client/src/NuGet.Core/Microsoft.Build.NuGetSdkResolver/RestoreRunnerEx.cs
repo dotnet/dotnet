@@ -69,7 +69,7 @@ namespace NuGet.Commands
                 {
                     Dependencies = new List<LibraryDependency>
                     {
-                        new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                        new LibraryDependency()
                         {
                             LibraryRange = new LibraryRange(
                                 libraryIdentity.Name,

@@ -20,8 +20,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageToSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 // Arrange
@@ -52,8 +50,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UpdatePackageToSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 // Arrange
@@ -93,8 +89,6 @@ namespace NuGet.Tests.Apex.Daily
         [Timeout(DefaultTimeout)]
         public async Task UninstallPackageFromSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 // Arrange

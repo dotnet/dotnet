@@ -15,21 +15,32 @@ parameters:
 - name: timeoutInMinutes
   type: number
   default: 15
+- name: testProjectName
+  displayName: Optional name of an individual test project to run tests from.  The default is to run tests from all applicable projects.
+  type: string
+  default: ''
+- name: testVerbosity
+  displayName: Optional verbosity to use when running tests.
+  type: string
+  default: 'minimal'
 
 jobs:
 - job:
   displayName: ${{ parameters.displayName }}
-  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   variables:
     - name: TestType
       value: ${{ parameters.testType }}
     - name: TestTargetFramework
       value: ${{ parameters.testTargetFramework }}
+    - name: TestProjectName
+      value: ${{ parameters.testProjectName }}
     - name: BinlogDirectory
       ${{ if eq(parameters.osName, 'Windows') }}:
         value: $(Agent.TempDirectory)\binlogs\
       ${{ else }}:
         value: $(Agent.TempDirectory)/binlogs/
+    - name: VSTestVerbosity
+      value: ${{ parameters.testVerbosity }}
 
   pool:
     name: ${{ parameters.agentPool }}
@@ -76,14 +87,27 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: Run $(TestType) Tests 
     condition: succeeded()
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    env:
+      VSTEST_TESTHOST_SHUTDOWN_TIMEOUT: 1000
     inputs:
       command: test
       arguments: --no-restore --restore:false --no-build --framework $(TestTargetFramework) --binarylogger:"$(BinlogDirectory)02-RunTests.binlog"
-      testRunTitle: ${{ parameters.osName }} $(TestType) Tests ($(TestTargetFramework))
+      ${{ if ne(parameters.testProjectName, '') }}:
+        testRunTitle: ${{ parameters.osName }} $(TestType) Tests for $(TestProjectName) ($(TestTargetFramework))
+      ${{ else }}:
+        testRunTitle: ${{ parameters.osName }} $(TestType) Tests ($(TestTargetFramework))
+
+  - ${{ if eq(parameters.osName, 'Windows') }}:
+    - script: taskkill /im dotnet.exe /f
+      displayName: Terminate dotnet.exe processes on cancellation or failure
+      continueOnError: true
+      condition: or(failed(), canceled(), eq(variables['System.Debug'], 'true'))
 
   - task: PublishPipelineArtifact@1
     displayName: Publish MSBuild Binary Logs
-    condition: or(failed(), eq(variables['System.Debug'], 'true'))
+    condition: or(failed(), canceled(), eq(variables['System.Debug'], 'true'))
     inputs:
       targetPath: $(BinlogDirectory)
       artifact: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+

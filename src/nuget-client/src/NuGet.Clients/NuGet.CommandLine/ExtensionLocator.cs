@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NuGet.Common;
 using NuGet.Configuration;
 
 namespace NuGet.CommandLine
@@ -33,7 +34,12 @@ namespace NuGet.CommandLine
         /// </summary>
         public IEnumerable<string> FindExtensions()
         {
-            var customPaths = ReadPathsFromEnvar(ExtensionsEnvar);
+            return FindExtensions(EnvironmentVariableWrapper.Instance);
+        }
+
+        internal static IEnumerable<string> FindExtensions(IEnvironmentVariableReader environmentVariableReader)
+        {
+            var customPaths = ReadPathsFromEnvar(ExtensionsEnvar, environmentVariableReader);
             return FindAll(
                 ExtensionsDirectoryRoot,
                 customPaths,
@@ -47,7 +53,12 @@ namespace NuGet.CommandLine
         /// </summary>
         public IEnumerable<string> FindCredentialProviders()
         {
-            var customPaths = ReadPathsFromEnvar(CredentialProvidersEnvar);
+            return FindCredentialProviders(EnvironmentVariableWrapper.Instance);
+        }
+
+        internal static IEnumerable<string> FindCredentialProviders(IEnvironmentVariableReader environmentVariableReader)
+        {
+            var customPaths = ReadPathsFromEnvar(CredentialProvidersEnvar, environmentVariableReader);
             return FindAll(
                 CredentialProvidersDirectoryRoot,
                 customPaths,
@@ -109,14 +120,14 @@ namespace NuGet.CommandLine
             return paths;
         }
 
-        private static IEnumerable<string> ReadPathsFromEnvar(string key)
+        private static IEnumerable<string> ReadPathsFromEnvar(string key, IEnvironmentVariableReader environmentVariableReader)
         {
             var result = new List<string>();
-            var paths = Environment.GetEnvironmentVariable(key);
+            var paths = environmentVariableReader.GetEnvironmentVariable(key);
             if (!string.IsNullOrEmpty(paths))
             {
                 result.AddRange(
-                    paths.Split(new[] { ';' },
+                    paths.Split(new[] { Path.PathSeparator },
                     StringSplitOptions.RemoveEmptyEntries));
             }
             return result;

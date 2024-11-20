@@ -18,6 +18,18 @@ namespace NuGet.Build.Tasks
     /// </summary>
     public class GetRestoreSettingsTask : Microsoft.Build.Utilities.Task
     {
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
+
+        public GetRestoreSettingsTask()
+            : this(EnvironmentVariableWrapper.Instance)
+        {
+        }
+
+        internal GetRestoreSettingsTask(IEnvironmentVariableReader environmentVariableReader)
+        {
+            _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
+        }
+
         [Required]
         public string ProjectUniqueName { get; set; }
 
@@ -94,7 +106,7 @@ namespace NuGet.Build.Tasks
         public override bool Execute()
         {
 #if DEBUG
-            var debugRestoreTask = Environment.GetEnvironmentVariable("DEBUG_RESTORE_SETTINGS_TASK");
+            var debugRestoreTask = _environmentVariableReader.GetEnvironmentVariable("DEBUG_RESTORE_SETTINGS_TASK");
             if (!string.IsNullOrEmpty(debugRestoreTask) && debugRestoreTask.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase))
             {
                 System.Diagnostics.Debugger.Launch();
