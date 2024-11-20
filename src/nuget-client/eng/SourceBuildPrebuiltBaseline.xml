@@ -13,7 +13,7 @@
       Repo owners or contributors:
       If you get an error in source-build leg pointing at new prebuilt package being detected,
       resolve the prebuilt issue before merging your PR.
-      If that is not possible, contact the source-build team: @dotnet/source-build-internal.
+      If that is not possible, contact the source-build team: @dotnet/source-build.
     -->
 
     <!--

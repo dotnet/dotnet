@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
     <Description>Integration tests for the more involved NuGet.Protocol functionality, such as plugins.</Description>
+    <TestProjectType>Unit</TestProjectType>
   </PropertyGroup>
 
   <ItemGroup>

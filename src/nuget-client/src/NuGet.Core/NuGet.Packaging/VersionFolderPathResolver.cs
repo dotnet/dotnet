@@ -8,7 +8,7 @@ using NuGet.Versioning;
 namespace NuGet.Packaging
 {
     /// <summary>
-    /// A V3 path resolver.
+    /// A path resolver to calculate package paths for PackageReference (Global Packages Folder) style directory layouts.
     /// </summary>
     public class VersionFolderPathResolver
     {

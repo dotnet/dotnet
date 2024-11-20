@@ -380,7 +380,7 @@ namespace API.Test
 
                 if (project != null)
                 {
-                    if (project.UniqueName.StartsWith(solutionFolderName, StringComparison.OrdinalIgnoreCase))
+                    if (project.Name.StartsWith(solutionFolderName, StringComparison.OrdinalIgnoreCase))
                     {
                         if (solutionFolderParts.Length == level + 1)
                         {

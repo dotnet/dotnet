@@ -114,7 +114,7 @@ namespace NuGet.Build.Tasks
             ProjectStyle.ProjectJson
         };
 
-        public static Task<bool> RestoreAsync(
+        public static Task<List<RestoreSummary>> RestoreAsync(
             DependencyGraphSpec dependencyGraphSpec,
             bool interactive,
             bool recursive,
@@ -131,7 +131,7 @@ namespace NuGet.Build.Tasks
             return RestoreAsync(dependencyGraphSpec, interactive, recursive, noCache, ignoreFailedSources, disableParallel, force, forceEvaluate, hideWarningsAndErrors, restorePC, cleanupAssetsForUnsupportedProjects: false, log, cancellationToken);
         }
 
-        public static async Task<bool> RestoreAsync(
+        public static async Task<List<RestoreSummary>> RestoreAsync(
             DependencyGraphSpec dependencyGraphSpec,
             bool interactive,
             bool recursive,
@@ -289,7 +289,7 @@ namespace NuGet.Build.Tasks
                 {
                     RestoreSummary.Log(log, restoreSummaries);
                 }
-                return restoreSummaries.All(x => x.Success);
+                return restoreSummaries;
             }
             finally
             {

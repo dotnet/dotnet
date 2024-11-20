@@ -8,12 +8,13 @@ using System.Formats.Asn1;
 using System.Security.Cryptography;
 #if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.X509Certificates;
-using Test.Utility.Signing;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+
 #endif
 using Xunit;
 using EssCertId = NuGet.Packaging.Signing.EssCertId;
 #if IS_SIGNING_SUPPORTED
-using TestGeneralName = Test.Utility.Signing.GeneralName;
+using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
 #endif
 
 namespace NuGet.Packaging.Test

@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using NuGet.CommandLine.XPlat;
 using NuGet.Configuration;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -49,7 +50,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Contains("Invalid combination of arguments", log.ShowErrors());
@@ -76,7 +77,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -106,7 +107,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "A fileCert path specified a file that does not exist";
@@ -124,7 +125,7 @@ namespace NuGet.XPlat.FuncTest
             var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
-            var exitCode = Program.MainInternal(args.ToArray(), log);
+            var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
             // Assert
             var expectedError = "Property 'PackageSource' should not be null or empty";
@@ -154,7 +155,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "was not found";
@@ -189,7 +190,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 //Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -229,7 +230,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -270,7 +271,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -311,7 +312,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -354,7 +355,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -386,7 +387,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -424,7 +425,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -454,7 +455,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -490,7 +491,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -524,7 +525,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -556,7 +557,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "does not exist";
@@ -584,7 +585,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -626,7 +627,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -679,7 +680,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -727,7 +728,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "A fileCert path specified a file that does not exist";
@@ -762,7 +763,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "does not exist";
@@ -810,7 +811,7 @@ namespace NuGet.XPlat.FuncTest
                 var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
-                var exitCode = Program.MainInternal(args.ToArray(), log);
+                var exitCode = Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 var expectedError = "was not found";

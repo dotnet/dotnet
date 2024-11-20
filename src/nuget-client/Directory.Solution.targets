@@ -56,11 +56,34 @@
               ItemName="_TestProject" />
     </MSBuild>
 
+    <MSBuild Projects="@(_TestProject)"
+         Targets="DoesProjectSupportTargetFramework"
+         Condition="'$(TargetFramework)' != ''"
+         BuildInParallel="$(BuildInParallel)"
+         RemoveProperties="TargetFramework"
+         Properties="ProjectTargetFramework=$(TargetFramework)">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="_TestProjectForFramework" />
+    </MSBuild>
+
     <ItemGroup>
       <!--
         Add only the specified test type to the TestProject item group.
       -->
-      <TestProject Include="@(_TestProject->WithMetadataValue('TestType', '$(TestType)'))" />
+      <TestProject Include="@(_TestProject->WithMetadataValue('TestType', '$(TestType)'))" Condition="'$(TargetFramework)' == ''" />
+      <TestProject Include="@(_TestProjectForFramework->WithMetadataValue('TestType', '$(TestType)'))" Condition="'$(TargetFramework)' != ''" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(TestProjectName)' != ''">
+        <_FilteredTestProject Include="@(TestProject)" Condition="'%(TestProject.ProjectName)' == '$(TestProjectName)'" />
+    </ItemGroup>
+    
+    <Error Text="The specified test project '$(TestProjectName)' was not found.  Possible projects are &quot;@(TestProject->'%(ProjectName)', ', ')&quot;"
+           Condition="'$(TestProjectName)' != '' And @(_FilteredTestProject->Count()) == 0" />
+
+    <ItemGroup Condition="'$(TestProjectName)' != ''">
+      <TestProject Remove="@(TestProject)" />
+      <TestProject Include="@(_FilteredTestProject)" />
     </ItemGroup>
 
     <!--
@@ -185,11 +208,16 @@
               ItemName="TestAssembly" />
     </MSBuild>
 
+    <Message Text="Only running tests from a single test project: @(TestProject)"
+             Importance="High"
+             Condition="'$(TestProjectName)' != ''" />
+
     <ItemGroup>
       <!--
         Adds the console logger with verbosity and then adds any specified from the command-line.
       -->
       <VSTestLogger Include="console%3Bverbosity=$(VSTestVerbosity);$(VSTestLogger)" />
+      <TestAssembly Remove="@(TestAssembly)" Condition="'$(TestAssembly)' != '' And '%(TestAssembly.Identity)' != '$(TestAssembly)'" />
     </ItemGroup>
 
     <ItemGroup>

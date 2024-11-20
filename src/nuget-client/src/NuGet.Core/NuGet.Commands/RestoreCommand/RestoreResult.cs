@@ -82,6 +82,9 @@ namespace NuGet.Commands
         /// </summary>
         internal PackagesLockFile _newPackagesLockFile { get; }
 
+        /// <inheritdoc cref="RestoreSummary.AuditRan"/>
+        internal bool AuditRan { get; init; }
+
 
         private readonly string _dependencyGraphSpecFilePath;
 

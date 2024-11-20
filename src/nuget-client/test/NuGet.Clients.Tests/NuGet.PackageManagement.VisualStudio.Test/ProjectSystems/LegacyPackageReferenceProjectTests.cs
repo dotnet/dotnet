@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using FluentAssertions;
 using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
@@ -1819,6 +1820,172 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
 
             actualRestoreSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task GetPackageSpecAsync_WithVariousCentralPackageVersions_AppliesFlagsCorreclty()
+        {
+            // Arrange
+            var tfm = NuGetFramework.Parse("net472");
+            var packageA = (PackageId: "packageA", Version: "1.2.3");
+            var packageB = (PackageId: "packageB", Version: "3.4.5");
+            var packageC = (PackageId: "packageC", Version: "6.7.8");
+            var packageD = (PackageId: "packageD", Version: "9.9.9");
+
+            var projectNames = new ProjectNames(
+                        fullName: "projectName",
+                        uniqueName: "projectName",
+                        shortName: "projectName",
+                        customUniqueName: "projectName",
+                        projectId: Guid.NewGuid().ToString());
+
+            var projectServices = new TestProjectSystemServices();
+            projectServices.SetupInstalledPackages(
+                    tfm,
+                    new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange(
+                            packageA.PackageId,
+                            null,
+                            LibraryDependencyTarget.Package),
+                    },
+                    new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange(
+                            packageB.PackageId,
+                            null,
+                            LibraryDependencyTarget.Package),
+                    },
+                    new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange(
+                            packageC.PackageId,
+                            VersionRange.Parse("2.0.0"),
+                            LibraryDependencyTarget.Package),
+                        AutoReferenced = true,
+                    },
+                    new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange(
+                            packageD.PackageId,
+                            null,
+                            LibraryDependencyTarget.Package),
+                        VersionOverride = VersionRange.Parse("3.0.0"),
+                    });
+
+            var vsProjectAdapter = new TestVSProjectAdapter(
+                        "projectPath",
+                        projectNames,
+                        "net472",
+                        restorePackagesWithLockFile: null,
+                        nuGetLockFilePath: null,
+                        restoreLockedMode: false,
+                        projectPackageVersions: new List<(string Id, string Version)>() { packageA, packageB, packageC, packageD },
+                        isCentralPackageVersionOverrideEnabled: "true");
+
+            var legacyPRProject = new LegacyPackageReferenceProject(
+                       vsProjectAdapter,
+                       Guid.NewGuid().ToString(),
+                       projectServices,
+                       _threadingService);
+
+            var settings = NullSettings.Instance;
+            var context = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            var packageSpecs = await legacyPRProject.GetPackageSpecsAsync(context);
+
+            packageSpecs.Should().HaveCount(1);
+            PackageSpec spec = packageSpecs[0];
+            spec.TargetFrameworks.Should().HaveCount(1);
+            TargetFrameworkInformation tfi = spec.TargetFrameworks[0];
+            tfi.FrameworkName.Should().Be(tfm);
+            tfi.CentralPackageVersions.Should().HaveCount(4);
+            tfi.Dependencies.Should().HaveCount(4);
+
+            tfi.Dependencies[0].Name.Should().Be(packageA.PackageId);
+            tfi.Dependencies[0].VersionCentrallyManaged.Should().BeTrue();
+            tfi.Dependencies[0].LibraryRange.VersionRange.Should().Be(VersionRange.Parse(packageA.Version));
+            tfi.Dependencies[0].VersionOverride.Should().BeNull();
+
+            tfi.Dependencies[1].Name.Should().Be(packageB.PackageId);
+            tfi.Dependencies[1].VersionCentrallyManaged.Should().BeTrue();
+            tfi.Dependencies[1].LibraryRange.VersionRange.Should().Be(VersionRange.Parse(packageB.Version));
+            tfi.Dependencies[1].VersionOverride.Should().BeNull();
+
+            tfi.Dependencies[2].Name.Should().Be(packageC.PackageId);
+            tfi.Dependencies[2].VersionCentrallyManaged.Should().BeFalse();
+            tfi.Dependencies[2].LibraryRange.VersionRange.Should().Be(VersionRange.Parse("2.0.0"));
+            tfi.Dependencies[2].AutoReferenced.Should().BeTrue();
+            tfi.Dependencies[2].VersionOverride.Should().BeNull();
+
+            tfi.Dependencies[2].LibraryRange.VersionRange.Should().NotBe(tfi.CentralPackageVersions[packageC.PackageId].VersionRange);
+
+            tfi.Dependencies[3].Name.Should().Be(packageD.PackageId);
+            tfi.Dependencies[3].VersionCentrallyManaged.Should().BeFalse();
+            tfi.Dependencies[3].LibraryRange.VersionRange.Should().Be(VersionRange.Parse("3.0.0"));
+            tfi.Dependencies[3].AutoReferenced.Should().BeFalse();
+            tfi.Dependencies[3].VersionOverride.Should().Be(VersionRange.Parse("3.0.0"));
+        }
+
+        [Fact]
+        public async Task GetPackageSpecAsync_WithDifferentCasingPackageVersionAndPackageReference_CombinesCorrectly()
+        {
+            // Arrange
+            var tfm = NuGetFramework.Parse("net472");
+            var packageA = (PackageId: "packageA", Version: "1.2.3");
+            var packageAUpperCase = (PackageId: "PACKAGEA", Version: "1.2.3");
+
+            var projectNames = new ProjectNames(
+                        fullName: "projectName",
+                        uniqueName: "projectName",
+                        shortName: "projectName",
+                        customUniqueName: "projectName",
+                        projectId: Guid.NewGuid().ToString());
+
+            var projectServices = new TestProjectSystemServices();
+            projectServices.SetupInstalledPackages(
+                    tfm,
+                    new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange(
+                            packageA.PackageId,
+                            null,
+                            LibraryDependencyTarget.Package),
+                    });
+
+            var vsProjectAdapter = new TestVSProjectAdapter(
+                        "projectPath",
+                        projectNames,
+                        "net472",
+                        restorePackagesWithLockFile: null,
+                        nuGetLockFilePath: null,
+                        restoreLockedMode: false,
+                        projectPackageVersions: new List<(string Id, string Version)>() { packageAUpperCase },
+                        isCentralPackageVersionOverrideEnabled: "true");
+
+            var legacyPRProject = new LegacyPackageReferenceProject(
+                       vsProjectAdapter,
+                       Guid.NewGuid().ToString(),
+                       projectServices,
+                       _threadingService);
+
+            var settings = NullSettings.Instance;
+            var context = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            var packageSpecs = await legacyPRProject.GetPackageSpecsAsync(context);
+
+            packageSpecs.Should().HaveCount(1);
+            PackageSpec spec = packageSpecs[0];
+            spec.TargetFrameworks.Should().HaveCount(1);
+            TargetFrameworkInformation tfi = spec.TargetFrameworks[0];
+            tfi.FrameworkName.Should().Be(tfm);
+            tfi.CentralPackageVersions.Should().HaveCount(1);
+            tfi.Dependencies.Should().HaveCount(1);
+
+            tfi.Dependencies[0].Name.Should().Be(packageA.PackageId);
+            tfi.Dependencies[0].VersionCentrallyManaged.Should().BeTrue();
+            tfi.Dependencies[0].LibraryRange.VersionRange.Should().Be(VersionRange.Parse(packageA.Version));
+            tfi.Dependencies[0].VersionOverride.Should().BeNull();
         }
 
         private LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string range)

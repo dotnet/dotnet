@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using EnvDTE;
 using Microsoft;
@@ -64,7 +63,6 @@ namespace NuGet.PackageManagement.VisualStudio
                 // This project system does not implement IVsBuildPropertyStorage, meaning
                 // this call will never return a value, even when the project file specifies
                 // a value for the property.
-                Debug.Fail("The project system does not implement IVsBuildPropertyStorage");
                 return null;
             }
 

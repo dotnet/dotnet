@@ -99,23 +99,24 @@ namespace NuGet.ProjectModel.Test
 
         public static PackageSpec GetSpec()
         {
-            return GetSpec("netcoreapp2.0");
+            return GetSpec(assetTargetFallback: false, "netcoreapp2.0");
         }
 
-        public static PackageSpec GetSpec(params NuGetFramework[] frameworks)
+        public static PackageSpec GetSpec(bool assetTargetFallback, params NuGetFramework[] frameworks)
         {
             var tfis = new List<TargetFrameworkInformation>(
                 frameworks.Select(e => new TargetFrameworkInformation()
                 {
+                    AssetTargetFallback = assetTargetFallback,
                     FrameworkName = e
                 }));
 
             return new PackageSpec(tfis);
         }
 
-        public static PackageSpec GetSpec(params string[] frameworks)
+        public static PackageSpec GetSpec(bool assetTargetFallback, params string[] frameworks)
         {
-            return GetSpec(frameworks.Select(NuGetFramework.Parse).ToArray());
+            return GetSpec(assetTargetFallback: assetTargetFallback, frameworks.Select(NuGetFramework.Parse).ToArray());
         }
     }
 }

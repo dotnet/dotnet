@@ -3,11 +3,11 @@
 
 using System.Formats.Asn1;
 using System.Security.Cryptography;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
-using Test.Utility.Signing;
 using Xunit;
 using AlgorithmIdentifier = NuGet.Packaging.Signing.AlgorithmIdentifier;
-using TestAlgorithmIdentifier = Test.Utility.Signing.AlgorithmIdentifier;
+using TestAlgorithmIdentifier = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.AlgorithmIdentifier;
 
 namespace NuGet.Packaging.Test
 {

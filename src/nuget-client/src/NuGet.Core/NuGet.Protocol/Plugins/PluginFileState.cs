@@ -26,6 +26,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// The file exists but it has either no embedded signature or an invalid embedded signature.
         /// </summary>
+        /// <remarks>No longer used.</remarks>
         InvalidEmbeddedSignature
     }
 }

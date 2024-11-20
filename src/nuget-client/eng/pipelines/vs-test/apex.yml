@@ -26,6 +26,9 @@ parameters:
     default: false
   - name: QBuildSessionId
     type: string
+  - name: GitHubStatusName
+    type: string
+    default: ''
 
 stages:
   - template: stages\visual-studio\build-to-build-upgrade\single-runsettings.yml@DartLabTemplates
@@ -143,3 +146,23 @@ stages:
           displayName: "SetupFunctionalTests.ps1"
           inputs:
             scriptName: "$(Build.StagingDirectory)/scripts/e2etests/SetupFunctionalTests.ps1"
+
+##############################
+## postDeployAndRunTestsStepList
+##############################
+      postDeployAndRunTestsStepList:
+        - task: PowerShell@1
+          displayName: "Test"
+          inputs:
+            scriptType: "inlineScript"
+            inlineScript: |
+              "This is a test"
+        - ${{ if ne(parameters.GitHubStatusName, '') }}:
+          - task: PowerShell@1
+            displayName: "Set result status on GitHub Checks"
+            inputs:
+              scriptType: "inlineScript"
+              inlineScript: |
+                . $(Build.StagingDirectory)\\scripts\\utils\\PostGitCommitStatus.ps1
+                SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "${{ parameters.GitHubStatusName }}"
+            condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

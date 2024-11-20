@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Frameworks;

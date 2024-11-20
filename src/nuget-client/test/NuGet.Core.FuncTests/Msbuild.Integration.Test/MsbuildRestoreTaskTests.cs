@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -1861,6 +1862,95 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
             project.AssetsFile.PackageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue(because: result.AllOutput);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithPackageReferenceAndPackageVersion_RaisesNU1008(bool useStaticGraphRestore)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageX = new SimpleTestPackageContext("x", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
+
+            SimpleTestProjectContext projectA = SimpleTestProjectContext.CreateNETCoreWithSDK("a", pathContext.SolutionRoot, FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
+
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext()
+            {
+                Id = packageX.Id,
+                Version = "1.0.0"
+            });
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var directoryPackagesProps = $@"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include=""{packageX.Id}"" Version=""{packageX.Version}"" />
+    </ItemGroup>
+</Project>";
+            var directoryPackagesPropsPath = Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props");
+            File.WriteAllText(directoryPackagesPropsPath, directoryPackagesProps);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeFalse(because: result.AllOutput);
+            projectA.AssetsFile.LogMessages.Should().HaveCount(1);
+            projectA.AssetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1008);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithDifferentCasingInPackageReferenceAndPackageVersion_RestoresCorrectly(bool useStaticGraphRestore)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageX = new SimpleTestPackageContext("x", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
+
+            SimpleTestProjectContext projectA = SimpleTestProjectContext.CreateNETCoreWithSDK("a", pathContext.SolutionRoot, FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
+
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext()
+            {
+                Id = packageX.Id,
+                Version = null
+            });
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var directoryPackagesProps = $@"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include=""{packageX.Id.ToUpperInvariant()}"" Version=""{packageX.Version}"" />
+    </ItemGroup>
+</Project>";
+            var directoryPackagesPropsPath = Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props");
+            File.WriteAllText(directoryPackagesPropsPath, directoryPackagesProps);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            projectA.AssetsFile.LogMessages.Should().HaveCount(0);
+            projectA.AssetsFile.Targets[0].Libraries.Should().HaveCount(1);
+            projectA.AssetsFile.Targets[0].Libraries[0].Name.Should().Be(packageX.Id);
         }
     }
 }

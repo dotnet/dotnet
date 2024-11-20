@@ -4,13 +4,13 @@
 using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using Test.Utility.Signing;
 using Xunit;
 using MessageImprint = NuGet.Packaging.Signing.MessageImprint;
-using TestAlgorithmIdentifier = Test.Utility.Signing.AlgorithmIdentifier;
-using TestMessageImprint = Test.Utility.Signing.MessageImprint;
+using TestAlgorithmIdentifier = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.AlgorithmIdentifier;
+using TestMessageImprint = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.MessageImprint;
 
 namespace NuGet.Packaging.Test
 {

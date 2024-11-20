@@ -404,11 +404,14 @@ namespace NuGet.PackageManagement.UI.Test
         {
             var versionString = "4.3.0";
             var version = NuGetVersion.Parse(versionString);
-            var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
+            var recommendedPackageSearchMetadata = new RecommendedPackageSearchMetadata(
+            new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
                 Identity = new PackageIdentity("NuGet.Versioning", version),
                 OwnersList = new List<string> { "owner1", "owner2" },
-            };
+            },
+            recommenderVersion: (versionString, versionString));
+
             PackageSource packageSource = new PackageSource("https://nuget.test/v3/index.json");
             Mock<IOwnerDetailsUriService> ownerDetailsUriService = new Mock<IOwnerDetailsUriService>();
             ownerDetailsUriService.Setup(x => x.SupportsKnownOwners).Returns(true);
@@ -422,7 +425,7 @@ namespace NuGet.PackageManagement.UI.Test
                 knownOwner2
             };
 
-            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, isRecommended: true, recommenderVersion: (versionString, versionString), knownOwners);
+            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(recommendedPackageSearchMetadata, knownOwners);
             var searchResult = new SearchResultContextInfo(new[] { packageSearchMetadataContextInfo }, new Dictionary<string, LoadingStatus> { { "Search", LoadingStatus.Loading } }, hasMoreItems: false);
             var serviceBroker = Mock.Of<IServiceBroker>();
             var testVersions = new List<VersionInfoContextInfo>() {

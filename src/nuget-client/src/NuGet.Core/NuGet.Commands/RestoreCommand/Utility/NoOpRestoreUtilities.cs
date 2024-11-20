@@ -273,7 +273,7 @@ namespace NuGet.Commands
                 pathResolvers.Add(new VersionFolderPathResolver(restoreMetadataFallbackFolder));
             }
 
-            var packageFiles = new List<string>(lockFile.Libraries.Count + request.Project.TargetFrameworks.Sum(i => i.DownloadDependencies.Count));
+            var packageFiles = new List<string>(lockFile.Libraries.Count + request.Project.TargetFrameworks.Sum(i => i.DownloadDependencies.Length));
 
             foreach (var library in lockFile.Libraries)
             {

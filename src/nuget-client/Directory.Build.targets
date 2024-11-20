@@ -17,7 +17,9 @@
           Returns="@(TestProject)"
           Condition="'$(TestProject)' == 'true'">
     <ItemGroup>
-      <TestProject Include="$(MSBuildProjectFullPath)" TestType="$(TestProjectType)" />
+      <TestProject Include="$(MSBuildProjectFullPath)"
+                   TestType="$(TestProjectType)"
+                   ProjectName="$(MSBuildProjectName)" />
     </ItemGroup>
   </Target>
 
@@ -29,7 +31,9 @@
           DependsOnTargets="GetProjectTargetFrameworks"
           Returns="@(_SupportedProject)">
     <ItemGroup>
-      <_SupportedProject Include="%(ProjectTargetFramework.ProjectFile)" Condition="'%(Identity)' == '$(ProjectTargetFramework)'" />
+      <_SupportedProject Include="%(ProjectTargetFramework.ProjectFile)"
+                         ProjectName="$(MSBuildProjectName)"
+                         Condition="'%(Identity)' == '$(ProjectTargetFramework)'" />
     </ItemGroup>
   </Target>
   

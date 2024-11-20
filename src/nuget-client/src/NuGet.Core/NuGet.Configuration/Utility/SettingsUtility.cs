@@ -241,12 +241,17 @@ namespace NuGet.Configuration
 
         public static string GetGlobalPackagesFolder(ISettings settings)
         {
+            return GetGlobalPackagesFolder(settings, EnvironmentVariableWrapper.Instance);
+
+        }
+        internal static string GetGlobalPackagesFolder(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (settings == null)
             {
                 throw new ArgumentNullException(nameof(settings));
             }
 
-            var path = Environment.GetEnvironmentVariable(GlobalPackagesFolderEnvironmentKey);
+            var path = environmentVariableReader.GetEnvironmentVariable(GlobalPackagesFolderEnvironmentKey);
             if (string.IsNullOrEmpty(path))
             {
                 // Environment variable for globalPackagesFolder is not set.
@@ -255,7 +260,7 @@ namespace NuGet.Configuration
             else
             {
                 // Verify the path is absolute
-                VerifyPathIsRooted(GlobalPackagesFolderEnvironmentKey, path);
+                VerifyPathIsRooted(GlobalPackagesFolderEnvironmentKey, path!);
             }
 
             if (!string.IsNullOrEmpty(path))
@@ -275,6 +280,11 @@ namespace NuGet.Configuration
         /// </summary>
         public static IReadOnlyList<string> GetFallbackPackageFolders(ISettings settings)
         {
+            return GetFallbackPackageFolders(settings, EnvironmentVariableWrapper.Instance);
+        }
+
+        internal static IReadOnlyList<string> GetFallbackPackageFolders(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (settings == null)
             {
                 throw new ArgumentNullException(nameof(settings));
@@ -282,7 +292,7 @@ namespace NuGet.Configuration
 
             var paths = new List<string>();
 
-            var envValue = Environment.GetEnvironmentVariable(FallbackPackagesFolderEnvironmentKey);
+            var envValue = environmentVariableReader.GetEnvironmentVariable(FallbackPackagesFolderEnvironmentKey);
 
             if (string.IsNullOrEmpty(envValue))
             {
@@ -291,7 +301,7 @@ namespace NuGet.Configuration
             }
             else
             {
-                paths.AddRange(envValue.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+                paths.AddRange(envValue!.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
 
                 // Verify the path is absolute
                 foreach (var path in paths)
@@ -332,16 +342,20 @@ namespace NuGet.Configuration
         /// </summary>
         public static string GetHttpCacheFolder()
         {
-            var path = Environment.GetEnvironmentVariable(HttpCacheEnvironmentKey);
+            return GetHttpCacheFolder(EnvironmentVariableWrapper.Instance);
+        }
+        internal static string GetHttpCacheFolder(IEnvironmentVariableReader environmentVariableReader)
+        {
+            var path = environmentVariableReader.GetEnvironmentVariable(HttpCacheEnvironmentKey);
             if (!string.IsNullOrEmpty(path))
             {
                 // Verify the path is absolute
-                VerifyPathIsRooted(HttpCacheEnvironmentKey, path);
+                VerifyPathIsRooted(HttpCacheEnvironmentKey, path!);
             }
 
             if (!string.IsNullOrEmpty(path))
             {
-                path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                path = path!.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 path = Path.GetFullPath(path);
                 return path;
             }
@@ -354,12 +368,16 @@ namespace NuGet.Configuration
         /// </summary>
         public static string GetPluginsCacheFolder()
         {
-            var path = Environment.GetEnvironmentVariable(PluginsCacheEnvironmentKey);
+            return GetPluginsCacheFolder(EnvironmentVariableWrapper.Instance);
+        }
+        internal static string GetPluginsCacheFolder(IEnvironmentVariableReader environmentVariableReader)
+        {
+            var path = environmentVariableReader.GetEnvironmentVariable(PluginsCacheEnvironmentKey);
             if (!string.IsNullOrEmpty(path))
             {
                 // Verify the path is absolute
-                VerifyPathIsRooted(PluginsCacheEnvironmentKey, path);
-                path = PathUtility.GetPathWithDirectorySeparator(path);
+                VerifyPathIsRooted(PluginsCacheEnvironmentKey, path!);
+                path = PathUtility.GetPathWithDirectorySeparator(path!);
                 path = Path.GetFullPath(path);
                 return path;
             }

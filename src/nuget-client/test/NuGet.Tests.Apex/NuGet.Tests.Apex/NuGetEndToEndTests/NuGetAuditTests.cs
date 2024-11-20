@@ -57,8 +57,6 @@ namespace NuGet.Tests.Apex.NuGetEndToEndTests
 
             testPathContext.Settings.AddSource("auditSource", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
-            EnsureVisualStudioHost();
-
             using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, addNetStandardFeeds: true, simpleTestPathContext: testPathContext);
 
             var errorListService = VisualStudio.Get<ErrorListService>();

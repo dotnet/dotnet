@@ -472,7 +472,9 @@ namespace NuGet.PackageManagement.Test
             SimpleTestPackageContext packageA = new("a", "1.0.0");
             packageA.AddFile("lib/netstandard2.0/a.dll");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
-            packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+
+            var newDependencies = packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+            packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(packageSpec.TargetFrameworks[0]) { Dependencies = newDependencies };
 
             // Act
             IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(
@@ -514,7 +516,9 @@ namespace NuGet.PackageManagement.Test
             var progressReporter = new Mock<IRestoreProgressReporter>();
             SimpleTestPackageContext packageA = new("a", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
-            packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+
+            var newDependencies = packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+            packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(packageSpec.TargetFrameworks[0]) { Dependencies = newDependencies };
 
             // Act
             IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(
@@ -557,7 +561,9 @@ namespace NuGet.PackageManagement.Test
             SimpleTestPackageContext packageA = new("a", "1.0.0");
             packageA.AddFile("build/netstandard2.0/a.targets");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
-            packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+
+            var newDependencies = packageSpec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(new LibraryRange(packageA.Id, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All)));
+            packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(packageSpec.TargetFrameworks[0]) { Dependencies = newDependencies };
 
             // Act
             IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(

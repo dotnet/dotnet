@@ -274,6 +274,64 @@ For example the following are correct:
 
 Many of the guidelines, wherever possible, and potentially some not listed here, are enforced by an [EditorConfig](https://editorconfig.org "EditorConfig homepage") file (`.editorconfig`) at the root of the repository.
 
+### Getting or Setting Environment Variables
+
+Environment variables apply to the entire process and are considered static state which can cause test issues since multiple tests can be running in parallel reading or updating the same variable.
+All components that use environment variables should use the `IEnvironmentVariableReader` interface.
+
+**NOTE:** It's preferred that any projects that are part of the NuGet Client SDK do not use environment variables directly.
+Instead, we prefer method parameters or class properties that developers using our packages can use themselves, and read the environment variable in the code not part of packages that we publish.
+
+An instance type should have a public constructor and an internal constructor which accepts an environment variable provider:
+
+```cs
+public class SomeClass
+{
+    private readonly IEnvironmentVariableReader _environmentVariableProvider;
+
+    public SomeClass()
+        : this(EnvironmentVariableWrapper.Instance)
+    {
+    }
+
+    internal SomeClass(IEnvironmentVariableReader environmentVariableProvider)
+    {
+        _environmentVariableProvider = environmentVariableProvider ?? throw new ArgumentNullException(nameof(environmentVariableProvider));
+    }
+
+    public string DetermineSomeValue()
+    {
+        return _environmentVariableProvider.GetEnvironmentVariable("SomeVariable");
+    }
+}
+```
+
+Public static methods should have an internal overload that accepts an `IEnvironmentVariableReader`:
+```cs
+public static string DetermineSomeValue()
+{
+    return DetermineSomeValue(EnvironmentVariableWrapper.Instance);
+}
+
+internal static string DetermineSomeValue(IEnvironmentVariableReader environmentVariableProvider)
+{
+    return environmentVariableProvider.GetEnvironmentVariable("SomeVariable");
+}
+```
+
+The `EnvironmentVariableWrapper.Instance` is the default implementation of `IEnvironmentVariableReader` which uses `Environment.GetEnvironmentVariable`.
+
+We try to avoid setting environment variables in our product, if setting an environment variable is necessary, please seek an exception and add a `#pragma warning disable RS0030` to your call:
+
+```cs
+public void MyMethod()
+{
+    #pragma warning disable RS0030 // Do not used banned APIs (Give a reason for you exception)
+    Environment.SetEnvironmentVariable("SomeVariable", "SomeValue");
+    #pragma warning restore RS0030 // Do not used banned APIs
+})
+```
+
 ### When to use internals vs. public and when to use InternalsVisibleTo
 
 Usage of internal types and members is allowed. Do consider whether external customers could benefit from having said internal class public.

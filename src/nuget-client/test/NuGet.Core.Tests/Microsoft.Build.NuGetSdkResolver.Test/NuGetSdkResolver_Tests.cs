@@ -9,6 +9,7 @@ using Microsoft.Build.Framework;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+using Test.Utility;
 using Xunit;
 
 namespace Microsoft.Build.NuGetSdkResolver.Test
@@ -236,7 +237,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         {
             var globalJsonReader = new MockGlobalJsonReader(allVersions);
 
-            var sdkResolver = new NuGetSdkResolver(globalJsonReader);
+            var sdkResolver = new NuGetSdkResolver(globalJsonReader, TestEnvironmentVariableReader.EmptyInstance);
 
             var result = sdkResolver.TryGetNuGetVersionForSdk(PackageA, version, context, out var parsedVersion);
 

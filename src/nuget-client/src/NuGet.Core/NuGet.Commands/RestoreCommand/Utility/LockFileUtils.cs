@@ -657,7 +657,7 @@ namespace NuGet.Commands
                 out frameworkReferencesObject))
             {
                 projectLib.FrameworkReferences.AddRange(
-                    ((ISet<FrameworkDependency>)frameworkReferencesObject)
+                    ((IReadOnlyCollection<FrameworkDependency>)frameworkReferencesObject)
                         .Where(e => e.PrivateAssets != FrameworkDependencyFlags.All)
                         .Select(f => f.Name));
             }

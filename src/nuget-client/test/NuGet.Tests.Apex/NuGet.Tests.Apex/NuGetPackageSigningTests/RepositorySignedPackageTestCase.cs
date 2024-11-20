@@ -29,9 +29,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositorySignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -51,9 +48,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UninstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositorySignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -74,9 +68,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UpdateUnsignedToSignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var packageVersion09 = "0.9.0";
             var signedPackage = Fixture.RepositorySignedTestPackage;
 
@@ -99,9 +90,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task WithExpiredCertificate_InstallFromPMCForPC_WarnAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             using (var trustedExpiringTestCert = SigningUtility.GenerateTrustedTestCertificateThatWillExpireSoon())
             {
@@ -130,9 +118,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task Tampered_InstallFromPMCForPC_FailAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositorySignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))

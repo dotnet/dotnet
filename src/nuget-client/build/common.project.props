@@ -12,10 +12,10 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net9.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net10.0</NETCoreTargetFramework>
     <NETCoreLegacyTargetFramework>netcoreapp3.1</NETCoreLegacyTargetFramework>
-    <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net9.0</NETCoreLegacyTargetFramework>
-    <NETCoreLegacyTargetFrameworkForSigning>netcoreapp5.0</NETCoreLegacyTargetFrameworkForSigning>
+    <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework)</NETCoreLegacyTargetFramework>
+    <NETCoreLegacyTargetFrameworkForSigning>net8.0</NETCoreLegacyTargetFrameworkForSigning>
 
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
@@ -69,7 +69,8 @@
     <TreatWarningsAsErrors Condition=" '$(TreatWarningsAsErrors)' == '' ">true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     <!-- Treat all warnings as errors, except on official builds since we don't want new warnings to break servicing branches -->
-    <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors>
+    <!-- MSBuild currently has a bug: https://github.com/dotnet/msbuild/issues/10801 -->
+    <!-- <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors> -->
   </PropertyGroup>
 
   <!-- Default project configuration -->

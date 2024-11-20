@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using NuGet.Test.Utility;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 
 namespace NuGet.CommandLine.Test.Caching
 {
@@ -20,7 +20,7 @@ namespace NuGet.CommandLine.Test.Caching
         /// <summary>
         /// Iteration count. How many times should the same commmand be executed.
         /// </summary>
-        /// 
+        ///
         int IterationCount { get; }
 
         /// <summary>

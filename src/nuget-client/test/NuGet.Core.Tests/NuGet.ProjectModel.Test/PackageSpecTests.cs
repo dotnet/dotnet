@@ -132,7 +132,7 @@ namespace NuGet.ProjectModel.Test
                 libraryRange: new LibraryRange(Guid.NewGuid().ToString(), LibraryDependencyTarget.Package),
                 includeType: LibraryIncludeFlags.None,
                 suppressParent: LibraryIncludeFlags.ContentFiles,
-                noWarn: new List<NuGetLogCode>() { NuGetLogCode.NU1000, NuGetLogCode.NU1001, NuGetLogCode.NU1002 },
+                noWarn: [NuGetLogCode.NU1000, NuGetLogCode.NU1001, NuGetLogCode.NU1002],
                 autoReferenced: false,
                 generatePathProperty: false,
                 versionCentrallyManaged: false,
@@ -275,12 +275,14 @@ namespace NuGet.ProjectModel.Test
 
             public static void ModifyOriginalTargetFrameworkInformationEdit(PackageSpec packageSpec)
             {
-                packageSpec.TargetFrameworks[0].Imports.Add(NuGetFramework.Parse("net461"));
+                var newImports = packageSpec.TargetFrameworks[0].Imports.Add(NuGetFramework.Parse("net461"));
+                packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(packageSpec.TargetFrameworks[0]) { Imports = newImports };
             }
 
             public static void ModifyRestoreMetadata(PackageSpec packageSpec)
             {
-                packageSpec.TargetFrameworks[0].Imports.Add(NuGetFramework.Parse("net461"));
+                var newImports = packageSpec.TargetFrameworks[0].Imports.Add(NuGetFramework.Parse("net461"));
+                packageSpec.TargetFrameworks[0] = new TargetFrameworkInformation(packageSpec.TargetFrameworks[0]) { Imports = newImports };
             }
 
             public static void ModifyVersion(PackageSpec packageSpec)
@@ -714,7 +716,7 @@ namespace NuGet.ProjectModel.Test
                 libraryRange: new LibraryRange("Dependency", LibraryDependencyTarget.Package),
                 includeType: LibraryIncludeFlags.None,
                 suppressParent: LibraryIncludeFlags.ContentFiles,
-                noWarn: new List<NuGetLogCode>() { NuGetLogCode.NU1000, NuGetLogCode.NU1001 },
+                noWarn: [NuGetLogCode.NU1000, NuGetLogCode.NU1001],
                 autoReferenced: false,
                 generatePathProperty: false,
                 versionCentrallyManaged: false,
@@ -723,17 +725,25 @@ namespace NuGet.ProjectModel.Test
                 versionOverride: null);
             var imports = NuGetFramework.Parse("net45"); // This makes no sense in the context of fallback, just for testing :)
 
-            var originalTargetFrameworkInformation = new TargetFrameworkInformation();
-            originalTargetFrameworkInformation.TargetAlias = alias ?? Guid.NewGuid().ToString();
-            originalTargetFrameworkInformation.FrameworkName = framework;
-            originalTargetFrameworkInformation.Dependencies = new List<LibraryDependency>() { dependency };
-            originalTargetFrameworkInformation.AssetTargetFallback = false;
-            originalTargetFrameworkInformation.Imports = new List<NuGetFramework>() { imports };
-            originalTargetFrameworkInformation.DownloadDependencies.Add(new DownloadDependency("X", VersionRange.Parse("1.0.0")));
-            originalTargetFrameworkInformation.FrameworkReferences.Add(new FrameworkDependency("frameworkRef", FrameworkDependencyFlags.All));
-            originalTargetFrameworkInformation.FrameworkReferences.Add(new FrameworkDependency("FrameworkReference", FrameworkDependencyFlags.None));
-            originalTargetFrameworkInformation.RuntimeIdentifierGraphPath = @"path/to/dotnet/sdk/3.0.100/runtime.json";
-            originalTargetFrameworkInformation.CentralPackageVersions.Add("CVD", new CentralPackageVersion("CVD", VersionRange.Parse("1.0.0")));
+            var originalTargetFrameworkInformation = new TargetFrameworkInformation()
+            {
+                AssetTargetFallback = false,
+                CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "CVD", new CentralPackageVersion("CVD", VersionRange.Parse("1.0.0")) },
+                },
+                Dependencies = [dependency],
+                DownloadDependencies = [new DownloadDependency("X", VersionRange.Parse("1.0.0"))],
+                FrameworkName = framework,
+                FrameworkReferences = [
+                    new FrameworkDependency("frameworkRef", FrameworkDependencyFlags.All),
+                    new FrameworkDependency("FrameworkReference", FrameworkDependencyFlags.None)
+                ],
+                Imports = [imports],
+                RuntimeIdentifierGraphPath = @"path/to/dotnet/sdk/3.0.100/runtime.json",
+                TargetAlias = alias ?? Guid.NewGuid().ToString()
+            };
+
             return originalTargetFrameworkInformation;
         }
 
@@ -744,7 +754,7 @@ namespace NuGet.ProjectModel.Test
             var originalTargetFrameworkInformation = CreateTargetFrameworkInformation();
 
             // Act
-            var clone = originalTargetFrameworkInformation.Clone();
+            var clone = new TargetFrameworkInformation(originalTargetFrameworkInformation);
 
             // Assert
             Assert.Equal(originalTargetFrameworkInformation, clone);
@@ -752,68 +762,71 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(originalTargetFrameworkInformation.GetHashCode(), clone.GetHashCode());
 
             // Act
-            originalTargetFrameworkInformation.Imports.Clear();
+            originalTargetFrameworkInformation = new TargetFrameworkInformation(originalTargetFrameworkInformation) { Imports = [] };
 
             // Assert
             Assert.NotEqual(originalTargetFrameworkInformation, clone);
-            Assert.Equal(1, clone.Imports.Count);
+            Assert.Equal(1, clone.Imports.Length);
 
             //Act
-            var cloneToTestDependencies = originalTargetFrameworkInformation.Clone();
+            var cloneToTestDependencies = new TargetFrameworkInformation(originalTargetFrameworkInformation);
 
             // Assert
             Assert.Equal(originalTargetFrameworkInformation, cloneToTestDependencies);
             Assert.False(ReferenceEquals(originalTargetFrameworkInformation, cloneToTestDependencies));
 
             // Act
-            originalTargetFrameworkInformation.Dependencies.Clear();
+            originalTargetFrameworkInformation = new TargetFrameworkInformation(originalTargetFrameworkInformation) { Dependencies = [] };
 
             // Assert
             Assert.NotEqual(originalTargetFrameworkInformation, cloneToTestDependencies);
-            Assert.Equal(1, cloneToTestDependencies.Dependencies.Count);
+            Assert.Equal(1, cloneToTestDependencies.Dependencies.Length);
 
             //Act
-            var cloneToTestDownloadDependencies = originalTargetFrameworkInformation.Clone();
+            var cloneToTestDownloadDependencies = new TargetFrameworkInformation(originalTargetFrameworkInformation);
 
             // Assert
             Assert.Equal(originalTargetFrameworkInformation, cloneToTestDownloadDependencies);
             Assert.False(ReferenceEquals(originalTargetFrameworkInformation, cloneToTestDownloadDependencies));
 
             // Act
-            originalTargetFrameworkInformation.DownloadDependencies.Clear();
+            originalTargetFrameworkInformation = new TargetFrameworkInformation(originalTargetFrameworkInformation) { DownloadDependencies = [] };
 
             //Assert
             Assert.NotEqual(originalTargetFrameworkInformation, cloneToTestDownloadDependencies);
-            Assert.Equal(1, cloneToTestDownloadDependencies.DownloadDependencies.Count);
+            Assert.Equal(1, cloneToTestDownloadDependencies.DownloadDependencies.Length);
 
             //Setup
-            var cloneToTestFrameworkReferenceEquality = originalTargetFrameworkInformation.Clone();
-            cloneToTestFrameworkReferenceEquality.FrameworkReferences.Clear();
-            cloneToTestFrameworkReferenceEquality.FrameworkReferences.Add(new FrameworkDependency("frameworkRef", FrameworkDependencyFlags.All));
-            cloneToTestFrameworkReferenceEquality.FrameworkReferences.Add(new FrameworkDependency("frameworkReference", FrameworkDependencyFlags.None));
+            var cloneToTestFrameworkReferenceEquality = new TargetFrameworkInformation(originalTargetFrameworkInformation)
+            {
+                FrameworkReferences = [
+                    new FrameworkDependency("frameworkRef", FrameworkDependencyFlags.All),
+                    new FrameworkDependency("frameworkReference", FrameworkDependencyFlags.None)
+                ]
+            };
 
             // Assert
             Assert.Equal(originalTargetFrameworkInformation, cloneToTestFrameworkReferenceEquality);
             Assert.False(ReferenceEquals(originalTargetFrameworkInformation, cloneToTestFrameworkReferenceEquality));
 
             //Act
-            var cloneToTestFrameworkReferences = originalTargetFrameworkInformation.Clone();
+            var cloneToTestFrameworkReferences = new TargetFrameworkInformation(originalTargetFrameworkInformation);
 
             // Assert
             Assert.Equal(originalTargetFrameworkInformation, cloneToTestFrameworkReferences);
             Assert.False(ReferenceEquals(originalTargetFrameworkInformation, cloneToTestFrameworkReferences));
 
             // Act
-            originalTargetFrameworkInformation.FrameworkReferences.Clear();
+            originalTargetFrameworkInformation = new TargetFrameworkInformation(originalTargetFrameworkInformation) { FrameworkReferences = [] };
 
             //Assert
             Assert.NotEqual(originalTargetFrameworkInformation, cloneToTestFrameworkReferences);
             Assert.Equal(2, cloneToTestFrameworkReferences.FrameworkReferences.Count);
 
-            var cloneToTestRuntimeIdentifierGraphPath = originalTargetFrameworkInformation.Clone();
+            var cloneToTestRuntimeIdentifierGraphPath = new TargetFrameworkInformation(originalTargetFrameworkInformation);
 
             // Act
-            originalTargetFrameworkInformation.RuntimeIdentifierGraphPath = "new/path/to/runtime.json";
+            originalTargetFrameworkInformation = new TargetFrameworkInformation(originalTargetFrameworkInformation) { RuntimeIdentifierGraphPath = "new/path/to/runtime.json" };
 
             //Assert
             Assert.NotEqual(originalTargetFrameworkInformation, cloneToTestRuntimeIdentifierGraphPath);

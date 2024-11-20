@@ -10,7 +10,7 @@ using Microsoft.Extensions.CommandLineUtils;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
-    internal static class WhyCommand
+    public static class WhyCommand
     {
         internal static void Register(CommandLineApplication app)
         {
@@ -23,6 +23,16 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger)
         {
             Register(rootCommand, getLogger, WhyCommandRunner.ExecuteCommand);
+        }
+
+        /// <summary>
+        /// This is a temporary API until NuGet migrates all our commands to System.CommandLine, at which time I suspect we'll have a NuGetParser.GetNuGetCommand for all the `dotnet nuget *` commands.
+        /// For now, this allows the dotnet CLI to invoke why directly, instead of running NuGet.CommandLine.XPlat as a child process.
+        /// </summary>
+        /// <param name="rootCommand">The <c>dotnet nuget</c> command handler, to add <c>why</c> to.</param>
+        public static void GetWhyCommand(CliCommand rootCommand)
+        {
+            Register(rootCommand, CommandOutputLogger.Create, WhyCommandRunner.ExecuteCommand);
         }
 
         internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, int> action)

@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using NuGet.Test.Utility;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Xunit;
 
 namespace NuGet.CommandLine.Test

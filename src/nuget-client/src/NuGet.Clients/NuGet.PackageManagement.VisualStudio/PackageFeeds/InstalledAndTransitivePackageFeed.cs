@@ -32,10 +32,10 @@ namespace NuGet.PackageManagement.VisualStudio
             IEnumerable<PackageCollectionItem> transitivePkgsWithOrigins = GetTransitivePackagesWithOrigins(_transitivePackages);
 
             // Get the metadata for the latest version of the installed packages and transitive packages
-            IEnumerable<PackageCollectionItem> installedPackagesLatest = GetLatestPackages(_installedPackages);
+            IEnumerable<PackageCollectionItem> latestInstalledPackages = GetLatestPackages(_installedPackages);
             IEnumerable<PackageCollectionItem> latestTransitivePackages = GetLatestPackages(transitivePkgsWithOrigins);
 
-            var installedItems = await GetMetadataForPackagesAsync(PerformLookup(installedPackagesLatest, searchToken), searchToken.SearchFilter.IncludePrerelease, cancellationToken);
+            var installedItems = await GetMetadataForPackagesAsync(PerformLookup(latestInstalledPackages, searchToken), searchToken.SearchFilter.IncludePrerelease, cancellationToken);
             var transitiveItems = await GetMetadataForPackagesAsync(PerformLookup(latestTransitivePackages, searchToken), searchToken.SearchFilter.IncludePrerelease, cancellationToken);
 
             // Get metadata from identity for the rest of the installed and transitive packages
@@ -107,7 +107,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return PackageSearchMetadataBuilder.FromIdentity(identity).Build();
         }
 
-        internal override async Task<IPackageSearchMetadata> GetPackageMetadataAsync<T>(T identity, bool includePrerelease, CancellationToken cancellationToken)
+        internal override async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

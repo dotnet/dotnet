@@ -102,12 +102,12 @@ stages:
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: Functional Tests on Windows (.NET Framework 4.7.2)
+    displayName: Msbuild.Integration.Test on Windows (.NET Framework 4.7.2)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Functional Tests on Windows (.NET Framework 4.7.2)
+        displayName: Msbuild.Integration.Test on Windows (.NET Framework 4.7.2)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -116,16 +116,72 @@ stages:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Functional
         testTargetFramework: net472
-        timeoutInMinutes: 60
+        testProjectName: Msbuild.Integration.Test
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: Functional Tests on Windows (.NET 8.0)
+    displayName: NuGet.CommandLine.FuncTest on Windows (.NET Framework 4.7.2)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Functional Tests on Windows (.NET 8.0)
+        displayName: NuGet.CommandLine.FuncTest on Windows (.NET Framework 4.7.2)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: net472
+        testProjectName: NuGet.CommandLine.FuncTest
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: NuGet.CommandLine.Test on Windows (.NET Framework 4.7.2)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: NuGet.CommandLine.Test on Windows (.NET Framework 4.7.2)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: net472
+        testProjectName: NuGet.CommandLine.Test
+        testVerbosity: normal
+        timeoutInMinutes: 45
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: NuGet.Packaging.FuncTest on Windows (.NET Framework 4.7.2)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: NuGet.Packaging.FuncTest on Windows (.NET Framework 4.7.2)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: net472
+        testProjectName: NuGet.Packaging.FuncTest
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: Dotnet.Integration.Test on Windows (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Dotnet.Integration.Test on Windows (.NET 8.0)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -134,16 +190,17 @@ stages:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Functional
         testTargetFramework: net8.0
-        timeoutInMinutes: 60
+        testProjectName: Dotnet.Integration.Test
+        timeoutInMinutes: 45
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: Functional Tests on Windows (.NET Core 3.1)
+    displayName: NuGet.Packaging.FuncTest on Windows (.NET 8.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Functional Tests on Windows (.NET Core 3.1)
+        displayName: NuGet.Packaging.FuncTest on Windows (.NET 8.0)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -151,8 +208,8 @@ stages:
         ${{ else }}:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Functional
-        testTargetFramework: netcoreapp3.1
-        timeoutInMinutes: 60
+        testTargetFramework: net8.0
+        testProjectName: NuGet.Packaging.FuncTest
 
 - ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
   - stage:
@@ -192,20 +249,7 @@ stages:
         vmImage: ubuntu-latest
         testType: Functional
         testTargetFramework: net8.0
-        timeoutInMinutes: 60
-
-- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
-  - stage:
-    displayName: Functional Tests on Linux (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Functional Tests on Linux (.NET Core 3.1)
-        osName: Linux
-        vmImage: ubuntu-latest
-        testType: Functional
-        testTargetFramework: netcoreapp3.1
+        timeoutInMinutes: 30
 
 - ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
   - stage:
@@ -245,20 +289,7 @@ stages:
         vmImage: macos-latest
         testType: Functional
         testTargetFramework: net8.0
-        timeoutInMinutes: 60
-
-- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
-  - stage:
-    displayName: Functional Tests on MacOS (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Functional Tests on MacOS (.NET Core 3.1)
-        osName: MacOS
-        vmImage: macos-latest
-        testType: Functional
-        testTargetFramework: netcoreapp3.1
+        timeoutInMinutes: 30
 
 - ${{ if or(eq(parameters.RunSourceBuild, true), eq(parameters.RunStaticAnalysis, true)) }}:
   - stage:

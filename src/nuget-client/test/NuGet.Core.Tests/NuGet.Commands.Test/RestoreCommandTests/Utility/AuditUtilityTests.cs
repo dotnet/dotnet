@@ -120,7 +120,7 @@ public class AuditUtilityTests
         var result = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
         // Assert
-        vulnProvider.Mock.Verify(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()), Times.Never);
+        vulnProvider.Mock.Verify(p => p.GetVulnerabilityInformationAsync(CancellationToken.None), Times.Never);
     }
 
     [Fact]
@@ -625,7 +625,7 @@ public class AuditUtilityTests
             SourceName = sourceName ?? Guid.NewGuid().ToString();
 
             Mock = new Mock<IVulnerabilityInformationProvider>();
-            Mock.Setup(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(p => p.GetVulnerabilityInformationAsync(CancellationToken.None))
                 .Returns(CreateVulnerabilityInformationResult);
             Mock.SetupGet(p => p.IsAuditSource).Returns(IsAuditSource);
             Mock.SetupGet(p => p.SourceName).Returns(SourceName);

@@ -78,12 +78,13 @@ namespace NuGet.Commands.Restore.Utility
             }
         }
 
-        public async Task CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
+        public async Task<bool> CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
             // Performance: Early exit if restore graph does not contain any packages.
             if (!HasPackages())
             {
-                return;
+                // No packages means we've validated there are none with known vulnerabilities.
+                return true;
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -94,10 +95,11 @@ namespace NuGet.Commands.Restore.Utility
             // Performance: Early exit if there's no vulnerability data to check packages against.
             if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData))
             {
-                return;
+                return false;
             }
 
             CheckPackageVulnerabilities(allVulnerabilityData);
+            return true;
 
             bool HasPackages()
             {

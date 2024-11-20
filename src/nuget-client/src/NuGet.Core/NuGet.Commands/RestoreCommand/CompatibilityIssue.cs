@@ -288,13 +288,13 @@ namespace NuGet.Commands
                     foreach (var framework in AvailableFrameworks.Select(FormatFramework)
                         .OrderBy(s => s, StringComparer.CurrentCultureIgnoreCase))
                     {
-                        sb.Append(Environment.NewLine).Append($"  - {framework}");
+                        sb.Append(Environment.NewLine).Append("  - " + framework);
                     }
                 }
                 else
                 {
                     // Write single frameworks on the same line.
-                    sb.Append($" {FormatFramework(AvailableFrameworks.Single())}");
+                    sb.Append(" " + FormatFramework(AvailableFrameworks.Single()));
                 }
             }
             else if (AvailableFrameworkRuntimePairs.Any())
@@ -307,14 +307,14 @@ namespace NuGet.Commands
                     foreach (var framework in AvailableFrameworkRuntimePairs.Select(e => FormatFramework(e.Framework, e.RuntimeIdentifier))
                         .OrderBy(s => s, StringComparer.CurrentCultureIgnoreCase))
                     {
-                        sb.Append(Environment.NewLine).Append($"  - {framework}");
+                        sb.Append(Environment.NewLine).Append("  - " + framework);
                     }
                 }
                 else
                 {
                     // Write single frameworks on the same line.
                     var frp = AvailableFrameworkRuntimePairs.Single();
-                    sb.Append($" {FormatFramework(frp.Framework, frp.RuntimeIdentifier)}");
+                    sb.Append(" " + FormatFramework(frp.Framework, frp.RuntimeIdentifier));
                 }
             }
             else

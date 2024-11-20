@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -438,7 +439,7 @@ namespace NuGet.ProjectModel
             writer.WriteObjectEnd();
         }
 
-        private static void SetDependencies(IObjectWriter writer, IList<LibraryDependency> libraryDependencies)
+        private static void SetDependencies(IObjectWriter writer, IEnumerable<LibraryDependency> libraryDependencies)
         {
             SetDependencies(writer, "dependencies", libraryDependencies.Where(dependency => dependency.LibraryRange.TypeConstraint != LibraryDependencyTarget.Reference));
             SetDependencies(writer, "frameworkAssemblies", libraryDependencies.Where(dependency => dependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.Reference));
@@ -510,7 +511,7 @@ namespace NuGet.ProjectModel
 
                     SetValueIfTrue(writer, "autoReferenced", dependency.AutoReferenced);
 
-                    if (dependency.NoWarn.Count > 0)
+                    if (dependency.NoWarn.Length > 0)
                     {
                         SetArrayValue(writer, "noWarn", dependency
                             .NoWarn
@@ -573,9 +574,9 @@ namespace NuGet.ProjectModel
             writer.WriteObjectEnd();
         }
 
-        private static void SetImports(IObjectWriter writer, IList<NuGetFramework> frameworks)
+        private static void SetImports(IObjectWriter writer, ImmutableArray<NuGetFramework> frameworks)
         {
-            if (frameworks?.Count > 0)
+            if (frameworks.Length > 0)
             {
                 var imports = frameworks.Select(framework => framework.GetShortFolderName());
 
@@ -583,9 +584,9 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private static void SetDownloadDependencies(IObjectWriter writer, IList<DownloadDependency> downloadDependencies)
+        private static void SetDownloadDependencies(IObjectWriter writer, ImmutableArray<DownloadDependency> downloadDependencies)
         {
-            if (!(downloadDependencies.Count > 0))
+            if (downloadDependencies.Length == 0)
             {
                 return;
             }
@@ -616,7 +617,7 @@ namespace NuGet.ProjectModel
                     writer.WriteObjectStart(framework.FrameworkName.GetShortFolderName());
                     SetValueIfNotNull(writer, "targetAlias", framework.TargetAlias);
                     SetDependencies(writer, framework.Dependencies);
-                    SetCentralDependencies(writer, framework.CentralPackageVersions.Values, hashing);
+                    SetCentralDependencies(writer, framework.CentralPackageVersions.Count, framework.CentralPackageVersions.Values, hashing);
                     SetImports(writer, framework.Imports);
                     SetValueIfTrue(writer, "assetTargetFallback", framework.AssetTargetFallback);
                     SetValueIfNotNull(writer, "secondaryFramework",
@@ -648,7 +649,7 @@ namespace NuGet.ProjectModel
             return nuGetFramework;
         }
 
-        private static void SetFrameworkReferences(IObjectWriter writer, ISet<FrameworkDependency> frameworkReferences)
+        private static void SetFrameworkReferences(IObjectWriter writer, IReadOnlyCollection<FrameworkDependency> frameworkReferences)
         {
             if (frameworkReferences?.Count > 0)
             {
@@ -664,9 +665,9 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private static void SetCentralDependencies(IObjectWriter writer, ICollection<CentralPackageVersion> centralPackageVersions, bool hashing)
+        private static void SetCentralDependencies(IObjectWriter writer, int count, IEnumerable<CentralPackageVersion> centralPackageVersions, bool hashing)
         {
-            if (!(centralPackageVersions.Count > 0))
+            if (count == 0)
             {
                 return;
             }

@@ -391,7 +391,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             using NuGetPackageSearchService searchService = SetupSearchService();
 
             // Act
-            (IPackageFeed main, IPackageFeed recommender) = await searchService.CreatePackageFeedAsync(
+            IPackageFeed packageFeed = await searchService.CreatePackageFeedAsync(
                 projectContextInfos: _projects,
                 targetFrameworks: new List<string>() { "net45" },
                 itemFilter: itemFilter,
@@ -401,8 +401,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 cancellationToken: CancellationToken.None);
 
             // Assert
-            Assert.IsType(expectedFeedType, main);
-            Assert.Null(recommender);
+            Assert.IsType(expectedFeedType, packageFeed);
+            Assert.IsNotType<RecommenderPackageFeed>(packageFeed);
         }
 
         private NuGetPackageSearchService SetupSearchService()

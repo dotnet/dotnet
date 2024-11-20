@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
+    <PackProject>true</PackProject>
+    <Shipping>true</Shipping>
+    <IsPackable>true</IsPackable>
+    <SkipShared>true</SkipShared>
+    <TestProject>false</TestProject>
+    <Description>Intended for internal NuGet testing only, for signed package validation.</Description>
+    <SkipAnalyzers>true</SkipAnalyzers>
+    <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+    <SignWithNuGetKey>true</SignWithNuGetKey>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="compiler\resources\*" />
+    <None Remove="compiler\resources\*" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
+    <Reference Include="System.Security" />
+    <PackageReference Include="System.Formats.Asn1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' ">
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NuGet.Common
@@ -89,28 +91,39 @@ namespace NuGet.Common
         /// </summary>
         /// <param name="s">A comma or semicolon delimited list of NuGet log codes.</param>
         /// <returns>An <see cref="IList{T}" /> containing the <see cref="NuGetLogCode" /> values that were successfully parsed from the specified string.</returns>
-        public static IList<NuGetLogCode> GetNuGetLogCodes(string s)
+        public static ImmutableArray<NuGetLogCode> GetNuGetLogCodes(string s)
         {
             // The Split() method already checks for an empty string and returns Array.Empty<string>().
             string[] split = MSBuildStringUtility.Split(s, ';', ',');
 
             if (split.Length == 0)
             {
-                return Array.Empty<NuGetLogCode>();
+                return [];
             }
 
-            List<NuGetLogCode> logCodes = new List<NuGetLogCode>(capacity: split.Length);
+            NuGetLogCode[]? logCodes = null;
+            int index = 0;
 
             for (int i = 0; i < split.Length; i++)
             {
                 if (split[i].StartsWith("NU", StringComparison.OrdinalIgnoreCase) &&
                     Enum.TryParse(value: split[i], ignoreCase: true, out NuGetLogCode logCode))
                 {
-                    logCodes.Add(logCode);
+                    logCodes ??= ArrayPool<NuGetLogCode>.Shared.Rent(split.Length);
+
+                    logCodes[index++] = logCode;
                 }
             }
 
-            return logCodes;
+            if (logCodes == null)
+            {
+                return [];
+            }
+
+            var retVal = logCodes.AsSpan(0, index).ToImmutableArray();
+            ArrayPool<NuGetLogCode>.Shared.Return(logCodes);
+
+            return retVal;
         }
 
         /// <summary>
@@ -137,37 +150,6 @@ namespace NuGet.Common
             }
 
             return value.Replace(',', ';');
-        }
-
-        /// <summary>
-        /// Return empty list of NuGetLogCode if all lists of NuGetLogCode are not the same.
-        /// </summary>
-        public static IEnumerable<NuGetLogCode> GetDistinctNuGetLogCodesOrDefault(IEnumerable<IEnumerable<NuGetLogCode>?> nugetLogCodeLists)
-        {
-            if (nugetLogCodeLists.Any())
-            {
-                var result = Enumerable.Empty<NuGetLogCode>();
-                var first = true;
-
-                foreach (IEnumerable<NuGetLogCode>? logCodeList in nugetLogCodeLists)
-                {
-                    // If this is first item, assign it to result
-                    if (first)
-                    {
-                        result = logCodeList;
-                        first = false;
-                    }
-                    // Compare the rest items to the first one.
-                    else if (result == null || logCodeList == null || result.Count() != logCodeList.Count() || !result.All(logCodeList.Contains))
-                    {
-                        return Enumerable.Empty<NuGetLogCode>();
-                    }
-                }
-
-                return result ?? Enumerable.Empty<NuGetLogCode>();
-            }
-
-            return Enumerable.Empty<NuGetLogCode>();
         }
     }
 }

@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Moq;
 using NuGet.CommandLine.Commands;
 using NuGet.CommandLine.Test;
@@ -136,7 +138,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
         [InlineData("notSupportedAction")]
         public void TrustedSignersCommand_Failure_InvalidArguments_HelpMessage(string args)
         {
-            // Arrange & Act 
+            // Arrange & Act
             var result = CommandRunner.Run(
                 _nugetExePath,
                 Directory.GetCurrentDirectory(),

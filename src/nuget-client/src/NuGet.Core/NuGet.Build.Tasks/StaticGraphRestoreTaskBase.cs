@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using NuGet.Common;
 
 namespace NuGet.Build.Tasks
 {
@@ -22,10 +23,11 @@ namespace NuGet.Build.Tasks
     public abstract class StaticGraphRestoreTaskBase : Microsoft.Build.Utilities.Task, ICancelableTask, IDisposable
     {
         internal readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-        protected StaticGraphRestoreTaskBase()
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        protected StaticGraphRestoreTaskBase(IEnvironmentVariableReader environmentVariableReader)
             : base(Strings.ResourceManager)
         {
+            _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
         }
 
         /// <summary>
@@ -95,7 +97,7 @@ namespace NuGet.Build.Tasks
         {
             try
             {
-                string debugEnvironmentVariable = Environment.GetEnvironmentVariable(DebugEnvironmentVariableName);
+                string debugEnvironmentVariable = _environmentVariableReader.GetEnvironmentVariable(DebugEnvironmentVariableName);
                 if (string.Equals(debugEnvironmentVariable, bool.TrueString, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(debugEnvironmentVariable, "1", StringComparison.OrdinalIgnoreCase))
                 {

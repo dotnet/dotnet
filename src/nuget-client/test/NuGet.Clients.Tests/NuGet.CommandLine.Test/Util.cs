@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Configuration;

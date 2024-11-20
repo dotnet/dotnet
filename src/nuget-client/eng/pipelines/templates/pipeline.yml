@@ -145,6 +145,8 @@ stages:
         condition: "succeeded()"
         targetPath: $(MicroBuildOutputFolderOverride)\MicroBuild\Output
         artifactName: MicroBuildOutputs
+        # need to make daily Apex test pipeline build its own bootstrapper, and remove this from official pipeline
+        codeSignValidationEnabled: false
 
       - output: artifactsDrop
         displayName: 'Publish the .runsettings files to artifact services'
@@ -155,6 +157,8 @@ stages:
         toLowerCase: false
         usePat: true
         dropMetadataContainerName: 'DropMetadata-RunSettings'
+        # need to make daily Apex test pipeline build its own tests, and remove this from official pipeline
+        codeSignValidationEnabled: false
 
       - output: artifactsDrop
         displayName: 'OptProfV2:  publish profiling inputs to artifact services'
@@ -176,6 +180,7 @@ stages:
         condition: "or(eq(variables['OverridePublishLocalizationArtifact'], 'true'), and(succeededOrFailed(), eq(variables['IsOfficialBuild'], 'true')))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\localizationArtifacts\\"
         artifactName: "localizationArtifacts"
+        codeSignValidationEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'

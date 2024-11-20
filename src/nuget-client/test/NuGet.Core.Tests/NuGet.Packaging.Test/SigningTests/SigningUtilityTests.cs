@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 #endif
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 #if IS_SIGNING_SUPPORTED
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +20,9 @@ using Moq;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
+#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
+#endif
 using Xunit;
 
 namespace NuGet.Packaging.Test

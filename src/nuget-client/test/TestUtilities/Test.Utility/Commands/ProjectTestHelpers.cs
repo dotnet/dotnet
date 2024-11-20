@@ -147,13 +147,15 @@ namespace NuGet.Commands.Test
             };
 
             // Update the Target Alias.
-            foreach (var framework in updated.TargetFrameworks)
+            for (int i = 0; i < updated.TargetFrameworks.Count; i++)
             {
+                var framework = updated.TargetFrameworks[i];
                 if (string.IsNullOrEmpty(framework.TargetAlias))
                 {
-                    framework.TargetAlias = framework.FrameworkName.GetShortFolderName();
+                    updated.TargetFrameworks[i] = new TargetFrameworkInformation(framework) { TargetAlias = framework.FrameworkName.GetShortFolderName() };
                 }
             }
+
             foreach (var framework in updated.TargetFrameworks)
             {
                 updated.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName) { TargetAlias = framework.TargetAlias });
@@ -274,7 +276,7 @@ namespace NuGet.Commands.Test
 
         public static PackageSpec GetPackageSpec(ISettings settings, string projectName, string rootPath, string framework, string dependencyName, bool useAssetTargetFallback = false, string assetTargetFallbackFrameworks = "", bool asAssetTargetFallback = true)
         {
-            var packageSpec = GetPackageSpec(projectName, rootPath, framework, dependencyName, useAssetTargetFallback, assetTargetFallbackFrameworks, asAssetTargetFallback);
+            var packageSpec = GetPackageSpec(projectName, rootPath, framework, dependencyName, "1.0.0", useAssetTargetFallback, assetTargetFallbackFrameworks, asAssetTargetFallback);
             return packageSpec.WithSettingsBasedRestoreMetadata(settings);
         }
 
@@ -290,7 +292,7 @@ namespace NuGet.Commands.Test
             return packageSpec;
         }
 
-        public static PackageSpec GetPackageSpec(string projectName, string rootPath, string framework, string dependencyName, bool useAssetTargetFallback = false, string assetTargetFallbackFrameworks = "", bool asAssetTargetFallback = true)
+        public static PackageSpec GetPackageSpec(string projectName, string rootPath, string framework, string dependencyName, string dependencyVersion = "1.0.0", bool useAssetTargetFallback = false, string assetTargetFallbackFrameworks = "", bool asAssetTargetFallback = true)
         {
             var actualAssetTargetFallback = GetFallbackString(useAssetTargetFallback, assetTargetFallbackFrameworks, asAssetTargetFallback);
 
@@ -299,14 +301,14 @@ namespace NuGet.Commands.Test
                     ""frameworks"": {
                         ""TARGET_FRAMEWORK"": {
                             ""dependencies"": {
-                                ""DEPENDENCY_NAME"" : ""1.0.0""
+                                ""DEPENDENCY_NAME"" : ""VERSION""
                             }
                             ASSET_TARGET_FALLBACK
                         }
                     }
                 }";
 
-            var spec = referenceSpec.Replace("TARGET_FRAMEWORK", framework).Replace("DEPENDENCY_NAME", dependencyName).Replace("ASSET_TARGET_FALLBACK", actualAssetTargetFallback);
+            var spec = referenceSpec.Replace("TARGET_FRAMEWORK", framework).Replace("DEPENDENCY_NAME", dependencyName).Replace("VERSION", dependencyVersion).Replace("ASSET_TARGET_FALLBACK", actualAssetTargetFallback);
             return GetPackageSpecWithProjectNameAndSpec(projectName, rootPath, spec);
         }
 

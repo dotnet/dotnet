@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
@@ -149,7 +150,7 @@ namespace NuGet.Protocol
                             },
                             async httpSourceResult =>
                             {
-                                var result = await ConsumeServiceIndexStreamAsync(httpSourceResult.Stream, utcNow, token);
+                                var result = await ConsumeServiceIndexStreamAsync(httpSourceResult.Stream, utcNow, source.PackageSource, token);
 
                                 return result;
                             },
@@ -194,7 +195,7 @@ namespace NuGet.Protocol
             return null;
         }
 
-        private async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamAsync(Stream stream, DateTime utcNow, CancellationToken token)
+        private static async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
         {
             // Parse the JSON
             JObject json = await stream.AsJObjectAsync(token);
@@ -209,7 +210,7 @@ namespace NuGet.Protocol
                 if (SemanticVersion.TryParse((string)versionToken, out version) &&
                     version.Major == 3)
                 {
-                    return new ServiceIndexResourceV3(json, utcNow);
+                    return new ServiceIndexResourceV3(json, utcNow, source);
                 }
                 else
                 {

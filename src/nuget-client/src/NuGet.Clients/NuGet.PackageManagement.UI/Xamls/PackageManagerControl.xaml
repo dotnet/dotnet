@@ -83,8 +83,7 @@
           <Grid.ColumnDefinitions>
             <ColumnDefinition
               x:Name="_leftSideGridColumn"
-              Width="65*"
-              MinWidth="300">
+              Width="67*">
               <ColumnDefinition.MaxWidth>
                 <MultiBinding Converter="{StaticResource SubstractionConverter}">
                   <Binding Path="ActualWidth" ElementName="_root" />
@@ -93,17 +92,17 @@
                 </MultiBinding>
               </ColumnDefinition.MaxWidth>
             </ColumnDefinition>
+            <ColumnDefinition Width="224*"/>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition
               x:Name="_rightSideGridColumn"
-              Width="35*"
-              MinWidth="382" />
+              Width="157*"/>
           </Grid.ColumnDefinitions>
 
           <!-- left side -->
           <Grid
             Name="_leftSide"
-            Grid.Column="0">
+            Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
               <RowDefinition Height="*" />
               <RowDefinition Height="Auto" />
@@ -145,11 +144,9 @@
 
           <GridSplitter
             x:Name="_gridSplitter"
-            Grid.Column="1"
+            Grid.Column="2"
             Width="4"
-            Grid.RowSpan="2"
             HorizontalAlignment="Center"
-            VerticalAlignment="Stretch"
             AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_ThumbName}"
             AutomationProperties.HelpText="{x:Static nuget:Resources.Accessibility_ThumbHelp}"
             Background="{DynamicResource {x:Static nuget:Brushes.SplitterBackgroundKey}}"
@@ -161,7 +158,8 @@
             x:Name="_packageDetail"
             AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackagesDetails}"
             Grid.Column="2"
-            Grid.RowSpan="2" />
+            Grid.ColumnSpan="2"
+            Margin="4,0,0,0" />
         </Grid>
       </Border>
     </DockPanel>

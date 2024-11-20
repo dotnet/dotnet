@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -889,7 +891,7 @@ namespace NuGet.Build.Tasks.Pack
                     //   https://github.com/NuGet/Home/issues/3891
                     //
                     // For now, assume the project reference is a package dependency.
-                    var projectDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                    var projectDependency = new LibraryDependency()
                     {
                         LibraryRange = new LibraryRange(
                             targetLibrary.Name,
@@ -910,85 +912,143 @@ namespace NuGet.Build.Tasks.Pack
             ISet<NuGetFramework> frameworkWithSuppressedDependencies)
         {
             var packageSpecificNoWarnProperties = new Dictionary<string, HashSet<(NuGetLogCode, NuGetFramework)>>(StringComparer.OrdinalIgnoreCase);
+            var frameworks = assetsFile.PackageSpec.TargetFrameworks;
 
             // From the package spec, we know the direct package dependencies of this project.
-            foreach (TargetFrameworkInformation framework in assetsFile.PackageSpec.TargetFrameworks)
+            for (var i = 0; i < frameworks.Count; i++)
             {
+                var framework = frameworks[i];
+
                 if (frameworkWithSuppressedDependencies.Contains(framework.FrameworkName))
                 {
                     continue;
                 }
 
-                IEnumerable<LibraryDependency> centralTransitiveDependencies = assetsFile
-                    .CentralTransitiveDependencyGroups
-                    .Where(centralTDG => centralTDG.FrameworkName.Equals(framework.FrameworkName.ToString(), StringComparison.OrdinalIgnoreCase))
-                    .SelectMany(centralTDG => centralTDG.TransitiveDependencies);
+                // First, add each of the generic package dependencies
+                AddDependencies(assetsFile.PackageSpec.Dependencies, dependenciesByFramework, framework, assetsFile, packageSpecificNoWarnProperties);
 
-                // First, add each of the generic package dependencies to the framework-specific list.
-                var packageDependencies = assetsFile
-                    .PackageSpec
-                    .Dependencies
-                    .Concat(framework.Dependencies)
-                    .Concat(centralTransitiveDependencies);
+                // Next, the framework-specific dependencies
+                var newFrameworkDependencies = AddDependencies(framework.Dependencies, dependenciesByFramework, framework, assetsFile, packageSpecificNoWarnProperties);
+                framework = new TargetFrameworkInformation(framework) { Dependencies = newFrameworkDependencies };
 
-                HashSet<LibraryDependency> dependencies;
-                if (!dependenciesByFramework.TryGetValue(framework.FrameworkName, out dependencies))
+                // Next, the central transitive dependencies
+                foreach (var centralTDG in assetsFile.CentralTransitiveDependencyGroups)
                 {
-                    dependencies = new HashSet<LibraryDependency>();
-                    dependenciesByFramework[framework.FrameworkName] = dependencies;
+                    if (centralTDG.FrameworkName.Equals(framework.FrameworkName.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddDependencies(centralTDG.TransitiveDependencies.ToList(), dependenciesByFramework, framework, assetsFile, packageSpecificNoWarnProperties);
+                    }
                 }
 
-                // Add each package dependency.
-                foreach (var packageDependency in packageDependencies)
-                {
-                    // If we have a floating package dependency like 1.2.3-xyz-*, we
-                    // use the version of the package that restore resolved it to.
-                    if (packageDependency.LibraryRange.VersionRange.IsFloating)
-                    {
-                        var lockFileTarget = assetsFile.GetTarget(framework.FrameworkName, runtimeIdentifier: null);
-                        var package = lockFileTarget.Libraries.First(
-                            library =>
-                                string.Equals(library.Name, packageDependency.Name, StringComparison.OrdinalIgnoreCase));
-                        if (package != null)
-                        {
-                            if (packageDependency.LibraryRange.VersionRange.HasUpperBound)
-                            {
-                                packageDependency.LibraryRange.VersionRange = new VersionRange(
-                                    minVersion: package.Version,
-                                    includeMinVersion: packageDependency.LibraryRange.VersionRange.IsMinInclusive,
-                                    maxVersion: packageDependency.LibraryRange.VersionRange.MaxVersion,
-                                    includeMaxVersion: packageDependency.LibraryRange.VersionRange.IsMaxInclusive);
-                            }
-                            else
-                            {
-                                packageDependency.LibraryRange.VersionRange = new VersionRange(
-                                    minVersion: package.Version,
-                                    includeMinVersion: packageDependency.LibraryRange.VersionRange.IsMinInclusive);
-                            }
-                        }
-                    }
-
-                    if (packageDependency.NoWarn.Count > 0)
-                    {
-                        HashSet<(NuGetLogCode, NuGetFramework)> nowarnProperties = null;
-
-                        if (!packageSpecificNoWarnProperties.TryGetValue(packageDependency.Name, out nowarnProperties))
-                        {
-                            nowarnProperties = new HashSet<(NuGetLogCode, NuGetFramework)>();
-                        }
-
-                        nowarnProperties.AddRange(packageDependency.NoWarn.Select(n => (n, framework.FrameworkName)));
-                        packageSpecificNoWarnProperties[packageDependency.Name] = nowarnProperties;
-                    }
-
-                    PackCommandRunner.AddLibraryDependency(packageDependency, dependencies);
-                }
+                frameworks[i] = framework;
             }
 
             if (packageSpecificNoWarnProperties.Keys.Count > 0)
             {
                 _packageSpecificWarningProperties = PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(packageSpecificNoWarnProperties);
             }
+        }
+
+        private static void AddDependencies(
+            IList<LibraryDependency> packageDependencies,
+            Dictionary<NuGetFramework, HashSet<LibraryDependency>> dependenciesByFramework,
+            TargetFrameworkInformation framework,
+            LockFile assetsFile,
+            Dictionary<string, HashSet<(NuGetLogCode, NuGetFramework)>> packageSpecificNoWarnProperties)
+        {
+            HashSet<LibraryDependency> dependencies;
+            if (!dependenciesByFramework.TryGetValue(framework.FrameworkName, out dependencies))
+            {
+                dependencies = new HashSet<LibraryDependency>();
+                dependenciesByFramework[framework.FrameworkName] = dependencies;
+            }
+
+            // Add each package dependency.
+            for (int i = 0; i < packageDependencies.Count; i++)
+            {
+                var updatedPackageDependency = GetUpdatedPackageDependency(packageDependencies[i], assetsFile, framework, packageSpecificNoWarnProperties, dependencies);
+                packageDependencies[i] = updatedPackageDependency;
+            }
+        }
+
+        private static ImmutableArray<LibraryDependency> AddDependencies(
+            ImmutableArray<LibraryDependency> packageDependencies,
+            Dictionary<NuGetFramework, HashSet<LibraryDependency>> dependenciesByFramework,
+            TargetFrameworkInformation framework,
+            LockFile assetsFile,
+            Dictionary<string, HashSet<(NuGetLogCode, NuGetFramework)>> packageSpecificNoWarnProperties)
+        {
+            HashSet<LibraryDependency> dependencies;
+            if (!dependenciesByFramework.TryGetValue(framework.FrameworkName, out dependencies))
+            {
+                dependencies = new HashSet<LibraryDependency>();
+                dependenciesByFramework[framework.FrameworkName] = dependencies;
+            }
+
+            LibraryDependency[] updatedDependencies = new LibraryDependency[packageDependencies.Length];
+
+            // Add each package dependency.
+            for (var i = 0; i < packageDependencies.Length; i++)
+            {
+                var updatedPackageDependency = GetUpdatedPackageDependency(packageDependencies[i], assetsFile, framework, packageSpecificNoWarnProperties, dependencies);
+                updatedDependencies[i] = updatedPackageDependency;
+            }
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(updatedDependencies);
+        }
+
+        private static LibraryDependency GetUpdatedPackageDependency(
+            LibraryDependency packageDependency,
+            LockFile assetsFile,
+            TargetFrameworkInformation framework,
+            Dictionary<string, HashSet<(NuGetLogCode, NuGetFramework)>> packageSpecificNoWarnProperties,
+            HashSet<LibraryDependency> dependencies)
+        {
+            // If we have a floating package dependency like 1.2.3-xyz-*, we
+            // use the version of the package that restore resolved it to.
+            if (packageDependency.LibraryRange.VersionRange.IsFloating)
+            {
+                var lockFileTarget = assetsFile.GetTarget(framework.FrameworkName, runtimeIdentifier: null);
+                var package = lockFileTarget.Libraries.First(
+                    library =>
+                        string.Equals(library.Name, packageDependency.Name, StringComparison.OrdinalIgnoreCase));
+
+                VersionRange versionRange;
+                if (packageDependency.LibraryRange.VersionRange.HasUpperBound)
+                {
+                    versionRange = new VersionRange(
+                        minVersion: package.Version,
+                        includeMinVersion: packageDependency.LibraryRange.VersionRange.IsMinInclusive,
+                        maxVersion: packageDependency.LibraryRange.VersionRange.MaxVersion,
+                        includeMaxVersion: packageDependency.LibraryRange.VersionRange.IsMaxInclusive);
+                }
+                else
+                {
+                    versionRange = new VersionRange(
+                        minVersion: package.Version,
+                        includeMinVersion: packageDependency.LibraryRange.VersionRange.IsMinInclusive);
+                }
+
+                var libraryRange = new LibraryRange(packageDependency.LibraryRange) { VersionRange = versionRange };
+                packageDependency = new LibraryDependency(packageDependency) { LibraryRange = libraryRange };
+            }
+
+            if (packageDependency.NoWarn.Length > 0)
+            {
+                HashSet<(NuGetLogCode, NuGetFramework)> nowarnProperties = null;
+
+                if (!packageSpecificNoWarnProperties.TryGetValue(packageDependency.Name, out nowarnProperties))
+                {
+                    nowarnProperties = new HashSet<(NuGetLogCode, NuGetFramework)>();
+                }
+
+                nowarnProperties.AddRange(packageDependency.NoWarn.Select(n => (n, framework.FrameworkName)));
+                packageSpecificNoWarnProperties[packageDependency.Name] = nowarnProperties;
+            }
+
+            PackCommandRunner.AddLibraryDependency(packageDependency, dependencies);
+
+            return packageDependency;
         }
 
         private static IDictionary<string, string> ParsePropertiesAsDictionary(string[] properties)

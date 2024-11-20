@@ -8,15 +8,15 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.CommandLine.Test;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
 using Test.Utility;
-using Test.Utility.Signing;
 
 namespace NuGet.CommandLine.FuncTest.Commands
 {
-    using X509StorePurpose = global::Test.Utility.Signing.X509StorePurpose;
+    using X509StorePurpose = Microsoft.Internal.NuGet.Testing.SignedPackages.X509StorePurpose;
 
     /// <summary>
     /// Used to bootstrap functional tests for signing.

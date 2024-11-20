@@ -220,7 +220,7 @@ namespace NuGet.Commands.Test
             var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
             var expectedResult = new PackageSpecificWarningProperties();
             expectedResult.AddRangeOfCodes(
-                new List<NuGetLogCode> { NuGetLogCode.NU1601, NuGetLogCode.NU1605 },
+                [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
                 packageId1,
                 net461);
             expectedResult.AddRangeOfFrameworks(
@@ -243,7 +243,7 @@ namespace NuGet.Commands.Test
 
             var first = new PackageSpecificWarningProperties();
             first.AddRangeOfCodes(
-                new List<NuGetLogCode> { NuGetLogCode.NU1601, NuGetLogCode.NU1605 },
+                [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
                 packageId1,
                 net461);
             first.AddRangeOfFrameworks(
@@ -417,7 +417,7 @@ namespace NuGet.Commands.Test
             var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
             var input = new PackageSpecificWarningProperties();
             input.AddRangeOfCodes(
-                new List<NuGetLogCode> { NuGetLogCode.NU1601, NuGetLogCode.NU1605 },
+                [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
                 packageId1,
                 net461);
             input.AddRangeOfFrameworks(
@@ -514,7 +514,7 @@ namespace NuGet.Commands.Test
             var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
             var input = new PackageSpecificWarningProperties();
             input.AddRangeOfCodes(
-                new List<NuGetLogCode> { NuGetLogCode.NU1601, NuGetLogCode.NU1605 },
+                [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
                 packageId1,
                 net461);
             input.AddRangeOfFrameworks(

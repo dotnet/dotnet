@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using NuGet.Common;
 using NuGet.Shared;
 
@@ -116,7 +116,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Create warning properties from NuGetLogCode collection.
         /// </summary>
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, IEnumerable<NuGetLogCode> warningsAsErrors, IEnumerable<NuGetLogCode> noWarn, IEnumerable<NuGetLogCode> warningsNotAsErrors)
+        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn, ImmutableArray<NuGetLogCode> warningsNotAsErrors)
         {
             var props = new WarningProperties()
             {
@@ -133,9 +133,9 @@ namespace NuGet.ProjectModel
         /// Create warning properties from NuGetLogCode collection.
         /// </summary>
         [Obsolete]
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, IEnumerable<NuGetLogCode> warningsAsErrors, IEnumerable<NuGetLogCode> noWarn)
+        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn)
         {
-            return GetWarningProperties(treatWarningsAsErrors, warningsAsErrors, noWarn, Enumerable.Empty<NuGetLogCode>());
+            return GetWarningProperties(treatWarningsAsErrors, warningsAsErrors, noWarn, []);
         }
     }
 }

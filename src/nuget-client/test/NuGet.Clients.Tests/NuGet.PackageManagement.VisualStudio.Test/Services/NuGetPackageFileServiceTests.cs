@@ -449,8 +449,41 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.Null(licenseStream);
         }
 
+        [Fact]
+        public async Task Readme_WhenAdded_IsFound()
+        {
+            using (TestDirectory testDir = TestDirectory.Create())
+            {
+                // Create decoy nuget package
+                var readmeContent = "Hello this is README";
+                var readmeName = "readme.md";
+                var zipPath = Path.Combine(testDir.Path, "file.nupkg");
+                CreateDummyPackage(
+                    zipPath: zipPath,
+                    readmeName: readmeName,
+                    readmeContent: readmeContent);
+
+                // prepare test
+                var builder = new UriBuilder(new Uri(zipPath, UriKind.Absolute))
+                {
+                    Fragment = readmeName
+                };
+
+                var packageFileService = new NuGetPackageFileService(
+                        default(ServiceActivationOptions),
+                        Mock.Of<IServiceBroker>(),
+                        new AuthorizationServiceClient(Mock.Of<IAuthorizationService>()),
+                        _telemetryProvider.Object);
+
+                Stream readmeStream = await packageFileService.GetReadmeAsync(builder.Uri, CancellationToken.None);
+
+                Assert.NotNull(readmeStream);
+                Assert.Equal(readmeContent.Length, readmeStream.Length);
+            }
+        }
+
         /// <summary>
-        /// Creates a NuGet package with .nupkg extension and with a PNG image named "icon.png"
+        /// Creates a NuGet package with .nupkg extension and with a PNG image named "icon.png" and a MD readme named "readme.md"
         /// </summary>
         /// <param name="path">Path to NuGet package</param>
         /// <param name="iconName">Icon filename with .png extension</param>
@@ -459,7 +492,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             string iconName = "icon.png",
             string iconFile = "icon.png",
             string iconFileSourceElement = "icon.png",
-            string iconFileTargetElement = "")
+            string iconFileTargetElement = "",
+            string readmeName = "readme.md",
+            string readmeContent = "readme content")
         {
             var dir = Path.GetDirectoryName(zipPath);
             var holdDir = "pkg";
@@ -471,7 +506,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // create nuspec
             var nuspec = NuspecBuilder.Create()
                 .WithIcon(iconName)
-                .WithFile(iconFileSourceElement, iconFileTargetElement);
+                .WithFile(iconFileSourceElement, iconFileTargetElement)
+                .WithReadme(readmeName)
+                .WithFile(readmeName);
 
             // create png image
             var iconPath = Path.Combine(folderPath, iconFile);
@@ -479,6 +516,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Directory.CreateDirectory(iconDir);
 
             File.WriteAllText(iconPath, StreamContents);
+
+            // create md readme
+            var readmePath = Path.Combine(folderPath, readmeName);
+            var readmeDir = Path.GetDirectoryName(readmePath);
+            Directory.CreateDirectory(readmeDir);
+
+            File.WriteAllText(readmePath, readmeContent);
 
             // Create nuget package
             using (var nuspecStream = new MemoryStream())

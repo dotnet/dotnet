@@ -571,25 +571,12 @@ NuGet.ProjectModel.RestoreLockProperties.RestoreLockedMode.get -> bool
 ~NuGet.ProjectModel.RestoreLockProperties.RestorePackagesWithLockFile.get -> string
 NuGet.ProjectModel.TargetFrameworkInformation
 NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.get -> bool
-NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.set -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IDictionary<string, NuGet.LibraryModel.CentralPackageVersion>
-~NuGet.ProjectModel.TargetFrameworkInformation.Clone() -> NuGet.ProjectModel.TargetFrameworkInformation
-~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency>
-~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.set -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.get -> System.Collections.Generic.IList<NuGet.LibraryModel.DownloadDependency>
 ~NuGet.ProjectModel.TargetFrameworkInformation.Equals(NuGet.ProjectModel.TargetFrameworkInformation other) -> bool
 ~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.set -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.FrameworkDependency>
-~NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Generic.IList<NuGet.Frameworks.NuGetFramework>
-~NuGet.ProjectModel.TargetFrameworkInformation.Imports.set -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.get -> string
-~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.set -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.get -> string
-~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.set -> void
 NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation() -> void
 NuGet.ProjectModel.TargetFrameworkInformation.Warn.get -> bool
-NuGet.ProjectModel.TargetFrameworkInformation.Warn.set -> void
 NuGet.ProjectModel.ToolPathResolver
 ~NuGet.ProjectModel.ToolPathResolver.GetBestToolDirectoryPath(string packageId, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework framework) -> string
 ~NuGet.ProjectModel.ToolPathResolver.GetLockFilePath(string packageId, NuGet.Versioning.NuGetVersion version, NuGet.Frameworks.NuGetFramework framework) -> string
@@ -731,8 +718,6 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash.Default.get -> NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash
 static NuGet.ProjectModel.RestoreAuditProperties.operator !=(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
 static NuGet.ProjectModel.RestoreAuditProperties.operator ==(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
-~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> noWarn) -> NuGet.ProjectModel.WarningProperties
-~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> noWarn, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn, string warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
 static readonly NuGet.ProjectModel.BuildAction.AndroidAsset -> NuGet.ProjectModel.BuildAction

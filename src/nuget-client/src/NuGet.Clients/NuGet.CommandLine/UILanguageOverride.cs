@@ -26,7 +26,7 @@ namespace NuGet.CommandLine
         /// <param name="logger">NuGet logger for diagnostic messages</param>
         /// <param name="langOverrideFunc">Method to apply culture to other step</param>
         /// <exception cref="ArgumentNullException">If any arguments are null</exception>
-        internal static void Setup(ILogger logger, Action<CultureInfo> langOverrideFunc, IEnvironmentVariableReader envvarReader)
+        internal static void Setup(ILogger logger, Action<CultureInfo> langOverrideFunc, IEnvironmentVariableReader environmentVariableReader)
         {
             if (logger == null)
             {
@@ -36,11 +36,11 @@ namespace NuGet.CommandLine
             {
                 throw new ArgumentNullException(nameof(langOverrideFunc));
             }
-            if (envvarReader == null)
+            if (environmentVariableReader == null)
             {
-                throw new ArgumentNullException(nameof(envvarReader));
+                throw new ArgumentNullException(nameof(environmentVariableReader));
             }
-            CultureInfo language = GetOverriddenUILanguage(envvarReader, logger);
+            CultureInfo language = GetOverriddenUILanguage(environmentVariableReader, logger);
             if (language != null)
             {
                 langOverrideFunc(language);
@@ -52,10 +52,10 @@ namespace NuGet.CommandLine
             CultureInfo.DefaultThreadCurrentUICulture = language;
         }
 
-        internal static CultureInfo GetOverriddenUILanguage(IEnvironmentVariableReader envvarReader, ILogger logger)
+        internal static CultureInfo GetOverriddenUILanguage(IEnvironmentVariableReader environmentVariableReader, ILogger logger)
         {
             // NUGET_CLI_LANGUAGE=<culture name> is the main way for users to customize nuget.exe language.
-            string nugetCliLanguage = envvarReader.GetEnvironmentVariable(NUGET_CLI_LANGUAGE);
+            string nugetCliLanguage = environmentVariableReader.GetEnvironmentVariable(NUGET_CLI_LANGUAGE);
             if (nugetCliLanguage != null)
             {
                 try

@@ -107,6 +107,7 @@
     "Component.xamarin",
     "runtimes.ios",
     "Microsoft.VisualStudio.Workload.NetCrossPlat",
-    "Component.Android.SDK.MAUI"
+    "Component.Android.SDK.MAUI",
+    "Microsoft.VisualStudio.Component.FSharp.Desktop"
   ]
 }

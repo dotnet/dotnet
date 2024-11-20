@@ -27,13 +27,13 @@ namespace NuGet.CommandLine.XPlat
         public static int Main(string[] args)
         {
             var log = new CommandOutputLogger(LogLevel.Information);
-            return MainInternal(args, log);
+            return MainInternal(args, log, EnvironmentVariableWrapper.Instance);
         }
 
         /// <summary>
         /// Internal Main. This is used for testing.
         /// </summary>
-        public static int MainInternal(string[] args, CommandOutputLogger log)
+        public static int MainInternal(string[] args, CommandOutputLogger log, IEnvironmentVariableReader environmentVariableReader)
         {
 #if USEMSBUILDLOCATOR
             try
@@ -51,7 +51,7 @@ namespace NuGet.CommandLine.XPlat
 #endif
 
 #if DEBUG
-            var debugNuGetXPlat = Environment.GetEnvironmentVariable("DEBUG_NUGET_XPLAT");
+            var debugNuGetXPlat = environmentVariableReader.GetEnvironmentVariable("DEBUG_NUGET_XPLAT");
 
             if (args.Contains(DebugOption) || string.Equals(bool.TrueString, debugNuGetXPlat, StringComparison.OrdinalIgnoreCase))
             {
@@ -67,7 +67,7 @@ namespace NuGet.CommandLine.XPlat
             }
             else
             {
-                UILanguageOverride.Setup(log);
+                UILanguageOverride.Setup(log, environmentVariableReader);
             }
             log.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.Debug_CurrentUICulture, CultureInfo.DefaultThreadCurrentUICulture));
 

@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -52,7 +53,7 @@ namespace NuGet.XPlat.FuncTest
                 };
 
                 // Act
-                var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log);
+                var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -94,8 +95,8 @@ namespace NuGet.XPlat.FuncTest
                 };
 
                 // Act
-                var exitCodeFirstPush = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), logFirstPush);
-                var exitCodeSecondPush = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), logSecondPush);
+                var exitCodeFirstPush = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), logFirstPush, TestEnvironmentVariableReader.EmptyInstance);
+                var exitCodeSecondPush = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), logSecondPush, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert First Push - it should happen without error.
                 var outputMessagesFirstPush = logFirstPush.ShowMessages();
@@ -144,7 +145,7 @@ namespace NuGet.XPlat.FuncTest
                 };
 
                 // Act
-                var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log);
+                var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -179,7 +180,7 @@ namespace NuGet.XPlat.FuncTest
                 };
 
                 // Act
-                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log);
+                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(string.Empty, log.ShowErrors());
@@ -213,7 +214,7 @@ namespace NuGet.XPlat.FuncTest
                 "--non-interactive"
             };
 
-            var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(args.ToArray(), log);
+            var exitCode = NuGet.CommandLine.XPlat.Program.MainInternal(args.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
             Assert.InRange(exitCode, 0, 1);
 
             Assert.Contains($"DELETE {packageUri}", log.ShowMessages());

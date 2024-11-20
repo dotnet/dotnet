@@ -38,6 +38,8 @@ namespace NuGet.Protocol
 
         public Uri IconUrl => GetIconUri();
 
+        public string ReadmeFileUrl => GetReadmeUri();
+
         public PackageIdentity Identity => _nuspec.GetIdentity();
 
         public Uri LicenseUrl => Convert(_nuspec.GetLicenseUrl());
@@ -205,6 +207,24 @@ namespace NuGet.Protocol
 
             // get the special icon url
             return builder.Uri;
+        }
+
+        private string GetReadmeUri()
+        {
+            string embeddedReadme = _nuspec.GetReadme();
+            if (embeddedReadme == null)
+            {
+                return null;
+            }
+
+            var baseUri = Convert(_package.Path);
+            UriBuilder builder = new UriBuilder(baseUri)
+            {
+                Fragment = embeddedReadme
+            };
+
+            // get the readme url
+            return builder.Uri.AbsoluteUri;
         }
     }
 }

@@ -2,8 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text;
 using NuGet.Common;
 using NuGet.Test.Utility;
 using Xunit;
@@ -22,11 +21,7 @@ namespace NuGet.Packaging.Test
             }";
 
             // Act
-            NupkgMetadataFile file;
-            using (var reader = new StringReader(nupkgMetadataFileContent))
-            {
-                file = NupkgMetadataFileFormat.Read(reader, NullLogger.Instance, string.Empty);
-            }
+            NupkgMetadataFile file = Read(nupkgMetadataFileContent, NullLogger.Instance, string.Empty);
 
             // Assert
             Assert.NotNull(file);
@@ -46,11 +41,7 @@ namespace NuGet.Packaging.Test
             }";
 
             // Act
-            NupkgMetadataFile file;
-            using (var reader = new StringReader(nupkgMetadataFileContent))
-            {
-                file = NupkgMetadataFileFormat.Read(reader, NullLogger.Instance, string.Empty);
-            }
+            NupkgMetadataFile file = Read(nupkgMetadataFileContent, NullLogger.Instance, string.Empty);
 
             // Assert
             Assert.NotNull(file);
@@ -63,25 +54,24 @@ namespace NuGet.Packaging.Test
         public void Write_WithObject_RoundTrips()
         {
             var nupkgMetadataFileContent = @"{
-                ""version"": 2,
-                ""contentHash"": ""NhfNp80eWq5ms7fMrjuRqpwhL1H56IVzXF9d+OIDcEfQ92m1DyE0c+ufUE1ogB09+sYLd58IO4eJ8jyn7AifbA=="",
-                ""source"": ""https://source/v3/index.json""
-            }";
+  ""version"": 2,
+  ""contentHash"": ""NhfNp80eWq5ms7fMrjuRqpwhL1H56IVzXF9d+OIDcEfQ92m1DyE0c+ufUE1ogB09+sYLd58IO4eJ8jyn7AifbA=="",
+  ""source"": ""https://source/v3/index.json""
+}";
 
-            NupkgMetadataFile metadataFile = null;
+            NupkgMetadataFile metadataFile = Read(nupkgMetadataFileContent, NullLogger.Instance, string.Empty);
 
-            using (var reader = new StringReader(nupkgMetadataFileContent))
+            using (var stream = new MemoryStream())
             {
-                metadataFile = NupkgMetadataFileFormat.Read(reader, NullLogger.Instance, string.Empty);
-            }
+                NupkgMetadataFileFormat.Write(stream, metadataFile);
+                stream.Position = 0;
+                string content;
+                using (var reader = new StreamReader(stream))
+                {
+                    content = reader.ReadToEnd();
+                }
 
-            using (var writer = new StringWriter())
-            {
-                NupkgMetadataFileFormat.Write(writer, metadataFile);
-                var output = JObject.Parse(writer.ToString());
-                var expected = JObject.Parse(nupkgMetadataFileContent);
-
-                Assert.Equal(expected.ToString(), output.ToString());
+                Assert.Equal(nupkgMetadataFileContent, content);
             }
         }
 
@@ -89,32 +79,14 @@ namespace NuGet.Packaging.Test
         [InlineData("")]
         [InlineData("1")]
         [InlineData("[]")]
-        public void Read_ContentsNotAnObject_ThrowsException(string contents)
+        [InlineData(@"{""version"":")]
+        public void Read_ContentsInvalid_ThrowsException(string contents)
         {
             // Arrange
             var logger = new TestLogger();
 
             // Act
-            using (var stringReader = new StringReader(contents))
-            {
-                Assert.Throws<InvalidDataException>(() => NupkgMetadataFileFormat.Read(stringReader, logger, "from memory"));
-            }
-
-            // Assert
-            Assert.Equal(1, logger.Messages.Count);
-        }
-
-        [Fact]
-        public void Read_ContentsInvalidJson_ThrowsJsonReaderException()
-        {
-            // Arrange
-            var logger = new TestLogger();
-
-            // Act
-            using (var stringReader = new StringReader(@"{""version"":"))
-            {
-                Assert.Throws<JsonReaderException>(() => NupkgMetadataFileFormat.Read(stringReader, logger, "from memory"));
-            }
+            Assert.Throws<InvalidDataException>(() => Read(contents, logger, "from memory"));
 
             // Assert
             Assert.Equal(1, logger.Messages.Count);
@@ -135,13 +107,19 @@ namespace NuGet.Packaging.Test
             }";
 
             // Act
-            using (var stringReader = new StringReader(nupkgMetadataFileContent))
-            {
-                NupkgMetadataFileFormat.Read(stringReader, logger, "from memory");
-            }
+            Read(nupkgMetadataFileContent, logger, "from memory");
 
             // Assert
             Assert.Equal(0, logger.Messages.Count);
+        }
+
+        private NupkgMetadataFile Read(string contents, ILogger logger, string path)
+        {
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(contents);
+            using (var stream = new MemoryStream(utf8Bytes))
+            {
+                return NupkgMetadataFileFormat.Read(stream, logger, path);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>$(NETCoreTargetFramework)</TargetFramework>
     <Description>Functional tests for nuget in dotnet CLI scenarios, using the NuGet.CommandLine.XPlat assembly.</Description>
+    <TestProjectType>Unit</TestProjectType>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-using NuGet.Test.Utility;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 
 namespace NuGet.CommandLine.Test.Caching
 {

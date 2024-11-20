@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -13,80 +13,112 @@ namespace NuGet.ProjectModel
 {
     public class TargetFrameworkInformation : IEquatable<TargetFrameworkInformation>
     {
-        public string TargetAlias { get; set; }
+        // private fields to allow for validating initialization values
+        private IReadOnlyDictionary<string, CentralPackageVersion> _centralPackageVersions;
+        private ImmutableArray<LibraryDependency> _dependencies;
+        private ImmutableArray<DownloadDependency> _downloadDependencies;
+        private IReadOnlyCollection<FrameworkDependency> _frameworkReferences;
+        private ImmutableArray<NuGetFramework> _imports;
 
-        public NuGetFramework FrameworkName { get; set; }
+        public string TargetAlias { get; init; }
 
-        public IList<LibraryDependency> Dependencies { get; set; }
+        public NuGetFramework FrameworkName { get; init; }
+
+        public ImmutableArray<LibraryDependency> Dependencies
+        {
+            get => _dependencies;
+            init
+            {
+                _dependencies = value.IsDefault ? ImmutableArray<LibraryDependency>.Empty : value;
+            }
+        }
 
         /// <summary>
         /// A fallback PCL framework to use when no compatible items
         /// were found for <see cref="FrameworkName"/>.
         /// </summary>
-        public IList<NuGetFramework> Imports { get; set; }
+        public ImmutableArray<NuGetFramework> Imports
+        {
+            get => _imports;
+            init
+            {
+                _imports = value.IsDefault ? ImmutableArray<NuGetFramework>.Empty : value;
+            }
+        }
 
         /// <summary>
         /// If True AssetTargetFallback behavior will be used for Imports.
         /// </summary>
-        public bool AssetTargetFallback { get; set; }
+        public bool AssetTargetFallback { get; init; }
 
         /// <summary>
         /// Display warnings when the Imports framework is used.
         /// </summary>
-        public bool Warn { get; set; }
+        public bool Warn { get; init; }
 
         /// <summary>
         /// List of dependencies that are not part of the graph resolution.
         /// </summary>
-        public IList<DownloadDependency> DownloadDependencies { get; }
+        public ImmutableArray<DownloadDependency> DownloadDependencies
+        {
+            get => _downloadDependencies;
+            init
+            {
+                _downloadDependencies = value.IsDefault ? ImmutableArray<DownloadDependency>.Empty : value;
+            }
+        }
 
         /// <summary>
-        /// List of the package versions defined in the Central package versions management file. 
+        /// Package versions defined in the Central package versions management file. 
         /// </summary>
-        public IDictionary<string, CentralPackageVersion> CentralPackageVersions { get; }
+        public IReadOnlyDictionary<string, CentralPackageVersion> CentralPackageVersions
+        {
+            get => _centralPackageVersions;
+            init
+            {
+                _centralPackageVersions = value ?? ImmutableDictionary<string, CentralPackageVersion>.Empty;
+            }
+        }
 
         /// <summary>
         /// A set of unique FrameworkReferences
         /// </summary>
-        public ISet<FrameworkDependency> FrameworkReferences { get; }
+        public IReadOnlyCollection<FrameworkDependency> FrameworkReferences
+        {
+            get => _frameworkReferences;
+            init
+            {
+                _frameworkReferences = value ?? ImmutableHashSet<FrameworkDependency>.Empty;
+            }
+        }
 
         /// <summary>
         /// The project provided runtime.json
         /// </summary>
-        public string RuntimeIdentifierGraphPath { get; set; }
+        public string RuntimeIdentifierGraphPath { get; init; }
 
         public TargetFrameworkInformation()
         {
             TargetAlias = string.Empty;
-            Dependencies = new List<LibraryDependency>();
-            Imports = new List<NuGetFramework>();
-            DownloadDependencies = new List<DownloadDependency>();
-            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase);
-            FrameworkReferences = new HashSet<FrameworkDependency>();
+            Dependencies = [];
+            Imports = [];
+            DownloadDependencies = [];
+            CentralPackageVersions = ImmutableDictionary<string, CentralPackageVersion>.Empty;
+            FrameworkReferences = ImmutableHashSet<FrameworkDependency>.Empty;
         }
 
-        internal TargetFrameworkInformation(TargetFrameworkInformation cloneFrom)
+        public TargetFrameworkInformation(TargetFrameworkInformation cloneFrom)
         {
             TargetAlias = cloneFrom.TargetAlias;
             FrameworkName = cloneFrom.FrameworkName;
-            Dependencies = CloneList(cloneFrom.Dependencies, static dep => dep.Clone());
-            Imports = new List<NuGetFramework>(cloneFrom.Imports);
+            Dependencies = cloneFrom.Dependencies;
+            Imports = cloneFrom.Imports;
             AssetTargetFallback = cloneFrom.AssetTargetFallback;
             Warn = cloneFrom.Warn;
-            DownloadDependencies = cloneFrom.DownloadDependencies.ToList();
-            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(cloneFrom.CentralPackageVersions, StringComparer.OrdinalIgnoreCase);
-            FrameworkReferences = new HashSet<FrameworkDependency>(cloneFrom.FrameworkReferences);
+            DownloadDependencies = cloneFrom.DownloadDependencies;
+            CentralPackageVersions = cloneFrom.CentralPackageVersions;
+            FrameworkReferences = cloneFrom.FrameworkReferences;
             RuntimeIdentifierGraphPath = cloneFrom.RuntimeIdentifierGraphPath;
-
-            static IList<T> CloneList<T>(IList<T> source, Func<T, T> cloneFunc)
-            {
-                var clone = new List<T>(capacity: source.Count);
-                for (int i = 0; i < source.Count; i++)
-                {
-                    clone.Add(cloneFunc(source[i]));
-                }
-                return clone;
-            }
         }
 
         public override string ToString()
@@ -101,7 +133,7 @@ namespace NuGet.ProjectModel
             hashCode.AddObject(FrameworkName);
             hashCode.AddObject(AssetTargetFallback);
             hashCode.AddUnorderedSequence(Dependencies);
-            hashCode.AddSequence(Imports);
+            hashCode.AddSequence((IReadOnlyList<NuGetFramework>)Imports);
             hashCode.AddObject(Warn);
             hashCode.AddUnorderedSequence(DownloadDependencies);
             hashCode.AddUnorderedSequence(FrameworkReferences);
@@ -141,11 +173,6 @@ namespace NuGet.ProjectModel
                    EqualityUtility.OrderedEquals(CentralPackageVersions.Values, other.CentralPackageVersions.Values, e => e.Name, StringComparer.OrdinalIgnoreCase) &&
                    PathUtility.GetStringComparerBasedOnOS().Equals(RuntimeIdentifierGraphPath, other.RuntimeIdentifierGraphPath) &&
                    StringComparer.OrdinalIgnoreCase.Equals(TargetAlias, other.TargetAlias);
-        }
-
-        public TargetFrameworkInformation Clone()
-        {
-            return new TargetFrameworkInformation(this);
         }
     }
 }

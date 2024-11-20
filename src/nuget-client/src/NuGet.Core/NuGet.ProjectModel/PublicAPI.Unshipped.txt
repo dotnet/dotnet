@@ -1,1 +1,19 @@
 #nullable enable
+NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.Warn.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.CentralPackageVersion>
+~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.LibraryDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.DownloadDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.LibraryModel.FrameworkDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework>
+~NuGet.ProjectModel.TargetFrameworkInformation.Imports.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation(NuGet.ProjectModel.TargetFrameworkInformation cloneFrom) -> void
+~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> noWarn) -> NuGet.ProjectModel.WarningProperties
+~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> noWarn, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties

@@ -11,15 +11,15 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 {
     public static class FeedTestUtils
     {
-        internal static INuGetResourceProvider CreateTestResourceProvider(PackageMetadataResource _metadataResource)
+        internal static INuGetResourceProvider CreateTestResourceProvider<T>(T resource)
         {
             var provider = Mock.Of<INuGetResourceProvider>();
             Mock.Get(provider)
                 .Setup(x => x.TryCreate(It.IsAny<SourceRepository>(), It.IsAny<CancellationToken>()))
-                .Returns(() => Task.FromResult(Tuple.Create(true, (INuGetResource)_metadataResource)));
+                .Returns(() => Task.FromResult(Tuple.Create(true, (INuGetResource)resource)));
             Mock.Get(provider)
                 .Setup(x => x.ResourceType)
-                .Returns(typeof(PackageMetadataResource));
+                .Returns(typeof(T));
 
             return provider;
         }

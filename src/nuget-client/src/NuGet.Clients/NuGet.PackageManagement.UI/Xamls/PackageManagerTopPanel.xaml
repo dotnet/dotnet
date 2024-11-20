@@ -180,18 +180,16 @@
     <!-- search control and include prerelease checkbox -->
     <Grid Grid.Row="2" Margin="20,0,0,0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" MinWidth="269"/>
-        <ColumnDefinition Width="0.01*" MinWidth="5" />
-        <ColumnDefinition Width="*" MinWidth="192" />
+        <ColumnDefinition Width="2*"/>
+        <ColumnDefinition MinWidth="192" />
       </Grid.ColumnDefinitions>
-
       <Grid
         Grid.Column="0">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" MaxWidth="320" MinWidth="118"/>
+          <ColumnDefinition MaxWidth="320" MinWidth="118"/>
           <ColumnDefinition Width="auto" />
-          <ColumnDefinition Width="auto" />
-          <ColumnDefinition Width="auto" />
+          <ColumnDefinition MaxWidth="125" />
+          <ColumnDefinition MaxWidth="150"/>
         </Grid.ColumnDefinitions>
         <!-- container of the search control -->
         <Border
@@ -226,12 +224,13 @@
           AutomationProperties.AutomationId="CheckBox_Prerelease"
           Margin="3,0"
           VerticalAlignment="Center"
-          Content="{x:Static nuget:Resources.Checkbox_IncludePrerelease}"
           Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
           VerticalContentAlignment="Center"
           Checked="_checkboxPrerelease_Checked"
           Unchecked="_checkboxPrerelease_Unchecked"
-          IsChecked="True" />
+          IsChecked="True">
+          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_IncludePrerelease}" />
+        </CheckBox>
 
         <!-- show vulnerabilities checkbox -->
         <CheckBox
@@ -246,7 +245,7 @@
           Unchecked="_checkboxVulnerabilities_Unchecked"
           Visibility="Hidden"
           IsChecked="False">
-          <TextBlock Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
+          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
         </CheckBox>
       </Grid>
       <Grid

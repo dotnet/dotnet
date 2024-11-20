@@ -19,9 +19,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromPMCWithNoAutoRestoreVerifyAssetsFileAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, noAutoRestore: true, addNetStandardFeeds: true))
             {
                 var packageName = "TestPackage";
@@ -41,9 +38,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromPMCVerifyInstallForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 var packageName = "TestPackage";
@@ -63,9 +57,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UninstallPackageFromPMCForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 var packageName = "TestPackage";
@@ -86,9 +77,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UpdatePackageFromPMCForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 var packageName = "TestPackage";
@@ -111,9 +99,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallMultiplePackagesFromPMCForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 var packageName1 = "TestPackage1";
@@ -139,8 +124,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UninstallMultiplePackagesFromPMCForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
             var packageName1 = "TestPackage1";
             var packageVersion1 = "1.0.0";
             var packageName2 = "TestPackage2";
@@ -179,8 +162,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task DowngradePackageFromPMCForPCAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
             var packageName = "TestPackage";
             var packageVersion1 = "1.0.0";
             var packageVersion2 = "2.0.0";
@@ -204,9 +185,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task NetCoreTransitivePackageReferenceLimitAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject2");
@@ -250,7 +228,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallAndUpdatePackageWithSourceParameterWarnsAsync(ProjectTemplate projectTemplate, bool warns)
         {
-            EnsureVisualStudioHost();
             var packageName = "TestPackage";
             var packageVersion1 = "1.0.0";
             var packageVersion2 = "2.0.0";
@@ -301,8 +278,6 @@ namespace NuGet.Tests.Apex
         public async Task InstallPackageForPC_PackageSourceMapping_WithSingleFeed(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
@@ -347,8 +322,6 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageForPC_PackageSourceMapping_WithSingleFeed(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
@@ -396,8 +369,6 @@ namespace NuGet.Tests.Apex
         public async Task InstallPackageForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var packageName = "Contoso.A";
@@ -460,8 +431,6 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_UpdatesCorrectPackage(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var packageName = "Contoso.A";
@@ -526,7 +495,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UpdateAllReinstall_WithPackageReferenceProject_WarnsAsync(ProjectTemplate projectTemplate, bool warns)
         {
-            EnsureVisualStudioHost();
             var packageName = "TestPackage";
             var packageVersion1 = "1.0.0";
 
@@ -566,8 +534,6 @@ namespace NuGet.Tests.Apex
         public async Task InstallPackageForPR_PackageNamespace_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var packageName = "Contoso.A";
@@ -625,8 +591,6 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageForPR_PackageNamespace_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var packageName = "Contoso.A";
@@ -697,8 +661,6 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageForPR_PackageIdWithDifferentCase_UpdatesSuccessfully()
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using var simpleTestPathContext = new SimpleTestPathContext();
             string solutionDirectory = simpleTestPathContext.SolutionRoot;
             var packageName = "Contoso.A";

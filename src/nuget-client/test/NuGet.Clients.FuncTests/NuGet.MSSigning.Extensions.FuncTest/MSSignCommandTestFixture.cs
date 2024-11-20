@@ -6,7 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Test.Utility.Signing;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 
 namespace NuGet.MSSigning.Extensions.FuncTest.Commands
 {

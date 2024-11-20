@@ -33,17 +33,6 @@
   </Choose>
 
   <ItemGroup>
-    <Compile Remove="external\*" />
-    <Compile Update="Commands\Verbs.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Verbs.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Commands\CommandParsers.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CommandParsers.tt</DependentUpon>
-    </Compile>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -54,6 +43,7 @@
   <ItemGroup Label="NuGet Shared">
     <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
     <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
     <Compile Include="$(SharedDirectory)\TaskResult.cs" />
   </ItemGroup>
 
@@ -62,17 +52,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Commands\Verbs.tt">
-      <LastGenOutput>Verbs.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Commands\CommandParsers.tt">
-      <LastGenOutput>CommandParsers.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

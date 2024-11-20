@@ -19,6 +19,7 @@ using Xunit;
 
 #if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;

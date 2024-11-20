@@ -8,6 +8,7 @@ using System.Net;
 using System.Security.Principal;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -490,7 +491,7 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/13864")]
         public void PushCommand_PushTimeoutErrorMessage()
         {
             using (TestDirectory packageDirectory = TestDirectory.Create())
@@ -502,7 +503,7 @@ namespace NuGet.CommandLine.Test
                 server.Get.Add("/push", r => "OK");
                 server.Put.Add("/push", r =>
                 {
-                    System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
                     return HttpStatusCode.Created;
                 });
                 pathContext.Settings.AddSource("http-feed", $"{server.Uri}push", allowInsecureConnectionsValue: "true");
@@ -512,7 +513,7 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     pathContext.WorkingDirectory,
-                    $"push {packageFileName} -Source {server.Uri}push -Timeout 1");
+                    $"push {packageFileName} -Source {server.Uri}push -Timeout 3");
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);

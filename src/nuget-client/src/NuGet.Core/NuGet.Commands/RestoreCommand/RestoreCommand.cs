@@ -345,9 +345,10 @@ namespace NuGet.Commands
                     _request.Project.FilePath,
                     _logger);
                 telemetry.TelemetryEvent[AuditEnabled] = auditEnabled ? "enabled" : "disabled";
+                bool auditRan = false;
                 if (auditEnabled)
                 {
-                    await PerformAuditAsync(graphs, telemetry, token);
+                    auditRan = await PerformAuditAsync(graphs, telemetry, token);
                 }
 
                 telemetry.StartIntervalMeasure();
@@ -511,11 +512,19 @@ namespace NuGet.Commands
                     dependencyGraphSpecFilePath: NoOpRestoreUtilities.GetPersistedDGSpecFilePath(_request),
                     dependencyGraphSpec: _request.DependencyGraphSpec,
                     _request.ProjectStyle,
-                    restoreTime.Elapsed);
+                    restoreTime.Elapsed)
+                {
+                    AuditRan = auditRan
+                };
             }
         }
 
-        private async Task PerformAuditAsync(IEnumerable<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
+        /// <summary>Run NuGetAudit on the project's resolved restore graphs, and log messages and telemetry with the results.</summary>
+        /// <param name="graphs">The resolved package graphs, one for each project target framework.</param>
+        /// <param name="telemetry">The <see cref="TelemetryActivity"/> to log NuGetAudit telemetry to.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> to cancel obtaining a vulnerability database. Once the database is downloaded, audit is quick to complete.</param>
+        /// <returns>False if no vulnerability database could be found (so packages were not scanned for vulnerabilities), true otherwise.</returns>
+        private async Task<bool> PerformAuditAsync(IEnumerable<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
         {
             telemetry.StartIntervalMeasure();
             var audit = new AuditUtility(
@@ -524,7 +533,7 @@ namespace NuGet.Commands
                 graphs,
                 _request.DependencyProviders.VulnerabilityInfoProviders,
                 _logger);
-            await audit.CheckPackageVulnerabilitiesAsync(token);
+            bool auditRan = await audit.CheckPackageVulnerabilitiesAsync(token);
 
             telemetry.TelemetryEvent[AuditLevel] = (int)audit.MinSeverity;
             telemetry.TelemetryEvent[AuditMode] = AuditUtility.GetString(audit.AuditMode);
@@ -553,6 +562,8 @@ namespace NuGet.Commands
             if (audit.CheckPackagesDurationSeconds.HasValue) { telemetry.TelemetryEvent[AuditDurationCheck] = audit.CheckPackagesDurationSeconds.Value; }
             if (audit.GenerateOutputDurationSeconds.HasValue) { telemetry.TelemetryEvent[AuditDurationOutput] = audit.GenerateOutputDurationSeconds.Value; }
             telemetry.EndIntervalMeasure(AuditDurationTotal);
+
+            return auditRan;
 
             void AddPackagesList(TelemetryActivity telemetry, string eventName, List<string> packages)
             {

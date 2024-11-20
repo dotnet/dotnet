@@ -33,6 +33,7 @@ namespace NuGet.PackageManagement.UI
             IconUrl = serverData.IconUrl;
             LicenseUrl = serverData.LicenseUrl;
             ProjectUrl = serverData.ProjectUrl;
+            ReadmeFileUrl = serverData.ReadmeFileUrl;
             ReadmeUrl = serverData.ReadmeUrl;
             ReportAbuseUrl = serverData.ReportAbuseUrl;
             // Some server implementations send down an array with an empty string, which ends up as an empty string.
@@ -94,6 +95,8 @@ namespace NuGet.PackageManagement.UI
         public Uri? LicenseUrl { get; set; }
 
         public Uri? ProjectUrl { get; set; }
+
+        public string? ReadmeFileUrl { get; set; }
 
         public Uri? ReadmeUrl { get; set; }
 

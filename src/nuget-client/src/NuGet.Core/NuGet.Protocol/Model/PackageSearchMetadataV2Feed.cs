@@ -105,6 +105,8 @@ namespace NuGet.Protocol
 
         public Uri ReadmeUrl { get; } = null; // The ReadmeUrl has not been added to the V2 feed.
 
+        public string ReadmeFileUrl { get; } = null; // The ReadmeFileUrl has not been added to the V2 feed.
+
         public Uri ReportAbuseUrl { get; private set; }
 
         public Uri PackageDetailsUrl { get; private set; }

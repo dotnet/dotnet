@@ -48,6 +48,9 @@
     <Reference Include="Microsoft.VisualStudio.ExtensionEngine">
       <HintPath>$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\Microsoft.VisualStudio.ExtensionEngine.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.ExtensionEngineContract">
+      <HintPath>$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\Microsoft.VisualStudio.ExtensionEngineContract.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CommonResources.resx">

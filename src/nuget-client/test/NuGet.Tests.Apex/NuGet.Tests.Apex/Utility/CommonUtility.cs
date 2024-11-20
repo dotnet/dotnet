@@ -15,7 +15,6 @@ using FluentAssertions;
 using Microsoft.Test.Apex.Services;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using NuGet.Common;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
@@ -227,7 +226,7 @@ namespace NuGet.Tests.Apex
                     LibraryRange = new LibraryRange(e.Attribute(XName.Get("Include")).Value, VersionRange.Parse(e.Attribute(XName.Get("Version")).Value), LibraryDependencyTarget.Package),
                     IncludeType = LibraryIncludeFlags.All,
                     SuppressParent = LibraryIncludeFlags.None,
-                    NoWarn = new List<NuGetLogCode>(),
+                    NoWarn = [],
                     AutoReferenced = false,
                     GeneratePathProperty = false
                 })

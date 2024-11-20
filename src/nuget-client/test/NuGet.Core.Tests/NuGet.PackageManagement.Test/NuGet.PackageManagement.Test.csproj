@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>Unit tests for NuGet.PackageManagement.</Description>
-    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Unit</TestProjectType>
     <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
 

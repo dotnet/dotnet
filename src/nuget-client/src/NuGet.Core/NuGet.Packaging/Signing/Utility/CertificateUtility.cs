@@ -61,11 +61,11 @@ namespace NuGet.Packaging.Signing
         {
             var certificateFingerprint = GetHashString(cert, fingerprintAlgorithm);
 
-            certStringBuilder.AppendLine($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateSubjectName, cert.Subject)}");
-            certStringBuilder.AppendLine($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateHashSha1, cert.Thumbprint)}");
-            certStringBuilder.AppendLine($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateHash, fingerprintAlgorithm.ToString(), certificateFingerprint)}");
-            certStringBuilder.AppendLine($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateIssuer, cert.IssuerName.Name)}");
-            certStringBuilder.AppendLine($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateValidity, cert.NotBefore, cert.NotAfter)}");
+            certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateSubjectName, cert.Subject));
+            certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateHashSha1, cert.Thumbprint));
+            certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateHash, fingerprintAlgorithm.ToString(), certificateFingerprint));
+            certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateIssuer, cert.IssuerName.Name));
+            certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateValidity, cert.NotBefore, cert.NotAfter));
         }
 
         /// <summary>
@@ -155,11 +155,12 @@ namespace NuGet.Packaging.Signing
         public static bool IsCertificatePublicKeyValid(X509Certificate2 certificate)
         {
             // Check if the public key is RSA with a valid keysize
-            System.Security.Cryptography.RSA RSAPublicKey = RSACertificateExtensions.GetRSAPublicKey(certificate);
-
-            if (RSAPublicKey != null)
+            using (System.Security.Cryptography.RSA publicKey = RSACertificateExtensions.GetRSAPublicKey(certificate))
             {
-                return RSAPublicKey.KeySize >= SigningSpecifications.V1.RSAPublicKeyMinLength;
+                if (publicKey != null)
+                {
+                    return publicKey.KeySize >= SigningSpecifications.V1.RSAPublicKeyMinLength;
+                }
             }
 
             return false;

@@ -71,7 +71,7 @@ namespace NuGet.Configuration
             foreach (var source in sourceItems)
             {
                 bool isEnabled = !disabledPackageSources.Any(p => p.Key.Equals(source.Key, StringComparison.OrdinalIgnoreCase));
-                PackageSource packageSource = PackageSourceProvider.ReadPackageSource(source, isEnabled, _settingsManager);
+                PackageSource packageSource = PackageSourceProvider.ReadPackageSource(source, isEnabled, _settingsManager, EnvironmentVariableWrapper.Instance);
                 packageSource.IsOfficial = true;
                 sources.Add(packageSource);
             }

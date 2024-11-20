@@ -160,7 +160,7 @@ namespace NuGet.Client
         /// If matchOnly is true, then an empty string may be returned as a performance optimization.
         /// If matchOnly is false, the parsed result will be returned.
         /// </summary>
-        private static object Locale_Parser(ReadOnlyMemory<char> name, PatternTable table, bool matchOnly)
+        internal static object Locale_Parser(ReadOnlyMemory<char> name, PatternTable table, bool matchOnly)
         {
             if (table != null)
             {
@@ -171,7 +171,10 @@ namespace NuGet.Client
                 }
             }
 
-            if (name.Length == 2)
+            // We use a heuristic here for common locale codes. Locale codes are often
+            // * two characters for the language: en, es, fr, de
+            // * three characters for the language: agq
+            if (name.Length == 2 || name.Length == 3)
             {
                 if (matchOnly)
                 {
@@ -179,7 +182,9 @@ namespace NuGet.Client
                 }
                 return name.ToString();
             }
-            else if (name.Length >= 4 && name.Span[2] == '-')
+
+            // * a language portion that is two or three characters followed by a '-' and a country code
+            else if (name.Length >= 4 && name.Span[2] == '-') // e.g. en-US
             {
                 if (matchOnly)
                 {
@@ -187,6 +192,19 @@ namespace NuGet.Client
                 }
                 return name.ToString();
             }
+            else if (name.Length >= 5 && name.Span[3] == '-') // e.g agq-CM
+            {
+                if (matchOnly)
+                {
+                    return string.Empty;
+                }
+                return name.ToString();
+            }
+
+            // there are other variations, but this heuristic doesn't cover them all. A future-proof implementation would make
+            // use of the .NET CultureInfo APIs to compare the locale against the underlying system ICU database. This would
+            // be correct, but potentially more expensive because the CultureInfo APIs are lazily-loaded and throw if an
+            // invalid/unknown locale is used.
 
             return null;
         }

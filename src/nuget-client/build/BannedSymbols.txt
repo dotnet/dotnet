@@ -21,3 +21,9 @@ M:System.IO.Path.GetTempPath(); Use NuGetEnvironment.GetFolderPath(NuGetFolderPa
 
 M:NuGet.Protocol.Core.Types.SourceRepository.GetResource`1(); Pass a cancellation token
 M:NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync`1(); Pass a cancellation token
+
+M:System.Environment.GetEnvironmentVariable(System.String); Use NuGet.Common.IEnvironmentVariableReader. For more information, visit https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md#getting-or-setting-environment-variables
+M:System.Environment.GetEnvironmentVariable(System.String,System.EnvironmentVariableTarget); Use NuGet.Common.IEnvironmentVariableReader. For more information, visit https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md#getting-or-setting-environment-variables
+
+M:System.Environment.SetEnvironmentVariable(System.String,System.String); NuGet should not need to set environment variables. If you need to set one, you must seek an exception. For more information, visit https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md#getting-or-setting-environment-variables
+M:System.Environment.SetEnvironmentVariable(System.String,System.String,System.EnvironmentVariableTarget); NuGet should not need to set environment variables. If you need to set one, you must seek an exception. For more information, visit https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md#getting-or-setting-environment-variables

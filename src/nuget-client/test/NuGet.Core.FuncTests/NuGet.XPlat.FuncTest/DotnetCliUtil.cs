@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Frameworks;
 using NuGet.Test.Utility;
 using Xunit;

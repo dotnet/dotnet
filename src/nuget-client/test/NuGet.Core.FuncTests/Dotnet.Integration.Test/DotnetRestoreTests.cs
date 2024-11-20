@@ -8,12 +8,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
 using NuGet.Test.Utility;
+using NuGet.Versioning;
+using Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
 using Xunit.Abstractions;
@@ -2691,6 +2696,107 @@ EndGlobal";
             var targetsFilePath = Path.Combine(pathContext.SolutionRoot, "obj", "a.csproj.nuget.g.props");
             var allTargets = File.ReadAllText(targetsFilePath);
             allTargets.Should().Contain(condition);
+        }
+
+        // https://github.com/NuGet/Home/issues/13829
+        [PlatformFact(SkipPlatform = Platform.Linux)]
+        public async Task DotnetRestore_WithServerProvidingAuditData_RestoreTaskReturnsCountProperties()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+
+            mockServer.Vulnerabilities.Add(
+                "Insecure.Package",
+                new List<(Uri, PackageVulnerabilitySeverity, VersionRange)> {
+                    (new Uri("https://contoso.test/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.0.0, 2.0.0)"))
+                });
+            pathContext.Settings.RemoveSource("source");
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
+
+            var packageA1 = new SimpleTestPackageContext()
+            {
+                Id = "packageA",
+                Version = "1.0.0"
+            };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageA1);
+
+            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
+            var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
+            File.WriteAllText(csprojPath, csprojContents);
+
+            mockServer.Start();
+
+            // Act & Assert
+
+            // First restore is fresh, so should not be skipped (no-op), and should run audit
+            _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, "restore -p:ExpectedRestoreProjectCount=1 -p:ExpectedRestoreSkippedCount=0 -p:ExpectedRestoreProjectsAuditedCount=1");
+
+            // Second restore is no-op, so should be skipped, and audit not run
+            _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, "restore -p:ExpectedRestoreProjectCount=1 -p:ExpectedRestoreSkippedCount=1 -p:ExpectedRestoreProjectsAuditedCount=0");
+
+            mockServer.Stop();
+        }
+
+        [Fact]
+        public async Task DotnetRestore_WithServerWithoutAuditData_RestoreTaskReturnsCountProperties()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA1 = new SimpleTestPackageContext()
+            {
+                Id = "packageA",
+                Version = "1.0.0"
+            };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageA1);
+
+            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
+            var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
+            File.WriteAllText(csprojPath, csprojContents);
+
+            // Act & Assert
+
+            // First restore is fresh, so should not be skipped (no-op), and should run audit
+            _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, "restore -p:ExpectedRestoreProjectCount=1 -p:ExpectedRestoreSkippedCount=0 -p:ExpectedRestoreProjectsAuditedCount=0");
+
+            // Second restore is no-op, so should be skipped, and audit not run
+            _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, "restore -p:ExpectedRestoreProjectCount=1 -p:ExpectedRestoreSkippedCount=1 -p:ExpectedRestoreProjectsAuditedCount=0");
+        }
+
+        private string GetProjectFileForRestoreTaskOutputTests(string targetFramework)
+        {
+            string csprojContents = @$"<Project Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>
+        <TargetFramework>{targetFramework}</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include=""packageA"" Version=""1.0.0"" />
+    </ItemGroup>
+
+    <Target Name=""AssertRestoreTaskOutputProperties""
+            AfterTargets=""Restore"">
+        <Error
+            Condition="" '$(RestoreProjectCount)' != '$(ExpectedRestoreProjectCount)' ""
+            Text=""RestoreProjectCount did not have the expected value. Expected: $(ExpectedRestoreProjectCount) Found: $(RestoreProjectCount)"" />
+        <Error
+            Condition="" '$(RestoreSkippedCount)' != '$(ExpectedRestoreSkippedCount)' ""
+            Text=""RestoreSkippedCount did not have the expected value. Expected: $(ExpectedRestoreSkippedCount) Found: $(RestoreSkippedCount)"" />
+        <Error
+            Condition="" '$(RestoreProjectsAuditedCount)' != '$(ExpectedRestoreProjectsAuditedCount)' ""
+            Text=""RestoreProjectsAuditedCount did not have the expected value. Expected: $(ExpectedRestoreProjectsAuditedCount) Found: $(RestoreProjectsAuditedCount)"" />
+    </Target>
+</Project>";
+            return csprojContents;
         }
 
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)

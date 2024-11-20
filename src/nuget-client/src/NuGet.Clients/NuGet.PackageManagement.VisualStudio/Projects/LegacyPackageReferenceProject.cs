@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -128,7 +130,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return (new[] { packageSpec }, null);
         }
 
-        private Dictionary<string, CentralPackageVersion> GetCentralPackageVersions()
+        private IReadOnlyDictionary<string, CentralPackageVersion> GetCentralPackageVersions()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -139,9 +141,8 @@ namespace NuGet.PackageManagement.VisualStudio
             return packageVersions
                 .Select(item => ToCentralPackageVersion(item.PackageId, item.Version))
                 .Distinct(CentralPackageVersionNameComparer.Default)
-                .ToDictionary(cpv => cpv.Name);
+                .ToDictionary(cpv => cpv.Name, StringComparer.OrdinalIgnoreCase);
         }
-
 
         private CentralPackageVersion ToCentralPackageVersion(string packageId, string version)
         {
@@ -220,7 +221,7 @@ namespace NuGet.PackageManagement.VisualStudio
             BuildIntegratedInstallationContext __,
             CancellationToken token)
         {
-            var dependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+            var dependency = new LibraryDependency()
             {
                 LibraryRange = new LibraryRange(
                     name: packageId,
@@ -423,7 +424,7 @@ namespace NuGet.PackageManagement.VisualStudio
             var packageReferences = (await ProjectServices
                 .ReferencesReader
                 .GetPackageReferencesAsync(targetFramework, CancellationToken.None))
-                .ToList();
+                .ToImmutableArray();
 
 #pragma warning disable CS0618 // Type or member is obsolete
             // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
@@ -431,30 +432,36 @@ namespace NuGet.PackageManagement.VisualStudio
                 .Select(NuGetFramework.Parse)
                 .ToList();
 
-            var assetTargetFallback = MSBuildStringUtility.Split(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.AssetTargetFallback))
+            var assetTargetFallbackList = MSBuildStringUtility.Split(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.AssetTargetFallback))
                 .Select(NuGetFramework.Parse)
                 .ToList();
 #pragma warning restore CS0618 // Type or member is obsolete
-
-            var projectTfi = new TargetFrameworkInformation
-            {
-                FrameworkName = targetFramework,
-                Dependencies = packageReferences,
-            };
 
 #pragma warning disable CS0618 // Type or member is obsolete
             // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             bool isCpvmEnabled = MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.ManagePackageVersionsCentrally));
 #pragma warning restore CS0618 // Type or member is obsolete
+
+            IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions = null;
             if (isCpvmEnabled)
             {
                 // Add the central version information and merge the information to the package reference dependencies
-                projectTfi.CentralPackageVersions.AddRange(GetCentralPackageVersions());
-                LibraryDependency.ApplyCentralVersionInformation(projectTfi.Dependencies, projectTfi.CentralPackageVersions);
+                centralPackageVersions = GetCentralPackageVersions();
+                packageReferences = ApplyCentralVersionInformation(packageReferences, centralPackageVersions);
             }
 
-            // Apply fallback settings
-            AssetTargetFallbackUtility.ApplyFramework(projectTfi, packageTargetFallback, assetTargetFallback);
+            // Get fallback settings
+            (targetFramework, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(targetFramework, packageTargetFallback, assetTargetFallbackList);
+
+            var projectTfi = new TargetFrameworkInformation
+            {
+                AssetTargetFallback = assetTargetFallback,
+                CentralPackageVersions = centralPackageVersions,
+                Dependencies = packageReferences,
+                Imports = imports,
+                FrameworkName = targetFramework,
+                Warn = warn,
+            };
 
             // Build up runtime information.
 
@@ -562,6 +569,57 @@ namespace NuGet.PackageManagement.VisualStudio
                     UseLegacyDependencyResolver = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.RestoreUseLegacyDependencyResolver)),
                 }
             };
+        }
+
+        internal static ImmutableArray<LibraryDependency> ApplyCentralVersionInformation(ImmutableArray<LibraryDependency> packageReferences, IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions)
+        {
+            if (packageReferences.IsDefault)
+            {
+                throw new ArgumentNullException(nameof(packageReferences));
+            }
+            if (centralPackageVersions == null)
+            {
+                throw new ArgumentNullException(nameof(centralPackageVersions));
+            }
+            if (centralPackageVersions.Count == 0)
+            {
+                return packageReferences;
+            }
+
+            LibraryDependency[] result = new LibraryDependency[packageReferences.Length];
+            for (int i = 0; i < packageReferences.Length; i++)
+            {
+                LibraryDependency d = packageReferences[i];
+                if (!d.AutoReferenced && d.LibraryRange.VersionRange == null)
+                {
+                    var libraryRange = d.LibraryRange;
+                    var versionCentrallyManaged = d.VersionCentrallyManaged;
+
+                    if (d.VersionOverride != null)
+                    {
+                        libraryRange = new LibraryRange(d.LibraryRange) { VersionRange = d.VersionOverride };
+                    }
+                    else
+                    {
+                        if (centralPackageVersions.TryGetValue(d.Name, out CentralPackageVersion centralPackageVersion))
+                        {
+                            libraryRange = new LibraryRange(d.LibraryRange) { VersionRange = centralPackageVersion.VersionRange };
+                        }
+
+                        versionCentrallyManaged = true;
+                    }
+
+                    d = new LibraryDependency(d)
+                    {
+                        LibraryRange = libraryRange,
+                        VersionCentrallyManaged = versionCentrallyManaged
+                    };
+                }
+
+                result[i] = d;
+            }
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(result);
         }
 
         internal static IEnumerable<RuntimeDescription> GetRuntimeIdentifiers(string unparsedRuntimeIdentifer, string unparsedRuntimeIdentifers)

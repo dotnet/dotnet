@@ -28,9 +28,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.AuthorSignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -50,9 +47,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UninstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.AuthorSignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -73,9 +67,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UpdateUnsignedToSignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var packageVersion09 = "0.9.0";
             var signedPackage = Fixture.AuthorSignedTestPackage;
 
@@ -98,9 +89,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task DowngradeSignedToUnsignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             // This test is not considered an ideal behavior of the product but states the current behavior.
             // A package that is already installed as signed should be specailly treated and a user should not be
             // able to downgrade to an unsigned version. This test needs to be updated once this behavior gets
@@ -127,9 +115,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task WithExpiredCertificate_InstallFromPMCForPC_WarnAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             using (var trustedExpiringTestCert = SigningUtility.GenerateTrustedTestCertificateThatWillExpireSoon())
             {
@@ -159,9 +144,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task Tampered_InstallFromPMCForPC_FailAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.AuthorSignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))

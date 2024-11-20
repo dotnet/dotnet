@@ -22,7 +22,17 @@ namespace NuGet.Build.Tasks
     public class RestoreTask : Microsoft.Build.Utilities.Task, ICancelableTask, IDisposable
     {
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
         private bool _disposed = false;
+
+        public RestoreTask()
+            : this(EnvironmentVariableWrapper.Instance)
+        {
+        }
+        internal RestoreTask(IEnvironmentVariableReader environmentVariableReader)
+        {
+            _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
+        }
 
         /// <summary>
         /// DG file entries
@@ -89,6 +99,30 @@ namespace NuGet.Build.Tasks
         public ITaskItem[] EmbedInBinlog { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of projects that were considered for this restore operation.
+        /// </summary>
+        /// <remarks>
+        /// Projects that no-op (were already up to date) are included.
+        /// </remarks>
+        [Output]
+        public int ProjectsRestored { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of projects that were already up to date.
+        /// </summary>
+        [Output]
+        public int ProjectsAlreadyUpToDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of projects that NuGetAudit scanned.
+        /// </summary>
+        /// <remarks>
+        /// NuGetAudit does not run on no-op restores, or when no vulnerability database can be downloaded.
+        /// </remarks>
+        [Output]
+        public int ProjectsAudited { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to embed files produced by restore in the MSBuild binary logger.
         /// 0 = Nothing
         /// 1 = Assets file, g.props, and g.targets
@@ -98,7 +132,7 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
-            var debugRestoreTask = Environment.GetEnvironmentVariable("DEBUG_RESTORE_TASK");
+            var debugRestoreTask = _environmentVariableReader.GetEnvironmentVariable("DEBUG_RESTORE_TASK");
             if (!string.IsNullOrEmpty(debugRestoreTask) &&
                 (debugRestoreTask.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase) || debugRestoreTask == "1"))
             {
@@ -148,7 +182,7 @@ namespace NuGet.Build.Tasks
                 log.LogInformation(Strings.Log_RestoreNoCacheInformation);
             }
 
-            return await BuildTasksUtility.RestoreAsync(
+            var restoreSummaries = await BuildTasksUtility.RestoreAsync(
                 dependencyGraphSpec: dgFile,
                 interactive: Interactive,
                 recursive: RestoreRecursive,
@@ -161,6 +195,20 @@ namespace NuGet.Build.Tasks
                 restorePC: RestorePackagesConfig,
                 log: log,
                 cancellationToken: _cts.Token);
+
+            int upToDate = 0;
+            int audited = 0;
+            foreach (var summary in restoreSummaries)
+            {
+                if (summary.NoOpRestore) { upToDate++; }
+                if (summary.AuditRan) { audited++; }
+            }
+
+            ProjectsRestored = restoreSummaries.Count;
+            ProjectsAlreadyUpToDate = upToDate;
+            ProjectsAudited = audited;
+
+            return restoreSummaries.All(s => s.Success);
         }
 
         public void Cancel()

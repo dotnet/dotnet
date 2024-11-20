@@ -34,7 +34,7 @@ Param (
 
 if (!$BuildRTM)
 {
-    $PackageIDListShouldExist.Add("Test.Utility")
+    $PackageIDListShouldExist.Add("Microsoft.Internal.NuGet.Testing.SignedPackages")
     $PackageIDListShouldExist.Add("NuGet.Localization")
 }
 

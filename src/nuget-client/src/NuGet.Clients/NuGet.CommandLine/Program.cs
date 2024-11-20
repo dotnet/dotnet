@@ -71,10 +71,10 @@ namespace NuGet.CommandLine
                 args = CommandLineResponseFile.ParseArgsResponseFiles(args);
             }
 #endif
-            return MainCore(Directory.GetCurrentDirectory(), args);
+            return MainCore(Directory.GetCurrentDirectory(), args, EnvironmentVariableWrapper.Instance);
         }
 
-        public static int MainCore(string workingDirectory, string[] args)
+        public static int MainCore(string workingDirectory, string[] args, IEnvironmentVariableReader environmentVariableReader)
         {
             var console = new Console();
 
@@ -158,7 +158,7 @@ namespace NuGet.CommandLine
                 {
                     if (command is Command baseCommand)
                     {
-                        SetConsoleInteractivity(console, baseCommand);
+                        SetConsoleInteractivity(console, baseCommand, environmentVariableReader);
                     }
 
                     try
@@ -423,19 +423,19 @@ namespace NuGet.CommandLine
             }
         }
 
-        private static void SetConsoleInteractivity(IConsole console, Command command)
+        private static void SetConsoleInteractivity(IConsole console, Command command, IEnvironmentVariableReader environmentVariableReader)
         {
             // Apply command setting
             console.IsNonInteractive = command.NonInteractive;
 
             // Global environment variable to prevent the exe for prompting for credentials
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NUGET_EXE_NO_PROMPT")))
+            if (!string.IsNullOrEmpty(environmentVariableReader.GetEnvironmentVariable("NUGET_EXE_NO_PROMPT")))
             {
                 console.IsNonInteractive = true;
             }
 
             // Disable non-interactive if force is set.
-            var forceInteractive = Environment.GetEnvironmentVariable("FORCE_NUGET_EXE_INTERACTIVE");
+            var forceInteractive = environmentVariableReader.GetEnvironmentVariable("FORCE_NUGET_EXE_INTERACTIVE");
             if (!string.IsNullOrEmpty(forceInteractive))
             {
                 console.IsNonInteractive = false;

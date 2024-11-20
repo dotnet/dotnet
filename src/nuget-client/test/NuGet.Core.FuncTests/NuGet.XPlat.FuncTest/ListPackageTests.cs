@@ -172,7 +172,7 @@ namespace NuGet.XPlat.FuncTest
                 });
         }
 
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/13874")]
         public async Task ListPackage_WithPrivateHttpSourceCredentialServiceIsInvokedAsNeeded_Succeeds()
         {
             // Arrange

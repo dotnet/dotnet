@@ -8,13 +8,15 @@ using System.Linq;
 using System.Text;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using Test.Utility.Signing;
 using Xunit;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+
 
 #if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Test.Utility.Signing;
 #endif
 
 namespace NuGet.Packaging.Test

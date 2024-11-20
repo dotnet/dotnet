@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
@@ -1187,7 +1188,7 @@ namespace NuGet.CommandLine.Test
                     string.Join(" ", args));
 
                 // Assert
-                // Verify restore worked, this requires finding the packages from the repository, which is in 
+                // Verify restore worked, this requires finding the packages from the repository, which is in
                 // the solution level nuget.config.
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 

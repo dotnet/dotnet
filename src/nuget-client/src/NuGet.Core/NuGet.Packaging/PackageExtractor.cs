@@ -17,6 +17,20 @@ namespace NuGet.Packaging
 {
     public static class PackageExtractor
     {
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageStream">A <see cref="Stream"/> for the nupkg file that is being extracted.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="ArgumentException">If packageStream is not seekable.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             Stream packageStream,
@@ -140,6 +154,21 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageReader">A <see cref="PackageReaderBase"/> with the package opened.</param>
+        /// <param name="packageStream">A <see cref="Stream"/> for the nupkg file that is being extracted.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="ArgumentException">If packagestream is not seekable.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             PackageReaderBase packageReader,
@@ -241,6 +270,19 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageReader">A <see cref="PackageReaderBase"/> with the package opened.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             PackageReaderBase packageReader,
@@ -336,20 +378,26 @@ namespace NuGet.Packaging
         }
 
         /// <summary>
-        /// Uses a copy function to install a package to a global packages directory.
+        /// Uses a copy function to install a package to a global packages directory with the PackageReference directory layout.
         /// </summary>
+        /// <param name="source">The source where the nupkg was downloaded from.</param>
+        /// <param name="packageIdentity">The package id + version being installed.</param>
         /// <param name="copyToAsync">
         /// A function which should copy the package to the provided destination stream.
         /// </param>
+        /// <param name="versionFolderPathResolver">The path resolver for PackageReference layout.</param>
         /// <param name="packageExtractionContext">
         /// The version folder path context, which encapsulates all of the parameters to observe
         /// while installing the package.
         /// </param>
         /// <param name="token">The cancellation token.</param>
+        /// <param name="parentId">The telemetry parent ID.</param>
         /// <returns>
         /// True if the package was installed. False if the package already exists and therefore
         /// resulted in no copy operation.
         /// </returns>
+        /// <exception cref="ArgumentNullException">If copyToAsync or packageExtractionContext is null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<bool> InstallFromSourceAsync(
             string source,
             PackageIdentity packageIdentity,
@@ -592,6 +640,26 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Uses a copy function to install a package to a global packages directory with the PackageReference directory layout.
+        /// </summary>
+        /// <param name="packageIdentity">The package id + version being installed.</param>
+        /// <param name="packageDownloader">
+        /// A <see cref="IPackageDownloader"/> to download the nupkg.
+        /// </param>
+        /// <param name="versionFolderPathResolver">The path resolver for PackageReference layout.</param>
+        /// <param name="packageExtractionContext">
+        /// The version folder path context, which encapsulates all of the parameters to observe
+        /// while installing the package.
+        /// </param>
+        /// <param name="token">The cancellation token.</param>
+        /// <param name="parentId">The telemetry parent ID.</param>
+        /// <returns>
+        /// True if the package was installed. False if the package already exists and therefore
+        /// resulted in no copy operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">If packageDownlaoder or packageExtractionContext is null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<bool> InstallFromSourceAsync(
             PackageIdentity packageIdentity,
             IPackageDownloader packageDownloader,

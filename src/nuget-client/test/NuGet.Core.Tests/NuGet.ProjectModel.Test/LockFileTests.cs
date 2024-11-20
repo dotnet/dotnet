@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
 
@@ -32,8 +32,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -53,7 +52,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -99,8 +98,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -120,7 +118,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -170,8 +168,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -191,7 +188,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -256,8 +253,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -277,7 +273,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -379,8 +375,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -400,7 +395,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -466,8 +461,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -487,7 +481,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -551,8 +545,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -572,7 +565,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -666,8 +659,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -687,7 +679,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {

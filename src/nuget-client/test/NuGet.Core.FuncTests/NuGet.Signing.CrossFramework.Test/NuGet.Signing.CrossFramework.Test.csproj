@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>NuGet package signing cross framework test.</Description>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Unit</TestProjectType>
     <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
   <ItemGroup>

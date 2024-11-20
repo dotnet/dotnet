@@ -191,6 +191,9 @@ Copyright (c) .NET Foundation. All rights reserved.
       RestorePackagesConfig="$(RestorePackagesConfig)"
       EmbedFilesInBinlog="$(RestoreEmbedFilesInBinlog)">
       <Output TaskParameter="EmbedInBinlog" ItemName="EmbedInBinlog" />
+      <Output TaskParameter="ProjectsRestored" PropertyName="RestoreProjectCount" />
+      <Output TaskParameter="ProjectsAlreadyUpToDate" PropertyName="RestoreSkippedCount" />
+      <Output TaskParameter="ProjectsAudited" PropertyName="RestoreProjectsAuditedCount" />
     </RestoreTask>
   </Target>
 
