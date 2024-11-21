@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>10.0.0-beta.24570.1</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>81282417af07e7bdee0a364e714205316ed2b91e</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24570.1</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>38250c13a7be74dd7525ef69d3fa6f73133f645a</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24570.5</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>b897087e8b76481a9213ae422f5dc16f64a124b5</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24521.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>feb61c7f328a2401d74f4317b39d02126cfdfe24</commandlineapiGitCommitHash>
@@ -15,8 +15,8 @@
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24562.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>8c505ca6921b5f7e9b8acc234cc8f15035537ee4</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>9.0.0-preview.24566.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>cda78166c99b55b61cf0e24ce76c3f9980a79f63</efcoreGitCommitHash>
-    <efcoreOutputPackageVersion>10.0.0-alpha.1.24569.2</efcoreOutputPackageVersion>
+    <efcoreGitCommitHash>c8e08de4cf15210da5ead8ae5be0015dc05e6886</efcoreGitCommitHash>
+    <efcoreOutputPackageVersion>10.0.0-alpha.1.24569.3</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>8808f75f212bcec6a2050fe045a7e07ab8a5a8c1</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>10.0.0-alpha.1.24563.1</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>e9dab83bc86ec414b7288d3f8be48a2b14eabb5d</fsharpGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24570.2</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>44c807fb89cb9eea8bdec164af363ce6b2ce5abe</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24568.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>893096d63a82eb4dc245e082d543fc2ef0ba4bad</sdkGitCommitHash>
+    <sdkGitCommitHash>cf197364c3b52f4bc7c9d4bd3d03cf771e163a9e</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>09aaed01f4bd113a1aca58d620096fe77c5a2da7</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24568.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>df6fdaf26c24fa7c897ca8062227aa28e76e2339</sourcebuildreferencepackagesGitCommitHash>
