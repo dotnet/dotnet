@@ -45,13 +45,8 @@ internal static partial class RazorEditHelper
 
         textChangeBuilder.AddDirectlyMappedEdits(textChanges, codeDocument, cancellationToken);
 
-        var oldUsings = await AddUsingsHelper.FindUsingDirectiveStringsAsync(
-            originalSyntaxTree,
-            cancellationToken).ConfigureAwait(false);
-
-        var newUsings = await AddUsingsHelper.FindUsingDirectiveStringsAsync(
-            newSyntaxTree,
-            cancellationToken).ConfigureAwait(false);
+        var oldUsings = await AddUsingsHelper.FindUsingDirectiveStringsAsync(originalSyntaxTree, cancellationToken).ConfigureAwait(false);
+        var newUsings = await AddUsingsHelper.FindUsingDirectiveStringsAsync(newSyntaxTree, cancellationToken).ConfigureAwait(false);
 
         var addedUsings = Delta.Compute(oldUsings, newUsings);
         var removedUsings = Delta.Compute(newUsings, oldUsings);

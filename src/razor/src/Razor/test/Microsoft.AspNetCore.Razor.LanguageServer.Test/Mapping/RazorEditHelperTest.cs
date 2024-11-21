@@ -467,7 +467,7 @@ public class RazorEditHelperTest : LanguageServerTestBase
             }
             """);
 
-    [Fact(Skip = "https://github.com/dotnet/razor/issues/11168")]
+    [Fact]
     public Task UsingAliasRemoved_HandledCorrectly()
         => TestAsync(
             csharpSource:
@@ -507,13 +507,12 @@ public class RazorEditHelperTest : LanguageServerTestBase
             @using System
             @using System.Collections.Generic
 
-
             @code {
                 public int NewCounter { get; set; } 
             }
             """);
 
-    [Fact(Skip = "https://github.com/dotnet/razor/issues/11168")]
+    [Fact]
     public Task UsingAliasAdded_HandledCorrectly()
         => TestAsync(
             csharpSource:
@@ -552,6 +551,96 @@ public class RazorEditHelperTest : LanguageServerTestBase
             @using System
             @using System.Collections.Generic
             @using Goo = Bar
+
+            @code {
+                public int NewCounter { get; set; } 
+            }
+            """);
+
+        [Fact]
+        public Task UsingStaticRemoved_HandledCorrectly()
+        => TestAsync(
+            csharpSource:
+            """
+            {|mapUsing:using System;|}
+            {|mapUsing2:using System.Collections.Generic;|}
+            {|mapUsing3:using static Test.Bar;|}
+            class MyComponent : ComponentBase
+            {
+                {|map1:public int Counter { get; set; }|}
+            }
+            """,
+            razorSource:
+            """
+            @page "/counter"
+            {|mapUsing:@using System|}
+            {|mapUsing2:@using System.Collections.Generic|}
+            {|mapUsing3:@using static Test.Bar|}
+
+            @code {
+                {|map1:public int Counter { get; set; }|} 
+            }
+            """,
+            newCSharpSource:
+            """
+            using System;
+            using System.Collections.Generic;
+
+            class MyComponent : ComponentBase
+            {
+                public int NewCounter { get; set; }
+            }
+            """,
+            expectedRazorSource:
+            """
+            @page "/counter"
+            @using System
+            @using System.Collections.Generic
+
+            @code {
+                public int NewCounter { get; set; } 
+            }
+            """);
+
+    [Fact]
+    public Task UsingStaticAdded_HandledCorrectly()
+        => TestAsync(
+            csharpSource:
+            """
+            {|mapUsing:using System;|}
+            {|mapUsing2:using static System.Collections.Generic;|}
+            class MyComponent : ComponentBase
+            {
+                {|map1:public int Counter { get; set; }|}
+            }
+            """,
+            razorSource:
+            """
+            @page "/counter"
+            {|mapUsing:@using System|}
+            {|mapUsing2:@using System.Collections.Generic|}
+
+            @code {
+                {|map1:public int Counter { get; set; }|} 
+            }
+            """,
+            newCSharpSource:
+            """
+            using System;
+            using System.Collections.Generic;
+            using static Test.Bar;
+
+            class MyComponent : ComponentBase
+            {
+                public int NewCounter { get; set; }
+            }
+            """,
+            expectedRazorSource:
+            """
+            @page "/counter"
+            @using System
+            @using System.Collections.Generic
+            @using static Test.Bar
 
             @code {
                 public int NewCounter { get; set; } 

@@ -17,7 +17,8 @@ internal class AsyncBatchingWorkQueue<TItem>(
     TimeSpan delay,
     Func<ImmutableArray<TItem>, CancellationToken, ValueTask> processBatchAsync,
     IEqualityComparer<TItem>? equalityComparer,
-    CancellationToken cancellationToken) : AsyncBatchingWorkQueue<TItem, VoidResult>(delay, Convert(processBatchAsync), equalityComparer, cancellationToken)
+    Action? idleAction,
+    CancellationToken cancellationToken) : AsyncBatchingWorkQueue<TItem, VoidResult>(delay, Convert(processBatchAsync), equalityComparer, idleAction, cancellationToken)
 {
     public AsyncBatchingWorkQueue(
         TimeSpan delay,
@@ -27,6 +28,19 @@ internal class AsyncBatchingWorkQueue<TItem>(
                processBatchAsync,
                equalityComparer: null,
                cancellationToken)
+    {
+    }
+
+    public AsyncBatchingWorkQueue(
+        TimeSpan delay,
+        Func<ImmutableArray<TItem>, CancellationToken, ValueTask> processBatchAsync,
+        IEqualityComparer<TItem>? equalityComparer,
+        CancellationToken cancellationToken)
+        : this(delay,
+              processBatchAsync,
+              equalityComparer,
+              idleAction: null,
+              cancellationToken)
     {
     }
 

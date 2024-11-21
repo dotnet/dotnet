@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -246,7 +247,7 @@ internal static partial class RazorEditHelper
                 cancellationToken.ThrowIfCancellationRequested();
 
                 RazorSyntaxFacts.TryGetNamespaceFromDirective(node, out var @namespace);
-                Debug.Assert(@namespace is not null);
+                @namespace.AssumeNotNull();
                 if (removedUsings.Contains(@namespace))
                 {
                     AddRemoveEdit(node, codeDocument.Source.Text);
