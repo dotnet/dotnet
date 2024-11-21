@@ -17,7 +17,7 @@ internal readonly record struct RemoteAutoInsertTextEdit(
     [property: DataMember(Order = 2)] RoslynInsertTextFormat InsertTextFormat)
 {
     public static RemoteAutoInsertTextEdit FromLspInsertTextEdit(VSInternalDocumentOnAutoInsertResponseItem edit)
-        => new (
+        => new(
             edit.TextEdit.Range.ToLinePositionSpan(),
             edit.TextEdit.NewText,
             (RoslynInsertTextFormat)edit.TextEditFormat);

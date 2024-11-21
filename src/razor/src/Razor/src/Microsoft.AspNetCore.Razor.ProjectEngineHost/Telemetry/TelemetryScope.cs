@@ -95,7 +95,7 @@ internal sealed class TelemetryScope : IDisposable
         array[0] = property1;
         array[1] = property2;
 
-        return new(reporter, name, minTimeToReport, severity,  array);
+        return new(reporter, name, minTimeToReport, severity, array);
     }
 
     public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2, Property property3)
@@ -112,7 +112,7 @@ internal sealed class TelemetryScope : IDisposable
     {
         var array = new Property[properties.Length + 1];
         properties.CopyTo(array);
-        
+
         return new(reporter, name, minTimeToReport, severity, array);
     }
 }

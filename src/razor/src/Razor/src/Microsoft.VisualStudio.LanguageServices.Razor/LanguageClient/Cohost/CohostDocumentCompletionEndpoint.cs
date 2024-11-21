@@ -89,7 +89,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
         }
 
         // Return immediately if this is auto-shown completion but auto-shown completion is disallowed in settings
-        var clientSettings =  _clientSettingsManager.GetClientSettings();
+        var clientSettings = _clientSettingsManager.GetClientSettings();
         var autoShownCompletion = completionContext.TriggerKind != CompletionTriggerKind.Invoked;
         if (autoShownCompletion && !clientSettings.ClientCompletionSettings.AutoShowCompletion)
         {

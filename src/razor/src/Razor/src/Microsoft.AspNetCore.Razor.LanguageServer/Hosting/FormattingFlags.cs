@@ -9,8 +9,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 internal enum FormattingFlags
 {
     Disabled = 0,
-    Enabled  = 1,
-    OnPaste  = 1 << 1,
-    OnType   = 1 << 2,
-    All      = Enabled | OnPaste | OnType
+    Enabled = 1,
+    OnPaste = 1 << 1,
+    OnType = 1 << 2,
+    All = Enabled | OnPaste | OnType
 };

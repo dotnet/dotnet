@@ -24,7 +24,7 @@ internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewri
         // Modifying label of the C# using snippet to "using statement" to disambiguate from
         // Razor @using directive, and also appending a space to sort text to make sure it's sorted
         // after Razor "using" keyword and "using directive ..." entries (which use "using" as sort text)
-        ["using"] = (Label:$"using {SR.Statement}", SortText:"using ")
+        ["using"] = (Label: $"using {SR.Statement}", SortText: "using ")
     }
     .ToFrozenDictionary();
 
