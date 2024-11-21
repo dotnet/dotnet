@@ -925,6 +925,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: SymbolPublishVisibility.Public,
                 filenamesToExclude: FilenamesToExclude),
 
+            // .NET 10 UB,
+            new TargetChannelConfig(
+                id: 5708,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                filenamesToExclude: FilenamesToExclude),
+
             // .NET Core Experimental,
             new TargetChannelConfig(
                 id: 562,
