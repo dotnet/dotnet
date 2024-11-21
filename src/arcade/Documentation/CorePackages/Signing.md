@@ -101,11 +101,11 @@ The [default configuration](../../src/Microsoft.DotNet.Arcade.Sdk/tools/Sign.pro
 
 #### 2. Use a different certificate for an specific Public Key Token
 
-If you repo have signable files that have a different Public Key Token than the one preconfigured in the SDK (i.e., `31bf3856ad364e35`) you might add an entry to `StrongNameSignInfo` to specify the certificate name that should be used for those files. To do that, place an entry like the one show below in your `eng\Signing.props` file.
+If your repo has signable files that have a different Public Key Token than the one preconfigured in the SDK (i.e., `31bf3856ad364e35`) you might add an entry to `StrongNameSignInfo` to specify the certificate name that should be used for those files. To do that, place an entry like the one show below in your `eng\Signing.props` file.
 
 ```xml
 <ItemGroup>
-	<StrongNameSignInfo Include="StrongName1" PublicKeyToken="4321abcda1b2c3d4" CertificateName="DifferentCertName" />
+	<StrongNameSignInfo Include="(MSBuildThisFileDirectory)..\StrongName1.snk" PublicKeyToken="4321abcda1b2c3d4" CertificateName="DifferentCertName" />
 </ItemGroup>
 ```
 
