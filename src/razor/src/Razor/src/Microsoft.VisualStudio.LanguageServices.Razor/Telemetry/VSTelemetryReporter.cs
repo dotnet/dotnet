@@ -11,7 +11,7 @@ using StreamJsonRpc;
 namespace Microsoft.VisualStudio.Razor.Telemetry;
 
 [Export(typeof(ITelemetryReporter))]
-[method:ImportingConstructor]
+[method: ImportingConstructor]
 internal class VSTelemetryReporter(ILoggerFactory loggerFactory) : TelemetryReporter(TelemetryService.DefaultSession)
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<VSTelemetryReporter>();

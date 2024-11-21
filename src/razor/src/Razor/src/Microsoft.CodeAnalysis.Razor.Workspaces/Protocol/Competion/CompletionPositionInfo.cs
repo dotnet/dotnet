@@ -20,6 +20,6 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 /// <param name="DocumentPositionInfo">Document position mapping data for language mappings</param>
 /// <param name="ShouldIncludeDelegationSnippets">Indicates that snippets should be added to delegated completion list (currently for HTML only)</param>
 internal record struct CompletionPositionInfo(
-    [property:JsonPropertyName("provisionalTextEdit")] TextEdit? ProvisionalTextEdit,
-    [property:JsonPropertyName("documentPositionInfo")] DocumentPositionInfo DocumentPositionInfo,
-    [property:JsonPropertyName("shouldIncludeDelegationSnippets")] bool ShouldIncludeDelegationSnippets);
+    [property: JsonPropertyName("provisionalTextEdit")] TextEdit? ProvisionalTextEdit,
+    [property: JsonPropertyName("documentPositionInfo")] DocumentPositionInfo DocumentPositionInfo,
+    [property: JsonPropertyName("shouldIncludeDelegationSnippets")] bool ShouldIncludeDelegationSnippets);

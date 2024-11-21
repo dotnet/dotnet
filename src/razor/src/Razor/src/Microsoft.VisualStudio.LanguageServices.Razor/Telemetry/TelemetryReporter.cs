@@ -435,7 +435,7 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
             declaringTypeName.StartsWith(AspNetCoreNamespace) ||
             declaringTypeName.StartsWith(MicrosoftVSRazorNamespace);
 
-    private sealed class TelemetrySessionManager: IDisposable
+    private sealed class TelemetrySessionManager : IDisposable
     {
         /// <summary>
         /// Store request counters in a concurrent dictionary as non-mutating LSP requests can

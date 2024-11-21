@@ -13,5 +13,5 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 /// it will lose the project context information.
 /// </summary>
 internal record class TextDocumentIdentifierAndVersion(
-    [property:JsonPropertyName("textDocumentIdentifier")] TextDocumentIdentifier TextDocumentIdentifier,
-    [property:JsonPropertyName("version")] int Version);
+    [property: JsonPropertyName("textDocumentIdentifier")] TextDocumentIdentifier TextDocumentIdentifier,
+    [property: JsonPropertyName("version")] int Version);
