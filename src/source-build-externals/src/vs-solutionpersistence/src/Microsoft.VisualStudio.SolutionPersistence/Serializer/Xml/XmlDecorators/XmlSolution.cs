@@ -96,12 +96,12 @@ internal sealed partial class XmlSolution(SlnxFile file, XmlElement element) :
             }
             catch (Exception ex) when (SolutionException.ShouldWrap(ex))
             {
-                throw SolutionException.Create(ex, this, string.Format(Errors.InvalidVersion_Args1, fileVersion));
+                throw SolutionException.Create(ex, this, string.Format(Errors.InvalidVersion_Args1, fileVersion), SolutionErrorType.InvalidVersion);
             }
 
             if (this.Root.FileVersion.Major > SlnxFile.CurrentVersion)
             {
-                throw SolutionException.Create(string.Format(Errors.UnsupportedVersion_Args1, fileVersion), this);
+                throw SolutionException.Create(string.Format(Errors.UnsupportedVersion_Args1, fileVersion), this, SolutionErrorType.UnsupportedVersion);
             }
         }
 

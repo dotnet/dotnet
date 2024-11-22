@@ -206,7 +206,7 @@ namespace Microsoft.VisualStudio.SolutionPersistence {
         
         /// <summary>
         ///   Looks up a localized string similar to Names cannot:
-        ///- contain any of the following characters: / ? : \ * &quot; &lt; &gt; | # &amp; %
+        ///- contain any of the following characters: / ? : \ * &quot; &lt; &gt; |
         ///- contain control characters
         ///- be system reserved names, including &apos;CON&apos;, &apos;AUX&apos;, &apos;PRN&apos;, &apos;COM1&apos; or &apos;LPT2&apos;
         ///- be &apos;.&apos; or &apos;..&apos;.

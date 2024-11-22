@@ -41,7 +41,7 @@ internal sealed partial class ProjectTypeTable
                 !this.fromExtension.TryAdd(GetExtension(type.Extension), type))
             {
                 string projectType = type.GetDisplayName();
-                throw new SolutionException(string.Format(Errors.DuplicateExtension_Args2, type.Extension, projectType));
+                throw new SolutionException(string.Format(Errors.DuplicateExtension_Args2, type.Extension, projectType), SolutionErrorType.DuplicateExtension);
             }
 
             if (!type.Name.IsNullOrEmpty())
@@ -49,14 +49,14 @@ internal sealed partial class ProjectTypeTable
                 if (!this.fromName.TryAdd(type.Name, type))
                 {
                     string projectType = type.GetDisplayName();
-                    throw new SolutionException(string.Format(Errors.DuplicateName_Args2, type.Name, projectType));
+                    throw new SolutionException(string.Format(Errors.DuplicateName_Args2, type.Name, projectType), SolutionErrorType.DuplicateName);
                 }
 
                 // If a name isn't provided, it is just to map an extension to a project type.
                 if (type.ProjectTypeId != Guid.Empty && !this.fromProjectTypeId.TryAdd(type.ProjectTypeId, type))
                 {
                     string projectType = type.GetDisplayName();
-                    throw new SolutionException(string.Format(Errors.DuplicateProjectTypeId_Args2, type.ProjectTypeId, projectType));
+                    throw new SolutionException(string.Format(Errors.DuplicateProjectTypeId_Args2, type.ProjectTypeId, projectType), SolutionErrorType.DuplicateProjectTypeId);
                 }
             }
 
@@ -64,7 +64,7 @@ internal sealed partial class ProjectTypeTable
             {
                 if (this.defaultRules is not null)
                 {
-                    throw new SolutionException(Errors.DuplicateDefaultProjectType);
+                    throw new SolutionException(Errors.DuplicateDefaultProjectType, SolutionErrorType.DuplicateDefaultProjectType);
                 }
 
                 this.defaultRules ??= type.ConfigurationRules;
@@ -77,7 +77,7 @@ internal sealed partial class ProjectTypeTable
             {
                 if (this.GetBasedOnType(type) is null)
                 {
-                    throw new SolutionException(string.Format(Errors.InvalidProjectTypeReference_Args1, type.BasedOn));
+                    throw new SolutionException(string.Format(Errors.InvalidProjectTypeReference_Args1, type.BasedOn), SolutionErrorType.InvalidProjectTypeReference);
                 }
 
                 // Check for loops in the BasedOn chain using Floyd's cycle-finding algorithm.
@@ -88,7 +88,7 @@ internal sealed partial class ProjectTypeTable
                     if (object.ReferenceEquals(currentSlow, currentFast))
                     {
                         string projectType = type.GetDisplayName();
-                        throw new SolutionException(string.Format(Errors.InvalidLoop_Args1, projectType));
+                        throw new SolutionException(string.Format(Errors.InvalidLoop_Args1, projectType), SolutionErrorType.InvalidLoop);
                     }
 
                     currentSlow = this.GetBasedOnType(currentSlow);

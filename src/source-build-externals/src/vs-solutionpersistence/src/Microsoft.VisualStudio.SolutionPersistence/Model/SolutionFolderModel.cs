@@ -62,7 +62,7 @@ public sealed class SolutionFolderModel : SolutionItemModel
             string testName = $"{this.Parent?.ItemRef ?? "/"}{value}/";
             if (this.Solution.FindFolder(testName) is not null)
             {
-                throw new ArgumentException(string.Format(Errors.DuplicateItemRef_Args2, testName, "Folder"), nameof(value));
+                throw new SolutionArgumentException(string.Format(Errors.DuplicateItemRef_Args2, testName, "Folder"), nameof(value), SolutionErrorType.DuplicateItemRef);
             }
 
             string oldName = this.name;

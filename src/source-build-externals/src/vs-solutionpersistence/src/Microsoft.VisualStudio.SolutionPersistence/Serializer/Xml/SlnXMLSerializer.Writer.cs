@@ -43,6 +43,8 @@ internal partial class SlnXmlSerializer
                 model.RemoveObsoleteProperties();
             }
 
+            model.DistillProjectConfigurations();
+
             // If this started as an XML document, merge the changes back into the original document.
             SlnxFile root = modelExtension?.Root ?? CreateNewSlnFile(fullPath, xmlSerializerSettings, model.StringTable);
 

@@ -62,7 +62,7 @@ public abstract class SolutionItemModel : PropertyContainerModel
             {
                 if (this.Solution.FindItemById(value) is not null)
                 {
-                    throw new ArgumentException(string.Format(Errors.DuplicateItemRef_Args2, value, this.GetType().Name), nameof(value));
+                    throw new SolutionArgumentException(string.Format(Errors.DuplicateItemRef_Args2, value, this.GetType().Name), nameof(value), SolutionErrorType.DuplicateItemRef);
                 }
 
                 Guid? oldId = this.id ?? this.defaultId;
@@ -114,7 +114,7 @@ public abstract class SolutionItemModel : PropertyContainerModel
         {
             if (ReferenceEquals(parents, this))
             {
-                throw new ArgumentException(Errors.CannotMoveFolderToChildFolder, nameof(folder));
+                throw new SolutionArgumentException(Errors.CannotMoveFolderToChildFolder, nameof(folder), SolutionErrorType.CannotMoveFolderToChildFolder);
             }
         }
 
@@ -122,6 +122,13 @@ public abstract class SolutionItemModel : PropertyContainerModel
         try
         {
             this.Parent = folder;
+
+            // Reevaulate the id.
+            if (this.id == this.DefaultId)
+            {
+                this.id = null;
+            }
+
             if (this is SolutionProjectModel thisProject)
             {
                 this.Solution.ValidateProjectName(thisProject);

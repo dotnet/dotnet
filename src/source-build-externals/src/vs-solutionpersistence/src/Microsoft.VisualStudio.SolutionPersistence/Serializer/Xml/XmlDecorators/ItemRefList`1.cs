@@ -34,14 +34,14 @@ internal readonly struct ItemRefList<T>(bool ignoreCase)
         // Missing Name attribute.
         if (!item.IsValid() || item.ItemRef is null)
         {
-            throw SolutionException.Create(string.Format(Errors.InvalidItemRef_Args2, item.ItemRefAttribute, item.ElementName), item);
+            throw SolutionException.Create(string.Format(Errors.InvalidItemRef_Args2, item.ItemRefAttribute, item.ElementName), item, SolutionErrorType.InvalidItemRef);
         }
         else
         {
             if (!this.items.TryAdd(item.ItemRef, item))
             {
                 // Duplicate Name attribute.
-                throw SolutionException.Create(string.Format(Errors.DuplicateItemRef_Args2, item.ItemRef, item.ElementName), item);
+                throw SolutionException.Create(string.Format(Errors.DuplicateItemRef_Args2, item.ItemRef, item.ElementName), item, SolutionErrorType.DuplicateItemRef);
             }
         }
     }

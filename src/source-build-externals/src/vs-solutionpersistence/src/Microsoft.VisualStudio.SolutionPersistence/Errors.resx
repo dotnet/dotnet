@@ -199,7 +199,7 @@
   </data>
   <data name="InvalidName" xml:space="preserve">
     <value>Names cannot:
-- contain any of the following characters: / ? : \ * " &lt; &gt; | # &amp; %
+- contain any of the following characters: / ? : \ * " &lt; &gt; |
 - contain control characters
 - be system reserved names, including 'CON', 'AUX', 'PRN', 'COM1' or 'LPT2'
 - be '.' or '..'</value>
