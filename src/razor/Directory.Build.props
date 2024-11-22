@@ -29,6 +29,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
     <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\</SharedSourceRoot>
+    <SharedFilesRoot>$(SharedSourceRoot)files\</SharedFilesRoot>
 
     <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -91,7 +92,7 @@
       the same type that is included in Microsoft.CodeAnalysis.ExternalAccess.Razor, which allows InternalsVisibleTo access
       to Razor tooling.
     -->
-    <Compile Condition="'$(SkipLanguageSupport)' != 'true'" Include="$(MSBuildThisFileDirectory)\src\Shared\LanguageSupport\IsExternalInit.cs" Link="LanguageSupport\IsExternalInit.cs" />
+    <Compile Condition="'$(SkipLanguageSupport)' != 'true'" Include="$(SharedFilesRoot)LanguageSupport\IsExternalInit.cs" Link="LanguageSupport\IsExternalInit.cs" />
   </ItemGroup>
 
   <PropertyGroup Label="Package and Assembly Metadata">

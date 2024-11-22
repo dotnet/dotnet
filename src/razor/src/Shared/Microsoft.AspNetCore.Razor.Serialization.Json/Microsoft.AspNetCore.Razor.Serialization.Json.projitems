@@ -9,6 +9,7 @@
     <Import_RootNamespace>Microsoft.AspNetCore.Razor.Serialization.Json</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)JsonDataConvert_ProjectSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataConvert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataReader.Policy.cs" />
@@ -16,9 +17,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataWriter.Policy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonReaderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectJsonConverter`1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectReaders_ProjectSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectReaders_TagHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectReaders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectWriters_ProjectSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectWriters_TagHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectWriters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SerializationFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringCache.Entry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringCache.ExfiltratingEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownPropertyNames.cs" />
   </ItemGroup>
   <ItemGroup>

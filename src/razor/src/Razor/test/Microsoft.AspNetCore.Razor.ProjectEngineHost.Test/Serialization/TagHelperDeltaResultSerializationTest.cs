@@ -59,15 +59,15 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
+            attributes:
+            [
                 builder => builder
                     .Name("test-attribute")
                     .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
-            },
-            ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
-            {
+            ],
+            ruleBuilders:
+            [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
                         .Name("required-attribute-one")
@@ -79,7 +79,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
                         .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
                     .RequireParentTag("parent-name")
                     .RequireTagStructure(TagStructure.WithoutEndTag),
-            },
+            ],
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
@@ -89,8 +89,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.Checksum),
-            Removed: ImmutableArray.Create(descriptor.Checksum));
+            Added: [descriptor.Checksum],
+            Removed: [descriptor.Checksum]);
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -109,15 +109,15 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
+            attributes:
+            [
                 builder => builder
                     .Name("test-attribute")
                     .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
-            },
-            ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
-            {
+            ],
+            ruleBuilders:
+            [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
                         .Name("required-attribute-one")
@@ -129,7 +129,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
                         .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
                     .RequireParentTag("parent-name")
                     .RequireTagStructure(TagStructure.WithoutEndTag),
-            },
+            ],
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
@@ -139,8 +139,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.Checksum),
-            Removed: ImmutableArray.Create(descriptor.Checksum));
+            Added: [descriptor.Checksum],
+            Removed: [descriptor.Checksum]);
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -159,15 +159,15 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
+            attributes:
+            [
                 builder => builder
                     .Name("test-attribute")
                     .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
-            },
-            ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
-            {
+            ],
+            ruleBuilders:
+            [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
                         .Name("required-attribute-one")
@@ -178,7 +178,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
                         .Value("something")
                         .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
                     .RequireParentTag("parent-name"),
-            },
+            ],
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
                 .Metadata("foo", "bar")
                 .AddDiagnostic(RazorDiagnostic.Create(
@@ -187,12 +187,13 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.Checksum),
-            Removed: ImmutableArray.Create(descriptor.Checksum));
+            Added: [descriptor.Checksum],
+            Removed: [descriptor.Checksum]);
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
         var actualResult = MessagePackConvert.Deserialize<TagHelperDeltaResult>(bytes, s_options);
+
         // Assert
         Assert.Equal(expectedResult, actualResult);
     }
@@ -206,8 +207,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
+            attributes:
+            [
                 builder => builder
                     .Name("test-attribute")
                     .Metadata(PropertyName("TestAttribute"))
@@ -219,14 +220,14 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
                     .Metadata(PropertyName("TestAttribute2"))
                     .TypeName("SomeDictionary")
                     .AsDictionaryAttribute("dict-prefix-", "string"),
-            },
-            ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
-            {
+            ],
+            ruleBuilders:
+            [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
                         .Name("required-attribute-one")
                         .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
-            },
+            ],
             configureAction: builder => builder
                 .AllowChildTag("allowed-child-one")
                 .Metadata("foo", "bar")
@@ -235,8 +236,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.Checksum),
-            Removed: ImmutableArray.Create(descriptor.Checksum));
+            Added: [descriptor.Checksum],
+            Removed: [descriptor.Checksum]);
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -283,8 +284,6 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
 
         configureAction?.Invoke(builder);
 
-        var descriptor = builder.Build();
-
-        return descriptor;
+        return builder.Build();
     }
 }

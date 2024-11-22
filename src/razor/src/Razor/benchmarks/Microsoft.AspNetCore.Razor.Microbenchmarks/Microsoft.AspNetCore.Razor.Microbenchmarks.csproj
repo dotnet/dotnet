@@ -9,6 +9,7 @@
     <IsPackable>false</IsPackable>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsShipping>false</IsShipping>
+    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,36 +20,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\**\*.*" />
-    <None Remove="Resources\**\*.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\**\*.*" />
-    <EmbeddedResource Include="..\..\..\Compiler\perf\Microbenchmarks\MSN.cshtml">
-      <Link>Resources\%(FileName)%(Extension)</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestServices.cs">
-      <Link>TestServices\%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestWorkspace.cs">
-      <Link>TestServices\%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestLanguageServices.cs">
-      <Link>TestServices\%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestWorkspaceServices.cs">
-      <Link>TestServices\%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Mef\ExportProviderExtensions.cs">
-      <Link>TestServices\%(FileName)%(Extension)</Link>
-    </Compile>
-
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />
+
+    <Compile Remove="Resources\**\*.*" />
+    <None Remove="Resources\**\*.*" />
+
+    <EmbeddedResource Include="Resources\**\*.*" />
+    <EmbeddedResource Include="$(SharedFilesRoot)\Tooling\**\*.*" Link="Resources\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SharedFilesRoot)\Compiler\MSN.cshtml" Link="Resources\%(FileName)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

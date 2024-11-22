@@ -616,6 +616,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{078aef36-f319-4ce2-baa2-5b58a6536b46}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{6205467f-e381-4c42-aeec-763bd62b3d5e}*SharedItemsImports = 5
+		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{7b1c5668-b4bc-45d9-ae4c-9c2382fc47a9}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{cd6913f3-ec47-4470-9c45-f5f898615e9d}*SharedItemsImports = 13
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{e5d92db7-5cbf-410a-9685-ff76f71ec96f}*SharedItemsImports = 5
 	EndGlobalSection

@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.IO;
-using System.Reflection;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,25 +10,23 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Xunit;
 using Xunit.Abstractions;
-using MessagePackSerializationFormat = Microsoft.AspNetCore.Razor.Serialization.MessagePack.SerializationFormat;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 
 public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Theory]
-    [InlineData("Kendo.Mvc.Examples.project.razor.json")]
+    [InlineData("Kendo.Mvc.Examples.project.razor.json", "Telerik")]
     [InlineData("project.razor.json")]
-    public void VerifyMessagePack_RazorProjectInfo(string resourceName)
+    public void VerifyMessagePack_RazorProjectInfo(string resourceName, string? folderName = null)
     {
         // Arrange
-        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, "Benchmarking");
+        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, folderName);
 
         // Read tag helpers from JSON
-        var originalProjectInfo = DeserializeProjectInfoFromJsonBytes(resourceBytes);
+        var originalProjectInfo = JsonDataConvert.DeserializeProjectInfo(resourceBytes);
 
         var options = MessagePackSerializerOptions.Standard
             .WithResolver(CompositeResolver.Create(
@@ -46,15 +42,15 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTes
     }
 
     [Theory]
-    [InlineData("Kendo.Mvc.Examples.taghelpers.json")]
+    [InlineData("Kendo.Mvc.Examples.taghelpers.json", "Telerik")]
     [InlineData("taghelpers.json")]
-    public void VerifyMessagePack_TagHelpers(string resourceName)
+    public void VerifyMessagePack_TagHelpers(string resourceName, string? folderName = null)
     {
         // Arrange
-        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, "Benchmarking");
+        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, folderName);
 
         // Read tag helpers from JSON
-        var originalTagHelpers = ReadTagHelpersFromJsonBytes(resourceBytes);
+        var originalTagHelpers = JsonDataConvert.DeserializeTagHelperArray(resourceBytes);
 
         var options = MessagePackSerializerOptions.Standard.WithResolver(
             CompositeResolver.Create(
@@ -70,23 +66,23 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTes
     }
 
     [Theory]
-    [InlineData("Kendo.Mvc.Examples.project.razor.json")]
+    [InlineData("Kendo.Mvc.Examples.project.razor.json", "Telerik")]
     [InlineData("project.razor.json")]
-    public void VerifyJson_RazorProjectInfo(string resourceName)
+    public void VerifyJson_RazorProjectInfo(string resourceName, string? folderName = null)
     {
         // Arrange
-        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, "Benchmarking");
+        var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, folderName);
 
         // Read tag helpers from JSON
-        var originalProjectInfo = DeserializeProjectInfoFromJsonBytes(resourceBytes);
+        var originalProjectInfo = JsonDataConvert.DeserializeProjectInfo(resourceBytes);
 
         // Act
 
         // Serialize to JSON
-        var jsonText = JsonDataConvert.SerializeObject(originalProjectInfo, ObjectWriters.WriteProperties);
+        var jsonText = JsonDataConvert.Serialize(originalProjectInfo);
 
-        // Deserialize from message pack
-        var actualProjectInfo = JsonDataConvert.DeserializeObject(jsonText, ObjectReaders.ReadProjectInfoFromProperties);
+        // Deserialize from JSON
+        var actualProjectInfo = JsonDataConvert.DeserializeProjectInfo(jsonText);
         Assert.NotNull(actualProjectInfo);
 
         // Assert
@@ -99,8 +95,8 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTes
     }
 
     [Theory]
-    [InlineData("Kendo.Mvc.Examples.taghelpers.json", "Benchmarking")]
-    [InlineData("taghelpers.json", "Benchmarking")]
+    [InlineData("Kendo.Mvc.Examples.taghelpers.json", "Telerik")]
+    [InlineData("taghelpers.json")]
     [InlineData("BlazorServerApp.TagHelpers.json")]
     public void VerifyJson_TagHelpers(string resourceName, string? folderName = null)
     {
@@ -108,41 +104,17 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTes
         var resourceBytes = RazorTestResources.GetResourceBytes(resourceName, folderName);
 
         // Read tag helpers from JSON
-        var originalTagHelpers = ReadTagHelpersFromJsonBytes(resourceBytes);
+        var originalTagHelpers = JsonDataConvert.DeserializeTagHelperArray(resourceBytes);
 
         // Act
 
         // Serialize to JSON
-        var jsonText = JsonDataConvert.SerializeData(
-            dataWriter => dataWriter.WriteArray(originalTagHelpers, ObjectWriters.Write));
+        var jsonText = JsonDataConvert.Serialize(originalTagHelpers);
 
         // Deserialize from JSON
-        var actualTagHelpers = JsonDataConvert.DeserializeData(jsonText,
-            r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+        var actualTagHelpers = JsonDataConvert.DeserializeTagHelperArray(jsonText);
 
         // Assert
         Assert.Equal<TagHelperDescriptor>(originalTagHelpers, actualTagHelpers);
-    }
-
-    private static RazorProjectInfo DeserializeProjectInfoFromJsonBytes(byte[] resourceBytes)
-    {
-        using var stream = new MemoryStream(resourceBytes);
-        using var streamReader = new StreamReader(stream);
-
-        var originalProjectInfo = JsonDataConvert.DeserializeObject(streamReader, ObjectReaders.ReadProjectInfoFromProperties);
-        Assert.NotNull(originalProjectInfo);
-
-        return originalProjectInfo;
-    }
-
-    private static ImmutableArray<TagHelperDescriptor> ReadTagHelpersFromJsonBytes(byte[] resourceBytes)
-    {
-        using var stream = new MemoryStream(resourceBytes);
-        using var streamReader = new StreamReader(stream);
-
-        return JsonDataConvert.DeserializeData(streamReader,
-            static r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
     }
 }
