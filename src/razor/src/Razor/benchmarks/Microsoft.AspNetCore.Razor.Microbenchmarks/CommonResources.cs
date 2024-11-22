@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
@@ -24,21 +23,8 @@ internal static class CommonResources
     public static readonly RazorProjectInfo TelerikProjectInfo = LoadProjectInfo(TelerikProjectInfoJsonBytes);
 
     private static ImmutableArray<TagHelperDescriptor> LoadTagHelpers(byte[] bytes)
-    {
-        using var stream = new MemoryStream(bytes);
-        using var reader = new StreamReader(stream);
-
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false))).NullToEmpty();
-    }
+        => JsonDataConvert.DeserializeTagHelperArray(bytes);
 
     private static RazorProjectInfo LoadProjectInfo(byte[] bytes)
-    {
-        using var stream = new MemoryStream(bytes);
-        using var reader = new StreamReader(stream);
-
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadNonNullObject(ObjectReaders.ReadProjectInfoFromProperties));
-    }
+        => JsonDataConvert.DeserializeProjectInfo(bytes);
 }

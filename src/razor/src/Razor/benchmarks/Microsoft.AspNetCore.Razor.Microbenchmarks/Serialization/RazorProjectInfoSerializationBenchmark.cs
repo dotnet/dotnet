@@ -44,15 +44,10 @@ public class RazorProjectInfoSerializationBenchmark
         };
 
     private static RazorProjectInfo DeserializeProjectInfo_Json(TextReader reader)
-    {
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadNonNullObject(ObjectReaders.ReadProjectInfoFromProperties));
-    }
+        => JsonDataConvert.DeserializeProjectInfo(reader);
 
     private static void SerializeProjectInfo_Json(TextWriter writer, RazorProjectInfo projectInfo)
-    {
-        JsonDataConvert.SerializeObject(writer, projectInfo, ObjectWriters.WriteProperties);
-    }
+        => JsonDataConvert.Serialize(projectInfo, writer);
 
     [Benchmark(Description = "Serialize RazorProjectInfo (JSON)")]
     public void Serialize_Json()
@@ -100,7 +95,7 @@ public class RazorProjectInfoSerializationBenchmark
         }
     }
 
-    [GlobalSetup(Targets = new[] { nameof(Serialize_MessagePack), nameof(Deserialize_MessagePack), nameof(RoundTrip_MessagePack) })]
+    [GlobalSetup(Targets = [nameof(Serialize_MessagePack), nameof(Deserialize_MessagePack), nameof(RoundTrip_MessagePack)])]
     public void GlobalSetup_MessagePack()
     {
         _buffer = new ArrayBufferWriter<byte>(initialCapacity: 1024 * 1024);

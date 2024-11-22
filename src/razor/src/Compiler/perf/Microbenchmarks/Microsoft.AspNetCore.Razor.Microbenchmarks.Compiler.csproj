@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
     <ProjectReference Include="..\..\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <PackageReference Include="BenchmarkDotNet" />
     <PackageReference Include="Newtonsoft.Json" />
@@ -17,18 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="MSN.cshtml" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="BlazorServerTagHelpers.razor" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(SharedFilesRoot)Compiler\MSN.cshtml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(SharedFilesRoot)Compiler\BlazorServerTagHelpers.razor" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(SharedFilesRoot)Compiler\taghelpers.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\shared\JsonReaderExtensions.cs" LinkBase="Shared" />
-    <Compile Include="..\..\shared\RazorDiagnosticJsonConverter.cs" LinkBase="Shared" />
-    <Compile Include="..\..\shared\TagHelperDescriptorJsonConverter.cs" LinkBase="Shared" />
-
-    <None Include="..\..\shared\taghelpers.json" CopyToOutputDirectory="PreserveNewest">
-      <Link>taghelpers.json</Link>
-    </None>
-  </ItemGroup>
+  <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
 </Project>

@@ -1,25 +1,17 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.Editor.Razor;
+namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
-public class StringCacheTest : ToolingTestBase
+public class StringCacheTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public StringCacheTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
-    public void GetOrAdd_EquivilentStrings_RetrievesFirstReference()
+    public void GetOrAdd_EquivalentStrings_RetrievesFirstReference()
     {
         // Arrange
         var cache = new StringCache();
@@ -30,7 +22,7 @@ public class StringCacheTest : ToolingTestBase
         Assert.False(ReferenceEquals(str1, str2));
 
         // Act
-        // Force a colleciton
+        // Force a collection
         _ = cache.GetOrAddValue(str1);
         GC.Collect();
         var result = cache.GetOrAddValue(str2);
@@ -47,7 +39,7 @@ public class StringCacheTest : ToolingTestBase
         var cache = new StringCache();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => cache.GetOrAddValue(null));
+        Assert.Throws<ArgumentNullException>(() => cache.GetOrAddValue(null!));
     }
 
     [Fact]

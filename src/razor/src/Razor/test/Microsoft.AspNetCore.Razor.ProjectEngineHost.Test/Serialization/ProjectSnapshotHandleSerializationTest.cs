@@ -22,7 +22,7 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
             StandardResolver.Instance));
 
     [Fact]
-    public void ProjectSnapshotHandleJsonConverter_Serialization_CanKindaRoundTrip()
+    public void ProjectSnapshotHandle_Serialization_CanKindaRoundTrip()
     {
         // Arrange
         var projectId = ProjectId.CreateNewId();
@@ -52,7 +52,7 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
     }
 
     [Fact]
-    public void ProjectSnapshotHandleJsonConverter_SerializationWithNulls_CanKindaRoundTrip()
+    public void ProjectSnapshotHandle_SerializationWithNulls_CanKindaRoundTrip()
     {
         // Arrange
         var projectId = ProjectId.CreateNewId();

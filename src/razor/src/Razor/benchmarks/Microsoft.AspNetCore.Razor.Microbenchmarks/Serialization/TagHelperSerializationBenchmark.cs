@@ -46,17 +46,10 @@ public class TagHelperSerializationBenchmark
         };
 
     private static ImmutableArray<TagHelperDescriptor> DeserializeTagHelpers_Json(TextReader reader)
-    {
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
-    }
+        => JsonDataConvert.DeserializeTagHelperArray(reader);
 
     private static void SerializeTagHelpers(TextWriter writer, ImmutableArray<TagHelperDescriptor> tagHelpers)
-    {
-        JsonDataConvert.SerializeData(writer,
-            w => w.WriteArray(tagHelpers, ObjectWriters.Write));
-    }
+        => JsonDataConvert.Serialize(tagHelpers, writer);
 
     [Benchmark(Description = "Serialize Tag Helpers (JSON)")]
     public void Serialize_Json()

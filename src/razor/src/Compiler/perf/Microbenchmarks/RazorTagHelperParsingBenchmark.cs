@@ -1,16 +1,14 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Serialization;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using static Microsoft.AspNetCore.Razor.Language.DefaultRazorTagHelperContextDiscoveryPhase;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
@@ -25,7 +23,7 @@ public class RazorTagHelperParsingBenchmark
             current = current.Parent;
         }
 
-        var root = current;
+        var root = current.AssumeNotNull();
 
         var tagHelpers = ReadTagHelpers(Path.Combine(root.FullName, "taghelpers.json"));
         var tagHelperFeature = new StaticTagHelperFeature(tagHelpers);
@@ -64,16 +62,10 @@ public class RazorTagHelperParsingBenchmark
         ComponentDirectiveVisitor.Visit(SyntaxTree);
     }
 
-    private static IReadOnlyList<TagHelperDescriptor> ReadTagHelpers(string filePath)
+    private static ImmutableArray<TagHelperDescriptor> ReadTagHelpers(string filePath)
     {
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(new RazorDiagnosticJsonConverter());
-        serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
-
-        using (var reader = new JsonTextReader(File.OpenText(filePath)))
-        {
-            return serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
-        }
+        using var reader = new StreamReader(filePath);
+        return JsonDataConvert.DeserializeTagHelperArray(reader);
     }
 
     private sealed class StaticTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature

@@ -87,12 +87,7 @@ internal static class RazorTestResources
             {
                 var bytes = GetResourceBytes(BlazorServerAppTagHelpersJson);
 
-                using var stream = new MemoryStream(bytes);
-                using var reader = new StreamReader(stream);
-
-                return JsonDataConvert.DeserializeData(reader,
-                    static r => r.ReadImmutableArray(
-                        static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+                return JsonDataConvert.DeserializeTagHelperArray(bytes);
             }
         }
     }
