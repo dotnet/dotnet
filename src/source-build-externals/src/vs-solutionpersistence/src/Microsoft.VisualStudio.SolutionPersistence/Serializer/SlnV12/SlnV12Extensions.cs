@@ -265,8 +265,6 @@ public static class SlnV12Extensions
                 {
                     ParseProjectConfigLine(solution, projectKey, projectValue);
                 }
-
-                solution.DistillProjectConfigurations();
             }
 
             // Applies a .SLN configuration line to the current project configuration.

@@ -14,9 +14,9 @@ namespace Microsoft.VisualStudio.SolutionPersistence.Model;
 public sealed class SolutionModel : PropertyContainerModel
 {
 #if NETFRAMEWORK
-    private const string InvalidNameChars = @"?:&\/*""<>|#%";
+    private const string InvalidNameChars = @"?:\/*""<>|";
 #else
-    private static readonly SearchValues<char> InvalidNameChars = SearchValues.Create(@"?:&\/*""<>|#%");
+    private static readonly SearchValues<char> InvalidNameChars = SearchValues.Create(@"?:\/*""<>|");
 #endif
 
     private readonly VisualStudioProperties visualStudioProperties;
@@ -177,7 +177,7 @@ public sealed class SolutionModel : PropertyContainerModel
         Argument.ThrowIfNullOrEmpty(path, nameof(path));
         if (!path.StartsWith('/') || !path.EndsWith('/'))
         {
-            throw new ArgumentException(string.Format(Errors.InvalidFolderPath_Args1, path), nameof(path));
+            throw new SolutionArgumentException(string.Format(Errors.InvalidFolderPath_Args1, path), nameof(path), SolutionErrorType.InvalidFolderPath);
         }
 
         SolutionFolderModel? existingFolder = this.FindFolder(path);
@@ -193,7 +193,12 @@ public sealed class SolutionModel : PropertyContainerModel
         string? parentItemRef = lastSlash > 0 ? folderPath.Slice(0, lastSlash + 1).ToString() : null;
         StringSpan newName = lastSlash > 0 ? folderPath.Slice(lastSlash + 1) : folderPath.Slice(1);
 
-        return this.AddFolder(newName, parentItemRef);
+        SolutionFolderModel folder = this.AddFolder(newName, parentItemRef);
+
+        // Ensure the project type is in the project type table, if it is not already.
+        this.solutionItemsById[folder.Id] = folder;
+
+        return folder;
     }
 
     /// <summary>
@@ -213,7 +218,7 @@ public sealed class SolutionModel : PropertyContainerModel
         Guid projectTypeId =
             Guid.TryParse(projectTypeName, out Guid projectTypeGuid) ? projectTypeGuid :
             this.ProjectTypeTable.GetProjectTypeId(projectTypeName, Path.GetExtension(filePath.AsSpan())) ??
-            throw new ArgumentException(string.Format(Errors.InvalidProjectTypeReference_Args1, projectTypeName), nameof(projectTypeName));
+            throw new SolutionArgumentException(string.Format(Errors.InvalidProjectTypeReference_Args1, projectTypeName), nameof(projectTypeName), SolutionErrorType.InvalidProjectReference);
 
         return this.AddProject(filePath, projectTypeName ?? string.Empty, projectTypeId, folder);
     }
@@ -337,7 +342,7 @@ public sealed class SolutionModel : PropertyContainerModel
         Argument.ThrowIfNullOrEmpty(path, nameof(path));
         if (!path.StartsWith('/') || !path.EndsWith('/'))
         {
-            throw new ArgumentException(string.Format(Errors.InvalidFolderPath_Args1, path), nameof(path));
+            throw new SolutionArgumentException(string.Format(Errors.InvalidFolderPath_Args1, path), nameof(path), SolutionErrorType.InvalidFolderPath);
         }
 
         return ModelHelper.FindByItemRef(this.solutionFolders, path);
@@ -386,13 +391,13 @@ public sealed class SolutionModel : PropertyContainerModel
         {
             if (char.IsControl(c) || InvalidNameChars.Contains(c))
             {
-                throw new ArgumentException(Errors.InvalidName, nameof(name));
+                throw new SolutionArgumentException(Errors.InvalidName, nameof(name), SolutionErrorType.InvalidName);
             }
         }
 
         if (IsDosWord(name))
         {
-            throw new ArgumentException(Errors.InvalidName, nameof(name));
+            throw new SolutionArgumentException(Errors.InvalidName, nameof(name), SolutionErrorType.InvalidName);
         }
 
         static bool IsDosWord(scoped StringSpan name)
@@ -491,7 +496,7 @@ public sealed class SolutionModel : PropertyContainerModel
         // Project is already in the solution.
         if (this.FindProject(project.FilePath) is not null)
         {
-            throw new ArgumentException(string.Format(Errors.DuplicateProjectPath_Arg1, project.ItemRef), nameof(filePath));
+            throw new SolutionArgumentException(string.Format(Errors.DuplicateProjectPath_Arg1, project.ItemRef), nameof(filePath), SolutionErrorType.DuplicateProjectPath);
         }
 
         this.ValidateProjectName(project);
@@ -602,7 +607,7 @@ public sealed class SolutionModel : PropertyContainerModel
 
             if (existingProject.ActualDisplayName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
             {
-                throw new ArgumentException(string.Format(Errors.DuplicateProjectName_Arg1, displayName));
+                throw new SolutionArgumentException(string.Format(Errors.DuplicateProjectName_Arg1, displayName), SolutionErrorType.DuplicateProjectName);
             }
         }
     }
@@ -611,7 +616,7 @@ public sealed class SolutionModel : PropertyContainerModel
     {
         if (item is not null && item.Solution != this)
         {
-            throw new ArgumentException(Errors.InvalidModelItem, nameof(item));
+            throw new SolutionArgumentException(Errors.InvalidModelItem, nameof(item), SolutionErrorType.InvalidModelItem);
         }
     }
 
@@ -629,8 +634,6 @@ public sealed class SolutionModel : PropertyContainerModel
         this.solutionFolders.Add(folder);
         this.solutionItems.Add(folder);
 
-        // Ensure the project type is in the project type table, if it is not already.
-        this.solutionItemsById[folder.Id] = folder;
         return folder;
     }
 

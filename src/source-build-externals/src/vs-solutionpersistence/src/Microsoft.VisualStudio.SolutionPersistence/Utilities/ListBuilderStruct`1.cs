@@ -111,7 +111,7 @@ internal ref struct ListBuilderStruct<T>
             2 => [this.item0, this.item1],
             3 => [this.item0, this.item1, this.item2],
             4 => [this.item0, this.item1, this.item2, this.item3],
-            _ => [this.item0, this.item1, this.item2, this.item3, .. this.items],
+            _ => [this.item0, this.item1, this.item2, this.item3, .. this.items!],
         };
     }
 

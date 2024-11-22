@@ -88,11 +88,8 @@ public class Validation
             ">",
             "?",
             "*",
-            "%",
             ":",
             "|",
-            "&",
-            "%",
             "con",
             "com1",
             "lpt9",
@@ -170,7 +167,7 @@ public class Validation
         string invalidNameError = Errors.InvalidName;
 
         // Don't allow invalid characters
-        Assert.StartsWith(invalidNameError, Assert.ThrowsAny<ArgumentException>(() => solution.AddFolder("/Foo#/")).Message);
+        Assert.StartsWith(invalidNameError, Assert.ThrowsAny<ArgumentException>(() => solution.AddFolder("/Foo</")).Message);
 
         // Don't allow reserved names
         Assert.StartsWith(invalidNameError, Assert.ThrowsAny<ArgumentException>(() => solution.AddFolder("/LPT4/")).Message);

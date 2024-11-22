@@ -31,7 +31,7 @@ internal sealed partial class SolutionConfigurationMap
     /// </summary>
     /// <param name="projectMappings">The mappings to update.</param>
     /// <param name="scopedRules">The rules to run, scoped to their effect.</param>
-    private void ApplyRules(in SolutionToProjectMappings projectMappings, in ScopedRules scopedRules)
+    private void ApplyRules(in SolutionToProjectMappings projectMappings, scoped in ScopedRules scopedRules)
     {
         int iBuildTypeBegin = scopedRules.BuildTypeIndex == ScopedRules.All ? 0 : scopedRules.BuildTypeIndex;
         int iBuildTypeEnd = scopedRules.BuildTypeIndex == ScopedRules.All ? this.BuildTypesCount : scopedRules.BuildTypeIndex + 1;

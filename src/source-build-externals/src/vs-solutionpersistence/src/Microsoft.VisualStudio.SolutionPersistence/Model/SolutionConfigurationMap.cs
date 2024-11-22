@@ -9,8 +9,8 @@ namespace Microsoft.VisualStudio.SolutionPersistence.Model;
 internal sealed partial class SolutionConfigurationMap
 {
     private readonly SolutionModel solutionModel;
-    private readonly Dictionary<string, int> buildTypesIndex = [];
-    private readonly Dictionary<string, int> platformsIndex = [];
+    private readonly Dictionary<string, int> buildTypesIndex;
+    private readonly Dictionary<string, int> platformsIndex;
 
     private readonly Dictionary<SolutionProjectModel, SolutionToProjectMappings> perProjectCurrent = [];
 
@@ -19,11 +19,13 @@ internal sealed partial class SolutionConfigurationMap
     internal SolutionConfigurationMap(SolutionModel solutionModel)
     {
         this.solutionModel = solutionModel;
+        this.buildTypesIndex = new Dictionary<string, int>(solutionModel.BuildTypes.Count);
         for (int i = 0; i < solutionModel.BuildTypes.Count; i++)
         {
             this.buildTypesIndex.Add(solutionModel.BuildTypes[i], i);
         }
 
+        this.platformsIndex = new Dictionary<string, int>(solutionModel.Platforms.Count);
         for (int i = 0; i < solutionModel.Platforms.Count; i++)
         {
             this.platformsIndex.Add(PlatformNames.Canonical(solutionModel.Platforms[i]), i);

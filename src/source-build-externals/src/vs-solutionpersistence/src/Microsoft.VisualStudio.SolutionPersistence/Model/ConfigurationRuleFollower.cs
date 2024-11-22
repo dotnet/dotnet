@@ -6,7 +6,7 @@ namespace Microsoft.VisualStudio.SolutionPersistence.Model;
 /// <summary>
 /// Helper to process configuration rules.
 /// </summary>
-internal readonly struct ConfigurationRuleFollower(IReadOnlyList<ConfigurationRule>? configurationRules)
+internal readonly ref struct ConfigurationRuleFollower(IReadOnlyList<ConfigurationRule>? configurationRules)
 {
     private readonly IReadOnlyList<ConfigurationRule>? configurationRules = configurationRules;
 

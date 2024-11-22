@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml;
+using Microsoft.VisualStudio.SolutionPersistence.Model;
 
 namespace Microsoft.VisualStudio.SolutionPersistence.Serializer.Xml.XmlDecorators;
 
@@ -66,7 +67,7 @@ internal abstract partial class XmlContainer(SlnxFile root, XmlElement element, 
 
         if (validateItemRef && !xmlDecorator.IsValid())
         {
-            throw new ArgumentException(string.Format(Errors.InvalidItemRef_Args2, itemRef, xmlDecorator.ElementName));
+            throw new SolutionArgumentException(string.Format(Errors.InvalidItemRef_Args2, itemRef, xmlDecorator.ElementName), SolutionErrorType.InvalidItemRef);
         }
 
         xmlDecorator.UpdateFromXml();

@@ -63,7 +63,7 @@ internal sealed partial class SlnFileV12Serializer
             this.lineNumber = 0;
             if (!this.TryParseFormatLine())
             {
-                throw new SolutionException(Errors.NotSolution) { File = fullPath, Line = this.lineNumber };
+                throw new SolutionException(Errors.NotSolution, SolutionErrorType.NotSolution) { File = fullPath, Line = this.lineNumber };
             }
 
             // Some property bags need to be loaded after all projects have been resolved.
@@ -213,7 +213,7 @@ internal sealed partial class SlnFileV12Serializer
             }
             catch (Exception ex) when (SolutionException.ShouldWrap(ex))
             {
-                throw new SolutionException(ex.Message, ex) { File = fullPath, Line = this.lineNumber };
+                throw new SolutionException(ex.Message, ex, SolutionErrorType.Undefined) { File = fullPath, Line = this.lineNumber };
             }
 
             return new ValueTask<SolutionModel>(solutionModel);
@@ -459,7 +459,7 @@ internal sealed partial class SlnFileV12Serializer
 
             if (string.IsNullOrEmpty(fileVersionMaj) || !int.TryParse(fileVersionMaj, out int fileVer) || fileVer > CurrentFileVersion)
             {
-                throw new SolutionException(string.Format(Errors.UnsupportedVersion_Args1, fileVersionMaj)) { File = fullPath, Line = this.lineNumber };
+                throw new SolutionException(string.Format(Errors.UnsupportedVersion_Args1, fileVersionMaj), SolutionErrorType.UnsupportedVersion) { File = fullPath, Line = this.lineNumber };
             }
 
             return true;
@@ -564,7 +564,7 @@ internal sealed partial class SlnFileV12Serializer
                 return;
             }
 
-            throw new SolutionException(message) { File = fullPath, Line = this.lineNumber };
+            throw new SolutionException(message, SolutionErrorType.Undefined) { File = fullPath, Line = this.lineNumber };
         }
     }
 }

@@ -101,7 +101,7 @@ internal sealed partial class XmlProject(SlnxFile root, XmlFolder? xmlParentFold
                 }
                 else
                 {
-                    throw SolutionException.Create(string.Format(Errors.InvalidFolderReference_Args1, this.ParentFolder.Name), this);
+                    throw SolutionException.Create(string.Format(Errors.InvalidFolderReference_Args1, this.ParentFolder.Name), this, SolutionErrorType.InvalidFolderReference);
                 }
             }
 
@@ -152,7 +152,7 @@ internal sealed partial class XmlProject(SlnxFile root, XmlFolder? xmlParentFold
             }
             else
             {
-                throw SolutionException.Create(string.Format(Errors.InvalidProjectReference_Args1, dependencyItemRef), buildDependency);
+                throw SolutionException.Create(string.Format(Errors.InvalidProjectReference_Args1, dependencyItemRef), buildDependency, SolutionErrorType.InvalidProjectReference);
             }
         }
     }

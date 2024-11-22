@@ -48,13 +48,13 @@ internal abstract class XmlConfiguration(SlnxFile root, XmlElement element, Keyw
 
         if (string.IsNullOrEmpty(projectValue))
         {
-            throw SolutionException.Create(Errors.MissingProjectValue, this);
+            throw SolutionException.Create(Errors.MissingProjectValue, this, SolutionErrorType.MissingProjectValue);
         }
 
         if (!ModelHelper.TrySplitFullConfiguration(this.Root.StringTable, this.Solution, out string? solutionBuildType, out string? solutionPlatform) &&
             !this.Solution.IsNullOrEmpty())
         {
-            throw SolutionException.Create(string.Format(Errors.InvalidConfiguration_Args1, this.Solution), this);
+            throw SolutionException.Create(string.Format(Errors.InvalidConfiguration_Args1, this.Solution), this, SolutionErrorType.InvalidConfiguration);
         }
 
         if (solutionBuildType is BuildTypeNames.All or null)

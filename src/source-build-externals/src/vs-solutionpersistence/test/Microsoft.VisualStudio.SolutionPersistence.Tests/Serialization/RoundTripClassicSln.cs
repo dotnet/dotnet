@@ -39,6 +39,9 @@ public class RoundTripClassicSln
     [Fact]
     public Task MissingConfigurationsAsync() => TestRoundTripSerializerAsync(SlnAssets.ClassicSlnMissingConfigurations);
 
+    [Fact]
+    public Task FolderIdAsync() => TestRoundTripSerializerAsync(SlnAssets.LoadResource("FolderId.sln"));
+
     [Theory]
     [MemberData(nameof(ClassicSlnFiles))]
     public Task AllClassicSolutionAsync(ResourceName sampleFile)

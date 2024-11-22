@@ -28,26 +28,26 @@ public sealed class Project
 
         // Verify error if same project is added again.
         {
-            Exception ex = Assert.Throws<ArgumentException>(() => solution.AddProject(projectPath, projectTypeName: null));
+            Exception ex = Assert.Throws<SolutionArgumentException>(() => solution.AddProject(projectPath, projectTypeName: null));
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, projectPath, "Project"), ex.Message);
         }
 
         // Verify error if same project is added to folder.
         {
-            Exception ex = Assert.Throws<ArgumentException>(() => solution.AddProject(projectPath, projectTypeName: null, folder: folder));
+            Exception ex = Assert.Throws<SolutionArgumentException>(() => solution.AddProject(projectPath, projectTypeName: null, folder: folder));
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, projectPath, "Project"), ex.Message);
         }
 
         // Verify error if same project is added with different case..
         {
             string projectPathUpper = projectPath.ToUpperInvariant();
-            Exception ex = Assert.Throws<ArgumentException>(() => solution.AddProject(projectPathUpper, projectTypeName: null));
+            Exception ex = Assert.Throws<SolutionArgumentException>(() => solution.AddProject(projectPathUpper, projectTypeName: null));
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, projectPathUpper, "Project"), ex.Message);
         }
 
         // Try chaging a path to an existing project.
         {
-            Exception ex = Assert.Throws<ArgumentException>(() => anotherProject.FilePath = project.FilePath);
+            Exception ex = Assert.Throws<SolutionArgumentException>(() => anotherProject.FilePath = project.FilePath);
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, projectPath, "Project"), ex.Message);
         }
     }

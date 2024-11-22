@@ -41,7 +41,7 @@ public class ManipulateXmlKitchenSink
 
             SolutionProjectModel? project = solution.FindProject(Path.Join("other", "Project4.nativeproj"));
             Assert.NotNull(project);
-            project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Platform, "*", "Z80", "Z80"));
+            project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Platform, "*", "Arm64", "Z80"));
 
             SolutionProjectModel? project3 = solution.FindProject("Project3.csproj");
             Assert.NotNull(project3);

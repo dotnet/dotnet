@@ -52,7 +52,7 @@
             <BuildDependency Project="Project2.nativeproj" />
             <BuildDependency Project="Project3.csproj" />
             <BuildDependency Project="Project3.nativeproj" />
-            <Platform Solution="*|Z80" Project="Z80" />
+            <Platform Solution="*|Arm64" Project="Z80" />
         </Project>
         <Project Path="other/Project5.nativeproj" />
         <Project Path="other/Project6.nativeproj" />

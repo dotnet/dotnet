@@ -137,7 +137,7 @@ public sealed class Folders
         Assert.Equal("/This/Is/A/Nested/Folder/", wanderingProject.Parent.ItemRef);
 
         // Try moving project to folder with existing project
-        ArgumentException ex = Assert.Throws<ArgumentException>(() => wanderingProject.MoveToFolder(folderA));
+        ArgumentException ex = Assert.Throws<SolutionArgumentException>(() => wanderingProject.MoveToFolder(folderA));
         Assert.Equal(string.Format(Errors.DuplicateProjectName_Arg1, wanderingProject.ActualDisplayName), ex.Message);
         Assert.Equal("/This/Is/A/Nested/Folder/", wanderingProject.Parent.ItemRef);
 
@@ -172,7 +172,7 @@ public sealed class Folders
         Assert.Equal("/This/Is/A/", folderFolder.Parent.ItemRef);
 
         // Try to move folder under itself.
-        ArgumentException ex = Assert.Throws<ArgumentException>(() => folderThis.MoveToFolder(folderNested));
+        ArgumentException ex = Assert.Throws<SolutionArgumentException>(() => folderThis.MoveToFolder(folderNested));
         Assert.StartsWith(Errors.CannotMoveFolderToChildFolder, ex.Message);
     }
 
@@ -192,7 +192,7 @@ public sealed class Folders
 
         // Try case exact
         {
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => folderB.Name = "A");
+            ArgumentException ex = Assert.Throws<SolutionArgumentException>(() => folderB.Name = "A");
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, "/A/", "Folder"), ex.Message);
 
             Assert.Equal("/B/Nested/Deep/", folderNestedB.Path);
@@ -200,7 +200,7 @@ public sealed class Folders
 
         // Try case insensitive
         {
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => folderB.Name = "a");
+            ArgumentException ex = Assert.Throws<SolutionArgumentException>(() => folderB.Name = "a");
             Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, "/a/", "Folder"), ex.Message);
 
             Assert.Equal("/B/Nested/Deep/", folderNestedB.Path);

@@ -38,7 +38,7 @@ internal sealed class SlnxFile
         }
         else
         {
-            throw new SolutionException(Errors.NotSolution) { File = this.FullPath };
+            throw new SolutionException(Errors.NotSolution, SolutionErrorType.NotSolution) { File = this.FullPath };
         }
 
         this.SerializationSettings = this.GetDefaultSerializationSettings(serializationSettings);
