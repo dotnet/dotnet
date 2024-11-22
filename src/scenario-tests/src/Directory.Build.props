@@ -7,6 +7,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
+
+    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
 
   <!-- Common properties for the test projects -->
@@ -15,6 +18,8 @@
     <UseAppHost>true</UseAppHost>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
+    <!-- Allow test apps to be invoked with a newer SDK. -->
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CommandLine" Version="$(SystemCommandlineVersion)" />
-    <PackageReference Include="xunit.extensibility.core" Version="$(XunitVersion)" />
-    <PackageReference Include="xunit.extensibility.execution" Version="$(XunitVersion)" />
-    <PackageReference Include="xunit.runner.utility" Version="$(XunitVersion)" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="xunit.extensibility.core" />
+    <PackageReference Include="xunit.extensibility.execution" />
+    <PackageReference Include="xunit.runner.utility" />
   </ItemGroup>
 
 </Project>

@@ -230,7 +230,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/scenario-tests/issues/132")]
     [Trait("Category", "Workload")]
     [Trait("SkipIfBuild", "CommunityArchitecture")]     // SDK has no workloads that support community architectures.
     public void VerifyWorkloadCmd()

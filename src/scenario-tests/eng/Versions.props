@@ -5,6 +5,5 @@
   </PropertyGroup>
   <PropertyGroup>
     <SystemCommandLineVersion>2.0.0-beta4.23307.1</SystemCommandLineVersion>
-    <XunitVersion>2.9.2</XunitVersion>
   </PropertyGroup>
 </Project>
