@@ -37,6 +37,11 @@
     <PackageReference Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" />
   </ItemGroup>
 
+  <!-- Profile is intentionally undefined so that the reference will only be included when no profile is specified i.e. both WPF and WindowsForms are in use https://github.com/dotnet/wpf/blob/bbfc24fd13804a191e20064acd599b0a359092df/packaging/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.props#L45-L46 -->
+  <ItemGroup>
+    <FrameworkListFileClass Include="WindowsFormsIntegration.dll" />
+  </ItemGroup>
+
   <!-- References that are common to both WinForms and WPF -->
   <ItemGroup>
     <FrameworkListFileClass Include="Accessibility.dll" Profile="WindowsForms;WPF" />
@@ -56,7 +61,6 @@
     <FrameworkListFileClass Include="System.Security.Permissions.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Threading.AccessControl.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Windows.Extensions.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="WindowsFormsIntegration.dll"  Profile="WindowsForms;WPF"/>
   </ItemGroup>
 
   <!-- WPF specific references -->
