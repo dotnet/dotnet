@@ -63,7 +63,7 @@ namespace NuGet.Protocol.Tests
 
             int actualCount = resourceProviders.Count();
 
-            Assert.Equal(48, actualCount);
+            Assert.Equal(49, actualCount);
         }
     }
 }

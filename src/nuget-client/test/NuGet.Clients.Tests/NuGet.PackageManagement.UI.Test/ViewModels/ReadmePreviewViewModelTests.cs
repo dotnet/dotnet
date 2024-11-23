@@ -36,7 +36,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             var target = new ReadmePreviewViewModel(mockFileService.Object, ItemFilter.All, true);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(string.Empty, target.ReadmeMarkdown);
         }
 
@@ -56,7 +56,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.SetPackageMetadataAsync(package, CancellationToken.None);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(string.Empty, target.ReadmeMarkdown);
         }
 
@@ -77,7 +77,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.ItemFilterChangedAsync(ItemFilter.All);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(string.Empty, target.ReadmeMarkdown);
         }
 
@@ -101,7 +101,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.ItemFilterChangedAsync(filter);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(readmeContents, target.ReadmeMarkdown);
         }
 
@@ -121,7 +121,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.SetPackageMetadataAsync(package, CancellationToken.None);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(readmeContents, target.ReadmeMarkdown);
         }
 
@@ -141,7 +141,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.SetPackageMetadataAsync(package, CancellationToken.None);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(string.Empty, target.ReadmeMarkdown);
         }
 
@@ -159,7 +159,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             await target.SetPackageMetadataAsync(package, CancellationToken.None);
 
             //Assert
-            Assert.False(target.ErrorLoadingReadme);
+            Assert.False(target.ErrorWithReadme);
             Assert.Equal(Resources.Text_NoReadme, target.ReadmeMarkdown);
         }
     }

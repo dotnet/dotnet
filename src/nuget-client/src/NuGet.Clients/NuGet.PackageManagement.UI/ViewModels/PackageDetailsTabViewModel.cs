@@ -110,7 +110,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
         {
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
-                if (_readmeTabEnabled)
+                if (_readmeTabEnabled && e.PropertyName == nameof(DetailControlModel.PackageMetadata))
                 {
                     await ReadmePreviewViewModel.SetPackageMetadataAsync(DetailControlModel.PackageMetadata, CancellationToken.None);
                 }

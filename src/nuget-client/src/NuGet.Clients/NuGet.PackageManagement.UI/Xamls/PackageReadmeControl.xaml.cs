@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Markdown.Platform;
-using Microsoft.VisualStudio.Shell;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
@@ -39,7 +38,7 @@ namespace NuGet.PackageManagement.UI
         {
             if (e.PropertyName == nameof(ReadmePreviewViewModel.ReadmeMarkdown))
             {
-                NuGetUIThreadHelper.JoinableTaskFactory.Run(UpdateMarkdownAsync);
+                NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(UpdateMarkdownAsync).PostOnFailure(nameof(PackageReadmeControl), nameof(ReadmeViewModel_PropertyChanged));
             }
         }
 
@@ -79,7 +78,7 @@ namespace NuGet.PackageManagement.UI
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
-                ReadmeViewModel.ErrorLoadingReadme = true;
+                ReadmeViewModel.ErrorWithReadme = true;
                 ReadmeViewModel.ReadmeMarkdown = string.Empty;
                 await TelemetryUtility.PostFaultAsync(ex, nameof(ReadmePreviewViewModel));
             }
@@ -104,10 +103,8 @@ namespace NuGet.PackageManagement.UI
 
         private void PackageReadmeControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                await UpdateMarkdownAsync();
-            });
+            NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(UpdateMarkdownAsync)
+                .PostOnFailure(nameof(PackageReadmeControl), nameof(PackageReadmeControl_Loaded));
         }
     }
 }

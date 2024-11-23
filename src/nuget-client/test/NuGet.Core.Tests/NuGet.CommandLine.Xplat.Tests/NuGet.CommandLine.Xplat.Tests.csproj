@@ -18,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="compiler\resources\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="compiler\resources\DNW.Test.SampleProject1.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.SampleProject2.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.TwoDifferentVersions.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.MultiTfmMultiRidProject.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.NoPackageRidSpecificPackageProject.project.assets.json" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@
   xmlns:imagingTheme="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
   xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
   xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Utilities"
+  Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
+  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
   DataContextChanged="UserControl_DataContextChanged"
   Unloaded="PackageReadmeControl_Unloaded"
   Loaded="PackageReadmeControl_Loaded"
@@ -28,12 +30,14 @@
       x:Uid="descriptionMarkdownPreview"
       ClipToBounds="True"
       Focusable="False"
-      Visibility="{Binding Path=ErrorLoadingReadme, Mode=OneWay, Converter={StaticResource NegatedBooleanToVisibilityConverter}}"
-    />
+      Visibility="{Binding Path=IsReadmeReady, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    <TextBlock
+      TextWrapping="Wrap"
+      Text="{x:Static nuget:Resources.Text_Loading}"
+      Visibility="{Binding Path=IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
     <TextBlock
       TextWrapping="Wrap"
       Text="{x:Static nuget:Resources.Error_UnableToLoadReadme}"
-      Visibility="{Binding Path=ErrorLoadingReadme, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-      />
+      Visibility="{Binding Path=ErrorWithReadme, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
   </Grid>
 </UserControl>
