@@ -21,7 +21,7 @@ using Xunit;
 namespace NuGet.Packaging.FuncTest
 {
     [Collection(SigningTestCollection.Name)]
-    public class AllowListVerificationProviderTests : IDisposable
+    public class AllowListVerificationProviderTests
     {
         private const string _noMatchInAllowList = "The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.";
         private const string _noAllowList = "A list of trusted signers is required but none was found.";
@@ -32,12 +32,8 @@ namespace NuGet.Packaging.FuncTest
         public AllowListVerificationProviderTests(SigningTestFixture fixture)
         {
             _testFixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
-            _trustedRepoTestCert = SigningTestUtility.GenerateTrustedTestCertificate();
-        }
-
-        public void Dispose()
-        {
-            _trustedRepoTestCert.Dispose();
+            // Do not dispose this.  The fixture will dispose it.
+            _trustedRepoTestCert = fixture.TrustedRepositoryCertificate;
         }
 
         [CIOnlyFact]

@@ -891,6 +891,8 @@ namespace NuGet.XPlat.FuncTest
 ");
             }
 
+            public X509Certificate2 Certificate { get; private set; }
+
             public string CertificateAbsoluteFilePath { get; }
             public string CertificateFileName { get; }
             public X509FindType CertificateFindBy { get; }
@@ -910,6 +912,7 @@ namespace NuGet.XPlat.FuncTest
             {
                 WorkingPath.Dispose();
                 RemoveCertificateFromStorage();
+                Certificate?.Dispose();
             }
 
             public void SetupCertificateFile()
@@ -920,16 +923,26 @@ namespace NuGet.XPlat.FuncTest
 
             public void SetupCertificateInStorage()
             {
+                if (Certificate is not null)
+                {
+                    return;
+                }
+
                 using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
                 {
                     store.Open(OpenFlags.ReadWrite);
-                    var password = new SecureString();
-                    foreach (var symbol in CertificatePassword)
-                    {
-                        password.AppendChar(symbol);
-                    }
 
-                    store.Add(new X509Certificate2(CreateCertificate(), password, X509KeyStorageFlags.Exportable));
+                    using (var password = new SecureString())
+                    {
+                        foreach (var symbol in CertificatePassword)
+                        {
+                            password.AppendChar(symbol);
+                        }
+
+                        Certificate = new X509Certificate2(CreateCertificate(), password, X509KeyStorageFlags.Exportable);
+
+                        store.Add(Certificate);
+                    }
                 }
             }
 
@@ -982,13 +995,17 @@ namespace NuGet.XPlat.FuncTest
 
             private byte[] CreateCertificate()
             {
-                var rsa = RSA.Create(2048);
-                var request = new CertificateRequest("cn=" + CertificateFindValue, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-                var start = DateTime.UtcNow.AddDays(-1);
-                var end = start.AddYears(1);
+                using (RSA rsa = RSA.Create(2048))
+                {
+                    var request = new CertificateRequest("cn=" + CertificateFindValue, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+                    var start = DateTime.UtcNow.AddMinutes(-1);
+                    var end = start.AddMinutes(10);
 
-                var cert = request.CreateSelfSigned(start, end);
-                return cert.Export(X509ContentType.Pfx, CertificatePassword);
+                    using (X509Certificate2 cert = request.CreateSelfSigned(start, end))
+                    {
+                        return cert.Export(X509ContentType.Pfx, CertificatePassword);
+                    }
+                }
             }
 
             private ISettings LoadSettingsFromConfigFile()
@@ -1000,13 +1017,23 @@ namespace NuGet.XPlat.FuncTest
 
             private void RemoveCertificateFromStorage()
             {
+                if (Certificate is null)
+                {
+                    return;
+                }
+
                 using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
                 {
                     store.Open(OpenFlags.ReadWrite);
-                    var resultCertificates = store.Certificates.Find(CertificateFindBy, CertificateFindValue, false);
-                    foreach (var certificate in resultCertificates)
+
+                    X509Certificate2Collection resultCertificates = store.Certificates.Find(
+                        X509FindType.FindByIssuerDistinguishedName,
+                        Certificate.Issuer,
+                        validOnly: false);
+
+                    foreach (X509Certificate2 resultCertificate in resultCertificates)
                     {
-                        store.Remove(certificate);
+                        store.Remove(resultCertificate);
                     }
                 }
             }

@@ -32,7 +32,7 @@
         <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}" />
         <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font122PercentSizeConverter}}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
-        <Setter Property="Padding" Value="20,0,20,0" />
+        <Setter Property="Padding" Value="12,0,12,0" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}" />
         <Setter Property="Template">
           <Setter.Value>
@@ -97,7 +97,7 @@
                   <RowDefinition x:Name="RowDefinition1" Height="Auto"/>
                   <RowDefinition x:Name="RowDefinition2"/>
                 </Grid.RowDefinitions>
-                <TabPanel x:Name="headerPanel" Background="Transparent" Grid.Column="0" IsItemsHost="true" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                <TabPanel x:Name="headerPanel" Margin="12,0,0,0" Background="Transparent" Grid.Column="0" IsItemsHost="true" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
                 <ContentPresenter
                     Grid.Row="2"
                     ClipToBounds="True"
@@ -131,10 +131,11 @@
             <DataTemplate DataType="{x:Type nuget:DetailControlModel}">
               <nuget:PackageMetadataControl
                 Focusable="True"
-                Margin="0,12,0,0"/>
+                Margin="0,5,0,0"/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ReadmePreviewViewModel}">
               <nuget:PackageReadmeControl
+                Margin="22,0,0,0"
                 x:Name="_packageReadmeControl"/>
             </DataTemplate>
           </ContentControl.Resources>
