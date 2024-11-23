@@ -2966,7 +2966,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(24);
+            projectInformationEvent.Count.Should().Be(25);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -2991,6 +2991,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["NoOpCacheFileAgeDays"].Should().NotBeNull();
             projectInformationEvent["UseLegacyDependencyResolver"].Should().BeOfType<bool>();
             projectInformationEvent["UsedLegacyDependencyResolver"].Should().BeOfType<bool>();
+            projectInformationEvent["Audit.Enabled"].Should().BeOfType<string>();
         }
 
         [Fact]

@@ -259,7 +259,10 @@ namespace NuGet.PackageManagement.UI
             }
 
             var newWidth = _projectColumnHeader.ActualWidth + width;
-            _projectColumn.Width = newWidth;
+            if (newWidth > 0)
+            {
+                _projectColumn.SetValue(Canvas.WidthProperty, newWidth);
+            }
 
             // this width adjustment is only done once.
             _projectList.SizeChanged -= ListView_SizeChanged;

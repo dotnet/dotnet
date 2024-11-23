@@ -30,7 +30,7 @@
     HorizontalScrollBarVisibility="Disabled"
     AutomationProperties.Name="{Binding Text, ElementName=_packageId}">
     <Grid
-      Margin="24,0,7,0">
+      Margin="0,0,7,0">
       <Grid.RowDefinitions>
         <RowDefinition
           Height="Auto" />
@@ -49,7 +49,7 @@
       <Grid
         Grid.Row="0"
         MinHeight="32"
-        Margin="0,8">
+        Margin="24,8,0,8">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="auto"/>
           <ColumnDefinition Width="*"/>
@@ -124,7 +124,7 @@
       <!-- project action when in project package manager -->
       <nuget:ProjectView
         Grid.Row="1"
-        Margin="0,8"
+        Margin="24,8,0,8"
         x:Name="_projectView"
         Visibility="{Binding Path=IsSolution, Converter={StaticResource NegatedBooleanToVisibilityConverter}}" />
 
@@ -133,7 +133,7 @@
         AutomationProperties.AutomationId="SolutionView"
         x:Name="_solutionView"
         Grid.Row="1"
-        Margin="0,8"
+        Margin="24,8,0,8"
         Visibility="{Binding Path=IsSolution,Converter={StaticResource BooleanToVisibilityConverter}}" />
 
       <!-- the splitter is shown when in solution package manager -->
@@ -153,6 +153,7 @@
       <!-- options -->
       <Border
         Grid.Row="3"
+        Margin="24,0,0,0"
         BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
         BorderThickness="0,1,0,1">
         <Grid>

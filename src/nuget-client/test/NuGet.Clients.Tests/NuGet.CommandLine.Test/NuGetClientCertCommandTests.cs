@@ -826,6 +826,8 @@ namespace NuGet.CommandLine.Test
 ");
             }
 
+            public X509Certificate2 Certificate { get; private set; }
+
             public string CertificateAbsoluteFilePath { get; }
             public string CertificateFileName { get; }
             public X509FindType CertificateFindBy { get; }
@@ -854,7 +856,6 @@ namespace NuGet.CommandLine.Test
 
                 LogInstalledCertificates();
 
-
                 Util.VerifyResultSuccess(result, expectedOutput);
             }
 
@@ -862,6 +863,7 @@ namespace NuGet.CommandLine.Test
             {
                 WorkingPath.Dispose();
                 RemoveCertificateFromStorage();
+                Certificate?.Dispose();
             }
 
             public void SetupCertificateFile()
@@ -874,19 +876,28 @@ namespace NuGet.CommandLine.Test
 
             public void SetupCertificateInStorage()
             {
+                if (Certificate is not null)
+                {
+                    return;
+                }
+
                 using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
                 {
                     store.Open(OpenFlags.ReadWrite);
-                    var password = new SecureString();
-                    foreach (var symbol in CertificatePassword)
+
+                    using (var password = new SecureString())
                     {
-                        password.AppendChar(symbol);
+                        foreach (var symbol in CertificatePassword)
+                        {
+                            password.AppendChar(symbol);
+                        }
+
+                        Certificate = new X509Certificate2(CreateCertificate(), password, X509KeyStorageFlags.Exportable);
+
+                        store.Add(Certificate);
+
+                        _testOutputHelper.WriteLine("Added certificate {0} to store {1}\\{2}", Certificate.Subject, CertificateStoreLocation, CertificateStoreName);
                     }
-
-                    var cert = new X509Certificate2(CreateCertificate(), password, X509KeyStorageFlags.Exportable);
-                    store.Add(cert);
-
-                    _testOutputHelper.WriteLine("Added certificate {0} to store {1}\\{2}", cert.Subject, CertificateStoreLocation, CertificateStoreName);
                 }
 
                 LogInstalledCertificates();
@@ -955,16 +966,19 @@ namespace NuGet.CommandLine.Test
 
             private byte[] CreateCertificate()
             {
-                var rsa = RSA.Create(2048);
-                var request = new CertificateRequest("cn=" + CertificateFindValue, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-                var start = DateTime.UtcNow.AddDays(-1);
-                var end = start.AddYears(1);
+                using (RSA rsa = RSA.Create(2048))
+                {
+                    var request = new CertificateRequest("cn=" + CertificateFindValue, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+                    var start = DateTime.UtcNow.AddMinutes(-1);
+                    var end = start.AddMinutes(10);
 
-                var cert = request.CreateSelfSigned(start, end);
+                    using (X509Certificate2 cert = request.CreateSelfSigned(start, end))
+                    {
+                        _testOutputHelper.WriteLine("Created certificate {0}", request.SubjectName.Name);
 
-                _testOutputHelper.WriteLine("Created certificate {0}", request.SubjectName.Name);
-
-                return cert.Export(X509ContentType.Pfx, CertificatePassword);
+                        return cert.Export(X509ContentType.Pfx, CertificatePassword);
+                    }
+                }
             }
 
             private Configuration.ISettings LoadSettingsFromConfigFile()
@@ -976,20 +990,32 @@ namespace NuGet.CommandLine.Test
 
             private void RemoveCertificateFromStorage()
             {
+                if (Certificate is null)
+                {
+                    return;
+                }
+
                 bool certificateRemoved = false;
 
                 using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
                 {
                     store.Open(OpenFlags.ReadWrite);
-                    var resultCertificates = store.Certificates.Find(CertificateFindBy, CertificateFindValue, false);
-                    foreach (var certificate in resultCertificates)
+
+                    X509Certificate2Collection resultCertificates = store.Certificates.Find(
+                        X509FindType.FindByIssuerDistinguishedName,
+                        Certificate.Issuer,
+                        validOnly: false);
+
+                    foreach (X509Certificate2 resultCertificate in resultCertificates)
                     {
-                        _testOutputHelper.WriteLine("Removing certificate {0} from store {1}\\{2}", certificate.Subject, CertificateStoreLocation, CertificateStoreName);
-                        store.Remove(certificate);
+                        _testOutputHelper.WriteLine("Removing certificate {0} from store {1}\\{2}", Certificate.Subject, CertificateStoreLocation, CertificateStoreName);
+
+                        store.Remove(resultCertificate);
 
                         certificateRemoved = true;
                     }
                 }
+
                 if (certificateRemoved)
                 {
                     LogInstalledCertificates();
