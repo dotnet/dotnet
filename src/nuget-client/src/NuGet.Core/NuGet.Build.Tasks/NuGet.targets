@@ -73,17 +73,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <!-- Report all severity vulnerabilities (low severity and higher). Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
     <!-- Report known vulnerabilities on direct and transitive dependencies, unless SdkAnalysisLevel (or equalivant) is lower than 9.0.100. Allowed values are: direct, all -->
-    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
-                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
-                    AND '$(SdkAnalysisLevel)' != ''
-                    AND $([MSBuild]::VersionLessThan('$(SdkAnalysisLevel)', '9.0.100'))"
-                    >direct</NuGetAuditMode>
-    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
-                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
-                    AND '$(UsingMicrosoftNETSdk)' == 'true'
-                    AND '$(SdkAnalysisLevel)' == ''"
-                    >direct</NuGetAuditMode>
-    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">all</NuGetAuditMode>
+    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -1155,7 +1145,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <TargetPlatformMinVersion>$(TargetPlatformMinVersion)</TargetPlatformMinVersion>
         <CLRSupport>$(CLRSupport)</CLRSupport>
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
-        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>      
+        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
     </_RestoreGraphEntry>
     </ItemGroup>
   </Target>
