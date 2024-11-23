@@ -31,6 +31,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             var dependencyGraphPerFramework = new Dictionary<string, List<DependencyNode>?>(assetsFile.Targets.Count);
             bool doesProjectHaveDependencyOnPackage = false;
 
+            // add null to the list of runtime identifiers to account for projects that do not have a runtime identifier
+            var runtimeIdentifiers = assetsFile.PackageSpec.RuntimeGraph.Runtimes.Keys
+                .Append(null)
+                .ToList();
             // get all top-level package and project references for the project, categorized by target framework alias
             Dictionary<string, List<string>> topLevelReferencesByFramework = GetTopLevelPackageAndProjectReferences(assetsFile, userInputFrameworks);
 
@@ -38,21 +42,26 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 foreach (var (targetFrameworkAlias, topLevelReferences) in topLevelReferencesByFramework)
                 {
-                    LockFileTarget? target = assetsFile.GetTarget(targetFrameworkAlias, runtimeIdentifier: null);
-
-                    // get all package libraries for the framework
-                    IList<LockFileTargetLibrary>? packageLibraries = target?.Libraries;
-
-                    // if the project has a dependency on the target package, get the dependency graph
-                    if (packageLibraries?.Any(l => l?.Name?.Equals(targetPackage, StringComparison.OrdinalIgnoreCase) == true) == true)
+                    foreach (var runtimeIdentifier in runtimeIdentifiers)
                     {
-                        doesProjectHaveDependencyOnPackage = true;
-                        dependencyGraphPerFramework.Add(targetFrameworkAlias,
-                                                        GetDependencyGraphForTargetPerFramework(topLevelReferences, packageLibraries, targetPackage));
-                    }
-                    else
-                    {
-                        dependencyGraphPerFramework.Add(targetFrameworkAlias, null);
+                        var targetFrameworkDisplayName = runtimeIdentifier == null ? targetFrameworkAlias : $"{targetFrameworkAlias}/{runtimeIdentifier}";
+
+                        LockFileTarget target = assetsFile.GetTarget(targetFrameworkAlias, runtimeIdentifier: runtimeIdentifier);
+
+                        // get all package libraries for the framework
+                        IList<LockFileTargetLibrary>? packageLibraries = target.Libraries;
+
+                        // if the project has a dependency on the target package, get the dependency graph
+                        if (packageLibraries?.Any(l => l?.Name?.Equals(targetPackage, StringComparison.OrdinalIgnoreCase) == true) == true)
+                        {
+                            doesProjectHaveDependencyOnPackage = true;
+                            dependencyGraphPerFramework.Add(targetFrameworkDisplayName,
+                                GetDependencyGraphForTargetPerFramework(topLevelReferences, packageLibraries, targetPackage));
+                        }
+                        else
+                        {
+                            dependencyGraphPerFramework.Add(targetFrameworkDisplayName, null);
+                        }
                     }
                 }
             }

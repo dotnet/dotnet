@@ -13,28 +13,46 @@ namespace NuGet.PackageManagement.UI.ViewModels
 {
     public sealed class ReadmePreviewViewModel : TitledPageViewModelBase
     {
-        private bool _errorLoadingReadme;
+        private bool _errorWithReadme;
         private INuGetPackageFileService _nugetPackageFileService;
         private string _rawReadme;
         private DetailedPackageMetadata _packageMetadata;
         private bool _canRenderLocalReadme;
+        private bool _isBusy;
 
         public ReadmePreviewViewModel(INuGetPackageFileService packageFileService, ItemFilter itemFilter, bool isReadmeFeatureEnabled)
         {
             _nugetPackageFileService = packageFileService ?? throw new ArgumentNullException(nameof(packageFileService));
             _canRenderLocalReadme = CanRenderLocalReadme(itemFilter);
             _nugetPackageFileService = packageFileService;
-            _errorLoadingReadme = false;
+            _errorWithReadme = false;
+            _isBusy = false;
             _rawReadme = string.Empty;
             _packageMetadata = null;
             Title = Resources.Label_Readme_Tab;
             IsVisible = isReadmeFeatureEnabled;
         }
 
-        public bool ErrorLoadingReadme
+        public bool IsReadmeReady { get => !IsBusy && !ErrorWithReadme; }
+
+        public bool ErrorWithReadme
         {
-            get => _errorLoadingReadme;
-            set => SetAndRaisePropertyChanged(ref _errorLoadingReadme, value);
+            get => _errorWithReadme;
+            set
+            {
+                SetAndRaisePropertyChanged(ref _errorWithReadme, value);
+                RaisePropertyChanged(nameof(IsReadmeReady));
+            }
+        }
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                SetAndRaisePropertyChanged(ref _isBusy, value);
+                RaisePropertyChanged(nameof(IsReadmeReady));
+            }
         }
 
         public string ReadmeMarkdown
@@ -76,7 +94,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
             {
                 ReadmeMarkdown = _canRenderLocalReadme && !string.IsNullOrWhiteSpace(_packageMetadata.PackagePath) ? Resources.Text_NoReadme : string.Empty;
                 IsVisible = !string.IsNullOrWhiteSpace(ReadmeMarkdown);
-                ErrorLoadingReadme = false;
+                ErrorWithReadme = false;
                 return;
             }
 
@@ -85,29 +103,34 @@ namespace NuGet.PackageManagement.UI.ViewModels
             {
                 ReadmeMarkdown = string.Empty;
                 IsVisible = false;
-                ErrorLoadingReadme = false;
+                ErrorWithReadme = false;
                 return;
             }
 
             var readme = Resources.Text_NoReadme;
-            await ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            try
             {
-                await TaskScheduler.Default;
-                using var readmeStream = await _nugetPackageFileService.GetReadmeAsync(readmeUrl, cancellationToken);
-                if (readmeStream is null)
+                IsBusy = true;
+                ErrorWithReadme = false;
+                await ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 {
-                    return;
-                }
+                    await TaskScheduler.Default;
+                    using var readmeStream = await _nugetPackageFileService.GetReadmeAsync(readmeUrl, cancellationToken);
+                    if (readmeStream is null)
+                    {
+                        return;
+                    }
 
-                using StreamReader streamReader = new StreamReader(readmeStream);
-                readme = await streamReader.ReadToEndAsync();
-            });
-
-            if (!cancellationToken.IsCancellationRequested)
+                    using StreamReader streamReader = new StreamReader(readmeStream);
+                    readme = await streamReader.ReadToEndAsync();
+                });
+            }
+            finally
             {
                 ReadmeMarkdown = readme;
                 IsVisible = !string.IsNullOrWhiteSpace(readme);
-                ErrorLoadingReadme = false;
+                ErrorWithReadme = false;
+                IsBusy = false;
             }
         }
     }
