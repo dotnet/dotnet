@@ -30,18 +30,18 @@
     <roslynanalyzersGitCommitHash>3d61c57c73c3dd5f1f407ef9cd3414d94bf0eaf2</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24574.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>dfa7fc6bdea31a858a402168384192b633c811fa</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.12.0-3.24572.7</roslynOutputPackageVersion>
+    <roslynOutputPackageVersion>4.12.0-3.24574.8</roslynOutputPackageVersion>
     <runtimeGitCommitHash>9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-rtm.24528.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>ff3f83ca736691839759ee83fe205abe29193031</sdkGitCommitHash>
+    <sdkGitCommitHash>651a47bc94fd484f00d68385aee1c98b00af3d47</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>c65b1c1affed1f4847f9c3f81623dfa929d21e1a</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24568.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>a3776f67d97bd5d9ada92122330454b284bfe915</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.24568.3</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>084a76b3adf59dfbdc5c3f7614979e309910fa50</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24572.2</sourcelinkOutputPackageVersion>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24574.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
     <templatingGitCommitHash>e660cd905cc907f7167c0826e2c30eb57a87e4da</templatingGitCommitHash>
