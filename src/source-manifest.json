@@ -73,7 +73,7 @@
       "commitSha": "c0d3837b40a353b5178cd02953db2924aacb8712"
     },
     {
-      "packageVersion": "9.0.0-preview.24571.2",
+      "packageVersion": "9.0.0-preview.24574.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
       "commitSha": "eef0189b5fbef8ad4446dc0e409163448dff81e9"
@@ -85,7 +85,7 @@
       "commitSha": "543cb4568f28b0d2f2cfecdf2d56365b9252e848"
     },
     {
-      "packageVersion": "3.12.0-beta1.24559.1",
+      "packageVersion": "3.12.0-beta1.24574.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
       "commitSha": "5435ba7b1037f21237adc1b3845f97e9fdbc075d"
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "460f6b807d5e60a858e16a447bfee016a2f5f70f"
+      "commitSha": "a8e88ac2daedcd9bc68fb2f2628edf66a1ea9b89"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24571.1",
