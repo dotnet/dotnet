@@ -49,7 +49,7 @@ namespace Microsoft.DotNet.VersionTools.Automation
             }
             catch (Exception ex)
             {
-                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "Invalid package: {0}", path), ex);
+                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "Invalid package", path), ex);
             }
         }
 
