@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- We include both netframework and netcore in the target frameworks because Arcade's Tools.proj
+         'targets' via net472. -->
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <Description>The MacOsPkg tool is used for unpacking and packing MacOS .pkg files and nested .app bundles.</Description>
+    <PackageTags>Arcade Build Tool MacOS Pkg</PackageTags>
+    <DevelopmentDependency>false</DevelopmentDependency>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-macos-pkg</ToolCommandName>
+  </PropertyGroup>
+</Project>
