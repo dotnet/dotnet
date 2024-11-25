@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.101">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.102">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>e660cd905cc907f7167c0826e2c30eb57a87e4da</Sha>
+      <Sha>3b27191a9169f1c5cd881850754d526e394d504e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.101-servicing.24565.5">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.102-servicing.24575.3">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>e660cd905cc907f7167c0826e2c30eb57a87e4da</Sha>
+      <Sha>3b27191a9169f1c5cd881850754d526e394d504e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.101-servicing.24565.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.102-servicing.24575.3">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>e660cd905cc907f7167c0826e2c30eb57a87e4da</Sha>
+      <Sha>3b27191a9169f1c5cd881850754d526e394d504e</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0">
@@ -379,14 +379,14 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>49c9ad01f057b3c6352bbec12b117acc2224493c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rtm.24570.2">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rtm.24575.3">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>2adf5822dc94d97d0f6e1584129fcf65ba837097</Sha>
+      <Sha>f0304c844992d470ca7379b7d36e4c1274482d5e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rtm.24570.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rtm.24575.3">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>2adf5822dc94d97d0f6e1584129fcf65ba837097</Sha>
+      <Sha>f0304c844992d470ca7379b7d36e4c1274482d5e</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
