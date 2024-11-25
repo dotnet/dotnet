@@ -35,6 +35,15 @@ namespace Microsoft.DotNet.SdkCustomHelix.Sdk
 
     public sealed class AssemblyScheduler
     {
+        /// <summary>
+        /// This is a test class inserted into assemblies to guard against a .NET desktop bug.  The tests
+        /// inside of it counteract the underlying issue.  If this test is included in any assembly it 
+        /// must be added to every partition to ensure the work around is present
+        /// 
+        /// https://github.com/dotnet/corefx/issues/3793
+        /// https://github.com/dotnet/roslyn/issues/8936
+        /// </summary>
+        private const string EventListenerGuardFullName = "Microsoft.CodeAnalysis.UnitTests.EventListenerGuard";
 
         private readonly struct TypeInfo
         {
@@ -69,18 +78,23 @@ namespace Microsoft.DotNet.SdkCustomHelix.Sdk
             private readonly StringBuilder _builder = new();
             private readonly string _assemblyPath;
             private readonly int _methodLimit;
+            private readonly bool _hasEventListenerGuard;
+            private readonly bool _netFramework;
             private int _currentId;
             private List<TypeInfo> _currentTypeInfoList = new();
 
-            private AssemblyInfoBuilder(string assemblyPath, int methodLimit)
+            private AssemblyInfoBuilder(string assemblyPath, int methodLimit, bool hasEventListenerGuard, bool netFramework = false)
             {
                 _assemblyPath = assemblyPath;
                 _methodLimit = methodLimit;
+                _hasEventListenerGuard = hasEventListenerGuard;
+                _netFramework = netFramework;
             }
 
             internal static void Build(string assemblyPath, int methodLimit, List<TypeInfo> typeInfoList, out List<Partition> partitionList, out List<AssemblyPartitionInfo> assemblyInfoList, bool netFramework = false)
             {
-                var builder = new AssemblyInfoBuilder(assemblyPath, methodLimit);
+                var hasEventListenerGuard = typeInfoList.Any(x => x.FullName == EventListenerGuardFullName);
+                var builder = new AssemblyInfoBuilder(assemblyPath, methodLimit, hasEventListenerGuard, netFramework);
                 builder.Build(typeInfoList);
                 partitionList = builder._partitionList;
                 assemblyInfoList = builder._assemblyInfoList;
@@ -93,13 +107,19 @@ namespace Microsoft.DotNet.SdkCustomHelix.Sdk
                 foreach (var typeInfo in typeInfoList)
                 {
                     _currentTypeInfoList.Add(typeInfo);
-
-                    if (_builder.Length > 0)
+                    if (_netFramework)
                     {
-                        _builder.Append("|");
-                    }
-                    _builder.Append($@"{typeInfo.FullName}");
+                        if (_builder.Length > 0)
+                        {
+                            _builder.Append("|");
+                        }
+                        _builder.Append($@"{typeInfo.FullName}");
 
+                    }
+                    else
+                    {
+                        _builder.Append($@"-class ""{typeInfo.FullName}"" ");
+                    }
                     CheckForPartitionLimit(done: false);
                 }
 
@@ -111,6 +131,12 @@ namespace Microsoft.DotNet.SdkCustomHelix.Sdk
                 _currentId++;
                 _currentTypeInfoList = new List<TypeInfo>();
                 _builder.Length = 0;
+
+                // Ensure the EventListenerGuard is in every partition.
+                if (_hasEventListenerGuard)
+                {
+                    _builder.Append($@"-class ""{EventListenerGuardFullName}"" ");
+                }
             }
 
             private void CheckForPartitionLimit(bool done)

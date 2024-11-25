@@ -12,8 +12,6 @@ public static class TerminalLoggerExtensions
     {
         return stdout
             .Replace("\x1b]9;4;3;\x1b\\", "") // indeterminate progress start
-            .Replace("\x1b]9;4;0;\x1b\\", "") // indeterminate progress end
-            .Replace("\x1b[?25l", "") // make cursor invisble
-            .Replace("\x1b[?25h", ""); // make cursor visible
+            .Replace("\x1b]9;4;0;\x1b\\", ""); // indeterminate progress end
     }
 }

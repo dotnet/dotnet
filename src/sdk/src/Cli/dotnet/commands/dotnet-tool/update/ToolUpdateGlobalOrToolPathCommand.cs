@@ -10,7 +10,6 @@ using Microsoft.DotNet.Tools.Tool.Install;
 using Microsoft.DotNet.Tools.Tool.Uninstall;
 using Microsoft.Extensions.EnvironmentAbstractions;
 using Microsoft.DotNet.Cli.ToolPackage;
-using Microsoft.DotNet.Cli.NuGetPackageDownloader;
 using CreateShellShimRepository = Microsoft.DotNet.Tools.Tool.Install.CreateShellShimRepository;
 
 namespace Microsoft.DotNet.Tools.Tool.Update
@@ -23,7 +22,7 @@ namespace Microsoft.DotNet.Tools.Tool.Update
     {
         private readonly CreateShellShimRepository _createShellShimRepository;
         private readonly CreateToolPackageStoresAndDownloaderAndUninstaller _createToolPackageStoreDownloaderUninstaller;
-        internal readonly ToolInstallGlobalOrToolPathCommand _toolInstallGlobalOrToolPathCommand;
+        private readonly ToolInstallGlobalOrToolPathCommand _toolInstallGlobalOrToolPathCommand;
 
         public ToolUpdateGlobalOrToolPathCommand(ParseResult parseResult,
             CreateToolPackageStoresAndDownloaderAndUninstaller createToolPackageStoreDownloaderUninstaller = null,

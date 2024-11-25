@@ -165,7 +165,7 @@ namespace Microsoft.DotNet.Tests.ArgumentForwarding
 
             Console.WriteLine($"STDERR: {commandResult.StdErr}");
 
-            commandResult.ExitCode.Should().Be(0, $"STDOUT: {commandResult.StdOut} STDERR: {commandResult.StdErr}");
+            commandResult.ExitCode.Should().Be(0);
 
             return ParseReflectorOutput(commandResult.StdOut);
         }

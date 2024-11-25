@@ -50,8 +50,6 @@ namespace Microsoft.DotNet.Tools.Tool.Install
         private readonly bool _updateAll;
 
 
-        internal readonly RestoreActionConfig _restoreActionConfig;
-
         public ToolInstallGlobalOrToolPathCommand(
             ParseResult parseResult,
             PackageId? packageId = null,
@@ -83,11 +81,11 @@ namespace Microsoft.DotNet.Tools.Tool.Install
             var configOption = parseResult.GetValue(ToolInstallCommandParser.ConfigOption);
             var sourceOption = parseResult.GetValue(ToolInstallCommandParser.AddSourceOption);
             var packageSourceLocation = new PackageSourceLocation(string.IsNullOrEmpty(configOption) ? null : new FilePath(configOption), additionalSourceFeeds: sourceOption);
-            _restoreActionConfig = new RestoreActionConfig(DisableParallel: parseResult.GetValue(ToolCommandRestorePassThroughOptions.DisableParallelOption),
+            var restoreAction = new RestoreActionConfig(DisableParallel: parseResult.GetValue(ToolCommandRestorePassThroughOptions.DisableParallelOption),
                 NoCache: (parseResult.GetValue(ToolCommandRestorePassThroughOptions.NoCacheOption) || parseResult.GetValue(ToolCommandRestorePassThroughOptions.NoHttpCacheOption)),
                 IgnoreFailedSources: parseResult.GetValue(ToolCommandRestorePassThroughOptions.IgnoreFailedSourcesOption),
                 Interactive: parseResult.GetValue(ToolCommandRestorePassThroughOptions.InteractiveRestoreOption));
-            nugetPackageDownloader ??= new NuGetPackageDownloader(tempDir, verboseLogger: new NullLogger(), restoreActionConfig: _restoreActionConfig, verbosityOptions: _verbosity);
+            nugetPackageDownloader ??= new NuGetPackageDownloader(tempDir, verboseLogger: new NullLogger(), restoreActionConfig: restoreAction, verbosityOptions: _verbosity);
             _shellShimTemplateFinder = new ShellShimTemplateFinder(nugetPackageDownloader, tempDir, packageSourceLocation);
             _store = store;
 
@@ -192,8 +190,7 @@ namespace Microsoft.DotNet.Tools.Tool.Install
                         targetFramework: _framework,
                         verbosity: _verbosity,
                         isGlobalTool: true,
-                        isGlobalToolRollForward: _allowRollForward,
-                        restoreActionConfig: _restoreActionConfig
+                        isGlobalToolRollForward: _allowRollForward
                     );
 
                     EnsureVersionIsHigher(oldPackageNullable, newInstalledPackage, _allowPackageDowngrade);

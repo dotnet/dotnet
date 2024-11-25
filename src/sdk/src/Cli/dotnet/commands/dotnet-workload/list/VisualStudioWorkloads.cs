@@ -19,8 +19,6 @@ namespace Microsoft.DotNet.Workloads.Workload
 #endif
     internal static class VisualStudioWorkloads
     {
-        private static readonly object s_guard = new();
-
         private const int REGDB_E_CLASSNOTREG = unchecked((int)0x80040154);
 
         /// <summary>
@@ -206,50 +204,44 @@ namespace Microsoft.DotNet.Workloads.Workload
         /// <returns>A list of Visual Studio instances.</returns>
         private static List<ISetupInstance> GetVisualStudioInstances()
         {
-            // The underlying COM API has a bug where-by it's not safe for concurrent calls. Until their
-            // bug fix is rolled out use a lock to ensure we don't concurrently access this API.
-            // https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2241752/
-            lock (s_guard)
+            List<ISetupInstance> vsInstances = new();
+
+            try
             {
-                List<ISetupInstance> vsInstances = new();
+                SetupConfiguration setupConfiguration = new();
+                ISetupConfiguration2 setupConfiguration2 = setupConfiguration;
+                IEnumSetupInstances setupInstances = setupConfiguration2.EnumInstances();
+                ISetupInstance[] instances = new ISetupInstance[1];
+                int fetched = 0;
 
-                try
+                do
                 {
-                    SetupConfiguration setupConfiguration = new();
-                    ISetupConfiguration2 setupConfiguration2 = setupConfiguration;
-                    IEnumSetupInstances setupInstances = setupConfiguration2.EnumInstances();
-                    ISetupInstance[] instances = new ISetupInstance[1];
-                    int fetched = 0;
+                    setupInstances.Next(1, instances, out fetched);
 
-                    do
+                    if (fetched > 0)
                     {
-                        setupInstances.Next(1, instances, out fetched);
+                        ISetupInstance2 instance = (ISetupInstance2)instances[0];
 
-                        if (fetched > 0)
+                        // .NET Workloads only shipped in 17.0 and later and we should only look at IDE based SKUs
+                        // such as community, professional, and enterprise.
+                        if (Version.TryParse(instance.GetInstallationVersion(), out Version version) &&
+                            version.Major >= 17 &&
+                            s_visualStudioProducts.Contains(instance.GetProduct().GetId()))
                         {
-                            ISetupInstance2 instance = (ISetupInstance2)instances[0];
-
-                            // .NET Workloads only shipped in 17.0 and later and we should only look at IDE based SKUs
-                            // such as community, professional, and enterprise.
-                            if (Version.TryParse(instance.GetInstallationVersion(), out Version version) &&
-                                version.Major >= 17 &&
-                                s_visualStudioProducts.Contains(instance.GetProduct().GetId()))
-                            {
-                                vsInstances.Add(instances[0]);
-                            }
+                            vsInstances.Add(instances[0]);
                         }
                     }
-                    while (fetched > 0);
-
                 }
-                catch (COMException e) when (e.ErrorCode == REGDB_E_CLASSNOTREG)
-                {
-                    // Query API not registered, good indication there are no VS installations of 15.0 or later.
-                    // Other exceptions are passed through since that likely points to a real error.
-                }
+                while (fetched > 0);
 
-                return vsInstances;
             }
+            catch (COMException e) when (e.ErrorCode == REGDB_E_CLASSNOTREG)
+            {
+                // Query API not registered, good indication there are no VS installations of 15.0 or later.
+                // Other exceptions are passed through since that likely points to a real error.
+            }
+
+            return vsInstances;
         }
     }
 }

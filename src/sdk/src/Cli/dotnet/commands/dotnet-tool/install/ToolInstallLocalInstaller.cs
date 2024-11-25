@@ -3,7 +3,6 @@
 
 using System.CommandLine;
 using Microsoft.DotNet.Cli;
-using Microsoft.DotNet.Cli.NuGetPackageDownloader;
 using Microsoft.DotNet.Cli.ToolPackage;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.ToolPackage;
@@ -21,13 +20,11 @@ namespace Microsoft.DotNet.Tools.Tool.Install
         private readonly string _configFilePath;
         private readonly string[] _sources;
         private readonly VerbosityOptions _verbosity;
-        private readonly RestoreActionConfig _restoreActionConfig;
 
         public ToolInstallLocalInstaller(
             ParseResult parseResult,
             IToolPackageDownloader toolPackageDownloader = null,
-            string runtimeJsonPathForTests = null,
-            RestoreActionConfig restoreActionConfig = null)
+            string runtimeJsonPathForTests = null)
         {
             _parseResult = parseResult;
             _configFilePath = parseResult.GetValue(ToolInstallCommandParser.ConfigOption);
@@ -40,7 +37,7 @@ namespace Microsoft.DotNet.Tools.Tool.Install
                     = ToolPackageFactory.CreateToolPackageStoresAndDownloader(
                         additionalRestoreArguments: parseResult.OptionValuesToBeForwarded(ToolInstallCommandParser.GetCommand()), runtimeJsonPathForTests: runtimeJsonPathForTests);
             _toolPackageDownloader = toolPackageDownloader ?? toolPackageStoresAndDownloader.downloader;
-            _restoreActionConfig = restoreActionConfig;
+
 
             TargetFrameworkToInstall = BundledTargetFramework.GetTargetFrameworkMoniker();
         }
@@ -73,8 +70,7 @@ namespace Microsoft.DotNet.Tools.Tool.Install
                         packageId,
                         verbosity: _verbosity,
                         versionRange,
-                        TargetFrameworkToInstall,
-                        restoreActionConfig: _restoreActionConfig
+                        TargetFrameworkToInstall
                         );
 
                 return toolDownloadedPackage;
