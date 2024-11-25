@@ -235,10 +235,6 @@ public sealed partial class CreateNewImage : Microsoft.Build.Utilities.Task, ICa
             telemetry.LogLocalLoadError();
             Log.LogErrorFromException(dle, showStackTrace: false);
         }
-        catch (ArgumentException argEx)
-        {
-            Log.LogErrorFromException(argEx, showStackTrace: false);
-        }
     }
 
     private async Task PushToRemoteRegistryAsync(BuiltImage builtImage, SourceImageReference sourceImageReference,

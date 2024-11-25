@@ -38,11 +38,11 @@ internal class DefaultManifestOperations : IManifestOperations
         };
     }
 
-    public async Task PutAsync(string repositoryName, string reference, ManifestV2 manifest, string mediaType, CancellationToken cancellationToken)
+    public async Task PutAsync(string repositoryName, string reference, ManifestV2 manifest, CancellationToken cancellationToken)
     {
         string jsonString = JsonSerializer.SerializeToNode(manifest)?.ToJsonString() ?? "";
         HttpContent manifestUploadContent = new StringContent(jsonString);
-        manifestUploadContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+        manifestUploadContent.Headers.ContentType = new MediaTypeHeaderValue(manifest.MediaType);
 
         HttpResponseMessage putResponse = await _client.PutAsync(new Uri(_baseUri, $"/v2/{repositoryName}/manifests/{reference}"), manifestUploadContent, cancellationToken).ConfigureAwait(false);
 

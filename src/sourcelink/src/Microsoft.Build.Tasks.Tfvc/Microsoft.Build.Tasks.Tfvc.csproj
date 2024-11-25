@@ -1,11 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
+
+    <!-- NuGet: Using an explicit nuspec file to customize TFM directory -->
+    <IsPackable>true</IsPackable>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    
     <PackageDescription>MSBuild tasks providing TFVC repository information.</PackageDescription>
     <PackageTags>MSBuild Tasks TFVC source link</PackageTags>
-    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" />
@@ -15,5 +22,4 @@
   <ItemGroup>
     <Compile Include="..\Common\Utilities\*.cs" Link="Common\%(FileName).cs" />
   </ItemGroup>
-
 </Project>
