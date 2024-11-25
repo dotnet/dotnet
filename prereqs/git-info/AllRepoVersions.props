@@ -11,8 +11,8 @@
     <cecilOutputPackageVersion>0.11.5-alpha.24521.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>feb61c7f328a2401d74f4317b39d02126cfdfe24</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.552801</commandlineapiOutputPackageVersion>
-    <deploymenttoolsGitCommitHash>4d818b1bfd1cf450492eb8ab3877eb3875488642</deploymenttoolsGitCommitHash>
-    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24562.1</deploymenttoolsOutputPackageVersion>
+    <deploymenttoolsGitCommitHash>0cae9f631980a7f09a852f80549274d7b819da70</deploymenttoolsGitCommitHash>
+    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24572.3</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>8c505ca6921b5f7e9b8acc234cc8f15035537ee4</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>9.0.0-preview.24566.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>a4a350a6f77f6260a7f2f2bbd3fe91e5502a3540</efcoreGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24570.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>2acfac2e45092b884281b76fb6fc33fadb1cba58</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24572.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>3652f4124d67b90d6416752701ac9551e5e668c4</sdkGitCommitHash>
+    <sdkGitCommitHash>ea852314b9408a40e58e866f153cc413e112a045</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>a5a31c71349868357945ccff44a47a997b4f5717</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24571.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>ef10a9fae360251bdd4b7552a4c90bf626977453</sourcebuildreferencepackagesGitCommitHash>
