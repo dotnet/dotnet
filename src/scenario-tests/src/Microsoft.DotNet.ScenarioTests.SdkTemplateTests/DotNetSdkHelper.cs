@@ -70,6 +70,8 @@ internal class DotNetSdkHelper
         process.StartInfo.EnvironmentVariables["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRoot;
+        process.StartInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "Major";
+
         if (!string.IsNullOrEmpty(nugetPackagesDirectory))
         {
             process.StartInfo.EnvironmentVariables["NUGET_PACKAGES"] = nugetPackagesDirectory;
