@@ -30,7 +30,7 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.13.2</VsixVersionPrefix>
+    <VsixVersionPrefix>17.13.3</VsixVersionPrefix>
     <AddinMajorVersion>17.13</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
