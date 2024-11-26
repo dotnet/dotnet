@@ -2,28 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
     public class PluginFactoryTests
     {
-        public bool IsDesktop
-        {
-            get
-            {
-#if IS_DESKTOP
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
-
         [Fact]
         public void Constructor_ThrowsForTimeSpanBelowMinimum()
         {
@@ -60,7 +46,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: filePath, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath,
                     PluginConstants.PluginArguments,
                     new RequestHandlers(),
                     ConnectionOptions.CreateDefault(),
@@ -76,7 +62,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath: "a",
                     arguments: null,
                     requestHandlers: new RequestHandlers(),
                     options: ConnectionOptions.CreateDefault(),
@@ -92,7 +78,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath: "a",
                     arguments: PluginConstants.PluginArguments,
                     requestHandlers: null,
                     options: ConnectionOptions.CreateDefault(),
@@ -108,7 +94,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath: "a",
                     arguments: PluginConstants.PluginArguments,
                     requestHandlers: new RequestHandlers(),
                     options: null,
@@ -124,7 +110,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             await Assert.ThrowsAsync<OperationCanceledException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath: "a",
                     arguments: PluginConstants.PluginArguments,
                     requestHandlers: new RequestHandlers(),
                     options: ConnectionOptions.CreateDefault(),
@@ -140,41 +126,13 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ObjectDisposedException>(
                 () => factory.GetOrCreateAsync(
-                    new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    filePath: "a",
                     arguments: PluginConstants.PluginArguments,
                     requestHandlers: new RequestHandlers(),
                     options: ConnectionOptions.CreateDefault(),
                     sessionCancellationToken: CancellationToken.None));
 
             Assert.Equal(nameof(PluginFactory), exception.ObjectName);
-        }
-
-        [PlatformFact(Platform.Windows)]
-        public async Task GetOrCreateNetPluginAsync_UsingBatchFile_CreatesPluginAndExecutes()
-        {
-            using TestDirectory testDirectory = TestDirectory.Create();
-            string pluginPath = Path.Combine(testDirectory.Path, "nuget-plugin-batFile.bat");
-            string outputPath = Path.Combine(testDirectory.Path, "plugin-output.txt");
-
-            string batFileContent = $@"
-        @echo off
-        echo File executed > ""{outputPath}""
-    ";
-
-            File.WriteAllText(pluginPath, batFileContent);
-
-            var args = PluginConstants.PluginArguments;
-            var reqHandler = new RequestHandlers();
-            var options = ConnectionOptions.CreateDefault();
-
-            var pluginFactory = new PluginFactory(Timeout.InfiniteTimeSpan);
-
-            // Act
-            var plugin = await Assert.ThrowsAnyAsync<Exception>(() => pluginFactory.GetOrCreateAsync(new PluginFile(filePath: pluginPath, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: false), args, reqHandler, options, CancellationToken.None));
-
-            // Assert
-            string outputContent = File.ReadAllText(outputPath);
-            Assert.Contains("File executed", outputContent);
         }
 
         [Fact]

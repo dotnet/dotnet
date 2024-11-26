@@ -226,17 +226,6 @@ namespace NuGet.Protocol.Plugins.Tests
 
         private sealed class PluginResourceProviderNegativeTest : IDisposable
         {
-            public static bool IsDesktop
-            {
-                get
-                {
-#if IS_DESKTOP
-                    return true;
-#else
-                    return false;
-#endif
-                }
-            }
             private readonly Mock<IPluginDiscoverer> _pluginDiscoverer;
             private readonly PluginManager _pluginManager;
             private readonly Mock<IEnvironmentVariableReader> _environmentVariableReader;
@@ -284,7 +273,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 _pluginManager = new PluginManager(
                     _environmentVariableReader.Object,
                     new Lazy<IPluginDiscoverer>(() => _pluginDiscoverer.Object),
-                    (TimeSpan idleTimeout) => Mock.Of<PluginFactory>(),
+                    (TimeSpan idleTimeout) => Mock.Of<IPluginFactory>(),
                     new Lazy<string>(() => _testDirectory.Path));
                 Provider = new PluginResourceProvider(_pluginManager);
             }
@@ -310,7 +299,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 foreach (var path in pluginPaths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var state = path == "a" ? PluginFileState.Valid : PluginFileState.InvalidEmbeddedSignature;
-                    var file = new PluginFile(path, new Lazy<PluginFileState>(() => state), requiresDotnetHost: !IsDesktop);
+                    var file = new PluginFile(path, new Lazy<PluginFileState>(() => state));
                     results.Add(new PluginDiscoveryResult(file));
                 }
 
@@ -320,20 +309,9 @@ namespace NuGet.Protocol.Plugins.Tests
 
         private sealed class PluginResourceProviderPositiveTest : IDisposable
         {
-            public static bool IsDesktop
-            {
-                get
-                {
-#if IS_DESKTOP
-                    return true;
-#else
-                    return false;
-#endif
-                }
-            }
             private readonly Mock<IConnection> _connection;
             private readonly IEnumerable<PositiveTestExpectation> _expectations;
-            private readonly Mock<PluginFactory> _factory;
+            private readonly Mock<IPluginFactory> _factory;
             private readonly Mock<IPlugin> _plugin;
             private readonly Mock<IPluginDiscoverer> _pluginDiscoverer;
             private readonly Mock<IEnvironmentVariableReader> _reader;
@@ -377,7 +355,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 _pluginDiscoverer.Setup(x => x.DiscoverAsync(It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new[]
                         {
-                            new PluginDiscoveryResult(new PluginFile(pluginFilePath, new Lazy<PluginFileState>(() => pluginFileState), requiresDotnetHost : ! IsDesktop))
+                            new PluginDiscoveryResult(new PluginFile(pluginFilePath, new Lazy<PluginFileState>(() => pluginFileState)))
                         });
 
                 _connection = new Mock<IConnection>(MockBehavior.Strict);
@@ -429,11 +407,11 @@ namespace NuGet.Protocol.Plugins.Tests
                 _plugin.SetupGet(x => x.Id)
                     .Returns("id");
 
-                _factory = new Mock<PluginFactory>(MockBehavior.Strict);
+                _factory = new Mock<IPluginFactory>(MockBehavior.Strict);
 
                 _factory.Setup(x => x.Dispose());
                 _factory.Setup(x => x.GetOrCreateAsync(
-                        It.Is<PluginFile>(p => p.Path == pluginFilePath),
+                        It.Is<string>(p => p == pluginFilePath),
                         It.IsNotNull<IEnumerable<string>>(),
                         It.IsNotNull<IRequestHandlers>(),
                         It.IsNotNull<ConnectionOptions>(),

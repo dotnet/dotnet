@@ -1,15 +1,11 @@
 #nullable enable
-NuGet.Protocol.Plugins.PluginDiscoverer.PluginDiscoverer() -> void
-virtual NuGet.Protocol.Plugins.PluginFactory.Dispose() -> void
-~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state, bool requiresDotnetHost) -> void
-~NuGet.Protocol.Plugins.PluginManager.PluginManager(NuGet.Common.IEnvironmentVariableReader reader, System.Lazy<NuGet.Protocol.Plugins.IPluginDiscoverer> pluginDiscoverer, System.Func<System.TimeSpan, NuGet.Protocol.Plugins.PluginFactory> pluginFactoryCreator, System.Lazy<string> pluginsCacheDirectoryPath) -> void
-~virtual NuGet.Protocol.Plugins.PluginFactory.GetOrCreateAsync(NuGet.Protocol.Plugins.PluginFile pluginFile, System.Collections.Generic.IEnumerable<string> arguments, NuGet.Protocol.Plugins.IRequestHandlers requestHandlers, NuGet.Protocol.Plugins.ConnectionOptions options, System.Threading.CancellationToken sessionCancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Plugins.IPlugin>
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticServiceIndexEntryEventHandler
 NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent
 NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.HttpsSourceHasHttpResource.get -> bool
 static NuGet.Protocol.Events.ProtocolDiagnostics.ServiceIndexEntryEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticServiceIndexEntryEventHandler
 ~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.ProtocolDiagnosticServiceIndexEntryEvent(string source, bool httpsSourceHasHttpResource) -> void
 ~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.Source.get -> string
+~NuGet.Protocol.Plugins.PluginDiscoverer.PluginDiscoverer(string rawPluginPaths) -> void
 ~const NuGet.Protocol.JsonProperties.ReadmeFileUrl = "readmeFileUrl" -> string
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ReadmeFileUrl.get -> string
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReadmeFileUrl.get -> string

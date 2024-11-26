@@ -66,21 +66,9 @@ namespace NuGet.Credentials.Test
 
     internal sealed class PluginManagerMock : IDisposable
     {
-        public static bool IsDesktop
-        {
-            get
-            {
-#if IS_DESKTOP
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
-
         private readonly Mock<IConnection> _connection;
         private readonly TestExpectation _expectations;
-        private readonly Mock<PluginFactory> _factory;
+        private readonly Mock<IPluginFactory> _factory;
         private readonly Mock<IPlugin> _plugin;
         private readonly Mock<IPluginDiscoverer> _pluginDiscoverer;
         private readonly Mock<IEnvironmentVariableReader> _reader;
@@ -111,7 +99,7 @@ namespace NuGet.Credentials.Test
             _plugin = new Mock<IPlugin>(MockBehavior.Strict);
             EnsurePluginSetupCalls();
 
-            _factory = new Mock<PluginFactory>(MockBehavior.Strict);
+            _factory = new Mock<IPluginFactory>(MockBehavior.Strict);
             EnsureFactorySetupCalls(pluginFilePath);
 
             // Setup connection
@@ -250,7 +238,7 @@ namespace NuGet.Credentials.Test
             _pluginDiscoverer.Setup(x => x.DiscoverAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new[]
                     {
-                        new PluginDiscoveryResult(new PluginFile(pluginFilePath, new Lazy<PluginFileState>(() => pluginFileState), requiresDotnetHost: !IsDesktop))
+                        new PluginDiscoveryResult(new PluginFile(pluginFilePath, new Lazy<PluginFileState>(() => pluginFileState)))
                     });
         }
 
@@ -293,7 +281,7 @@ namespace NuGet.Credentials.Test
         {
             _factory.Setup(x => x.Dispose());
             _factory.Setup(x => x.GetOrCreateAsync(
-                    It.Is<PluginFile>(p => p.Path == pluginFilePath),
+                    It.Is<string>(p => p == pluginFilePath),
                     It.IsNotNull<IEnumerable<string>>(),
                     It.IsNotNull<IRequestHandlers>(),
                     It.IsNotNull<ConnectionOptions>(),
