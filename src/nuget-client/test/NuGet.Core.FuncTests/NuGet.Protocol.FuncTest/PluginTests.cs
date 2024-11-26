@@ -26,18 +26,6 @@ namespace NuGet.Protocol.FuncTest
 {
     public class PluginTests
     {
-        public static bool IsDesktop
-        {
-            get
-            {
-#if IS_DESKTOP
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
-
         private static readonly FileInfo PluginFile;
         private static readonly ushort PortNumber = 11000;
         private static readonly IEnumerable<string> PluginArguments = PluginConstants.PluginArguments
@@ -72,7 +60,7 @@ namespace NuGet.Protocol.FuncTest
             using (var pluginFactory = new PluginFactory(PluginConstants.IdleTimeout))
             {
                 var exception = await Assert.ThrowsAsync<PluginException>(() => pluginFactory.GetOrCreateAsync(
-                    new PluginFile(filePath: PluginFile.FullName, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    PluginFile.FullName,
                     PluginConstants.PluginArguments.Concat(new[] { "-ThrowException Unhandled" }),
                     new RequestHandlers(),
                     ConnectionOptions.CreateDefault(),
@@ -93,7 +81,7 @@ namespace NuGet.Protocol.FuncTest
             using (var pluginFactory = new PluginFactory(PluginConstants.IdleTimeout))
             {
                 var exception = await Assert.ThrowsAsync<PluginException>(() => pluginFactory.GetOrCreateAsync(
-                    new PluginFile(filePath: PluginFile.FullName, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    PluginFile.FullName,
                     PluginConstants.PluginArguments.Concat(new[] { "-ThrowException Handled" }),
                     new RequestHandlers(),
                     ConnectionOptions.CreateDefault(),
@@ -114,7 +102,7 @@ namespace NuGet.Protocol.FuncTest
             using (var pluginFactory = new PluginFactory(PluginConstants.IdleTimeout))
             {
                 var exception = await Assert.ThrowsAsync<PluginException>(() => pluginFactory.GetOrCreateAsync(
-                    new PluginFile(filePath: PluginFile.FullName, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    PluginFile.FullName,
                     PluginConstants.PluginArguments.Concat(new[] { "-Freeze" }),
                     new RequestHandlers(),
                     ConnectionOptions.CreateDefault(),
@@ -135,7 +123,7 @@ namespace NuGet.Protocol.FuncTest
             using (var pluginFactory = new PluginFactory(PluginConstants.IdleTimeout))
             {
                 var exception = await Assert.ThrowsAsync<ProtocolException>(() => pluginFactory.GetOrCreateAsync(
-                    new PluginFile(filePath: PluginFile.FullName, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    PluginFile.FullName,
                     PluginConstants.PluginArguments.Concat(new[] { "-CauseProtocolException" }),
                     new RequestHandlers(),
                     ConnectionOptions.CreateDefault(),
@@ -330,7 +318,7 @@ namespace NuGet.Protocol.FuncTest
                 var pluginFactory = new PluginFactory(PluginConstants.IdleTimeout);
                 var options = ConnectionOptions.CreateDefault();
                 var plugin = await pluginFactory.GetOrCreateAsync(
-                    new PluginFile(filePath: PluginFile.FullName, state: new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: !IsDesktop),
+                    PluginFile.FullName,
                     PluginArguments,
                     new RequestHandlers(),
                     options,

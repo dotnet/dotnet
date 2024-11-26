@@ -67,10 +67,10 @@
       "commitSha": "37fc8280dd8516257e7d04b9fc5e426de33091f2"
     },
     {
-      "packageVersion": "6.13.0-preview.1.71",
+      "packageVersion": "6.13.0-preview.1.73",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "c0d3837b40a353b5178cd02953db2924aacb8712"
+      "commitSha": "cee6d943f9a6fa38daf5adba4d4dae9d230e83c6"
     },
     {
       "packageVersion": "9.0.0-preview.24575.4",
@@ -106,19 +106,19 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e52407731aa7777a47f52b75c1ce576062deee1f"
+      "commitSha": "e1228b015ae4436df420a3da8d275a2d217928da"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24571.1",
+      "packageVersion": "10.0.0-alpha.1.24575.3",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "a5a31c71349868357945ccff44a47a997b4f5717"
+      "commitSha": "476ab5c5aab87185e7232268e564832ea8ca5b56"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24571.2",
+      "packageVersion": "10.0.0-alpha.1.24575.1",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "ef10a9fae360251bdd4b7552a4c90bf626977453"
+      "commitSha": "239b264c86cb505180968ab98adee25145902fc3"
     },
     {
       "packageVersion": "9.0.0-beta.24574.1",

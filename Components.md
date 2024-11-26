@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/msbuild`  
 *[dotnet/msbuild@37fc828](https://github.com/dotnet/msbuild/tree/37fc8280dd8516257e7d04b9fc5e426de33091f2)*
 - `src/nuget-client`  
-*[nuget/nuget.client@c0d3837](https://github.com/nuget/nuget.client/tree/c0d3837b40a353b5178cd02953db2924aacb8712)*
+*[nuget/nuget.client@cee6d94](https://github.com/nuget/nuget.client/tree/cee6d943f9a6fa38daf5adba4d4dae9d230e83c6)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -48,9 +48,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@5a67083](https://github.com/dotnet/scenario-tests/tree/5a67083512f32fb0187d42caeae3969c958ea1d5)*
 - `src/sdk`  
-*[dotnet/sdk@e524077](https://github.com/dotnet/sdk/tree/e52407731aa7777a47f52b75c1ce576062deee1f)*
+*[dotnet/sdk@e1228b0](https://github.com/dotnet/sdk/tree/e1228b015ae4436df420a3da8d275a2d217928da)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@a5a31c7](https://github.com/dotnet/source-build-externals/tree/a5a31c71349868357945ccff44a47a997b4f5717)*
+*[dotnet/source-build-externals@476ab5c](https://github.com/dotnet/source-build-externals/tree/476ab5c5aab87185e7232268e564832ea8ca5b56)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -80,7 +80,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@ef10a9f](https://github.com/dotnet/source-build-reference-packages/tree/ef10a9fae360251bdd4b7552a4c90bf626977453)*
+*[dotnet/source-build-reference-packages@239b264](https://github.com/dotnet/source-build-reference-packages/tree/239b264c86cb505180968ab98adee25145902fc3)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@084a76b](https://github.com/dotnet/sourcelink/tree/084a76b3adf59dfbdc5c3f7614979e309910fa50)*
 - `src/symreader`  

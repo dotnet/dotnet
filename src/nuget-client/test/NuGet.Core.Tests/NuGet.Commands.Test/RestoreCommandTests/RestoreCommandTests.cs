@@ -2895,6 +2895,9 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Audit.Duration.Total"] = value => value.Should().BeOfType<double>(),
                 ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
                 ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["TargetFrameworksCount"] = value => value.Should().Be(1),
+                ["RuntimeIdentifiersCount"] = value => value.Should().Be(0),
+                ["TreatWarningsAsErrors"] = value => value.Should().Be(false),
             };
 
             HashSet<string> actualProperties = new();
@@ -2922,6 +2925,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             var projectName = "TestProject";
             var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
             PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "a");
+            packageSpec.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors = true;
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                 pathContext.PackageSource,
@@ -2966,7 +2970,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(25);
+            projectInformationEvent.Count.Should().Be(28);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -2992,6 +2996,9 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["UseLegacyDependencyResolver"].Should().BeOfType<bool>();
             projectInformationEvent["UsedLegacyDependencyResolver"].Should().BeOfType<bool>();
             projectInformationEvent["Audit.Enabled"].Should().BeOfType<string>();
+            projectInformationEvent["TargetFrameworksCount"].Should().Be(1);
+            projectInformationEvent["RuntimeIdentifiersCount"].Should().Be(0);
+            projectInformationEvent["TreatWarningsAsErrors"].Should().Be(true);
         }
 
         [Fact]
@@ -3049,7 +3056,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(31);
+            projectInformationEvent.Count.Should().Be(34);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);

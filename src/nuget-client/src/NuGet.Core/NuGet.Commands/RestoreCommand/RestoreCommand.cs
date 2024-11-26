@@ -56,6 +56,9 @@ namespace NuGet.Commands
         private const string HttpSourcesCount = nameof(HttpSourcesCount);
         private const string LocalSourcesCount = nameof(LocalSourcesCount);
         private const string FallbackFoldersCount = nameof(FallbackFoldersCount);
+        private const string TargetFrameworksCount = nameof(TargetFrameworksCount);
+        private const string RuntimeIdentifiersCount = nameof(RuntimeIdentifiersCount);
+        private const string TreatWarningsAsErrors = nameof(TreatWarningsAsErrors);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -170,6 +173,9 @@ namespace NuGet.Commands
                 telemetry.TelemetryEvent[IsLockFileEnabled] = _isLockFileEnabled;
                 telemetry.TelemetryEvent[UseLegacyDependencyResolver] = _request.Project.RestoreMetadata.UseLegacyDependencyResolver;
                 telemetry.TelemetryEvent[UsedLegacyDependencyResolver] = !_enableNewDependencyResolver;
+                telemetry.TelemetryEvent[TargetFrameworksCount] = _request.Project.RestoreMetadata.TargetFrameworks.Count;
+                telemetry.TelemetryEvent[RuntimeIdentifiersCount] = _request.Project.RuntimeGraph.Runtimes.Count;
+                telemetry.TelemetryEvent[TreatWarningsAsErrors] = _request.Project.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors;
 
                 _operationId = telemetry.OperationId;
 
