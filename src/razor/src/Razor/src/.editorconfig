@@ -2,5 +2,3 @@
 
 # Call ConfigureAwait
 dotnet_diagnostic.CA2007.severity = warning
-# Fix Formatting
-dotnet_diagnostic.IDE0055.severity = warning
