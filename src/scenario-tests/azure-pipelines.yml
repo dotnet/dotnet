@@ -120,3 +120,4 @@ stages:
       enableSigningValidation: false
       enableNugetValidation: false
       enableSourceLinkValidation: false
+      publishAssetsImmediately: true
