@@ -111,6 +111,15 @@ internal sealed class ProjectCapabilityResolver : IProjectCapabilityResolver, ID
             return false;
         }
 
+        // vsHierarchy can be null here if the document is not included in a project.
+        // In this scenario, the IVsUIShellOpenDocument.IsDocumentInAProject(..., ..., ..., ..., out int pDocInProj) call succeeds,
+        // but pDocInProj == __VSDOCINPROJECT.DOCINPROJ_DocNotInProject.
+        if (vsHierarchy is null)
+        {
+            _logger.LogWarning($"LSP Editor is not supported for file because it is not in a project: {documentFilePath}");
+            return false;
+        }
+
         try
         {
             return vsHierarchy.IsCapabilityMatch(capability);
