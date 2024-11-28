@@ -104,6 +104,11 @@
         <target state="translated">Proběhl dotaz na řádek {0} mimo rozsah {1} {2}. Dokument nemusí být aktuální.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Promote_using_directive_to">
+        <source>Promote using directive to {0}</source>
+        <target state="new">Promote using directive to {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
         <target state="translated">příkaz</target>

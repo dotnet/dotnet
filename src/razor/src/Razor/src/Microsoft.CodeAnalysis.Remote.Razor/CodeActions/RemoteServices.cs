@@ -49,6 +49,9 @@ internal sealed class OOPComponentAccessibilityCodeActionProvider(IFileSystem fi
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPGenerateMethodCodeActionProvider : GenerateMethodCodeActionProvider;
 
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPPromoteUsingDirectiveCodeActionProvider : PromoteUsingCodeActionProvider;
+
 [Export(typeof(ICSharpCodeActionProvider)), Shared]
 internal sealed class OOPTypeAccessibilityCodeActionProvider : TypeAccessibilityCodeActionProvider;
 
@@ -88,6 +91,10 @@ internal sealed class OOPGenerateMethodCodeActionResolver(
     IRazorFormattingService razorFormattingService,
     IFileSystem fileSystem)
     : GenerateMethodCodeActionResolver(roslynCodeActionHelpers, documentMappingService, razorFormattingService, fileSystem);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+[method: ImportingConstructor]
+internal sealed class OOPPromoteUsingDirectiveCodeActionResolver(IFileSystem fileSystem) : PromoteUsingCodeActionResolver(fileSystem);
 
 [Export(typeof(ICSharpCodeActionResolver)), Shared]
 [method: ImportingConstructor]

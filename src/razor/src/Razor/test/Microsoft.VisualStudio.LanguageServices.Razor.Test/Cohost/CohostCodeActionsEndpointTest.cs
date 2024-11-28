@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -15,6 +16,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
@@ -24,8 +26,8 @@ using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
+using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -870,6 +872,178 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
                     """)]);
     }
 
+    [Fact]
+    public async Task PromoteUsingDirective()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using [||]System
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            expected: """
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_Imports.razor"), """
+                    @using System
+                    """)]);
+    }
+
+    [Fact]
+    public async Task PromoteUsingDirective_Indented()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    @using [||]System
+                </div>
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            expected: """
+                <div>
+                </div>
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_Imports.razor"), """
+                    @using System
+                    """)]);
+    }
+
+    [Fact]
+    public async Task PromoteUsingDirective_Mvc()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using [||]System
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            expected: """
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            fileKind: FileKinds.Legacy,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_ViewImports.cshtml"), """
+                    @using System
+                    """)]);
+    }
+
+    [Fact]
+    public async Task PromoteUsingDirective_ExistingImports()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using [||]System
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            additionalFiles: [
+                (FilePath(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                    """)],
+            expected: """
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                    @using System
+                    """)]);
+    }
+
+    [Fact]
+    public async Task PromoteUsingDirective_ExistingImports_BlankLineAtEnd()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using [||]System
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            additionalFiles: [
+                (FilePath(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                    
+                    """)],
+            expected: """
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                    @using System
+                    """)]);
+    }
+
+    [Fact]
+    public async Task PromoteUsingDirective_ExistingImports_WhitespaceLineAtEnd()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using [||]System
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            additionalFiles: [
+                (FilePath(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                        
+                    """)],
+            expected: """
+
+                <div>
+                    Hello World
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
+            additionalExpectedFiles: [
+                (FileUri(@"..\_Imports.razor"), """
+                    @using System.Text
+                    @using Foo.Bar
+                    @using System    
+                    """)]);
+    }
+
     private async Task VerifyCodeActionAsync(TestCode input, string? expected, string codeActionName, int childActionIndex = 0, string? fileKind = null, (string filePath, string contents)[]? additionalFiles = null, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
         var fileSystem = (RemoteFileSystem)OOPExportProvider.GetExportedValue<IFileSystem>();
@@ -905,7 +1079,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
         await VerifyCodeActionResultAsync(document, workspaceEdit, expected, additionalExpectedFiles);
     }
 
-    private async Task<CodeAction?> VerifyCodeActionRequestAsync(CodeAnalysis.TextDocument document, TestCode input, string codeActionName, int childActionIndex)
+    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex)
     {
         var requestInvoker = new TestLSPRequestInvoker();
         var endpoint = new CohostCodeActionsEndpoint(RemoteServiceInvoker, ClientCapabilitiesService, TestHtmlDocumentSynchronizer.Instance, requestInvoker, NoOpTelemetryReporter.Instance);

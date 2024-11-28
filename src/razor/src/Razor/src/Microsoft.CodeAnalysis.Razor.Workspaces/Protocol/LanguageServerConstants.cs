@@ -45,6 +45,8 @@ internal static class LanguageServerConstants
 
         public const string AddUsing = "AddUsing";
 
+        public const string PromoteUsingDirective = "PromoteUsingDirective";
+
         public const string CodeActionFromVSCode = "CodeActionFromVSCode";
 
         /// <summary>

@@ -18,6 +18,16 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_createExtractToComponentTelemetryId = new("af67b0a3-f84b-4808-97a7-b53e85b22c64");
     private readonly static Guid s_generateMethodTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
     private readonly static Guid s_generateAsyncMethodTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
+    private readonly static Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
+
+    public static RazorVSInternalCodeAction CreatePromoteUsingDirective(string importsFileName, RazorCodeActionResolutionParams resolutionParams)
+        => new RazorVSInternalCodeAction
+        {
+            Title = SR.FormatPromote_using_directive_to(importsFileName),
+            Data = JsonSerializer.SerializeToElement(resolutionParams),
+            TelemetryId = s_promoteUsingDirectiveTelemetryId,
+            Name = LanguageServerConstants.CodeActions.PromoteUsingDirective,
+        };
 
     public static RazorVSInternalCodeAction CreateAddComponentUsing(string @namespace, string? newTagName, RazorCodeActionResolutionParams resolutionParams)
     {

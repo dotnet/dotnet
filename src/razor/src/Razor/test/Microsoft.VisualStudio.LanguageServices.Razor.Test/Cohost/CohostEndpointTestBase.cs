@@ -272,5 +272,5 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         => new(FilePath(projectRelativeFileName));
 
     protected static string FilePath(string projectRelativeFileName)
-        => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
+        => Path.GetFullPath(Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName));
 }

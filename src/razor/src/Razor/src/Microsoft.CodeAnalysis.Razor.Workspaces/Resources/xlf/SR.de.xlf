@@ -104,6 +104,11 @@
         <target state="translated">Die Zeile "{0}" außerhalb des {1} Bereichs von "{2}" wurde abgefragt. Das Dokument ist möglicherweise nicht auf dem neuesten Stand.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Promote_using_directive_to">
+        <source>Promote using directive to {0}</source>
+        <target state="new">Promote using directive to {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
         <target state="translated">Anweisung</target>
