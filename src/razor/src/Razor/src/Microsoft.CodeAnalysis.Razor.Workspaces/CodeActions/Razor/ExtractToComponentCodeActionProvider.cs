@@ -83,7 +83,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
 
     private static (SyntaxNode? Start, SyntaxNode? End) GetStartAndEndElements(RazorCodeActionContext context, RazorSyntaxTree syntaxTree)
     {
-        var owner = syntaxTree.Root.FindInnermostNode(context.StartAbsoluteIndex, includeWhitespace: true);
+        var owner = syntaxTree.Root.FindInnermostNode(context.StartAbsoluteIndex, includeWhitespace: !context.HasSelection);
         if (owner is null)
         {
             return (null, null);
@@ -112,25 +112,13 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
 
     private static SyntaxNode? GetEndElementNode(RazorCodeActionContext context, RazorSyntaxTree syntaxTree)
     {
-        var endOwner = syntaxTree.Root.FindInnermostNode(context.EndAbsoluteIndex, includeWhitespace: true);
+        var endOwner = syntaxTree.Root.FindInnermostNode(context.EndAbsoluteIndex, includeWhitespace: false);
         if (endOwner is null)
         {
             return null;
         }
 
-        // Correct selection to include the current node if the selection ends immediately after a closing tag.
-        if (endOwner is MarkupTextLiteralSyntax markupTextLiteral
-            && SelectionShouldBePrevious(markupTextLiteral, context.EndAbsoluteIndex)
-            && endOwner.TryGetPreviousSibling(out var previousSibling))
-        {
-            endOwner = previousSibling;
-        }
-
         return GetBlockOrTextNode(endOwner);
-
-        static bool SelectionShouldBePrevious(MarkupTextLiteralSyntax markupTextLiteral, int absoluteIndex)
-            => markupTextLiteral.Span.Start == absoluteIndex
-                || markupTextLiteral.ContainsOnlyWhitespace();
     }
 
     private static SyntaxNode? GetBlockOrTextNode(SyntaxNode node)

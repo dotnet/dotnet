@@ -155,6 +155,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, AddUsingsCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, GenerateMethodCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, GenerateMethodCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, PromoteUsingCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, PromoteUsingCodeActionResolver>();
 
         // Html Code actions
         services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();

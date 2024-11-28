@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
 internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
 {
-    private const string ImportsFileName = "_ViewImports.cshtml";
+    internal const string ImportsFileName = "_ViewImports.cshtml";
 
     public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
     {

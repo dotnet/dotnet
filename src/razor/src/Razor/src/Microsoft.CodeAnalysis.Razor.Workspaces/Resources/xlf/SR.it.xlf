@@ -104,6 +104,11 @@
         <target state="translated">È stata eseguita una query sulla riga '{0}' non compresa nell'intervallo {1} di '{2}'. Il documento potrebbe non essere aggiornato.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Promote_using_directive_to">
+        <source>Promote using directive to {0}</source>
+        <target state="new">Promote using directive to {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
         <target state="translated">istruzione</target>
