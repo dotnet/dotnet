@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>2a3bf4e3a4c473135d058adcd7193a5a4bcd38a7</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>10.0.0-beta.24575.1</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>9ad0880a9f8450f4ac4e097cfe830e401ea3e22c</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>10.0.0-beta.24576.1</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>35c31ca295d83c938e159abae0a7aa65ed46d16f</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24576.16</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>81a2bab8704d87d324039b42eb1bab0d977f25b8</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24577.10</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>b897087e8b76481a9213ae422f5dc16f64a124b5</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24521.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>feb61c7f328a2401d74f4317b39d02126cfdfe24</commandlineapiGitCommitHash>
@@ -35,13 +35,13 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24570.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>5a67083512f32fb0187d42caeae3969c958ea1d5</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24575.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>8f63ab45c8f72eb0e34c134be836e60cea8611cf</sdkGitCommitHash>
+    <sdkGitCommitHash>550f036afc89ad49818624ee855cb25acdd8ccfb</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>476ab5c5aab87185e7232268e564832ea8ca5b56</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24575.3</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>239b264c86cb505180968ab98adee25145902fc3</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24575.1</sourcebuildreferencepackagesOutputPackageVersion>
-    <sourcelinkGitCommitHash>cb197e7177e288db2eba6357982f9e7c397951bb</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24575.2</sourcelinkOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>450c665d6f838ff0ede862b20e30f80b9d7846a0</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>10.0.557602</sourcebuildreferencepackagesOutputPackageVersion>
+    <sourcelinkGitCommitHash>891854929f588c720666cb9fd0a23f498f76f7d3</sourcelinkGitCommitHash>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24576.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>878352351804a2339d595c1f74f9e6b32c6c6e6b</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24574.1</symreaderOutputPackageVersion>
     <templatingGitCommitHash>a0a5baca73c2a056cb4ab5cd8f6c9f33c3718452</templatingGitCommitHash>

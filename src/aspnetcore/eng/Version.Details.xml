@@ -339,32 +339,32 @@
       <Sha>1a54480f52703fb45fac2a6b955247d33758383e</Sha>
       <SourceBuild RepoName="xdt" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24571.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.557602">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>ef10a9fae360251bdd4b7552a4c90bf626977453</Sha>
+      <Sha>450c665d6f838ff0ede862b20e30f80b9d7846a0</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Not updated automatically -->
-    <Dependency Name="Microsoft.CodeAnalysis.Common" Version="4.11.0-1.24218.5">
+    <Dependency Name="Microsoft.CodeAnalysis.Common" Version="4.13.0-3.24576.5">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>afa1eb6821f62183651ab017b2f5c3fbeb934904</Sha>
+      <Sha>175121c035a6f057b9388737bb9b8755fb6dba7e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.AspNetCore" Version="4.11.0-1.24218.5">
+    <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.AspNetCore" Version="4.13.0-3.24576.5">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>afa1eb6821f62183651ab017b2f5c3fbeb934904</Sha>
+      <Sha>175121c035a6f057b9388737bb9b8755fb6dba7e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.11.0-1.24218.5">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.13.0-3.24576.5">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>afa1eb6821f62183651ab017b2f5c3fbeb934904</Sha>
+      <Sha>175121c035a6f057b9388737bb9b8755fb6dba7e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0-1.24218.5">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0-3.24576.5">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>afa1eb6821f62183651ab017b2f5c3fbeb934904</Sha>
+      <Sha>175121c035a6f057b9388737bb9b8755fb6dba7e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.11.0-1.24218.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.13.0-3.24576.5">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>afa1eb6821f62183651ab017b2f5c3fbeb934904</Sha>
+      <Sha>175121c035a6f057b9388737bb9b8755fb6dba7e</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.Composition" Version="10.0.0-alpha.1.24576.1">
@@ -431,7 +431,7 @@
       <Sha>8fef55f5a55a3b4f2c96cd1a9b5ddc51d4b927f8</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.2.0-beta.24527.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.2.0-beta.24574.1">
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>878352351804a2339d595c1f74f9e6b32c6c6e6b</Sha>
       <SourceBuild RepoName="symreader" ManagedOnly="true" />
