@@ -4,7 +4,6 @@
   <ItemGroup>
     <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\template_feed\NetCoreTestTemplates.sln" />
     <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\Templates\MSTestTemplates.sln" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\WizardExtensions\WizardExtensions.sln" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <!-- Contains only a single test project. Exclude if not building tests. Otherwise nuget will fail to find a project to restore -->
     <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\test\Microsoft.TestTemplates.Acceptance.Tests.sln" Condition="'$(DotNetBuildTests)' == 'true'" />
   </ItemGroup>
