@@ -954,10 +954,6 @@
     <DefaultValidateFramework Include="net9.0">
       <RuntimeIDs>@(NETCoreApp90RIDs)</RuntimeIDs>
     </DefaultValidateFramework>
-    <NETCoreApp100RIDs Condition="'@(NETCoreApp100RIDs)' == ''" Include="@(NETCoreApp90RIDs)" />
-    <DefaultValidateFramework Include="net10.0">
-      <RuntimeIDs>@(NETCoreApp100RIDs)</RuntimeIDs>
-    </DefaultValidateFramework>
 
     <NETCore50RIDs Condition="'@(NETCore50RIDs)' == ''" Include="win10-x86;win10-x86-aot;win10-x64;win10-x64-aot;win10-arm;win10-arm-aot" />
     <DefaultValidateFramework Include="netcore50">
