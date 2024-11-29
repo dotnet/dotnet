@@ -245,7 +245,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-#if NETFRAMEWORK
+#if NET472
         private static bool RunTarProcess(string srcPath, string dstPath, string tarToolPath)
         {
             var process = Process.Start(new ProcessStartInfo()
@@ -326,41 +326,34 @@ namespace Microsoft.DotNet.SignTool
 #else
         private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
-            using MemoryStream outputStream = new();
+            using var outputStream = new MemoryStream();
 
-            using (GZipStream gzipStream = new(outputStream, CompressionMode.Compress, leaveOpen: true))
-            using (TarWriter writer = new(gzipStream))
             {
-                foreach (TarEntry entry in ReadTarGZipEntries(FileSignInfo.FullPath))
+                using var gzipStream = new GZipStream(outputStream, CompressionMode.Compress, leaveOpen: true);
+                using var writer = new TarWriter(gzipStream);
+
+                foreach (var entry in ReadTarGZipEntries(FileSignInfo.FullPath))
                 {
                     if (entry.DataStream != null)
                     {
-                        Stream dataStream;
-
-                        string relativeName = entry.Name;
-                        ZipPart? signedPart = FindNestedPart(relativeName);
+                        var relativeName = entry.Name;
+                        var signedPart = FindNestedPart(relativeName);
 
                         if (signedPart.HasValue)
                         {
-                            dataStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
+                            using var signedStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
                             log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName}.");
+                            entry.DataStream = signedStream;
+                            writer.WriteEntry(entry);
+                            continue;
                         }
                         else
                         {
-                            dataStream = new MemoryStream();
-                            entry.DataStream.CopyTo(dataStream);
-                            dataStream.Position = 0;
                             log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativeName}");
                         }
+                    }
 
-                        entry.DataStream = dataStream;
-                        writer.WriteEntry(entry);
-                        dataStream.Dispose();
-                    }
-                    else
-                    {
-                        writer.WriteEntry(entry);
-                    }
+                    writer.WriteEntry(entry);
                 }
             }
 
@@ -370,14 +363,20 @@ namespace Microsoft.DotNet.SignTool
             outputStream.CopyTo(outputFile);
         }
 
-        private static IEnumerable<TarEntry> ReadTarGZipEntries(string path)
+        internal static IEnumerable<TarEntry> ReadTarGZipEntries(string path)
         {
             using var gzipStream = File.Open(path, FileMode.Open);
             using var tar = new GZipStream(gzipStream, CompressionMode.Decompress);
             using var reader = new TarReader(tar);
 
-            while (reader.GetNextEntry() is TarEntry entry)
+            while (true)
             {
+                var entry = reader.GetNextEntry();
+                if (entry == null)
+                {
+                    break;
+                }
+
                 yield return entry;
             }
         }
