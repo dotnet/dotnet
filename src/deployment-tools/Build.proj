@@ -5,7 +5,7 @@
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
     <!-- Disable native projects - see https://github.com/dotnet/deployment-tools/issues/398 -->
-    <DisableNativeProjects>true</DisableNativeProjects>
+    <DisableNativeProjects>false</DisableNativeProjects>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
