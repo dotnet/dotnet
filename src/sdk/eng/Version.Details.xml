@@ -325,22 +325,22 @@
       <Sha>81a2bab8704d87d324039b42eb1bab0d977f25b8</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.24577.5">
+    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.24601.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>5f32f2648d0b10317487b25a9dcd17ea1b45dc13</Sha>
+      <Sha>db3fecf853512dbb9440a8abd75ed8b266ee075a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.24577.5">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.24601.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>5f32f2648d0b10317487b25a9dcd17ea1b45dc13</Sha>
+      <Sha>db3fecf853512dbb9440a8abd75ed8b266ee075a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.24577.5">
+    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.24601.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>5f32f2648d0b10317487b25a9dcd17ea1b45dc13</Sha>
+      <Sha>db3fecf853512dbb9440a8abd75ed8b266ee075a</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.24577.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.24601.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>5f32f2648d0b10317487b25a9dcd17ea1b45dc13</Sha>
+      <Sha>db3fecf853512dbb9440a8abd75ed8b266ee075a</Sha>
       <SourceBuild RepoName="razor" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0-alpha.2.24577.10">
@@ -664,9 +664,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>e77011b31a3e5c47d931248a64b47f9b2d47853d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="1.5.0-preview.24577.10">
+    <Dependency Name="Microsoft.Testing.Platform" Version="1.5.0-preview.24580.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>70546c0d261f2b5fda45684be88e751c6dfb5f2d</Sha>
+      <Sha>a3805f89a2d13fbd30bbaf00a88363c588d591c7</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
