@@ -36,5 +36,6 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.Hover" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteHoverService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.Completion" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteCompletionService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.CodeActions" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteCodeActionsService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.FindAllReferences" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFindAllReferencesService+Factory" />
   </ItemGroup>
 </Project>

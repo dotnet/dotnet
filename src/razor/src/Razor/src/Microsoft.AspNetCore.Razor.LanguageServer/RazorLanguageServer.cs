@@ -212,6 +212,8 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddHandler<ColorPresentationEndpoint>();
 
                 services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
+
+                services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
@@ -219,7 +221,6 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandler<RazorProximityExpressionsEndpoint>();
 
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
-            services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<MapCodeEndpoint>();
         }
     }
