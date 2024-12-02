@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!--
+       We need to target net8.0 while Arcade SDK 8 is being used.
+       Xliff tasks were moved from dotnet/xliff-tasks to Arcade in V9, so they are not available in release/8.0 branch.
+    -->
     <TargetFrameworks>$(NetToolMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
