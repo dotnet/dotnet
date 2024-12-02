@@ -71,89 +71,92 @@ parameters:
     os: linux
 
 #### VERTICAL BUILD ####
-- stage: VMR_Vertical_Build
-  displayName: VMR Vertical Build
-  dependsOn: []
-  variables:
-  - template: ../variables/vmr-build.yml
-    parameters:
-      vmrBranch: ${{ parameters.vmrBranch }}
-  jobs:
+stages:
 
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono1
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
-
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono2
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
-
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono3
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
-
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono4
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
-
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono5
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
-
-  - template: ../jobs/vmr-build.yml
-    parameters:
-      buildName: AzureLinux_x64_Cross_Mono6
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
-      pool: ${{ parameters.pool_Linux }}
-      container: ${{ variables.azurelinuxX64CrossContainer }}
-      crossRootFs: '/crossrootfs/x64'
-      useMonoRuntime: true
-      targetOS: linux
-      targetArchitecture: x64
+- ${{ if not(parameters.isSourceOnlyBuild) }}:
+  - stage: VMR_Vertical_Build
+    displayName: VMR Vertical Build
+    dependsOn: []
+    variables:
+    - template: ../variables/vmr-build.yml
+      parameters:
+        vmrBranch: ${{ parameters.vmrBranch }}
+    jobs:
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono1
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono2
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono3
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono4
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono5
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
+  
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: AzureLinux_x64_Cross_Mono6
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool: ${{ parameters.pool_Linux }}
+        container: ${{ variables.azurelinuxX64CrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        useMonoRuntime: true
+        targetOS: linux
+        targetArchitecture: x64
