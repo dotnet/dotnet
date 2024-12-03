@@ -145,14 +145,14 @@
     <MicrosoftExtensionsDiagnosticsTestingVersion>9.1.0-preview.1.24575.1</MicrosoftExtensionsDiagnosticsTestingVersion>
     <MicrosoftExtensionsTimeProviderTestingVersion>9.1.0-preview.1.24575.1</MicrosoftExtensionsTimeProviderTestingVersion>
     <!-- Packages from dotnet/efcore -->
-    <dotnetefVersion>10.0.0-alpha.1.24580.1</dotnetefVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreSqliteVersion>
-    <MicrosoftEntityFrameworkCoreSqlServerVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreSqlServerVersion>
-    <MicrosoftEntityFrameworkCoreToolsVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreToolsVersion>
-    <MicrosoftEntityFrameworkCoreVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreDesignVersion>10.0.0-alpha.1.24580.1</MicrosoftEntityFrameworkCoreDesignVersion>
+    <dotnetefVersion>10.0.0-alpha.1.24602.3</dotnetefVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftEntityFrameworkCoreSqlServerVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreSqlServerVersion>
+    <MicrosoftEntityFrameworkCoreToolsVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreToolsVersion>
+    <MicrosoftEntityFrameworkCoreVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreDesignVersion>10.0.0-alpha.1.24602.3</MicrosoftEntityFrameworkCoreDesignVersion>
     <!-- Packages from dotnet/roslyn -->
     <MicrosoftCodeAnalysisCommonVersion>4.13.0-3.24576.5</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>4.13.0-3.24576.5</MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>
@@ -165,12 +165,12 @@
     <NuGetVersioningVersion>6.2.4</NuGetVersioningVersion>
     <NuGetFrameworksVersion>6.2.4</NuGetFrameworksVersion>
     <!-- Packages from dotnet/arcade -->
-    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.24575.1</MicrosoftDotNetBuildTasksInstallersVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.24575.1</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetRemoteExecutorVersion>10.0.0-beta.24575.1</MicrosoftDotNetRemoteExecutorVersion>
-    <MicrosoftSourceBuildIntermediatearcadeVersion>10.0.0-beta.24575.1</MicrosoftSourceBuildIntermediatearcadeVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.24578.2</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.24578.2</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetRemoteExecutorVersion>10.0.0-beta.24578.2</MicrosoftDotNetRemoteExecutorVersion>
+    <MicrosoftSourceBuildIntermediatearcadeVersion>10.0.0-beta.24578.2</MicrosoftSourceBuildIntermediatearcadeVersion>
     <!-- Packages from dotnet/source-build-externals -->
-    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>10.0.0-alpha.1.24571.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>10.0.0-alpha.1.24575.3</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
     <!-- Packages from dotnet/source-build-reference-packages -->
     <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>10.0.557602</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
     <!-- Packages from dotnet/symreader -->
