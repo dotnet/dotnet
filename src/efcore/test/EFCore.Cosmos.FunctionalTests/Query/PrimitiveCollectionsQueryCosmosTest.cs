@@ -619,6 +619,30 @@ WHERE NOT(ARRAY_CONTAINS(@ints, c["Int"]))
 """);
             });
 
+    public override Task Parameter_collection_ImmutableArray_of_ints_Contains_int(bool async)
+        => CosmosTestHelpers.Instance.NoSyncTest(
+            async, async a =>
+            {
+                await base.Parameter_collection_ImmutableArray_of_ints_Contains_int(a);
+
+                AssertSql(
+                    """
+@ints='[10,999]'
+
+SELECT VALUE c
+FROM root c
+WHERE ARRAY_CONTAINS(@ints, c["Int"])
+""",
+                    //
+                    """
+@ints='[10,999]'
+
+SELECT VALUE c
+FROM root c
+WHERE NOT(ARRAY_CONTAINS(@ints, c["Int"]))
+""");
+            });
+
     public override Task Parameter_collection_of_ints_Contains_nullable_int(bool async)
         => CosmosTestHelpers.Instance.NoSyncTest(
             async, async a =>
@@ -2099,6 +2123,82 @@ WHERE ((c["Ints"][2] ?? 999) = 999)
             });
 
     #endregion Cosmos-specific tests
+
+    public override async Task Parameter_collection_of_structs_Contains_struct(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(() => base.Parameter_collection_of_structs_Contains_struct(async));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task Parameter_collection_of_structs_Contains_nullable_struct(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(() => base.Parameter_collection_of_structs_Contains_nullable_struct(async));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task Parameter_collection_of_structs_Contains_nullable_struct_with_nullable_comparer(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Parameter_collection_of_structs_Contains_nullable_struct_with_nullable_comparer(async));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task Parameter_collection_of_nullable_structs_Contains_struct(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Parameter_collection_of_nullable_structs_Contains_struct(async));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task Parameter_collection_of_nullable_structs_Contains_nullable_struct(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Parameter_collection_of_nullable_structs_Contains_nullable_struct(async));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task Parameter_collection_of_nullable_structs_Contains_nullable_struct_with_nullable_comparer(bool async)
+    {
+        // Always throws for sync before getting to the exception to test.
+        if (async)
+        {
+            // Requires collections of converted elements
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Parameter_collection_of_nullable_structs_Contains_nullable_struct_with_nullable_comparer(async));
+
+            AssertSql();
+        }
+    }
 
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()
