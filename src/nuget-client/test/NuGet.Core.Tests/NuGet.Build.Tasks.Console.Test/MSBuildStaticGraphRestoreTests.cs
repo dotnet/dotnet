@@ -1095,5 +1095,195 @@ namespace NuGet.Build.Tasks.Console.Test
             netTFI.FrameworkName.Should().Be(FrameworkConstants.CommonFrameworks.Net461);
             netTFI.AssetTargetFallback.Should().BeFalse();
         }
+
+        [Fact]
+        public void GetTargetFrameworkInfos_WithPrunePackageReferences()
+        {
+            // Arrange
+            string net471 = "net471";
+            string net472 = "net472";
+            string net47 = "net47";
+
+            var innerNodes = new Dictionary<string, IMSBuildProject>
+            {
+                [net472] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "ManagePackageVersionsCentrally", "true"},
+                        { "TargetFramework", "net472" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.2" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                        { "RestoreEnablePackagePruning", "true" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { ["Version"] = "1.0.0"}),
+                            new MSBuildItem("y", new Dictionary<string, string> { ["Version"] = "5.0.0"}),
+                        }
+                    }),
+                [net471] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "TargetFramework", "net471" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.1" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.1" },
+                        { "RestoreEnablePackagePruning", "true" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { ["Version"] = "1.0.0"}),
+                        }
+                    }),
+                [net47] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "TargetFramework", "net47" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.0" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.0" },
+                        { "RestoreEnablePackagePruning", "false" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { ["Version"] = "1.0.0"}),
+                        }
+                    })
+            };
+
+            var targetFrameworkInfos = MSBuildStaticGraphRestore.GetTargetFrameworkInfos(innerNodes, isCpvmEnabled: false);
+
+            // Assert
+            targetFrameworkInfos.Should().HaveCount(3);
+            var net472tfi = targetFrameworkInfos.Single(e => e.TargetAlias == "net472");
+            var net471tfi = targetFrameworkInfos.Single(e => e.TargetAlias == "net471");
+            var net47tfi = targetFrameworkInfos.Single(e => e.TargetAlias == "net47");
+
+            net472tfi.PackagesToPrune.Should().HaveCount(2);
+            var net472PackagesToPrune = net472tfi.PackagesToPrune.ToList();
+            net472PackagesToPrune[0].Key.Should().Be("x");
+            net472PackagesToPrune[0].Value.Name.Should().Be("x");
+            net472PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+            net472PackagesToPrune[1].Key.Should().Be("y");
+            net472PackagesToPrune[1].Value.Name.Should().Be("y");
+            net472PackagesToPrune[1].Value.VersionRange.Should().Be(VersionRange.Parse("(, 5.0.0]"));
+
+            net471tfi.PackagesToPrune.Should().HaveCount(1);
+            var net471PackagesToPrune = net471tfi.PackagesToPrune.ToList();
+            net471PackagesToPrune[0].Key.Should().Be("x");
+            net471PackagesToPrune[0].Value.Name.Should().Be("x");
+            net471PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+
+            net47tfi.PackagesToPrune.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public void GetTargetFrameworkInfos_WithPrunePackageReferencesAndMissingVersion()
+        {
+            // Arrange
+            string net472 = "net472";
+
+            var innerNodes = new Dictionary<string, IMSBuildProject>
+            {
+                [net472] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "ManagePackageVersionsCentrally", "true"},
+                        { "TargetFramework", "net472" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.2" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                        { "RestoreEnablePackagePruning", "true" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { }),
+                            new MSBuildItem("y", new Dictionary<string, string> { ["Version"] = "5.0.0"}),
+                        }
+                    })
+            };
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => MSBuildStaticGraphRestore.GetTargetFrameworkInfos(innerNodes, isCpvmEnabled: false));
+            exception.Message.Should().Contain("PrunePackageReference");
+        }
+
+        [Fact]
+        public void GetTargetFrameworkInfos_WithPrunePackageReferencesWithDifferentCasing()
+        {
+            // Arrange
+            string net471 = "net471";
+            string net472 = "net472";
+
+            var innerNodes = new Dictionary<string, IMSBuildProject>
+            {
+                [net472] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "ManagePackageVersionsCentrally", "true"},
+                        { "TargetFramework", "net472" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.2" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                        { "RestoreEnablePackagePruning", "true" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { ["Version"] = "1.0.0"}),
+                            new MSBuildItem("y", new Dictionary<string, string> { ["Version"] = "5.0.0"}),
+                            new MSBuildItem("X", new Dictionary<string, string> { ["Version"] = "2.0.0"}),
+                        }
+                    }),
+                [net471] = new MockMSBuildProject("Project",
+                    new Dictionary<string, string>
+                    {
+                        { "TargetFramework", "net471" },
+                        { "TargetFrameworkIdentifier", ".NETFramework" },
+                        { "TargetFrameworkVersion", "v4.7.1" },
+                        { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.1" },
+                        { "RestoreEnablePackagePruning", "true" },
+                    },
+                    new Dictionary<string, IList<IMSBuildItem>>
+                    {
+                        ["PrunePackageReference"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem("x", new Dictionary<string, string> { ["Version"] = "1.0.0"}),
+                            new MSBuildItem("X", new Dictionary<string, string> { ["Version"] = "2.0.0"}),
+                        }
+                    })
+            };
+
+            var targetFrameworkInfos = MSBuildStaticGraphRestore.GetTargetFrameworkInfos(innerNodes, isCpvmEnabled: false);
+
+            // Assert
+            targetFrameworkInfos.Should().HaveCount(2);
+            var net472tfi = targetFrameworkInfos.Single(e => e.TargetAlias == "net472");
+            var net471tfi = targetFrameworkInfos.Single(e => e.TargetAlias == "net471");
+
+            net472tfi.PackagesToPrune.Should().HaveCount(2);
+            var net472PackagesToPrune = net472tfi.PackagesToPrune.ToList();
+            net472PackagesToPrune[0].Key.Should().Be("x");
+            net472PackagesToPrune[0].Value.Name.Should().Be("x");
+            net472PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+            net472PackagesToPrune[1].Key.Should().Be("y");
+            net472PackagesToPrune[1].Value.Name.Should().Be("y");
+            net472PackagesToPrune[1].Value.VersionRange.Should().Be(VersionRange.Parse("(, 5.0.0]"));
+
+            net471tfi.PackagesToPrune.Should().HaveCount(1);
+            var net471PackagesToPrune = net471tfi.PackagesToPrune.ToList();
+            net471PackagesToPrune[0].Key.Should().Be("x");
+            net471PackagesToPrune[0].Value.Name.Should().Be("x");
+            net471PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+        }
     }
 }

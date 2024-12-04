@@ -12,6 +12,8 @@ NuGet.ProjectModel.TargetFrameworkInformation.Warn.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework>
 ~NuGet.ProjectModel.TargetFrameworkInformation.Imports.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.PrunePackageReference>
+~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation(NuGet.ProjectModel.TargetFrameworkInformation cloneFrom) -> void

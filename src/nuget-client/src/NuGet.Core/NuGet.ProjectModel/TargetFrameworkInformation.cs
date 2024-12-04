@@ -19,6 +19,7 @@ namespace NuGet.ProjectModel
         private ImmutableArray<DownloadDependency> _downloadDependencies;
         private IReadOnlyCollection<FrameworkDependency> _frameworkReferences;
         private ImmutableArray<NuGetFramework> _imports;
+        private IReadOnlyDictionary<string, PrunePackageReference> _packagesToPrune;
 
         public string TargetAlias { get; init; }
 
@@ -93,6 +94,20 @@ namespace NuGet.ProjectModel
         }
 
         /// <summary>
+        /// A dictionary of packages to be pruned from the graph.
+        /// An item existing in this dictionary means the pruning capability is enabled.
+        /// If pruning is not enabled, this property return Empty regardless of what was specified in the items.
+        /// </summary>
+        public IReadOnlyDictionary<string, PrunePackageReference> PackagesToPrune
+        {
+            get => _packagesToPrune;
+            init
+            {
+                _packagesToPrune = value ?? ImmutableDictionary<string, PrunePackageReference>.Empty;
+            }
+        }
+
+        /// <summary>
         /// The project provided runtime.json
         /// </summary>
         public string RuntimeIdentifierGraphPath { get; init; }
@@ -105,6 +120,7 @@ namespace NuGet.ProjectModel
             DownloadDependencies = [];
             CentralPackageVersions = ImmutableDictionary<string, CentralPackageVersion>.Empty;
             FrameworkReferences = ImmutableHashSet<FrameworkDependency>.Empty;
+            PackagesToPrune = ImmutableDictionary<string, PrunePackageReference>.Empty;
         }
 
         public TargetFrameworkInformation(TargetFrameworkInformation cloneFrom)
@@ -119,6 +135,7 @@ namespace NuGet.ProjectModel
             CentralPackageVersions = cloneFrom.CentralPackageVersions;
             FrameworkReferences = cloneFrom.FrameworkReferences;
             RuntimeIdentifierGraphPath = cloneFrom.RuntimeIdentifierGraphPath;
+            PackagesToPrune = cloneFrom.PackagesToPrune;
         }
 
         public override string ToString()
@@ -142,6 +159,7 @@ namespace NuGet.ProjectModel
                 hashCode.AddObject(PathUtility.GetStringComparerBasedOnOS().GetHashCode(RuntimeIdentifierGraphPath));
             }
             hashCode.AddUnorderedSequence(CentralPackageVersions.Values);
+            hashCode.AddUnorderedSequence(PackagesToPrune.Values);
             hashCode.AddStringIgnoreCase(TargetAlias);
             return hashCode.CombinedHash;
         }
@@ -171,6 +189,7 @@ namespace NuGet.ProjectModel
                    EqualityUtility.OrderedEquals(DownloadDependencies, other.DownloadDependencies, e => e.Name, StringComparer.OrdinalIgnoreCase) &&
                    EqualityUtility.OrderedEquals(FrameworkReferences, other.FrameworkReferences, e => e.Name, ComparisonUtility.FrameworkReferenceNameComparer) &&
                    EqualityUtility.OrderedEquals(CentralPackageVersions.Values, other.CentralPackageVersions.Values, e => e.Name, StringComparer.OrdinalIgnoreCase) &&
+                   EqualityUtility.OrderedEquals(PackagesToPrune.Values, other.PackagesToPrune.Values, e => e.Name, StringComparer.OrdinalIgnoreCase) &&
                    PathUtility.GetStringComparerBasedOnOS().Equals(RuntimeIdentifierGraphPath, other.RuntimeIdentifierGraphPath) &&
                    StringComparer.OrdinalIgnoreCase.Equals(TargetAlias, other.TargetAlias);
         }

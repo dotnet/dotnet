@@ -73,17 +73,11 @@ Copyright (c) .NET Foundation. All rights reserved.
     <!-- Report all severity vulnerabilities (low severity and higher). Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
     <!-- Report known vulnerabilities on direct and transitive dependencies, unless SdkAnalysisLevel (or equalivant) is lower than 9.0.100. Allowed values are: direct, all -->
-    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
-                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
-                    AND '$(SdkAnalysisLevel)' != ''
-                    AND $([MSBuild]::VersionLessThan('$(SdkAnalysisLevel)', '9.0.100'))"
-                    >direct</NuGetAuditMode>
-    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
-                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
-                    AND '$(UsingMicrosoftNETSdk)' == 'true'
-                    AND '$(SdkAnalysisLevel)' == ''"
-                    >direct</NuGetAuditMode>
-    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">all</NuGetAuditMode>
+    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestoreEnablePackagePruning Condition="$(RestoreEnablePackagePruning) == '' ">false</RestoreEnablePackagePruning>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -149,6 +143,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestorePackageDownloadsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreFrameworkReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreNuGetAuditSuppressionsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
+  <UsingTask TaskName="NuGet.Build.Tasks.GetRestorePrunePackageReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreDotnetCliToolsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetProjectTargetFrameworksTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreSolutionProjectsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
@@ -379,6 +374,35 @@ Copyright (c) .NET Foundation. All rights reserved.
     </ItemGroup>
   </Target>
 
+  <Target Name="CollectPrunePackageReferences" Returns="@(PrunePackageReference)">
+    <!-- NOTE for design-time builds we need to ensure that we continue on error. -->
+    <PropertyGroup>
+      <CollectPrunePackageReferencesContinueOnError>$(ContinueOnError)</CollectPrunePackageReferencesContinueOnError>
+      <CollectPrunePackageReferencesContinueOnError Condition="'$(ContinueOnError)' == '' ">false</CollectPrunePackageReferencesContinueOnError>
+  </PropertyGroup>
+
+    <CheckForDuplicateNuGetItemsTask
+      Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' "
+      Items="@(PrunePackageReference)"
+      ItemName="PrunePackageReference"
+      LogCode="NU1509"
+      MSBuildProjectFullPath="$(MSBuildProjectFullPath)"
+      TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
+      WarningsAsErrors="$(WarningsAsErrors)"
+      WarningsNotAsErrors="$(WarningsNotAsErrors)"
+      NoWarn="$(NoWarn)"
+      ContinueOnError="$(CollectPrunePackageReferencesContinueOnError)"
+      >
+      <Output TaskParameter="DeduplicatedItems" ItemName="DeduplicatedPrunePackageReference" />
+    </CheckForDuplicateNuGetItemsTask>
+
+    <ItemGroup Condition="'@(DeduplicatedPrunePackageReference)' != ''">
+      <PrunePackageReference Remove="@(PrunePackageReference)" />
+      <PrunePackageReference Include="@(DeduplicatedPrunePackageReference)" />
+    </ItemGroup>
+  </Target>
+
+
   <!--
     ============================================================
     _CollectRestoreInputs
@@ -386,7 +410,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     ============================================================
   -->
   <Target Name="_CollectRestoreInputs"
-          DependsOnTargets="CollectPackageReferences;CollectPackageDownloads;CollectFrameworkReferences;CollectCentralPackageVersions;CollectNuGetAuditSuppressions">
+          DependsOnTargets="CollectPackageReferences;CollectPackageDownloads;CollectFrameworkReferences;CollectCentralPackageVersions;CollectNuGetAuditSuppressions;CollectPrunePackageReferences">
   </Target>
 
   <!--
@@ -1140,6 +1164,17 @@ Copyright (c) .NET Foundation. All rights reserved.
         ItemName="_RestoreGraphEntry" />
     </GetRestoreNuGetAuditSuppressionsTask>
 
+    <!-- Write out pruned package references-->
+    <GetRestorePrunePackageReferencesTask
+      ProjectUniqueName="$(MSBuildProjectFullPath)"
+      PrunePackageReferences="@(PrunePackageReference)"
+      TargetFrameworks="$(TargetFramework)"
+      >
+      <Output
+        TaskParameter="RestoreGraphItems"
+        ItemName="_RestoreGraphEntry" />
+    </GetRestorePrunePackageReferencesTask>
+
     <!-- Write out target framework information -->
     <ItemGroup Condition="  '$(PackageReferenceCompatibleProjectStyle)' == 'true'">
       <_RestoreGraphEntry Include="$([System.Guid]::NewGuid())">
@@ -1158,8 +1193,9 @@ Copyright (c) .NET Foundation. All rights reserved.
         <TargetPlatformMinVersion>$(TargetPlatformMinVersion)</TargetPlatformMinVersion>
         <CLRSupport>$(CLRSupport)</CLRSupport>
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
-        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>      
-    </_RestoreGraphEntry>
+        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
+        <RestoreEnablePackagePruning>$(RestoreEnablePackagePruning)</RestoreEnablePackagePruning>
+      </_RestoreGraphEntry>
     </ItemGroup>
   </Target>
 

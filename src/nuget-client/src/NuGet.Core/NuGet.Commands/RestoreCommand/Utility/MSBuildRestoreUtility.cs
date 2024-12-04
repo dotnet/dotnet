@@ -241,6 +241,7 @@ namespace NuGet.Commands
                     AddPackageReferences(result, items, isCentralPackageManagementEnabled);
                     AddPackageDownloads(result, items);
                     AddFrameworkReferences(result, items);
+                    AddPrunePackageReferences(result, items);
 
                     // Store the original framework strings for msbuild conditionals
                     result.TargetFrameworks.ForEach(tfi =>
@@ -720,6 +721,66 @@ namespace NuGet.Commands
                     };
 
                     AddDependencyIfNotExist(spec, framework, dependency);
+                }
+            }
+        }
+
+        internal static void AddPrunePackageReferences(PackageSpec spec, IEnumerable<IMSBuildItem> items)
+        {
+            var prunePackageReferences = new Dictionary<string, Dictionary<string, PrunePackageReference>>(StringComparer.OrdinalIgnoreCase);
+            var isPruningEnabled = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            foreach (var targetFramework in spec.TargetFrameworks)
+            {
+                prunePackageReferences.Add(targetFramework.TargetAlias, new Dictionary<string, PrunePackageReference>(StringComparer.OrdinalIgnoreCase));
+            }
+
+            foreach (var item in GetItemByType(items, "TargetFrameworkInformation"))
+            {
+                var tfm = item.GetProperty("TargetFramework") ?? string.Empty;
+
+                bool enabled = IsPropertyTrue(item, "RestoreEnablePackagePruning");
+                isPruningEnabled[tfm] = enabled;
+            }
+
+            foreach (var item in GetItemByType(items, "PrunePackageReference"))
+            {
+                var id = item.GetProperty("Id");
+                var versionString = item.GetProperty("VersionRange");
+                HashSet<string> tfms = GetFrameworks(item);
+
+                if (tfms.Count > 0)
+                {
+                    foreach (var targetAlias in tfms)
+                    {
+                        if (isPruningEnabled[targetAlias])
+                        {
+                            var frameworkInfo = prunePackageReferences[targetAlias];
+                            AddPackageToPrune(id, versionString, frameworkInfo);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var frameworkInfo in prunePackageReferences)
+                    {
+                        if (isPruningEnabled[frameworkInfo.Key])
+                        {
+                            AddPackageToPrune(id, versionString, frameworkInfo.Value);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < spec.TargetFrameworks.Count; i++)
+            {
+                spec.TargetFrameworks[i] = new TargetFrameworkInformation(spec.TargetFrameworks[i]) { PackagesToPrune = prunePackageReferences[spec.TargetFrameworks[i].TargetAlias] };
+            }
+
+            static void AddPackageToPrune(string id, string version, Dictionary<string, PrunePackageReference> frameworkInfo)
+            {
+                if (!frameworkInfo.ContainsKey(id))
+                {
+                    frameworkInfo.Add(id, PrunePackageReference.Create(id, version!));
                 }
             }
         }

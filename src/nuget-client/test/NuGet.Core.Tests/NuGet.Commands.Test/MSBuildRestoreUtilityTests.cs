@@ -4800,6 +4800,308 @@ namespace NuGet.Commands.Test
             Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingMicrosoftNETSdk));
         }
 
+        [Fact]
+        public void MSBuildRestoreUtility_GetPackageSpec_WithPrunePackageReferences()
+        {
+            var projectName = "project";
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var projectUniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
+                var project1Root = Path.Combine(workingDir, projectName);
+                var project1Path = Path.Combine(project1Root, $"{projectName}.csproj");
+
+                var items = new List<IDictionary<string, string>>
+                {
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "ProjectName", projectName },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "ProjectPath", project1Path },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net472" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.2" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                    { "RestoreEnablePackagePruning", "true" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net471" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.1" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.1" },
+                    { "RestoreEnablePackagePruning", "true" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net47" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.0" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.0" },
+                    { "RestoreEnablePackagePruning", "false" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                    { "VersionRange", "1.0.0" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "y" },
+                    { "VersionRange", "5.0.0" },
+                    { "TargetFrameworks", "net472"},
+                },
+                };
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+                var project = dgSpec.Projects.Single(e => e.Name == projectName);
+
+                // Assert
+                project.TargetFrameworks.Should().HaveCount(3);
+                var net472tfi = project.TargetFrameworks.Single(e => e.TargetAlias == "net472");
+                var net471tfi = project.TargetFrameworks.Single(e => e.TargetAlias == "net471");
+                var net47tfi = project.TargetFrameworks.Single(e => e.TargetAlias == "net47");
+
+                net472tfi.PackagesToPrune.Should().HaveCount(2);
+                var net472PackagesToPrune = net472tfi.PackagesToPrune.ToList();
+                net472PackagesToPrune[0].Key.Should().Be("x");
+                net472PackagesToPrune[0].Value.Name.Should().Be("x");
+                net472PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+                net472PackagesToPrune[1].Key.Should().Be("y");
+                net472PackagesToPrune[1].Value.Name.Should().Be("y");
+                net472PackagesToPrune[1].Value.VersionRange.Should().Be(VersionRange.Parse("(, 5.0.0]"));
+
+                net471tfi.PackagesToPrune.Should().HaveCount(1);
+                var net471PackagesToPrune = net471tfi.PackagesToPrune.ToList();
+                net471PackagesToPrune[0].Key.Should().Be("x");
+                net471PackagesToPrune[0].Value.Name.Should().Be("x");
+                net471PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+
+                net47tfi.PackagesToPrune.Should().HaveCount(0);
+            }
+        }
+
+        [Fact]
+        public void MSBuildRestoreUtility_GetPackageSpec_WithPrunePackageReferenceWithVariousCasing()
+        {
+            var projectName = "project";
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var projectUniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
+                var project1Root = Path.Combine(workingDir, projectName);
+                var project1Path = Path.Combine(project1Root, $"{projectName}.csproj");
+
+                var items = new List<IDictionary<string, string>>
+                {
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "ProjectName", projectName },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "ProjectPath", project1Path },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net472" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.2" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                    { "RestoreEnablePackagePruning", "true" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net471" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.1" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.1" },
+                    { "RestoreEnablePackagePruning", "true" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                    { "VersionRange", "1.0.0" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "X" },
+                    { "VersionRange", "2.0.0" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "y" },
+                    { "VersionRange", "5.0.0" },
+                    { "TargetFrameworks", "net472"},
+                },
+                };
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+                var project = dgSpec.Projects.Single(e => e.Name == projectName);
+
+                // Assert
+                project.TargetFrameworks.Should().HaveCount(2);
+                var net472tfi = project.TargetFrameworks.Single(e => e.TargetAlias == "net472");
+                var net471tfi = project.TargetFrameworks.Single(e => e.TargetAlias == "net471");
+
+                net472tfi.PackagesToPrune.Should().HaveCount(2);
+                var net472PackagesToPrune = net472tfi.PackagesToPrune.ToList();
+                net472PackagesToPrune[0].Key.Should().Be("x");
+                net472PackagesToPrune[0].Value.Name.Should().Be("x");
+                net472PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+                net472PackagesToPrune[1].Key.Should().Be("y");
+                net472PackagesToPrune[1].Value.Name.Should().Be("y");
+                net472PackagesToPrune[1].Value.VersionRange.Should().Be(VersionRange.Parse("(, 5.0.0]"));
+
+                net471tfi.PackagesToPrune.Should().HaveCount(1);
+                var net471PackagesToPrune = net471tfi.PackagesToPrune.ToList();
+                net471PackagesToPrune[0].Key.Should().Be("x");
+                net471PackagesToPrune[0].Value.Name.Should().Be("x");
+                net471PackagesToPrune[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void MSBuildRestoreUtility_GetPackageSpecWithLegacyProject_WithPrunePackageReferences(bool enabledPruning)
+        {
+            var projectName = "project";
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var projectUniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
+                var project1Root = Path.Combine(workingDir, projectName);
+                var project1Path = Path.Combine(project1Root, $"{projectName}.csproj");
+
+                var items = new List<IDictionary<string, string>>
+                {
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "ProjectName", projectName },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "ProjectPath", project1Path },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.0" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.0" },
+                    { "RestoreEnablePackagePruning", enabledPruning.ToString() },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                    { "VersionRange", "1.0.0" },
+                }
+                };
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+                var project = dgSpec.Projects.Single(e => e.Name == projectName);
+
+                // Assert
+                project.TargetFrameworks.Should().HaveCount(1);
+                if (enabledPruning)
+                {
+                    project.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
+                    var packageToPruneList = project.TargetFrameworks[0].PackagesToPrune.ToList();
+                    packageToPruneList[0].Key.Should().Be("x");
+                    packageToPruneList[0].Value.Name.Should().Be("x");
+                    packageToPruneList[0].Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+                }
+                else
+                {
+                    project.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
+                }
+            }
+        }
+
+        [Fact]
+        public void MSBuildRestoreUtility_GetPackageSpec_WithPrunePackageReferenceAndMissingVersion_Throws()
+        {
+            var projectName = "project";
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var projectUniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
+                var project1Root = Path.Combine(workingDir, projectName);
+                var project1Path = Path.Combine(project1Root, $"{projectName}.csproj");
+
+                var items = new List<IDictionary<string, string>>
+                {
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "ProjectName", projectName },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "ProjectPath", project1Path },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.0" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.0" },
+                    { "RestoreEnablePackagePruning", "true" },
+                },
+                    new Dictionary<string, string>()
+                {
+                    { "Type", "PrunePackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                }
+                };
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var exception = Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetDependencySpec(wrappedItems));
+                exception.Message.Should().Contain("PrunePackageReference");
+            }
+        }
+
         private static IDictionary<string, string> CreateProject(string root, string uniqueName)
         {
             var project1Path = Path.Combine(root, "a.csproj");

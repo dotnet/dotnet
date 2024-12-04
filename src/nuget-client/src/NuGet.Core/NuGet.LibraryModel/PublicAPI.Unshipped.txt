@@ -15,3 +15,12 @@ NuGet.LibraryModel.LibraryRange.LibraryRange(NuGet.LibraryModel.LibraryRange! ot
 NuGet.LibraryModel.LibraryRange.Name.init -> void
 NuGet.LibraryModel.LibraryRange.TypeConstraint.init -> void
 NuGet.LibraryModel.LibraryRange.VersionRange.init -> void
+NuGet.LibraryModel.PrunePackageReference
+NuGet.LibraryModel.PrunePackageReference.Equals(NuGet.LibraryModel.PrunePackageReference? other) -> bool
+NuGet.LibraryModel.PrunePackageReference.Name.get -> string!
+NuGet.LibraryModel.PrunePackageReference.PrunePackageReference(string! name, NuGet.Versioning.VersionRange! versionRange) -> void
+NuGet.LibraryModel.PrunePackageReference.VersionRange.get -> NuGet.Versioning.VersionRange!
+override NuGet.LibraryModel.PrunePackageReference.Equals(object? obj) -> bool
+override NuGet.LibraryModel.PrunePackageReference.GetHashCode() -> int
+override NuGet.LibraryModel.PrunePackageReference.ToString() -> string!
+static NuGet.LibraryModel.PrunePackageReference.Create(string! name, string! version) -> NuGet.LibraryModel.PrunePackageReference!

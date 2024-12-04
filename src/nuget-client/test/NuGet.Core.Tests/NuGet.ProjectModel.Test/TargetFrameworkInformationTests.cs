@@ -326,6 +326,31 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
+        [InlineData("a;(,1.0.0];b;(,2.0.0]", "a;(,1.0.0];b;(,2.0.0]", true)]
+        [InlineData("a;(,1.0.0];B;(,2.0.0]", "A;(,1.0.0];b;(,2.0.0]", true)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", true)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0];c;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", false)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0];c;(,2.0.0]", false)]
+        [InlineData("a;(,2.0.0];b;(,2.0.0]", "a;(,1.0.0];b;(,2.0.0]", false)]
+        [InlineData("a;(,1.0.0];B;(,1.0.0]", "A;(,1.0.0];b;(,2.0.0]", false)]
+        [InlineData("B;(,2.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", false)]
+        public void Equals_WithPrunePackageReference(string left, string right, bool expected)
+        {
+            var leftSide = new TargetFrameworkInformation()
+            {
+                PackagesToPrune = GetPrunePackageReferences(left),
+                FrameworkName = NuGetFramework.AnyFramework
+            };
+
+            var rightSide = new TargetFrameworkInformation()
+            {
+                PackagesToPrune = GetPrunePackageReferences(right),
+                FrameworkName = NuGetFramework.AnyFramework
+            };
+            AssertEquality(expected, leftSide, rightSide);
+        }
+
+        [Theory]
         [InlineData("net461", "net461", true)]
         [InlineData("net461", "NET461", true)]
         [InlineData("net461", "", false)]
@@ -580,6 +605,43 @@ namespace NuGet.ProjectModel.Test
             };
 
             AssertHashCode(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData("a;(,1.0.0];b;(,2.0.0]", "a;(,1.0.0];b;(,2.0.0]", true)]
+        [InlineData("a;(,1.0.0];B;(,2.0.0]", "A;(,1.0.0];b;(,2.0.0]", true)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", true)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0];c;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", false)]
+        [InlineData("B;(,1.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0];c;(,2.0.0]", false)]
+        [InlineData("a;(,2.0.0];b;(,2.0.0]", "a;(,1.0.0];b;(,2.0.0]", false)]
+        [InlineData("a;(,1.0.0];B;(,1.0.0]", "A;(,1.0.0];b;(,2.0.0]", false)]
+        [InlineData("B;(,2.0.0];a;(,2.0.0]", "A;(,2.0.0];b;(,1.0.0]", false)]
+        public void HashCode_PrunePackageReference(string left, string right, bool expected)
+        {
+            var leftSide = new TargetFrameworkInformation()
+            {
+                PackagesToPrune = GetPrunePackageReferences(left),
+                FrameworkName = NuGetFramework.AnyFramework
+            };
+
+            var rightSide = new TargetFrameworkInformation()
+            {
+                PackagesToPrune = GetPrunePackageReferences(right),
+                FrameworkName = NuGetFramework.AnyFramework
+            };
+
+            AssertHashCode(expected, leftSide, rightSide);
+        }
+
+        private static Dictionary<string, PrunePackageReference> GetPrunePackageReferences(string list)
+        {
+            Dictionary<string, PrunePackageReference> PrunePackageReferences = new(StringComparer.OrdinalIgnoreCase);
+            var results = list.Split(';');
+            for (int i = 0; i < results.Length; i = i + 2)
+            {
+                PrunePackageReferences.Add(results[i], new PrunePackageReference(results[i], VersionRange.Parse(results[i + 1])));
+            }
+            return PrunePackageReferences;
         }
 
         private TargetFrameworkInformation CreateTargetFrameworkInformation()

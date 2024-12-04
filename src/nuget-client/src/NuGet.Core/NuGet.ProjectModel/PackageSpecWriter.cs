@@ -626,6 +626,7 @@ namespace NuGet.ProjectModel
                     SetDownloadDependencies(writer, framework.DownloadDependencies);
                     SetFrameworkReferences(writer, framework.FrameworkReferences);
                     SetValueIfNotNull(writer, "runtimeIdentifierGraphPath", framework.RuntimeIdentifierGraphPath);
+                    SetPackagesToPrune(writer, framework.PackagesToPrune, hashing);
                     writer.WriteObjectEnd();
                 }
 
@@ -686,6 +687,33 @@ namespace NuGet.ProjectModel
                 foreach (var dependency in centralPackageVersions.OrderBy(dep => dep.Name, StringComparer.OrdinalIgnoreCase))
                 {
                     writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.OriginalString ?? dependency.VersionRange.ToNormalizedString());
+                }
+            }
+
+            writer.WriteObjectEnd();
+        }
+
+        private static void SetPackagesToPrune(IObjectWriter writer, IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune, bool hashing)
+        {
+            if (packagesToPrune.Count == 0)
+            {
+                return;
+            }
+
+            writer.WriteObjectStart("packagesToPrune");
+
+            if (hashing)
+            {
+                foreach (var dependency in packagesToPrune)
+                {
+                    writer.WriteNameValue(name: dependency.Key, value: dependency.Value.VersionRange.OriginalString ?? dependency.Value.VersionRange.ToNormalizedString());
+                }
+            }
+            else
+            {
+                foreach (var dependency in packagesToPrune.OrderBy(dep => dep.Key, StringComparer.OrdinalIgnoreCase))
+                {
+                    writer.WriteNameValue(name: dependency.Key, value: dependency.Value.VersionRange.OriginalString ?? dependency.Value.VersionRange.ToNormalizedString());
                 }
             }
 

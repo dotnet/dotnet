@@ -9,6 +9,7 @@ namespace NuGet.PackageManagement.Telemetry
         Options_PackageSourceMapping_Add,
         Options_PackageSourceMapping_Remove,
         Options_PackageSourceMapping_RemoveAll,
+        Options_LocalsCommand_ClearAll,
         PMUI_ExternalLink,
         PMUI_PackageSourceMapping_Configure
     }

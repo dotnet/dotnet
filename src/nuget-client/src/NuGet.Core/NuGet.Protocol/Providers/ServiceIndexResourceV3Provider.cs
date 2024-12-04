@@ -21,7 +21,7 @@ namespace NuGet.Protocol
     /// </summary>
     public class ServiceIndexResourceV3Provider : ResourceProvider
     {
-        private static readonly TimeSpan _defaultCacheDuration = TimeSpan.FromMinutes(40);
+        private static readonly TimeSpan DefaultCacheDuration = TimeSpan.FromMinutes(40);
         private readonly ConcurrentDictionary<string, ServiceIndexCacheInfo> _cache;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private readonly EnhancedHttpRetryHelper _enhancedHttpRetryHelper;
@@ -40,7 +40,7 @@ namespace NuGet.Protocol
                   NuGetResourceProviderPositions.Last)
         {
             _cache = new ConcurrentDictionary<string, ServiceIndexCacheInfo>(StringComparer.OrdinalIgnoreCase);
-            MaxCacheDuration = _defaultCacheDuration;
+            MaxCacheDuration = DefaultCacheDuration;
             _enhancedHttpRetryHelper = new EnhancedHttpRetryHelper(environmentVariableReader);
         }
 
@@ -62,15 +62,10 @@ namespace NuGet.Protocol
                 if (!_cache.TryGetValue(url, out cacheInfo) ||
                     entryValidCutoff > cacheInfo.CachedTime)
                 {
-                    // Track if the semaphore needs to be released
-                    var release = false;
+                    await _semaphore.WaitAsync(token);
+
                     try
                     {
-                        await _semaphore.WaitAsync(token);
-                        release = true;
-
-                        token.ThrowIfCancellationRequested();
-
                         // check the cache again, another thread may have finished this one waited for the lock
                         if (!_cache.TryGetValue(url, out cacheInfo) ||
                             entryValidCutoff > cacheInfo.CachedTime)
@@ -90,10 +85,7 @@ namespace NuGet.Protocol
                     }
                     finally
                     {
-                        if (release)
-                        {
-                            _semaphore.Release();
-                        }
+                        _semaphore.Release();
                     }
                 }
             }
