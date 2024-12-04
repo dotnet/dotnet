@@ -16,11 +16,6 @@
     <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
-    <!-- TODO: Remove when Arcade SDK updated TargetFrameworkDefaults.props for .NET 10. -->
-    <NetCurrent>net10.0</NetCurrent>
-    <NetPrevious>net9.0</NetPrevious>
-    <NetToolCurrent>$(NetCurrent)</NetToolCurrent>
-    <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
   </PropertyGroup>
 
 </Project>
