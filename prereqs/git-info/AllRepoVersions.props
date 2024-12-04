@@ -40,8 +40,8 @@
     <sourcebuildexternalsOutputPackageVersion>10.0.560301</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>450c665d6f838ff0ede862b20e30f80b9d7846a0</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>10.0.557602</sourcebuildreferencepackagesOutputPackageVersion>
-    <sourcelinkGitCommitHash>928f459936292b3128b949957c7b46ae5ed59e4c</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24577.2</sourcelinkOutputPackageVersion>
+    <sourcelinkGitCommitHash>bf9eea4cf019e8f86e7fae35380533eae25f487e</sourcelinkGitCommitHash>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24602.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>878352351804a2339d595c1f74f9e6b32c6c6e6b</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24574.1</symreaderOutputPackageVersion>
     <templatingGitCommitHash>157cd53097ceb5a5e05de83fa94bb37dd203bdcb</templatingGitCommitHash>
