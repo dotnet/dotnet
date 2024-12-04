@@ -44,7 +44,9 @@ internal sealed partial record Checksum
     {
 #if NETCOREAPP
         Span<byte> bytes = stackalloc byte[HashSize];
+#pragma warning disable CS9191 // The 'ref' modifier for an argument corresponding to 'in' parameter is equivalent to 'in'. Consider using 'in' instead.
         MemoryMarshal.TryWrite(bytes, ref Unsafe.AsRef(in Data));
+#pragma warning restore CS9191
 
         return Convert.ToBase64String(bytes);
 #else
