@@ -360,6 +360,11 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
+        private readonly HashSet<string> specialExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".tar.gz"
+        };
+
         private Dictionary<string, List<SignInfo>> ParseFileExtensionSignInfo()
         {
             var map = new Dictionary<string, List<SignInfo>>(StringComparer.OrdinalIgnoreCase);
@@ -372,9 +377,8 @@ namespace Microsoft.DotNet.SignTool
                     var certificate = item.GetMetadata("CertificateName");
                     var collisionPriorityId = item.GetMetadata(SignToolConstants.CollisionPriorityId);
 
-                    // Path.GetExtension will return .gz for .tar.gz files, so we need to handle that case separately
-                    var actualExtension = extension.Equals(".tar.gz", StringComparison.OrdinalIgnoreCase) ? ".tar.gz" : Path.GetExtension(extension);
-                    if (!extension.Equals(actualExtension))
+                    // Some supported extensions have multiple dots. Special case these so that we don't throw an error below.
+                    if (!extension.Equals(Path.GetExtension(extension)) && !specialExtensions.Contains(extension))
                     {
                         Log.LogError($"Value of {nameof(FileExtensionSignInfo)} is invalid: '{extension}'");
                         continue;

@@ -38,8 +38,7 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
                     throw new ArgumentException($"Value of FileExtensionSignInfo 'Include' is invalid, must be non-empty.");
                 }
 
-                string extension = signInfo.Include.Equals(".tar.gz", StringComparison.OrdinalIgnoreCase) ? ".tar.gz" : Path.GetExtension(signInfo.Include);
-                if (!signInfo.Include.Equals(extension))
+                if (!signInfo.Include.Equals(Path.GetExtension(signInfo.Include)))
                 {
                     throw new ArgumentException($"Value of FileExtensionSignInfo Include is invalid: '{signInfo.Include}' is not returned by Path.GetExtension('{signInfo.Include}')");
                 }
