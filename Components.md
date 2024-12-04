@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@da72b6f](https://github.com/dotnet/sdk/tree/da72b6fab077f57c39de203a85ced97c9c595da8)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@476ab5c](https://github.com/dotnet/source-build-externals/tree/476ab5c5aab87185e7232268e564832ea8ca5b56)*
+*[dotnet/source-build-externals@e05b759](https://github.com/dotnet/source-build-externals/tree/e05b759f3b6b09e30bf52535375181bfa25e2c49)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -70,7 +70,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/spectre-console`  
     *[spectreconsole/spectre.console@7397169](https://github.com/spectreconsole/spectre.console/tree/7397169a2757dc3657598bdea4ac222c0f283425)*
     - `src/source-build-externals/src/vs-solutionpersistence`  
-    *[microsoft/vs-solutionpersistence@eb339e2](https://github.com/microsoft/vs-solutionpersistence/tree/eb339e21ca8e5beb1a4301c1df73c9a5389738a9)*
+    *[microsoft/vs-solutionpersistence@87ee8ea](https://github.com/microsoft/vs-solutionpersistence/tree/87ee8ea069662d55c336a9bd68fe4851d0384fa5)*
     - `src/source-build-externals/src/xunit`  
     *[xunit/xunit@82543a6](https://github.com/xunit/xunit/tree/82543a6df6f5f13b5b70f8a9f9ccb41cd676084f)*
     - `src/source-build-externals/src/xunit/src/xunit.assert/Asserts`  

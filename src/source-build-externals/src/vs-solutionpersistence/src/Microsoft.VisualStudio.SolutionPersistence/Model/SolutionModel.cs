@@ -218,13 +218,13 @@ public sealed class SolutionModel : PropertyContainerModel
         Guid projectTypeId =
             Guid.TryParse(projectTypeName, out Guid projectTypeGuid) ? projectTypeGuid :
             this.ProjectTypeTable.GetProjectTypeId(projectTypeName, Path.GetExtension(filePath.AsSpan())) ??
-            throw new SolutionArgumentException(string.Format(Errors.InvalidProjectTypeReference_Args1, projectTypeName), nameof(projectTypeName), SolutionErrorType.InvalidProjectReference);
+            throw new SolutionArgumentException(string.Format(Errors.InvalidProjectTypeReference_Args1, projectTypeName), nameof(projectTypeName), SolutionErrorType.InvalidProjectTypeReference);
 
         return this.AddProject(filePath, projectTypeName ?? string.Empty, projectTypeId, folder);
     }
 
     /// <summary>
-    /// Remove a solution folder from the solution model.
+    /// Remove a solution folder from the solution model. This includes any child folders and projects.
     /// </summary>
     /// <param name="folder">The folder to remove.</param>
     /// <returns><see langword="true"/> if the folder was found and removed.</returns>
@@ -232,18 +232,8 @@ public sealed class SolutionModel : PropertyContainerModel
     {
         Argument.ThrowIfNull(folder, nameof(folder));
         this.ValidateInModel(folder);
-        _ = this.solutionFolders.Remove(folder);
 
-        // Remove any children of this folder.
-        foreach (SolutionItemModel existingItem in this.SolutionItems)
-        {
-            if (ReferenceEquals(existingItem.Parent, folder))
-            {
-                existingItem.MoveToFolder(folder.Parent);
-            }
-        }
-
-        return this.RemoveItem(folder);
+        return this.RemoveFolder(folder, this.SolutionItems.ToArray());
     }
 
     /// <summary>
@@ -635,6 +625,29 @@ public sealed class SolutionModel : PropertyContainerModel
         this.solutionItems.Add(folder);
 
         return folder;
+    }
+
+    // Remove a solution folder from the solution model. This includes any child folders and projects.
+    // Recursive call reuses the solutionItems array to avoid creating a new array for each recursive call.
+    private bool RemoveFolder(SolutionFolderModel folder, SolutionItemModel[] solutionItems)
+    {
+        _ = this.solutionFolders.Remove(folder);
+
+        // Remove any children of this folder.
+        foreach (SolutionItemModel existingItem in solutionItems)
+        {
+            if (ReferenceEquals(existingItem.Parent, folder))
+            {
+                _ = existingItem switch
+                {
+                    SolutionFolderModel childFolder => this.RemoveFolder(childFolder, solutionItems),
+                    SolutionProjectModel childProject => this.RemoveProject(childProject),
+                    _ => throw new InvalidOperationException(),
+                };
+            }
+        }
+
+        return this.RemoveItem(folder);
     }
 
     private bool RemoveItem(SolutionItemModel item)
