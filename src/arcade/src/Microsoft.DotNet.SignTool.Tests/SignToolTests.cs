@@ -1822,6 +1822,19 @@ $@"
             runTask(fileExtensionSignInfo: fileExtensionSignInfo.ToArray()).Should().BeTrue();
         }
 
+        [Fact]
+        public void ValidateParseFileExtensionEntriesForTarGzExtensionPasses()
+        {
+            var fileExtensionSignInfo = new List<ITaskItem>();
+
+            fileExtensionSignInfo.Add(new TaskItem(".tar.gz", new Dictionary<string, string>
+            {
+                { "CertificateName", "None" }
+            }));
+
+            runTask(fileExtensionSignInfo: fileExtensionSignInfo.ToArray()).Should().BeTrue();
+        }
+
         // Given:
         // - "SameFiles1.zip" contains "Simple1.exe" and "Simple2.exe"
         // - "SameFiles2.zip" contains "Simple1.exe"
