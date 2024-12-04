@@ -159,6 +159,19 @@ namespace NuGet.PackageManagement.VisualStudio
             return new CentralPackageVersion(packageId, VersionRange.Parse(version));
         }
 
+        private IReadOnlyDictionary<string, PrunePackageReference> GetPackagesToPrune()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string PackageId, string Version)> packageVersions =
+                        _vsProjectAdapter.GetBuildItemInformation(ProjectItems.PrunePackageReference, ProjectBuildProperties.Version)
+                        .Select(item => (PackageId: item.ItemId, Version: item.ItemMetadata.FirstOrDefault()));
+
+            return packageVersions
+                .Select(item => PrunePackageReference.Create(item.PackageId, item.Version))
+                .ToDictionary(i => i.Name, StringComparer.OrdinalIgnoreCase);
+        }
+
         private RestoreAuditProperties GetRestoreAuditProperties()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -445,10 +458,14 @@ namespace NuGet.PackageManagement.VisualStudio
             IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions = null;
             if (isCpvmEnabled)
             {
-                // Add the central version information and merge the information to the package reference dependencies
+                // Add the central versionString information and merge the information to the package reference dependencies
                 centralPackageVersions = GetCentralPackageVersions();
                 packageReferences = ApplyCentralVersionInformation(packageReferences, centralPackageVersions);
             }
+
+            IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.RestoreEnablePackagePruning))
+                ? GetPackagesToPrune()
+                : ImmutableDictionary<string, PrunePackageReference>.Empty;
 
             // Get fallback settings
             (targetFramework, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(targetFramework, packageTargetFallback, assetTargetFallbackList);
@@ -461,6 +478,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 Imports = imports,
                 FrameworkName = targetFramework,
                 Warn = warn,
+                PackagesToPrune = packagesToPrune,
             };
 
             // Build up runtime information.

@@ -1,2 +1,3 @@
 #nullable enable
+NuGet.Common.NuGetLogCode.NU1509 = 1509 -> NuGet.Common.NuGetLogCode
 static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode>

@@ -971,7 +971,8 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
   </data>
   <data name="SignCommandInvalidCertificateFingerprint" xml:space="preserve">
-    <value>Invalid value for '--certificate-fingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
+    <value>{0}: Invalid value for '--certificate-fingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
+    <comment>{0} - error code</comment>
   </data>
   <data name="Error_ProjectAssetsFilePropertyNotFound" xml:space="preserve">
     <value>Project '{0}' does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values.</value>

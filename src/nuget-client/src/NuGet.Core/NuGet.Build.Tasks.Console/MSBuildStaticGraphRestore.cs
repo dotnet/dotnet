@@ -389,6 +389,21 @@ namespace NuGet.Build.Tasks.Console
             return ImmutableCollectionsMarshal.AsImmutableArray(libraryDependencies);
         }
 
+        internal static Dictionary<string, PrunePackageReference> GetPrunePackageReferences(IMSBuildProject project)
+        {
+            var result = new Dictionary<string, PrunePackageReference>(StringComparer.OrdinalIgnoreCase);
+            IEnumerable<IMSBuildItem> PrunePackageReferences = GetDistinctItemsOrEmpty(project, "PrunePackageReference");
+
+            foreach (var projectItemInstance in PrunePackageReferences)
+            {
+                string id = projectItemInstance.Identity;
+                string versionString = projectItemInstance.GetProperty("Version");
+                result.Add(id, PrunePackageReference.Create(id, versionString));
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Gets the packages path for the specified project.
         /// </summary>
@@ -716,6 +731,7 @@ namespace NuGet.Build.Tasks.Console
                 }
 
                 var dependencies = GetPackageReferences(msBuildProjectInstance, isCpvmEnabled, centralPackageVersions);
+                var prunedReferences = msBuildProjectInstance.IsPropertyTrue("RestoreEnablePackagePruning") ? GetPrunePackageReferences(msBuildProjectInstance) : [];
 
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {
@@ -726,6 +742,7 @@ namespace NuGet.Build.Tasks.Console
                     FrameworkName = targetFramework,
                     Imports = imports,
                     FrameworkReferences = GetFrameworkReferences(msBuildProjectInstance),
+                    PackagesToPrune = prunedReferences,
                     RuntimeIdentifierGraphPath = msBuildProjectInstance.GetProperty(nameof(TargetFrameworkInformation.RuntimeIdentifierGraphPath)),
                     TargetAlias = targetAlias,
                     Warn = warn

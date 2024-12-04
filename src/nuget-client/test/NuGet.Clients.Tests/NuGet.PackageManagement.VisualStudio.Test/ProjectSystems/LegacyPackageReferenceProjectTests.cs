@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.ProjectSystem;
@@ -1986,6 +1987,75 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             tfi.Dependencies[0].VersionCentrallyManaged.Should().BeTrue();
             tfi.Dependencies[0].LibraryRange.VersionRange.Should().Be(VersionRange.Parse(packageA.Version));
             tfi.Dependencies[0].VersionOverride.Should().BeNull();
+        }
+
+        public static readonly List<object[]> PrunePackageReferenceData
+            = new List<object[]>
+            {
+                new object[] { "true", new (string, string[])[] { ("PackageA", ["1.0.0"]) }, true },
+                new object[] { "false", new (string, string[])[] { ("PackageA", ["1.0.0"]) }, false },
+            };
+
+        [Theory]
+        [MemberData(nameof(PrunePackageReferenceData))]
+        public async Task GetPackageSpec_WithPrunePackageReferences(string restoreEnablePackagePruning, IEnumerable<(string ItemId, string[] ItemMetadata)> buildIteminfo, bool hasPrunedReferences)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            using var testDirectory = TestDirectory.Create();
+            IReadOnlyList<PackageSpec> packageSpecs = await SetupPrunePackageReferenceDataAndAct(restoreEnablePackagePruning, buildIteminfo, testDirectory);
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+
+
+            if (hasPrunedReferences)
+            {
+                actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
+                KeyValuePair<string, PrunePackageReference> result = actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Single();
+                result.Key.Should().Be("PackageA");
+                result.Value.Name.Should().Be("PackageA");
+                result.Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+            }
+            else
+            {
+                actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
+            }
+        }
+
+        [Fact]
+        public async Task GetPackageSpec_WithPrunePackageReferenceAndMissingVersion_Throws()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            using var testDirectory = TestDirectory.Create();
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => SetupPrunePackageReferenceDataAndAct("true", new (string, string[])[] { ("PackageA", [null]) }, testDirectory));
+            exception.Message.Should().Contain("PrunePackageReference");
+        }
+
+        private async Task<IReadOnlyList<PackageSpec>> SetupPrunePackageReferenceDataAndAct(string restoreEnablePackagePruning, IEnumerable<(string ItemId, string[] ItemMetadata)> buildIteminfo, TestDirectory testDirectory)
+        {
+            // Arrange
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+            projectBuildProperties
+                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreEnablePackagePruning))))
+                .Returns(restoreEnablePackagePruning);
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+            projectAdapterMock.Setup(m => m.GetBuildItemInformation(ProjectItems.PrunePackageReference, It.IsAny<string[]>()))
+                .Returns(buildIteminfo);
+
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                new TestProjectSystemServices(),
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act
+            return await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext);
         }
 
         private LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string range)

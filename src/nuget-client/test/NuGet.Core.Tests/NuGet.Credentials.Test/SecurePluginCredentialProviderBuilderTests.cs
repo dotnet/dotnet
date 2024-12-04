@@ -17,6 +17,17 @@ namespace NuGet.Credentials.Test
 {
     public class SecurePluginCredentialProviderBuilderTests : IDisposable
     {
+        public static bool IsDesktop
+        {
+            get
+            {
+#if IS_DESKTOP
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
         private readonly TestDirectory _testDirectory;
 
         public SecurePluginCredentialProviderBuilderTests()
@@ -156,7 +167,7 @@ namespace NuGet.Credentials.Test
                 PluginManager = new PluginManager(
                     reader.Object,
                     new Lazy<IPluginDiscoverer>(() => pluginDiscoverer.Object),
-                    (TimeSpan idleTimeout) => Mock.Of<IPluginFactory>(),
+                    (TimeSpan idleTimeout) => Mock.Of<PluginFactory>(),
                     new Lazy<string>(() => _testDirectory.Path));
             }
 
@@ -170,7 +181,7 @@ namespace NuGet.Credentials.Test
                 var results = new List<PluginDiscoveryResult>();
                 foreach (var plugin in plugins)
                 {
-                    var file = new PluginFile(plugin.Key, new Lazy<PluginFileState>(() => plugin.Value));
+                    var file = new PluginFile(plugin.Key, new Lazy<PluginFileState>(() => plugin.Value), requiresDotnetHost: !IsDesktop);
                     results.Add(new PluginDiscoveryResult(file));
                 }
 
@@ -183,7 +194,7 @@ namespace NuGet.Credentials.Test
             return new PluginManager(
                 Mock.Of<IEnvironmentVariableReader>(),
                 new Lazy<IPluginDiscoverer>(),
-                (TimeSpan idleTimeout) => Mock.Of<IPluginFactory>(),
+                (TimeSpan idleTimeout) => Mock.Of<PluginFactory>(),
                 new Lazy<string>(() => _testDirectory.Path));
         }
     }

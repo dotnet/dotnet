@@ -224,23 +224,28 @@ namespace NuGet.CommandLine.XPlat
                  !string.IsNullOrEmpty(location.Value()) ||
                  !string.IsNullOrEmpty(store.Value())))
             {
-                // Thow if the user provided a path and any one of the other options
+                // Throw if the user provided a path and any one of the other options
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
             }
             else if (!string.IsNullOrEmpty(fingerprint.Value()) && !string.IsNullOrEmpty(subject.Value()))
             {
-                // Thow if the user provided a fingerprint and a subject
+                // Throw if the user provided a fingerprint and a subject
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
             }
             else if (fingerprint.Value() != null)
             {
-                if (!CertificateUtility.TryDeduceHashAlgorithm(fingerprint.Value(), out HashAlgorithmName hashAlgorithmName))
+                bool isValidFingerprint = CertificateUtility.TryDeduceHashAlgorithm(fingerprint.Value(), out HashAlgorithmName hashAlgorithmName);
+                bool isSHA1 = hashAlgorithmName == HashAlgorithmName.SHA1;
+                int assemblyVersion = typeof(int).Assembly.GetName().Version.Major;
+                string message = string.Format(CultureInfo.CurrentCulture, Strings.SignCommandInvalidCertificateFingerprint, NuGetLogCode.NU3043);
+
+                if (!isValidFingerprint || (assemblyVersion >= 10 && isSHA1))
                 {
-                    throw new ArgumentException(Strings.SignCommandInvalidCertificateFingerprint);
+                    throw new ArgumentException(message);
                 }
-                else if (hashAlgorithmName == HashAlgorithmName.SHA1)
+                else if (isSHA1)
                 {
-                    logger.Log(LogMessage.CreateWarning(NuGetLogCode.NU3043, Strings.SignCommandInvalidCertificateFingerprint));
+                    logger.Log(LogMessage.Create(LogLevel.Warning, message));
                 }
             }
         }

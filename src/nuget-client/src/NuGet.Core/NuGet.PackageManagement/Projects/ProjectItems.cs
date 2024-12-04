@@ -15,5 +15,6 @@ namespace NuGet.ProjectManagement
         public const string PackageVersion = nameof(PackageVersion);
         public const string ProjectReference = nameof(ProjectReference);
         public const string NuGetAuditSuppress = nameof(NuGetAuditSuppress);
+        public const string PrunePackageReference = nameof(PrunePackageReference);
     }
 }

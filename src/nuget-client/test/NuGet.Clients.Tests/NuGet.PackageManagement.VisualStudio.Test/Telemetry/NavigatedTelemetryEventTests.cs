@@ -221,6 +221,27 @@ namespace NuGet.PackageManagement.Test.Telemetry
             Assert.Contains(packageIdHyperlink, packageIds);
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void CreateWithClearLocalsCommand_WithValidProperties_CreatedWithoutPiiData(bool isUnifiedSettings)
+        {
+            // Arrange
+            SetupTelemetryListener();
+
+            var evt = NavigatedTelemetryEvent.CreateWithClearLocalsCommand(isUnifiedSettings);
+
+            // Act
+            TelemetryActivity.NuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(3, _lastTelemetryEvent.Count);
+            Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(NavigationOrigin.Options_LocalsCommand_ClearAll, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(isUnifiedSettings, _lastTelemetryEvent[NavigatedTelemetryEvent.IsUnifiedSettingsPropertyName]);
+            Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
         private Mock<ITelemetrySession> SetupTelemetryListener()
         {
             var telemetrySession = new Mock<ITelemetrySession>();

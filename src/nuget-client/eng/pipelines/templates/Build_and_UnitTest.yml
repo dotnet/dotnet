@@ -180,6 +180,13 @@ steps:
     msbuildArguments: "/restore /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignAssemblies.binlog"
 
 - task: MSBuild@1
+  displayName: "Copy signed assemblies to localize artifacts folder"
+  inputs:
+    solution: "build\\loc.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore /t:CopyBinariesToLocalizationArtifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\09.LocalizeFolderAssemblies.binlog"
+
+- task: MSBuild@1
   displayName: "Pack Nupkgs"
   inputs:
     solution: "build\\build.proj"

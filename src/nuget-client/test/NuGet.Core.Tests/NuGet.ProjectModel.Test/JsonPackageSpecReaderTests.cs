@@ -4250,6 +4250,91 @@ namespace NuGet.ProjectModel.Test
             packageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().Be(useLegacyDependencyResolver);
         }
 
+        [Theory]
+        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WhenFrameworksPackagesToPrunePropertyIsAbsent_ReturnsEmptyPackagesToPrune(IEnvironmentVariableReader environmentVariableReader)
+        {
+            TargetFrameworkInformation framework = GetFramework("{\"frameworks\":{\"a\":{}}}", environmentVariableReader);
+
+            Assert.Empty(framework.PackagesToPrune);
+        }
+
+        [Theory]
+        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WhenFrameworksPackagesToPruneValueIsEmptyObject_ReturnsEmptyPackagesToPrune(IEnvironmentVariableReader environmentVariableReader)
+        {
+            TargetFrameworkInformation framework = GetFramework("{\"frameworks\":{\"a\":{\"packagesToPrune\":{}}}}", environmentVariableReader);
+
+            Assert.Empty(framework.PackagesToPrune);
+        }
+
+        [Theory]
+        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WhenFrameworksPackagesToPruneVersionPropertyNameIsEmptyString_Throws(IEnvironmentVariableReader environmentVariableReader)
+        {
+            var json = "{\"frameworks\":{\"a\":{\"packagesToPrune\":{\"\":\"1.0.0\"}}}}";
+
+            FileFormatException exception = Assert.Throws<FileFormatException>(() => GetPackageSpec(json, environmentVariableReader));
+
+            Assert.IsType<FileFormatException>(exception.InnerException);
+            Assert.Null(exception.InnerException.InnerException);
+
+            if (string.Equals(bool.TrueString, environmentVariableReader.GetEnvironmentVariable(JsonUtility.NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING)))
+            {
+                Assert.Equal("Error reading '' at line 1 column 20 : Unable to resolve package to prune version ''.", exception.Message);
+                Assert.Equal(1, exception.Line);
+                Assert.Equal(20, exception.Column);
+            }
+            else
+            {
+                Assert.Equal("Error reading '' : Unable to resolve package to prune ''.", exception.Message);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(TestEnvironmentVariableReader), "null", MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        [MemberData(nameof(TestEnvironmentVariableReader), "\"\"", MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WhenFrameworksPackagesToPruneVersionPropertyValueIsNullOrEmptyString_Throws(IEnvironmentVariableReader environmentVariableReader, string value)
+        {
+            var json = $"{{\"frameworks\":{{\"a\":{{\"packagesToPrune\":{{\"b\":{value}}}}}}}}}";
+
+            FileFormatException exception = Assert.Throws<FileFormatException>(() => GetPackageSpec(json, environmentVariableReader));
+
+            Assert.IsType<FileFormatException>(exception.InnerException);
+            Assert.Null(exception.InnerException.InnerException);
+
+            if (string.Equals(bool.TrueString, environmentVariableReader.GetEnvironmentVariable(JsonUtility.NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING)))
+            {
+                Assert.Equal("Error reading '' at line 1 column 20 : The version cannot be null or empty.", exception.Message);
+                Assert.Equal(1, exception.Line);
+                Assert.Equal(20, exception.Column);
+            }
+            else
+            {
+                Assert.Equal("Error reading '' : The version cannot be null or empty.", exception.Message);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WhenFrameworksPackagesToPruneIsValid_ReturnsPackagesToPrune(IEnvironmentVariableReader environmentVariableReader)
+        {
+            const string expectedPackageId = "b";
+            VersionRange expectedVersionRange = VersionRange.Parse("[1.2.3,4.5.6)");
+            var expectedPackageToPrune = new PrunePackageReference(expectedPackageId, expectedVersionRange);
+            var json = $"{{\"frameworks\":{{\"a\":{{\"packagesToPrune\":{{\"{expectedPackageId}\":\"{expectedVersionRange.ToShortString()}\"}}}}}}}}";
+
+            TargetFrameworkInformation framework = GetFramework(json, environmentVariableReader);
+
+            Assert.Collection(
+                framework.PackagesToPrune,
+                actualResult =>
+                {
+                    Assert.Equal(expectedPackageId, actualResult.Key);
+                    Assert.Equal(expectedPackageToPrune, actualResult.Value);
+                });
+        }
+
         private static PackageSpec GetPackageSpec(string json)
         {
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))

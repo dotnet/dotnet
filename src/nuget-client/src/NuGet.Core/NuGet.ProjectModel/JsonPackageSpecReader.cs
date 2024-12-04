@@ -313,6 +313,41 @@ namespace NuGet.ProjectModel
         }
 
         [Obsolete]
+        private static void ReadPackagesToPrune(
+            JsonTextReader jsonReader,
+            IDictionary<string, PrunePackageReference> packagesToPrune,
+            string filePath)
+        {
+            jsonReader.ReadObject(propertyName =>
+            {
+                int line = jsonReader.LineNumber;
+                int column = jsonReader.LinePosition;
+
+                if (string.IsNullOrEmpty(propertyName))
+                {
+                    throw FileFormatException.Create(
+                        "Unable to resolve package to prune version ''.",
+                        line,
+                        column,
+                        filePath);
+                }
+
+                string version = jsonReader.ReadNextTokenAsString();
+
+                if (string.IsNullOrEmpty(version))
+                {
+                    throw FileFormatException.Create(
+                        "The version cannot be null or empty.",
+                        line,
+                        column,
+                        filePath);
+                }
+
+                packagesToPrune[propertyName] = new PrunePackageReference(propertyName, VersionRange.Parse(version));
+            });
+        }
+
+        [Obsolete]
         private static CompatibilityProfile ReadCompatibilityProfile(JsonTextReader jsonReader, string profileName)
         {
             List<FrameworkRuntimePair> sets = null;
@@ -1821,6 +1856,7 @@ namespace NuGet.ProjectModel
             string runtimeIdentifierGraphPath = null;
             string targetAlias = string.Empty;
             bool warn = false;
+            Dictionary<string, PrunePackageReference> packagesToPrune = null;
 
             NuGetFramework secondaryFramework = default;
 
@@ -1887,6 +1923,14 @@ namespace NuGet.ProjectModel
                         ReadImports(packageSpec, jsonReader, imports);
                         break;
 
+                    case "packagesToPrune":
+                        packagesToPrune ??= new Dictionary<string, PrunePackageReference>(StringComparer.OrdinalIgnoreCase);
+                        ReadPackagesToPrune(
+                            jsonReader,
+                            packagesToPrune,
+                            packageSpec.FilePath);
+                        break;
+
                     case "runtimeIdentifierGraphPath":
                         runtimeIdentifierGraphPath = jsonReader.ReadNextTokenAsString();
                         break;
@@ -1911,7 +1955,8 @@ namespace NuGet.ProjectModel
                 Imports = imports != null ? imports.ToImmutableArray() : [],
                 RuntimeIdentifierGraphPath = runtimeIdentifierGraphPath,
                 TargetAlias = targetAlias,
-                Warn = warn
+                Warn = warn,
+                PackagesToPrune = packagesToPrune,
             };
 
             AddTargetFramework(packageSpec, frameworkName, secondaryFramework, targetFrameworkInformation);

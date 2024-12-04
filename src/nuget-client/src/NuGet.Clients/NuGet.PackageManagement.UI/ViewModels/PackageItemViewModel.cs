@@ -814,13 +814,13 @@ namespace NuGet.PackageManagement.UI
                 LatestVersion = result;
                 Status = GetPackageStatus(LatestVersion, InstalledVersion, AutoReferenced);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException)
             {
                 // UI requested cancellation
             }
-            catch (TaskCanceledException)
+            catch (TimeoutException)
             {
-                // HttpClient throws TaskCanceledExceptions for HTTP timeouts
+                // Our code throws a TimeoutException for HTTP timeouts
                 try
                 {
                     await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -851,13 +851,13 @@ namespace NuGet.PackageManagement.UI
 
                 SetVulnerabilityMaxSeverity(identity.Version, packageMetadata?.Vulnerabilities?.FirstOrDefault()?.Severity ?? -1);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException)
             {
                 // UI requested cancellation.
             }
-            catch (TaskCanceledException)
+            catch (TimeoutException)
             {
-                // HttpClient throws TaskCanceledExceptions for HTTP timeouts
+                // Our code throws a TimeoutException for HTTP timeouts
                 try
                 {
                     await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -882,13 +882,13 @@ namespace NuGet.PackageManagement.UI
                     await UpdatePackageMaxVulnerabilityAsync(identity, cancellationToken);
                 }
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException)
             {
                 // UI requested cancellation.
             }
-            catch (TaskCanceledException)
+            catch (TimeoutException)
             {
-                // HttpClient throws TaskCanceledExceptions for HTTP timeouts
+                // Our code throws a TimeoutException for HTTP timeouts
                 try
                 {
                     await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);

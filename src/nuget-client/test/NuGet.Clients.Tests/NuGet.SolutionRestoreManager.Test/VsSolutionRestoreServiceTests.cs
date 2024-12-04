@@ -2739,6 +2739,84 @@ namespace NuGet.SolutionRestoreManager.Test
             tfm.Dependencies[0].AutoReferenced.Should().BeFalse();
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToPackageSpec_WithPrunePackageReference_CapturesAsMaxVersions(bool restoreEnablePackagePruning)
+        {
+            // Arrange
+            ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [ProjectItems.PrunePackageReference] = [ new VsReferenceItem2("PackageA", new Dictionary<string, string> { {"Version", "1.0.0"}}) ]
+                },
+                properties: new Dictionary<string, string>()
+                {
+                    { ProjectBuildProperties.RestoreEnablePackagePruning, restoreEnablePackagePruning.ToString() },
+                })
+            };
+
+            var pri = new VsProjectRestoreInfo3
+            {
+                MSBuildProjectExtensionsPath = string.Empty,
+                TargetFrameworks = targetFrameworks,
+                OriginalTargetFrameworks = string.Empty
+            };
+
+            // Act
+            var actualRestoreSpec = VsSolutionRestoreService.ToPackageSpec(projectName, pri);
+
+            // Assert
+            if (restoreEnablePackagePruning)
+            {
+                actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
+                KeyValuePair<string, PrunePackageReference> result = actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Single();
+                result.Key.Should().Be("PackageA");
+                result.Value.Name.Should().Be("PackageA");
+                result.Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+            }
+            else
+            {
+                actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
+
+            }
+        }
+
+        [Fact]
+        public void ToPackageSpec_WithPrunePackageReference_WithMissingVersion_Throws()
+        {
+            // Arrange
+            ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [ProjectItems.PrunePackageReference] = [ new VsReferenceItem2("PackageA", new Dictionary<string, string> { {"Version", null}}) ]
+                },
+                properties: new Dictionary<string, string>()
+                {
+                    { ProjectBuildProperties.RestoreEnablePackagePruning, "true" },
+                })
+            };
+
+            var pri = new VsProjectRestoreInfo3
+            {
+                MSBuildProjectExtensionsPath = string.Empty,
+                TargetFrameworks = targetFrameworks,
+                OriginalTargetFrameworks = string.Empty
+            };
+
+            // Act & Assert
+            var result = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, pri));
+            result.Message.Should().Contain("PrunePackageReference");
+        }
+
         private static IVsTargetFrameworkInfo FrameworkWithProperty(bool isV2Nominate, string propertyName, string propertyValue)
         {
             return isV2Nominate ?

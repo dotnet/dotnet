@@ -1782,7 +1782,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value for &apos;--certificate-fingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
+        ///   Looks up a localized string similar to {0}: Invalid value for &apos;--certificate-fingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
         /// </summary>
         internal static string SignCommandInvalidCertificateFingerprint {
             get {

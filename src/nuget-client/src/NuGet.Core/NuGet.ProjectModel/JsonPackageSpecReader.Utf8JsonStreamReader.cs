@@ -114,6 +114,8 @@ namespace NuGet.ProjectModel
         private static readonly byte[] SdkAnalysisLevel = Encoding.UTF8.GetBytes("SdkAnalysisLevel");
         private static readonly byte[] UsingMicrosoftNETSdk = Encoding.UTF8.GetBytes("UsingMicrosoftNETSdk");
         private static readonly byte[] UseLegacyDependencyResolverPropertyName = Encoding.UTF8.GetBytes("restoreUseLegacyDependencyResolver");
+        private static readonly byte[] PackagesToPrunePropertyName = Encoding.UTF8.GetBytes("packagesToPrune");
+        private static readonly byte[] EnablePackagePruningPropertyName = Encoding.UTF8.GetBytes("enablePackagePruning");
 
         internal static PackageSpec GetPackageSpecUtf8JsonStreamReader(Stream stream, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
         {
@@ -635,6 +637,34 @@ namespace NuGet.ProjectModel
                     }
 
                     centralPackageVersions[propertyName] = new CentralPackageVersion(propertyName, VersionRange.Parse(version));
+                }
+            }
+        }
+
+        private static void ReadPackagesToPrune(
+            ref Utf8JsonStreamReader jsonReader,
+            IDictionary<string, PrunePackageReference> packagesToPrune,
+            string filePath)
+        {
+            if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
+            {
+                while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
+                {
+                    var propertyName = jsonReader.GetString();
+
+                    if (string.IsNullOrEmpty(propertyName))
+                    {
+                        throw FileFormatException.Create("Unable to resolve package to prune ''.", filePath);
+                    }
+
+                    string version = jsonReader.ReadNextTokenAsString();
+
+                    if (string.IsNullOrEmpty(version))
+                    {
+                        throw FileFormatException.Create("The version cannot be null or empty.", filePath);
+                    }
+
+                    packagesToPrune[propertyName] = new PrunePackageReference(propertyName, VersionRange.Parse(version));
                 }
             }
         }
@@ -1818,6 +1848,7 @@ namespace NuGet.ProjectModel
             string runtimeIdentifierGraphPath = null;
             string targetAlias = string.Empty;
             bool warn = false;
+            Dictionary<string, PrunePackageReference> packagesToPrune = null;
 
             NuGetFramework secondaryFramework = default;
 
@@ -1896,6 +1927,14 @@ namespace NuGet.ProjectModel
                     {
                         warn = jsonReader.ReadNextTokenAsBoolOrFalse();
                     }
+                    else if (jsonReader.ValueTextEquals(PackagesToPrunePropertyName))
+                    {
+                        packagesToPrune ??= new Dictionary<string, PrunePackageReference>(StringComparer.OrdinalIgnoreCase);
+                        ReadPackagesToPrune(
+                            ref jsonReader,
+                            packagesToPrune,
+                            packageSpec.FilePath);
+                    }
                     else
                     {
                         jsonReader.Skip();
@@ -1912,6 +1951,7 @@ namespace NuGet.ProjectModel
                 FrameworkReferences = frameworkReferences,
                 Imports = imports != null ? imports.ToImmutableArray() : [],
                 RuntimeIdentifierGraphPath = runtimeIdentifierGraphPath,
+                PackagesToPrune = packagesToPrune,
                 TargetAlias = targetAlias,
                 Warn = warn
             };

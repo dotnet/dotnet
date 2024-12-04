@@ -34,6 +34,13 @@ namespace NuGet.VisualStudio.Telemetry
                 throw new ArgumentNullException(nameof(e));
             }
 
+            if (e is OperationCanceledException)
+            {
+                // Don't post telemetry for cancellation exceptions since these should only happen for user initiated actions.
+                // Any other cancellation exceptions like a timeout should be a TimeoutException instead.
+                return;
+            }
+
             var caller = $"{callerClassName}.{callerMemberName}";
             var description = $"{e.GetType().Name} - {e.Message}";
 

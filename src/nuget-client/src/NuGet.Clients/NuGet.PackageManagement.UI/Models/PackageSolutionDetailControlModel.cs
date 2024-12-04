@@ -612,7 +612,7 @@ namespace NuGet.PackageManagement.UI
             {
                 foreach (PackageInstallationInfo project in Projects)
                 {
-                    project.IsSelected = project.InstalledVersion != null;
+                    project.IsSelected = project.InstalledVersion != null && project.PackageLevel.Equals(PackageLevel.TopLevel);
                 }
             }
             finally

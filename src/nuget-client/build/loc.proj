@@ -89,21 +89,35 @@
   </Target>
 
   <!-- Prepares localization artifact -->
-  <Target Name="CopyBinariesToLocalizationArtifacts" AfterTargets="Localize">
+  <Target Name="CopyLocalizationArtifacts" AfterTargets="Localize">
     <ItemGroup>
-      <_EnglishBinaries Include="@(FilesToLocalize)">
-        <DestinationPath>$(ArtifactsDirectory)\localizationArtifacts\artifacts\$([MSBuild]::MakeRelative($(ArtifactsDirectory), %(FilesToLocalize.RootDir)%(FilesToLocalize.Directory)))\%(FilesToLocalize.Filename)%(FilesToLocalize.Extension)</DestinationPath>
-      </_EnglishBinaries>
       <_LocalizeFolder Include="$(ArtifactsDirectory)localize\**\*" Exclude="$(ArtifactsDirectory)localize\ResponseFiles\**\*" />
       <_LocalizeFiles Include="@(_LocalizeFolder)">
         <DestinationPath>$(ArtifactsDirectory)\localizationArtifacts\artifacts\$([MSBuild]::MakeRelative($(ArtifactsDirectory), %(_LocalizeFolder.Identity)))</DestinationPath>
       </_LocalizeFiles>
-      <!-- Second Localize run creates appropiate LocProject.json -->
+      <!-- Second Localize run creates appropriate LocProject.json -->
       <_LocalizeFiles Include="$(ArtifactsDirectory)localize\ResponseFiles\*.loc.002\ENU\LocProject.json">
         <DestinationPath>$(ArtifactsDirectory)\localizationArtifacts\ENU\LocProject.json</DestinationPath>
       </_LocalizeFiles>
     </ItemGroup>
-    <Copy SourceFiles="@(_EnglishBinaries)" DestinationFiles="@(_EnglishBinaries->'%(DestinationPath)')" />
     <Copy SourceFiles="@(_LocalizeFiles)" DestinationFiles="@(_LocalizeFiles->'%(DestinationPath)')" />
+  </Target>
+
+  <!-- Copy binaries to the localization artifacts folder -->
+   <Target Name="CopyBinariesToLocalizationArtifacts">
+    <MSBuild
+      Projects="@(SolutionProjectsWithoutVSIX)"
+      Properties="BuildProjectReferences=false;"
+      Targets="GetLocalizationInputs">
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="FilesToLocalize" />
+    </MSBuild>
+    <ItemGroup>
+      <_EnglishBinaries Include="@(FilesToLocalize)">
+        <DestinationPath>$(ArtifactsDirectory)\localizationArtifacts\artifacts\$([MSBuild]::MakeRelative($(ArtifactsDirectory), %(FilesToLocalize.RootDir)%(FilesToLocalize.Directory)))\%(FilesToLocalize.Filename)%(FilesToLocalize.Extension)</DestinationPath>
+      </_EnglishBinaries>
+    </ItemGroup>
+    <Copy SourceFiles="@(_EnglishBinaries)" DestinationFiles="@(_EnglishBinaries->'%(DestinationPath)')" />
   </Target>
 </Project>

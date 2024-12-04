@@ -105,6 +105,8 @@ namespace NuGet.SolutionRestoreManager
                 ? MSBuildStringUtility.Split(atfString).Select(NuGetFramework.Parse).ToList()
                 : null;
 
+            bool isPackagePruningEnabled = MSBuildStringUtility.IsTrue(GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RestoreEnablePackagePruning));
+
             // Get fallback properties
             (frameworkName, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(frameworkName, ptf, atf);
 
@@ -112,6 +114,7 @@ namespace NuGet.SolutionRestoreManager
             ImmutableArray<DownloadDependency> downloadDependencies = [];
             IReadOnlyDictionary<string, CentralPackageVersion>? centralPackageVersions = null;
             IReadOnlyCollection<FrameworkDependency>? frameworkReferences = null;
+            IReadOnlyDictionary<string, PrunePackageReference>? packagesToPrune = null;
 
             if (targetFrameworkInfo.Items is not null)
             {
@@ -137,6 +140,13 @@ namespace NuGet.SolutionRestoreManager
                 {
                     frameworkReferences = PopulateFrameworkDependencies(frameworkReference);
                 }
+
+                if (isPackagePruningEnabled && targetFrameworkInfo.Items.TryGetValue("PrunePackageReference", out var PrunePackageReferences))
+                {
+                    packagesToPrune = PrunePackageReferences
+                        .Select(ToPrunePackageReference)
+                        .ToDictionary(packageToPrune => packageToPrune.Name, StringComparer.OrdinalIgnoreCase);
+                }
             }
 
             var tfi = new TargetFrameworkInformation
@@ -150,7 +160,8 @@ namespace NuGet.SolutionRestoreManager
                 Imports = imports,
                 RuntimeIdentifierGraphPath = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RuntimeIdentifierGraphPath),
                 TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework),
-                Warn = warn
+                Warn = warn,
+                PackagesToPrune = packagesToPrune,
             };
 
             return tfi;
@@ -601,6 +612,13 @@ namespace NuGet.SolutionRestoreManager
             var centralPackageVersion = new CentralPackageVersion(id, versionRange);
 
             return centralPackageVersion;
+        }
+
+        private static PrunePackageReference ToPrunePackageReference(IVsReferenceItem2 item)
+        {
+            string id = item.Name;
+            string? versionString = GetPropertyValueOrNull(item, ProjectBuildProperties.Version);
+            return PrunePackageReference.Create(id, versionString!);
         }
 
         private static IReadOnlyCollection<FrameworkDependency>? PopulateFrameworkDependencies(IReadOnlyList<IVsReferenceItem2> frameworkReferences)
