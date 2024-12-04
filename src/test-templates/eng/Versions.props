@@ -9,16 +9,11 @@
     <UsingToolVSSDK>true</UsingToolVSSDK>
   </PropertyGroup>
   <PropertyGroup Label="Dependencies settings">
-    <MicrosoftInternalCreateUnitTestVersion>17.0.0-preview-1-30928-1112</MicrosoftInternalCreateUnitTestVersion>
-    <MicrosoftInternalIntelliTestVersion>17.3.0-beta.22215.7</MicrosoftInternalIntelliTestVersion>
-    <MicrosoftVisualStudioComponentModelHostVersion>16.0.342-g758a0a97e0</MicrosoftVisualStudioComponentModelHostVersion>
     <MicrosoftVisualStudioCoreUtilityVersion>15.0.26201</MicrosoftVisualStudioCoreUtilityVersion>
-    <MicrosoftVisualStudioInteropVersion>17.0.0-preview-1-31216-036</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2116</MicrosoftVSSDKBuildToolsVersion>
-    <MSTestv2IntellitestFrameworkVersion>net472</MSTestv2IntellitestFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Label="Testing settings">
-    <!-- Arcade is messing up with the properties of MSTest.Sdk so we need to set explicitely MicrosoftNetTestSdkVersion and MSTestVersion -->
+    <!-- Arcade is messing up with the properties of MSTest.Sdk so we need to set explicitly MicrosoftNetTestSdkVersion and MSTestVersion -->
     <MicrosoftNetTestSdkVersion>17.11.1</MicrosoftNetTestSdkVersion>
     <MSTestVersion>3.6.3</MSTestVersion>
   </PropertyGroup>
