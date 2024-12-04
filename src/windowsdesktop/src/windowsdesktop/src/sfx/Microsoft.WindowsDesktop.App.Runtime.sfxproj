@@ -10,20 +10,14 @@
     <RollForward>LatestPatch</RollForward>
   </PropertyGroup>
 
+  <!-- Profile is intentionally undefined so that the reference will only be included when no profile is specified i.e. both WPF and WindowsForms are in use https://github.com/dotnet/wpf/blob/bbfc24fd13804a191e20064acd599b0a359092df/packaging/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.props#L45-L46 -->
+  <ItemGroup>
+    <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" />
+  </ItemGroup>
+
   <!-- References that are common to both WinForms and WPF -->
   <ItemGroup>
     <FrameworkListFileClass Include="System.Diagnostics.EventLog.Messages.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="System.Xaml.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="UIAutomationClient.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="UIAutomationClientSideProviders.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="UIAutomationProvider.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="UIAutomationTypes.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="WindowsBase.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="PenImc_cor3.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="vcruntime140_cor3.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="wpfgfx_cor3.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WindowsForms;WPF" />
   </ItemGroup>
 
   <!-- Windows Forms specific references -->
@@ -42,24 +36,34 @@
     <FrameworkListFileClass Include="System.Windows.Forms.Design.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Forms.Primitives.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Input.Manipulations.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms" />
   </ItemGroup>
 
   <!-- WPF specific references -->
   <ItemGroup>
+    <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="DirectWriteForwarder.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PenImc_cor3.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationCore.resources.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.Fluent.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.resources.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationUI.resources.dll" Profile="WPF" />
-    <FrameworkListFileClass Include="ReachFramework.resources.dll" Profile="WPF" />
-    <FrameworkListFileClass Include="System.Windows.Controls.Ribbon.resources.dll" Profile="WPF" />
-    <FrameworkListFileClass Include="DirectWriteForwarder.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework-SystemCore.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework-SystemData.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework-SystemDrawing.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework-SystemXml.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework-SystemXmlLinq.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationNative_cor3.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="ReachFramework.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Controls.Ribbon.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Input.Manipulations.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Xaml.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationClient.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationClientSideProviders.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationProvider.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationTypes.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="vcruntime140_cor3.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="WindowsBase.resources.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="wpfgfx_cor3.dll" Profile="WPF" />
   </ItemGroup>
 </Project>
