@@ -15,28 +15,28 @@
     <deploymenttoolsOutputPackageVersion>8.0.0-preview.6.23463.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>5ce78f66d89ea529e459abddb129ab36cb5bd936</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>7.0.0-preview.23211.1</diagnosticsOutputPackageVersion>
-    <emsdkGitCommitHash>f6237140b33bf18c72dccfeda14be8d103c3b93e</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>8.0.11-servicing.24511.5</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>c458a7647c04e323c238f381eb176af24254b3ff</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>8.0.12-servicing.24569.2</emsdkOutputPackageVersion>
     <formatGitCommitHash>27f18656aab37d71839f562c0653afce07a2d2fd</formatGitCommitHash>
     <formatOutputPackageVersion>8.1.546807</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>3919a70a242c9475bb3aa3e6e92083278d8fab66</installerGitCommitHash>
+    <installerGitCommitHash>0b843a7d84960d25be00a29fbb56f6ae0c2c9c80</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>b5265ef370a651f8c3458110b804e5cbf869eeb5</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.5-preview-24055-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>550277e0616e549446f03fda35d3e23dff75dc01</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.8.1-rc.2</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>d135dd8d2ec1c2fbdee220e8656b308694e17a4b</razorGitCommitHash>
-    <razorOutputPackageVersion>7.0.0-preview.24052.1</razorOutputPackageVersion>
+    <razorGitCommitHash>0d10fb38d28484fc4189a5441d258d60c3cf2ca3</razorGitCommitHash>
+    <razorOutputPackageVersion>7.0.0-preview.24574.1</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>223fa62ea09457588b4b0f88ee8ac62ea5ab5db5</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24303.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>4ff64493649bd045ced204661958393dc5575e96</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.8.0-7.24514.16</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>9cb3b725e3ad2b57ddc9fb2dd48d2d170563a8f5</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.11-servicing.24517.7</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>f3835a7fb45497f53fc92ca7dd4a06793884b1cd</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.111-servicing.24521.41</sdkOutputPackageVersion>
+    <roslynOutputPackageVersion>4.8.0-7.24574.2</roslynOutputPackageVersion>
+    <runtimeGitCommitHash>89ef51c5d8f5239345127a1e282e11036e590c8b</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.12-servicing.24603.5</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>aaaba35c60c58e388637d347d6836853efcf792d</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.112-servicing.24603.14</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>3b85d089311e89b47758ba6a84eeb79374476dc8</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.24516.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>fe3794a68bd668d36d4d5014a9e6c9d22c0e6d86</sourcebuildreferencepackagesGitCommitHash>
@@ -45,8 +45,8 @@
     <sourcelinkOutputPackageVersion>8.0.0-beta.23615.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>2c8079e2e8e78c0cd11ac75a32014756136ecdb9</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.1.0-beta.23253.1</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>b5712b997be1bdfef6bcdf0ff79c3677777894cb</templatingGitCommitHash>
-    <templatingOutputPackageVersion>8.0.111-servicing.24516.5</templatingOutputPackageVersion>
+    <templatingGitCommitHash>7e0acf900fbe1081a0cf8981b0139aba830b3318</templatingGitCommitHash>
+    <templatingOutputPackageVersion>8.0.112-servicing.24573.2</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>1e5f3603af2277910aad946736ee23283e7f3e16</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.23410.2</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>aa59400b11e1aeee2e8af48928dbd48748a8bef9</vstestGitCommitHash>

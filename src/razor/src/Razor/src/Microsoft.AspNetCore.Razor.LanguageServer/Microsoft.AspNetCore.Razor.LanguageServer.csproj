@@ -19,6 +19,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistPackageVersion)" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.

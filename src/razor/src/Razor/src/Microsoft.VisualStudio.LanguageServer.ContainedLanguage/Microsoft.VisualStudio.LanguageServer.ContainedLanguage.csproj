@@ -14,6 +14,9 @@
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client.Implementation" Version="$(MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion)" />
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistPackageVersion)" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
   </ItemGroup>
 
   <ItemGroup>
