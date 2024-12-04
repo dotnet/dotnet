@@ -5,8 +5,7 @@
     <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
+    <SkipPackagePublishingVersionChecks>true</SkipPackagePublishingVersionChecks>
   </PropertyGroup>
   <PropertyGroup>
     <AbstractionsXunitReleaseVersion>2.0.3</AbstractionsXunitReleaseVersion>
@@ -14,7 +13,7 @@
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
-    <SolutionPersistenceVersion>1.0.23</SolutionPersistenceVersion>
+    <SolutionPersistenceVersion>1.0.26</SolutionPersistenceVersion>
     <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
     <XunitReleaseVersion>2.9.2</XunitReleaseVersion>
   </PropertyGroup>
