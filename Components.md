@@ -12,11 +12,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@4757647](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC47576478939fdd59b4400ad135f47938af486ab3)*
+*[_git/dotnet-aspnetcore@6b7b74f](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC6b7b74f519fd8876bdcd2939a45e3fdab2b3513f)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@6dae7eb](https://github.com/google/googletest/tree/6dae7eb4a5c3a169f3e298392bff4680224aa94a)*
+    *[google/googletest@d144031](https://github.com/google/googletest/tree/d144031940543e15423a25ae5a8a74141044862f)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
-    *[aspnet/MessagePack-CSharp@9511905](https://github.com/aspnet/MessagePack-CSharp/tree/95119056ee8f4da1714b055a4f16893afaa73af7)*
+    *[aspnet/MessagePack-CSharp@9aeb12b](https://github.com/aspnet/MessagePack-CSharp/tree/9aeb12b9bdb024512ffe2e4bddfa2785dca6e39e)*
 - `src/cecil`  
 *[dotnet/cecil@45dd3a7](https://github.com/dotnet/cecil/tree/45dd3a73dd5b64b010c4251303b3664bb30df029)*
 - `src/command-line-api`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@25109b0](https://github.com/dotnet/installer/tree/25109b0f0b8dec291be48fe0a16a836d3b73b32b)*
+*[dotnet/installer@99d7cfd](https://github.com/dotnet/installer/tree/99d7cfda48b5d6dd11b60694be87f74732a692ca)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@89ef51c](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC89ef51c5d8f5239345127a1e282e11036e590c8b)*
 - `src/sdk`  
-*[_git/dotnet-sdk@aaaba35](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCaaaba35c60c58e388637d347d6836853efcf792d)*
+*[_git/dotnet-sdk@d27975b](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCd27975b5ef47a37a4ca3990f1a25b996feae3755)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@3b85d08](https://github.com/dotnet/source-build-externals/tree/3b85d089311e89b47758ba6a84eeb79374476dc8)*
     - `src/source-build-externals/src/abstractions-xunit`  
