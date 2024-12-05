@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
@@ -134,7 +135,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         string contents,
         string? fileKind = null,
         (string fileName, string contents)[]? additionalFiles = null,
-        bool createSeparateRemoteAndLocalWorkspaces = false)
+        bool createSeparateRemoteAndLocalWorkspaces = false,
+        bool inGlobalNamespace = false)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = !FileKinds.IsLegacy(fileKind);
@@ -149,7 +151,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
         var remoteWorkspace = RemoteWorkspaceAccessor.GetWorkspace();
-        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
 
         if (createSeparateRemoteAndLocalWorkspaces)
         {
@@ -165,7 +167,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                 documentId,
                 documentFilePath,
                 contents,
-                additionalFiles);
+                additionalFiles,
+                inGlobalNamespace);
         }
 
         // If we're just creating one workspace, then its the remote one and we just return the remote document
@@ -181,14 +184,15 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         DocumentId documentId,
         string documentFilePath,
         string contents,
-        (string fileName, string contents)[]? additionalFiles)
+        (string fileName, string contents)[]? additionalFiles,
+        bool inGlobalNamespace)
     {
         var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
         AddDisposable(exportProvider);
         var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
         AddDisposable(workspace);
 
-        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
 
         // Until the source generator is hooked up, the workspace representing "local" projects doesn't have anything
         // to actually compile the Razor to C#, so we just do it now at creation
@@ -210,7 +214,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         return razorDocument;
     }
 
-    private static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles)
+    private static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
     {
         var projectInfo = ProjectInfo
             .Create(
@@ -219,9 +223,14 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                 name: projectName,
                 assemblyName: projectName,
                 LanguageNames.CSharp,
-                documentFilePath)
-            .WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace)
+                documentFilePath,
+                compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
             .WithMetadataReferences(AspNet80.ReferenceInfos.All.Select(r => r.Reference));
+
+        if (!inGlobalNamespace)
+        {
+            projectInfo = projectInfo.WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace);
+        }
 
         var solution = workspace.CurrentSolution.AddProject(projectInfo);
 

@@ -25,8 +25,8 @@
     <msbuildOutputPackageVersion>17.13.0-preview-24604-04</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>aef398ffa7d4e2e9f5f0d1f3b1b6215f9958689c</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.13.0-preview.1.84</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>14238b2cccfcbe1d760665b620f68151e4ed2f2e</razorGitCommitHash>
-    <razorOutputPackageVersion>9.0.0-preview.24604.1</razorOutputPackageVersion>
+    <razorGitCommitHash>c4899e8305a4c9ed76dcfc56ad210c0477d9e16d</razorGitCommitHash>
+    <razorOutputPackageVersion>9.0.0-preview.24604.2</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>99db1b81f53362abc36c44c0179e50b75aca5cb2</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.12.0-beta1.24603.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>543cb4568f28b0d2f2cfecdf2d56365b9252e848</roslynGitCommitHash>

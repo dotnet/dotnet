@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
@@ -21,4 +22,13 @@ internal sealed class UpdateBufferRequest
 
     [JsonPropertyName("previousWasEmpty")]
     public bool PreviousWasEmpty { get; set; }
+
+    [JsonPropertyName("checksum")]
+    public required string Checksum { get; set; }
+
+    [JsonPropertyName("checksumAlgorithm")]
+    public SourceHashAlgorithm ChecksumAlgorithm { get; set; }
+
+    [JsonPropertyName("encodingCodePage")]
+    public int? SourceEncodingCodePage { get; set; }
 }

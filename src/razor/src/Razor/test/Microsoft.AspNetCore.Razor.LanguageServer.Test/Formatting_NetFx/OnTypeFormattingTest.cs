@@ -1,19 +1,22 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Xunit;
 using Xunit.Abstractions;
 
+#if COHOSTING
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
+#else
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+#endif
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CodeDirectiveOnTypeFormattingTest(HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(fixture.Service, testOutput)
+public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
+    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
     [Fact]
     public async Task FormatsIfStatementInComponent()
@@ -923,5 +926,200 @@ public class CodeDirectiveOnTypeFormattingTest(HtmlFormattingFixture fixture, IT
                     """,
             triggerCharacter: '}',
             insertSpaces: false);
+    }
+
+    [Fact]
+    public async Task CloseCurly_IfBlock_SingleLineAsync()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{
+                     if(true){}$$
+                    }
+                    """,
+            expected: """
+                    @{
+                        if (true) { }
+                    }
+                    """,
+            triggerCharacter: '}');
+    }
+
+    [Theory, CombinatorialData]
+    public async Task CloseCurly_IfBlock_MultiLineAsync(bool inGlobalNamespace)
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{
+                     if(true)
+                    {
+                     }$$
+                    }
+                    """,
+            expected: """
+                    @{
+                        if (true)
+                        {
+                        }
+                    }
+                    """,
+            triggerCharacter: '}',
+            inGlobalNamespace: inGlobalNamespace);
+    }
+
+    [Theory, CombinatorialData]
+    public async Task CloseCurly_MultipleStatementBlocksAsync(bool inGlobalNamespace)
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    <div>
+                        @{
+                          if(true) { }
+                        }
+                    </div>
+
+                    @{
+                     if(true)
+                    {
+                     }$$
+                    }
+                    """,
+            expected: """
+                    <div>
+                        @{
+                            if(true) { }
+                        }
+                    </div>
+
+                    @{
+                        if (true)
+                        {
+                        }
+                    }
+                    """,
+            triggerCharacter: '}',
+            inGlobalNamespace: inGlobalNamespace);
+    }
+
+    [Fact]
+    public async Task Semicolon_Variable_SingleLineAsync()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{
+                     var x = 'foo';$$
+                    }
+                    """,
+            expected: """
+                    @{
+                        var x = 'foo';
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
+
+    [Fact]
+    public async Task Semicolon_Variable_MultiLineAsync()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{
+                     var x = @"
+                    foo";$$
+                    }
+                    """,
+            expected: """
+                    @{
+                        var x = @"
+                    foo";
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
+
+    [Fact]
+    public async Task Semicolon_PropertyGet()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @code {
+                     private string Name {get;$$}
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private string Name { get; }
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
+
+    [Fact]
+    public async Task Semicolon_AddsLineAtEndOfDocument()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{ var x = new HtmlString("sdf");$$ }
+                    """,
+            expected: """
+                    @{
+                        var x = new HtmlString("sdf"); 
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
+
+    [Fact]
+    public async Task FormatsSimpleHtmlTag_OnType()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    <html>
+                    <head>
+                        <title>Hello</title>
+                            <script>
+                                var x = 2;$$
+                            </script>
+                    </head>
+                    </html>
+                    """,
+            expected: """
+                    <html>
+                    <head>
+                        <title>Hello</title>
+                        <script>
+                            var x = 2;
+                        </script>
+                    </head>
+                    </html>
+                    """,
+            triggerCharacter: ';',
+            fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_Enabled()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+            @functions {
+            	private int currentCount = 0;
+            
+            	private void IncrementCount (){
+            		currentCount++;
+            	}$$
+            }
+            """,
+            expected: """
+            @functions {
+                private int currentCount = 0;
+            
+                private void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
+            triggerCharacter: '}');
     }
 }

@@ -1,9 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,8 +10,8 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CodeActionFormattingTest(HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(fixture.Service, testOutput)
+public class CodeActionFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
+    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
     [Fact]
     public async Task AddDebuggerDisplay()
