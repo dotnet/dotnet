@@ -28,6 +28,9 @@
 
     <!-- Temporary, remove when arcade NetCurrent to net10. This requires a net10 targeting SDK. -->
     <NetCurrent>net10.0</NetCurrent>
+
+    <!-- Builds are portable by default -->
+    <PortableBuild Condition="'$(PortableBuild)' != 'false'">true</PortableBuild>
   </PropertyGroup>
 
 </Project>
