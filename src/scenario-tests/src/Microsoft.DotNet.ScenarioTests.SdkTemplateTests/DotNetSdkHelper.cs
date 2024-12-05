@@ -195,7 +195,7 @@ internal class DotNetSdkHelper
             {
                 if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
                 {
-                    process.Kill();
+                    process.Kill(true);
                     process.WaitForExit();
                 }
             });
