@@ -53,6 +53,7 @@ internal sealed class FormattingTestCase : XunitTestCase
         constructorArguments[0] = new FormattingTestContext
         {
             ShouldFlipLineEndings = _shouldFlipLineEndings,
+            ForceRuntimeCodeGeneration = _forceRuntimeCodeGeneration,
             CreatedByFormattingDiscoverer = true
         };
         return base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);

@@ -5,11 +5,11 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 public sealed class FormattingTestContext
 {
-    public bool ShouldFlipLineEndings { get; init; }
+    public required bool ShouldFlipLineEndings { get; init; }
 
-    public bool ForceRuntimeCodeGeneration { get; init; }
+    public required bool ForceRuntimeCodeGeneration { get; init; }
 
-    public bool CreatedByFormattingDiscoverer { get; init; }
+    public required bool CreatedByFormattingDiscoverer { get; init; }
 
     public string FlipLineEndings(string input)
     {
