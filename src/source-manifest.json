@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24605.1",
+      "packageVersion": "10.0.0-alpha.2.24605.2",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "96dc49024ccd2e4fe81833a8cd40e2f3651a17ac"
+      "commitSha": "ec77307b34ff97c6270638077ab062dc78544a81"
     },
     {
       "packageVersion": "0.11.5-alpha.24521.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f9cf0b926534cdb941c876cbf021288198e673c9"
+      "commitSha": "eee748ef501dc21b14163e3d5ae4efe7b7276c4e"
     },
     {
       "packageVersion": "10.0.560301",
