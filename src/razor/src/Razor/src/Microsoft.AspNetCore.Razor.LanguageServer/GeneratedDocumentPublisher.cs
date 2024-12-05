@@ -101,7 +101,10 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             ProjectKeyId = projectKey.Id,
             Changes = textChanges.Select(static t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
-            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0,
+            Checksum = Convert.ToBase64String(sourceText.GetChecksum().ToArray()),
+            ChecksumAlgorithm = sourceText.ChecksumAlgorithm,
+            SourceEncodingCodePage = sourceText.Encoding?.CodePage
         };
 
         _clientConnection.SendNotificationAsync(CustomMessageNames.RazorUpdateCSharpBufferEndpoint, request, CancellationToken.None).Forget();
@@ -145,7 +148,10 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             ProjectKeyId = projectKey.Id,
             Changes = textChanges.Select(static t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
-            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0,
+            Checksum = Convert.ToBase64String(sourceText.GetChecksum().ToArray()),
+            ChecksumAlgorithm = sourceText.ChecksumAlgorithm,
+            SourceEncodingCodePage = sourceText.Encoding?.CodePage
         };
 
         _clientConnection.SendNotificationAsync(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None).Forget();

@@ -7,6 +7,7 @@
     <!-- The binding redirects are needed due to a conflict between the test host and Roslyn regarding System.Collections.Immutable -->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <DefineConstants>$(DefineConstants);COHOSTING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\DocumentFormattingTest.cs" Link="Cohost\DocumentFormattingTest.cs" />
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\OnTypeFormattingTest.cs" Link="Cohost\OnTypeFormattingTest.cs" />
     <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
   </ItemGroup>
 
