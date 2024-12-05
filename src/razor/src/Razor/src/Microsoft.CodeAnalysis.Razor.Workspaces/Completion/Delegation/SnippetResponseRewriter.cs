@@ -1,10 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Frozen;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -14,20 +13,10 @@ namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 /// Modifies delegated snippet completion items
 /// </summary>
 /// <remarks>
-/// At the moment primarily used to modify C# "using" snippet to "using statement" snippet
-/// in order to disambiguate it from Razor "using directive" snippet
+/// At the moment primarily used to remove the C# "using" snippet because we have our own
 /// </remarks>
 internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewriter
 {
-    private static readonly FrozenDictionary<string, (string Label, string SortText)> s_snippetToCompletionData = new Dictionary<string, (string Label, string SortText)>()
-    {
-        // Modifying label of the C# using snippet to "using statement" to disambiguate from
-        // Razor @using directive, and also appending a space to sort text to make sure it's sorted
-        // after Razor "using" keyword and "using directive ..." entries (which use "using" as sort text)
-        ["using"] = (Label: $"using {SR.Statement}", SortText: "using ")
-    }
-    .ToFrozenDictionary();
-
     public Task<VSInternalCompletionList> RewriteAsync(
         VSInternalCompletionList completionList,
         int hostDocumentIndex,
@@ -36,21 +25,22 @@ internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewri
         RazorCompletionOptions completionOptions,
         CancellationToken cancellationToken)
     {
+        using var items = new PooledArrayBuilder<CompletionItem>(completionList.Items.Length);
+
         foreach (var item in completionList.Items)
         {
-            if (item.Kind == CompletionItemKind.Snippet)
+            if (item is { Kind: CompletionItemKind.Snippet, Label: "using" })
             {
-                if (item.Label is null)
-                {
-                    continue;
-                }
-
-                if (s_snippetToCompletionData.TryGetValue(item.Label, out var completionData))
-                {
-                    item.Label = completionData.Label;
-                    item.SortText = completionData.SortText;
-                }
+                continue;
             }
+
+            items.Add(item);
+        }
+
+        // If we didn't remove anything, then don't bother materializing the array
+        if (completionList.Items.Length != items.Count)
+        {
+            completionList.Items = items.ToArray();
         }
 
         return Task.FromResult(completionList);

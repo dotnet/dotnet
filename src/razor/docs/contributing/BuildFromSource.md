@@ -23,6 +23,7 @@ Building Razor on Windows requires:
 - Windows 10, version 1803 or newer
 - At least 10 GB of disk space and a good internet connection (our build scripts download a lot of tools and dependencies)
 - Git. <https://git-scm.org>
+- [LongPaths](LongPaths.md) to be enabled
 
 ### macOS/Linux
 
@@ -69,12 +70,6 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
      of Razor to be deployed. This can be useful if the latest Razor bits depend on a breaking change in
      Roslyn that isn't available in the version of Visual Studio being targeted. If you encounter errors
      when debugging the Razor bits that you've built and deployed, setting this switch _might_ fix them.
-    > :bulb: Windows tip: if you encounter errors pointing to `path-too-long` errors, like `The fully qualified file name must be less than 260 characters.`, consider shortening your local path with `subst`, where `R` is a free drive-letter, e.g.
-    >> ```ps1
-    >> $dir = pwd
-    >> subst R: $dir
-    >> cd R:\
-   >> ```
 
 3. Set `Microsoft.VisualStudio.RazorExtension` as the startup project.
 

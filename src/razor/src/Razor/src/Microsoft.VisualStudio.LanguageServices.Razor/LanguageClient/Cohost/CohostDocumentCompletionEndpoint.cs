@@ -4,13 +4,11 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
@@ -25,6 +23,8 @@ using Microsoft.VisualStudio.Razor.Snippets;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalCompletionList?>;
 using RoslynCompletionParams = Roslyn.LanguageServer.Protocol.CompletionParams;
 using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
+using RoslynPosition = Roslyn.LanguageServer.Protocol.Position;
+using RoslynCompletionContext = Roslyn.LanguageServer.Protocol.CompletionContext;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -82,7 +82,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
 
     private async Task<VSInternalCompletionList?> HandleRequestAsync(RoslynCompletionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (request.Context is null || ToVsLSP<VSInternalCompletionContext>(request.Context) is not VSInternalCompletionContext completionContext)
+        if (request.Context is null || JsonHelpers.ToVsLSP<VSInternalCompletionContext, RoslynCompletionContext>(request.Context) is not VSInternalCompletionContext completionContext)
         {
             _logger.LogError("Completion request context is null");
             return null;
@@ -105,7 +105,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
                             solutionInfo,
                             razorDocument.Id,
                             completionContext,
-                            ToVsLSP<Position>(request.Position).AssumeNotNull(),
+                            JsonHelpers.ToVsLSP<Position, RoslynPosition>(request.Position).AssumeNotNull(),
                             cancellationToken),
                 cancellationToken).ConfigureAwait(false) is not { } completionPositionInfo)
         {
@@ -216,23 +216,6 @@ internal sealed class CohostDocumentCompletionEndpoint(
         var rewrittenResponse = DelegatedCompletionHelper.RewriteHtmlResponse(result?.Response, razorCompletionOptions);
 
         return rewrittenResponse;
-    }
-
-    private static T? ToVsLSP<T>(object source) where T : class
-    {
-        // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.
-        var options = new JsonSerializerOptions();
-        foreach (var converter in RazorServiceDescriptorsWrapper.GetLspConverters())
-        {
-            options.Converters.Add(converter);
-        }
-
-        if (JsonSerializer.Deserialize<T>(JsonSerializer.SerializeToDocument(source), options) is not { } target)
-        {
-            return null;
-        }
-
-        return target;
     }
 
     private VSInternalCompletionList? AddSnippets(

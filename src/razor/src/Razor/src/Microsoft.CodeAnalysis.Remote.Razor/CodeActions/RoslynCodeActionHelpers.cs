@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Diagnostics;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
@@ -56,16 +56,10 @@ internal sealed class RoslynCodeActionHelpers : IRoslynCodeActionHelpers
             document = solution.GetRequiredDocument(documentIds.First(d => d.ProjectId == context.TextDocument.Project.Id));
         }
 
-        var options = new JsonSerializerOptions();
-        foreach (var converter in RazorServiceDescriptorsWrapper.GetLspConverters())
-        {
-            options.Converters.Add(converter);
-        }
-
-        var convertedEdit = JsonSerializer.Deserialize<RoslynTextEdit>(JsonSerializer.SerializeToDocument(edit, options), options).AssumeNotNull();
+        var convertedEdit = JsonHelpers.ToRoslynLSP<RoslynTextEdit, TextEdit>(edit).AssumeNotNull();
 
         var edits = await ExternalHandlers.CodeActions.GetSimplifiedEditsAsync(document, convertedEdit, cancellationToken).ConfigureAwait(false);
 
-        return JsonSerializer.Deserialize<TextEdit[]>(JsonSerializer.SerializeToDocument(edits, options), options);
+        return JsonHelpers.ToVsLSP<TextEdit[], RoslynTextEdit[]>(edits);
     }
 }

@@ -193,9 +193,6 @@
   <data name="Blazor_directive_attributes" xml:space="preserve">
     <value>Blazor directive attributes</value>
   </data>
-  <data name="Statement" xml:space="preserve">
-    <value>statement</value>
-  </data>
   <data name="Promote_using_directive_to" xml:space="preserve">
     <value>Promote using directive to {0}</value>
   </data>
