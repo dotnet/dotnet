@@ -21,7 +21,7 @@
     <NoWarn>$(NoWarn);Nullable</NoWarn>
   </PropertyGroup>
 
-  <Import Project="eng\targets\Packaging.targets" />
+  <Import Project="eng\targets\Common.targets" />
 
   <!-- Workaround https://github.com/dotnet/cli/issues/10528 -->
   <PropertyGroup>

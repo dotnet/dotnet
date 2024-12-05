@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,6 +11,7 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using RoslynSymbolSumType = Roslyn.LanguageServer.Protocol.SumType<Roslyn.LanguageServer.Protocol.DocumentSymbol[], Roslyn.LanguageServer.Protocol.SymbolInformation[]>;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -49,13 +49,7 @@ internal sealed partial class RemoteDocumentSymbolService(in ServiceArgs args) :
         var csharpDocument = codeDocument.GetCSharpDocument();
 
         // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.
-        var options = new JsonSerializerOptions();
-        foreach (var converter in RazorServiceDescriptorsWrapper.GetLspConverters())
-        {
-            options.Converters.Add(converter);
-        }
-
-        var vsCSharpSymbols = JsonSerializer.Deserialize<SumType<DocumentSymbol[], SymbolInformation[]>?>(JsonSerializer.SerializeToDocument(csharpSymbols), options);
+        var vsCSharpSymbols = JsonHelpers.ToVsLSP<SumType<DocumentSymbol[], SymbolInformation[]>?, RoslynSymbolSumType>(csharpSymbols);
         if (vsCSharpSymbols is not { } convertedSymbols)
         {
             return null;

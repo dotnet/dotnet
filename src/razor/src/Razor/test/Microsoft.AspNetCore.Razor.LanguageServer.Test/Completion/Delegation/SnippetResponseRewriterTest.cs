@@ -17,7 +17,7 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
     : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
-    public async Task RewriteAsync_ChangesUsingSnippetLabel()
+    public async Task RewriteAsync_RemovesUsingSnippetLabel()
     {
         // Arrange
         var documentContent = "@$$";
@@ -36,11 +36,6 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
-            completion =>
-            {
-                Assert.Equal("using statement", completion.Label);
-                Assert.Equal("using ", completion.SortText);
-            },
             completion =>
             {
                 Assert.Equal("if", completion.Label);
