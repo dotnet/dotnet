@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24572.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>af22effae4069a5dfb9b0735859de48820104f5b</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-rtm.24529.3</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>4e4e1fc383c5abd03312fa95955982df4607c621</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.1-rtm.24604.7</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>72791f7604750fb8af9249b94318547c5f1d6683</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24602.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
@@ -15,8 +15,8 @@
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24406.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>513150c2f25077b1fcb194407e53c433c975f39b</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>645f3131a5b0a4bf677201cf22773990a5316c89</efcoreGitCommitHash>
-    <efcoreOutputPackageVersion>9.0.0</efcoreOutputPackageVersion>
+    <efcoreGitCommitHash>471bcaed1ece1855cce69d3c929ec55e52bd4274</efcoreGitCommitHash>
+    <efcoreOutputPackageVersion>9.0.1</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>5a1972348bdf1daf0ae6c93e6d1ee89400e02cc4</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.1-servicing.24571.2</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>fd29258f2eb7502b09a450a8250495adb6c5caee</fsharpGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.1-servicing.24603.14</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>33fefd6cd96f032c576ae60a297a9b2e2c7dec41</sdkGitCommitHash>
+    <sdkGitCommitHash>925a4b96a17c4874e53b5ae737c9e2b6018b4124</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>ab469606a3e6b026dcac301e2dab96117c94faeb</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24575.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c81acaa80719d0ecfadfe41e3c0e3548bdc4e78d</sourcebuildreferencepackagesGitCommitHash>
