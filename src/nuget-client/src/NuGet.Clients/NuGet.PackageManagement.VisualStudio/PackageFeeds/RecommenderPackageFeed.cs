@@ -33,7 +33,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly IPackageMetadataProvider _metadataProvider;
         private readonly Common.ILogger _logger;
 
-        public (string modelVersion, string vsixVersion) VersionInfo { get; set; } = (modelVersion: (string)null, vsixVersion: (string)null);
+        public (string modelVersion, string vsixVersion) VersionInfo { get; set; } = (modelVersion: null, vsixVersion: null);
 
         private readonly AsyncLazyNuGetRecommender _nuGetRecommender;
 
@@ -137,8 +137,8 @@ namespace NuGet.PackageManagement.VisualStudio
                 if (!(NuGetRecommender is null))
                 {
                     var VersionDict = NuGetRecommender.GetVersionInfo();
-                    VersionInfo = (modelVersion: VersionDict.ContainsKey("Model") ? VersionDict["Model"] : (string)null,
-                                    vsixVersion: VersionDict.ContainsKey("Vsix") ? VersionDict["Vsix"] : (string)null);
+                    VersionInfo = (modelVersion: VersionDict.ContainsKey("Model") ? VersionDict["Model"] : null,
+                                    vsixVersion: VersionDict.ContainsKey("Vsix") ? VersionDict["Vsix"] : null);
                 }
             }
 

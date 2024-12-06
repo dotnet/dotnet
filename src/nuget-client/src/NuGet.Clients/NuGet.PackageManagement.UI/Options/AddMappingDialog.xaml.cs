@@ -92,9 +92,9 @@ namespace NuGet.PackageManagement.UI.Options
             var viewModel = new SourceMappingViewModel(packageId, packageSources);
             _parent.SourceMappingsCollection.Add(viewModel);
 
-            (_parent.ShowAddDialogCommand as DelegateCommand).RaiseCanExecuteChanged();
-            (_parent.RemoveMappingCommand as DelegateCommand).RaiseCanExecuteChanged();
-            (_parent.RemoveAllMappingsCommand as DelegateCommand).RaiseCanExecuteChanged();
+            _parent.ShowAddDialogCommand.RaiseCanExecuteChanged();
+            _parent.RemoveMappingCommand.RaiseCanExecuteChanged();
+            _parent.RemoveAllMappingsCommand.RaiseCanExecuteChanged();
 
             bool isGlobbing = packageId.Contains("*");
             var evt = NavigatedTelemetryEvent.CreateWithAddPackageSourceMapping(

@@ -928,16 +928,11 @@ namespace NuGet.CommandLine
             ISetupConfiguration configuration;
             try
             {
-                configuration = new SetupConfiguration() as ISetupConfiguration2;
+                configuration = new SetupConfiguration();
             }
             catch (Exception)
             {
                 return null; // No COM class
-            }
-
-            if (configuration == null)
-            {
-                return null;
             }
 
             var enumerator = configuration.EnumInstances();

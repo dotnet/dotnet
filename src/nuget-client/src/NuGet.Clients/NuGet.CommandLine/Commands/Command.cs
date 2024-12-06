@@ -270,14 +270,16 @@ namespace NuGet.CommandLine
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method does quite a bit of processing.")]
         public virtual CommandAttribute GetCommandAttribute()
         {
-            var attributes = GetType().GetCustomAttributes(typeof(CommandAttribute), true);
-            if (attributes.Any())
+            var type = GetType();
+            var attributes = type.GetCustomAttributes(typeof(CommandAttribute), true);
+            var attribute = attributes.FirstOrDefault();
+            if (attribute != null)
             {
-                return (CommandAttribute)attributes.FirstOrDefault();
+                return (CommandAttribute)attribute;
             }
 
             // Use the command name minus the suffix if present and default description
-            var name = GetType().Name;
+            var name = type.Name;
             var idx = name.LastIndexOf(CommandSuffix, StringComparison.OrdinalIgnoreCase);
             if (idx >= 0)
             {

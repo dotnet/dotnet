@@ -250,7 +250,7 @@ namespace NuGet.ProjectModel
                 switch (_reader.TokenType)
                 {
                     case JsonTokenType.String:
-                        return new[] { (string)_reader.GetString() };
+                        return new[] { _reader.GetString() };
 
                     case JsonTokenType.StartArray:
                         return ReadStringArrayAsReadOnlyListFromArrayStart();
@@ -312,7 +312,7 @@ namespace NuGet.ProjectModel
         }
 
         /// <summary>
-        /// Loops through the stream and reads it into the buffer until the buffer is full or the stream is empty, creates the Utf8JsonReader. 
+        /// Loops through the stream and reads it into the buffer until the buffer is full or the stream is empty, creates the Utf8JsonReader.
         /// </summary>
         private void ReadStreamIntoBuffer(JsonReaderState jsonReaderState)
         {

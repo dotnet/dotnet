@@ -1,10 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>aef398ffa7d4e2e9f5f0d1f3b1b6215f9958689c</GitCommitHash>
-    <OfficialBuildId>20241204.1</OfficialBuildId>
-    <OutputPackageVersion>6.13.0-preview.1.84</OutputPackageVersion>
-    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <IsStable>false</IsStable>
+    <GitCommitHash>a96fbf6593fa744d07b5dfa7614cfb4e6749e763</GitCommitHash>
+    <OfficialBuildId>20241206.1</OfficialBuildId>
+    <OutputPackageVersion>6.13.0-rc.90</OutputPackageVersion>
   </PropertyGroup>
 </Project>

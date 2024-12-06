@@ -128,12 +128,12 @@ namespace NuGet.Configuration
             {
                 char c = term[i];
 
-                if (!currentNode.Children.ContainsKey(c))
+                if (!currentNode.Children.TryGetValue(c, out SearchNode? child))
                 {
                     break;
                 }
 
-                currentNode = currentNode.Children[c];
+                currentNode = child;
 
                 if (currentNode.IsGlobbing)
                 {
@@ -172,7 +172,7 @@ namespace NuGet.Configuration
             {
                 char c = term[i];
 
-                if (!currentNode.Children.ContainsKey(c))
+                if (!currentNode.Children.TryGetValue(c, out SearchNode? child))
                 {
                     if (!currentNode.IsGlobbing)
                     {
@@ -181,7 +181,7 @@ namespace NuGet.Configuration
                     break;
                 }
 
-                currentNode = currentNode.Children[c];
+                currentNode = child;
 
                 sb.Append(c);
             }

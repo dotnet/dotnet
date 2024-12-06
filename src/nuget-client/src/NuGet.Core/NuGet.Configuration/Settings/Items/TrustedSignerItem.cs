@@ -134,7 +134,7 @@ namespace NuGet.Configuration
                 }
                 else if (cert is SettingItem item)
                 {
-                    item.Update(otherChild as SettingItem);
+                    item.Update(otherChild);
                 }
             }
 
