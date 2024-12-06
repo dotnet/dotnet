@@ -85,10 +85,10 @@
       "commitSha": "dfa7fc6bdea31a858a402168384192b633c811fa"
     },
     {
-      "packageVersion": "3.11.0-beta1.24574.2",
+      "packageVersion": "3.11.0-beta1.24605.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "3d61c57c73c3dd5f1f407ef9cd3414d94bf0eaf2"
+      "commitSha": "5bfaf6aea5cf9d1c924d9adc69916eac3be07880"
     },
     {
       "packageVersion": "9.0.1-servicing.24603.14",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "7d28a22d5340b0863b43fbead7c452aa8d24ae62"
+      "commitSha": "357543aa93872e5b810114f715f4859736844d2a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24575.1",
@@ -139,10 +139,10 @@
       "commitSha": "b1003b44bf4f77613101b9d31a55bb307515bb6d"
     },
     {
-      "packageVersion": "1.1.0-rtm.24604.2",
+      "packageVersion": "1.1.0-rtm.24605.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "82cef577c12adcc0cf9048d186910ae1f8f33fde"
+      "commitSha": "22f4800ed2fe5dbca64c982aa15fd6838016328e"
     },
     {
       "packageVersion": "17.12.0-release-24508-01",
