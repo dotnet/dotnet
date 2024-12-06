@@ -76,9 +76,9 @@ namespace NuGet.Build.Tasks.Pack
                 if (request.NuspecProperties != null && request.NuspecProperties.Any())
                 {
                     packArgs.Properties.AddRange(ParsePropertiesAsDictionary(request.NuspecProperties));
-                    if (packArgs.Properties.ContainsKey("version"))
+                    if (packArgs.Properties.TryGetValue("version", out var version))
                     {
-                        packArgs.Version = packArgs.Properties["version"];
+                        packArgs.Version = version;
                     }
                 }
             }

@@ -100,8 +100,8 @@ namespace NuGet.PackageManagement.VisualStudio
             IVsUIShell vsUIShell = await _vsUIShell.GetValueAsync();
             vsUIShell.PostExecCommand(
                 ref toolsGroupGuid,
-                (uint)VSConstants.cmdidToolsOptions,
-                (uint)0,
+                VSConstants.cmdidToolsOptions,
+                0,
                 ref targetGuid);
         }
     }

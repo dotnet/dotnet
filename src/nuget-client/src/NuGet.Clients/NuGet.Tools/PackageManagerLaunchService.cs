@@ -28,8 +28,8 @@ namespace NuGetVSExtension
                 var guidNuGetDialog = GuidList.guidNuGetDialogCmdSet;
                 vsUIShell.PostExecCommand(
                     ref guidNuGetDialog,
-                    (uint)PkgCmdIDList.cmdidAddPackageDialogForSolution,
-                    (uint)0,
+                    PkgCmdIDList.cmdidAddPackageDialogForSolution,
+                    0,
                     ref targetGuid);
             }).PostOnFailure(nameof(PackageManagerLaunchService));
         }

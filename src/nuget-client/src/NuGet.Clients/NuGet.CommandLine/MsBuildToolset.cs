@@ -96,7 +96,7 @@ namespace NuGet.CommandLine
         {
             long highBits = time.dwHighDateTime;
             highBits = highBits << 32;
-            return DateTime.FromFileTimeUtc(highBits | (long)(uint)time.dwLowDateTime);
+            return DateTime.FromFileTimeUtc(highBits | (uint)time.dwLowDateTime);
         }
 
         public static string GetMsBuildDirFromVsDir(string vsDir)

@@ -166,9 +166,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 }
             }
 
-            return dependencyNodes.ContainsKey(topLevelPackage)
-                ? dependencyNodes[topLevelPackage]
-                : null;
+            return dependencyNodes.GetValueOrDefault(topLevelPackage);
         }
 
         /// <summary>

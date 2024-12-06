@@ -122,7 +122,7 @@ namespace NuGet.CommandLine.XPlat.Utility
             // Include "Requested" version column for top level package list
             if (!printingTransitive)
             {
-                valueSelectors.Add(p => new FormattedCell((p as ListReportPackage)?.RequestedVersion));
+                valueSelectors.Add(p => new FormattedCell(p?.RequestedVersion));
             }
 
             // "Resolved" version

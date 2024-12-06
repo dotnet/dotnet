@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
 using NuGet.PackageManagement.VisualStudio;
-using NuGet.ProjectManagement.Projects;
 using NuGet.VisualStudio.Etw;
 using NuGet.VisualStudio.Implementation.Resources;
 using NuGet.VisualStudio.Telemetry;
@@ -93,8 +92,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
                         project, optionalContext: null);
                 Assumes.Present(legacyPackageRefBasedProject);
 
-                await ProjectJsonToPackageRefMigrator.MigrateAsync(
-                    legacyPackageRefBasedProject as BuildIntegratedNuGetProject);
+                await ProjectJsonToPackageRefMigrator.MigrateAsync(legacyPackageRefBasedProject);
                 var result = new VsProjectJsonToPackageReferenceMigrateResult(success: true, errorMessage: null);
                 await nuGetProject.SaveAsync(CancellationToken.None);
                 await _solutionManager.Value.UpgradeProjectToPackageReferenceAsync(nuGetProject);

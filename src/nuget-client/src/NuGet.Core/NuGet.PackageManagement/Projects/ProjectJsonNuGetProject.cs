@@ -369,7 +369,7 @@ namespace NuGet.ProjectManagement.Projects
                 {
                     // project.json can have only one target framework
                     JsonConfigUtility.ClearFrameworks(json);
-                    JsonConfigUtility.AddFramework(json, newTargetFramework as NuGetFramework);
+                    JsonConfigUtility.AddFramework(json, newTargetFramework);
                 }
             }
         }

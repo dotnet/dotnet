@@ -396,9 +396,9 @@ namespace NuGet.CommandLine
             _properties.Clear();
 
             // Allow Id to be overriden by cmd line properties
-            if (ProjectProperties.ContainsKey("Id"))
+            if (ProjectProperties.TryGetValue("Id", out var id))
             {
-                _properties.Add("Id", ProjectProperties["Id"]);
+                _properties.Add("Id", id);
             }
             else
             {
@@ -776,9 +776,9 @@ namespace NuGet.CommandLine
                 }
 
                 VersionRange versionRange = null;
-                if (dependencies.ContainsKey(builder.Id))
+                if (dependencies.TryGetValue(builder.Id, out PackageDependency dependency))
                 {
-                    VersionRange nuspecVersion = dependencies[builder.Id].VersionRange;
+                    VersionRange nuspecVersion = dependency.VersionRange;
                     if (nuspecVersion != null)
                     {
                         versionRange = nuspecVersion;
