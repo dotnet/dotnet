@@ -9,7 +9,8 @@
                                       in some Linux distributions RSA+SHA1 (required for full signing) is not
                                       functional/available, and trying to use full signing results in the runtime
                                       throwing an exception. For more details and an example, see
-                                      https://github.com/dotnet/runtime/issues/65874.
+                                      https://github.com/dotnet/runtime/issues/65874. We default to full assembly
+                                      signing not being supported in source-only modes.
       StrongNameKeyId The id of the key used for strong name generation
 
     Writes variables:

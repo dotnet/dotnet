@@ -43,6 +43,8 @@
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
+  <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
+  <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
   <!-- Allow for repo specific Publish properties such as add additional files to be published -->
