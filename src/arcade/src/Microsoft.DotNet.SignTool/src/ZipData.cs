@@ -326,57 +326,48 @@ namespace Microsoft.DotNet.SignTool
 #else
         private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
-            using MemoryStream outputStream = new();
-
-            using (GZipStream gzipStream = new(outputStream, CompressionMode.Compress, leaveOpen: true))
-            using (TarWriter writer = new(gzipStream))
+            using MemoryStream streamToCompress = new();
+            using (TarWriter writer = new(streamToCompress, leaveOpen: true))
             {
                 foreach (TarEntry entry in ReadTarGZipEntries(FileSignInfo.FullPath))
                 {
                     if (entry.DataStream != null)
                     {
-                        Stream dataStream;
-
                         string relativeName = entry.Name;
                         ZipPart? signedPart = FindNestedPart(relativeName);
 
                         if (signedPart.HasValue)
                         {
-                            dataStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
+                            using FileStream signedStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
+                            entry.DataStream = signedStream;
+                            entry.DataStream.Position = 0;
+                            writer.WriteEntry(entry);
+
                             log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName}.");
-                        }
-                        else
-                        {
-                            dataStream = new MemoryStream();
-                            entry.DataStream.CopyTo(dataStream);
-                            dataStream.Position = 0;
-                            log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativeName}");
+                            continue;
                         }
 
-                        entry.DataStream = dataStream;
-                        writer.WriteEntry(entry);
-                        dataStream.Dispose();
+                        log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativeName}");
                     }
-                    else
-                    {
-                        writer.WriteEntry(entry);
-                    }
+
+                    writer.WriteEntry(entry);
                 }
             }
 
-            outputStream.Position = 0;
-
-            using var outputFile = File.Open(FileSignInfo.FullPath, FileMode.Truncate, FileAccess.Write);
-            outputStream.CopyTo(outputFile);
+            streamToCompress.Position = 0;
+            using (FileStream outputStream = File.Open(FileSignInfo.FullPath, FileMode.Truncate, FileAccess.Write))
+            {
+                using GZipStream compressor = new(outputStream, CompressionMode.Compress);
+                streamToCompress.CopyTo(compressor);
+            }
         }
 
         private static IEnumerable<TarEntry> ReadTarGZipEntries(string path)
         {
-            using var gzipStream = File.Open(path, FileMode.Open);
-            using var tar = new GZipStream(gzipStream, CompressionMode.Decompress);
-            using var reader = new TarReader(tar);
-
-            while (reader.GetNextEntry() is TarEntry entry)
+            using FileStream streamToDecompress = File.OpenRead(path);
+            using GZipStream decompressor = new(streamToDecompress, CompressionMode.Decompress);
+            using TarReader tarReader = new(decompressor);
+            while (tarReader.GetNextEntry() is TarEntry entry)
             {
                 yield return entry;
             }

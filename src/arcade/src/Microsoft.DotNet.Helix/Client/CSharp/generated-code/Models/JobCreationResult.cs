@@ -49,10 +49,6 @@ namespace Microsoft.DotNet.Helix.Client.Models
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(ResultsUriRSAS))
-                {
-                    return false;
-                }
                 return true;
             }
         }

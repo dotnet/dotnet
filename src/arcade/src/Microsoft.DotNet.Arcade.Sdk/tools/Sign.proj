@@ -23,6 +23,8 @@
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
 
+  <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
+  <Import Project="StrongName.props" />
   <Import Project="Sign.props" />
 
   <!-- Import the wix props to get the install path -->
@@ -80,6 +82,7 @@
       <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
     </PropertyGroup>
 
+    <!-- Keep TarToolPath TFM in sync with TarTool project TFM. -->
     <Microsoft.DotNet.SignTool.SignToolTask
         DryRun="$(_DryRun)"
         TestSign="$(_TestSign)"
@@ -97,7 +100,7 @@
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net\any\Microsoft.Dotnet.Tar.dll"
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net9.0\any\Microsoft.Dotnet.Tar.dll"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)" />
   </Target>
