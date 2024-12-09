@@ -29,6 +29,14 @@ steps:
     displayName: Set Feature Flags
     condition: and(succeeded(), ne(variables['FeatureFlag'], ''))
 
+  - powershell: New-ItemProperty
+      -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem"
+      -Name "LongPathsEnabled"
+      -Value "1"
+      -PropertyType DWORD
+      -Force
+    displayName: Enable Long Paths
+
   - script: eng\cibuild.cmd
       -configuration ${{ parameters.configuration }}
       -msbuildEngine vs
