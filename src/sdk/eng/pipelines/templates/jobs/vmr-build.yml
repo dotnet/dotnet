@@ -346,12 +346,12 @@ jobs:
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
             eval rm -f "$previousSdkPath"
 
-            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
+            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(sourcesPath)/.dotnet"
           fi
 
-          cd $(sourcesPath)
           ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
+        workingDirectory: $(sourcesPath)
 
     - script: |
         set -ex
@@ -427,10 +427,11 @@ jobs:
         for envVar in $customEnvVars; do
           customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
         done
-        cd $(sourcesPath)
+
         eval $customEnvVarsWithBashSyntax
         $customPreBuildArgs ./build.sh $buildArgs
       displayName: Build
+      workingDirectory: $(sourcesPath)
 
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:
