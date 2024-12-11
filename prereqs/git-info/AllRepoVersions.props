@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24572.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>4e4e1fc383c5abd03312fa95955982df4607c621</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.1-rtm.24604.7</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>45da74322d3553d7009b45fef9f725a91451c068</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.1-rtm.24610.5</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>72791f7604750fb8af9249b94318547c5f1d6683</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24602.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
