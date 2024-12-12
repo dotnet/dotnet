@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Globalization;
+using FluentAssertions;
 using NuGet.CommandLine.XPlat;
+using NuGet.CommandLine.XPlat.Commands;
 using Xunit;
 using static NuGet.CommandLine.XPlat.PackageSearchCommand;
 
@@ -10,6 +12,18 @@ namespace NuGet.CommandLine.Xplat.Tests
 {
     public class PackageSearchCommandTests : PackageSearchTestInitializer
     {
+        [Fact]
+        public void Register_HasHelpUrl()
+        {
+            // Arrange
+            // Act
+            Register(RootCommand, GetLogger, SetupSettingsAndRunSearchAsync);
+
+            // Assert
+            RootCommand.Subcommands[0].Should().BeAssignableTo<DocumentedCommand>();
+            ((DocumentedCommand)RootCommand.Subcommands[0]).HelpUrl.Should().NotBeNullOrEmpty();
+        }
+
         [Fact]
         public void Register_withSearchTermOnly_SetsSearchTerm()
         {

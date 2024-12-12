@@ -279,6 +279,12 @@
   <data name="Text_Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
+  <data name="Text_LoadingReadme" xml:space="preserve">
+    <value>Loading README...</value>
+  </data>
+  <data name="Text_ReadmeLoaded" xml:space="preserve">
+    <value>README loaded</value>
+  </data>
   <data name="Text_NoPackagesFound" xml:space="preserve">
     <value>No packages found</value>
   </data>

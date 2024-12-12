@@ -184,14 +184,14 @@ steps:
   inputs:
     solution: "build\\loc.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /t:CopyBinariesToLocalizationArtifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\09.LocalizeFolderAssemblies.binlog"
+    msbuildArguments: "/restore /t:CopyBinariesToLocalizationArtifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\10.LocalizeFolderAssemblies.binlog"
 
 - task: MSBuild@1
   displayName: "Pack Nupkgs"
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\10.Pack.binlog /property:MicroBuild_SigningEnabled=false"
+    msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\11.Pack.binlog /property:MicroBuild_SigningEnabled=false"
 
 - task: PowerShell@1
   displayName: "Check expected packages exist for publishing"
@@ -205,14 +205,14 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:EnsurePackagesExist /property:ExcludeTestProjects=$(BuildRTM) /binarylogger:$(Build.StagingDirectory)\\binlog\\11.EnsurePackagesExist.binlog"
+    msbuildArguments: "/restore:false /target:EnsurePackagesExist /property:ExcludeTestProjects=$(BuildRTM) /binarylogger:$(Build.StagingDirectory)\\binlog\\12.EnsurePackagesExist.binlog"
 
 - task: MSBuild@1
   displayName: "Pack VSIX"
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:BuildVSIX /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\12.PackVSIX.binlog"
+    msbuildArguments: "/restore:false /target:BuildVSIX /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\13.PackVSIX.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 - ${{ if not(parameters.BuildRTM)}}:
   - template: /eng/common/templates/steps/generate-sbom.yml@self
@@ -225,7 +225,7 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:BuildNumber=$(BuildNumber) /property:IsVsixBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\13.BuildToolsVSIX.binlog"
+    msbuildArguments: "/property:BuildNumber=$(BuildNumber) /property:IsVsixBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\14.BuildToolsVSIX.binlog"
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
 - task: MSBuild@1
@@ -233,7 +233,7 @@ steps:
   inputs:
     solution: "build\\sign.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /property:SignPackages=true /binarylogger:$(Build.StagingDirectory)\\binlog\\14.SignPackages.binlog"
+    msbuildArguments: "/restore /property:SignPackages=true /binarylogger:$(Build.StagingDirectory)\\binlog\\15.SignPackages.binlog"
 
 - task: NuGetToolInstaller@1
   displayName: Use NuGet 6.x
@@ -263,7 +263,7 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\15.GenerateVSManifestForVSIX.binlog"
+    msbuildArguments: "/property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\16.GenerateVSManifestForVSIX.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 
 - task: MSBuild@1
@@ -271,7 +271,7 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\16.GenerateVSManifestForToolsVSIX.binlog"
+    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateVSManifestForToolsVSIX.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 
 - task: NuGetCommand@2
@@ -381,7 +381,7 @@ steps:
   inputs:
     solution: "build\\symbols.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:IsSymbolBuild=true /property:BuildRTM=$(BuildRTM) /binarylogger:$(Build.StagingDirectory)\\binlog\\17.CollectBuildSymbols.binlog"
+    msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:IsSymbolBuild=true /property:BuildRTM=$(BuildRTM) /binarylogger:$(Build.StagingDirectory)\\binlog\\18.CollectBuildSymbols.binlog"
     maximumCpuCount: true
   condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
@@ -390,7 +390,7 @@ steps:
   inputs:
     solution: "build\\BuildValidator.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/target:ValidateVsix /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\18.ValidateVsixLocalization.binlog"
+    msbuildArguments: "/target:ValidateVsix /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\19.ValidateVsixLocalization.binlog"
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
 - task: MSBuild@1
@@ -398,7 +398,7 @@ steps:
   inputs:
     solution: "build\\BuildValidator.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/target:ValidateArtifacts /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\19.ValidateArtifactsLocalization.binlog"
+    msbuildArguments: "/target:ValidateArtifacts /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\20.ValidateArtifactsLocalization.binlog"
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
   # Use dotnet msbuild instead of MSBuild CLI.

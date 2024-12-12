@@ -104,6 +104,11 @@ namespace NuGet.PackageManagement.UI
             }).PostOnFailure(nameof(DetailControl));
         }
 
+        public void Cleanup()
+        {
+            _packageDetailsTabControl.Dispose();
+        }
+
         private void ProjectInstallButtonClicked(object sender, EventArgs e)
         {
             var model = (PackageDetailControlModel)DataContext;

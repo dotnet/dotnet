@@ -19,7 +19,8 @@
       <ResourceDictionary.MergedDictionaries>
         <nuget:SharedResources />
       </ResourceDictionary.MergedDictionaries>
-      <nuget:AccessibleConverter x:Key="AccNameWorkaround" />
+      <nuget:StringFormatConverter
+        x:Key="StringFormatConverter" />
     </ResourceDictionary>
   </UserControl.Resources>
   <TabControl
@@ -30,7 +31,7 @@
     <TabControl.Resources>
       <Style TargetType="TabItem">
         <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}" />
-        <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font122PercentSizeConverter}}"/>
+        <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Font122PercentSizeConverter}}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
         <Setter Property="Padding" Value="12,0,12,0" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}" />
@@ -115,12 +116,30 @@
     </TabControl.Resources>
     <TabControl.ItemTemplate>
       <DataTemplate>
-        <TextBlock Text="{Binding Title}" />
-        <DataTemplate.Triggers>
-          <DataTrigger Binding="{Binding IsVisible}" Value="False">
-            <Setter Property="Visibility" Value="Collapsed" />
-          </DataTrigger>
-        </DataTemplate.Triggers>
+        <StackPanel Orientation="Horizontal" >
+          <TextBlock Text="{Binding Title}" />
+          <imaging:CrispImage
+            Margin="3,0"
+            Visibility="{Binding Path=IsPackageVulnerableOrDeprecated, FallbackValue=Collapsed, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
+            <imaging:CrispImage.ToolTip>
+              <StackPanel>
+                <TextBlock
+                  Visibility="{Binding IsPackageVulnerable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                  <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                      <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
+                      <Binding Path="PackageVulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+                <TextBlock
+                  Text="{x:Static nuget:Resources.Label_PackageDeprecatedToolTip}"
+                  Visibility="{Binding IsPackageDeprecated, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+              </StackPanel>
+            </imaging:CrispImage.ToolTip>
+          </imaging:CrispImage>
+        </StackPanel>
       </DataTemplate>
     </TabControl.ItemTemplate>
     <TabControl.ContentTemplate>

@@ -8,6 +8,7 @@ using System.CommandLine.Parsing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
+using NuGet.CommandLine.XPlat.Commands;
 using NuGet.Common;
 
 namespace NuGet.CommandLine.XPlat
@@ -95,13 +96,13 @@ namespace NuGet.CommandLine.XPlat
 
         internal static CliCommand Register(CliCommand app, Func<ILogger> getLogger)
         {
-            var ConfigCmd = new CliCommand(name: "config", description: Strings.Config_Description);
+            var ConfigCmd = new DocumentedCommand(name: "config", description: Strings.Config_Description, "https://aka.ms/dotnet/nuget/config");
             ConfigCmd.Options.Add(HelpOption);
 
             // Options directly under the verb 'config'
 
             // noun sub-command: config paths
-            var PathsCmd = new CliCommand(name: "paths", description: Strings.ConfigPathsCommandDescription);
+            var PathsCmd = new DocumentedCommand(name: "paths", description: Strings.ConfigPathsCommandDescription, "https://aka.ms/dotnet/nuget/config/paths");
 
             // Options under sub-command: config paths
             RegisterOptionsForCommandConfigPaths(PathsCmd, getLogger);
@@ -109,7 +110,7 @@ namespace NuGet.CommandLine.XPlat
             ConfigCmd.Subcommands.Add(PathsCmd);
 
             // noun sub-command: config get
-            var GetCmd = new CliCommand(name: "get", description: Strings.ConfigGetCommandDescription);
+            var GetCmd = new DocumentedCommand(name: "get", description: Strings.ConfigGetCommandDescription, "https://aka.ms/dotnet/nuget/config/get");
 
             // Options under sub-command: config get
             RegisterOptionsForCommandConfigGet(GetCmd, getLogger);
@@ -117,7 +118,7 @@ namespace NuGet.CommandLine.XPlat
             ConfigCmd.Subcommands.Add(GetCmd);
 
             // noun sub-command: config set
-            var SetCmd = new CliCommand(name: "set", description: Strings.ConfigSetCommandDescription);
+            var SetCmd = new DocumentedCommand(name: "set", description: Strings.ConfigSetCommandDescription, "https://aka.ms/dotnet/nuget/config/set");
 
             // Options under sub-command: config set
             RegisterOptionsForCommandConfigSet(SetCmd, getLogger);
@@ -125,7 +126,7 @@ namespace NuGet.CommandLine.XPlat
             ConfigCmd.Subcommands.Add(SetCmd);
 
             // noun sub-command: config unset
-            var UnsetCmd = new CliCommand(name: "unset", description: Strings.ConfigUnsetCommandDescription);
+            var UnsetCmd = new DocumentedCommand(name: "unset", description: Strings.ConfigUnsetCommandDescription, "https://aka.ms/dotnet/nuget/config/unset");
 
             // Options under sub-command: config unset
             RegisterOptionsForCommandConfigUnset(UnsetCmd, getLogger);

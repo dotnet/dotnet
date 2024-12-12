@@ -4,6 +4,7 @@
 using System;
 using System.CommandLine;
 using FluentAssertions;
+using NuGet.CommandLine.XPlat.Commands;
 using NuGet.CommandLine.XPlat.Commands.Why;
 using Xunit;
 
@@ -11,6 +12,20 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
 {
     public class WhyCommandLineParsingTests
     {
+        [Fact]
+        public void WhyCommand_HasHelpUrl()
+        {
+            // Arrange
+            CliCommand rootCommand = new("nuget");
+
+            // Act
+            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance);
+
+            // Assert
+            rootCommand.Subcommands[0].Should().BeAssignableTo<DocumentedCommand>();
+            ((DocumentedCommand)rootCommand.Subcommands[0]).HelpUrl.Should().NotBeNullOrEmpty();
+        }
+
         [Fact]
         public void WithTwoArguments_PathAndPackageAreSet()
         {

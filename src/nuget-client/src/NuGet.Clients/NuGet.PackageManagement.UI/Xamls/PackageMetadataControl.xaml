@@ -9,7 +9,6 @@
   xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
   xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
   xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
-  AutomationProperties.Name=" "
   Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
   Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
   mc:Ignorable="d"
@@ -86,7 +85,7 @@
     <!-- vulnerabilities info -->
     <Border
      Grid.Row="0"
-      Margin="22,0,0,0"
+     Margin="22,0,0,16"
      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
      Visibility="{Binding Path=IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}"
      BorderThickness="0,0,0,1">
@@ -102,7 +101,7 @@
     <Border
       Grid.Row="1"
       BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-      Margin="22,0,0,0"
+      Margin="22,0,0,16"
       Visibility="{Binding Path=IsPackageDeprecated,Converter={StaticResource BooleanToVisibilityConverter}}"
       BorderThickness="0,0,0,1">
       <Grid>

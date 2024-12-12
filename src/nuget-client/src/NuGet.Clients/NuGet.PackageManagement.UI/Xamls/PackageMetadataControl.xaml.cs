@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using NuGet.VisualStudio;
@@ -23,6 +24,11 @@ namespace NuGet.PackageManagement.UI
 
             Visibility = Visibility.Collapsed;
             DataContextChanged += PackageMetadataControl_DataContextChanged;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return null;
         }
 
         private void ViewLicense_Click(object sender, RoutedEventArgs e)

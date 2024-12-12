@@ -1580,6 +1580,7 @@ namespace NuGet.PackageManagement.UI
             _refreshCts?.Dispose();
             _cancelSelectionChangedSource?.Dispose();
 
+            _packageDetail.Cleanup();
             _detailModel.Dispose();
             _packageList.SelectionChanged -= PackageList_SelectionChanged;
 

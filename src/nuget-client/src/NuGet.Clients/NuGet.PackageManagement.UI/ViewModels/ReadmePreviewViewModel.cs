@@ -20,7 +20,9 @@ namespace NuGet.PackageManagement.UI.ViewModels
         private bool _canRenderLocalReadme;
         private bool _isBusy;
 
+#pragma warning disable CS0618 // Type or member is obsolete
         public ReadmePreviewViewModel(INuGetPackageFileService packageFileService, ItemFilter itemFilter, bool isReadmeFeatureEnabled)
+#pragma warning restore CS0618 // Type or member is obsolete
         {
             _nugetPackageFileService = packageFileService ?? throw new ArgumentNullException(nameof(packageFileService));
             _canRenderLocalReadme = CanRenderLocalReadme(itemFilter);

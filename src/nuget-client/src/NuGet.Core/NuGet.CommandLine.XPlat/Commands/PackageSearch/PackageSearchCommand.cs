@@ -8,6 +8,7 @@ using System.CommandLine.Help;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.CommandLine.XPlat.Commands;
 using NuGet.Configuration;
 using NuGet.Credentials;
 
@@ -22,7 +23,7 @@ namespace NuGet.CommandLine.XPlat
 
         public static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<PackageSearchArgs, string, CancellationToken, Task<int>> setupSettingsAndRunSearchAsync)
         {
-            var searchCommand = new CliCommand("search", Strings.pkgSearch_Description);
+            var searchCommand = new DocumentedCommand("search", Strings.pkgSearch_Description, "https://aka.ms/dotnet/package/search");
 
             var searchTerm = new CliArgument<string>("Search Term")
             {
