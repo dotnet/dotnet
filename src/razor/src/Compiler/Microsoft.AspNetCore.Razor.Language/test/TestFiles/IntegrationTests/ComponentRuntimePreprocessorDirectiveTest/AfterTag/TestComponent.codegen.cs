@@ -17,6 +17,14 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
+#nullable restore
+#line (1,3)-(2,1) "x:\dir\subdir\Test\TestComponent.razor"
+
+
+#line default
+#line hidden
+#nullable disable
+
             __builder.OpenElement(0, "div");
             __builder.AddMarkupContent(1, "\r\n#if true\r\n    ");
             __builder.OpenElement(2, "div");
@@ -32,6 +40,13 @@ namespace Test
 
             __builder.CloseElement();
             __builder.CloseElement();
+#nullable restore
+#line (8,2)-(8,2) "x:\dir\subdir\Test\TestComponent.razor"
+
+#line default
+#line hidden
+#nullable disable
+
         }
         #pragma warning restore 1998
     }

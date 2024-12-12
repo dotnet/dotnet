@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.LanguageServer.Protocol;
+using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -217,19 +219,38 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             }
         }
 
-        foreach (var location in results.Select(GetLocation))
+        foreach (var result in results)
         {
+            var location = GetLocation(result);
+            string matchedText;
             if (razorDocumentUri.Equals(location.Uri))
             {
+                matchedText = inputText.Lines[location.Range.Start.Line].ToString();
                 Assert.Single(input.Spans.Where(s => inputText.GetRange(s).Equals(location.Range)));
             }
             else
             {
                 var additionalFile = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
                 var text = SourceText.From(additionalFile.testCode.Text);
+                matchedText = text.Lines[location.Range.Start.Line].ToString();
                 Assert.Single(additionalFile.testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));
             }
+
+            if (result.TryGetFirst(out var referenceItem))
+            {
+                Assert.Equal(matchedText.Trim(), GetText(referenceItem));
+            }
         }
+    }
+
+    private static string GetText(VSInternalReferenceItem referenceItem)
+    {
+        if (referenceItem.Text is ClassifiedTextElement classifiedText)
+        {
+            return string.Join("", classifiedText.Runs.Select(s => s.Text));
+        }
+
+        return referenceItem.Text.AssumeNotNull().ToString();
     }
 
     private static Location GetLocation(SumType<VSInternalReferenceItem, Location> r)

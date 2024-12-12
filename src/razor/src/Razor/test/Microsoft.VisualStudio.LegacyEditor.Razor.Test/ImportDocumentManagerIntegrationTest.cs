@@ -45,14 +45,14 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
             t.ProjectPath == _projectPath &&
             t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
-                p.GetDocument(It.IsAny<string>()) == null));
+                p.TryGetDocument(It.IsAny<string>(), out It.Ref<IDocumentSnapshot?>.IsAny) == false));
 
         var anotherTracker = StrictMock.Of<IVisualStudioDocumentTracker>(t =>
             t.FilePath == Path.Combine(_directoryPath, "anotherFile.cshtml") &&
             t.ProjectPath == _projectPath &&
             t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
-                p.GetDocument(It.IsAny<string>()) == null));
+                p.TryGetDocument(It.IsAny<string>(), out It.Ref<IDocumentSnapshot?>.IsAny) == false));
 
         var fileChangeTrackerFactoryMock = new StrictMock<IFileChangeTrackerFactory>();
         var fileChangeTracker1Mock = new StrictMock<IFileChangeTracker>();

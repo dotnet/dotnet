@@ -126,20 +126,15 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         }
     }
 
-    public IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
+    public bool ContainsProject(ProjectKey projectKey)
     {
         using (_readerWriterLock.DisposableRead())
         {
-            if (_projectMap.TryGetValue(projectKey, out var entry))
-            {
-                return entry.GetSnapshot();
-            }
+            return _projectMap.ContainsKey(projectKey);
         }
-
-        throw new InvalidOperationException($"No project snapshot exists with the key, '{projectKey}'");
     }
 
-    public bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
+    public bool TryGetProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
     {
         using (_readerWriterLock.DisposableRead())
         {
@@ -154,7 +149,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         return false;
     }
 
-    public ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
+    public ImmutableArray<ProjectKey> GetProjectKeysWithFilePath(string filePath)
     {
         using (_readerWriterLock.DisposableRead())
         {
@@ -162,7 +157,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
 
             foreach (var (key, entry) in _projectMap)
             {
-                if (FilePathComparer.Instance.Equals(entry.State.HostProject.FilePath, projectFileName))
+                if (FilePathComparer.Instance.Equals(entry.State.HostProject.FilePath, filePath))
                 {
                     projects.Add(key);
                 }

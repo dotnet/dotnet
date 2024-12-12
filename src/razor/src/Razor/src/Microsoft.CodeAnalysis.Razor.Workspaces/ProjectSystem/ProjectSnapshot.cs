@@ -64,11 +64,6 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot
         }
     }
 
-    public IDocumentSnapshot? GetDocument(string filePath)
-        => TryGetDocument(filePath, out var document)
-            ? document
-            : null;
-
     public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
     {
         lock (_gate)

@@ -16,7 +16,7 @@ internal static partial class IProjectSnapshotManagerExtensions
 {
     public static IProjectSnapshot GetMiscellaneousProject(this IProjectSnapshotManager projectManager)
     {
-        return projectManager.GetLoadedProject(MiscFilesHostProject.Instance.Key);
+        return projectManager.GetRequiredProject(MiscFilesHostProject.Instance.Key);
     }
 
     /// <summary>

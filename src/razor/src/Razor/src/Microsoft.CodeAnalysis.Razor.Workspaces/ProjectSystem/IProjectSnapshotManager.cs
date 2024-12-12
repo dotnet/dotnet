@@ -17,10 +17,11 @@ internal interface IProjectSnapshotManager
 
     bool IsSolutionClosing { get; }
 
-    ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName);
+    ImmutableArray<ProjectKey> GetProjectKeysWithFilePath(string projectFileName);
     ImmutableArray<IProjectSnapshot> GetProjects();
-    IProjectSnapshot GetLoadedProject(ProjectKey projectKey);
-    bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project);
+
+    bool ContainsProject(ProjectKey projectKey);
+    bool TryGetProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project);
 
     bool IsDocumentOpen(string documentFilePath);
     ImmutableArray<string> GetOpenDocuments();

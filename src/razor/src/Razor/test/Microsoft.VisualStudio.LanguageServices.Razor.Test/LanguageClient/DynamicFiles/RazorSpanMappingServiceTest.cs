@@ -33,8 +33,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
 
-        var document = project.GetDocument(_hostDocument.FilePath);
-        Assert.NotNull(document);
+        var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
         var generated = output.GetCSharpDocument();
@@ -65,8 +64,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
 
-        var document = project.GetDocument(_hostDocument.FilePath);
-        Assert.NotNull(document);
+        var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
         var generated = output.GetCSharpDocument();
@@ -98,8 +96,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
 
-        var document = project.GetDocument(_hostDocument.FilePath);
-        Assert.NotNull(document);
+        var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
         var generated = output.GetCSharpDocument();
@@ -130,8 +127,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
 
-        var document = project.GetDocument(_hostDocument.FilePath);
-        Assert.NotNull(document);
+        var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
         var generated = output.GetCSharpDocument();

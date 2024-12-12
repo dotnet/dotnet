@@ -2,17 +2,17 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
-using Xunit;
 using Microsoft.VisualStudio.Razor.LanguageClient;
-using Microsoft.AspNetCore.Razor.Threading;
-using System.Collections.Immutable;
-using System.Linq;
+using Xunit;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -44,55 +44,45 @@ internal partial class RazorProjectSystemInProcess
         Assert.NotNull(projectManager);
         await Helper.RetryAsync(ct =>
         {
-            var projectKeys = projectManager.GetAllProjectKeys(projectFilePath);
-            if (projectKeys.Length == 0)
-            {
-                return SpecializedTasks.False;
-            }
+            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
 
-            return Task.FromResult(projectManager.TryGetLoadedProject(projectKeys[0], out _));
+            return projectKeys is [var projectKey, ..] && projectManager.ContainsProject(projectKey)
+                ? SpecializedTasks.True
+                : SpecializedTasks.False;
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
     public async Task WaitForComponentTagNameAsync(string projectName, string componentName, CancellationToken cancellationToken)
     {
-        var projectFileName = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
+        var projectFilePath = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
         await Helper.RetryAsync(async ct =>
         {
-            var projectKeys = projectManager.GetAllProjectKeys(projectFileName);
-            if (projectKeys.Length == 0)
+            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
+
+            if (projectKeys is [var projectKey, ..] && projectManager.TryGetProject(projectKey, out var project))
             {
-                return false;
+                var tagHelpers = await project.GetTagHelpersAsync(cancellationToken);
+                return tagHelpers.Any(tagHelper => tagHelper.TagMatchingRules.Any(r => r.TagName.Equals(componentName, StringComparison.Ordinal)));
             }
 
-            if (!projectManager.TryGetLoadedProject(projectKeys[0], out var project))
-            {
-                return false;
-            }
-
-            var tagHelpers = await project.GetTagHelpersAsync(cancellationToken);
-            return tagHelpers.Any(tagHelper => tagHelper.TagMatchingRules.Any(r => r.TagName.Equals(componentName, StringComparison.Ordinal)));
+            return false;
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
     public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        var projectSnapshotManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
-        Assert.NotNull(projectSnapshotManager);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        Assert.NotNull(projectManager);
+
         await Helper.RetryAsync(ct =>
         {
-            var projectKeys = projectSnapshotManager.GetAllProjectKeys(projectFilePath);
-            if (projectKeys.Length == 0 ||
-                !projectSnapshotManager.TryGetLoadedProject(projectKeys[0], out var project))
-            {
-                return SpecializedTasks.False;
-            }
+            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
 
-            var document = project.GetDocument(filePath);
-
-            return Task.FromResult(document is not null);
+            return projectKeys is [var projectKey, ..] && projectManager.ContainsDocument(projectKey, filePath)
+                ? SpecializedTasks.True
+                : SpecializedTasks.False;
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
@@ -101,9 +91,7 @@ internal partial class RazorProjectSystemInProcess
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
 
-        var projectKeys = projectManager.GetAllProjectKeys(projectFilePath);
-
-        return projectKeys.SelectAsArray(key => key.Id);
+        return projectManager.GetProjectKeysWithFilePath(projectFilePath).SelectAsArray(static key => key.Id);
     }
 
     public async Task WaitForCSharpVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)

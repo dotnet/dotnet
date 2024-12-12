@@ -53,6 +53,14 @@ x
 #line hidden
 #nullable disable
             );
+#nullable restore
+#line (3,23)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+  
+
+#line default
+#line hidden
+#nullable disable
+
         }
         #pragma warning restore 1998
     }

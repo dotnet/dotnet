@@ -26,6 +26,29 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpInEmptyExplicitStatement(bool fuse)
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @{
+                    $$
+                }
+
+                The end.
+                """,
+             completionContext: new RoslynVSInternalCompletionContext()
+             {
+                 InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                 TriggerKind = RoslynCompletionTriggerKind.Invoked
+             },
+             expectedItemLabels: ["var", "char", "DateTime", "Exception"],
+             fuse: fuse);
+    }
+
     [Fact]
     public async Task CSharpClassesAtTransition()
     {
@@ -430,8 +453,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         string[]? delegatedItemCommitCharacters = null,
         string[]? snippetLabels = null,
         bool autoInsertAttributeQuotes = true,
-        bool commitElementsWithSpace = true)
+        bool commitElementsWithSpace = true,
+        bool fuse = false)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = fuse });
+
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 

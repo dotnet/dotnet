@@ -59,16 +59,6 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
     public bool ContainsDocument(string filePath)
         => false;
 
-    public IDocumentSnapshot? GetDocument(string filePath)
-    {
-        if (filePath is null)
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        return null;
-    }
-
     public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
     {
         document = null;

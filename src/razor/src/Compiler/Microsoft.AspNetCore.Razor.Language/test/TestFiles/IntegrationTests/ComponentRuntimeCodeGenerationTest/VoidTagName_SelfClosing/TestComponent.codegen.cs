@@ -24,6 +24,14 @@ using Microsoft.AspNetCore.Components
         {
             __builder.OpenComponent<global::Test.Col>(0);
             __builder.CloseComponent();
+#nullable restore
+#line (4,3)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
+
+#line default
+#line hidden
+#nullable disable
+
             __builder.OpenComponent<global::Test.Col>(1);
             __builder.CloseComponent();
 #nullable restore

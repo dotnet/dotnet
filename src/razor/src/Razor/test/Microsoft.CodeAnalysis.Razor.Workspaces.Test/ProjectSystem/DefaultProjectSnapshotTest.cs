@@ -51,14 +51,14 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var snapshot = new ProjectSnapshot(state);
 
         // Act
-        var documents = snapshot.DocumentFilePaths.ToDictionary(f => f, f => snapshot.GetDocument(f));
+        var documents = snapshot.DocumentFilePaths.ToDictionary(f => f, snapshot.GetRequiredDocument);
 
         // Assert
         Assert.Collection(
             documents,
-            d => Assert.Same(d.Value, snapshot.GetDocument(d.Key)),
-            d => Assert.Same(d.Value, snapshot.GetDocument(d.Key)),
-            d => Assert.Same(d.Value, snapshot.GetDocument(d.Key)));
+            d => Assert.Same(d.Value, snapshot.GetRequiredDocument(d.Key)),
+            d => Assert.Same(d.Value, snapshot.GetRequiredDocument(d.Key)),
+            d => Assert.Same(d.Value, snapshot.GetRequiredDocument(d.Key)));
     }
 
     [Fact]
@@ -69,8 +69,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
         var snapshot = new ProjectSnapshot(state);
 
-        var document = snapshot.GetDocument(_documents[0].FilePath);
-        Assert.NotNull(document);
+        var document = snapshot.GetRequiredDocument(_documents[0].FilePath);
 
         // Act
         var documents = snapshot.GetRelatedDocuments(document);
@@ -89,8 +88,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
         var snapshot = new ProjectSnapshot(state);
 
-        var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
-        Assert.NotNull(document);
+        var document = snapshot.GetRequiredDocument(TestProjectData.SomeProjectImportFile.FilePath);
 
         // Act
         var documents = snapshot.GetRelatedDocuments(document);

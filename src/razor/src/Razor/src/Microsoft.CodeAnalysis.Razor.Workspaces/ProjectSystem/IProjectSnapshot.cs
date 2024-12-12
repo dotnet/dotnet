@@ -39,6 +39,5 @@ internal interface IProjectSnapshot
     ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken);
 
     bool ContainsDocument(string filePath);
-    IDocumentSnapshot? GetDocument(string filePath);
     bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document);
 }

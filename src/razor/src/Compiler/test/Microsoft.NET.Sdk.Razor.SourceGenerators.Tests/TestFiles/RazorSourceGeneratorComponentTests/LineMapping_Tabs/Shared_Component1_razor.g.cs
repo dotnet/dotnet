@@ -20,6 +20,14 @@ namespace MyApp.Shared
         {
             __builder.OpenElement(0, "div");
 #nullable restore
+#line (2,1)-(2,2) "Shared/Component1.razor"
+	
+
+#line default
+#line hidden
+#nullable disable
+
+#nullable restore
 #line (2,3)-(4,3) "Shared/Component1.razor"
 if (true)
 	{

@@ -4,7 +4,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.FindAllReferences;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
@@ -38,10 +40,10 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => GetImplementationAsync(context, position, cancellationToken),
+            context => FindAllReferencesAsync(context, position, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<RemoteResponse<SumType<VSInternalReferenceItem, LspLocation>[]?>> GetImplementationAsync(
+    private async ValueTask<RemoteResponse<SumType<VSInternalReferenceItem, LspLocation>[]?>> FindAllReferencesAsync(
         RemoteDocumentContext context,
         Position position,
         CancellationToken cancellationToken)
@@ -104,6 +106,9 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
                 {
                     referenceItem.DisplayPath = mappedUri.AbsolutePath;
                     referenceItem.DocumentName = mappedUri.AbsolutePath;
+
+                    var fixedResultText = await FindAllReferencesHelper.GetResultTextAsync(DocumentMappingService, context.GetSolutionQueryOperations(), mappedRange.Start.Line, mappedUri.GetDocumentFilePath(), cancellationToken).ConfigureAwait(false);
+                    referenceItem.Text = fixedResultText ?? referenceItem.Text;
                 }
             }
 

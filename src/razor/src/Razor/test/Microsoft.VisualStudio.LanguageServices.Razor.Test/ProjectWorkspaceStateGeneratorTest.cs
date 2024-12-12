@@ -130,8 +130,8 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         await Task.Run(() => generatorAccessor.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
 
         // Assert
-        var newProjectSnapshot = _projectManager.GetLoadedProject(_projectSnapshot.Key);
-        Assert.NotNull(newProjectSnapshot);
+        var newProjectSnapshot = _projectManager.GetRequiredProject(_projectSnapshot.Key);
+
         Assert.Empty(await newProjectSnapshot.GetTagHelpersAsync(DisposalToken));
     }
 
@@ -157,8 +157,8 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         await Task.Run(() => generatorAccessor.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
 
         // Assert
-        var newProjectSnapshot = _projectManager.GetLoadedProject(_projectSnapshot.Key);
-        Assert.NotNull(newProjectSnapshot);
+        var newProjectSnapshot = _projectManager.GetRequiredProject(_projectSnapshot.Key);
+
         Assert.Equal<TagHelperDescriptor>(_tagHelperResolver.TagHelpers, await newProjectSnapshot.GetTagHelpersAsync(DisposalToken));
     }
 }

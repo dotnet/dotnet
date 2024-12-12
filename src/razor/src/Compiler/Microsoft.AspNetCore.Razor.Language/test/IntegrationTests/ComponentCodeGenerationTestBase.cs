@@ -2329,6 +2329,37 @@ namespace Test
             ]);
     }
 
+    [IntegrationTestFact]
+    public void ExplicitExpression_HtmlOnly()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @{
+                <p></p>
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void ExplicitExpression_Whitespace()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @{
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Bind
