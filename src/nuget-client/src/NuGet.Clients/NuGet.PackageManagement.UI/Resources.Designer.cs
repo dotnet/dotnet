@@ -2043,6 +2043,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading README....
+        /// </summary>
+        public static string Text_LoadingReadme {
+            get {
+                return ResourceManager.GetString("Text_LoadingReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You can manage these settings in .
         /// </summary>
         public static string Text_ManageSettings {
@@ -2232,6 +2241,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Text_PackageSources {
             get {
                 return ResourceManager.GetString("Text_PackageSources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to README loaded.
+        /// </summary>
+        public static string Text_ReadmeLoaded {
+            get {
+                return ResourceManager.GetString("Text_ReadmeLoaded", resourceCulture);
             }
         }
         

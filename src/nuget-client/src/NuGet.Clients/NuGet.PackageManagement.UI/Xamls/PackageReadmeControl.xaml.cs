@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Markdown.Platform;
+using Microsoft.VisualStudio.Shell;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
@@ -16,19 +17,16 @@ namespace NuGet.PackageManagement.UI
     /// <summary>
     /// Interaction logic for PackageReadmeControl.xaml
     /// </summary>
-    public partial class PackageReadmeControl : UserControl, IDisposable
+    public partial class PackageReadmeControl : UserControl
     {
 #pragma warning disable CS0618 // Type or member is obsolete
         private IMarkdownPreview _markdownPreview;
 #pragma warning restore CS0618 // Type or member is obsolete
-        private bool _disposed = false;
 
         public PackageReadmeControl()
         {
             InitializeComponent();
-#pragma warning disable CS0618 // Type or member is obsolete
-            _markdownPreview = new PreviewBuilder().Build();
-#pragma warning restore CS0618 // Type or member is obsolete
+            _markdownPreview = MarkdownPreviewSingleton.GetInstance();
             descriptionMarkdownPreview.Content = _markdownPreview.VisualElement;
         }
 
@@ -40,31 +38,6 @@ namespace NuGet.PackageManagement.UI
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(UpdateMarkdownAsync).PostOnFailure(nameof(PackageReadmeControl), nameof(ReadmeViewModel_PropertyChanged));
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _markdownPreview?.Dispose();
-                if (ReadmeViewModel is not null)
-                {
-                    ReadmeViewModel.PropertyChanged -= ReadmeViewModel_PropertyChanged;
-                }
-            }
-
-            _disposed = true;
         }
 
         private async Task UpdateMarkdownAsync()
@@ -88,6 +61,10 @@ namespace NuGet.PackageManagement.UI
         {
             if (e.OldValue is ReadmePreviewViewModel oldMetadata)
             {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await _markdownPreview.UpdateContentAsync("", ScrollHint.None);
+                });
                 oldMetadata.PropertyChanged -= ReadmeViewModel_PropertyChanged;
             }
             if (ReadmeViewModel is not null)
@@ -98,13 +75,19 @@ namespace NuGet.PackageManagement.UI
 
         private void PackageReadmeControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Dispose();
+            if (ReadmeViewModel is not null)
+            {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await _markdownPreview.UpdateContentAsync("", ScrollHint.None);
+                });
+                ReadmeViewModel.PropertyChanged -= ReadmeViewModel_PropertyChanged;
+            }
         }
 
         private void PackageReadmeControl_Loaded(object sender, RoutedEventArgs e)
         {
-            NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(UpdateMarkdownAsync)
-                .PostOnFailure(nameof(PackageReadmeControl), nameof(PackageReadmeControl_Loaded));
+            NuGetUIThreadHelper.JoinableTaskFactory.Run(UpdateMarkdownAsync);
         }
     }
 }

@@ -20,7 +20,7 @@
     </ResourceDictionary>
   </UserControl.Resources>
   <Grid
-      Margin="0,12,0,16">
+      Margin="0,0,0,16">
     <StackPanel
         Orientation="Vertical">
       <StackPanel
@@ -84,6 +84,7 @@
                 <TextBlock
                   Grid.Column="1"
                   Margin="8,1,0,1"
+                  TextWrapping="Wrap"
                   ToolTip="{Binding AdvisoryUrl}">
                   <Hyperlink
                     NavigateUri="{Binding Path=AdvisoryUrl}"

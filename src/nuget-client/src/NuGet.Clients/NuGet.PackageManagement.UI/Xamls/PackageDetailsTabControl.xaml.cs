@@ -41,6 +41,7 @@ namespace NuGet.PackageManagement.UI
             if (disposing)
             {
                 PackageDetailsTabViewModel.Dispose();
+                MarkdownPreviewSingleton.ResetInstance();
             }
             _disposed = true;
         }

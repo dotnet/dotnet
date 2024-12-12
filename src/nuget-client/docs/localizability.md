@@ -24,7 +24,7 @@ Unfortunately, NuGet.Client does not use OneLocBuild, and any resource comments 
 Although the steps below are for the dev branch, the process is similar for release branches.
 
 1. A PR merges into the dev branch.
-1. A NuGet.Client build generates a `localizationArtifacts` artifact.  This artifact contains newly built (but unsigned) assemblies and .lcg files.  The .lcg files contain information extracted from .resx files and are the primary input for later localization.
+1. A NuGet.Client build generates a `localizationArtifacts` artifact.  This artifact contains newly built assemblies and .lcg files.  The .lcg files contain information extracted from .resx files and are the primary input for later localization.
 1. The localization team grabs the `localizationArtifacts` artifact from a NuGet.Client build.
 1. The localization team localizes strings and merges a ["LEGO" PR][5] with localized strings (in .lcl files).
 1. During the next NuGet.Client build, the build adds the [NuGet.Build.Localization][6] repository as a submodule of the NuGet.Client repository and checks out a branch of the same name as the NuGet.Client repository (e.g.:  dev, release-6.7.x, etc.).  Localized resources are [made available][7] to localized builds through the `NuGetBuildLocalizationRepository` property.

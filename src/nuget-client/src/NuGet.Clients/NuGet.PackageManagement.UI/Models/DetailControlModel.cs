@@ -458,6 +458,11 @@ namespace NuGet.PackageManagement.UI
             get => PackageVulnerabilities?.Count > 0;
         }
 
+        public bool IsPackageVulnerableOrDeprecated
+        {
+            get => IsPackageVulnerable || IsPackageDeprecated;
+        }
+
         public int PackageVulnerabilityCount
         {
             get => PackageVulnerabilities?.Count ?? 0;
@@ -528,10 +533,7 @@ namespace NuGet.PackageManagement.UI
 
                     OnPropertyChanged(nameof(PackageMetadata));
                     OnPropertyChanged(nameof(IsPackageDeprecated));
-                    OnPropertyChanged(nameof(IsPackageVulnerable));
-                    OnPropertyChanged(nameof(PackageVulnerabilityCount));
-                    OnPropertyChanged(nameof(PackageVulnerabilities));
-                    OnPropertyChanged(nameof(PackageVulnerabilityMaxSeverity));
+                    OnPropertyChanged(nameof(IsPackageVulnerableOrDeprecated));
                 }
             }
         }

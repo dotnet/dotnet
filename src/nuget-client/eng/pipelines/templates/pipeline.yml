@@ -180,7 +180,6 @@ stages:
         condition: "or(eq(variables['OverridePublishLocalizationArtifact'], 'true'), and(succeededOrFailed(), eq(variables['IsOfficialBuild'], 'true')))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\localizationArtifacts\\"
         artifactName: "localizationArtifacts"
-        codeSignValidationEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'

@@ -37,7 +37,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 
         internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, int> action)
         {
-            var whyCommand = new CliCommand("why", Strings.WhyCommand_Description);
+            var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
             CliArgument<string> path = new CliArgument<string>("PROJECT|SOLUTION")
             {

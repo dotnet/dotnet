@@ -38,8 +38,9 @@ namespace NuGet.PackageManagement.UI.ViewModels
         {
             var nuGetFeatureFlagService = await ServiceLocator.GetComponentModelServiceAsync<INuGetFeatureFlagService>();
             _readmeTabEnabled = await nuGetFeatureFlagService.IsFeatureEnabledAsync(NuGetFeatureFlagConstants.RenderReadmeInPMUI);
-
+#pragma warning disable CS0618 // Type or member is obsolete
             ReadmePreviewViewModel = new ReadmePreviewViewModel(nugetPackageFileService, currentFilter, _readmeTabEnabled);
+#pragma warning restore CS0618 // Type or member is obsolete
             DetailControlModel = detailControlModel;
 
             if (_readmeTabEnabled)
@@ -76,7 +77,6 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
             _disposed = true;
             DetailControlModel.PropertyChanged -= DetailControlModel_PropertyChanged;
-
             foreach (var tab in Tabs)
             {
                 tab.PropertyChanged -= IsVisible_PropertyChanged;
