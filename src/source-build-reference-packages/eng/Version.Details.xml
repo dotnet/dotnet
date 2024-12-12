@@ -2,9 +2,9 @@
 <Dependencies>
   <ToolsetDependencies>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24575.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.560301">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>476ab5c5aab87185e7232268e564832ea8ca5b56</Sha>
+      <Sha>e05b759f3b6b09e30bf52535375181bfa25e2c49</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -14,18 +14,18 @@
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24578.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24606.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e8de3415124309210e4cbd0105e4a9da8dc01696</Sha>
+      <Sha>61b8f746424762d2e3173ebfaab19346224d591c</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24578.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24606.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e8de3415124309210e4cbd0105e4a9da8dc01696</Sha>
+      <Sha>61b8f746424762d2e3173ebfaab19346224d591c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.102-servicing.24579.1">
+    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.102-servicing.24605.31">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>cbec38b13edc53f701225f8f087fb5a2dbfd3679</Sha>
+      <Sha>92d3e8bae1b2c04b64cb333fb78b5294fa32731a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">
       <Uri>https://github.com/dotnet/runtime</Uri>
