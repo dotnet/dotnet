@@ -164,11 +164,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return false;
     }
 
-    public IDocumentSnapshot? GetDocument(string filePath)
-        => TryGetDocument(filePath, out var document)
-            ? document
-            : null;
-
     public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
     {
         if (!filePath.IsRazorFilePath())

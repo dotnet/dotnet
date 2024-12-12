@@ -19,6 +19,14 @@ namespace Test
         {
             __builder.OpenElement(0, "ul");
 #nullable restore
+#line (4,1)-(4,5) "x:\dir\subdir\Test\TestComponent.cshtml"
+    
+
+#line default
+#line hidden
+#nullable disable
+
+#nullable restore
 #line (4,6)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 foreach (var item in Enumerable.Range(1, 100))
     {

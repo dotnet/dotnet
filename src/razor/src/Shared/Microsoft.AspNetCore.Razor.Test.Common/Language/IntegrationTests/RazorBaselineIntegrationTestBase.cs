@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
@@ -156,6 +157,12 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
             var sourceMappings = csharpDocument.SourceMappings;
             foreach (var sourceMapping in sourceMappings)
             {
+                var content = codeDocument.Source.Text.GetSubText(new TextSpan(sourceMapping.OriginalSpan.AbsoluteIndex, sourceMapping.OriginalSpan.Length)).ToString();
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    continue;
+                }
+
                 var foundMatchingPragma = false;
                 foreach (var linePragma in linePragmas)
                 {

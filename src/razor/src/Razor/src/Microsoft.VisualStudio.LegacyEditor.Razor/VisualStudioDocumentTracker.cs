@@ -150,17 +150,16 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
     }
 
-    private IProjectSnapshot GetOrCreateProject(string projectPath)
+    private IProjectSnapshot GetOrCreateProject(string projectFilePath)
     {
-        var projectKeys = _projectManager.GetAllProjectKeys(projectPath);
+        var projectKeys = _projectManager.GetProjectKeysWithFilePath(projectFilePath);
 
-        if (projectKeys.Length == 0 ||
-            !_projectManager.TryGetLoadedProject(projectKeys[0], out var project))
+        if (projectKeys is [var projectKey, ..] && _projectManager.TryGetProject(projectKey, out var project))
         {
-            return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectPath);
+            return project;
         }
 
-        return project;
+        return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectFilePath);
     }
 
     public void Unsubscribe()
@@ -202,7 +201,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
         {
             // This will be the new snapshot unless the project was removed.
-            if (!_projectManager.TryGetLoadedProject(e.ProjectKey, out _projectSnapshot))
+            if (!_projectManager.TryGetProject(e.ProjectKey, out _projectSnapshot))
             {
                 _projectSnapshot = null;
             }

@@ -45,6 +45,13 @@ output
 #nullable disable
             );
             __builder.CloseElement();
+#nullable restore
+#line (8,1)-(8,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
+#line default
+#line hidden
+#nullable disable
+
         }
         #pragma warning restore 1998
     }

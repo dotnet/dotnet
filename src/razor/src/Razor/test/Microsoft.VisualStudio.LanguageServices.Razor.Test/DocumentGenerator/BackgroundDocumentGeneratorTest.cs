@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -62,7 +61,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Returns(tcs.Task);
         var hostDocument = s_documents[0];
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false)
@@ -126,12 +125,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
 
         await generator.WaitUntilCurrentBatchCompletesAsync();
     }
@@ -167,12 +166,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoaderMock.Object);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
 
         await generator.WaitUntilCurrentBatchCompletesAsync();
     }
@@ -191,7 +190,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.DocumentAdded(s_hostProject1.Key, s_documents[1], s_documents[1].CreateEmptyTextLoader());
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
         var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
@@ -199,7 +198,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Act & Assert
 
         // Enqueue some work.
-        generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
@@ -230,7 +229,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.DocumentAdded(hostProject1.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
         });
 
-        var project = projectManager.GetLoadedProject(hostProject1.Key);
+        var project = projectManager.GetRequiredProject(hostProject1.Key);
         var documentKey1 = new DocumentKey(project.Key, hostDocument1.FilePath);
         var documentKey2 = new DocumentKey(project.Key, hostDocument2.FilePath);
 
@@ -239,7 +238,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Act & Assert
 
         // First, enqueue some work.
-        generator.Enqueue(project, project.GetDocument(hostDocument1.FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetRequiredDocument(hostDocument1.FilePath));
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
@@ -248,7 +247,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         Assert.Single(generator.CompletedWork, documentKey1);
 
         // Enqueue more work.
-        generator.Enqueue(project, project.GetDocument(hostDocument2.FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetRequiredDocument(hostDocument2.FilePath));
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();

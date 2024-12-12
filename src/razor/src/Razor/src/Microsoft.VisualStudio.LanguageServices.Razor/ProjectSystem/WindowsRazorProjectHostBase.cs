@@ -214,21 +214,20 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
         // FilePath.
         return ExecuteWithLockAsync(() => UpdateAsync(updater =>
         {
-            var projectKeys = updater.GetAllProjectKeys(oldProjectFilePath);
+            var projectKeys = updater.GetProjectKeysWithFilePath(oldProjectFilePath);
             foreach (var projectKey in projectKeys)
             {
-                if (updater.TryGetLoadedProject(projectKey, out var current))
+                if (updater.TryGetProject(projectKey, out var project))
                 {
                     RemoveProject(updater, projectKey);
 
-                    var hostProject = new HostProject(newProjectFilePath, current.IntermediateOutputPath, current.Configuration, current.RootNamespace);
+                    var hostProject = new HostProject(newProjectFilePath, project.IntermediateOutputPath, project.Configuration, project.RootNamespace);
                     UpdateProject(updater, hostProject);
 
                     // This should no-op in the common case, just putting it here for insurance.
-                    foreach (var documentFilePath in current.DocumentFilePaths)
+                    foreach (var documentFilePath in project.DocumentFilePaths)
                     {
-                        var documentSnapshot = current.GetDocument(documentFilePath);
-                        Assumes.NotNull(documentSnapshot);
+                        var documentSnapshot = project.GetRequiredDocument(documentFilePath);
 
                         var hostDocument = new HostDocument(
                             documentSnapshot.FilePath,
@@ -241,10 +240,8 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
         }, CancellationToken.None));
     }
 
-    protected ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFilePath)
-    {
-        return _projectManager.GetAllProjectKeys(projectFilePath);
-    }
+    protected ImmutableArray<ProjectKey> GetProjectKeysWithFilePath(string projectFilePath)
+        => _projectManager.GetProjectKeysWithFilePath(projectFilePath);
 
     protected Task UpdateAsync(Action<ProjectSnapshotManager.Updater> action, CancellationToken cancellationToken)
     {
@@ -265,7 +262,7 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected static void UpdateProject(ProjectSnapshotManager.Updater updater, HostProject project)
     {
-        if (!updater.TryGetLoadedProject(project.Key, out _))
+        if (!updater.ContainsProject(project.Key))
         {
             // Just in case we somehow got in a state where VS didn't tell us that solution close was finished, lets just
             // ensure we're going to actually do something with the new project that we've just been told about.

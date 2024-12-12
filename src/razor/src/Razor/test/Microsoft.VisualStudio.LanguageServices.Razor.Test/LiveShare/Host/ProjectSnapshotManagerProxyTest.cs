@@ -59,8 +59,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         var state = await JoinableTaskFactory.RunAsync(() => proxy.CalculateUpdatedStateAsync(projectManager.GetProjects()));
 
         // Assert
-        var project1TagHelpers = await projectManager.GetLoadedProject(_hostProject1.Key).GetTagHelpersAsync(DisposalToken);
-        var project2TagHelpers = await projectManager.GetLoadedProject(_hostProject2.Key).GetTagHelpersAsync(DisposalToken);
+        var project1TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject1.Key)
+            .GetTagHelpersAsync(DisposalToken);
+
+        var project2TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject2.Key)
+            .GetTagHelpersAsync(DisposalToken);
 
         Assert.Collection(
             state.ProjectHandles,
@@ -101,7 +106,7 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = updater.GetLoadedProject(_hostProject1.Key);
+            var project = updater.GetRequiredProject(_hostProject1.Key);
             updater.ProjectConfigurationChanged(new(
                 project.FilePath,
                 project.IntermediateOutputPath,
@@ -142,7 +147,7 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = updater.GetLoadedProject(_hostProject1.Key);
+            var project = updater.GetRequiredProject(_hostProject1.Key);
             updater.ProjectConfigurationChanged(new(
                 project.FilePath,
                 project.IntermediateOutputPath,
@@ -211,8 +216,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         var state = await JoinableTaskFactory.RunAsync(() => proxy.GetProjectManagerStateAsync(DisposalToken));
 
         // Assert
-        var project1TagHelpers = await projectManager.GetLoadedProject(_hostProject1.Key).GetTagHelpersAsync(DisposalToken);
-        var project2TagHelpers = await projectManager.GetLoadedProject(_hostProject2.Key).GetTagHelpersAsync(DisposalToken);
+        var project1TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject1.Key)
+            .GetTagHelpersAsync(DisposalToken);
+
+        var project2TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject2.Key)
+            .GetTagHelpersAsync(DisposalToken);
 
         Assert.Collection(
             state.ProjectHandles,

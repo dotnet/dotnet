@@ -197,12 +197,13 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
 
         var inAny = false;
         var normalizedDocumentPath = RazorDynamicFileInfoProvider.GetProjectSystemFilePath(hostDocumentUri);
-        foreach (var projectSnapshot in projects)
+
+        foreach (var project in projects)
         {
-            if (projectSnapshot.ContainsDocument(normalizedDocumentPath))
+            if (project.ContainsDocument(normalizedDocumentPath))
             {
                 inAny = true;
-                yield return projectSnapshot.Key;
+                yield return project.Key;
             }
         }
 

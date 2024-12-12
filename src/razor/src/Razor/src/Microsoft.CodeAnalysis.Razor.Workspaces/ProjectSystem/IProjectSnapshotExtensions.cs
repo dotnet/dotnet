@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
@@ -11,6 +12,14 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal static class IProjectSnapshotExtensions
 {
+    public static IDocumentSnapshot? GetDocument(this IProjectSnapshot project, string filePath)
+        => project.TryGetDocument(filePath, out var result)
+            ? result
+            : null;
+
+    public static IDocumentSnapshot GetRequiredDocument(this IProjectSnapshot project, string filePath)
+        => project.GetDocument(filePath).AssumeNotNull();
+
     public static RazorProjectInfo ToRazorProjectInfo(this IProjectSnapshot project)
     {
         using var documents = new PooledArrayBuilder<DocumentSnapshotHandle>();

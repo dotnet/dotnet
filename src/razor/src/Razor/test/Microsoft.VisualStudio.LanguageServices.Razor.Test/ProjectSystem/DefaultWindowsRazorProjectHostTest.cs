@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Xunit;
 using Xunit.Abstractions;
@@ -711,28 +712,28 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert
-        var snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
+        var project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
 
-        Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
-        Assert.Equal("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        Assert.Equal(RazorLanguageVersion.Version_2_1, project.Configuration.LanguageVersion);
+        Assert.Equal("MVC-2.1", project.Configuration.ConfigurationName);
         Assert.Collection(
-            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            project.Configuration.Extensions.OrderBy(e => e.ExtensionName),
             e => Assert.Equal("Another-Thing", e.ExtensionName),
             e => Assert.Equal("MVC-2.1", e.ExtensionName));
 
         Assert.Collection(
-            snapshot.DocumentFilePaths.OrderBy(d => d),
+            project.DocumentFilePaths.OrderBy(d => d),
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Legacy, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Component, document.FileKind);
@@ -912,34 +913,34 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
+        var project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
 
-        Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
-        Assert.Equal("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        Assert.Equal(RazorLanguageVersion.Version_2_1, project.Configuration.LanguageVersion);
+        Assert.Equal("MVC-2.1", project.Configuration.ConfigurationName);
         Assert.Collection(
-            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            project.Configuration.Extensions.OrderBy(e => e.ExtensionName),
             e => Assert.Equal("Another-Thing", e.ExtensionName),
             e => Assert.Equal("MVC-2.1", e.ExtensionName));
 
         Assert.Collection(
-            snapshot.DocumentFilePaths.OrderBy(d => d),
+            project.DocumentFilePaths.OrderBy(d => d),
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.ComponentImport, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Component, document.FileKind);
@@ -973,49 +974,49 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
-        snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
+        project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
 
-        Assert.Equal(RazorLanguageVersion.Version_2_0, snapshot.Configuration.LanguageVersion);
-        Assert.Equal("MVC-2.0", snapshot.Configuration.ConfigurationName);
+        Assert.Equal(RazorLanguageVersion.Version_2_0, project.Configuration.LanguageVersion);
+        Assert.Equal("MVC-2.0", project.Configuration.ConfigurationName);
         Assert.Collection(
-            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            project.Configuration.Extensions.OrderBy(e => e.ExtensionName),
             e => Assert.Equal("Another-Thing", e.ExtensionName),
             e => Assert.Equal("MVC-2.0", e.ExtensionName));
 
         Assert.Collection(
-            snapshot.DocumentFilePaths.OrderBy(d => d),
+            project.DocumentFilePaths.OrderBy(d => d),
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.AnotherProjectNestedFile3.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.AnotherProjectNestedFile3.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Legacy, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.AnotherProjectNestedComponentFile3.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.AnotherProjectNestedComponentFile3.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Component, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.ComponentImport, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Legacy, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Component, document.FileKind);
@@ -1223,22 +1224,22 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
-        Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        var project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
+        Assert.Same("MVC-2.1", project.Configuration.ConfigurationName);
 
         Assert.Collection(
-           snapshot.DocumentFilePaths.OrderBy(d => d),
+           project.DocumentFilePaths.OrderBy(d => d),
            d =>
            {
-               var document = snapshot.GetDocument(d);
+               var document = project.GetRequiredDocument(d);
                Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
                Assert.Equal(FileKinds.Legacy, document.FileKind);
            },
            d =>
            {
-               var document = snapshot.GetDocument(d);
+               var document = project.GetRequiredDocument(d);
                Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                Assert.Equal(FileKinds.Component, document.FileKind);
@@ -1249,22 +1250,22 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectRenamingAsync(TestProjectData.SomeProject.FilePath, TestProjectData.AnotherProject.FilePath));
 
         // Assert - 1
-        snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.AnotherProject.FilePath, snapshot.FilePath);
-        Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.AnotherProject.FilePath, project.FilePath);
+        Assert.Same("MVC-2.1", project.Configuration.ConfigurationName);
 
         Assert.Collection(
-           snapshot.DocumentFilePaths.OrderBy(d => d),
+           project.DocumentFilePaths.OrderBy(d => d),
            d =>
            {
-               var document = snapshot.GetDocument(d);
+               var document = project.GetRequiredDocument(d);
                Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
                Assert.Equal(FileKinds.Legacy, document.FileKind);
            },
            d =>
            {
-               var document = snapshot.GetDocument(d);
+               var document = project.GetRequiredDocument(d);
                Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                Assert.Equal(FileKinds.Component, document.FileKind);
@@ -1320,34 +1321,34 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
+        var project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
 
-        Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
-        Assert.Equal("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        Assert.Equal(RazorLanguageVersion.Version_2_1, project.Configuration.LanguageVersion);
+        Assert.Equal("MVC-2.1", project.Configuration.ConfigurationName);
         Assert.Collection(
-            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            project.Configuration.Extensions.OrderBy(e => e.ExtensionName),
             e => Assert.Equal("Another-Thing", e.ExtensionName),
             e => Assert.Equal("MVC-2.1", e.ExtensionName));
 
         Assert.Collection(
-            snapshot.DocumentFilePaths.OrderBy(d => d),
+            project.DocumentFilePaths.OrderBy(d => d),
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.ComponentImport, document.FileKind);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
             },
             d =>
             {
-                var document = snapshot.GetDocument(d);
+                var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
                 Assert.Equal(FileKinds.Component, document.FileKind);
@@ -1370,9 +1371,9 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         // Assert - 2
         // Changing intermediate output path is effectively removing the old project and adding a new one.
-        snapshot = Assert.Single(_projectManager.GetProjects());
-        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
-        Assert.Equal(TestProjectData.SomeProject.IntermediateOutputPath + "2", snapshot.IntermediateOutputPath);
+        project = Assert.Single(_projectManager.GetProjects());
+        Assert.Equal(TestProjectData.SomeProject.FilePath, project.FilePath);
+        Assert.Equal(TestProjectData.SomeProject.IntermediateOutputPath + "2", project.IntermediateOutputPath);
 
         await Task.Run(async () => await host.DisposeAsync());
         Assert.Empty(_projectManager.GetProjects());

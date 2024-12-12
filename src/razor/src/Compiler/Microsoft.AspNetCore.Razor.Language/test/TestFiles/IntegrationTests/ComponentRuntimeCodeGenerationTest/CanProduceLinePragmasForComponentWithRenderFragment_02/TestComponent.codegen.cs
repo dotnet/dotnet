@@ -34,6 +34,14 @@ ActionText
             );
             __builder.CloseElement();
 #nullable restore
+#line (3,1)-(3,3) "x:\dir\subdir\Test\TestComponent.cshtml"
+  
+
+#line default
+#line hidden
+#nullable disable
+
+#nullable restore
 #line (3,4)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 if (!Collapsed)
   {

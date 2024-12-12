@@ -49,7 +49,7 @@
   <PropertyGroup Label="Automated">
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>10.0.557602</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>10.0.560201</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftSourceBuildIntermediatearcadePackageVersion>9.0.0-beta.24572.2</MicrosoftSourceBuildIntermediatearcadePackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksPackageVersion>
     <MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>1.0.0-beta.23475.1</MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>
@@ -99,5 +99,15 @@
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <XUnitVersion>2.6.6</XUnitVersion>
     <XUnitAnalyzersVersion>1.7.0</XUnitAnalyzersVersion>
+  </PropertyGroup>
+
+  <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
+    <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <MicrosoftIORedistVersion>6.1.0</MicrosoftIORedistVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.0</SystemThreadingTasksExtensionsVersion>
   </PropertyGroup>
 </Project>

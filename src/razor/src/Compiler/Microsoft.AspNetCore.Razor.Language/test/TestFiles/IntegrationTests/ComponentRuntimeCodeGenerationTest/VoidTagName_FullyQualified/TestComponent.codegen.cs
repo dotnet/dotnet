@@ -28,6 +28,14 @@ using Microsoft.AspNetCore.Components
             }
             ));
             __builder.CloseComponent();
+#nullable restore
+#line (4,3)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
+
+#line default
+#line hidden
+#nullable disable
+
             __builder.OpenComponent<global::Test.Col>(3);
             __builder.AddAttribute(4, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddContent(5, "in code block");
