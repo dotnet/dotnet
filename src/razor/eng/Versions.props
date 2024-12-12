@@ -100,4 +100,14 @@
     <XUnitVersion>2.6.6</XUnitVersion>
     <XUnitAnalyzersVersion>1.7.0</XUnitAnalyzersVersion>
   </PropertyGroup>
+
+  <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
+    <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
+  </PropertyGroup>
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <MicrosoftIORedistVersion>6.1.0</MicrosoftIORedistVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.0</SystemThreadingTasksExtensionsVersion>
+  </PropertyGroup>
 </Project>
