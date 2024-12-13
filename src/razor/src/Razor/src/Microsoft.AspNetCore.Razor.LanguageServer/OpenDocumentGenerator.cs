@@ -92,7 +92,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
     private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
     {
         // Don't do any work if the solution is closing
-        if (args.SolutionIsClosing)
+        if (args.IsSolutionClosing)
         {
             return;
         }

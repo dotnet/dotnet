@@ -42,7 +42,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
             var hostProject = MiscFilesHostProject.Instance with { Configuration = FallbackRazorConfiguration.Latest };
             var hostDocument = new HostDocument(normalizedFilePath, targetPath: "document.cshtml");
 
-            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
         });
 
         // Act
@@ -114,7 +114,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
+            updater.AddProject(hostProject);
         });
 
         // Act
@@ -133,9 +133,9 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         var expectedProject = await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.ProjectAdded(otherHostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddProject(hostProject);
+            updater.AddProject(otherHostProject);
+            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
 
             return updater.GetRequiredProject(hostProject.Key);
         });
@@ -163,8 +163,8 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         var miscProject = await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentAdded(miscFilesHostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
-            updater.ProjectAdded(hostProject);
+            updater.AddDocument(miscFilesHostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddProject(hostProject);
 
             return updater.GetRequiredProject(miscFilesHostProject.Key);
         });
@@ -188,8 +188,8 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         var ownerProject = await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
 
             return updater.GetRequiredProject(hostProject.Key);
         });
@@ -249,7 +249,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
             await projectManager.UpdateAsync(updater =>
             {
-                updater.ProjectAdded(hostProject);
+                updater.AddProject(hostProject);
             });
         }
 
@@ -257,7 +257,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
         });
 
         return projectManager;

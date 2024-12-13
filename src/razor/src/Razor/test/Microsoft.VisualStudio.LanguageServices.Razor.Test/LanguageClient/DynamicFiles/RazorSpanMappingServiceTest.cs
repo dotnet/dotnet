@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
@@ -29,9 +28,10 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 @SomeProperty
 ");
 
-        var project = new ProjectSnapshot(ProjectState
+        var state = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
+            .AddDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText));
+        var project = new ProjectSnapshot(state);
 
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
@@ -60,9 +60,10 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 @SomeProperty
 ");
 
-        var project = new ProjectSnapshot(ProjectState
+        var state = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
+            .AddDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText));
+        var project = new ProjectSnapshot(state);
 
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
@@ -92,9 +93,10 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 }
 ");
 
-        var project = new ProjectSnapshot(ProjectState
+        var state = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
+            .AddDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText));
+        var project = new ProjectSnapshot(state);
 
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
@@ -123,9 +125,10 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 }
 ");
 
-        var project = new ProjectSnapshot(ProjectState
+        var state = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
+            .AddDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText));
+        var project = new ProjectSnapshot(state);
 
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 

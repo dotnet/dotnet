@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -109,9 +108,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
                 filePath: "Three.csproj",
                 documents: [razorDocumentInfo]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj3\\Three.dll")));
 
-        _projectNumberOne = _solutionWithTwoProjects.GetProject(projectId1).AssumeNotNull();
-        _projectNumberTwo = _solutionWithTwoProjects.GetProject(projectId2).AssumeNotNull();
-        _projectNumberThree = _solutionWithOneProject.GetProject(projectId3).AssumeNotNull();
+        _projectNumberOne = _solutionWithTwoProjects.GetRequiredProject(projectId1);
+        _projectNumberTwo = _solutionWithTwoProjects.GetRequiredProject(projectId2);
+        _projectNumberThree = _solutionWithOneProject.GetRequiredProject(projectId3);
 
         _hostProjectOne = new HostProject("One.csproj", "obj1", FallbackRazorConfiguration.MVC_1_1, "One");
         _hostProjectTwo = new HostProject("Two.csproj", "obj2", FallbackRazorConfiguration.MVC_1_1, "Two");
@@ -135,7 +134,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         await workspaceChangedTask;
@@ -149,7 +148,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             updater.SolutionClosed();
 
             // Trigger a project removed event while solution is closing to clear state.
-            updater.ProjectRemoved(_hostProjectOne.Key);
+            updater.RemoveProject(_hostProjectOne.Key);
         });
 
         // Assert
@@ -171,9 +170,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
-            updater.ProjectAdded(_hostProjectTwo);
-            updater.ProjectAdded(_hostProjectThree);
+            updater.AddProject(_hostProjectOne);
+            updater.AddProject(_hostProjectTwo);
+            updater.AddProject(_hostProjectThree);
         });
 
         // Initialize with a project. This will get removed.
@@ -212,9 +211,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
-            updater.ProjectAdded(_hostProjectTwo);
-            updater.ProjectAdded(_hostProjectThree);
+            updater.AddProject(_hostProjectOne);
+            updater.AddProject(_hostProjectTwo);
+            updater.AddProject(_hostProjectThree);
         });
 
         // Initialize with a project. This will get removed.
@@ -255,8 +254,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
-            updater.ProjectAdded(_hostProjectTwo);
+            updater.AddProject(_hostProjectOne);
+            updater.AddProject(_hostProjectTwo);
         });
 
         var e = new WorkspaceChangeEventArgs(kind, oldSolution: _emptySolution, newSolution: _solutionWithTwoProjects);
@@ -289,9 +288,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
-            updater.ProjectAdded(_hostProjectTwo);
-            updater.ProjectAdded(_hostProjectThree);
+            updater.AddProject(_hostProjectOne);
+            updater.AddProject(_hostProjectTwo);
+            updater.AddProject(_hostProjectThree);
         });
 
         // Initialize with a project. This will get removed.
@@ -329,7 +328,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         // Stop any existing work and clear out any updates that we might have received.
@@ -367,7 +366,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         generator.Clear();
@@ -399,7 +398,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         generator.Clear();
@@ -431,7 +430,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         generator.Clear();
@@ -463,7 +462,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
+            updater.AddProject(_hostProjectOne);
         });
 
         await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
@@ -480,8 +479,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // The change detector only operates when a semantic model / syntax tree is available.
         await document.GetSyntaxRootAsync();
@@ -511,8 +509,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectOne);
-            updater.ProjectAdded(_hostProjectTwo);
+            updater.AddProject(_hostProjectOne);
+            updater.AddProject(_hostProjectTwo);
         });
 
         var solution = _solutionWithTwoProjects.RemoveProject(_projectNumberOne.Id);
@@ -539,7 +537,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProjectThree);
+            updater.AddProject(_hostProjectThree);
         });
 
         var solution = _solutionWithOneProject;
@@ -568,8 +566,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -597,8 +594,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -626,8 +622,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Act
         var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
@@ -651,8 +646,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         await document.GetSyntaxRootAsync();
 
@@ -672,8 +666,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -705,8 +698,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -737,8 +729,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
-        var document = solution.GetDocument(_partialComponentClassDocumentId);
-        Assert.NotNull(document);
+        var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Initialize document
         await document.GetSyntaxRootAsync();

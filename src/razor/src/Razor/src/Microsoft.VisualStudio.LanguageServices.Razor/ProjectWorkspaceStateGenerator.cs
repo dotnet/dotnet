@@ -165,7 +165,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                         }
 
                         logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
-                        updater.ProjectWorkspaceStateChanged(projectKey, workspaceState);
+                        updater.UpdateProjectWorkspaceState(projectKey, workspaceState);
                     },
                     state: (projectKey, workspaceState, _logger, cancellationToken),
                     cancellationToken)

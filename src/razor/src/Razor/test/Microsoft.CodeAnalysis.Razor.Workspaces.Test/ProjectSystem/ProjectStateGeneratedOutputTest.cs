@@ -39,17 +39,17 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task HostDocumentAdded_CachesOutput()
+    public async Task AddDocument_CachesOutput()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithAddedHostDocument(TestProjectData.AnotherProjectFile1, DocumentState.EmptyLoader);
+        var state = original.AddDocument(TestProjectData.AnotherProjectFile1, DocumentState.EmptyLoader);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -58,17 +58,17 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task HostDocumentAdded_Import_DoesNotCacheOutput()
+    public async Task AddDocument_Import_DoesNotCacheOutput()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
+        var state = original.AddDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -78,19 +78,19 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task HostDocumentChanged_DoesNotCacheOutput()
+    public async Task WithDocumentText_DoesNotCacheOutput()
     {
         // Arrange
         var original = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader)
-            .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader)
+            .AddDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
         var version = VersionStamp.Create();
-        var state = original.WithChangedHostDocument(_hostDocument, TestMocks.CreateTextLoader("@using System", version));
+        var state = original.WithDocumentText(_hostDocument.FilePath, TestMocks.CreateTextLoader("@using System", version));
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -100,19 +100,19 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task HostDocumentChanged_Import_DoesNotCacheOutput()
+    public async Task WithDocumentText_Import_DoesNotCacheOutput()
     {
         // Arrange
         var original = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader)
-            .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader)
+            .AddDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
         var version = VersionStamp.Create();
-        var state = original.WithChangedHostDocument(TestProjectData.SomeProjectImportFile, TestMocks.CreateTextLoader("@using System", version));
+        var state = original.WithDocumentText(TestProjectData.SomeProjectImportFile.FilePath, TestMocks.CreateTextLoader("@using System", version));
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -122,18 +122,18 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task HostDocumentRemoved_Import_DoesNotCacheOutput()
+    public async Task RemoveDocument_Import_DoesNotCacheOutput()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader)
-            .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader)
+            .AddDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithRemovedHostDocument(TestProjectData.SomeProjectImportFile);
+        var state = original.RemoveDocument(TestProjectData.SomeProjectImportFile.FilePath);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -143,18 +143,17 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task ProjectWorkspaceStateChange_CachesOutput_EvenWhenNewerProjectWorkspaceState()
+    public async Task WithProjectWorkspaceState_CachesOutput_EvenWhenNewerProjectWorkspaceState()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
-        var changed = ProjectWorkspaceState.Default;
 
         // Act
-        var state = original.WithProjectWorkspaceState(changed);
+        var state = original.WithProjectWorkspaceState(ProjectWorkspaceState.Default);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -164,18 +163,18 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
 
     // The generated code's text doesn't change as a result, so the output version does not change
     [Fact]
-    public async Task ProjectWorkspaceStateChange_WithTagHelperChange_DoesNotCacheOutput()
+    public async Task WithProjectWorkspaceState_TagHelperChange_DoesNotCacheOutput()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
-        var changed = ProjectWorkspaceState.Create(_someTagHelpers);
 
         // Act
-        var state = original.WithProjectWorkspaceState(changed);
+        var state = original.WithProjectWorkspaceState(
+            ProjectWorkspaceState.Create(_someTagHelpers));
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -185,21 +184,21 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task ProjectWorkspaceStateChange_WithProjectWorkspaceState_CSharpLanguageVersionChange_DoesNotCacheOutput()
+    public async Task WithProjectWorkspaceState_CSharpLanguageVersionChange_DoesNotCacheOutput()
     {
         // Arrange
         var csharp8ValidConfiguration = new RazorConfiguration(RazorLanguageVersion.Version_3_0, _hostProject.Configuration.ConfigurationName, _hostProject.Configuration.Extensions);
         var hostProject = TestProjectData.SomeProject with { Configuration = csharp8ValidConfiguration };
         var originalWorkspaceState = ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp7);
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, hostProject, originalWorkspaceState)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader("@DateTime.Now", VersionStamp.Default));
-        var changedWorkspaceState = ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp8);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, hostProject, originalWorkspaceState)
+            .AddDocument(_hostDocument, TestMocks.CreateTextLoader("@DateTime.Now", VersionStamp.Default));
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 
         // Act
-        var state = original.WithProjectWorkspaceState(changedWorkspaceState);
+        var state = original.WithProjectWorkspaceState(
+            ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp8));
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
@@ -209,12 +208,12 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     }
 
     [Fact]
-    public async Task ConfigurationChange_DoesNotCacheOutput()
+    public async Task WithHostProject_DoesNotCacheOutput()
     {
         // Arrange
-        var original =
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, DocumentState.EmptyLoader);
+        var original = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, DocumentState.EmptyLoader);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
 

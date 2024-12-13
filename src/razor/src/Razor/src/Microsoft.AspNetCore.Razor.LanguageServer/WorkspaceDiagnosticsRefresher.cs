@@ -2,9 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -65,7 +62,7 @@ internal sealed class WorkspaceDiagnosticsRefresher : IRazorStartupService, IDis
 
     private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs e)
     {
-        if (e.SolutionIsClosing)
+        if (e.IsSolutionClosing)
         {
             return;
         }

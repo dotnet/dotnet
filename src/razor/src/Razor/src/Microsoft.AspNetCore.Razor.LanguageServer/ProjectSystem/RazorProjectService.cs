@@ -19,8 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
@@ -175,7 +173,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
         _logger.LogInformation($"Adding document '{textDocumentPath}' to project '{miscFilesProject.Key}'.");
 
-        updater.DocumentAdded(miscFilesProject.Key, hostDocument, textLoader);
+        updater.AddDocument(miscFilesProject.Key, hostDocument, textLoader);
     }
 
     public async Task OpenDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken)
@@ -203,7 +201,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     (projectSnapshot, textDocumentPath) =>
                     {
                         _logger.LogInformation($"Opening document '{textDocumentPath}' in project '{projectSnapshot.Key}'.");
-                        updater.DocumentOpened(projectSnapshot.Key, textDocumentPath, sourceText);
+                        updater.OpenDocument(projectSnapshot.Key, textDocumentPath, sourceText);
                     });
             },
             cancellationToken)
@@ -224,7 +222,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                         var textLoader = _remoteTextLoaderFactory.Create(filePath);
                         _logger.LogInformation($"Closing document '{textDocumentPath}' in project '{projectSnapshot.Key}'.");
 
-                        updater.DocumentClosed(projectSnapshot.Key, textDocumentPath, textLoader);
+                        updater.CloseDocument(projectSnapshot.Key, textDocumentPath, textLoader);
                     });
             },
             cancellationToken)
@@ -270,7 +268,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                         {
                             _logger.LogInformation($"Removing document '{textDocumentPath}' from project '{projectSnapshot.Key}'.");
 
-                            updater.DocumentRemoved(projectSnapshot.Key, documentSnapshot.HostDocument);
+                            updater.RemoveDocument(projectSnapshot.Key, documentSnapshot.FilePath);
                         }
                     });
             },
@@ -291,7 +289,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     {
                         _logger.LogTrace($"Updating document '{textDocumentPath}' in {project.Key}.");
 
-                        updater.DocumentChanged(project.Key, textDocumentPath, sourceText);
+                        updater.UpdateDocumentText(project.Key, textDocumentPath, sourceText);
                     });
             },
             cancellationToken)
@@ -320,7 +318,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             normalizedPath, intermediateOutputPath, configuration ?? FallbackRazorConfiguration.Latest, rootNamespace, displayName);
 
         // ProjectAdded will no-op if the project already exists
-        updater.ProjectAdded(hostProject);
+        updater.AddProject(hostProject);
 
         _logger.LogInformation($"Added project '{filePath}' with key {hostProject.Key} to project system.");
 
@@ -369,7 +367,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}) and C# Language Version ({projectWorkspaceState.CSharpLanguageVersion}).");
                 }
 
-                updater.ProjectWorkspaceStateChanged(project.Key, projectWorkspaceState);
+                updater.UpdateProjectWorkspaceState(project.Key, projectWorkspaceState);
 
                 var currentConfiguration = project.Configuration;
                 var currentRootNamespace = project.RootNamespace;
@@ -396,7 +394,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                 }
 
                 var hostProject = new HostProject(project.FilePath, project.IntermediateOutputPath, configuration, rootNamespace, displayName);
-                updater.ProjectConfigurationChanged(hostProject);
+                updater.UpdateProjectConfiguration(hostProject);
             },
             cancellationToken);
     }
@@ -464,8 +462,8 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                 ? new DocumentSnapshotTextLoader(documentSnapshot)
                 : _remoteTextLoaderFactory.Create(newFilePath);
 
-            updater.DocumentRemoved(currentProjectKey, currentHostDocument);
-            updater.DocumentAdded(currentProjectKey, newHostDocument, textLoader);
+            updater.RemoveDocument(currentProjectKey, currentHostDocument.FilePath);
+            updater.AddDocument(currentProjectKey, newHostDocument, textLoader);
         }
 
         project = _projectManager.GetRequiredProject(project.Key);
@@ -493,7 +491,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
                 _logger.LogInformation($"Adding new document '{documentFilePath}' to project '{currentProjectKey}'.");
 
-                updater.DocumentAdded(currentProjectKey, newHostDocument, remoteTextLoader);
+                updater.AddDocument(currentProjectKey, newHostDocument, remoteTextLoader);
             }
         }
     }
@@ -530,8 +528,8 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
         _logger.LogInformation($"Moving '{documentFilePath}' from the '{fromProject.Key}' project to '{toProject.Key}' project.");
 
-        updater.DocumentRemoved(fromProject.Key, currentHostDocument);
-        updater.DocumentAdded(toProject.Key, newHostDocument, textLoader);
+        updater.RemoveDocument(fromProject.Key, currentHostDocument.FilePath);
+        updater.AddDocument(toProject.Key, newHostDocument, textLoader);
     }
 
     private static string EnsureFullPath(string filePath, string projectDirectory)

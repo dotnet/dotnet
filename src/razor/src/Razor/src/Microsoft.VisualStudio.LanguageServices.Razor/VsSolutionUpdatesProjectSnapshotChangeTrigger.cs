@@ -107,7 +107,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
 
     private void ProjectManager_Changed(object sender, ProjectChangeEventArgs args)
     {
-        if (args.SolutionIsClosing)
+        if (args.IsSolutionClosing)
         {
             // If the solution is closing, cancel all existing updates.
             _workspaceStateGenerator.CancelUpdates();

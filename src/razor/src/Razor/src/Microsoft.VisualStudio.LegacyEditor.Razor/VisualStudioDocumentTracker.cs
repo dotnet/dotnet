@@ -192,7 +192,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     internal void ProjectManager_Changed(object sender, ProjectChangeEventArgs e)
     {
         // Don't do any work if the solution is closing
-        if (e.SolutionIsClosing)
+        if (e.IsSolutionClosing)
         {
             return;
         }

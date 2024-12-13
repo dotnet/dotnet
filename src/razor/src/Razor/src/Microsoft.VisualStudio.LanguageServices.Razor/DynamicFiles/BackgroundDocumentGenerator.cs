@@ -170,7 +170,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     private void ProjectManager_Changed(object sender, ProjectChangeEventArgs args)
     {
         // We don't want to do any work on solution close
-        if (args.SolutionIsClosing)
+        if (args.IsSolutionClosing)
         {
             _solutionIsClosing = true;
             return;

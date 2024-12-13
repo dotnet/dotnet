@@ -29,35 +29,38 @@ internal partial class ProjectSnapshotManager
         public ImmutableArray<string> GetOpenDocuments()
             => instance.GetOpenDocuments();
 
-        public void DocumentAdded(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
-            => instance.DocumentAdded(projectKey, document, textLoader);
+        public void AddDocument(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
+            => instance.AddDocument(projectKey, document, textLoader);
 
-        public void DocumentRemoved(ProjectKey projectKey, HostDocument document)
-            => instance.DocumentRemoved(projectKey, document);
+        public void AddDocument(ProjectKey projectKey, HostDocument document, SourceText sourceText)
+            => instance.AddDocument(projectKey, document, sourceText);
 
-        public void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
-            => instance.DocumentChanged(projectKey, documentFilePath, textLoader);
+        public void RemoveDocument(ProjectKey projectKey, string documentFilePath)
+            => instance.RemoveDocument(projectKey, documentFilePath);
 
-        public void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
-            => instance.DocumentChanged(projectKey, documentFilePath, sourceText);
+        public void UpdateDocumentText(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
+            => instance.UpdateDocumentText(projectKey, documentFilePath, textLoader);
 
-        public void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
-            => instance.DocumentOpened(projectKey, documentFilePath, sourceText);
+        public void UpdateDocumentText(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
+            => instance.UpdateDocumentText(projectKey, documentFilePath, sourceText);
 
-        public void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
-            => instance.DocumentClosed(projectKey, documentFilePath, textLoader);
+        public void OpenDocument(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
+            => instance.OpenDocument(projectKey, documentFilePath, sourceText);
 
-        public void ProjectAdded(HostProject project)
-            => instance.ProjectAdded(project);
+        public void CloseDocument(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
+            => instance.CloseDocument(projectKey, documentFilePath, textLoader);
 
-        public void ProjectRemoved(ProjectKey projectKey)
-            => instance.ProjectRemoved(projectKey);
+        public void AddProject(HostProject project)
+            => instance.AddProject(project);
 
-        public void ProjectConfigurationChanged(HostProject project)
-            => instance.ProjectConfigurationChanged(project);
+        public void RemoveProject(ProjectKey projectKey)
+            => instance.RemoveProject(projectKey);
 
-        public void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState)
-            => instance.ProjectWorkspaceStateChanged(projectKey, projectWorkspaceState);
+        public void UpdateProjectConfiguration(HostProject project)
+            => instance.UpdateProjectConfiguration(project);
+
+        public void UpdateProjectWorkspaceState(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState)
+            => instance.UpdateProjectWorkspaceState(projectKey, projectWorkspaceState);
 
         public void SolutionOpened()
             => instance.SolutionOpened();

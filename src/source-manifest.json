@@ -64,18 +64,18 @@
       "commitSha": "235d38cd586eeed59513cf865f4771914d654e4a"
     },
     {
-      "packageVersion": "9.0.200-beta.24609.2",
+      "packageVersion": "9.0.200-beta.24612.2",
       "barId": null,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "446f247bdcbaef261682aa3f9686b886bc406712"
+      "commitSha": "6a93b9976d7f98673428ab5a4e2af96e02118d33"
     },
     {
-      "packageVersion": "17.13.0-preview-24611-01",
+      "packageVersion": "17.13.0-preview-24612-02",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "fc1f22bcf893e599cd2b1ab905e5a10996779474"
+      "commitSha": "41868360b914181b94136a1dc5911d8bdd66e2a9"
     },
     {
       "packageVersion": "6.13.0-rc.95",
@@ -85,11 +85,11 @@
       "commitSha": "f6f635eebfdddd88b8856f830e0f0ffa168540eb"
     },
     {
-      "packageVersion": "9.0.0-preview.24611.3",
+      "packageVersion": "9.0.0-preview.24612.1",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "96eab234794a0f31107a39f3291792ff011ae6da"
+      "commitSha": "60d689b3add229efff4c6ab7611dbc615961fa2c"
     },
     {
       "packageVersion": "4.13.0-2.24561.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ff065f5ed74422c1e94573b1d60855427ed8182d"
+      "commitSha": "189e2d803873f323e3d0cd428170796d31a89369"
     },
     {
       "packageVersion": "10.0.560902",

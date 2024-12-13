@@ -21,7 +21,6 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
     private static readonly HostDocument s_nestedComponentHostDocument = TestProjectData.SomeProjectNestedComponentFile3;
 
     private readonly SourceText _sourceText;
-    private readonly VersionStamp _version;
     private readonly DocumentSnapshot _componentDocument;
     private readonly DocumentSnapshot _componentCshtmlDocument;
     private readonly DocumentSnapshot _legacyDocument;
@@ -31,12 +30,11 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
         : base(testOutput)
     {
         _sourceText = SourceText.From("<p>Hello World</p>");
-        _version = VersionStamp.Create();
 
         var projectState = ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, TestProjectData.SomeProject, ProjectWorkspaceState.Default);
         var project = new ProjectSnapshot(projectState);
 
-        var textLoader = TestMocks.CreateTextLoader(_sourceText, _version);
+        var textLoader = TestMocks.CreateTextLoader(_sourceText);
 
         var documentState = DocumentState.Create(s_legacyHostDocument, textLoader);
         _legacyDocument = new DocumentSnapshot(project, documentState);

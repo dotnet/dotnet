@@ -115,7 +115,7 @@ internal sealed class FallbackProjectManager(
         var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, configuration, rootNamespace, project.Name);
 
         EnqueueProjectManagerUpdate(
-            updater => updater.ProjectAdded(hostProject),
+            updater => updater.AddProject(hostProject),
             cancellationToken);
 
         AddFallbackDocument(hostProject.Key, filePath, project.FilePath, cancellationToken);
@@ -132,7 +132,7 @@ internal sealed class FallbackProjectManager(
         var textLoader = new FileTextLoader(filePath, defaultEncoding: null);
 
         EnqueueProjectManagerUpdate(
-            updater => updater.DocumentAdded(projectKey, hostDocument, textLoader),
+            updater => updater.AddDocument(projectKey, hostDocument, textLoader),
             cancellationToken);
     }
 
@@ -169,7 +169,7 @@ internal sealed class FallbackProjectManager(
         }
 
         EnqueueProjectManagerUpdate(
-            updater => updater.DocumentRemoved(projectKey, hostDocument),
+            updater => updater.RemoveDocument(projectKey, hostDocument.FilePath),
             cancellationToken);
     }
 

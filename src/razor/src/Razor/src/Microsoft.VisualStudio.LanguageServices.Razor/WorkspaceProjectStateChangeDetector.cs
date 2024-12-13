@@ -336,7 +336,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
     private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
     {
         // Don't do any work if the solution is closing. Any work in the queue will be cancelled on disposal
-        if (e.SolutionIsClosing)
+        if (e.IsSolutionClosing)
         {
             _workQueue.CancelExistingWork();
             return;

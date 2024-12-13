@@ -45,9 +45,9 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
     {
         // Arrange
         var state = ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(_documents[2], DocumentState.EmptyLoader);
+            .AddDocument(_documents[0], DocumentState.EmptyLoader)
+            .AddDocument(_documents[1], DocumentState.EmptyLoader)
+            .AddDocument(_documents[2], DocumentState.EmptyLoader);
         var snapshot = new ProjectSnapshot(state);
 
         // Act
@@ -66,7 +66,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
     {
         // Arrange
         var state = ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
+            .AddDocument(_documents[0], DocumentState.EmptyLoader);
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetRequiredDocument(_documents[0].FilePath);
@@ -83,9 +83,9 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
     {
         // Arrange
         var state = ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
+            .AddDocument(_documents[0], DocumentState.EmptyLoader)
+            .AddDocument(_documents[1], DocumentState.EmptyLoader)
+            .AddDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetRequiredDocument(TestProjectData.SomeProjectImportFile.FilePath);

@@ -49,9 +49,9 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
-            updater.DocumentAdded(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
+            updater.AddDocument(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
         });
 
         _project = _projectManager.GetRequiredProject(hostProject.Key);
@@ -95,7 +95,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     }
 
     [Fact]
-    public void UpdateLSPFileInfo_UnknownFile_Noops()
+    public void UpdateLSPFileInfo_UnknownFile_Ignored()
     {
         // Arrange
         _provider.Updated += (sender, args) => throw new XunitException("Should not have been called.");
@@ -132,7 +132,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     }
 
     [Fact]
-    public async Task UpdateLSPFileInfo_ProjectRemoved_Noops()
+    public async Task UpdateLSPFileInfo_ProjectRemoved_Ignored()
     {
         // Arrange
         await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
@@ -141,7 +141,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectRemoved(_project.Key);
+            updater.RemoveProject(_project.Key);
         });
 
         // Act
@@ -162,7 +162,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         await _projectManager.UpdateAsync(updater =>
         {
             updater.SolutionClosed();
-            updater.DocumentClosed(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
+            updater.CloseDocument(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
         });
 
         // Act & Assert
