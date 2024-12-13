@@ -63,7 +63,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
+            updater.AddProject(hostProject);
         });
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(LanguageVersion.LatestMajor);
@@ -93,8 +93,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle("file.cshtml", "file.cshtml", FileKinds.Component);
@@ -125,8 +125,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var oldDocument = new DocumentSnapshotHandle(hostDocument.FilePath, hostDocument.TargetPath, hostDocument.FileKind);
@@ -158,8 +158,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var addedDocument = new DocumentSnapshotHandle(hostDocument.FilePath, hostDocument.TargetPath, hostDocument.FileKind);
@@ -231,8 +231,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", FileKinds.Legacy);
@@ -265,8 +265,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, document, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, document, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle(document.FilePath, document.TargetPath, document.FileKind);
@@ -296,8 +296,8 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, legacyDocument, StrictMock.Of<TextLoader>());
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, legacyDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle(legacyDocument.FilePath, legacyDocument.TargetPath, FileKinds.Component);

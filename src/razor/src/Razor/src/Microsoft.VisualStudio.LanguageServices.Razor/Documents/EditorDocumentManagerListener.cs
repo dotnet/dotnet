@@ -102,7 +102,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
         }
 
         // Don't do any work if the solution is closing
-        if (work is DocumentAdded && e.SolutionIsClosing)
+        if (work is DocumentAdded && e.IsSolutionClosing)
         {
             return;
         }
@@ -184,7 +184,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
         try
         {
             return _projectManager.UpdateAsync(
-                static (updater, document) => updater.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.TextLoader),
+                static (updater, document) => updater.UpdateDocumentText(document.ProjectKey, document.DocumentFilePath, document.TextLoader),
                 state: document,
                 cancellationToken);
         }
@@ -214,7 +214,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
             // However, due to accessing the project snapshot manager, we need to switch to
             // running on the project snapshot manager's specialized thread.
             return _projectManager.UpdateAsync(
-                static (updater, document) => updater.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText),
+                static (updater, document) => updater.UpdateDocumentText(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText),
                 state: (EditorDocument)sender,
                 cancellationToken);
         }
@@ -259,7 +259,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
                             new Property("taghelper.count", tagHelpers.Length));
                     }
 
-                    updater.DocumentOpened(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
+                    updater.OpenDocument(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
                 },
                 state: (document: (EditorDocument)sender, _telemetryReporter, cancellationToken),
                 cancellationToken);
@@ -287,7 +287,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
         try
         {
             return _projectManager.UpdateAsync(
-                static (updater, document) => updater.DocumentClosed(document.ProjectKey, document.DocumentFilePath, document.TextLoader),
+                static (updater, document) => updater.CloseDocument(document.ProjectKey, document.DocumentFilePath, document.TextLoader),
                 state: (EditorDocument)sender,
                 cancellationToken);
         }

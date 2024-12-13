@@ -233,7 +233,7 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
                             documentSnapshot.FilePath,
                             documentSnapshot.TargetPath,
                             documentSnapshot.FileKind);
-                        updater.DocumentAdded(projectKey, hostDocument, new FileTextLoader(hostDocument.FilePath, null));
+                        updater.AddDocument(projectKey, hostDocument, new FileTextLoader(hostDocument.FilePath, null));
                     }
                 }
             }
@@ -268,17 +268,17 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
             // ensure we're going to actually do something with the new project that we've just been told about.
             // If VS did tell us, then this is a no-op.
             updater.SolutionOpened();
-            updater.ProjectAdded(project);
+            updater.AddProject(project);
         }
         else
         {
-            updater.ProjectConfigurationChanged(project);
+            updater.UpdateProjectConfiguration(project);
         }
     }
 
     protected void RemoveProject(ProjectSnapshotManager.Updater updater, ProjectKey projectKey)
     {
-        updater.ProjectRemoved(projectKey);
+        updater.RemoveProject(projectKey);
     }
 
     private async Task ExecuteWithLockAsync(Func<Task> func)

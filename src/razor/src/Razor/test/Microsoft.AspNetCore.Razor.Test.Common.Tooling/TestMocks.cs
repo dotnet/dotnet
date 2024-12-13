@@ -14,6 +14,16 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 internal static class TestMocks
 {
+    public static TextLoader CreateEmptyTextLoader()
+    {
+        return CreateTextLoader(string.Empty, VersionStamp.Create());
+    }
+
+    public static TextLoader CreateTextLoader(string text)
+    {
+        return CreateTextLoader(text, VersionStamp.Create());
+    }
+
     public static TextLoader CreateTextLoader(string filePath, string text)
     {
         return CreateTextLoader(filePath, SourceText.From(text));
@@ -33,6 +43,9 @@ internal static class TestMocks
 
     public static TextLoader CreateTextLoader(string text, VersionStamp version)
         => CreateTextLoader(SourceText.From(text), version);
+
+    public static TextLoader CreateTextLoader(SourceText text)
+        => CreateTextLoader(text, VersionStamp.Create());
 
     public static TextLoader CreateTextLoader(SourceText text, VersionStamp version)
     {

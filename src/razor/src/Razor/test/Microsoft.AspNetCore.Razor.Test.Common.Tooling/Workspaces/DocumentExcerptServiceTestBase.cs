@@ -43,7 +43,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     {
         var state = ProjectState
             .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create()));
+            .AddDocument(_hostDocument, sourceText);
 
         var project = new ProjectSnapshot(state);
 

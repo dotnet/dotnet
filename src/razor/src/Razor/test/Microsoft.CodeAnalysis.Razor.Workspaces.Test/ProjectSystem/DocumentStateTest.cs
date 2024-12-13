@@ -20,7 +20,7 @@ public class DocumentStateTest : ToolingTestBase
     {
         _hostDocument = TestProjectData.SomeProjectFile1;
         _text = SourceText.From("Hello, world!");
-        _textLoader = TestMocks.CreateTextLoader(_text, VersionStamp.Create());
+        _textLoader = TestMocks.CreateTextLoader(_text);
     }
 
     [Fact]

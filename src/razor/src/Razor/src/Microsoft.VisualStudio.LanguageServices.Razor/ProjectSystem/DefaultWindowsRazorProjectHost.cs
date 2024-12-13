@@ -63,7 +63,7 @@ internal class DefaultWindowsRazorProjectHost(
                     updater =>
                     {
                         var beforeProjectKey = new ProjectKey(beforeIntermediateOutputPath);
-                        updater.ProjectRemoved(beforeProjectKey);
+                        updater.RemoveProject(beforeProjectKey);
                     },
                     CancellationToken.None)
                     .ConfigureAwait(false);
@@ -93,13 +93,13 @@ internal class DefaultWindowsRazorProjectHost(
 
                     for (var i = 0; i < changedDocuments.Length; i++)
                     {
-                        updater.DocumentRemoved(hostProject.Key, changedDocuments[i]);
+                        updater.RemoveDocument(hostProject.Key, changedDocuments[i].FilePath);
                     }
 
                     for (var i = 0; i < documents.Length; i++)
                     {
                         var document = documents[i];
-                        updater.DocumentAdded(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
+                        updater.AddDocument(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
                     }
                 },
                 CancellationToken.None)

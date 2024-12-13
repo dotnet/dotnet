@@ -57,7 +57,7 @@ internal class CSharpVirtualDocumentManager : IRazorStartupService, IDisposable
 
     private void ProjectManager_Changed(object sender, ProjectChangeEventArgs e)
     {
-        if (e.SolutionIsClosing)
+        if (e.IsSolutionClosing)
         {
             return;
         }

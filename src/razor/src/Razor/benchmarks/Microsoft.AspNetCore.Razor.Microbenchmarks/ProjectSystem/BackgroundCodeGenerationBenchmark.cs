@@ -19,7 +19,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
         ProjectManager = CreateProjectSnapshotManager();
 
         await ProjectManager.UpdateAsync(
-            updater => updater.ProjectAdded(HostProject),
+            updater => updater.AddProject(HostProject),
             CancellationToken.None);
 
         ProjectManager.Changed += SnapshotManager_Changed;
@@ -45,7 +45,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
             {
                 for (var i = 0; i < Documents.Length; i++)
                 {
-                    updater.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
+                    updater.AddDocument(HostProject.Key, Documents[i], TextLoaders[i % 4]);
                 }
             },
             CancellationToken.None);

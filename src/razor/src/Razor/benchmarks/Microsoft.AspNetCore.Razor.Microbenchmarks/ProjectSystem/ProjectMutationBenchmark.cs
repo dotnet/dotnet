@@ -32,7 +32,7 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
     public async Task ProjectMutation_Mutates100kFilesAsync()
     {
         await ProjectManager.UpdateAsync(
-            updater => updater.ProjectAdded(HostProject),
+            updater => updater.AddProject(HostProject),
             CancellationToken.None);
 
         var cancellationSource = new CancellationTokenSource();
@@ -44,9 +44,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
             for (var i = 0; i < Documents.Length; i++)
             {
                 var document = Documents[i];
-                await ProjectManager.UpdateAsync(updater => updater.DocumentAdded(HostProject.Key, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
+                await ProjectManager.UpdateAsync(updater => updater.AddDocument(HostProject.Key, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
-                await ProjectManager.UpdateAsync(updater => updater.DocumentRemoved(HostProject.Key, document), CancellationToken.None).ConfigureAwait(false);
+                await ProjectManager.UpdateAsync(updater => updater.RemoveDocument(HostProject.Key, document.FilePath), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
             }
 

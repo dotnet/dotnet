@@ -56,8 +56,8 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.DocumentAdded(hostProject.Key, hostDocument, TextLoader.From(TextAndVersion.Create(codeDocument.Source.Text, VersionStamp.Default)));
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument, codeDocument.Source.Text);
         });
 
         var endpoint = new FindAllReferencesEndpoint(

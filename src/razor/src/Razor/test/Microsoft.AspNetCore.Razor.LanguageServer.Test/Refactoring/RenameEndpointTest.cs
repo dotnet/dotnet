@@ -659,7 +659,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(projectKey1, ProjectWorkspaceState.Create(tagHelpers));
+            updater.UpdateProjectWorkspaceState(projectKey1, ProjectWorkspaceState.Create(tagHelpers));
         });
 
         await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1, DisposalToken);
@@ -681,7 +681,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(projectKey2, ProjectWorkspaceState.Create(tagHelpers));
+            updater.UpdateProjectWorkspaceState(projectKey2, ProjectWorkspaceState.Create(tagHelpers));
         });
 
         await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath3, DisposalToken);

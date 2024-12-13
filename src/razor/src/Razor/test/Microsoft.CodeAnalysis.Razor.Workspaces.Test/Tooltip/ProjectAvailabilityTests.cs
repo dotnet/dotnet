@@ -55,9 +55,9 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject);
+            updater.UpdateProjectWorkspaceState(hostProject.Key, projectWorkspaceState);
+            updater.AddDocument(hostProject.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var solutionQueryOperations = projectManager.GetQueryOperations();
@@ -100,13 +100,13 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject1);
-            updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject1);
+            updater.UpdateProjectWorkspaceState(hostProject1.Key, projectWorkspaceState);
+            updater.AddDocument(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
-            updater.ProjectAdded(hostProject2);
-            updater.ProjectWorkspaceStateChanged(hostProject2.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject2);
+            updater.UpdateProjectWorkspaceState(hostProject2.Key, projectWorkspaceState);
+            updater.AddDocument(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var solutionQueryOperations = projectManager.GetQueryOperations();
@@ -149,12 +149,12 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject1);
-            updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject1);
+            updater.UpdateProjectWorkspaceState(hostProject1.Key, projectWorkspaceState);
+            updater.AddDocument(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
-            updater.ProjectAdded(hostProject2);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject2);
+            updater.AddDocument(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var solutionQueryOperations = projectManager.GetQueryOperations();
@@ -194,11 +194,11 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject1);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject1);
+            updater.AddDocument(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
-            updater.ProjectAdded(hostProject2);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.AddProject(hostProject2);
+            updater.AddDocument(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var solutionQueryOperations = projectManager.GetQueryOperations();

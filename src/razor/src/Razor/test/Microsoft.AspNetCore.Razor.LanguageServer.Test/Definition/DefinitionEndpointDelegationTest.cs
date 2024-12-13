@@ -230,7 +230,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(new(
+            updater.AddProject(new(
                 filePath: "C:/path/to/project.csproj",
                 intermediateOutputPath: "C:/path/to/obj",
                 configuration: RazorConfiguration.Default,

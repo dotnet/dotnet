@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
@@ -13,25 +11,20 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-public class GeneratedDocumentTextLoaderTest : WorkspaceTestBase
+public class GeneratedDocumentTextLoaderTest(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
-    private readonly HostProject _hostProject;
-    private readonly HostDocument _hostDocument;
-
-    public GeneratedDocumentTextLoaderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _hostProject = TestProjectData.SomeProject;
-        _hostDocument = TestProjectData.SomeProjectFile1;
-    }
+    private readonly HostProject _hostProject = TestProjectData.SomeProject;
+    private readonly HostDocument _hostDocument = TestProjectData.SomeProjectFile1;
 
     [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/7997")]
     public async Task LoadAsync_SpecifiesEncoding()
     {
         // Arrange
-        var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader("", VersionStamp.Create())));
+        var state = ProjectState
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, _hostProject, ProjectWorkspaceState.Default)
+            .AddDocument(_hostDocument, TestMocks.CreateEmptyTextLoader());
+
+        var project = new ProjectSnapshot(state);
 
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 

@@ -50,7 +50,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public void Dispose_MakesUpdateNoop()
+    public void Dispose_MakesUpdateIgnored()
     {
         // Arrange
         using var generator = new ProjectWorkspaceStateGenerator(
@@ -119,8 +119,8 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_projectSnapshot.HostProject);
-            updater.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.AddProject(_projectSnapshot.HostProject);
+            updater.UpdateProjectWorkspaceState(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Act
@@ -147,7 +147,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_projectSnapshot.HostProject);
+            updater.AddProject(_projectSnapshot.HostProject);
         });
 
         // Act

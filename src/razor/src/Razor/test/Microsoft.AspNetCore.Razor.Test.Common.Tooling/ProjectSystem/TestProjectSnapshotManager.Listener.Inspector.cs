@@ -13,7 +13,7 @@ internal partial class TestProjectSnapshotManager
     {
         public readonly struct Inspector(ProjectChangeEventArgs notification)
         {
-            private void CommonAssertions(ProjectChangeKind kind, ProjectKey? projectKey = null, bool? solutionIsClosing = null)
+            private void CommonAssertions(ProjectChangeKind kind, ProjectKey? projectKey = null, bool? isSolutionClosing = null)
             {
                 Assert.Equal(kind, notification.Kind);
 
@@ -22,9 +22,9 @@ internal partial class TestProjectSnapshotManager
                     Assert.Equal(k, notification.ProjectKey);
                 }
 
-                if (solutionIsClosing is bool b)
+                if (isSolutionClosing is bool b)
                 {
-                    Assert.Equal(b, notification.SolutionIsClosing);
+                    Assert.Equal(b, notification.IsSolutionClosing);
                 }
             }
 

@@ -51,7 +51,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
             static updater =>
             {
                 var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
-                updater.ProjectAdded(hostProject);
+                updater.AddProject(hostProject);
             });
 
         await testAccessor.WaitForRefreshAsync();
@@ -95,7 +95,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
         await projectSnapshotManager.UpdateAsync(
             updater =>
             {
-                updater.ProjectAdded(hostProject);
+                updater.AddProject(hostProject);
             });
 
         await testAccessor.WaitForRefreshAsync();
@@ -103,7 +103,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
         await projectSnapshotManager.UpdateAsync(
             updater =>
             {
-                updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+                updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
             });
 
         await testAccessor.WaitForRefreshAsync();
@@ -140,7 +140,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
             updater =>
             {
                 var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
-                updater.ProjectAdded(hostProject);
+                updater.AddProject(hostProject);
             });
 
         await testAccessor.WaitForRefreshAsync();
@@ -179,7 +179,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
             static updater =>
             {
                 var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
-                updater.ProjectAdded(hostProject);
+                updater.AddProject(hostProject);
             });
 
         await testAccessor.WaitForRefreshAsync();
