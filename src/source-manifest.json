@@ -64,11 +64,11 @@
       "commitSha": "235d38cd586eeed59513cf865f4771914d654e4a"
     },
     {
-      "packageVersion": "9.0.200-beta.24614.1",
+      "packageVersion": "9.0.200-beta.24616.2",
       "barId": null,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "673e82bb3f4649a3c5b7977d213b4503f4ffd934"
+      "commitSha": "ea682d03f95e8e87c4d130e7b0871f6a5a9a2d2c"
     },
     {
       "packageVersion": "17.13.0-preview-24612-02",
@@ -99,11 +99,11 @@
       "commitSha": "543cb4568f28b0d2f2cfecdf2d56365b9252e848"
     },
     {
-      "packageVersion": "3.12.0-beta1.24605.1",
+      "packageVersion": "3.12.0-beta1.24616.1",
       "barId": null,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "7f449a5d6f05c6aed77e4abf85aac2ce19f6a2d6"
+      "commitSha": "5ed336762c6260a83ece35cd1f6749251452bad0"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24616.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a83c58d54f1628ea120d9e95902afee1cb22c8af"
+      "commitSha": "572a4334edd4373ca7d14843dbc848a06ad3404d"
     },
     {
       "packageVersion": "10.0.560902",
