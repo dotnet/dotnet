@@ -87,14 +87,14 @@
       <Sha>41868360b914181b94136a1dc5911d8bdd66e2a9</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24616.2">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24617.1">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>ea682d03f95e8e87c4d130e7b0871f6a5a9a2d2c</Sha>
+      <Sha>5af96504f10836eca6ce804ab3cdd28c042fa35a</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.200-beta.24616.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.200-beta.24617.1">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>ea682d03f95e8e87c4d130e7b0871f6a5a9a2d2c</Sha>
+      <Sha>5af96504f10836eca6ce804ab3cdd28c042fa35a</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.13.0-2.24561.1">
@@ -143,74 +143,74 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>e0ee9e981e4c90e78a31b36e41aecd9144119c77</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.NuGetSdkResolver" Version="6.13.0-rc.95">
+    <Dependency Name="Microsoft.Build.NuGetSdkResolver" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Build.Tasks" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
       <SourceBuildTarball RepoName="nuget-client" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks.Console" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Build.Tasks.Console" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks.Pack" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Build.Tasks.Pack" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Commands" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Commands" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.CommandLine.XPlat" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.CommandLine.XPlat" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Common" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Common" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Configuration" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Configuration" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Credentials" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Credentials" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.DependencyResolver.Core" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.DependencyResolver.Core" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Frameworks" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Frameworks" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.LibraryModel" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.LibraryModel" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.ProjectModel" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.ProjectModel" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Protocol" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Protocol" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Packaging" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Packaging" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Versioning" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Versioning" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Localization" Version="6.13.0-rc.95">
+    <Dependency Name="NuGet.Localization" Version="6.13.0-rc.98">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>f6f635eebfdddd88b8856f830e0f0ffa168540eb</Sha>
+      <Sha>c60352c138a25e8a4bde0775a7c2e0600b186b0b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.13.0-preview-24610-01">
       <Uri>https://github.com/microsoft/vstest</Uri>
@@ -460,34 +460,34 @@
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>33bdfdb07c2872191e96692dee67ee35bc360d4f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24611.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24616.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7134623ce41d6320339150849cdd838c8f6d2853</Sha>
+      <Sha>ab3010a0189f338e28097210c537dd6dc09a655f</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
