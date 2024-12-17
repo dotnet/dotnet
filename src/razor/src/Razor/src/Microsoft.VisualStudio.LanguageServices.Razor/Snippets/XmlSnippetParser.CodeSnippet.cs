@@ -99,7 +99,7 @@ internal partial class XmlSnippetParser
             return subElement == null ? string.Empty : subElement.Value.Trim();
         }
 
-        private static ImmutableArray<CodeSnippet> ReadSnippets(XDocument document)
+        public static ImmutableArray<CodeSnippet> ReadSnippets(XDocument document)
         {
             return ReadCodeSnippetElements(document).SelectAsArray(element => new CodeSnippet(element));
         }

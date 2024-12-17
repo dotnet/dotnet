@@ -52,7 +52,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
             languageServerFeatureOptions,
             LoggerFactory,
             DisposalToken,
-            initializer: static updater => updater.AddProject(MiscFilesHostProject.Instance));
+            initializer: static updater => updater.AddProject(MiscFilesProject.HostProject));
 
     private protected static RazorRequestContext CreateRazorRequestContext(
         DocumentContext? documentContext,

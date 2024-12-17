@@ -72,7 +72,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
             @code
             {
-                class [|Base|] { }
+                class Base { }
                 class [|Derived1|] : Base { }
                 class [|Derived2|] : Base { }
 

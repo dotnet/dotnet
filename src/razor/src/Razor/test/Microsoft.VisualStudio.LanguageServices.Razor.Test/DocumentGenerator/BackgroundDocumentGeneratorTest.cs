@@ -35,6 +35,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     private static readonly HostProject s_hostProject1 = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
     private static readonly HostProject s_hostProject2 = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
 
+    private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
+        x.IsFallbackProject(It.IsAny<IProjectSnapshot>()) == false);
+
     private readonly TestDynamicFileInfoProvider _dynamicFileInfoProvider = new();
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
@@ -62,7 +65,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var hostDocument = s_documents[0];
 
         var project = projectManager.GetRequiredProject(s_hostProject1.Key);
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false)
         };
@@ -127,7 +130,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         var project = projectManager.GetRequiredProject(s_hostProject1.Key);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
         generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
@@ -168,7 +171,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         var project = projectManager.GetRequiredProject(s_hostProject1.Key);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
         generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
@@ -193,7 +196,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var project = projectManager.GetRequiredProject(s_hostProject1.Key);
         var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
@@ -233,7 +236,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var documentKey1 = new DocumentKey(project.Key, hostDocument1.FilePath);
         var documentKey2 = new DocumentKey(project.Key, hostDocument2.FilePath);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
@@ -278,7 +281,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             }
         });
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             BlockBatchProcessing = true
         };
@@ -322,7 +325,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, TestProjectData.SomeProjectImportFile.CreateEmptyTextLoader());
         });
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             BlockBatchProcessing = true
         };
@@ -348,9 +351,10 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
     private class TestBackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
+        IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal dynamicFileInfoProvider,
         ILoggerFactory loggerFactory)
-        : BackgroundDocumentGenerator(projectManager, dynamicFileInfoProvider, loggerFactory, delay: TimeSpan.FromMilliseconds(1))
+        : BackgroundDocumentGenerator(projectManager, fallbackProjectManager, dynamicFileInfoProvider, loggerFactory, delay: TimeSpan.FromMilliseconds(1))
     {
         public readonly List<DocumentKey> PendingWork = [];
         public readonly List<DocumentKey> CompletedWork = [];

@@ -50,8 +50,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var hostProject = SomeProject with
         {
             Configuration = RazorConfiguration.Default,
-            RootNamespace = "RootNamespace",
-            DisplayName = "DisplayName"
+            RootNamespace = "RootNamespace"
         };
 
         await _projectManager.UpdateAsync(updater =>
@@ -76,7 +75,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
-        Assert.IsNotType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+        Assert.False(_fallbackProjectManger.IsFallbackProject(project));
     }
 
     [UIFact]
@@ -103,7 +102,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         Assert.Equal("DisplayName", project.DisplayName);
         Assert.Equal("RootNamespace", project.RootNamespace);
 
-        Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+        Assert.True(_fallbackProjectManger.IsFallbackProject(project));
 
         var documentFilePath = Assert.Single(project.DocumentFilePaths);
         Assert.Equal(SomeProjectFile1.FilePath, documentFilePath);
@@ -131,13 +130,12 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
-        Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+        Assert.True(_fallbackProjectManger.IsFallbackProject(project));
 
         var hostProject = SomeProject with
         {
             Configuration = RazorConfiguration.Default,
-            RootNamespace = "RootNamespace",
-            DisplayName = "DisplayName"
+            RootNamespace = "RootNamespace"
         };
 
         await _projectManager.UpdateAsync(updater =>
@@ -146,7 +144,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         });
 
         project = Assert.Single(_projectManager.GetProjects());
-        Assert.IsNotType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+        Assert.False(_fallbackProjectManger.IsFallbackProject(project));
     }
 
     [UIFact]

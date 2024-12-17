@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -113,14 +112,7 @@ internal sealed class CohostCodeActionsEndpoint(
 
     private async Task<RazorVSInternalCodeAction[]> GetCSharpCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
-        var generatedDocumentIds = razorDocument.Project.Solution.GetDocumentIdsWithUri(request.TextDocument.Uri);
-        var generatedDocumentId = generatedDocumentIds.FirstOrDefault(d => d.ProjectId == razorDocument.Project.Id);
-        if (generatedDocumentId is null)
-        {
-            return [];
-        }
-
-        if (razorDocument.Project.GetDocument(generatedDocumentId) is not { } generatedDocument)
+        if (!razorDocument.Project.TryGetCSharpDocument(request.TextDocument.Uri, out var generatedDocument))
         {
             return [];
         }

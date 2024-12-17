@@ -23,6 +23,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(2);
 
     private readonly IProjectSnapshotManager _projectManager;
+    private readonly IFallbackProjectManager _fallbackProjectManager;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
@@ -35,20 +36,23 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     [ImportingConstructor]
     public BackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
+        IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
         ILoggerFactory loggerFactory)
-        : this(projectManager, infoProvider, loggerFactory, s_delay)
+        : this(projectManager, fallbackProjectManager, infoProvider, loggerFactory, s_delay)
     {
     }
 
     // Provided for tests to be able to modify the timer delay
     protected BackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
+        IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
         ILoggerFactory loggerFactory,
         TimeSpan delay)
     {
         _projectManager = projectManager;
+        _fallbackProjectManager = fallbackProjectManager;
         _infoProvider = infoProvider;
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.GetOrCreateLogger<BackgroundDocumentGenerator>();
@@ -92,7 +96,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
             return;
         }
 
-        if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+        if (_fallbackProjectManager.IsFallbackProject(project))
         {
             // We don't support closed file code generation for fallback projects
             return;

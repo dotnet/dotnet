@@ -159,7 +159,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         await _projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject);
-            updater.AddDocument(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddDocument(MiscFilesProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var addedDocument = new DocumentSnapshotHandle(hostDocument.FilePath, hostDocument.TargetPath, hostDocument.FileKind);
@@ -232,7 +232,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         await _projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject);
-            updater.AddDocument(MiscFilesHostProject.Instance.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.AddDocument(MiscFilesProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", FileKinds.Legacy);
@@ -789,7 +789,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         // Assert
         listener.AssertNotifications(
             x => x.DocumentRemoved(DocumentFilePath, ownerProjectKey),
-            x => x.DocumentAdded(DocumentFilePath, MiscFilesHostProject.Instance.Key));
+            x => x.DocumentAdded(DocumentFilePath, MiscFilesProject.Key));
 
         Assert.True(_projectManager.IsDocumentOpen(DocumentFilePath));
     }
