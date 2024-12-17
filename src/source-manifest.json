@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3093791553ce79eb520a3ecebba833c8640ec54f"
+      "commitSha": "981b74b303ff6dfffea783bbaf4ea6eb7e9b9f06"
     },
     {
       "packageVersion": "10.0.560902",
