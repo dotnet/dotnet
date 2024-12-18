@@ -72,6 +72,9 @@ internal class CSharpSyntaxFacts : ISyntaxFacts
     public bool SupportsCollectionExpressionNaturalType(ParseOptions options)
         => false;
 
+    public bool SupportsImplicitImplementationOfNonPublicInterfaceMembers(ParseOptions options)
+        => options.LanguageVersion() >= LanguageVersion.CSharp10;
+
     public SyntaxToken ParseToken(string text)
         => SyntaxFactory.ParseToken(text);
 
@@ -507,7 +510,7 @@ internal class CSharpSyntaxFacts : ISyntaxFacts
     {
         if (this.IsWord(token) || this.IsLiteral(token) || this.IsOperator(token))
         {
-            switch ((SyntaxKind)token.RawKind)
+            switch (token.Kind())
             {
                 case SyntaxKind.DelegateKeyword:
                 case SyntaxKind.VoidKeyword:
@@ -1196,6 +1199,13 @@ internal class CSharpSyntaxFacts : ISyntaxFacts
     public bool IsVerbatimStringLiteral(SyntaxToken token)
         => token.IsVerbatimStringLiteral();
 
+    public bool IsRawStringLiteral(SyntaxToken token)
+        => token.Kind() is
+            SyntaxKind.SingleLineRawStringLiteralToken or
+            SyntaxKind.MultiLineRawStringLiteralToken or
+            SyntaxKind.Utf8SingleLineRawStringLiteralToken or
+            SyntaxKind.Utf8MultiLineRawStringLiteralToken;
+
     public bool IsNumericLiteral(SyntaxToken token)
         => token.Kind() == SyntaxKind.NumericLiteralToken;
 
@@ -1577,6 +1587,14 @@ internal class CSharpSyntaxFacts : ISyntaxFacts
     #endregion
 
     #region GetPartsOfXXX members
+
+    public void GetPartsOfAliasQualifiedName(SyntaxNode node, out SyntaxNode alias, out SyntaxToken colonColonToken, out SyntaxNode name)
+    {
+        var qualifiedName = (AliasQualifiedNameSyntax)node;
+        alias = qualifiedName.Alias;
+        colonColonToken = qualifiedName.ColonColonToken;
+        name = qualifiedName.Name;
+    }
 
     public void GetPartsOfArgumentList(SyntaxNode node, out SyntaxToken openParenToken, out SeparatedSyntaxList<SyntaxNode> arguments, out SyntaxToken closeParenToken)
     {
