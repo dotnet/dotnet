@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
@@ -23,17 +24,54 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 /// .razor or .cshtml files regardless.
 /// </summary>
 [Export(typeof(FallbackProjectManager))]
-[method: ImportingConstructor]
-internal sealed class FallbackProjectManager(
-    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    IProjectSnapshotManager projectManager,
-    IWorkspaceProvider workspaceProvider,
-    ITelemetryReporter telemetryReporter)
+[Export(typeof(IFallbackProjectManager))]
+internal sealed class FallbackProjectManager : IFallbackProjectManager
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
-    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IProjectSnapshotManager _projectManager;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly ITelemetryReporter _telemetryReporter;
+
+    // Tracks project keys that are known to be fallback projects.
+    private ImmutableHashSet<ProjectKey> _fallbackProjects = [];
+
+    [ImportingConstructor]
+    public FallbackProjectManager(
+        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+        IProjectSnapshotManager projectManager,
+        IWorkspaceProvider workspaceProvider,
+        ITelemetryReporter telemetryReporter)
+    {
+        _serviceProvider = serviceProvider;
+        _projectManager = projectManager;
+        _workspaceProvider = workspaceProvider;
+        _telemetryReporter = telemetryReporter;
+
+        // Use PriorityChanged to ensure that project changes or removes update _fallbackProjects
+        // before IProjectSnapshotManager.Changed listeners are notified.
+        _projectManager.PriorityChanged += ProjectManager_Changed;
+    }
+
+    private void ProjectManager_Changed(object sender, ProjectChangeEventArgs e)
+    {
+        // If a project is changed, we know that this is no longer a fallback project because
+        // one of two things has happened:
+        //
+        // 1. The project system has updated the project's configuration or root namespace.
+        // 2. The project's ProjectWorkspaceState has been updated.
+        //
+        // In either of these two cases, we assume that something else (Roslyn or CPS) is properly
+        // tracking the project and we no longer need to treat it as a fallback project.
+        //
+        // In addition, if a project is removed, we can stop tracking it as a fallback project.
+        if (e.Kind is ProjectChangeKind.ProjectChanged or ProjectChangeKind.ProjectRemoved)
+        {
+            ImmutableInterlocked.Update(ref _fallbackProjects, set => set.Remove(e.ProjectKey));
+        }
+    }
+
+    public bool IsFallbackProject(IProjectSnapshot project)
+        => _fallbackProjects.Contains(project.Key);
 
     internal void DynamicFileAdded(
         ProjectId projectId,
@@ -46,7 +84,7 @@ internal sealed class FallbackProjectManager(
         {
             if (_projectManager.TryGetProject(razorProjectKey, out var project))
             {
-                if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+                if (IsFallbackProject(project))
                 {
                     // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                     // are the only way to know about files in the project.
@@ -77,7 +115,7 @@ internal sealed class FallbackProjectManager(
         try
         {
             if (_projectManager.TryGetProject(razorProjectKey, out var project) &&
-                project is ProjectSnapshot { HostProject: FallbackHostProject })
+                IsFallbackProject(project))
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.
@@ -110,9 +148,11 @@ internal sealed class FallbackProjectManager(
 
         // We create this as a fallback project so that other parts of the system can reason about them - eg we don't do code
         // generation for closed files for documents in these projects. If these projects become "real", either because capabilities
-        // change or simply a timing difference between Roslyn and our CPS components, the HostProject instance associated with
-        // the project will be updated, and it will no longer be a fallback project.
-        var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, configuration, rootNamespace, project.Name);
+        // change or simply a timing difference between Roslyn and our CPS components, we'll receive a priority notification from
+        // the IProjectSnapshotManager and remove this project's key from the_fallbackProjects set.
+        var hostProject = new HostProject(project.FilePath, intermediateOutputPath, configuration, rootNamespace, project.Name);
+
+        ImmutableInterlocked.Update(ref _fallbackProjects, set => set.Add(hostProject.Key));
 
         EnqueueProjectManagerUpdate(
             updater => updater.AddProject(hostProject),

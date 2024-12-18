@@ -16,7 +16,7 @@
     <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <_XunitPackageVersion>2.6.6</_XunitPackageVersion>
+    <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
     <_MicrosoftBuildPackageVersion>17.12.0-preview-24426-07</_MicrosoftBuildPackageVersion>
   </PropertyGroup>
 
@@ -114,7 +114,7 @@
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="7.0.1" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.4" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="$(SystemThreadingTasksExtensionsVersion)" />
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />

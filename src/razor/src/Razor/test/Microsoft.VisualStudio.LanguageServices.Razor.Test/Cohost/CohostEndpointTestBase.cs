@@ -131,6 +131,9 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         SemanticTokensLegendService.SetLegend(_clientLSPInitializationOptions.TokenTypes, _clientLSPInitializationOptions.TokenModifiers);
     }
 
+    private protected virtual TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
+        => composition;
+
     protected Task<TextDocument> CreateProjectAndRazorDocumentAsync(
         string contents,
         string? fileKind = null,
@@ -187,7 +190,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         (string fileName, string contents)[]? additionalFiles,
         bool inGlobalNamespace)
     {
-        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
+        var exportProvider = ConfigureRoslynDevenvComposition(TestComposition.Roslyn).ExportProviderFactory.CreateExportProvider();
         AddDisposable(exportProvider);
         var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
         AddDisposable(workspace);

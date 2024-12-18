@@ -65,7 +65,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
 
             """;
 
-        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateDefaultConstructors);
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers);
     }
 
     [Fact]

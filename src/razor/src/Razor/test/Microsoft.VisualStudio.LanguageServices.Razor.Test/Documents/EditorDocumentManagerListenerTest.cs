@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using Xunit;
@@ -31,6 +32,9 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
     private static readonly HostDocument s_hostDocument = new(
         filePath: "/path/to/file1.razor",
         targetPath: "/path/to/file1.razor");
+
+    private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
+        x.IsFallbackProject(It.IsAny<IProjectSnapshot>()) == false);
 
     [UIFact]
     public async Task ProjectManager_Changed_RemoveDocument_RemovesDocument()
@@ -55,7 +59,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
+            editorDocumentMangerMock.Object, projectManager, s_fallbackProjectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
         var listenerAccessor = listener.GetTestAccessor();
 
@@ -94,7 +98,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
+            editorDocumentMangerMock.Object, projectManager, s_fallbackProjectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
         var listenerAccessor = listener.GetTestAccessor();
 
@@ -134,7 +138,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
+            editorDocumentMangerMock.Object, projectManager, s_fallbackProjectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
         var listenerAccessor = listener.GetTestAccessor();
 
@@ -167,7 +171,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
             .Returns(GetEditorDocument(isOpen: true));
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
+            editorDocumentMangerMock.Object, projectManager, s_fallbackProjectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
         var listenerAccessor = listener.GetTestAccessor();
 

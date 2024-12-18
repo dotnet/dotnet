@@ -37,4 +37,10 @@
     <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Cohost\TestSnippets.snippet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

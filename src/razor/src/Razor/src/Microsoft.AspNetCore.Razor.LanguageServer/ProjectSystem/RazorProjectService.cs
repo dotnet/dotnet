@@ -258,7 +258,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                         if (_projectManager.IsDocumentOpen(textDocumentPath))
                         {
                             _logger.LogInformation($"Moving document '{textDocumentPath}' from project '{projectSnapshot.Key}' to misc files because it is open.");
-                            if (!MiscFilesHostProject.IsMiscellaneousProject(projectSnapshot))
+                            if (!projectSnapshot.IsMiscellaneousProject())
                             {
                                 var miscellaneousProject = _projectManager.GetMiscellaneousProject();
                                 MoveDocument(updater, textDocumentPath, fromProject: projectSnapshot, toProject: miscellaneousProject);

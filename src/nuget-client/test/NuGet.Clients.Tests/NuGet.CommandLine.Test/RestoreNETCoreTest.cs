@@ -9948,7 +9948,7 @@ namespace NuGet.CommandLine.Test
                 var assetFileReader = new LockFileFormat();
                 var assetsFile = assetFileReader.Read(projectA.AssetsFileOutputPath);
 
-                var expectedLibraries = new List<string>() { "B.1.0.0", "C.2.0.0", "F.1.0.0", "G.1.0.0", "H.3.0.0", "O.3.0.0", "P.3.0.0", "S.3.0.0", "SS.3.0.0", "U.1.0.0", "V.1.0.0", "X.1.0.0", "Y.3.0.0" };
+                var expectedLibraries = new List<string>() { "B.1.0.0", "C.2.0.0", "F.1.0.0", "G.1.0.0", "H.3.0.0", "O.3.0.0", "P.3.0.0", "S.3.0.0", "SS.3.0.0", "U.1.0.0", "V.3.0.0", "X.1.0.0", "Y.3.0.0" };
                 var libraries = assetsFile.Libraries.Select(l => $"{l.Name}.{l.Version}").OrderBy(n => n).ToList();
                 Assert.Equal(expectedLibraries, libraries);
 

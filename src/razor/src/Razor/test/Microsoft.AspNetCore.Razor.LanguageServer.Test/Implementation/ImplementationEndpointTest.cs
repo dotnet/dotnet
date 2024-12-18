@@ -71,7 +71,7 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
 
                 @functions
                 {
-                    class [|Base|] { }
+                    class Base { }
                     class [|Derived1|] : Base { }
                     class [|Derived2|] : Base { }
 

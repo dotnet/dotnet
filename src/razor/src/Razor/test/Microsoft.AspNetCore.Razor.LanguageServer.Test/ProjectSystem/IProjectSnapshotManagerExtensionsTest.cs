@@ -39,7 +39,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         await projectManager.UpdateAsync(updater =>
         {
-            var hostProject = MiscFilesHostProject.Instance with { Configuration = FallbackRazorConfiguration.Latest };
+            var hostProject = MiscFilesProject.HostProject with { Configuration = FallbackRazorConfiguration.Latest };
             var hostDocument = new HostDocument(normalizedFilePath, targetPath: "document.cshtml");
 
             updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
@@ -92,7 +92,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     public async Task TryResolveAllProjects_OnlyMiscellaneousProjectContainsDocument_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Combine(MiscFilesHostProject.Instance.DirectoryPath, "document.cshtml");
+        var documentFilePath = Path.Combine(MiscFilesProject.DirectoryPath, "document.cshtml");
         var projectManager = await CreateProjectManagerAsync(documentFilePath, addToMiscellaneous: true);
 
         // Act
@@ -152,8 +152,8 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     public async Task TryResolveAllProjects_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
-        var miscFilesHostProject = MiscFilesHostProject.Instance;
-        var documentFilePath = Path.Combine(miscFilesHostProject.DirectoryPath, "file.cshtml");
+        var miscFilesHostProject = MiscFilesProject.HostProject;
+        var documentFilePath = Path.Combine(MiscFilesProject.DirectoryPath, "file.cshtml");
         documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
 
         var hostDocument = TestHostDocument.Create(miscFilesHostProject, documentFilePath);
@@ -210,7 +210,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         // Act
         var project = projectManager.GetMiscellaneousProject();
-        var inManager = projectManager.GetRequiredProject(MiscFilesHostProject.Instance.Key);
+        var inManager = projectManager.GetRequiredProject(MiscFilesProject.Key);
 
         // Assert
         Assert.Same(inManager, project);
@@ -227,7 +227,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         // Assert
         Assert.Single(projectManager.GetProjects());
-        Assert.Equal(MiscFilesHostProject.Instance.FilePath, project.FilePath);
+        Assert.Equal(MiscFilesProject.FilePath, project.FilePath);
     }
 
     private async Task<TestProjectSnapshotManager> CreateProjectManagerAsync(string documentFilePath, bool addToMiscellaneous = false)
@@ -240,7 +240,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         if (addToMiscellaneous)
         {
-            hostProject = MiscFilesHostProject.Instance;
+            hostProject = MiscFilesProject.HostProject;
         }
         else
         {

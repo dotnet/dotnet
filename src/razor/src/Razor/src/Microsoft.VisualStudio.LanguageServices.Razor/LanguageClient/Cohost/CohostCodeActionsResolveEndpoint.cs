@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -104,14 +103,7 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
             var uri = resolveParams.DelegatedDocumentUri.AssumeNotNull();
 
-            var generatedDocumentIds = razorDocument.Project.Solution.GetDocumentIdsWithUri(uri);
-            var generatedDocumentId = generatedDocumentIds.FirstOrDefault(d => d.ProjectId == razorDocument.Project.Id);
-            if (generatedDocumentId is null)
-            {
-                return codeAction;
-            }
-
-            if (razorDocument.Project.GetDocument(generatedDocumentId) is not { } generatedDocument)
+            if (!razorDocument.Project.TryGetCSharpDocument(uri, out var generatedDocument))
             {
                 return codeAction;
             }

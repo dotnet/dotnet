@@ -57,7 +57,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
 
             """;
 
-        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateDefaultConstructors);
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers);
     }
 
     [Fact]

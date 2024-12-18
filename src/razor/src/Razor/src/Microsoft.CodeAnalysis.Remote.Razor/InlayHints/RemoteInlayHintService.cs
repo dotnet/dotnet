@@ -19,7 +19,7 @@ using Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteInlayHintService
+internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteInlayHintService
 {
     internal sealed class Factory : FactoryBase<IRemoteInlayHintService>
     {
