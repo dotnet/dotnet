@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
+
 
 namespace Microsoft.AspNetCore.Mvc.Analyzers;
 
@@ -596,7 +596,7 @@ namespace TestApp
         return test.RunAsync();
     }
 
-    internal sealed class TopLevelParameterNameCSharpAnalyzerTest : CSharpAnalyzerTest<TopLevelParameterNameAnalyzer, XUnitVerifier>
+    internal sealed class TopLevelParameterNameCSharpAnalyzerTest : CSharpAnalyzerTest<TopLevelParameterNameAnalyzer, DefaultVerifier>
     {
         public TopLevelParameterNameCSharpAnalyzerTest(ImmutableArray<MetadataReference> metadataReferences)
         {
