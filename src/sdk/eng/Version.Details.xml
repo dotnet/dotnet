@@ -73,18 +73,18 @@
       <Sha>11e2cd6f4b4bd65b10692fbdc17f597fa79793c8</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.13.0-preview-24612-02">
+    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-24619-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>41868360b914181b94136a1dc5911d8bdd66e2a9</Sha>
+      <Sha>e9b99f554a3c298e1106ea171f5a0462780af2c5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.13.0-preview-24612-02">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-24619-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>41868360b914181b94136a1dc5911d8bdd66e2a9</Sha>
+      <Sha>e9b99f554a3c298e1106ea171f5a0462780af2c5</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.13.0-preview-24612-02">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-24619-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>41868360b914181b94136a1dc5911d8bdd66e2a9</Sha>
+      <Sha>e9b99f554a3c298e1106ea171f5a0462780af2c5</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24617.1">
@@ -593,13 +593,13 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>040cbe276907174316e2cc07b35814b3069874a6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24613.2">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24618.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5c20f1e0d467062aeefc6576bf414338a372e953</Sha>
+      <Sha>735c538ec84f8b6d9a5c4503870f6b57f8c3acd6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.24613.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.24618.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5c20f1e0d467062aeefc6576bf414338a372e953</Sha>
+      <Sha>735c538ec84f8b6d9a5c4503870f6b57f8c3acd6</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="10.0.0-preview.24602.1">
       <Uri>https://github.com/dotnet/scenario-tests</Uri>
