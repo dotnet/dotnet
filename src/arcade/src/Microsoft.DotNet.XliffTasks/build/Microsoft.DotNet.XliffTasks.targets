@@ -93,7 +93,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="GetXlfSources" Returns="@(XlfSource)" DependsOnTargets="$(GetXlfSourcesDependsOnTargets)">
+  <Target Name="GetXlfSources" Returns="@(XlfSource)" DependsOnTargets="AssignLinkMetadata;$(GetXlfSourcesDependsOnTargets)">
     <ItemGroup>
       <EmbeddedResource Update="@(EmbeddedResource)">
         <XlfInput Condition="'%(EmbeddedResource.XlfInput)' == '' and '%(EmbeddedResource.Extension)' == '.resx'">true</XlfInput>

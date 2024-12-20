@@ -109,7 +109,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="UseBundleWixProject">
+  <Target Name="UseBundleWixProject" DependsOnTargets="GenerateBundleThemeVariables">
     <ItemGroup>
       <WixExtensions Include="WixBalExtension.dll" />
       <WixExtensions Include="WixTagExtension.dll" />
@@ -118,6 +118,20 @@
       <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/bundle.wxs" />
       <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/upgradePolicies.wxs" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateBundleThemeVariables" Condition="'@(WixThemeVariable)' != ''">
+    <ItemGroup>
+      <_WixThemeIncludeLine Include="&lt;?xml version=&quot;1.0&quot;?&gt;" />
+      <_WixThemeIncludeLine Include="&lt;Include&gt;" />
+      <_WixThemeIncludeLine Include="@(WixThemeVariable->'&lt;Variable Name=&quot;%(Identity)&quot; Value=&quot;%(Value)&quot; /&gt;')"/>
+      <_WixThemeIncludeLine Include="&lt;/Include&gt;" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_WixThemeFile>$(IntermediateOutputPath)wix/wixtheme.wxi</_WixThemeFile>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="@(_WixThemeIncludeLine)" File="$(_WixThemeFile)" Overwrite="true" Encoding="UTF-8" />
   </Target>
 
   <Target Name="PublishFilesForWixInstaller">
@@ -171,6 +185,8 @@
       
     <PropertyGroup>
       <WixInstallerBackgroundFile Condition="'$(WixInstallerBackgroundFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnetbackground.png</WixInstallerBackgroundFile>
+      <WixInstallerLogoFile Condition="'$(WixInstallerLogoFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnetlogo.bmp</WixInstallerLogoFile>
+      <WixBootstrapperFlavor Condition="'$(WixBootstrapperFlavor)' == ''">Foundation</WixBootstrapperFlavor>
     </PropertyGroup>
 
     <ItemGroup>
@@ -185,6 +201,9 @@
 
       <CandleVariables Include="DotNetBackgroundPngFile" Value="$(WixInstallerBackgroundFile)" />
       <CandleVariables Include="DotNetDummyEulaFile" Value="$(MSBuildThisFileDirectory)bundle\dummyEula.rtf" />
+      <CandleVariables Include="DotNetLogoBmpFile" Value="$(WixInstallerLogoFile)" />
+      <CandleVariables Include="BootstrapperApplicationFlavor" Value="$(WixBootstrapperFlavor)" />
+      <CandleVariables Include="WixThemeFile" Value="$(_WixThemeFile)" Condition="'$(_WixThemeFile)' != ''" />
     </ItemGroup>
 
     <PropertyGroup>

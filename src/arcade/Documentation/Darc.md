@@ -170,6 +170,9 @@ D:\repos\arcade> darc get-channels
 .NET 3 Tools - Validation
 ```
 
+*Note: `darc get-channels` does not exercise all authentication paths which require PAT's.  If you run a darc command and see an error like `Response status code does not indicate success: 401 (Unauthorized)`, it likely indicates that you are missing an AzDo or GH PAT (or that one of those PAT's is invalid / expired).*
+
+
 ### Adding dependencies to a repository
 
 Adding a new dependency to a repository means adding a dependency that is

@@ -239,9 +239,9 @@ namespace Microsoft.DotNet.Helix.Client
             }
 
             string jobStartIdentifier = Guid.NewGuid().ToString("N");
-            var newJob = await JobApi.NewAsync(creationRequest, jobStartIdentifier, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var newJob = await JobApi.NewAsync(creationRequest, jobStartIdentifier, cancellationToken).ConfigureAwait(false);
 
-            return new SentJob(JobApi, newJob);
+            return new SentJob(JobApi, newJob, newJob.ResultsUri, newJob.ResultsUriRSAS);
         }
 
         private void WarnForImpendingRemoval(Action<string> log, QueueInfo queueInfo) 

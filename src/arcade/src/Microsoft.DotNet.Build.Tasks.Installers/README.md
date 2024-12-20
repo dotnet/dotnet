@@ -115,7 +115,7 @@ The purpose of the wix command package is to provide a simple way to operate on 
 
 If you're using the targets in this package to produce wix artifacts, then a wix command package will automatically be created for you.  If you're using the [wix toolset](https://wixtoolset.org/) to produce wix files, then you can produce "wix command packages" using the MSBuild tasks directly.
 
-Wix command packages are produced by using the `CreateLightCommandPackageDrop` or `CreateLitCommandPackageDrop` MSBuild tasks from the `Microsoft.DotNet.Build.Tasks.Installers` package.  Task usage is defined [here](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Installers/README.md#tasks)
+Wix command packages are produced by using the `CreateLightCommandPackageDrop` MSBuild task from the `Microsoft.DotNet.Build.Tasks.Installers` package.  Task usage is defined [here](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Installers/README.md#tasks)
 
 ### File Format
 

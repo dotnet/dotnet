@@ -9,7 +9,7 @@ using NuGet.Versioning;
 namespace Microsoft.DotNet.Arcade.Sdk
 {
     /// <summary>
-    /// File version has 4 parts and need to increase every official build.This is especially important when building MSIs.
+    /// File version has 4 parts and need to increase every official build. This is especially important when building MSIs.
     /// See https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#assembly-version.
     /// </summary>
     public class CalculateAssemblyAndFileVersions : Microsoft.Build.Utilities.Task
@@ -93,7 +93,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                     yy = mm = dd = r = -1;
                 }
 
-                if (yy < 0 || yy > 99 || mm < 1 || mm > 12 || dd < 1 || dd > 31 || r < 0 || r > 99)
+                if (yy < 0 || yy > 99 || mm < 1 || mm > 12 || dd < 1 || dd > 31 || r < 0 || r > 199)
                 {
                     Log.LogError($"Invalid format of {nameof(BuildNumber)}: {BuildNumber}");
                     return;

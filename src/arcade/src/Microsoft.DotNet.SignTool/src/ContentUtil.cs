@@ -16,13 +16,25 @@ namespace Microsoft.DotNet.SignTool
 {
     internal static class ContentUtil
     {
+        /// <summary>
+        /// Returns the hash of the content of the file at the given path.
+        /// If the file is empty, returns the hash of an empty stream.
+        /// </summary>
+        /// <param name="fullPath">Path of file to hash</param>
+        /// <returns>Hash of content.</returns>
         public static ImmutableArray<byte> GetContentHash(string fullPath)
         {
             using (var stream = File.OpenRead(fullPath))
             {
+                if (stream.Length == 0)
+                {
+                    return EmptyFileContentHash;
+                }
                 return GetContentHash(stream);
             }
         }
+
+        public static readonly ImmutableArray<byte> EmptyFileContentHash = GetContentHash(new MemoryStream()).ToImmutableArray();
 
         public static ImmutableArray<byte> GetContentHash(Stream stream)
         {

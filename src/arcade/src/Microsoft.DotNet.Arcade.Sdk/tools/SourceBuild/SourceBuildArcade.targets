@@ -27,7 +27,7 @@
     <UseInnerClone Condition="'$(UseInnerClone)' == '' and '$(DotNetBuildOrchestrator)' != 'true'">true</UseInnerClone>
 
     <!-- Do not create intermediate package in full product source-build. -->
-    <CreateIntermediatePackage Condition="'$(DotNetBuildOrchestrator)' != 'true'">true</CreateIntermediatePackage>
+    <CreateIntermediatePackage Condition="'$(CreateIntermediatePackage)' == '' and '$(DotNetBuildOrchestrator)' != 'true'">true</CreateIntermediatePackage>
 
     <!-- Prefer abbreviations to avoid long paths (breaks on Windows) -->
     <SourceBuildOutputDir Condition="'$(SourceBuildOutputDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'sb'))</SourceBuildOutputDir>

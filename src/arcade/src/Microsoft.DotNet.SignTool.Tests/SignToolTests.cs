@@ -38,6 +38,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             {".vsix",  new List<SignInfo>{ new SignInfo("VsixSHA2") } },
             {".zip",  new List<SignInfo>{ SignInfo.Ignore } },
             {".tgz",  new List<SignInfo>{ SignInfo.Ignore } },
+            {".py",  new List<SignInfo>{ new SignInfo("Microsoft400") } }, // lgtm [cs/common-default-passwords] Safe, these are certificate names
             {".nupkg",  new List<SignInfo>{ new SignInfo("NuGet") } },
             {".symbols.nupkg",  new List<SignInfo>{ SignInfo.Ignore } },
         };
@@ -1768,6 +1769,24 @@ $@"
         }
 
         [Fact]
+        public void ZeroLengthFilesShouldNotBeSigned()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new ITaskItem[]
+            {
+                new TaskItem(GetResourcePath("ZeroLengthPythonFile.py"))
+            };
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>();
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>()
+            {
+                { new ExplicitCertificateKey("ZeroLengthPythonFile.py"), "3PartySHA2" }
+            };
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, Array.Empty<string>());
+        }
+
+        [Fact]
         public void CheckFileExtensionSignInfo()
         {
             // List of files to be considered for signing
@@ -1858,6 +1877,19 @@ $@"
             {
                 { "CertificateName", "JSCertificate" },
                 { "CollisionPriorityId", "456" }
+            }));
+
+            runTask(fileExtensionSignInfo: fileExtensionSignInfo.ToArray()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ValidateParseFileExtensionEntriesForTarGzExtensionPasses()
+        {
+            var fileExtensionSignInfo = new List<ITaskItem>();
+
+            fileExtensionSignInfo.Add(new TaskItem(".tar.gz", new Dictionary<string, string>
+            {
+                { "CertificateName", "None" }
             }));
 
             runTask(fileExtensionSignInfo: fileExtensionSignInfo.ToArray()).Should().BeTrue();

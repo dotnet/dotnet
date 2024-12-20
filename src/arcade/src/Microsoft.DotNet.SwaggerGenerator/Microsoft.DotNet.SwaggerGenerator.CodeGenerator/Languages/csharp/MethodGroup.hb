@@ -179,7 +179,7 @@ namespace {{pascalCaseNs Namespace}}
 
                 if ({{#notNullCheck Type Required}}{{camelCase Name}}{{/notNullCheck}})
                 {
-                    _req.Headers.Add("{{Name}}", {{camelCase Name}}{{maybeCallToString Type}});
+                    _req.Headers.Add("{{Name}}", {{camelCase Name}});
                 }
                 {{/each}}
                 {{#with BodyParameter}}
