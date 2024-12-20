@@ -2,7 +2,7 @@
     "instanceUrl": "https://devdiv.visualstudio.com/",
     "template": "TFSDEVDIV",
     "projectName": "DEVDIV",
-    "areaPath": "DevDiv\\NET Fundamentals\\Infrastructure\\Arcade\\SDL",
+    "areaPath": "DevDiv\\.NET Shared",
     "iterationPath": "DevDiv",
     "notificationAliases": [ "dnceng@microsoft.com" ],
     "repositoryName":"scenario-tests",
