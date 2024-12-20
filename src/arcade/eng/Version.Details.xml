@@ -22,25 +22,25 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>d617bc8ed2787c235a57cf0dcdfd087b86ff9521</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="10.0.100-alpha.1.24605.5">
+    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="10.0.100-alpha.1.24611.2">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>0547db4136415c5e73c50aadb21d12293a0305e0</Sha>
+      <Sha>ed18af72023b6abf81d68840b0025b1d29e0dc33</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24610.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24617.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>d5c8bb8726b46b5867961f5d8f56f1b13e72dcb9</Sha>
+      <Sha>4f2968fce08735a7e22fca6bd4c99d003221d716</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.24610.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.24617.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>d5c8bb8726b46b5867961f5d8f56f1b13e72dcb9</Sha>
+      <Sha>4f2968fce08735a7e22fca6bd4c99d003221d716</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.24611.1">
+    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.24618.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>6bfef3adbac8a5948c4ab3f79f6787d3a7a36c10</Sha>
+      <Sha>b6a5413366317b21b811619ffc99cfb4e799149a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24611.1">
+    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24618.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>6bfef3adbac8a5948c4ab3f79f6787d3a7a36c10</Sha>
+      <Sha>b6a5413366317b21b811619ffc99cfb4e799149a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.24610.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -132,9 +132,9 @@
       <Sha>ef4c24166691977558e5312758df4313ab310dc0</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24610.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24617.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>d5c8bb8726b46b5867961f5d8f56f1b13e72dcb9</Sha>
+      <Sha>4f2968fce08735a7e22fca6bd4c99d003221d716</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -168,9 +168,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.561001">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.561602">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>94798e07efab2663f2d1a71862780bc365d2e3ab</Sha>
+      <Sha>b24c3aa9f120f83befa255d5d5f465b961f387fb</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Transitive dependency needed for source build. -->
@@ -199,9 +199,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.24605.7">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.24613.2">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>78169b1c639dfd1c0427311db9f85d8e8d1af8ec</Sha>
+      <Sha>6487d4d9c4c71b336a5f13427a590cb3ad7d5b0e</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

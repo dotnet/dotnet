@@ -155,9 +155,9 @@ try {
     $prOwnerName = $RepoOwner
     $prRepoName = $RepoName
 
-    $query = 'query ($repoOwner: String!, $repoName: String!, $baseRefName: String!) {
+    $query = 'query ($repoOwner: String!, $repoName: String!, $baseRefName: String!, $headRefName: String!) {
         repository(owner: $repoOwner, name: $repoName) {
-          pullRequests(baseRefName: $baseRefName, states: OPEN, first: 100) {
+          pullRequests(baseRefName: $baseRefName, headRefName: $headRefName, states: OPEN, first: 100) {
             totalCount
             nodes {
               number
@@ -181,6 +181,7 @@ try {
             repoOwner   = $RepoOwner
             repoName    = $RepoName
             baseRefName = $MergeToBranch
+            headRefName = $mergeBranchName
         }
     }
 

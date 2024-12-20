@@ -78,7 +78,7 @@
     <!-- Respect a restore config file passed in via /p:RestoreConfigFile, common in VMR builds -->
     <PropertyGroup>
       <RestoreConfigFileOption></RestoreConfigFileOption>
-      <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile $(RestoreConfigFile)</RestoreConfigFileOption>
+      <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile "$(RestoreConfigFile)"</RestoreConfigFileOption>
     </PropertyGroup>
 
     <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />

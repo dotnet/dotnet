@@ -19,18 +19,17 @@ stages:
         demands: ImageOverride -equals 1es-windows-2022
 
       steps:
-      - task: UseDotNet@2
-        displayName: Install global.json SDK
-        inputs:
-          useGlobalJson: true
+      - script: restore.cmd -ci
+        displayName: Run restore.cmd
 
       - task: UseDotNet@2
         displayName: Install .NET 6 runtime
         inputs:
           packageType: runtime
           version: 6.x
+          installationPath: $(Build.SourcesDirectory)/.dotnet
 
-      - script: dotnet tool restore
+      - script: $(Build.SourcesDirectory)/.dotnet/dotnet.exe tool restore
         displayName: Restore dotnet tools
 
       - task: AzureCLI@2
