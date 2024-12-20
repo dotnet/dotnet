@@ -45,16 +45,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         int tabSize = 4,
         bool allowDiagnostics = false)
     {
-        Assert.True(_context.CreatedByFormattingDiscoverer, "Test class is using FormattingTestContext, but not using [FormattingTestFact] or [FormattingTestTheory]");
-
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = _context.ForceRuntimeCodeGeneration });
-
-        if (_context.ShouldFlipLineEndings)
-        {
-            // flip the line endings of the stings (LF to CRLF and vice versa) and run again
-            input = new TestCode(_context.FlipLineEndings(input.OriginalInput));
-            expected = _context.FlipLineEndings(expected);
-        }
+        (input, expected) = ProcessFormattingContext(input, expected);
 
         var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
         if (!allowDiagnostics)
@@ -105,7 +96,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         string? fileKind = null,
         int? expectedChangedLines = null)
     {
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = false });
+        (input, expected) = ProcessFormattingContext(input, expected);
 
         var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
         var inputText = await document.GetTextAsync(DisposalToken);
@@ -156,6 +147,22 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
             var delta = lastLine - firstLine + changes.Count(e => e.NewText.AssumeNotNull().Contains(Environment.NewLine));
             Assert.Equal(changedLines, delta + 1);
         }
+    }
+
+    private (TestCode, string) ProcessFormattingContext(TestCode input, string expected)
+    {
+        Assert.True(_context.CreatedByFormattingDiscoverer, "Test class is using FormattingTestContext, but not using [FormattingTestFact] or [FormattingTestTheory]");
+
+        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = _context.ForceRuntimeCodeGeneration });
+
+        if (_context.ShouldFlipLineEndings)
+        {
+            // flip the line endings of the stings (LF to CRLF and vice versa) and run again
+            input = new TestCode(_context.FlipLineEndings(input.OriginalInput));
+            expected = _context.FlipLineEndings(expected);
+        }
+
+        return (input, expected);
     }
 
     private async Task<TextEdit[]?> GetFormattingEditsAsync(TextSpan span, bool insertSpaces, int tabSize, TextDocument document, LSPRequestInvoker requestInvoker, IClientSettingsManager clientSettingsManager)

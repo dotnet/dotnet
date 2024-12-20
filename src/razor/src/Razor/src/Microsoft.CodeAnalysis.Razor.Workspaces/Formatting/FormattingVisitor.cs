@@ -408,7 +408,20 @@ internal class FormattingVisitor : RazorSyntaxWalker
 
     public override void VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
     {
-        WriteSpan(node, FormattingSpanKind.Code);
+        // Workaround for a quirk of runtime code gen, where an empty marker is inserted before the close brace
+        // of an explicit expression. ie, at the $$ below:
+        //
+        // @{
+        //     something
+        // $$}
+        //
+        // Writing a span for this empty marker will cause the close brace to be incorrectly indented, because its seen as
+        // being "inside" the block.
+        if (node.LiteralTokens is not [{ Kind: SyntaxKind.Marker }])
+        {
+            WriteSpan(node, FormattingSpanKind.Code);
+        }
+
         base.VisitCSharpStatementLiteral(node);
     }
 

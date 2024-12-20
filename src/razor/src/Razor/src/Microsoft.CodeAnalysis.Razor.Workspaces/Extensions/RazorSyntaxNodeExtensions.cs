@@ -166,7 +166,9 @@ internal static class RazorSyntaxNodeExtensions
             {
                 var previousToken = token.GetPreviousToken(includeWhitespace);
 
-                if (previousToken.Kind != SyntaxKind.Marker || previousToken.Position != foundPosition)
+                if (previousToken is null ||
+                    previousToken.Kind != SyntaxKind.Marker ||
+                    previousToken.Position != foundPosition)
                 {
                     break;
                 }

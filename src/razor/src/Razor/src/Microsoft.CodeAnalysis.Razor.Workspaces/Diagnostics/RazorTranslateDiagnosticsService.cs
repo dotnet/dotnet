@@ -234,6 +234,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         return str switch
         {
+            CSSErrorCodes.UnrecognizedBlockType => IsEscapedAtSign(diagnostic, sourceText),
             CSSErrorCodes.MissingOpeningBrace => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
             CSSErrorCodes.MissingSelectorAfterCombinator => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
             CSSErrorCodes.MissingSelectorBeforeCombinatorCode => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
@@ -243,6 +244,34 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             HtmlErrorCodes.TooFewElementsErrorCode => IsAnyFilteredTooFewElementsError(diagnostic, sourceText, syntaxTree),
             _ => false,
         };
+
+        static bool IsEscapedAtSign(LspDiagnostic diagnostic, SourceText sourceText)
+        {
+            // Filters out "Unrecognized block type" errors in CSS, which occur with something like this:
+            //
+            // <style>
+            //     @@font - face
+            //     {
+            //         // contents
+            //     }
+            // </style>
+            //
+            // The "@@" tells Razor that the user wants an "@" in the final Html, but the design time document
+            // for the Html has to line up with the source Razor file, so that doesn't happen in the IDE. When
+            // CSS gets the two "@"s, it raises the "Unrecognized block type" error.
+
+            if (!sourceText.TryGetAbsoluteIndex(diagnostic.Range.Start, out var absoluteIndex))
+            {
+                return false;
+            }
+
+            // It's much easier to just check the source text directly, rather than try to understand all of the
+            // possible shapes of the syntax tree here. We assume that since the diagnostics we're filtering out
+            // came from the CSS server, it's a CSS block.
+            return absoluteIndex > 0 &&
+                sourceText[absoluteIndex] == '@' &&
+                sourceText[absoluteIndex - 1] == '@';
+        }
 
         static bool IsCSharpInStyleBlock(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {

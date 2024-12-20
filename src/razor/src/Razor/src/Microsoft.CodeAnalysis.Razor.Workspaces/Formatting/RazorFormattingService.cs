@@ -49,7 +49,7 @@ internal class RazorFormattingService : IRazorFormattingService
         _documentFormattingPasses =
         [
             new HtmlFormattingPass(loggerFactory),
-            new RazorFormattingPass(),
+            new RazorFormattingPass(loggerFactory),
             new CSharpFormattingPass(documentMappingService, hostServicesProvider, loggerFactory),
             .. _validationPasses
         ];

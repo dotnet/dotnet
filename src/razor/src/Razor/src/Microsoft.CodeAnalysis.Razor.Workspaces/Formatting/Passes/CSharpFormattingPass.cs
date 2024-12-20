@@ -55,7 +55,7 @@ internal sealed class CSharpFormattingPass(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var indentationChanges = await AdjustIndentationAsync(changedContext, startLine: 0, endLineInclusive: changedText.Lines.Count - 1, roslynWorkspaceHelper.HostWorkspaceServices, cancellationToken).ConfigureAwait(false);
+        var indentationChanges = await AdjustIndentationAsync(changedContext, startLine: 0, endLineInclusive: changedText.Lines.Count - 1, roslynWorkspaceHelper.HostWorkspaceServices, _logger, cancellationToken).ConfigureAwait(false);
         if (indentationChanges.Length > 0)
         {
             // Apply the edits that modify indentation.
@@ -64,9 +64,31 @@ internal sealed class CSharpFormattingPass(
             _logger.LogTestOnly($"After AdjustIndentationAsync:\r\n{changedText}");
         }
 
+        _logger.LogTestOnly($"Source Mappings:\r\n{RenderSourceMappings(context.CodeDocument)}");
+
         _logger.LogTestOnly($"Generated C#:\r\n{context.CSharpSourceText}");
 
         return changedText.GetTextChangesArray(originalText);
+    }
+
+    private static string RenderSourceMappings(RazorCodeDocument codeDocument)
+    {
+        var markers = codeDocument.GetCSharpDocument().SourceMappings.SelectMany(mapping =>
+            new[]
+            {
+                (index: mapping.OriginalSpan.AbsoluteIndex, text: "<#" ),
+                (index: mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length, text: "#>"),
+            })
+            .OrderByDescending(mapping => mapping.index)
+            .ThenBy(mapping => mapping.text);
+
+        var output = codeDocument.Source.Text.ToString();
+        foreach (var (index, text) in markers)
+        {
+            output = output.Insert(index, text);
+        }
+
+        return output;
     }
 
     private async Task<ImmutableArray<TextChange>> FormatCSharpAsync(FormattingContext context, HostWorkspaceServices hostWorkspaceServices, Document csharpDocument, CancellationToken cancellationToken)

@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task FormatsIfStatementInComponent()
     {
         await RunOnTypeFormattingTestAsync(
@@ -45,7 +45,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task FormatsIfStatementInComponent2()
     {
         await RunOnTypeFormattingTestAsync(
@@ -71,7 +71,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Class_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -89,7 +89,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 1);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Class_SingleLine_UseTabsAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -108,7 +108,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 1);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Class_SingleLine_AdjustTabSizeAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -127,7 +127,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 1);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Class_MultiLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -148,7 +148,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 3);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Method_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -166,7 +166,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 1);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Method_MultiLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -187,7 +187,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 3);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Property_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -204,7 +204,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Property_MultiLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -225,7 +225,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_Property_StartOfBlockAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -241,7 +241,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_ClassField_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -258,7 +258,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_ClassField_MultiLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -277,7 +277,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_MethodVariableAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -300,7 +300,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/27135")]
     public async Task Semicolon_Fluent_CallAsync()
     {
@@ -334,7 +334,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task ClosingBrace_MatchesCSharpIndentationAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -382,7 +382,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task ClosingBrace_DoesntMatchCSharpIndentationAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -430,7 +430,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/27102")]
     public async Task CodeBlock_SemiColon_SingleLine1Async()
     {
@@ -450,7 +450,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/27102")]
     public async Task CodeBlock_SemiColon_SingleLine2Async()
     {
@@ -470,7 +470,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/27102")]
     public async Task CodeBlock_SemiColon_SingleLine3Async()
     {
@@ -490,7 +490,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/27102")]
     public async Task CodeBlock_SemiColon_MultiLineAsync()
     {
@@ -512,7 +512,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/34319")]
     public async Task Switch_Statment_NestedHtml_NestedCodeBlock()
     {
@@ -554,7 +554,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/34319")]
     public async Task NestedHtml_NestedCodeBlock()
     {
@@ -666,7 +666,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5698")]
     public async Task Semicolon_NoDocumentChanges()
     {
@@ -684,7 +684,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
         await RunOnTypeFormattingTestAsync(input, input.Replace("$$", ""), triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5698")]
     public async Task Semicolon_NoDocumentChanges2()
     {
@@ -726,7 +726,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             expectedChangedLines: 1);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5693")]
     public async Task IfStatementInsideLambda()
     {
@@ -764,7 +764,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task ComponentInCSharp1()
     {
         await RunOnTypeFormattingTestAsync(
@@ -801,7 +801,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task ComponentInCSharp2()
     {
         await RunOnTypeFormattingTestAsync(
@@ -838,7 +838,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/6158")]
     public async Task Format_NestedLambdas()
     {
@@ -896,7 +896,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_UnrelatedEdit_DoesNothing()
     {
         await RunOnTypeFormattingTestAsync(
@@ -928,7 +928,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             insertSpaces: false);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task CloseCurly_IfBlock_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -945,7 +945,8 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: '}');
     }
 
-    [Theory, CombinatorialData]
+    [FormattingTestTheory(SkipFlipLineEnding = true)]
+    [CombinatorialData]
     public async Task CloseCurly_IfBlock_MultiLineAsync(bool inGlobalNamespace)
     {
         await RunOnTypeFormattingTestAsync(
@@ -967,7 +968,8 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             inGlobalNamespace: inGlobalNamespace);
     }
 
-    [Theory, CombinatorialData]
+    [FormattingTestTheory(SkipFlipLineEnding = true)]
+    [CombinatorialData]
     public async Task CloseCurly_MultipleStatementBlocksAsync(bool inGlobalNamespace)
     {
         await RunOnTypeFormattingTestAsync(
@@ -1001,7 +1003,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             inGlobalNamespace: inGlobalNamespace);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_Variable_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -1018,7 +1020,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_Variable_MultiLineAsync()
     {
         await RunOnTypeFormattingTestAsync(
@@ -1037,7 +1039,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_PropertyGet()
     {
         await RunOnTypeFormattingTestAsync(
@@ -1054,7 +1056,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task Semicolon_AddsLineAtEndOfDocument()
     {
         await RunOnTypeFormattingTestAsync(
@@ -1069,7 +1071,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             triggerCharacter: ';');
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task FormatsSimpleHtmlTag_OnType()
     {
         await RunOnTypeFormattingTestAsync(
@@ -1097,7 +1099,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             fileKind: FileKinds.Legacy);
     }
 
-    [Fact]
+    [FormattingTestFact(SkipFlipLineEnding = true)]
     public async Task OnTypeFormatting_Enabled()
     {
         await RunOnTypeFormattingTestAsync(

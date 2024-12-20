@@ -177,7 +177,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
             return node switch
             {
                 // We don't want to format lines that are part of multi-line string literals
-                LiteralExpressionSyntax { RawKind: (int)CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression } => SpansMultipleLines(node, text),
+                LiteralExpressionSyntax { RawKind: (int)CSharp.SyntaxKind.StringLiteralExpression } => SpansMultipleLines(node, text),
                 // As above, but for multi-line interpolated strings
                 InterpolatedStringExpressionSyntax => SpansMultipleLines(node, text),
                 InterpolatedStringTextSyntax => SpansMultipleLines(node, text),
@@ -197,47 +197,18 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
             // does format the braces of an array initializer, so we need to special case those
             // node types. Doing it outside the loop is good for perf, but also makes things easier.
             if (parent is InitializerExpressionSyntax initializer &&
-                initializer.IsKind(CodeAnalysis.CSharp.SyntaxKind.ArrayInitializerExpression) &&
+                initializer.IsKind(CSharp.SyntaxKind.ArrayInitializerExpression) &&
                 (token == initializer.OpenBraceToken || token == initializer.CloseBraceToken) &&
                 initializer.Parent?.Parent?.Parent?.Parent is ImplicitObjectCreationExpressionSyntax)
             {
                 return false;
             }
 
-            return parent.AncestorsAndSelf().Any(node =>
+            return parent.AncestorsAndSelf().Any(node => node switch
             {
-                if (node is not InitializerExpressionSyntax initializer)
-                {
-                    return false;
-                }
-
-                if (initializer.IsKind(CodeAnalysis.CSharp.SyntaxKind.ArrayInitializerExpression))
-                {
-                    // For array initializers we don't want to ignore the open and close braces
-                    // as the formatter does move them relative to the variable declaration they
-                    // are part of, but doesn't otherwise touch them.
-                    // This isn't true if they are part of other collection or object initializers, but
-                    // fortunately we can ignore that because of the recursive nature of this method,
-                    // I just wanted to mention it so you understood how annoying this is :)
-                    // This also isn't true for the close brace token of an _implicit_ array creation
-                    // expression, because Roslyn was designed to hurt me.
-                    if (token == initializer.OpenBraceToken ||
-                        (token == initializer.CloseBraceToken && initializer.Parent is not ImplicitArrayCreationExpressionSyntax))
-                    {
-                        return false;
-                    }
-
-                    // Anything else in an array initializer we ignore
-                    return true;
-                }
-
-                // Any other type of initializer, as long as its not empty, we also ignore
-                if (initializer.Expressions.Count > 0)
-                {
-                    return true;
-                }
-
-                return false;
+                CollectionExpressionSyntax collectionExpression => IgnoreCollectionExpression(collectionExpression, token),
+                InitializerExpressionSyntax initializer => IgnoreInitializerExpression(initializer, token),
+                _ => false
             });
         }
 
@@ -245,6 +216,56 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         {
             var range = text.GetRange(node.Span);
             return range.SpansMultipleLines();
+        }
+
+        static bool IgnoreCollectionExpression(CollectionExpressionSyntax collectionExpression, SyntaxToken token)
+        {
+            // We want to format the close brace otherwise it moves
+            if (token == collectionExpression.CloseBracketToken)
+            {
+                return false;
+            }
+
+            // Ditto for the first element
+            if (collectionExpression.Elements is [{ } first, ..] &&
+                first.Contains(token.Parent))
+            {
+                return false;
+            }
+
+            // Otherwise, leave collection expressions alone
+            return true;
+        }
+
+        static bool IgnoreInitializerExpression(InitializerExpressionSyntax initializer, SyntaxToken token)
+        {
+            if (initializer.IsKind(CSharp.SyntaxKind.ArrayInitializerExpression))
+            {
+                // For array initializers we don't want to ignore the open and close braces
+                // as the formatter does move them relative to the variable declaration they
+                // are part of, but doesn't otherwise touch them.
+                // This isn't true if they are part of other collection or object initializers, but
+                // fortunately we can ignore that because of the recursive nature of this method,
+                // I just wanted to mention it so you understood how annoying this is :)
+                // This also isn't true for the close brace token of an _implicit_ array creation
+                // expression, because Roslyn was designed to hurt me.
+                if (token == initializer.OpenBraceToken ||
+                    (token == initializer.CloseBraceToken && initializer.Parent is not ImplicitArrayCreationExpressionSyntax))
+                {
+                    return false;
+                }
+
+                // Anything else in an array initializer we ignore
+                return true;
+            }
+
+            // Any other type of initializer, as long as its not empty, we also ignore
+            if (initializer.Expressions.Count > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -262,11 +283,17 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
         using var changes = new PooledArrayBuilder<TextChange>();
 
+        var syntaxTree = CSharpSyntaxTree.ParseText(context.CSharpSourceText, cancellationToken: cancellationToken);
+        var root = syntaxTree.GetRoot(cancellationToken);
+
         var previousMarkerOffset = 0;
         foreach (var projectedDocumentIndex in projectedDocumentLocations)
         {
-            var useMarker = char.IsWhiteSpace(context.CSharpSourceText[projectedDocumentIndex]);
-            if (useMarker)
+            var token = root.FindToken(projectedDocumentIndex, findInsideTrivia: true);
+
+            // We use a marker if the projected location is in trivia, because we can't add annotations to a specific piece of trivia
+            var isInTrivia = projectedDocumentIndex < token.SpanStart || projectedDocumentIndex >= token.Span.End;
+            if (isInTrivia)
             {
                 // We want to add a marker here because the location points to a whitespace
                 // which will not get preserved during formatting.
@@ -299,8 +326,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         }
 
         var changedText = context.CSharpSourceText.WithChanges(changes.ToImmutable());
-        var syntaxTree = CSharpSyntaxTree.ParseText(changedText, cancellationToken: cancellationToken);
-        return (indentationMap, syntaxTree);
+        return (indentationMap, syntaxTree.WithChangedText(changedText));
     }
 
     private static SyntaxNode AttachAnnotations(

@@ -76,7 +76,7 @@
 "PreviewPaneChannels"="*"
 
 [$RootKey$\FeatureFlags\Razor\LSP\UseRoslynTokenizer]
-"Description"="Enables some new C# features, like interpolated and raw strings, in Razor files opened in Visual Studio. This matches using '<features>use-roslyn-tokenizer</feature>' in a project file for command line builds, and may result in inconsistencies if this option and your project files do not match."
+"Description"="Enables some new C# features, like interpolated and raw strings, in Razor files opened in Visual Studio. This matches using '<features>use-roslyn-tokenizer</features>' in a project file for command line builds, and may result in inconsistencies if this option and your project files do not match."
 "Value"=dword:00000000
 "Title"="Use the C# tokenizer for Razor files in the IDE (requires restart)"
 "PreviewPaneChannels"="*"

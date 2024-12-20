@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
@@ -60,6 +61,47 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                     {
                         Code = "HTM1337",
                         Range = SourceText.From(input.Text).GetRange(input.NamedSpans.First().Value.First())
+                    }
+                ]
+            }]);
+    }
+
+    [Fact]
+    public Task FilterEscapedAtFromCss()
+    {
+        TestCode input = """
+            <div>
+
+            <style>
+              @@media (max-width: 600px) {
+                body {
+                  background-color: lightblue;
+                }
+              }
+
+              {|CSS002:f|}oo
+              {
+                bar: baz;
+              }
+            </style>
+
+            </div>
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.UnrecognizedBlockType,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@@") + 1, 1))
+                    },
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.UnrecognizedBlockType,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("f"), 1))
                     }
                 ]
             }]);

@@ -1147,6 +1147,22 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </div>
                     }
 
+                    @{
+                    <div class="FF"
+                        id="ERT">
+                        @{
+                    <div class="FF"
+                        id="ERT">
+                        asdf
+                        <div class="3"
+                            id="3">
+                                @if(true){<p></p>}
+                            </div>
+                    </div>
+                    }
+                    </div>
+                    }
+
                     @functions {
                             public class Foo
                         {
@@ -1187,6 +1203,25 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                                     <p></p>
                                 }
                             </div>
+                        </div>
+                    }
+
+                    @{
+                        <div class="FF"
+                             id="ERT">
+                            @{
+                                <div class="FF"
+                                     id="ERT">
+                                    asdf
+                                    <div class="3"
+                                         id="3">
+                                        @if (true)
+                                        {
+                                            <p></p>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
 
@@ -2972,6 +3007,103 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    public async Task Format_SectionDirectiveBlock8()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @functions {
+                     public class Foo{
+                    void Method() {  }
+                        }
+                    }
+
+                    @section Scripts {
+                    <p>this is a para</p>
+                    @if(true)
+                    {
+                    <p>and so is this</p>
+                    }
+                    <p>and finally this</p>
+                    }
+                    """,
+            expected: """
+                    @functions {
+                        public class Foo
+                        {
+                            void Method() { }
+                        }
+                    }
+
+                    @section Scripts {
+                        <p>this is a para</p>
+                        @if (true)
+                        {
+                            <p>and so is this</p>
+                        }
+                        <p>and finally this</p>
+                    }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
+    public async Task Format_SectionDirectiveBlock9()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @functions {
+                     public class Foo{
+                    void Method() {  }
+                        }
+                    }
+
+                    @section Scripts {
+                    <p>this is a para</p>
+                    @if(true)
+                    {
+                    <p>and so is this</p>
+                    }
+                    <p>and finally this</p>
+                    }
+
+                    <p>I lied when I said finally</p>
+
+                    @functions {
+                     public class Foo2{
+                    void Method() {  }
+                        }
+                    }
+                    """,
+            expected: """
+                    @functions {
+                        public class Foo
+                        {
+                            void Method() { }
+                        }
+                    }
+
+                    @section Scripts {
+                        <p>this is a para</p>
+                        @if (true)
+                        {
+                            <p>and so is this</p>
+                        }
+                        <p>and finally this</p>
+                    }
+
+                    <p>I lied when I said finally</p>
+
+                    @functions {
+                        public class Foo2
+                        {
+                            void Method() { }
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
     public async Task Formats_CodeBlockDirectiveWithRazorComments()
     {
         await RunFormattingTestAsync(
@@ -3913,6 +4045,100 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11325")]
+    public async Task CodeBlock_CollectionExpression1()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                                "a",
+                                "b",
+                                "c"
+                            ];
+                        }
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                                "a",
+                                "b",
+                                "c"
+                            ];
+                        }
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11325")]
+    public async Task CodeBlock_CollectionExpression2()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                                    "a",
+                            "b",
+                                "c"
+                            ];
+                        }
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                                    "a",
+                            "b",
+                                "c"
+                            ];
+                        }
+                    }
+                    """);
+    }
+
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11325")]
+    public async Task CodeBlock_CollectionExpression3()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                            ];
+                        }
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private void M()
+                        {
+                            List<string> entries = [
+                            ];
+                        }
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5618")]
     public async Task CodeBlock_EmptyObjectCollectionInitializers()
     {
@@ -3986,6 +4212,93 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: """
                     @{
                         // foo
+                    }
+
+                    @if (true)
+                    {
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/aspnetcore/issues/4498")]
+    public async Task IfBlock_TopLevel_WithOtherCode2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+
+                        // foo
+
+                            // foo
+
+                    }
+
+                            @if (true)
+                    {
+                    }
+                    """,
+            expected: """
+                    @{
+
+                        // foo
+
+                        // foo
+
+                    }
+
+                    @if (true)
+                    {
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/aspnetcore/issues/4498")]
+    public async Task IfBlock_TopLevel_WithOtherCode3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+                        var x = 3;
+
+                        // foo
+                    }
+
+                            @if (true)
+                    {
+                    }
+                    """,
+            expected: """
+                    @{
+                        var x = 3;
+
+                        // foo
+                    }
+
+                    @if (true)
+                    {
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/aspnetcore/issues/4498")]
+    public async Task IfBlock_TopLevel_WithOtherCode4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+                        var x = 3;
+                    }
+
+                            @if (true)
+                    {
+                    }
+                    """,
+            expected: """
+                    @{
+                        var x = 3;
                     }
 
                     @if (true)
