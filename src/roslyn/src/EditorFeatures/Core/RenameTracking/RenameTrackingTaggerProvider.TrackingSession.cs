@@ -73,22 +73,8 @@ internal sealed partial class RenameTrackingTaggerProvider
                 _isRenamableIdentifierTask = DetermineIfRenamableIdentifierAsync(snapshotSpan, initialCheck: true);
                 _isRenamableIdentifierTask.ReportNonFatalErrorAsync();
 
-                var asyncToken = _asyncListener.BeginAsyncOperation(GetType().Name + ".UpdateTrackingSessionAfterIsRenamableIdentifierTask");
-
-                _isRenamableIdentifierTask.SafeContinueWithFromAsync(
-                    async t =>
-                    {
-                        await _threadingContext.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true, _cancellationToken).NoThrowAwaitable();
-
-                        // Avoid throwing an exception in this common case
-                        if (_cancellationToken.IsCancellationRequested)
-                            return;
-
-                        stateMachine.UpdateTrackingSessionIfRenamable();
-                    },
-                    _cancellationToken,
-                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously,
-                    TaskScheduler.Default).CompletesAsyncOperation(asyncToken);
+                SwitchToMainThreadAfterAndUpdateSessionTrackerAsync(_isRenamableIdentifierTask).CompletesAsyncOperation(
+                     _asyncListener.BeginAsyncOperation(GetType().Name + ".UpdateTrackingSessionAfterIsRenamableIdentifierTask"));
 
                 QueueUpdateToStateMachine(stateMachine, _isRenamableIdentifierTask);
             }
@@ -101,28 +87,41 @@ internal sealed partial class RenameTrackingTaggerProvider
 
                 _isRenamableIdentifierTask = s_notRenamableTask;
             }
+
+            return;
+
+            async Task SwitchToMainThreadAfterAndUpdateSessionTrackerAsync(Task isRenamableIdentifierTask)
+            {
+                // Use CA(true) so we can stay on the UI thread if already there.
+                await isRenamableIdentifierTask.ConfigureAwait(true);
+
+                // Avoid throwing an exception in this common case
+                await _threadingContext.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true, _cancellationToken).NoThrowAwaitable();
+                if (_cancellationToken.IsCancellationRequested)
+                    return;
+
+                stateMachine.UpdateTrackingSessionIfRenamable();
+            }
         }
 
         private void QueueUpdateToStateMachine(StateMachine stateMachine, Task task)
         {
-            var asyncToken = _asyncListener.BeginAsyncOperation($"{GetType().Name}.{nameof(QueueUpdateToStateMachine)}");
+            QueueUpdateToStateMachineAsync().CompletesAsyncOperation(
+                _asyncListener.BeginAsyncOperation($"{GetType().Name}.{nameof(QueueUpdateToStateMachine)}"));
 
-            task.SafeContinueWithFromAsync(async t =>
-               {
-                   await _threadingContext.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true, _cancellationToken).NoThrowAwaitable();
+            async Task QueueUpdateToStateMachineAsync()
+            {
+                // Use CA(true) so we can stay on the UI thread if already there.
+                await task.ConfigureAwait(true);
 
-                   // Avoid throwing an exception in this common case
-                   if (_cancellationToken.IsCancellationRequested)
-                       return;
+                // Avoid throwing an exception in this common case
+                await _threadingContext.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true, _cancellationToken).NoThrowAwaitable();
+                if (_cancellationToken.IsCancellationRequested)
+                    return;
 
-                   if (_isRenamableIdentifierTask.Result != TriggerIdentifierKind.NotRenamable)
-                   {
-                       stateMachine.OnTrackingSessionUpdated(this);
-                   }
-               },
-               _cancellationToken,
-               TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously,
-               TaskScheduler.Default).CompletesAsyncOperation(asyncToken);
+                if (await _isRenamableIdentifierTask.ConfigureAwait(true) != TriggerIdentifierKind.NotRenamable)
+                    stateMachine.OnTrackingSessionUpdated(this);
+            }
         }
 
         internal void CheckNewIdentifier(StateMachine stateMachine, ITextSnapshot snapshot)
@@ -146,10 +145,10 @@ internal sealed partial class RenameTrackingTaggerProvider
             }
         }
 
-        internal bool IsDefinitelyRenamableIdentifier()
+        internal bool IsDefinitelyRenamableIdentifierFastCheck()
         {
             // This needs to be able to run on a background thread for the CodeFix
-            return IsRenamableIdentifier(_isRenamableIdentifierTask, waitForResult: false, cancellationToken: CancellationToken.None);
+            return IsRenamableIdentifierFastCheck(_isRenamableIdentifierTask, out _);
         }
 
         public void Cancel()
@@ -198,7 +197,7 @@ internal sealed partial class RenameTrackingTaggerProvider
                         // This is a reference from a nameof expression. Allow the rename but set the RenameOverloads option
                         ForceRenameOverloads = true;
 
-                        return await DetermineIfRenamableSymbolsAsync(renameSymbolInfo.Symbols, document).ConfigureAwait(false);
+                        return DetermineIfRenamableSymbols(renameSymbolInfo.Symbols, document);
                     }
                     else
                     {
@@ -209,7 +208,7 @@ internal sealed partial class RenameTrackingTaggerProvider
                             return TriggerIdentifierKind.NotRenamable;
                         }
 
-                        return await DetermineIfRenamableSymbolAsync(renameSymbolInfo.Symbols.Single(), document, token).ConfigureAwait(false);
+                        return DetermineIfRenamableSymbol(renameSymbolInfo.Symbols.Single(), document, token);
                     }
                 }
             }
@@ -217,12 +216,12 @@ internal sealed partial class RenameTrackingTaggerProvider
             return TriggerIdentifierKind.NotRenamable;
         }
 
-        private async Task<TriggerIdentifierKind> DetermineIfRenamableSymbolsAsync(IEnumerable<ISymbol> symbols, Document document)
+        private TriggerIdentifierKind DetermineIfRenamableSymbols(IEnumerable<ISymbol> symbols, Document document)
         {
             foreach (var symbol in symbols)
             {
                 // Get the source symbol if possible
-                var sourceSymbol = await SymbolFinder.FindSourceDefinitionAsync(symbol, document.Project.Solution, _cancellationToken).ConfigureAwait(false) ?? symbol;
+                var sourceSymbol = SymbolFinder.FindSourceDefinition(symbol, document.Project.Solution, _cancellationToken) ?? symbol;
 
                 if (!sourceSymbol.IsFromSource())
                 {
@@ -233,10 +232,10 @@ internal sealed partial class RenameTrackingTaggerProvider
             return TriggerIdentifierKind.RenamableReference;
         }
 
-        private async Task<TriggerIdentifierKind> DetermineIfRenamableSymbolAsync(ISymbol symbol, Document document, SyntaxToken token)
+        private TriggerIdentifierKind DetermineIfRenamableSymbol(ISymbol symbol, Document document, SyntaxToken token)
         {
             // Get the source symbol if possible
-            var sourceSymbol = await SymbolFinder.FindSourceDefinitionAsync(symbol, document.Project.Solution, _cancellationToken).ConfigureAwait(false) ?? symbol;
+            var sourceSymbol = SymbolFinder.FindSourceDefinition(symbol, document.Project.Solution, _cancellationToken) ?? symbol;
 
             if (sourceSymbol.Kind == SymbolKind.Field &&
                 ((IFieldSymbol)sourceSymbol).ContainingType.IsTupleType &&
@@ -260,13 +259,11 @@ internal sealed partial class RenameTrackingTaggerProvider
         internal bool CanInvokeRename(
             ISyntaxFactsService syntaxFactsService,
             IRenameTrackingLanguageHeuristicsService languageHeuristicsService,
-            bool isSmartTagCheck,
-            bool waitForResult,
-            CancellationToken cancellationToken)
+            bool isSmartTagCheck)
         {
-            if (IsRenamableIdentifier(_isRenamableIdentifierTask, waitForResult, cancellationToken))
+            if (IsRenamableIdentifierFastCheck(_isRenamableIdentifierTask, out var triggerIdentifierKind))
             {
-                var isRenamingDeclaration = _isRenamableIdentifierTask.Result == TriggerIdentifierKind.RenamableDeclaration;
+                var isRenamingDeclaration = triggerIdentifierKind == TriggerIdentifierKind.RenamableDeclaration;
                 var newName = TrackingSpan.GetText(TrackingSpan.TextBuffer.CurrentSnapshot);
                 var comparison = isRenamingDeclaration || syntaxFactsService.IsCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
