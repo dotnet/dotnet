@@ -185,6 +185,8 @@ namespace NuGet.Commands
                     (rootProjectRefItem, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
                     token);
 
+                HashSet<LibraryDependencyIndex>? directPackageReferences = default;
+
             ProcessDeepEviction:
 
                 refImport.Clear();
@@ -209,6 +211,21 @@ namespace NuGet.Commands
                     }
 
                     FindLibraryEntryResult refItemResult = await refItemTask;
+
+                    if (importRefItem.LibraryRangeIndex == rootProjectRefItem.LibraryRangeIndex)
+                    {
+                        directPackageReferences = new HashSet<LibraryDependencyIndex>();
+
+                        for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
+                        {
+                            LibraryDependency dep = refItemResult.Item.Data.Dependencies[i];
+
+                            if (dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
+                            {
+                                directPackageReferences.Add(refItemResult.GetDependencyIndexForDependency(i));
+                            }
+                        }
+                    }
 
                     LibraryDependencyTarget typeConstraint = currentRef.LibraryRange.TypeConstraint;
                     if (evictions.TryGetValue(currentRefRangeIndex, out var eviction))
@@ -633,6 +650,11 @@ namespace NuGet.Commands
 
                         bool isPackage = dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
                         bool isDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && isPackage;
+
+                        if (!isDirectPackageReferenceFromRootProject && directPackageReferences?.Contains(depIndex) == true)
+                        {
+                            continue;
+                        }
 
                         bool isCentrallyPinnedTransitiveDependency = isCentralPackageTransitivePinningEnabled
                             && isPackage

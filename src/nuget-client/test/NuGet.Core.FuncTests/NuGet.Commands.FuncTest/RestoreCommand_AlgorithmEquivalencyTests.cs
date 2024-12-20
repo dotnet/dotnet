@@ -52,6 +52,60 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("X");
         }
 
+        // Project 1 -> a 1.0.0 -> b 1.0.0
+        //           -> b 2.0.0
+        // Does not install b 1.0.0 since it is eclipsed by a direct package reference
+        [Fact]
+        public async Task RestoreCommand_WithDirectDependency_DoesNotDownloadOtherVersions()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("a", "1.0.0")
+                {
+                    Dependencies =
+                    [
+                        new SimpleTestPackageContext("b", "1.0.0"),
+                    ]
+                },
+                new SimpleTestPackageContext("b", "2.0.0"));
+
+            var project1spec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "Project1",
+                pathContext.SolutionRoot,
+                @"
+                {
+                  ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                                ""a"": ""1.0.0"",
+                                ""b"": ""2.0.0""
+                        }
+                    }
+                  }
+                }");
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, project1spec);
+
+            // Additional assert
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            result.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("2.0.0"));
+
+            result.RestoreGraphs.Should().HaveCount(1);
+            result.RestoreGraphs.First().Install.Should().HaveCount(2);
+
+            string.Join(" ", result.RestoreGraphs.First().Install.Select(i => $"{i.Library.Name}/{i.Library.Version}")).Should().Be("a/1.0.0 b/2.0.0");
+        }
+
         // Project 1 -> X 1.0 -> B 2.0 -> E 1.0
         //           -> C 2.0 -> D 1.0 -> B 3.0
         // Expected: X 1.0, B 3.0, C 2.0, D 1.0

@@ -6,8 +6,8 @@
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
     <SystemFormatsAsn1PackageVersion Condition="'$(SystemFormatsAsn1PackageVersion)' == ''">8.0.1</SystemFormatsAsn1PackageVersion>
 
-    <!-- Do not update the version of System.Text.Json without explicit approval from the .NET SDK and .NET MsBuild repo owners. -->
-    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">8.0.4</SystemTextJsonVersion>
+    <!-- Read docs/updating-packages.md before updating System.Text.Json's version -->
+    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">8.0.5</SystemTextJsonVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
     <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta4.23307.1</SystemCommandLineVersion>
     <MSTestPackageVersion>3.4.3</MSTestPackageVersion>
@@ -15,7 +15,7 @@
 
   <!-- MSBuild has vulnerable dependencies Microsoft.IO.Redist and System.Security.Cryptography.Xml. When it's upgraded, try removing pinned packages-->
   <PropertyGroup>
-    <!-- Default MSBuild version -->
+    <!-- Read docs/updating-packages.md before updating MSBuild's version -->
     <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.10.4</MicrosoftBuildVersion>
     <!-- The last package version of MSBuild that works with netcoreapp3.1 or netstandard2.0 is 16.8.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
     <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netstandard2.0'">16.8.0</MicrosoftBuildVersion>
