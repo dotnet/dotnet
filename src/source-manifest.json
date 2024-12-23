@@ -22,11 +22,11 @@
       "commitSha": "1d71af1f9107bbccac84107a510f6368b4c1e64c"
     },
     {
-      "packageVersion": "0.11.5-alpha.24569.4",
+      "packageVersion": "0.11.5-alpha.24616.1",
       "barId": null,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "7f4a1466b958a6ac42953d72ae6ddaabb1149a78"
+      "commitSha": "224123342246b10bf2b4fde4f846f08c2661ec15"
     },
     {
       "packageVersion": "0.1.552801",
@@ -71,11 +71,11 @@
       "commitSha": "5af96504f10836eca6ce804ab3cdd28c042fa35a"
     },
     {
-      "packageVersion": "17.14.0-preview-24619-04",
+      "packageVersion": "17.14.0-preview-24620-02",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "95c3091c6aa98b237a23928c13a5f0c419cf979b"
+      "commitSha": "a71903d9684e24db3db261b27ca73c0ef879cf81"
     },
     {
       "packageVersion": "6.13.0-rc.100",
@@ -106,11 +106,11 @@
       "commitSha": "5ed336762c6260a83ece35cd1f6749251452bad0"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24619.8",
+      "packageVersion": "10.0.0-alpha.1.24620.10",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "208b974f93c0ee35a171eba374ca36aa9a78e930"
+      "commitSha": "57ab984bd0dbbacd02315d41e09144d2823e9475"
     },
     {
       "packageVersion": "10.0.0-preview.24602.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2cf6150ad2969c019c2540143e8f7e8c564235d6"
+      "commitSha": "679ebe04e3053d7b7fa82ed3d12db60a3028dd27"
     },
     {
       "packageVersion": "10.0.561901",
@@ -155,11 +155,11 @@
       "commitSha": "ff1852196a042a124267a6e599d12da20d7ff65a"
     },
     {
-      "packageVersion": "10.0.100-alpha.1.24619.1",
+      "packageVersion": "10.0.100-alpha.1.24622.1",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e07ee1b234c90f25a06d55cba3b75bf15ba04b95"
+      "commitSha": "3d78d072165f447b2205b4423deb184423e1c23b"
     },
     {
       "packageVersion": "17.13.0-preview-24610-01",
