@@ -43,7 +43,7 @@ jobs:
     - template: /eng/common/templates/steps/enable-internal-sources.yml
 
     - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-      - task: MicroBuildSigningPlugin@2
+      - task: MicroBuildSigningPlugin@4
         displayName: Install MicroBuild plugin for Signing
         inputs:
           signType: $(SignType)

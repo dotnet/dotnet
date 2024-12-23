@@ -388,8 +388,8 @@ public partial class Form : ContainerControl
     ///  its controls.
     /// </summary>
     [SRCategory(nameof(SR.CatLayout))]
-    [SRDescription(nameof(SR.FormAutoScaleDescr)),
-    Obsolete("This property has been deprecated. Use the AutoScaleMode property instead.  https://go.microsoft.com/fwlink/?linkid=14202")]
+    [SRDescription(nameof(SR.FormAutoScaleDescr))]
+    [Obsolete("This property has been deprecated. Use the AutoScaleMode property instead.  https://go.microsoft.com/fwlink/?linkid=14202")]
     [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -6064,7 +6064,7 @@ public partial class Form : ContainerControl
         }
     }
 
-    private void UpdateMenuHandles(bool recreateMenu = false)
+    private unsafe void UpdateMenuHandles(bool recreateMenu = false)
     {
         if (!IsHandleCreated)
         {

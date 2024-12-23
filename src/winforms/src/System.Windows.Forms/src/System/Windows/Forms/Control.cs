@@ -12,6 +12,7 @@ using System.Windows.Forms.Automation;
 using System.Windows.Forms.Layout;
 using System.Windows.Forms.Primitives;
 using Windows.Win32.Graphics.Dwm;
+using Windows.Win32.Graphics.GdiPlus;
 using Windows.Win32.System.Ole;
 using Windows.Win32.UI.Accessibility;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
@@ -2742,7 +2743,7 @@ public unsafe partial class Control :
 
         // If we're an ActiveX control, clone the region so it can potentially be modified
         using Region? regionCopy = IsActiveX ? ActiveXMergeRegion(region.Clone()) : null;
-        using RegionScope regionHandle = new(regionCopy ?? region, HWND);
+        using RegionScope regionHandle = (regionCopy ?? region).GetRegionScope(HWND);
 
         if (PInvoke.SetWindowRgn(this, regionHandle, PInvoke.IsWindowVisible(this)) != 0)
         {
@@ -4779,6 +4780,49 @@ public unsafe partial class Control :
         }
     }
 
+    /// <inheritdoc cref="DoDragDropAsJson{T}(T, DragDropEffects, Bitmap?, Point, bool)"/>
+    public DragDropEffects DoDragDropAsJson<T>(T data, DragDropEffects allowedEffects) =>
+        DoDragDropAsJson(data, allowedEffects, dragImage: null, cursorOffset: default, useDefaultDragImage: false);
+
+    /// <summary>
+    ///  Begins a drag operation.
+    /// </summary>
+    /// <param name="data">The data being dragged.</param>
+    /// <param name="allowedEffects">determine which drag operations can occur.</param>
+    /// <param name="dragImage">The drag image bitmap.</param>
+    /// <param name="cursorOffset">The drag image cursor offset.</param>
+    /// <param name="useDefaultDragImage">Indicating whether a layered window drag image is used.</param>
+    /// <returns>A value from the <see cref="DragDropEffects"/> enumeration that represents the final effect that was performed during the drag-and-drop operation.</returns>
+    /// <exception cref="InvalidOperationException">
+    ///  If <paramref name="data"/> is a non derived <see cref="DataObject"/>. This is for better error reporting as <see cref="DataObject"/> will serialize empty. If <see cref="DataObject"/>
+    ///  needs to be used to start a drag operation, use <see cref="DataObject.SetDataAsJson{T}(T)"/> to JSON serialize the data being held within the <paramref name="data"/>,
+    ///  then pass the <paramref name="data"/> to <see cref="DoDragDrop(object, DragDropEffects)"/>.
+    /// </exception>
+    /// <remarks>
+    ///  <para>
+    ///  The data will be stored as JSON if the data is not an intrinsically handled type. Otherwise, it will be stored
+    ///  the same as <see cref="DoDragDrop(object, DragDropEffects)"/>.
+    ///  </para>
+    /// </remarks>
+    public DragDropEffects DoDragDropAsJson<T>(
+        T data,
+        DragDropEffects allowedEffects,
+        Bitmap? dragImage,
+        Point cursorOffset,
+        bool useDefaultDragImage)
+    {
+        data.OrThrowIfNull(nameof(data));
+        if (typeof(T) == typeof(DataObject))
+        {
+            // TODO: Localize string
+            throw new InvalidOperationException($"DataObject will serialize as empty. JSON serialize the data within {nameof(data)} then start drag/drop operation by using {nameof(DoDragDrop)} instead.");
+        }
+
+        DataObject dataObject = new();
+        dataObject.SetDataAsJson(data);
+        return DoDragDrop(dataObject, allowedEffects, dragImage, cursorOffset, useDefaultDragImage);
+    }
+
     /// <summary>
     ///  Begins a drag operation. The allowedEffects determine which
     ///  drag operations can occur. If the drag operation needs to interop
@@ -4787,10 +4831,8 @@ public unsafe partial class Control :
     ///  that implements System.Runtime.Serialization.ISerializable. data can also be any Object that
     ///  implements System.Windows.Forms.IDataObject.
     /// </summary>
-    public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects)
-    {
-        return DoDragDrop(data, allowedEffects, dragImage: null, cursorOffset: default, useDefaultDragImage: false);
-    }
+    public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects) =>
+        DoDragDrop(data, allowedEffects, dragImage: null, cursorOffset: default, useDefaultDragImage: false);
 
     /// <summary>
     ///  Begins a drag operation. The <paramref name="allowedEffects"/> determine which drag operations can occur.
@@ -5774,7 +5816,7 @@ public unsafe partial class Control :
         else if (IsHandleCreated)
         {
             using Graphics graphics = CreateGraphicsInternal();
-            using RegionScope regionHandle = new(region, graphics);
+            using RegionScope regionHandle = region.GetRegionScope(graphics);
 
             if (invalidateChildren)
             {
@@ -11713,7 +11755,7 @@ public unsafe partial class Control :
         PaintEventArgs? pevent = null;
 
         using var paletteScope = doubleBuffered || usingBeginPaint
-            ? SelectPaletteScope.HalftonePalette(dc, forceBackground: false, realizePalette: false)
+            ? dc.HalftonePalette(forceBackground: false, realizePalette: false)
             : default;
 
         bool paintBackground = (usingBeginPaint && GetStyle(ControlStyles.AllPaintingInWmPaint)) || doubleBuffered;
@@ -11814,8 +11856,7 @@ public unsafe partial class Control :
         using GetDcScope dc = new(HWND);
 
         // We don't want to unset the palette in this case so we don't do this in a using.
-        var paletteScope = SelectPaletteScope.HalftonePalette(
-            dc,
+        var paletteScope = dc.HalftonePalette(
             forceBackground: true,
             realizePalette: true);
 

@@ -7,8 +7,14 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Formats.Nrbf;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Windows.Forms.Primitives;
 using Windows.Win32.System.Ole;
+using static System.Windows.Forms.Tests.BinaryFormatUtilitiesTests;
+using static System.Windows.Forms.TestUtilities.DataObjectTestHelpers;
 using Com = Windows.Win32.System.Com;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
@@ -20,6 +26,8 @@ namespace System.Windows.Forms.Tests;
 [UISettings(MaxAttempts = 3)] // Try up to 3 times before failing.
 public class ClipboardTests
 {
+#pragma warning disable WFDEV005 // Type or member is obsolete
+
     [WinFormsFact]
     public void Clipboard_SetText_InvokeString_GetReturnsExpected()
     {
@@ -111,8 +119,9 @@ public class ClipboardTests
     [WinFormsFact]
     public void Clipboard_GetDataObject_InvokeMultipleTimes_Success()
     {
-        IDataObject? result = Clipboard.GetDataObject();
-        (result == Clipboard.GetDataObject()).Should().BeFalse();
+        DataObject result1 = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
+        DataObject result2 = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
+        result1.GetFormats().Should().BeEquivalentTo(result2.GetFormats());
     }
 
     [WinFormsFact]
@@ -247,6 +256,7 @@ public class ClipboardTests
             // GetData will hit "Data on clipboard is invalid (0x800401D3 (CLIPBRD_E_BAD_DATA))"
             Clipboard.ContainsData("MyData").Should().BeTrue();
             Clipboard.GetData("MyData").Should().BeNull();
+            Clipboard.TryGetData("MyData", out string? data).Should().BeFalse();
         }
         finally
         {
@@ -261,8 +271,7 @@ public class ClipboardTests
     {
         Clipboard.SetDataObject(data);
 
-        var dataObject = Clipboard.GetDataObject();
-        Assert.NotNull(dataObject);
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
         dataObject.GetData(data.GetType()).Should().Be(data);
         Clipboard.ContainsData(data.GetType().FullName).Should().BeTrue();
     }
@@ -304,7 +313,7 @@ public class ClipboardTests
         DataObject dataObject = new(data);
         Clipboard.SetDataObject(dataObject, copy, retryTimes, retryDelay);
 
-        DataObject actual = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Which;
+        DataObject actual = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
         actual.GetData(data.GetType()).Should().Be(data);
         Clipboard.ContainsData(data.GetType().FullName).Should().BeTrue();
     }
@@ -318,7 +327,7 @@ public class ClipboardTests
     {
         Clipboard.SetDataObject(data, copy, retryTimes, retryDelay);
 
-        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Which;
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
         dataObject.GetData(data.GetType()).Should().Be(data);
         Clipboard.ContainsData(data.GetType().FullName).Should().BeTrue();
     }
@@ -433,7 +442,8 @@ public class ClipboardTests
         using Bitmap bitmap = new(10, 10);
         bitmap.SetPixel(1, 2, Color.FromArgb(0x01, 0x02, 0x03, 0x04));
         Clipboard.SetImage(bitmap);
-        Bitmap result = Assert.IsType<Bitmap>(Clipboard.GetImage());
+
+        var result = Clipboard.GetImage().Should().BeOfType<Bitmap>().Subject;
         result.Size.Should().Be(bitmap.Size);
         result.GetPixel(1, 2).Should().Be(Color.FromArgb(0xFF, 0xD2, 0xD2, 0xD2));
         Clipboard.ContainsImage().Should().BeTrue();
@@ -445,6 +455,10 @@ public class ClipboardTests
         try
         {
             using Metafile metafile = new("bitmaps/telescope_01.wmf");
+            using BinaryFormatterScope scope = new(enable: true);
+            using BinaryFormatterInClipboardDragDropScope clipboardScope = new(enable: true);
+
+            // SetImage fails silently and corrupts the clipboard state for anything other than a bitmap.
             Clipboard.SetImage(metafile);
 
             Clipboard.GetImage().Should().BeNull();
@@ -462,6 +476,10 @@ public class ClipboardTests
         try
         {
             using Metafile metafile = new("bitmaps/milkmateya01.emf");
+            using BinaryFormatterScope scope = new(enable: true);
+            using BinaryFormatterInClipboardDragDropScope clipboardScope = new(enable: true);
+
+            // SetImage fails silently and corrupts the clipboard for everything other than a bitmap.
             Clipboard.SetImage(metafile);
 
             Clipboard.GetImage().Should().BeNull();
@@ -523,9 +541,13 @@ public class ClipboardTests
         using BinaryFormatterScope scope = new(enable: false);
         string format = nameof(Clipboard_SetData_CustomFormat_Exception_BinaryFormatterDisabled_SerializesException);
 
-        // This will fail and NotSupportedException will be put on the Clipboard instead.
+        // This will fail because BinaryFormatter is disabled in the clipboard APIs, thus NotSupportedException
+        // will be put on the Clipboard instead.
         Clipboard.SetData(format, new FileNotFoundException());
         Clipboard.ContainsData(format).Should().BeTrue();
+        // However we don't need binary formatter to read this exception off of the clipboard.
+        Clipboard.TryGetData(format, out NotSupportedException? exception).Should().BeTrue();
+        exception.Should().NotBeNull();
         Clipboard.GetData(format).Should().BeOfType<NotSupportedException>();
     }
 
@@ -558,7 +580,7 @@ public class ClipboardTests
         Clipboard.SetDataObject(realDataObject);
 
         IDataObject? clipboardDataObject = Clipboard.GetDataObject();
-        var dataObject = clipboardDataObject.Should().BeOfType<DataObject>().Which;
+        var dataObject = clipboardDataObject.Should().BeOfType<DataObject>().Subject;
         dataObject.IsWrappedForClipboard.Should().BeTrue();
 
         Clipboard.SetDataObject(clipboardDataObject!);
@@ -640,7 +662,491 @@ public class ClipboardTests
         SetClipboardData((uint)CLIPBOARD_FORMAT.CF_UNICODETEXT, (HANDLE)Marshal.StringToHGlobalUni(testString));
         CloseClipboard().Should().BeTrue();
 
-        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Which;
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
         dataObject.GetData(DataFormats.Text).Should().Be(testString);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_BinaryFormatter_AppContextSwitch()
+    {
+        // Test the switch to ensure it works as expected in the context of this test assembly.
+        LocalAppContextSwitches.ClipboardDragDropEnableUnsafeBinaryFormatterSerialization.Should().BeFalse();
+
+        using (BinaryFormatterInClipboardDragDropScope scope = new(enable: true))
+        {
+            LocalAppContextSwitches.ClipboardDragDropEnableUnsafeBinaryFormatterSerialization.Should().BeTrue();
+        }
+
+        LocalAppContextSwitches.ClipboardDragDropEnableUnsafeBinaryFormatterSerialization.Should().BeFalse();
+
+        using (BinaryFormatterInClipboardDragDropScope scope = new(enable: false))
+        {
+            LocalAppContextSwitches.ClipboardDragDropEnableUnsafeBinaryFormatterSerialization.Should().BeFalse();
+        }
+
+        LocalAppContextSwitches.ClipboardDragDropEnableUnsafeBinaryFormatterSerialization.Should().BeFalse();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_NrbfSerializer_AppContextSwitch()
+    {
+        // Test the switch to ensure it works as expected in the context of this test assembly.
+        LocalAppContextSwitches.ClipboardDragDropEnableNrbfSerialization.Should().BeTrue();
+
+        using (NrbfSerializerInClipboardDragDropScope scope = new(enable: false))
+        {
+            LocalAppContextSwitches.ClipboardDragDropEnableNrbfSerialization.Should().BeFalse();
+        }
+
+        LocalAppContextSwitches.ClipboardDragDropEnableNrbfSerialization.Should().BeTrue();
+
+        using (NrbfSerializerInClipboardDragDropScope scope = new(enable: true))
+        {
+            LocalAppContextSwitches.ClipboardDragDropEnableNrbfSerialization.Should().BeTrue();
+        }
+
+        LocalAppContextSwitches.ClipboardDragDropEnableNrbfSerialization.Should().BeTrue();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetInt_ReturnsExpected()
+    {
+        int expected = 101;
+        using (BinaryFormatterScope scope = new(enable: true))
+        {
+            Clipboard.SetData("TestData", expected);
+        }
+
+        Clipboard.TryGetData("TestData", out int? data).Should().BeTrue();
+        data.Should().Be(expected);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetTestData()
+    {
+        TestData expected = new(DateTime.Now);
+        string format = "TestData";
+        using BinaryFormatterFullCompatScope scope = new();
+        Clipboard.SetData(format, expected);
+
+        Clipboard.TryGetData(format, TestData.TestDataResolver, out TestData? data).Should().BeTrue();
+        var result = data.Should().BeOfType<TestData>().Subject;
+        expected.Equals(result);
+
+        // We are still in the less safe switch configuration, but now we prefer the
+        // NRBF deserialization over the BinaryFormatter full compatibility mode.
+        using NrbfSerializerInClipboardDragDropScope nrbfScope = new(enable: true);
+        Clipboard.TryGetData(format, TestData.TestDataResolver, out TestData? testData).Should().BeTrue();
+        expected.Equals(testData.Should().BeOfType<TestData>().Subject);
+        // Resolver is required to read this type.
+        Action tryGetData = () => Clipboard.TryGetData(format, out testData);
+        tryGetData.Should().Throw<NotSupportedException>();
+
+        // This is the safe switch configuration, custom types can't be resolved
+        using NrbfSerializerInClipboardDragDropScope nrbfScope2 = new(enable: false);
+        using BinaryFormatterInClipboardDragDropScope binaryScope2 = new(enable: false);
+        Action tryGetDataWithResolver = () => Clipboard.TryGetData(format, TestData.TestDataResolver, out testData);
+        tryGetDataWithResolver.Should().Throw<NotSupportedException>();
+    }
+
+    [Serializable]
+    private class TestData
+    {
+        public TestData(DateTime dateTime)
+        {
+            _count = 2;
+            _dateTime = dateTime;
+        }
+
+        private readonly int _count;
+        private readonly DateTime _dateTime;
+        private readonly TestData1 _testData1 = new();
+
+        public void Equals(TestData actual)
+        {
+            _count.Should().Be(actual._count);
+            _dateTime.Should().Be(actual._dateTime);
+            _testData1.Text.Should().Be(actual._testData1.Text);
+        }
+
+        public static Type TestDataResolver(TypeName typeName)
+        {
+            string fullName = typeName.FullName;
+            if (typeof(TestData).FullName == fullName)
+            {
+                return typeof(TestData);
+            }
+
+            if (typeof(TestData1).FullName == fullName)
+            {
+                return typeof(TestData1);
+            }
+
+            throw new NotSupportedException($"Can't resolve {typeName.AssemblyQualifiedName}");
+        }
+    }
+
+    [Serializable]
+    public class TestData1
+    {
+        public string Text { get; } = "a";
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetObject_Throws()
+    {
+        object expected = new();
+        string format = "TestData";
+        Action tryGetData = () => Clipboard.TryGetData(format, out object? data);
+
+        using BinaryFormatterScope scope = new(enable: true);
+
+        using (BinaryFormatterInClipboardDragDropScope binaryFormatterScope = new(enable: true))
+        {
+            Clipboard.SetData(format, expected);
+
+            tryGetData.Should().Throw<NotSupportedException>();
+        }
+
+        tryGetData.Should().Throw<NotSupportedException>();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetRectangleAsObject_Throws()
+    {
+        Rectangle expected = new(1, 1, 2, 2);
+        string format = "TestData";
+        using BinaryFormatterScope scope = new(enable: true);
+        Clipboard.SetData(format, expected);
+
+        Action tryGetData = () => Clipboard.TryGetData(format, out object? data);
+        tryGetData.Should().Throw<NotSupportedException>();
+
+        using BinaryFormatterInClipboardDragDropScope binaryFormatterScope = new(enable: true);
+        tryGetData.Should().Throw<NotSupportedException>();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetNotSupportedException()
+    {
+        object expected = new();
+        string format = "TestData";
+        Action tryGetData = () => Clipboard.TryGetData(format, out object? data);
+
+        using BinaryFormatterScope scope = new(enable: true);
+        // BinaryFormatterInClipboardDragDropScope is off, the NotSupportedException is written to the clipboard.
+        Clipboard.SetData(format, expected);
+
+        using (BinaryFormatterInClipboardDragDropScope clipboardScope = new(enable: true))
+        {
+            Clipboard.SetData(format, expected);
+
+            tryGetData.Should().Throw<NotSupportedException>();
+        }
+
+        tryGetData.Should().Throw<NotSupportedException>();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_TryGetOffsetArray()
+    {
+        Array value = Array.CreateInstance(typeof(uint), lengths: [2, 3], lowerBounds: [1, 2]);
+        value.SetValue(101u, 1, 2);
+        value.SetValue(102u, 1, 3);
+        value.SetValue(103u, 1, 4);
+        value.SetValue(201u, 2, 2);
+        value.SetValue(202u, 2, 3);
+        value.SetValue(203u, 2, 4);
+
+        using BinaryFormatterFullCompatScope scope = new();
+        Clipboard.SetData("test", value);
+
+        var result = Clipboard.GetData("test").Should().BeOfType<uint[,]>().Subject;
+        result.Rank.Should().Be(2);
+        result.GetLength(0).Should().Be(2);
+        result.GetLength(1).Should().Be(3);
+        result.GetLowerBound(0).Should().Be(1);
+        result.GetLowerBound(1).Should().Be(2);
+        result.GetValue(1, 2).Should().Be(101u);
+        result.GetValue(1, 3).Should().Be(102u);
+        result.GetValue(1, 4).Should().Be(103u);
+        result.GetValue(2, 2).Should().Be(201u);
+        result.GetValue(2, 3).Should().Be(202u);
+        result.GetValue(2, 4).Should().Be(203u);
+
+        Action tryGetData = () => Clipboard.TryGetData("test", out uint[,]? data);
+        // Can't decode the root record, thus can't validate the T.
+        tryGetData.Should().Throw<NotSupportedException>();
+    }
+
+    [WinFormsTheory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData(" ")]
+    public void Clipboard_SetDataAsJson_EmptyFormat_Throws(string? format)
+    {
+        Action action = () => Clipboard.SetDataAsJson(format!, 1);
+        action.Should().Throw<ArgumentException>();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SetDataAsJson_DataObject_Throws()
+    {
+        Clipboard.Clear();
+        string format = "format";
+        Action action = () => Clipboard.SetDataAsJson(format, new DataObject());
+        action.Should().Throw<InvalidOperationException>();
+        Action clipboardSet2 = () => Clipboard.SetDataAsJson(format, new DerivedDataObject());
+        clipboardSet2.Should().NotThrow();
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SetDataAsJson_WithGeneric_ReturnsExpected()
+    {
+        Clipboard.Clear();
+        List<Point> generic1 = [];
+        string format = "list";
+        Clipboard.SetDataAsJson(format, generic1);
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
+        Action a = () => dataObject.TestAccessor().Dynamic._innerData.GetData(format);
+        // We do not handle List<Point>
+        a.Should().Throw<NotSupportedException>();
+        Clipboard.TryGetData(format, out List<Point>? points).Should().BeTrue();
+        points.Should().BeEquivalentTo(generic1);
+
+        List<int> generic2 = [];
+        Clipboard.SetDataAsJson(format, generic2);
+        dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Subject;
+        a = () => dataObject.TestAccessor().Dynamic._innerData.GetData(format);
+        a.Should().NotThrow();
+        Clipboard.TryGetData(format, out List<int>? intList).Should().BeTrue();
+        intList.Should().BeEquivalentTo(generic2);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SetDataAsJson_ReturnsExpected()
+    {
+        Clipboard.Clear();
+        SimpleTestData testData = new() { X = 1, Y = 1 };
+
+        Clipboard.SetDataAsJson("testDataFormat", testData);
+        IDataObject dataObject = Clipboard.GetDataObject().Should().BeAssignableTo<IDataObject>().Subject;
+        dataObject.GetDataPresent("testDataFormat").Should().BeTrue();
+        dataObject.TryGetData("testDataFormat", out SimpleTestData deserialized).Should().BeTrue();
+        deserialized.Should().BeEquivalentTo(testData);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SetDataAsJson_GetData()
+    {
+        Clipboard.Clear();
+        SimpleTestData testData = new() { X = 1, Y = 1 };
+        // Note that this simulates out of process scenario.
+        Clipboard.SetDataAsJson("test", testData);
+        Action a = () => Clipboard.GetData("test");
+        a.Should().Throw<NotSupportedException>();
+
+        using BinaryFormatterInClipboardDragDropScope scope = new(enable: true);
+        a.Should().Throw<NotSupportedException>();
+
+        using BinaryFormatterScope scope2 = new(enable: true);
+        Clipboard.GetData("test").Should().BeOfType<MemoryStream>();
+    }
+
+    [WinFormsTheory]
+    [BoolData]
+    public void Clipboard_SetDataObject_WithJson_ReturnsExpected(bool copy)
+    {
+        Clipboard.Clear();
+        SimpleTestData testData = new() { X = 1, Y = 1 };
+
+        DataObject dataObject = new();
+        dataObject.SetDataAsJson("testDataFormat", testData);
+
+        Clipboard.SetDataObject(dataObject, copy);
+        ITypedDataObject returnedDataObject = Clipboard.GetDataObject().Should().BeAssignableTo<ITypedDataObject>().Subject;
+        returnedDataObject.TryGetData("testDataFormat", out SimpleTestData deserialized).Should().BeTrue();
+        deserialized.Should().BeEquivalentTo(testData);
+    }
+
+    [WinFormsTheory]
+    [BoolData]
+    public void Clipboard_SetDataObject_WithMultipleData_ReturnsExpected(bool copy)
+    {
+        Clipboard.Clear();
+        SimpleTestData testData1 = new() { X = 1, Y = 1 };
+        SimpleTestData testData2 = new() { Y = 2, X = 2 };
+        DataObject data = new();
+        data.SetDataAsJson("testData1", testData1);
+        data.SetDataAsJson("testData2", testData2);
+        data.SetData("Mystring", "test");
+        Clipboard.SetDataObject(data, copy);
+
+        Clipboard.TryGetData("testData1", out SimpleTestData deserializedTestData1).Should().BeTrue();
+        deserializedTestData1.Should().BeEquivalentTo(testData1);
+        Clipboard.TryGetData("testData2", out SimpleTestData deserializedTestData2).Should().BeTrue();
+        deserializedTestData2.Should().BeEquivalentTo(testData2);
+        Clipboard.TryGetData("Mystring", out string? deserializedString).Should().BeTrue();
+        deserializedString.Should().Be("test");
+    }
+
+    [WinFormsFact]
+    public unsafe void Clipboard_Deserialize_FromStream_Manually()
+    {
+        // This test demonstrates how a user can manually deserialize JsonData<T> that has been serialized onto
+        // the clipboard from stream. This may need to be done if type JsonData<T> does not exist in the .NET version
+        // the user is utilizing.
+        Clipboard.Clear();
+        SimpleTestData testData = new() { X = 1, Y = 1 };
+        Clipboard.SetDataAsJson("testFormat", testData);
+
+        // Manually retrieve the serialized stream.
+        ComTypes.IDataObject dataObject = Clipboard.GetDataObject().Should().BeAssignableTo<ComTypes.IDataObject>().Which;
+        ComTypes.FORMATETC formatetc = new()
+        {
+            cfFormat = (short)DataFormats.GetFormat("testFormat").Id,
+            dwAspect = ComTypes.DVASPECT.DVASPECT_CONTENT,
+            lindex = -1,
+            tymed = ComTypes.TYMED.TYMED_HGLOBAL
+        };
+        dataObject.GetData(ref formatetc, out ComTypes.STGMEDIUM medium);
+        HGLOBAL hglobal = (HGLOBAL)medium.unionmember;
+        Stream stream;
+        try
+        {
+            void* buffer = PInvokeCore.GlobalLock(hglobal);
+            int size = (int)PInvokeCore.GlobalSize(hglobal);
+            byte[] bytes = new byte[size];
+            Marshal.Copy((nint)buffer, bytes, 0, size);
+            // this comes from DataObject.Composition.s_serializedObjectID
+            int index = 16;
+            stream = new MemoryStream(bytes, index, bytes.Length - index);
+        }
+        finally
+        {
+            PInvokeCore.GlobalUnlock(hglobal);
+        }
+
+        stream.Should().NotBeNull();
+        // Use NrbfDecoder to decode the stream and rehydrate the type.
+        SerializationRecord record = NrbfDecoder.Decode(stream);
+        ClassRecord types = record.Should().BeAssignableTo<ClassRecord>().Which;
+        types.HasMember("<JsonBytes>k__BackingField").Should().BeTrue();
+        types.HasMember("<InnerTypeAssemblyQualifiedName>k__BackingField").Should().BeTrue();
+        SZArrayRecord<byte> byteData = types.GetRawValue("<JsonBytes>k__BackingField").Should().BeAssignableTo<SZArrayRecord<byte>>().Subject;
+        string innerTypeAssemblyQualifiedName = types.GetRawValue("<InnerTypeAssemblyQualifiedName>k__BackingField").Should().BeOfType<string>().Subject;
+        TypeName.TryParse(innerTypeAssemblyQualifiedName, out TypeName? innerTypeName).Should().BeTrue();
+        TypeName checkedResult = innerTypeName.Should().BeOfType<TypeName>().Subject;
+        // These should not be the same since we take TypeForwardedFromAttribute name into account during serialization,
+        // which changes the assembly name.
+        typeof(SimpleTestData).AssemblyQualifiedName.Should().NotBe(checkedResult.AssemblyQualifiedName);
+        typeof(SimpleTestData).ToTypeName().Matches(checkedResult).Should().BeTrue();
+
+        JsonSerializer.Deserialize(byteData.GetArray(), typeof(SimpleTestData)).Should().BeEquivalentTo(testData);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SurfaceJsonError()
+    {
+        using Font font = new("Microsoft Sans Serif", emSize: 10);
+        byte[] serialized = JsonSerializer.SerializeToUtf8Bytes(font);
+        Action a1 = () => JsonSerializer.Deserialize<Font>(serialized);
+        a1.Should().Throw<NotSupportedException>();
+
+        string format = "font";
+        Clipboard.SetDataAsJson(format, font);
+        Action a2 = () => Clipboard.TryGetData(format, out Font? _);
+        a2.Should().Throw<NotSupportedException>();
+
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeAssignableTo<DataObject>().Subject;
+        Action a3 = () => dataObject.TryGetData(format, out Font? _);
+        a3.Should().Throw<NotSupportedException>();
+    }
+
+    [WinFormsTheory]
+    [BoolData]
+    public void Clipboard_CustomDataObject_AvoidBinaryFormatter(bool copy)
+    {
+        string format = "customFormat";
+        SimpleTestData data = new() { X = 1, Y = 1 };
+        Clipboard.SetData(format, data);
+        // BinaryFormatter not enabled.
+        Clipboard.GetData(format).Should().BeOfType<NotSupportedException>();
+
+        Clipboard.Clear();
+        JsonDataObject jsonDataObject = new();
+        jsonDataObject.SetData(format, data);
+
+        Clipboard.SetDataObject(jsonDataObject, copy);
+
+        if (copy)
+        {
+            // Pasting in different process has been simulated. Manual Json deserialization will need to occur.
+            IDataObject received = Clipboard.GetDataObject().Should().BeAssignableTo<IDataObject>().Subject;
+            received.Should().NotBe(jsonDataObject);
+            byte[] jsonBytes = Clipboard.GetData(format).Should().BeOfType<byte[]>().Subject;
+            JsonSerializer.Deserialize(jsonBytes, typeof(SimpleTestData)).Should().BeEquivalentTo(data);
+        }
+        else
+        {
+            JsonDataObject received = Clipboard.GetDataObject().Should().BeOfType<JsonDataObject>().Subject;
+            received.Should().Be(jsonDataObject);
+            received.Deserialize<SimpleTestData>(format).Should().BeEquivalentTo(data);
+        }
+    }
+
+    // Test class to demonstrate one way to write IDataObject to totally control serialization/deserialization
+    // and have it avoid BinaryFormatter.
+    private class JsonDataObject : IDataObject, ComTypes.IDataObject
+    {
+        private readonly Dictionary<string, byte[]> _formatToJson = [];
+        private readonly Dictionary<string, string> _formatToTypeName = [];
+
+        public T? Deserialize<T>(string format)
+        {
+            if (typeof(T).AssemblyQualifiedName != _formatToTypeName[format])
+            {
+                return default;
+            }
+
+            return JsonSerializer.Deserialize<T>(_formatToJson[format]);
+        }
+
+        public object GetData(string format, bool autoConvert) => GetData(format);
+        public object GetData(string format) => _formatToJson[format];
+        public object GetData(Type format) => throw new NotImplementedException();
+        public bool GetDataPresent(string format, bool autoConvert) => throw new NotImplementedException();
+        public bool GetDataPresent(string format) => _formatToJson.ContainsKey(format);
+        public bool GetDataPresent(Type format) => throw new NotImplementedException();
+        public string[] GetFormats(bool autoConvert) => throw new NotImplementedException();
+        public string[] GetFormats() => _formatToJson.Keys.ToArray();
+        public void SetData(string format, bool autoConvert, object? data) => throw new NotImplementedException();
+        public void SetData(string format, object? data)
+        {
+            _formatToTypeName.Add(format, data!.GetType().AssemblyQualifiedName!);
+            _formatToJson.Add(format, JsonSerializer.SerializeToUtf8Bytes(data));
+        }
+
+        public void SetData(Type format, object? data) => throw new NotImplementedException();
+        public void SetData(object? data) => throw new NotImplementedException();
+
+        public int DAdvise(ref ComTypes.FORMATETC pFormatetc, ComTypes.ADVF advf, ComTypes.IAdviseSink adviseSink, out int connection) => throw new NotImplementedException();
+        public void DUnadvise(int connection) => throw new NotImplementedException();
+        public int EnumDAdvise(out ComTypes.IEnumSTATDATA? enumAdvise) => throw new NotImplementedException();
+        public ComTypes.IEnumFORMATETC EnumFormatEtc(ComTypes.DATADIR direction) => throw new NotImplementedException();
+        public int GetCanonicalFormatEtc(ref ComTypes.FORMATETC formatIn, out ComTypes.FORMATETC formatOut) => throw new NotImplementedException();
+        public void SetData(ref ComTypes.FORMATETC formatIn, ref ComTypes.STGMEDIUM medium, bool release) => throw new NotImplementedException();
+        public void GetData(ref ComTypes.FORMATETC format, out ComTypes.STGMEDIUM medium) => throw new NotImplementedException();
+        public void GetDataHere(ref ComTypes.FORMATETC format, ref ComTypes.STGMEDIUM medium) => throw new NotImplementedException();
+        public int QueryGetData(ref ComTypes.FORMATETC format) => throw new NotImplementedException();
+    }
+
+    private class DerivedDataObject : DataObject { }
+
+    [WinFormsFact]
+    public void Clipboard_SetDataAsJson_NullData_Throws()
+    {
+        Action clipboardSet = () => Clipboard.SetDataAsJson<string>("format", null!);
+        clipboardSet.Should().Throw<ArgumentNullException>();
     }
 }

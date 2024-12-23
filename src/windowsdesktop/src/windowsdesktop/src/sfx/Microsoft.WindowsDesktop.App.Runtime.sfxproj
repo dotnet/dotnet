@@ -17,6 +17,7 @@
   <!-- References that are common to both WinForms and WPF -->
   <ItemGroup>
     <FrameworkListFileClass Include="System.Diagnostics.EventLog.Messages.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms;WPF" />
   </ItemGroup>
 
   <!-- Windows Forms specific references -->
@@ -35,7 +36,7 @@
     <FrameworkListFileClass Include="System.Windows.Forms.Design.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Forms.Primitives.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms" />
+    <FrameworkListFileClass Include="System.Private.Windows.GdiPlus.dll" Profile="WindowsForms" />
   </ItemGroup>
 
   <!-- WPF specific references -->
