@@ -267,7 +267,6 @@ EndGlobal";
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_FailsAsync()
         {
@@ -736,7 +735,6 @@ EndGlobal";
                 _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
             }
         }
-#endif //IS_SIGNING_SUPPORTED
 
         [PlatformTheory(Platform.Windows)]
         [InlineData(true)]
@@ -1307,7 +1305,6 @@ EndGlobal";
             }
         }
 
-#if NET5_0_OR_GREATER
         [Fact]
         public async Task DotnetRestore_WithTargetFrameworksProperty_StaticGraphAndRegularRestore_AreEquivalent()
         {
@@ -1385,7 +1382,6 @@ EndGlobal";
                 regularDgSpec.Should().BeEquivalentTo(staticGraphDgSpec);
             }
         }
-#endif
 
         [Theory]
         [InlineData("netcoreapp3.0;net7.0;net472", true)]
@@ -2797,6 +2793,69 @@ EndGlobal";
     </Target>
 </Project>";
             return csprojContents;
+        }
+
+        /// ClassLibrary1 -> X 1.0.0 -> Y 1.0.0
+        /// Prune Y 2.0.0
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DotnetRestore_WithConditionalPrunedPackageReference_Succeeds(bool isStaticGraphRestore)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, new SimpleTestPackageContext("X", "1.0.0") { Dependencies = [new SimpleTestPackageContext("Y", "1.0.0")] });
+
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.1", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"netstandard2.1;{tfm}");
+                ProjectFileUtils.AddProperty(xml, "RestoreEnablePackagePruning", "true");
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "X",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "1.0.0" } });
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PrunePackageReference",
+                    "Y",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "2.0.0" } });
+
+                ProjectFileUtils.AddProperty(xml, "RestoreEnablePackagePruning", "false", "'$(TargetFramework)' == 'netstandard2.1'");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty), testOutputHelper: _testOutputHelper);
+            result.AllOutput.Should().NotContain("Warning");
+            string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.Targets.Should().HaveCount(2);
+            assetsFile.PackageSpec.TargetFrameworks.Should().HaveCount(2);
+            assetsFile.PackageSpec.TargetFrameworks[0].TargetAlias.Should().Be(tfm);
+            assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().NotBeEmpty();
+            assetsFile.PackageSpec.TargetFrameworks[1].TargetAlias.Should().Be("netstandard2.1");
+            assetsFile.PackageSpec.TargetFrameworks[1].PackagesToPrune.Should().BeEmpty();
+
+            // netstandard2.1
+            assetsFile.Targets[0].TargetFramework.Should().Be(assetsFile.PackageSpec.TargetFrameworks[1].FrameworkName);
+            assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("Y"));
+            //net9.0
+            assetsFile.Targets[1].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[1].Libraries.Should().NotContain(e => e.Name.Equals("Y"));
         }
 
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)

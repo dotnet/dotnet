@@ -1092,11 +1092,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <value>README</value>
   </data>
   <data name="Text_NoReadme" xml:space="preserve">
-    <value>Could not read package README from selected package.
-
-Only the package maintainer can add a README. If you are not the maintainer, please consider filing an issue or contacting the maintainer to request a README.
-
-For instructions on how to add a README, please visit [aka.ms/nuget/readme](https://aka.ms/nuget/readme)</value>
-    <comment>{Locked="[aka.ms/nuget/readme](https://aka.ms/nuget/readme)"} "[aka.ms/nuget/readme](https://aka.ms/nuget/readme)" this is a URL link and should not be translated</comment>
+    <value>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</value>
+    <comment>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</comment>
   </data>
 </root>

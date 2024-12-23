@@ -604,7 +604,7 @@ namespace NuGet.PackageManagement.UI
             _loadingStatusBar.ItemsLoaded = 0;
         }
 
-        public void UpdatePackageStatus(PackageCollectionItem[] installedPackages)
+        public void UpdatePackageStatus(PackageCollectionItem[] installedPackages, bool clearCache = false)
         {
             // in this case, we only need to update PackageStatus of
             // existing items in the package list
@@ -612,7 +612,7 @@ namespace NuGet.PackageManagement.UI
             {
                 if (package.PackageLevel == PackageLevel.TopLevel)
                 {
-                    package.UpdatePackageStatus(installedPackages);
+                    package.UpdatePackageStatus(installedPackages, clearCache);
                 }
                 else
                 {

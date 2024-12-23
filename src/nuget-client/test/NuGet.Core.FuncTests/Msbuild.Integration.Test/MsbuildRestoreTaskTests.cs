@@ -2012,5 +2012,69 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             kvp.Value.Name.Should().Be("y");
             kvp.Value.VersionRange.Should().Be(VersionRange.Parse("(,2.0.0]"));
         }
+
+        // A -> X 1.0.0 -> Y 1.0.0
+        // Prune: Y 2.0.0
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithPackagesToPrune_PrunesCorrectly(bool isStaticGraphRestore)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            // Set up solution, project, and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+            var project = SimpleTestProjectContext.CreateLegacyPackageReference(
+                "a",
+                pathContext.SolutionRoot,
+                NuGetFramework.Parse("net472"));
+
+            var packageX = new SimpleTestPackageContext()
+            {
+                Id = "x",
+                Version = "1.0.0",
+                Dependencies = [new SimpleTestPackageContext("y", "1.0.0")]
+            };
+
+            project.AddPackageToAllFrameworks(packageX);
+            solution.Projects.Add(project);
+            solution.Create(pathContext.SolutionRoot);
+
+            File.WriteAllText(
+            Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"),
+                @$"<Project>
+              <PropertyGroup>
+                <RestoreEnablePackagePruning>true</RestoreEnablePackagePruning>
+              </PropertyGroup>
+              <ItemGroup>
+                <PrunePackageReference Include=""y"" Version=""2.0.0"" />
+              </ItemGroup>
+            </Project>");
+
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                packageX);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath} " +
+                (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
+                ignoreExitCode: true,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            project.AssetsFile.Targets.Select(e => e.TargetFramework).Distinct().Should().HaveCount(1);
+            project.AssetsFile.Targets[0].Libraries.Should().HaveCount(1);
+            project.AssetsFile.Targets[0].Libraries[0].Name.Should().Be("x");
+            project.AssetsFile.Targets[0].Libraries[0].Dependencies.Should().BeEmpty();
+            project.AssetsFile.PackageSpec.TargetFrameworks.Should().HaveCount(1);
+            project.AssetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
+            var kvp = project.AssetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.First();
+            kvp.Key.Should().Be("y");
+            kvp.Value.Name.Should().Be("y");
+            kvp.Value.VersionRange.Should().Be(VersionRange.Parse("(,2.0.0]"));
+        }
     }
 }

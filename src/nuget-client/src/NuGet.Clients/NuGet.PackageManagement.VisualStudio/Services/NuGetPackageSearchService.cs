@@ -382,6 +382,12 @@ namespace NuGet.PackageManagement.VisualStudio
             return allLocalFolders;
         }
 
+        public void ClearFromCache(string id, IReadOnlyCollection<PackageSourceContextInfo> packageSources, bool includePrerelease)
+        {
+            string cacheId = PackageSearchMetadataCacheItem.GetCacheId(id, includePrerelease, packageSources);
+            PackageSearchMetadataMemoryCache.Remove(cacheId);
+        }
+
         internal async Task<IPackageFeed?> CreatePackageFeedAsync(
             IReadOnlyCollection<IProjectContextInfo> projectContextInfos,
             IReadOnlyCollection<string> targetFrameworks,

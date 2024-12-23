@@ -338,6 +338,15 @@ namespace NuGet.Tests.Apex
             visualStudio.Dte.ExecuteCommand("ProjectAndSolutionContextMenus.Solution.RestoreNuGetPackages");
         }
 
+        public static void AutoRestorePackageByReloadingProject(VisualStudioHost visualStudio, ProjectTestExtension project)
+        {
+            var testService = visualStudio.Get<NuGetApexTestService>();
+
+            project.Unload();
+            project.Reload();
+            testService.WaitForAutoRestore();
+        }
+
         private static void WaitForCommandAvailable(VisualStudioHost visualStudio, string commandName, TimeSpan timeout, ITestLogger logger)
         {
             WaitForCommandAvailable(visualStudio.Dte.Commands.Item(commandName), timeout, logger);
@@ -425,7 +434,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        private static string GetAssetsFilePath(string projectPath)
+        public static string GetAssetsFilePath(string projectPath)
         {
             var projectDirectory = Path.GetDirectoryName(projectPath);
             return Path.Combine(projectDirectory, "obj", "project.assets.json");

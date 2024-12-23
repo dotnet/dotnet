@@ -276,6 +276,38 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        public void ClearFromCache_WhenPackageSearchMetadataMemoryCacheHasItem_ItemCleared()
+        {
+            using (NuGetPackageSearchService searchService = SetupSearchService())
+            {
+                IPackageSearchMetadata packageMetadata = PackageSearchMetadataBuilder.FromIdentity(new PackageIdentity("microsoft.extensions.logging.abstractions", NuGetVersion.Parse("5.0.0-rc.2.20475.5"))).Build();
+                IPackageSearchMetadata packageMetadataToRemove = PackageSearchMetadataBuilder.FromIdentity(new PackageIdentity("microsoft.extensions.test", NuGetVersion.Parse("5.0.0-rc.2.20475.5"))).Build();
+                var packageSources = new List<PackageSourceContextInfo> { PackageSourceContextInfo.Create(_sourceRepository.PackageSource) };
+                var metadataProvider = Mock.Of<IPackageMetadataProvider>();
+                CacheItemPolicy _cacheItemPolicy = new CacheItemPolicy
+                {
+                    SlidingExpiration = ObjectCache.NoSlidingExpiration,
+                    AbsoluteExpiration = ObjectCache.InfiniteAbsoluteExpiration,
+                };
+
+                string cacheId = PackageSearchMetadataCacheItem.GetCacheId(packageMetadata.Identity.Id, includePrerelease: true, packageSources);
+                var cacheEntry = new PackageSearchMetadataCacheItem(packageMetadata, metadataProvider);
+                NuGetPackageSearchService.PackageSearchMetadataMemoryCache.AddOrGetExisting(cacheId, cacheEntry, _cacheItemPolicy);
+
+                string cacheIdToRemove = PackageSearchMetadataCacheItem.GetCacheId(packageMetadataToRemove.Identity.Id, includePrerelease: true, packageSources);
+                var cacheEntryToRemove = new PackageSearchMetadataCacheItem(packageMetadataToRemove, metadataProvider);
+                NuGetPackageSearchService.PackageSearchMetadataMemoryCache.AddOrGetExisting(cacheIdToRemove, cacheEntryToRemove, _cacheItemPolicy);
+
+
+                searchService.ClearFromCache(packageMetadataToRemove.Identity.Id, packageSources, includePrerelease: true);
+
+                Assert.Equal(1, NuGetPackageSearchService.PackageSearchMetadataMemoryCache.Count());
+                Assert.Null(NuGetPackageSearchService.PackageSearchMetadataMemoryCache.Get(cacheIdToRemove));
+                Assert.NotNull(NuGetPackageSearchService.PackageSearchMetadataMemoryCache.Get(cacheId));
+            }
+        }
+
+        [Fact]
         public async Task GetPackageVersionsAsync_WithProjectAndIsTransitiveAndCacheIsNotPopulatedAsync()
         {
             using (NuGetPackageSearchService searchService = SetupSearchService())

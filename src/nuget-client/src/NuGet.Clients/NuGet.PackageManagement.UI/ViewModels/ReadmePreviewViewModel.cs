@@ -78,7 +78,11 @@ namespace NuGet.PackageManagement.UI.ViewModels
 
         public async Task SetPackageMetadataAsync(DetailedPackageMetadata packageMetadata, CancellationToken cancellationToken)
         {
-            if (packageMetadata != null && (!string.Equals(packageMetadata.Id, _packageMetadata?.Id) || packageMetadata.Version != _packageMetadata?.Version))
+            if (packageMetadata != null && (
+                !string.Equals(packageMetadata.Id, _packageMetadata?.Id)
+                || packageMetadata.Version != _packageMetadata?.Version
+                || !string.Equals(packageMetadata.ReadmeFileUrl, _packageMetadata?.ReadmeFileUrl)
+                ))
             {
                 _packageMetadata = packageMetadata;
                 await LoadReadmeAsync(cancellationToken);

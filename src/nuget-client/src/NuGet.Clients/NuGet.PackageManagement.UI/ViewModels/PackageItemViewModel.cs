@@ -936,12 +936,17 @@ namespace NuGet.PackageManagement.UI
                 .PostOnFailure(nameof(PackageItemViewModel), nameof(UpdatePackageMaxVulnerabilityAsync));
         }
 
-        public void UpdatePackageStatus(IEnumerable<PackageCollectionItem> installedPackages)
+        public void UpdatePackageStatus(IEnumerable<PackageCollectionItem> installedPackages, bool clearCache = false)
         {
             // Get the maximum version installed in any target project/solution
             InstalledVersion = installedPackages
                 .GetPackageVersions(Id)
                 .MaxOrDefault();
+
+            if (clearCache && InstalledVersion != null)
+            {
+                _searchService.ClearFromCache(Id, Sources, IncludePrerelease);
+            }
 
             // Set auto referenced to true any reference for the given id contains the flag.
             AutoReferenced = installedPackages.IsAutoReferenced(Id);

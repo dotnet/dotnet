@@ -104,7 +104,7 @@ namespace NuGet.Commands
                     // This is guaranteed to be computed before any graph with a RID, so we can assume this will return a value.
 
                     // PCL Projects with Supports have a runtime graph but no matching framework.
-                    var runtimeGraphPath = projectTargetFramework?.RuntimeIdentifierGraphPath;
+                    var runtimeGraphPath = projectTargetFramework.RuntimeIdentifierGraphPath;
 
                     RuntimeGraph? projectProviderRuntimeGraph = default;
                     if (runtimeGraphPath != null)
@@ -151,6 +151,8 @@ namespace NuGet.Commands
                         pinnedPackageVersions[depIndex] = item.Value.VersionRange;
                     }
                 }
+
+                Dictionary<LibraryDependencyIndex, VersionRange>? prunedPackageVersions = GetAndIndexPackagesToPrune(libraryDependencyInterningTable, projectTargetFramework);
 
                 DependencyGraphItem rootProjectRefItem = new()
                 {
@@ -635,10 +637,21 @@ namespace NuGet.Commands
                         suppressions = currentSuppressions;
                     }
 
+                    HashSet<int>? prunedPackageIndices = null;
                     for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
                     {
                         LibraryDependency dep = refItemResult.Item.Data.Dependencies[i];
+                        bool isPackage = dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
+                        bool isDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && isPackage;
+
                         LibraryDependencyIndex depIndex = refItemResult.GetDependencyIndexForDependency(i);
+
+                        if (ShouldPrunePackage(prunedPackageVersions, refItemResult, dep, depIndex, isPackage, isDirectPackageReferenceFromRootProject))
+                        {
+                            prunedPackageIndices ??= [];
+                            prunedPackageIndices.Add(i);
+                            continue;
+                        }
 
                         // Skip this node if the VersionRange is null or if its not transitively pinned and PrivateAssets=All
                         if (dep.LibraryRange.VersionRange == null || (!importRefItem.IsCentrallyPinnedTransitivePackage && suppressions!.Contains(depIndex)))
@@ -647,9 +660,6 @@ namespace NuGet.Commands
                         }
 
                         VersionRange? pinnedVersionRange = null;
-
-                        bool isPackage = dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
-                        bool isDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && isPackage;
 
                         if (!isDirectPackageReferenceFromRootProject && directPackageReferences?.Contains(depIndex) == true)
                         {
@@ -752,10 +762,19 @@ namespace NuGet.Commands
                         {
                             foreach (var dep in runtimeDependencies)
                             {
+                                var libraryDependencyIndex = findLibraryCachedAsyncResult.GetDependencyIndexForDependency(runtimeDependencyIndex);
+                                if (ShouldPrunePackage(prunedPackageVersions, refItemResult, dep, libraryDependencyIndex, isPackage: true, isDirectPackageReferenceFromRootProject: false))
+                                {
+                                    prunedPackageIndices ??= [];
+                                    prunedPackageIndices.Add(runtimeDependencyIndex);
+                                    runtimeDependencyIndex++;
+                                    continue;
+                                }
+
                                 DependencyGraphItem runtimeDependencyGraphItem = new()
                                 {
                                     LibraryDependency = dep,
-                                    LibraryDependencyIndex = findLibraryCachedAsyncResult.GetDependencyIndexForDependency(runtimeDependencyIndex),
+                                    LibraryDependencyIndex = libraryDependencyIndex,
                                     LibraryRangeIndex = findLibraryCachedAsyncResult.GetRangeIndexForDependency(runtimeDependencyIndex),
                                     Path = LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex),
                                     Parent = currentRefRangeIndex,
@@ -785,6 +804,12 @@ namespace NuGet.Commands
                                 runtimeDependencyIndex++;
                             }
                         }
+                    }
+
+                    // If the latest item was chosen, keep track of the pruned dependency indices.
+                    if (chosenResolvedItems.TryGetValue(currentRefDependencyIndex, out ResolvedDependencyGraphItem? resolvedGraphItem))
+                    {
+                        resolvedGraphItem.PrunedDependencies = prunedPackageIndices;
                     }
                 }
 
@@ -829,18 +854,20 @@ namespace NuGet.Commands
                     LibraryRangeIndex[] pathToChosenRef = foundItem.Path;
                     bool directPackageReferenceFromRootProject = foundItem.IsDirectPackageReferenceFromRootProject;
                     List<HashSet<LibraryDependencyIndex>> chosenSuppressions = foundItem.Suppressions;
-
                     if (findLibraryEntryCache.TryGetValue(chosenRefRangeIndex, out Task<FindLibraryEntryResult>? nodeTask))
                     {
                         FindLibraryEntryResult node = await nodeTask;
-
-                        flattenedGraphItems.Add(node.Item);
 
                         for (int i = 0; i < node.Item.Data.Dependencies.Count; i++)
                         {
                             var dep = node.Item.Data.Dependencies[i];
 
                             if (dep.LibraryRange.VersionRange == null)
+                            {
+                                continue;
+                            }
+
+                            if (foundItem.PrunedDependencies?.Contains(i) == true)
                             {
                                 continue;
                             }
@@ -1034,6 +1061,31 @@ namespace NuGet.Commands
                                 range: newGraphNode.Key.VersionRange,
                                 child: newGraphNode.Item.Key));
                         }
+
+                        if (foundItem.PrunedDependencies?.Count > 0)
+                        {
+                            int dependencyCount = node.Item.Data.Dependencies.Count - foundItem.PrunedDependencies.Count;
+
+                            List<LibraryDependency> dependencies = dependencyCount > 0 ? new(dependencyCount) : [];
+
+                            for (int i = 0; dependencyCount > 0 && i < node.Item.Data.Dependencies.Count; i++)
+                            {
+                                if (!foundItem.PrunedDependencies.Contains(i))
+                                {
+                                    dependencies.Add(node.Item.Data.Dependencies[i]);
+                                }
+                            }
+
+                            RemoteResolveResult remoteResolveResult = new RemoteResolveResult()
+                            {
+                                Match = node.Item.Data.Match,
+                                Dependencies = dependencies,
+                            };
+
+                            node.Item.Data = remoteResolveResult;
+                        }
+
+                        flattenedGraphItems.Add(node.Item);
                     }
                 }
 
@@ -1204,6 +1256,66 @@ namespace NuGet.Commands
             return (_success, allGraphs, allRuntimes);
         }
 
+        private static Dictionary<LibraryDependencyIndex, VersionRange>? GetAndIndexPackagesToPrune(LibraryDependencyInterningTable libraryDependencyInterningTable, TargetFrameworkInformation? projectTargetFramework)
+        {
+            Dictionary<LibraryDependencyIndex, VersionRange>? prunedPackageVersions = null;
+
+            if (projectTargetFramework?.PackagesToPrune.Count > 0)
+            {
+                prunedPackageVersions = new Dictionary<LibraryDependencyIndex, VersionRange>(capacity: projectTargetFramework.PackagesToPrune.Count);
+
+                foreach (var item in projectTargetFramework.PackagesToPrune)
+                {
+                    LibraryDependencyIndex depIndex = libraryDependencyInterningTable.Intern(item.Value);
+                    prunedPackageVersions[depIndex] = item.Value.VersionRange;
+                }
+            }
+
+            return prunedPackageVersions;
+        }
+
+        private bool ShouldPrunePackage(
+            IReadOnlyDictionary<LibraryDependencyIndex, VersionRange>? packagesToPrune,
+            FindLibraryEntryResult refItemResult,
+            LibraryDependency dep,
+            LibraryDependencyIndex libraryDependencyIndex,
+            bool isPackage,
+            bool isDirectPackageReferenceFromRootProject)
+        {
+            if (packagesToPrune?.TryGetValue(libraryDependencyIndex, out VersionRange? prunableVersion) == true)
+            {
+                if (dep.LibraryRange!.VersionRange!.Satisfies(prunableVersion!.MaxVersion!))
+                {
+                    if (!isPackage)
+                    {
+                        if (SdkAnalysisLevelMinimums.IsEnabled(
+                            _request.Project!.RestoreMetadata!.SdkAnalysisLevel,
+                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                            SdkAnalysisLevelMinimums.PruningWarnings))
+                        {
+                            _logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1511, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningProjectReference, dep.Name)));
+                        }
+                    }
+                    else if (isDirectPackageReferenceFromRootProject)
+                    {
+                        if (SdkAnalysisLevelMinimums.IsEnabled(
+                            _request.Project!.RestoreMetadata!.SdkAnalysisLevel,
+                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                            SdkAnalysisLevelMinimums.PruningWarnings))
+                        {
+                            _logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1510, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningDirectPackageReference, dep.Name)));
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.RestoreDebugPruningPackageReference, $"{dep.Name} {dep.LibraryRange.VersionRange.OriginalString}", refItemResult.Item.Key, prunableVersion.MaxVersion));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         private static bool EvictOnTypeConstraint(LibraryDependencyTarget current, LibraryDependencyTarget previous)
         {
             if (current == previous)
@@ -1295,6 +1407,8 @@ namespace NuGet.Commands
             public required LibraryRangeIndex[] Path { get; set; }
 
             public required List<HashSet<LibraryDependencyIndex>> Suppressions { get; set; }
+
+            public HashSet<int>? PrunedDependencies { get; set; }
         }
 
         internal sealed class LibraryDependencyInterningTable
@@ -1333,6 +1447,21 @@ namespace NuGet.Commands
                 }
 
                 return index;
+            }
+
+            public LibraryDependencyIndex Intern(PrunePackageReference prunePackageReference)
+            {
+                lock (_lockObject)
+                {
+                    string key = prunePackageReference.Name;
+                    if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
+                    {
+                        index = (LibraryDependencyIndex)_nextIndex++;
+                        _table.TryAdd(key, index);
+                    }
+
+                    return index;
+                }
             }
         }
 

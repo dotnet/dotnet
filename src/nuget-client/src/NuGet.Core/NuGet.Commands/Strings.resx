@@ -1127,4 +1127,16 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
     <value>Audit source '{0}' did not provide any vulnerability data.</value>
     <comment>{0} is the source name</comment>
   </data>
+  <data name="RestoreDebugPruningPackageReference" xml:space="preserve">
+    <value>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</value>
+    <comment>0 - package id and version, 1 - version</comment>
+  </data>
+  <data name="Error_RestorePruningDirectPackageReference" xml:space="preserve">
+    <value>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</value>
+    <comment>0 - package id and version</comment>
+  </data>
+  <data name="Error_RestorePruningProjectReference" xml:space="preserve">
+    <value>A ProjectReference cannot be pruned, {0}.</value>
+    <comment>0 - project reference</comment>
+  </data>
 </root>

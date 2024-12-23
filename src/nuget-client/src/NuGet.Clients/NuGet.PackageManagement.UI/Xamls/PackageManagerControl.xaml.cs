@@ -1293,7 +1293,7 @@ namespace NuGet.PackageManagement.UI
         /// <summary>
         /// Refreshes the control after packages are installed or uninstalled.
         /// </summary>
-        private async ValueTask RefreshAsync()
+        private async ValueTask RefreshAsync(bool clearCache = false)
         {
             if (_topPanel.Filter != ItemFilter.All)
             {
@@ -1307,7 +1307,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.Projects,
                     CancellationToken.None);
-                _packageList.UpdatePackageStatus(installedPackages.ToArray());
+                _packageList.UpdatePackageStatus(installedPackages.ToArray(), clearCache);
 
                 await RefreshInstalledAndUpdatesTabsAsync();
             }
@@ -1634,7 +1634,7 @@ namespace NuGet.PackageManagement.UI
                     _isExecutingAction = false;
                     if (_isRefreshRequired)
                     {
-                        await RunAndEmitRefreshAsync(async () => await RefreshAsync(), RefreshOperationSource.ExecuteAction, GetTimeSinceLastRefreshAndRestart(), sw);
+                        await RunAndEmitRefreshAsync(async () => await RefreshAsync(clearCache: true), RefreshOperationSource.ExecuteAction, GetTimeSinceLastRefreshAndRestart(), sw);
                         _isRefreshRequired = false;
                     }
 

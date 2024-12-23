@@ -114,6 +114,11 @@ namespace NuGet.PackageManagement.UI.Utility
                 _parent = service;
             }
 
+            public void ClearFromCache(string id, IReadOnlyCollection<PackageSourceContextInfo> packageSources, bool includePrerelease)
+            {
+                _parent._service.ClearFromCache(id, packageSources, includePrerelease);
+            }
+
             public ValueTask<SearchResultContextInfo> ContinueSearchAsync(CancellationToken cancellationToken)
             {
                 return _parent._service.ContinueSearchAsync(cancellationToken);

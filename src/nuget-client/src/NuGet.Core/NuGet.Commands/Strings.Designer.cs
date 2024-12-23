@@ -799,6 +799,24 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary..
+        /// </summary>
+        internal static string Error_RestorePruningDirectPackageReference {
+            get {
+                return ResourceManager.GetString("Error_RestorePruningDirectPackageReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A ProjectReference cannot be pruned, {0}..
+        /// </summary>
+        internal static string Error_RestorePruningProjectReference {
+            get {
+                return ResourceManager.GetString("Error_RestorePruningProjectReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The repository service index &apos;{0}&apos; is not a valid HTTPS url..
         /// </summary>
         internal static string Error_ServiceIndexShouldBeHttps {
@@ -1876,6 +1894,15 @@ namespace NuGet.Commands {
         internal static string ResolverRequest_ToStringFormat {
             get {
                 return ResourceManager.GetString("ResolverRequest_ToStringFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pruning the package &apos;{0}&apos; as a dependency of &apos;{1}&apos;. The maximum prunable version is &apos;{2}&apos;.
+        /// </summary>
+        internal static string RestoreDebugPruningPackageReference {
+            get {
+                return ResourceManager.GetString("RestoreDebugPruningPackageReference", resourceCulture);
             }
         }
         

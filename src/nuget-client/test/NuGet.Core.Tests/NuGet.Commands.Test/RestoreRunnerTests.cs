@@ -6,14 +6,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
+using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Commands.Test
@@ -1992,6 +1995,107 @@ namespace NuGet.Commands.Test
                     Assert.Equal(0, lockFile.LogMessages.Count);
                 }
             }
+        }
+
+        [Fact]
+        public async Task RestoreRunner_WithMultipleProjects_AndPackagePruningOnOnlyOne_PrunesCorrectly()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Arrange
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("packageB", "1.0.0")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var p1 = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            var p2 = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, p1).WithSettingsBasedRestoreMetadata(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, p2).WithSettingsBasedRestoreMetadata(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
+
+            // set up the dg spec.
+            var dgFile = new DependencyGraphSpec();
+            dgFile.AddProject(projectSpec1);
+            dgFile.AddProject(projectSpec2);
+            dgFile.AddRestore(projectSpec1.RestoreMetadata.ProjectUniqueName);
+            dgFile.AddRestore(projectSpec2.RestoreMetadata.ProjectUniqueName);
+
+            var logger = new TestLogger();
+            using var cacheContext = new SourceCacheContext();
+
+            var settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+
+            var restoreContext = new RestoreArgs()
+            {
+                CacheContext = cacheContext,
+                DisableParallel = true,
+                Log = logger,
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                CachingSourceProvider = new CachingSourceProvider(new TestPackageSourceProvider([new PackageSource(pathContext.PackageSource)])),
+                PreLoadedRequestProviders = new List<IPreLoadedRestoreRequestProvider>()
+                {
+                    new DependencyGraphSpecRequestProvider(new RestoreCommandProvidersCache(), dgFile)
+                }
+            };
+
+            // Act
+            var summaries = await RestoreRunner.RunAsync(restoreContext);
+            Assert.True(summaries.All(e => e.Success), string.Join(Environment.NewLine, logger.Messages));
+
+            var lockFormat = new LockFileFormat();
+            var p1AssetsFile = lockFormat.Read(Path.Combine(projectSpec1.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+            var p2AssetsFile = lockFormat.Read(Path.Combine(projectSpec2.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+
+            p1AssetsFile.Targets.Should().HaveCount(1);
+            p1AssetsFile.Targets[0].Libraries.Should().HaveCount(1);
+            p1AssetsFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            p1AssetsFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p1AssetsFile.Targets[0].Libraries[0].Dependencies.Should().BeEmpty();
+
+            p2AssetsFile.Targets.Should().HaveCount(1);
+            p2AssetsFile.Targets[0].Libraries.Should().HaveCount(2);
+            p2AssetsFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            p2AssetsFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p2AssetsFile.Targets[0].Libraries[0].Dependencies.Should().HaveCount(1);
+            p2AssetsFile.Targets[0].Libraries[1].Name.Should().Be("packageB");
+            p2AssetsFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p2AssetsFile.Targets[0].Libraries[1].Dependencies.Should().BeEmpty();
         }
     }
 }
