@@ -18,6 +18,6 @@
     <XunitReleaseVersion>2.9.2</XunitReleaseVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftBuildVersion>17.8.3</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>17.14.0-preview-24619-01</MicrosoftBuildVersion>
   </PropertyGroup>
 </Project>
