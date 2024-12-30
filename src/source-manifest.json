@@ -71,11 +71,11 @@
       "commitSha": "5af96504f10836eca6ce804ab3cdd28c042fa35a"
     },
     {
-      "packageVersion": "17.14.0-preview-24620-02",
+      "packageVersion": "17.14.0-preview-24624-01",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "a71903d9684e24db3db261b27ca73c0ef879cf81"
+      "commitSha": "0fe373a11daeafd2d684fe886abdaa5012ea5a92"
     },
     {
       "packageVersion": "6.13.0-rc.106",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3587d6c129688c1a25440c126299f9b486f9a2c8"
+      "commitSha": "598b3d0117e0709a6797fa037c927967c75c4cb5"
     },
     {
       "packageVersion": "10.0.561901",
@@ -155,11 +155,11 @@
       "commitSha": "ff1852196a042a124267a6e599d12da20d7ff65a"
     },
     {
-      "packageVersion": "10.0.100-alpha.1.24622.2",
+      "packageVersion": "10.0.100-alpha.1.24626.1",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "eb374a75184688f1aac820f88f5a5be4f8c5288c"
+      "commitSha": "16c260e4dccb1889f13aee89dcf97fa8cbace890"
     },
     {
       "packageVersion": "17.13.0-preview-24610-01",
@@ -169,11 +169,11 @@
       "commitSha": "fc785088a28006c774dcfe0916b69ff54e6f99c1"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24622.1",
+      "packageVersion": "10.0.0-alpha.1.24627.1",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "972ad14abc8ab7372f8d56147ff2082d3544685c"
+      "commitSha": "c8a9448eae29977f786b489ba2f02b8a71e36eb1"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24617.1",
@@ -183,11 +183,11 @@
       "commitSha": "d195a5f10338c2f15433f01e3dbfbdb2b10ba2a3"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24619.1",
+      "packageVersion": "10.0.0-alpha.1.24623.1",
       "barId": null,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "6cdf5bc75531e8f277c5a622fd87a9c291a15f22"
+      "commitSha": "fae44e353491dd309906bf21ae6aa47c3f8731d3"
     },
     {
       "packageVersion": "10.0.0-preview.24609.2",
