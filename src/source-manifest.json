@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.24622.1",
+      "packageVersion": "10.0.0-beta.24626.1",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "8589bd2a216025d753b5f107081bfa28a2d51bb8"
+      "commitSha": "ae8d2a08f1021624ae37cdd5b65f6c05e58a051b"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24623.1",
+      "packageVersion": "10.0.0-alpha.2.24627.1",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "f58b64021e551d9d33a8887c1324befb47294cc9"
+      "commitSha": "ad57bd06853f24e06bfe2672a2053fd7193dc17b"
     },
     {
       "packageVersion": "0.11.5-alpha.24616.1",
@@ -78,11 +78,11 @@
       "commitSha": "a71903d9684e24db3db261b27ca73c0ef879cf81"
     },
     {
-      "packageVersion": "6.13.0-rc.105",
+      "packageVersion": "6.13.0-rc.106",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "45a6a09e4dc08909a0c287da9e7f0a2c08d77f54"
+      "commitSha": "949031c79ea7f5c15b59f31e26d5355fb23795ca"
     },
     {
       "packageVersion": "9.0.0-preview.24619.4",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "22baaacb01aa215ee9f92ef987634e607aa02f4b"
+      "commitSha": "3658e6023d7b438365a8af293aa06f0c8f29b980"
     },
     {
       "packageVersion": "10.0.561901",
@@ -141,11 +141,11 @@
       "commitSha": "b24c3aa9f120f83befa255d5d5f465b961f387fb"
     },
     {
-      "packageVersion": "9.0.0-beta.24619.3",
+      "packageVersion": "9.0.0-beta.24627.2",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "4e176206614b345352885b55491aeb51bf77526b"
+      "commitSha": "03c92f32ef7ea5c47cbe928b5c26ee13a823f5ae"
     },
     {
       "packageVersion": "2.2.0-beta.24622.1",

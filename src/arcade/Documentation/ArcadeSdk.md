@@ -290,6 +290,7 @@ These tools are only used for build operations performed outside of the reposito
 Customization of Authenticode signing process.
 
 Configurable item groups:
+
 - `ItemsToSign`
   List of files to sign in-place, during the build. May list individual files to sign (e.g. .dll, .exe, .ps1, etc.) as well as container files (.nupkg, .vsix, .zip, etc.). All files embedded in a container file are signed (recursively) unless specified otherwise.
 - `ItemsToSignPostBuild`
@@ -302,8 +303,12 @@ Configurable item groups:
   Specifies Authenticode certificate properties, such as whether a certificate allows dual signing.
 - `StrongNameSignInfo`
   Strong Name key to use to sign a specific managed assembly.
+- `Artifact`
+  List of files to sign and publish, either in-place or post-build depending on `PostBuildSign`. May list packages and blobs to publish.
+  More documentation available in the section on Publishing.props.
 
 Properties:
+
 - `AllowEmptySignList`
   True to allow ItemsToSign to be empty (the repository doesn't have any file to sign in-build).
 - `AllowEmptyPostBuildSignList`
@@ -320,6 +325,16 @@ To change the key used for strong-naming assemblies see `StrongNameKeyId` proper
 ### /eng/Publishing.props (optional)
 
 Customization of publishing process.
+
+Configurable item groups:
+
+- `Artifact`: List of files to publish. May list packages and blobs to publish.
+  Supported Metadata:
+  - `Visibility`
+    - Visibility of the artifact. Default is `External`. Visibility options are listed below:
+      - `External`: The artifact is visible outside of the build. It will be uploaded to AzDO artifacts and published to [the Build Asset Registry (BAR)](./Maestro/BuildAssetRegistry.md) as an artifact of the build.
+      - `Internal`: The artifact is visible only within the build. It will be uploaded to AzDO artifacts but not published to BAR.
+      - `Vertical`: The artifact is only visible within a given vertical in a Vertical Build. It will be copied into the local artifacts folder for the repository on disk during a vertical build. It will not be uploaded to AzDO artifacts, nor published to BAR. Any artifacts marked with `Vertical` visibility are also not available in any other Join Points in a Unified Build. See [here](./UnifiedBuild/Unified-Build-Join-Point.md) for more information. `Vertical` visibility is only available in a Vertical Build.
 
 ### /eng/AfterSolutionBuild.targets (optional)
 

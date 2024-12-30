@@ -569,6 +569,25 @@ namespace Microsoft.DotNet.VersionTools.Tests.BuildManifest
             Assert.False(packageArtifact.Equals("thisIsNotAPackageArtifact!"));
         }
 
+        [InlineData("Vertical")]
+        [InlineData("External")]
+        [InlineData("Internal")]
+        [InlineData("")]
+        [Theory]
+        public void PackageArtifactModel_Visibility(string visibility)
+        {
+            PackageArtifactModel packageArtifact = new PackageArtifactModel
+            {
+                Id = "AssetName",
+                Attributes = new Dictionary<string, string>
+                {
+                    { "Visibility", visibility }
+                }
+            };
+
+            Assert.Equal(visibility is "" ? ArtifactVisibility.External : (ArtifactVisibility)Enum.Parse(typeof(ArtifactVisibility), visibility), packageArtifact.Visibility);
+        }
+
         [Fact]
         public void BlobArtifactModelEquals_ReturnsTrueWhenTwoObjectsHaveMatchingAttributes()
         {
@@ -654,6 +673,25 @@ namespace Microsoft.DotNet.VersionTools.Tests.BuildManifest
             };
 
             Assert.False(blobArtifact.Equals("thisIsNotABlobArtifact!"));
+        }
+
+        [InlineData("Vertical")]
+        [InlineData("External")]
+        [InlineData("Internal")]
+        [InlineData("")]
+        [Theory]
+        public void BlobArtifactModel_Visibility(string visibility)
+        {
+            BlobArtifactModel blobArtifact = new BlobArtifactModel
+            {
+                Id = "AssetName",
+                Attributes = new Dictionary<string, string>
+                {
+                    { "Visibility", visibility }
+                }
+            };
+
+            Assert.Equal(visibility is "" ? ArtifactVisibility.External : (ArtifactVisibility)Enum.Parse(typeof(ArtifactVisibility), visibility), blobArtifact.Visibility);
         }
 
         private BuildModel CreatePackageOnlyBuildManifestModel()

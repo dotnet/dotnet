@@ -43,6 +43,30 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
             set => Attributes[nameof(RepoOrigin)] = value;
         }
 
+        public ArtifactVisibility Visibility
+        {
+            get
+            {
+                string val = Attributes.GetOrDefault(nameof(Visibility));
+                if (string.IsNullOrEmpty(val))
+                {
+                    return ArtifactVisibility.External;
+                }
+                else if (Enum.TryParse(val, out ArtifactVisibility visibility))
+                {
+                    return visibility;
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid value for {nameof(Visibility)}: {val}");
+                }
+            }
+            set
+            {
+                Attributes[nameof(Visibility)] = value.ToString();
+            }
+        }
+
         public override string ToString() => $"Blob {Id}";
 
         public override bool Equals(object obj)

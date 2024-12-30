@@ -74,6 +74,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public bool PushToLocalStorage { get; set; }
 
+        public ITaskItem[] ArtifactVisibilitiesToPublish { get; set; }
+
         /// <summary>
         /// Which version should the build manifest be tagged with.
         /// By default he latest version is used.
@@ -218,6 +220,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             .Where(blob => blob != null);
                     }
 
+                    ArtifactVisibility[] visibilitiesToPublish = GetVisibilitiesToPublish(ArtifactVisibilitiesToPublish);
+
+                    packageArtifacts = packageArtifacts.Where(p => visibilitiesToPublish.Contains(p.Visibility));
+                    blobArtifacts = blobArtifacts.Where(b => visibilitiesToPublish.Contains(b.Visibility));
+
                     PublishingInfraVersion targetPublishingVersion = PublishingInfraVersion.Latest;
 
                     if (!string.IsNullOrEmpty(PublishingVersion))
@@ -322,6 +329,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         throw new ArgumentOutOfRangeException(nameof(itemType));
                 }
             }
+        }
+
+        private static ArtifactVisibility[] GetVisibilitiesToPublish(ITaskItem[] allowedVisibilities)
+        {
+            if (allowedVisibilities is null || allowedVisibilities.Length == 0)
+            {
+                return [ArtifactVisibility.External];
+            }
+
+            return allowedVisibilities.Select(item => (ArtifactVisibility)Enum.Parse(typeof(ArtifactVisibility), item.ItemSpec)).ToArray();
         }
     }
 }

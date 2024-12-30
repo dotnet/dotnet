@@ -11,6 +11,7 @@
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
       <IsShipping>true</IsShipping>
+      <Visibility>External</Visibility>
     </Artifact>
   </ItemDefinitionGroup>
 

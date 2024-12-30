@@ -43,6 +43,17 @@
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
+  <!--
+    Inside the VMR, we want to include "Vertical" artifacts as they should be available to other builds within the same
+    vertical on the same build machine.
+    Inside the VMR, we also want to include "Internal" artifacts in the build manifest, as they are used by other jobs
+    so we want to inclue them here so they can be in the vertical's final manifest.
+    The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">
+    <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
+  </ItemGroup>
+
   <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
@@ -218,8 +229,30 @@
 
     <ItemGroup>
       <ItemsToPushToBlobFeed>
+        <!-- Default artifact visibility is External -->
+        <Visibility Condition="'%(ItemsToPushToBlobFeed.Visibility)' == ''">External</Visibility>
+        <!-- Default to IsShipping=true -->
+        <IsShipping Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == ''">true</IsShipping>
+      </ItemsToPushToBlobFeed>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ItemsToPushToBlobFeed>
         <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'false'">%(ItemsToPushToBlobFeed.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
-        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'false' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
+      </ItemsToPushToBlobFeed>
+    </ItemGroup>
+
+    <Error Condition="'@(ItemsToPublishToBlobFeed->WithMetadataValue('IsShipping','true')->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true'"
+           Text="Visibility 'Vertical' is not supported for shipping artifacts." />
+    <Error Condition="'@(ItemsToPublishToBlobFeed->WithMetadataValue('IsShipping','true')->AnyHaveMetadataValue('Visibility','Internal'))' == 'true'"
+           Text="Visibility 'Internal' is not supported for shipping artifacts." />
+    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuild)' != 'true'"
+           Text="Visibility 'Vertical' is only supported in vertical builds." />
+
+    <ItemGroup>
+      <ItemsToPushToBlobFeed>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Visibility)' != ''">%(ItemsToPushToBlobFeed.ManifestArtifactData);Visibility=%(ItemsToPushToBlobFeed.Visibility)</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
@@ -250,7 +283,8 @@
       AssetsLocalStorageDir="$(SourceBuiltAssetsDir)"
       ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
       NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
-      AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)" />
+      AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"
+      ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)" />
 
     <!-- 
         Publish Windows PDBs produced by SymStore.targets (by default, only shipping PDBs are placed there).
