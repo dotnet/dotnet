@@ -17,45 +17,50 @@
     <PackageVersionNet8>8.0.8</PackageVersionNet8>
     <PackageVersionNet7>7.0.20</PackageVersionNet7>
     <PackageVersionNet6>6.0.36</PackageVersionNet6>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24575.2</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24561.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24561.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24561.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24561.1</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24554.4</runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24569.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>10.0.0-alpha.1.24609.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
+    <!-- binaryen -->
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.24622.2</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <!-- cpython -->
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24616.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24616.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24616.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.24616.1</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <!-- node -->
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.24623.1</runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
+    <!-- llvm-project -->
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.24619.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <!-- emscripten -->
+    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>10.0.0-alpha.1.24627.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksPackagingVersion>10.0.0-beta.24606.6</MicrosoftDotNetBuildTasksPackagingVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.24606.6</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetBuildTasksInstallersPackageVersion>10.0.0-beta.24606.6</MicrosoftDotNetBuildTasksInstallersPackageVersion>
-    <MicrosoftDotNetBuildTasksWorkloadsPackageVersion>10.0.0-beta.24606.6</MicrosoftDotNetBuildTasksWorkloadsPackageVersion>
+    <MicrosoftDotNetBuildTasksPackagingVersion>10.0.0-beta.24626.1</MicrosoftDotNetBuildTasksPackagingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.24626.1</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksInstallersPackageVersion>10.0.0-beta.24626.1</MicrosoftDotNetBuildTasksInstallersPackageVersion>
+    <MicrosoftDotNetBuildTasksWorkloadsPackageVersion>10.0.0-beta.24626.1</MicrosoftDotNetBuildTasksWorkloadsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
