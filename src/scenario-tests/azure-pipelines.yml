@@ -8,116 +8,76 @@ trigger:
     exclude:
     - README.md
     - docs/*
-
-pr:
-  branches:
-    include:
-    - main
-    - release/*
-  paths:
-    exclude:
-    - README.md
-    - docs/*
+pr: none
 
 variables:
-  - template: /eng/common/templates/variables/pool-providers.yml
+  - template: /eng/common/templates-official/variables/pool-providers.yml@self
   - name: _TeamName
     value: .NETCore
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      artifacts:
-        publish:
-          artifacts: true
-          logs: true
-          manifests: true
-      enableMicrobuild: true
-      enablePublishTestResults: true
-      enablePublishUsingPipelines: true
-      enableTelemetry: true
-      enableSourceBuild: true
-      publishAssetsImmediately: true
-      helixRepo: dotnet/scenario-tests
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: 1es-windows-2022
+      os: windows
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+
+    stages:
+    - stage: build
+      displayName: Build
       jobs:
-      - job: Windows
-        pool:
-          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-            vmImage: 'windows-latest'
-          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals 1es-windows-2022
-        variables:
-        # Only enable publishing in official builds
-        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-          # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-          - group: Publish-Build-Assets
-          - name: _OfficialBuildArgs
-            value: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-        # else
-        - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-          - name: _OfficialBuildArgs
-            value: ''
-        strategy:
-          matrix:
-            ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-              Debug:
-                _BuildConfig: Debug
-                _BuildArgs: ''
-            Release:
-              _BuildConfig: Release
-              # PRs or external builds are not signed.
-              ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-                _BuildArgs: ''
-              ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-                _BuildArgs: $(_OfficialBuildArgs) /p:DotNetPublishUsingPipelines=true
-        steps:
-        - checkout: self
-          clean: true
-        - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
-          displayName: Build and Test
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          artifacts:
+            publish:
+              artifacts: true
+              logs: true
+              manifests: true
+          enableMicrobuild: true
+          enablePublishTestResults: true
+          enablePublishUsingPipelines: true
+          enableTelemetry: true
+          enableSourceBuild: true
+          publishAssetsImmediately: true
+          helixRepo: dotnet/scenario-tests
+          jobs:
+          - job: Windows
+            pool:
+              name: $(DncEngInternalBuildPool)
+              demands: ImageOverride -equals 1es-windows-2022
+            variables:
+            # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
+            - group: Publish-Build-Assets
+            - name: _OfficialBuildArgs
+              value: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+            strategy:
+              matrix:
+                Release:
+                  _BuildConfig: Release
+                  _BuildArgs: $(_OfficialBuildArgs) /p:DotNetPublishUsingPipelines=true
+            steps:
+            - checkout: self
+              clean: true
+            - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
+              displayName: Build and Test
 
-      - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-        - job: MacOS
-          displayName: 'MacOS'
-          pool:
-            vmImage: 'macOS-latest'
-          strategy:
-            matrix:
-              Debug:
-                _BuildConfig: Debug
-              Release:
-                _BuildConfig: Release
-          steps:
-          - checkout: self
-            clean: true
-          - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
-            displayName: Build and Test
-
-        - job: Linux
-          displayName: 'Linux'
-          pool:
-            vmImage: 'ubuntu-latest'
-          strategy:
-            matrix:
-              Debug:
-                _BuildConfig: Debug
-              Release:
-                _BuildConfig: Release
-          steps:
-          - checkout: self
-            clean: true
-          - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
-            displayName: Build and Test
-
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: eng\common\templates\post-build\post-build.yml
-    parameters:
-      enableSymbolValidation: false
-      enableSigningValidation: false
-      enableNugetValidation: false
-      enableSourceLinkValidation: false
-      publishAssetsImmediately: true
+    - template: eng\common\templates-official\post-build\post-build.yml@self
+      parameters:
+        enableSymbolValidation: false
+        enableSigningValidation: false
+        enableNugetValidation: false
+        enableSourceLinkValidation: false
+        publishAssetsImmediately: true
