@@ -208,4 +208,35 @@ public sealed class InvalidSolutions
         Assert.Equal(1, ex.Line);
         Assert.Equal(2, ex.Column);
     }
+
+    /// <summary>
+    /// The legacy sln solution parser would ignore duplicate folder guids.
+    /// Ensure this behavior is maintained.
+    /// </summary>
+    [Fact]
+    public async Task DuplicateFolderIdSlnAsync()
+    {
+        ResourceStream duplicateId = SlnAssets.LoadResource("Invalid/DuplicateFolderId.sln");
+        SolutionModel solution = await SolutionSerializers.SlnFileV12.OpenAsync(duplicateId.Stream, CancellationToken.None);
+
+        Assert.Equal(4, solution.SolutionFolders.Count);
+
+        Assert.NotNull(solution.SerializerExtension);
+        Assert.True(solution.SerializerExtension.Tarnished);
+    }
+
+    /// <summary>
+    /// Ensure the slnx parser does fail on duplicate folder guids.
+    /// </summary>
+    [Fact]
+    public async Task DuplicateFolderIdSlnxAsync()
+    {
+        ResourceStream duplicateId = SlnAssets.LoadResource("Invalid/DuplicateFolderId.slnx");
+        SolutionException ex = await Assert.ThrowsAsync<SolutionException>(
+            async () => _ = await SolutionSerializers.SlnXml.OpenAsync(duplicateId.Stream, CancellationToken.None));
+
+        Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, "11111111-1111-1111-1111-111111111111", nameof(SolutionFolderModel)), ex.Message);
+        Assert.Equal(3, ex.Line);
+        Assert.Equal(4, ex.Column);
+    }
 }

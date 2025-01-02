@@ -532,6 +532,14 @@ internal sealed partial class SlnFileV12Serializer
 #pragma warning disable CS0618 // Type or member is obsolete (Temporaily create a potentially invalid solution folder until nested projects is interpreted.)
                 SolutionFolderModel folder = solution.CreateSlnFolder(name: displayName.ToString());
 #pragma warning restore CS0618 // Type or member is obsolete
+
+                // Solution folders with duplicate ids should not error when reading sln files to preserve legacy behavior.
+                if (solution.FindItemById(projectId) is not null)
+                {
+                    projectId = Guid.NewGuid();
+                    this.tarnished = true;
+                }
+
                 folder.Id = projectId;
                 return folder;
             }
