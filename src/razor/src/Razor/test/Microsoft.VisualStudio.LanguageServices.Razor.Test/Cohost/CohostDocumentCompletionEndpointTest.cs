@@ -314,6 +314,59 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
     }
 
     [Fact]
+    public async Task HtmlSnippetsCompletion_EmptyDocument()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                $$
+                """,
+             completionContext: new RoslynVSInternalCompletionContext()
+             {
+                 InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                 TriggerCharacter = null,
+                 TriggerKind = RoslynCompletionTriggerKind.Invoked
+             },
+             expectedItemLabels: ["snippet1", "snippet2"],
+             snippetLabels: ["snippet1", "snippet2"]);
+    }
+
+    [Fact]
+    public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument1()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+
+                $$
+                """,
+             completionContext: new RoslynVSInternalCompletionContext()
+             {
+                 InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                 TriggerCharacter = null,
+                 TriggerKind = RoslynCompletionTriggerKind.Invoked
+             },
+             expectedItemLabels: ["snippet1", "snippet2"],
+             snippetLabels: ["snippet1", "snippet2"]);
+    }
+
+    [Fact]
+    public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument2()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                $$
+
+                """,
+             completionContext: new RoslynVSInternalCompletionContext()
+             {
+                 InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                 TriggerCharacter = null,
+                 TriggerKind = RoslynCompletionTriggerKind.Invoked
+             },
+             expectedItemLabels: ["snippet1", "snippet2"],
+             snippetLabels: ["snippet1", "snippet2"]);
+    }
+
+    [Fact]
     public async Task HtmlSnippetsCompletion_NotInStartTag()
     {
         await VerifyCompletionListAsync(

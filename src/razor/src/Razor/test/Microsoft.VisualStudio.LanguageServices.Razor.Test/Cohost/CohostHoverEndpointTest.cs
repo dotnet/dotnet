@@ -145,6 +145,44 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         });
     }
 
+    [Fact]
+    public async Task Component_WithCallbacks()
+    {
+        TestCode code = """
+            <[|Inpu$$tText|] ValueChanged="Foo"
+                       DisplayName="Foo"
+                       @onchange="Foo"
+                       @onfocus="Foo"
+                       @onblur="Foo" />
+
+            @code {
+                private void Foo()
+                {
+                }
+            }
+            """;
+
+        await VerifyHoverAsync(code, async (hover, document) =>
+        {
+            await hover.VerifyRangeAsync(code.Span, document);
+
+            hover.VerifyRawContent(
+                Container(
+                    Container(
+                        Image,
+                        ClassifiedText( // Microsoft.ApsNetCore.Components.Forms.InputText
+                            Text("Microsoft"),
+                            Punctuation("."),
+                            Text("AspNetCore"),
+                            Punctuation("."),
+                            Text("Components"),
+                            Punctuation("."),
+                            Text("Forms"),
+                            Punctuation("."),
+                            Type("InputText")))));
+        });
+    }
+
     private async Task VerifyHoverAsync(TestCode input, Func<RoslynHover, TextDocument, Task> verifyHover)
     {
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);

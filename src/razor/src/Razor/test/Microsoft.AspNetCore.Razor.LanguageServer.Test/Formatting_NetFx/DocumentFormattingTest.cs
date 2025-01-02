@@ -4139,6 +4139,29 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11325")]
+    public async Task CodeBlock_CollectionExpression4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code {
+                        private void M(string[] strings)
+                        {
+                            List<string> entries = [  ..     strings,    "a",      "b",         "c"    ];
+                        }
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private void M(string[] strings)
+                        {
+                            List<string> entries = [.. strings, "a", "b", "c"];
+                        }
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5618")]
     public async Task CodeBlock_EmptyObjectCollectionInitializers()
     {

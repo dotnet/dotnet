@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -47,6 +48,17 @@ internal static class IDocumentMappingServiceExtensions
         int hostDocumentIndex)
     {
         var sourceText = codeDocument.Source.Text;
+
+        if (sourceText.Length == 0)
+        {
+            Debug.Assert(hostDocumentIndex == 0);
+
+            // Special case for empty documents, to just force Html. When there is no content, then there are no source mappings,
+            // so the map call below fails, and we would default to Razor. This is fine for most cases, but empty documents are a
+            // special case where Html provides much better results when users first start typing.
+            return new DocumentPositionInfo(RazorLanguageKind.Html, new Position(0, 0), hostDocumentIndex);
+        }
+
         var position = sourceText.GetPosition(hostDocumentIndex);
 
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);

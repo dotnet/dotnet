@@ -52,7 +52,7 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
 
     public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
-        // TODO: if (clientCapabilities.TextDocument?.Diagnostic?.DynamicRegistration is true)
+        if (clientCapabilities.TextDocument?.Diagnostic?.DynamicRegistration is true)
         {
             return [new Registration()
             {
@@ -64,7 +64,7 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
             }];
         }
 
-        // return [];
+        return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentDiagnosticsParams request)
