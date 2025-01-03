@@ -94,12 +94,11 @@ internal static class RazorCodeActionFactory
         return codeAction;
     }
 
-    public static RazorVSInternalCodeAction CreateGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string eventName, string? eventParameterType)
+    public static RazorVSInternalCodeAction CreateGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
     {
         var @params = new GenerateMethodCodeActionParams
         {
             MethodName = methodName,
-            EventName = eventName,
             EventParameterType = eventParameterType,
             IsAsync = false
         };
@@ -123,12 +122,11 @@ internal static class RazorCodeActionFactory
         return codeAction;
     }
 
-    public static RazorVSInternalCodeAction CreateAsyncGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string eventName, string? eventParameterType)
+    public static RazorVSInternalCodeAction CreateAsyncGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
     {
         var @params = new GenerateMethodCodeActionParams
         {
             MethodName = methodName,
-            EventName = eventName,
             EventParameterType = eventParameterType,
             IsAsync = true
         };

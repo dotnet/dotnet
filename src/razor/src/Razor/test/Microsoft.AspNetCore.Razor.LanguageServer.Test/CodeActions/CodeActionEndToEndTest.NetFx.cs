@@ -419,7 +419,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             @code {
-                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -448,7 +448,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             @code {
-                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -478,7 +478,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             <button @onclick="DoesNotExist"></button>
                 
             @code {
-                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -506,7 +506,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             @code {
-                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -535,7 +535,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             @code {
-                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -564,7 +564,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             @code {
-                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -602,7 +602,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
                 {
                 }
 
-                private {{returnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{returnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -638,7 +638,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
                 {
                 }
 
-                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -747,7 +747,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist"></button>
             {{inputIndentString}}@code {
-            {{initialIndentString}}{{indent}}private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+            {{initialIndentString}}{{indent}}private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
             {{initialIndentString}}{{indent}}{
             {{initialIndentString}}{{indent}}{{indent}}throw new global::System.NotImplementedException();
             {{initialIndentString}}{{indent}}}
@@ -805,7 +805,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             {
                 public partial class test
                 {{{spacingOrMethod}}
-                    private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                    private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                     {
                         throw new global::System.NotImplementedException();
                     }
@@ -849,7 +849,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             {
                 public partial class test
                 {{{spacingOrMethod}}
-                    private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                    private {{GenerateAsyncEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                     {
                         throw new global::System.NotImplementedException();
                     }
@@ -877,7 +877,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expectedRazorContent = """
             <button @onclick="DoesNotExist"></button>
             @code {
-                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -914,7 +914,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             namespace {{CodeBehindTestReplaceNamespace}};
             public partial class test
             {
-                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }
@@ -939,7 +939,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
         var expected = $$"""
             <button @onclick="DoesNotExist" />
             @code {
-                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                private void DoesNotExist(global::Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                 {
                     throw new global::System.NotImplementedException();
                 }

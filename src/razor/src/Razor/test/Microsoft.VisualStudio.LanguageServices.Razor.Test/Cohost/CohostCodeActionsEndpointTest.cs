@@ -523,7 +523,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
         var expected = """
             <button @onclick="DoesNotExist"></button>
             @code {
-                private void DoesNotExist(MouseEventArgs e)
+                private void DoesNotExist(MouseEventArgs args)
                 {
                     throw new NotImplementedException();
                 }
@@ -549,7 +549,63 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
 
             @code
             {
-                private void DoesNotExist(MouseEventArgs e)
+                private void DoesNotExist(MouseEventArgs args)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+    }
+
+    [Fact]
+    public async Task GenerateEventHandler_BindSet()
+    {
+        var input = """
+            <InputText @bind-Value="Text" @bind-Value:set="{|CS0103:Does[||]NotExist|}" />
+
+            @code
+            {
+                private string Text { get; set; }
+            }
+            """;
+
+        var expected = """
+            <InputText @bind-Value="Text" @bind-Value:set="DoesNotExist" />
+
+            @code
+            {
+                private string Text { get; set; }
+                private void DoesNotExist(string args)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+    }
+
+    [Fact]
+    public async Task GenerateEventHandler_BindAfter()
+    {
+        var input = """
+            <InputText @bind-Value="Text" @bind-Value:after="{|CS0103:Does[||]NotExist|}" />
+
+            @code
+            {
+                private string Text { get; set; }
+            }
+            """;
+
+        var expected = """
+            <InputText @bind-Value="Text" @bind-Value:after="DoesNotExist" />
+
+            @code
+            {
+                private string Text { get; set; }
+                private void DoesNotExist()
                 {
                     throw new NotImplementedException();
                 }
@@ -575,7 +631,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
 
             @code
             {
-                private void DoesNotExist(InputFileChangeEventArgs e)
+                private void DoesNotExist(InputFileChangeEventArgs args)
                 {
                     throw new NotImplementedException();
                 }
@@ -601,7 +657,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
 
             @code
             {
-                private Task DoesNotExistAsync(string e)
+                private Task DoesNotExistAsync(string args)
                 {
                     throw new NotImplementedException();
                 }
@@ -621,7 +677,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
             expected: """
                 <button @onclick="DoesNotExist"></button>
                 @code {
-                    private void DoesNotExist(MouseEventArgs e)
+                    private void DoesNotExist(MouseEventArgs args)
                     {
                         throw new NotImplementedException();
                     }
@@ -669,7 +725,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
                         public void M()
                         {
                         }
-                        private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                        private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                         {
                             throw new System.NotImplementedException();
                         }
@@ -702,7 +758,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
                     
                     public partial class File1
                     {
-                        private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+                        private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
                         {
                             throw new System.NotImplementedException();
                         }
@@ -721,7 +777,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
         var expected = """
             <button @onclick="DoesNotExist"></button>
             @code {
-                private Task DoesNotExist(MouseEventArgs e)
+                private Task DoesNotExist(MouseEventArgs args)
                 {
                     throw new NotImplementedException();
                 }
@@ -747,7 +803,7 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
 
             @code
             {
-                private Task DoesNotExist(MouseEventArgs e)
+                private Task DoesNotExist(MouseEventArgs args)
                 {
                     throw new NotImplementedException();
                 }

@@ -35,15 +35,7 @@ internal class GenerateMethodCodeActionResolver(
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
     private readonly IFileSystem _fileSystem = fileSystem;
 
-    private const string ReturnType = "$$ReturnType$$";
-    private const string MethodName = "$$MethodName$$";
-    private const string EventArgs = "$$EventArgs$$";
     private const string BeginningIndents = $"{FormattingUtilities.InitialIndent}{FormattingUtilities.Indent}";
-    private static readonly string s_generateMethodTemplate =
-        $"{BeginningIndents}private {ReturnType} {MethodName}({EventArgs}){Environment.NewLine}" +
-        BeginningIndents + "{" + Environment.NewLine +
-        $"{BeginningIndents}{FormattingUtilities.Indent}throw new global::System.NotImplementedException();{Environment.NewLine}" +
-        BeginningIndents + "}";
 
     public string Action => LanguageServerConstants.CodeActions.GenerateEventHandler;
 
@@ -204,16 +196,20 @@ internal class GenerateMethodCodeActionResolver(
 
     private static string PopulateMethodSignature(GenerateMethodCodeActionParams actionParams)
     {
-        var templateWithMethodSignature = s_generateMethodTemplate.Replace(MethodName, actionParams.MethodName);
+        var returnType = actionParams.IsAsync
+            ? "global::System.Threading.Tasks.Task"
+            : "void";
 
-        var returnType = actionParams.IsAsync ? "global::System.Threading.Tasks.Task" : "void";
-        templateWithMethodSignature = templateWithMethodSignature.Replace(ReturnType, returnType);
-
-        var eventArgsType = actionParams.EventParameterType is null
+        var parameters = actionParams.EventParameterType is null
             ? string.Empty // Couldn't find the params, generate no params instead.
-            : $"global::{actionParams.EventParameterType} e";
+            : $"global::{actionParams.EventParameterType} args";
 
-        return templateWithMethodSignature.Replace(EventArgs, eventArgsType);
+        return $$"""
+            {{BeginningIndents}}private {{returnType}} {{actionParams.MethodName}}({{parameters}})
+            {{BeginningIndents}}{
+            {{BeginningIndents}}{{FormattingUtilities.Indent}}throw new global::System.NotImplementedException();
+            {{BeginningIndents}}}
+            """;
     }
 
     private static ClassDeclarationSyntax? GetCSharpClassDeclarationSyntax(string csharpContent, string razorNamespace, string razorClassName)
