@@ -162,16 +162,9 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
         {
             if (_options.DelegateToCSharpOnDiagnosticPublish)
             {
-                var uriBuilder = new UriBuilder()
-                {
-                    Scheme = Uri.UriSchemeFile,
-                    Path = document.FilePath,
-                    Host = string.Empty,
-                };
-
                 var delegatedParams = new DocumentDiagnosticParams
                 {
-                    TextDocument = new TextDocumentIdentifier { Uri = uriBuilder.Uri },
+                    TextDocument = new TextDocumentIdentifier { Uri = VsLspFactory.CreateFilePathUri(document.FilePath) },
                 };
 
                 var delegatedResponse = await _clientConnection
@@ -257,19 +250,12 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
 
     private void PublishDiagnosticsForFilePath(string filePath, Diagnostic[] diagnostics)
     {
-        var uriBuilder = new UriBuilder()
-        {
-            Scheme = Uri.UriSchemeFile,
-            Path = filePath,
-            Host = string.Empty,
-        };
-
         _clientConnection
             .SendNotificationAsync(
                 Methods.TextDocumentPublishDiagnosticsName,
                 new PublishDiagnosticParams()
                 {
-                    Uri = uriBuilder.Uri,
+                    Uri = VsLspFactory.CreateFilePathUri(filePath),
                     Diagnostics = diagnostics,
                 },
                 _disposeTokenSource.Token)

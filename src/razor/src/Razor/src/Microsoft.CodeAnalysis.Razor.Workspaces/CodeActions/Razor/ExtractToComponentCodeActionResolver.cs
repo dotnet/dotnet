@@ -1,7 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#if !NET
 using System;
+#endif
 using System.IO;
 using System.Text.Json;
 using System.Threading;
@@ -58,12 +60,7 @@ internal class ExtractToComponentCodeActionResolver(
             ? '/' + componentPath
             : componentPath;
 
-        var newComponentUri = new UriBuilder
-        {
-            Scheme = Uri.UriSchemeFile,
-            Path = componentPath,
-            Host = string.Empty,
-        }.Uri;
+        var newComponentUri = VsLspFactory.CreateFilePathUri(componentPath);
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 

@@ -40,12 +40,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
         var file = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var folder = Path.GetDirectoryName(file).AssumeNotNull();
         var importsFile = Path.GetFullPath(Path.Combine(folder, "..", importsFileName));
-        var importFileUri = new UriBuilder
-        {
-            Scheme = Uri.UriSchemeFile,
-            Path = importsFile,
-            Host = string.Empty,
-        }.Uri;
+        var importFileUri = VsLspFactory.CreateFilePathUri(importsFile);
 
         using var edits = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
 

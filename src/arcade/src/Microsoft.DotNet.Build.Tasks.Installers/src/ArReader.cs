@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal sealed class ArReader(Stream stream, bool leaveOpen) : IDisposable
+    public sealed class ArReader(Stream stream, bool leaveOpen) : IDisposable
     {
         private bool readMagic;
         public ArEntry? GetNextEntry()

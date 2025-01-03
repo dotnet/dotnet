@@ -57,12 +57,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
             ? '/' + codeBehindPath
             : codeBehindPath;
 
-        var codeBehindUri = new UriBuilder
-        {
-            Scheme = Uri.UriSchemeFile,
-            Path = updatedCodeBehindPath,
-            Host = string.Empty,
-        }.Uri;
+        var codeBehindUri = VsLspFactory.CreateFilePathUri(updatedCodeBehindPath);
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 

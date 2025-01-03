@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
 using FluentAssertions;
+using System.Security.Cryptography;
 
 namespace Microsoft.DotNet.SignTool.Tests
 {
@@ -380,6 +381,70 @@ namespace Microsoft.DotNet.SignTool.Tests
             engine.LogWarningEvents.Select(w => $"{w.Code}: {w.Message}").Should().BeEquivalentTo(expectedWarnings ?? Array.Empty<string>());
         }
 
+#if !NETFRAMEWORK
+        private void ValidateProducedDebContent(
+            string debianPackage,
+            (string, string)[] expectedFilesOriginalHashes,
+            string[] signableFiles,
+            string expectedControlFileContent)
+        {
+            string tempDir = Path.Combine(_tmpDir, "verification");
+            Directory.CreateDirectory(tempDir);
+
+            string controlArchive = ExtractArchiveFromDebPackage(debianPackage, "control.tar", tempDir);
+            string dataArchive = ExtractArchiveFromDebPackage(debianPackage, "data.tar", tempDir);
+
+            string controlLayout = Path.Combine(tempDir, "control");
+            string dataLayout = Path.Combine(tempDir, "data");
+
+            Directory.CreateDirectory(controlLayout);
+            Directory.CreateDirectory(dataLayout);
+
+            ZipData.ExtractTarballContents(dataArchive, dataLayout, skipSymlinks: false);
+            ZipData.ExtractTarballContents(controlArchive, controlLayout);
+
+            string md5sumsContents = File.ReadAllText(Path.Combine(controlLayout, "md5sums"));
+
+            // Checks:
+            // Expected files are present
+            // Signed files have hashes different than original
+            // md5sums file contains the correct hashes of all files
+            // md5sums file does not contain the original hashes of signable files
+            foreach ((string targetSystemFilePath, string originalHash) in expectedFilesOriginalHashes)
+            {
+                string layoutFilePath = Path.Combine(dataLayout, targetSystemFilePath);
+                File.Exists(layoutFilePath).Should().BeTrue();
+
+                using MD5 md5 = MD5.Create();
+                using FileStream fileStream = File.OpenRead(layoutFilePath);
+                string newHash = Convert.ToHexString(md5.ComputeHash(fileStream));
+
+                if (signableFiles.Contains(targetSystemFilePath))
+                {
+                    newHash.Should().NotBe(originalHash);
+                    md5sumsContents.Should().Contain($"{newHash} {targetSystemFilePath}");
+                    md5sumsContents.Should().NotContain($"{originalHash} {targetSystemFilePath}");
+                }
+                else
+                {
+                    newHash.Should().Be(originalHash);
+                    md5sumsContents.Should().Contain($"{originalHash} {targetSystemFilePath}");
+                }
+            }
+
+            // Check: control file contents matches the expected contents
+            string controlFileContents = File.ReadAllText(Path.Combine(controlLayout, "control"));
+            controlFileContents.Should().Be(expectedControlFileContent);
+        }
+
+        private string ExtractArchiveFromDebPackage(string debianPackage, string archiveName, string destinationFolder)
+        {
+            var (relativePath, content, contentSize) = ZipData.ReadDebContainerEntries(debianPackage, archiveName).Single();
+            string archive = Path.Combine(destinationFolder, relativePath);
+            File.WriteAllBytes(archive, ((MemoryStream)content).ToArray());
+            return archive;
+        }
+#endif
         [Fact]
         public void EmptySigningList()
         {
@@ -1215,6 +1280,7 @@ $@"
             });
         }
 
+#if !NETFRAMEWORK
         [Fact]
         public void CheckDebSigning()
         {
@@ -1232,18 +1298,33 @@ $@"
 
             ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
             {
+                "File 'mscorlib.dll' TargetFramework='.NETCoreApp,Version=v10.0' Certificate='Microsoft400'",
+                "File 'data.tar.gz' Certificate=''",
                 "File 'test.deb' Certificate='LinuxSign'"
             });
 
             ValidateGeneratedProject(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
             {
-$@"
-<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"))}"">
+$@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "1", "./usr/local/bin/mscorlib.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>",
+$@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"))}"">
   <Authenticode>LinuxSign</Authenticode>
-</FilesToSign>
-"
+</FilesToSign>"
             });
+
+            var expectedFilesOriginalHashes = new (string, string)[]
+            {
+                ("usr/local/bin/hello", "644981BBD6F4ED1B3CF68CD0F47981AA"),
+                ("usr/local/bin/mscorlib.dll", "B80EEBA2B8616B7C37E49B004D69BBB7")
+            };
+            string[] signableFiles = ["usr/local/bin/mscorlib.dll"];
+            string expectedControlFileContent = "Package: test\nVersion: 1.0\nSection: base\nPriority: optional\nArchitecture: all\n";
+            expectedControlFileContent +="Maintainer: Arcade <test@example.com>\nInstalled-Size: 49697\nDescription: A simple test package\n This is a simple generated .deb package for testing purposes.\n";
+
+            ValidateProducedDebContent(Path.Combine(_tmpDir, "test.deb"), expectedFilesOriginalHashes, signableFiles, expectedControlFileContent);
         }
+#endif
 
         [Fact]
         public void CheckPowershellSigning()
@@ -2265,7 +2346,8 @@ $@"
                 { ".dll", "EmptyPKT.dll" },
                 { ".vsix", "Simple.vsix" },
                 { ".nupkg", "Simple.nupkg" },
-                { ".exe", "Simple.exe" }
+                { ".exe", "Simple.exe" },
+                { ".deb", "test.deb" }
             };
 
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
@@ -2296,18 +2378,20 @@ $@"
         [MemberData(nameof(GetSignableExtensions))]
         public void MissingCertificateNameButExtensionIsIgnored(string extension)
         {
-            var needContent = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            var needContent = new Dictionary<string, (string, string[])>(StringComparer.OrdinalIgnoreCase)
             {
-                { ".dll", "EmptyPKT.dll" },
-                { ".vsix", "Simple.vsix" },
-                { ".nupkg", "Simple.nupkg" },
-                { ".exe", "Simple.exe" }
+                { ".dll", ("EmptyPKT.dll", []) },
+                { ".vsix", ("Simple.vsix", []) },
+                { ".nupkg", ("Simple.nupkg", []) },
+                { ".exe", ("Simple.exe", []) },
+                { ".deb", ("test.deb", [".dll"]) }
             };
 
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
 
-            var inputFilePath = needContent.TryGetValue(extension, out var resourcePath) ?
-                GetResourcePath(resourcePath) :
+            needContent.TryGetValue(extension, out (string ResourcePath, string[] AdditionalExtensions) value);
+            var inputFilePath = value.ResourcePath != null ?
+                GetResourcePath(value.ResourcePath) :
                 CreateTestResource("test" + extension);
 
             var itemsToSign = new ITaskItem[]
@@ -2315,11 +2399,21 @@ $@"
                 new TaskItem(inputFilePath)
             };
 
+            var extensionSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { extension, new List<SignInfo> { SignInfo.Ignore } }
+            };
+
+            foreach (var additionalExtension in value.AdditionalExtensions ?? [])
+            {
+                extensionSignInfo.Add(additionalExtension, new List<SignInfo> { SignInfo.Ignore });
+            }
+
             new Configuration(_tmpDir,
                 itemsToSign,
                 new Dictionary<string, List<SignInfo>>(),
                 new Dictionary<ExplicitCertificateKey, string>(),
-                new Dictionary<string, List<SignInfo>>() { { extension, new List<SignInfo> { SignInfo.Ignore } } },
+                extensionSignInfo,
                 new ITaskItem[0],
                 tarToolPath: s_tarToolPath,
                 task.Log)

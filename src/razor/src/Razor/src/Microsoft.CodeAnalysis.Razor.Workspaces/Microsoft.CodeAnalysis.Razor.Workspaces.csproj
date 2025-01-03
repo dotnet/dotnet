@@ -7,6 +7,9 @@
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
+
+    <!-- Uncomment this line to run formatting on runtime code-gen if FUSE is turned on -->
+    <!--<DefineConstants>$(DefineConstants);FORMAT_FUSE</DefineConstants>-->
   </PropertyGroup>
 
   <ItemGroup>

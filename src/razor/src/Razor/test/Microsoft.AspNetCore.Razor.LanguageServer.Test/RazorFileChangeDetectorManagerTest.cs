@@ -21,16 +21,9 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
         // Arrange
         var initialWorkspaceDirectory = "testpath";
 
-        var uriBuilder = new UriBuilder
-        {
-            Scheme = "file",
-            Host = null,
-            Path = initialWorkspaceDirectory
-        };
-
         var initializeParams = new InitializeParams()
         {
-            RootUri = uriBuilder.Uri,
+            RootUri = VsLspFactory.CreateFilePathUri(initialWorkspaceDirectory),
         };
 
         var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());

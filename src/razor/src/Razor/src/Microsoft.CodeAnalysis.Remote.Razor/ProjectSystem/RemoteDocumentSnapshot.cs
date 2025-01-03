@@ -67,10 +67,12 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
         CancellationToken cancellationToken)
     {
         // We don't cache if we're forcing, as that would break everything else
+#if !FORMAT_FUSE
         if (forceDesignTimeGeneratedOutput)
         {
             return new ValueTask<RazorCodeDocument>(GetRazorCodeDocumentAsync(forceRuntimeCodeGeneration: false, cancellationToken));
         }
+#endif
 
         var forceRuntimeCodeGeneration = ProjectSnapshot.SolutionSnapshot.SnapshotManager.LanguageServerFeatureOptions.ForceRuntimeCodeGeneration;
 

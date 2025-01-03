@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers.src
+namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     /// <summary>
     /// Create a .deb package from a control file and a data file.

@@ -560,6 +560,58 @@ public class CohostCodeActionsEndpointTest(ITestOutputHelper testOutputHelper) :
     }
 
     [Fact]
+    public async Task GenerateEventHandler_Callback()
+    {
+        var input = """
+            <InputFile OnChange="{|CS0103:Does[||]NotExist|}" />
+
+            @code
+            {
+            }
+            """;
+
+        var expected = """
+            <InputFile OnChange="DoesNotExist" />
+
+            @code
+            {
+                private void DoesNotExist(InputFileChangeEventArgs e)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+    }
+
+    [Fact]
+    public async Task GenerateEventHandler_AsyncCallback()
+    {
+        var input = """
+            <InputText ValueChanged="{|CS0103:Does[||]NotExistAsync|}" />
+
+            @code
+            {
+            }
+            """;
+
+        var expected = """
+            <InputText ValueChanged="DoesNotExistAsync" />
+
+            @code
+            {
+                private Task DoesNotExistAsync(string e)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExistAsync"));
+    }
+
+    [Fact]
     public async Task GenerateEventHandler_BadCodeBehind()
     {
         await VerifyCodeActionAsync(

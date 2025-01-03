@@ -292,7 +292,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
     [Theory]
     [InlineData("$$", true)]
-    [InlineData("<$$", true)]
+    [InlineData("<$$", false)]
     [InlineData(">$$", true)]
     [InlineData("$$<", true)]
     [InlineData("$$>", false)] // This is the only case that returns false but should return true. It's unlikely a user will type this, but it's complex to solve. Consider this a known and acceptable bug.

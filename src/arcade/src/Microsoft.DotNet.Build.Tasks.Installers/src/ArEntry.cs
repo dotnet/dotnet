@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal sealed class ArEntry
+    public sealed class ArEntry
     {
         public ArEntry(string name, ulong timestamp, ulong ownerID, ulong groupID, uint mode, Stream dataStream)
         {

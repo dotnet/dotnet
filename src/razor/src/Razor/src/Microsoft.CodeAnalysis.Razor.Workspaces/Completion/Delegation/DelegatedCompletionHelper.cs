@@ -207,6 +207,16 @@ internal static class DelegatedCompletionHelper
         var tree = razorCodeDocument.GetSyntaxTree();
 
         var token = tree.Root.FindToken(absoluteIndex, includeWhitespace: false);
+        if (token.Kind == SyntaxKind.EndOfFile &&
+            token.GetPreviousToken()?.Parent is { } parent &&
+            parent.FirstAncestorOrSelf<SyntaxNode>(RazorSyntaxFacts.IsAnyStartTag) is not null)
+        {
+            // If we're at the end of the file, we check if the previous token is part of a start tag, because the parser
+            // treats whitespace at the end different. eg with "<$$[EOF]" or "<div $$", the EndOfFile won't be seen as being
+            // in the tag, so without this special casing snippets would be shown.
+            return false;
+        }
+
         var node = token.Parent;
         var startOrEndTag = node?.FirstAncestorOrSelf<SyntaxNode>(n => RazorSyntaxFacts.IsAnyStartTag(n) || RazorSyntaxFacts.IsAnyEndTag(n));
 

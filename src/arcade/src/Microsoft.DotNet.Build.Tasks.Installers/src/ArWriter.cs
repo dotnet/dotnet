@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers.src
+namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     internal sealed class ArWriter : IDisposable
     {

@@ -70,10 +70,12 @@ internal sealed class DocumentSnapshot(ProjectSnapshot project, DocumentState st
 
     public async ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(bool forceDesignTimeGeneratedOutput, CancellationToken cancellationToken)
     {
+#if !FORMAT_FUSE
         if (forceDesignTimeGeneratedOutput)
         {
             return await GetDesignTimeGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         }
+#endif
 
         var (output, _) = await _state
             .GetGeneratedOutputAndVersionAsync(_project, this, cancellationToken)

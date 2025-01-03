@@ -11,6 +11,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Data;
 using System.Diagnostics;
+using Microsoft.DotNet.Build.Tasks.Installers;
 
 #if NET472
 using System.IO.Packaging;
@@ -63,6 +64,14 @@ namespace Microsoft.DotNet.SignTool
                     .Select(entry => (entry.Name, entry.DataStream, entry.Length));
 #endif
             }
+            else if (FileSignInfo.IsDeb(archivePath))
+            {
+#if NET472
+                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
+#else
+                return ReadDebContainerEntries(archivePath, "data.tar");
+#endif
+            }
 
             return ReadZipEntries(archivePath);
         }
@@ -86,6 +95,14 @@ namespace Microsoft.DotNet.SignTool
             else if (FileSignInfo.IsWixContainer())
             {
                 RepackWixPack(log, tempDir, wixToolsPath);
+            }
+            else if (FileSignInfo.IsDeb())
+            {
+#if NET472
+                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
+#else
+                RepackDebContainer(log, tempDir);
+#endif
             }
             else 
             {
@@ -370,6 +387,137 @@ namespace Microsoft.DotNet.SignTool
             while (tarReader.GetNextEntry() is TarEntry entry)
             {
                 yield return entry;
+            }
+        }
+
+        /// <summary>
+        /// Repack Deb container.
+        /// </summary>
+        private void RepackDebContainer(TaskLoggingHelper log, string tempDir)
+        {
+            // Data archive is the only expected nested part
+            string dataArchive = NestedParts.Values.Single().FileSignInfo.FullPath;
+
+            string controlArchive;
+            try
+            {
+                controlArchive = GetUpdatedControlArchive(FileSignInfo.FullPath, dataArchive, tempDir);
+            }
+            catch(Exception e)
+            {
+                log.LogError(e.Message);
+                return;
+            }
+
+            CreateDebPackage createDebPackageTask = new()
+            {
+                OutputDebPackagePath = FileSignInfo.FullPath,
+                ControlFile = new TaskItem(controlArchive),
+                DataFile = new TaskItem(dataArchive)
+            };
+
+            if (!createDebPackageTask.Execute())
+            {
+                log.LogError($"Failed to create new DEB package: {FileSignInfo.FileName}");
+            }
+        }
+
+        /// <summary>
+        /// Updates checksums of updated data file contents and updates the
+        /// control file with the new checksums and new install size.
+        /// </summary>
+        /// <param name="debianPackage"></param>
+        /// <param name="dataArchive"></param>
+        /// <param name="tempDir"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private string GetUpdatedControlArchive(string debianPackage, string dataArchive, string tempDir)
+        {
+            var workingDirGuidSegment = Guid.NewGuid().ToString().Split('-')[0];
+
+            string workingDir = Path.Combine(tempDir, "work", workingDirGuidSegment);
+            string controlLayout = Path.Combine(workingDir, "control");
+            string dataLayout = Path.Combine(workingDir, "data");
+
+            Directory.CreateDirectory(controlLayout);
+            Directory.CreateDirectory(dataLayout);
+
+            // Get the original control archive - to reuse package metadata and scripts
+            var (relativePath, content, contentSize) = ReadDebContainerEntries(debianPackage, "control.tar").Single();
+            string controlArchive = Path.Combine(workingDir, relativePath);
+            File.WriteAllBytes(controlArchive, ((MemoryStream)content).ToArray());
+
+            ExtractTarballContents(dataArchive, dataLayout);
+            ExtractTarballContents(controlArchive, controlLayout);
+
+            string sumsFile = Path.Combine(workingDir, "md5sums");
+            CreateMD5SumsFile createMD5SumsFileTask = new()
+            {
+                OutputFile = sumsFile,
+                RootDirectory = dataLayout,
+                Files = Directory.GetFiles(dataLayout, "*", SearchOption.AllDirectories)
+                            .Select(f => new TaskItem(f)).ToArray()
+            };
+
+            if (!createMD5SumsFileTask.Execute())
+            {
+                throw new Exception($"Failed to create MD5 checksums file for: {FileSignInfo.FileName}");
+            }
+
+            File.Copy(sumsFile, Path.Combine(controlLayout, "md5sums"), overwrite: true);
+
+            // Update the optional Installed-Size field in control file
+            string controlFile = Path.Combine(controlLayout, "control");
+            string fileContents = File.ReadAllText(controlFile);
+            string stringToFind = "Installed-Size: ";
+            int index = fileContents.IndexOf(stringToFind);
+            if (index != -1)
+            {
+                int end = fileContents.IndexOf('\n', index);
+                fileContents = fileContents.Replace(fileContents.Substring(index, end - index), stringToFind + createMD5SumsFileTask.InstalledSize);
+                File.WriteAllText(controlFile, fileContents);
+            }
+
+            // Repack the control tarball
+            using (var dstStream = File.Open(controlArchive, FileMode.Create))
+            {
+                using var gzip = new GZipStream(dstStream, CompressionMode.Compress);
+                TarFile.CreateFromDirectory(controlLayout, gzip, includeBaseDirectory: false);
+            }
+
+            return controlArchive;
+        }
+
+        internal static void ExtractTarballContents(string file, string destination, bool skipSymlinks = true)
+        {
+            foreach (TarEntry tar in ReadTarGZipEntries(file))
+            {
+                if (tar.EntryType == TarEntryType.Directory ||
+                    (skipSymlinks && tar.EntryType == TarEntryType.SymbolicLink))
+                {
+                    continue;
+                }
+
+                string outputPath = Path.Join(destination, tar.Name);
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+
+                using FileStream outputFileStream = File.Create(outputPath);
+                tar.DataStream?.CopyTo(outputFileStream);
+            }
+        }
+
+        internal static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadDebContainerEntries(string archivePath, string match = null)
+        {
+            using var archive = new ArReader(File.OpenRead(archivePath), leaveOpen: false);
+
+            while (archive.GetNextEntry() is ArEntry entry)
+            {
+                string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
+
+                if (match == null || relativePath.StartsWith(match))
+                {
+                    yield return (relativePath, entry.DataStream, entry.DataStream.Length);
+                }
             }
         }
 #endif

@@ -147,13 +147,7 @@ internal class RenameService(
         var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
                     ? '/' + filePath
                     : filePath;
-        var oldUri = new UriBuilder
-        {
-            Path = updatedPath,
-            Host = string.Empty,
-            Scheme = Uri.UriSchemeFile,
-        }.Uri;
-        return oldUri;
+        return VsLspFactory.CreateFilePathUri(updatedPath);
     }
 
     private static string MakeNewPath(string originalPath, string newName)

@@ -40,18 +40,12 @@ public class DefaultWorkspaceDirectoryPathResolverTest(ITestOutputHelper testOut
     {
         // Arrange
         var initialWorkspaceDirectory = "C:\\testpath";
-        var uriBuilder = new UriBuilder
-        {
-            Scheme = "file",
-            Host = null,
-            Path = initialWorkspaceDirectory,
-        };
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var initializeParams = new InitializeParams()
         {
             RootPath = "/somethingelse",
-            RootUri = uriBuilder.Uri,
+            RootUri = VsLspFactory.CreateFilePathUri(initialWorkspaceDirectory),
         };
 #pragma warning restore CS0618 // Type or member is obsolete
 

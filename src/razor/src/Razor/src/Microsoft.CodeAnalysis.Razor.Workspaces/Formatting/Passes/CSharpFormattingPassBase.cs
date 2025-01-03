@@ -627,6 +627,26 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         }
     }
 
+    protected static string RenderSourceMappings(RazorCodeDocument codeDocument)
+    {
+        var markers = codeDocument.GetCSharpDocument().SourceMappings.SelectMany(mapping =>
+            new[]
+            {
+                (index: mapping.OriginalSpan.AbsoluteIndex, text: "<#" ),
+                (index: mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length, text: "#>"),
+            })
+            .OrderByDescending(mapping => mapping.index)
+            .ThenBy(mapping => mapping.text);
+
+        var output = codeDocument.Source.Text.ToString();
+        foreach (var (index, text) in markers)
+        {
+            output = output.Insert(index, text);
+        }
+
+        return output;
+    }
+
     private record struct ShouldFormatOptions(bool AllowImplicitStatements, bool AllowImplicitExpressions, bool AllowSingleLineExplicitExpressions, bool IsLineRequest)
     {
         public ShouldFormatOptions(bool allowImplicitStatements, bool isLineRequest)

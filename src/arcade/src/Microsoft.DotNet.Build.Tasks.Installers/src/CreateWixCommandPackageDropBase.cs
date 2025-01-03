@@ -11,7 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers.src
+namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     public abstract class CreateWixCommandPackageDropBase : BuildTask
     {
