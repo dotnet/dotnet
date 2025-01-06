@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25052.1",
+      "packageVersion": "10.0.0-beta.25053.3",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "c1862c6a2c01c419b4329513851d5d6c23410412"
+      "commitSha": "05d4d46d438eec2d012a0dae7a9118e5fab947af"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24627.1",
+      "packageVersion": "10.0.0-alpha.2.25054.1",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "ad57bd06853f24e06bfe2672a2053fd7193dc17b"
+      "commitSha": "1a23df0f96175d51940aec9306db3460d484da4d"
     },
     {
       "packageVersion": "0.11.5-alpha.24627.1",
@@ -50,11 +50,11 @@
       "commitSha": "8c505ca6921b5f7e9b8acc234cc8f15035537ee4"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24616.3",
+      "packageVersion": "10.0.0-alpha.1.25053.5",
       "barId": null,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "b8ddc5b1f9e8a0287d0b15b933c991b61806c2b4"
+      "commitSha": "1f43fd3cd1be94ba8ce01a8eed2ecbb5127a39c3"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24628.1",
@@ -78,11 +78,11 @@
       "commitSha": "89b8461825bfc2fc3d0b37798656438e563d48fe"
     },
     {
-      "packageVersion": "6.13.0-rc.106",
+      "packageVersion": "6.13.0-rc.108",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "949031c79ea7f5c15b59f31e26d5355fb23795ca"
+      "commitSha": "89781a27ff255553766e4b9403ea7947072b4335"
     },
     {
       "packageVersion": "9.0.0-preview.25052.3",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0b55fe48341080cb286d039765d1d4d1ec1d6454"
+      "commitSha": "ce859ca440fd427efa1db8615c75870575ad50d9"
     },
     {
       "packageVersion": "10.0.563102",
@@ -208,7 +208,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "79219e26e0e36b415a5804b6b017ad6c6cd99ad8"
+      "commitSha": "7d76a231b0e29caf86e68d1df858308cd53b2a66"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",

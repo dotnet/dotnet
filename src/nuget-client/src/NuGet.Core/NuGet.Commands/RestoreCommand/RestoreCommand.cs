@@ -119,6 +119,14 @@ namespace NuGet.Commands
         private const string AuditDurationCheck = "Audit.Duration.Check";
         private const string AuditDurationOutput = "Audit.Duration.Output";
         private const string AuditDurationTotal = "Audit.Duration.Total";
+        private const string AuditPackageDownloadVulnerabilitiesPackages = "Audit.Vulnerability.PackageDownload.Packages";
+        private const string AuditPackageDownloadVulnerabilitiesSev0 = "Audit.Vulnerability.PackageDownload.Severity0";
+        private const string AuditPackageDownloadVulnerabilitiesSev1 = "Audit.Vulnerability.PackageDownload.Severity1";
+        private const string AuditPackageDownloadVulnerabilitiesSev2 = "Audit.Vulnerability.PackageDownload.Severity2";
+        private const string AuditPackageDownloadVulnerabilitiesSev3 = "Audit.Vulnerability.PackageDownload.Severity3";
+        private const string AuditPackageDownloadVulnerabilitiesSevInvalid = "Audit.Vulnerability.PackageDownload.SeverityInvalid";
+        private const string AuditSuppressedAdvisoriesTotalPackageDownloadWarningsSuppressedCount = "Audit.Vulnerability.PackageDownloads.TotalWarningsSuppressed.Count";
+        private const string AuditSuppressedAdvisoriesDistinctPackageDownloadAdvisoriesSuppressedCount = "Audit.Vulnerability.PackageDownload.DistinctAdvisoriesSuppressed.Count";
 
         private readonly bool _enableNewDependencyResolver;
         private readonly bool _isLockFileEnabled;
@@ -612,12 +620,12 @@ namespace NuGet.Commands
         /// <returns>False if no vulnerability database could be found (so packages were not scanned for vulnerabilities), true otherwise.</returns>
         private async Task<bool> PerformAuditAsync(IEnumerable<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
         {
-            telemetry.StartIntervalMeasure();
             var audit = new AuditUtility(
                 _request.Project.RestoreMetadata.RestoreAuditProperties,
                 _request.Project.FilePath,
                 graphs,
                 _request.DependencyProviders.VulnerabilityInfoProviders,
+                _request.Project.TargetFrameworks,
                 _logger);
             bool auditRan = await audit.CheckPackageVulnerabilitiesAsync(token);
 
@@ -642,6 +650,15 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[AuditTransitiveVulnerabilitySev2] = audit.Sev2TransitiveMatches;
             telemetry.TelemetryEvent[AuditTransitiveVulnerabilitySev3] = audit.Sev3TransitiveMatches;
             telemetry.TelemetryEvent[AuditTransitiveVulnerabilitySevInvalid] = audit.InvalidSevTransitiveMatches;
+
+            if (audit.PackageDownloadPackagesWithAdvisory is not null) { AddPackagesList(telemetry, AuditPackageDownloadVulnerabilitiesPackages, audit.PackageDownloadPackagesWithAdvisory); }
+            telemetry.TelemetryEvent[AuditPackageDownloadVulnerabilitiesSev0] = audit.Sev0PackageDownloadMatches;
+            telemetry.TelemetryEvent[AuditPackageDownloadVulnerabilitiesSev1] = audit.Sev1PackageDownloadMatches;
+            telemetry.TelemetryEvent[AuditPackageDownloadVulnerabilitiesSev2] = audit.Sev2PackageDownloadMatches;
+            telemetry.TelemetryEvent[AuditPackageDownloadVulnerabilitiesSev3] = audit.Sev3PackageDownloadMatches;
+            telemetry.TelemetryEvent[AuditPackageDownloadVulnerabilitiesSevInvalid] = audit.InvalidSevPackageDownloadMatches;
+            telemetry.TelemetryEvent[AuditSuppressedAdvisoriesTotalPackageDownloadWarningsSuppressedCount] = audit.TotalPackageDownloadWarningsSuppressedCount;
+            telemetry.TelemetryEvent[AuditSuppressedAdvisoriesDistinctPackageDownloadAdvisoriesSuppressedCount] = audit.DistinctPackageDownloadAdvisoriesSuppressedCount;
 
             telemetry.TelemetryEvent[AuditDataSources] = audit.SourcesWithVulnerabilityData;
             if (audit.DownloadDurationSeconds.HasValue) { telemetry.TelemetryEvent[AuditDurationDownload] = audit.DownloadDurationSeconds.Value; }

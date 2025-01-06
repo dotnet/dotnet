@@ -97,6 +97,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageVersion Include="Octokit" Version="12.0.0" />
     <PackageVersion Include="Polly.Core" Version="8.4.1" />
+    <PackageVersion Include="sn" Version="1.0.0" />
     <PackageVersion Include="xunit" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />

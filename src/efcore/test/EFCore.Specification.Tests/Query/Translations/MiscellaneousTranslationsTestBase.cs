@@ -69,7 +69,100 @@ public abstract class MiscellaneousTranslationsTestBase<TFixture>(TFixture fixtu
             async,
             ss => ss.Set<BasicTypesEntity>().Where(e => e.ByteArray.Length >= 1 && e.ByteArray.First() == 0xDE));
 
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Byte_array_Contains_with_constant(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(s => s.ByteArray.Contains((byte)1)));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Byte_array_Contains_with_parameter(bool async)
+    {
+        byte someByte = 1;
+
+        return AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(s => s.ByteArray.Contains(someByte)));
+    }
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Byte_array_Contains_with_column(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(s => s.ByteArray.Contains(s.Byte)));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Byte_array_SequenceEqual(bool async)
+    {
+        var byteArrayParam = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
+
+        return AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(s => s.ByteArray.SequenceEqual(byteArrayParam)));
+    }
+
     #endregion Byte array
+
+    #region Random
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_on_EF_Functions(bool async)
+        => AssertCount(
+            async,
+            ss => ss.Set<BasicTypesEntity>(),
+            ss => ss.Set<BasicTypesEntity>(),
+            ss => EF.Functions.Random() >= 0 && EF.Functions.Random() < 1,
+            c => true);
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_Shared_Next_with_no_args(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int < (Random.Shared.Next() - 2147483647)),
+            assertEmpty: true);
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_Shared_Next_with_one_arg(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int > Random.Shared.Next(5) - 2147483647));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_Shared_Next_with_two_args(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int > Random.Shared.Next(0, 10) - 2147483647));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_new_Next_with_no_args(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int > new Random(15).Next() - 2147483647));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_new_Next_with_one_arg(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int > new Random(15).Next(5) - 2147483647));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task Random_new_Next_with_two_args(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<BasicTypesEntity>().Where(o => o.Int > new Random(15).Next(0, 10) - 2147483647));
+
+    #endregion Random
 
     #region Convert
 

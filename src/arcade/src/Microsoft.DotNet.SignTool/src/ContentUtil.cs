@@ -11,6 +11,9 @@ using System.Reflection.Metadata;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -113,6 +116,14 @@ namespace Microsoft.DotNet.SignTool
                 var entry = headers.PEHeader.CertificateTableDirectory;
 
                 return entry.Size > 0;
+            }
+        }
+
+        public static bool IsAuthenticodeSigned(string filePath)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                return IsAuthenticodeSigned(stream);
             }
         }
 

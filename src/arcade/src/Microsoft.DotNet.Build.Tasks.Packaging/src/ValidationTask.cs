@@ -38,7 +38,6 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         /// <summary>
         /// Package index files used to define package version mapping.
         /// </summary>
-        [Required]
         public ITaskItem[] PackageIndexes { get; set; }
 
         /// <summary>
@@ -147,7 +146,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         }
         private void LoadIndex()
         {
-            _index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            _index = PackageIndexes != null && PackageIndexes.Length > 0 ?
+                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                null;
         }
     }
 

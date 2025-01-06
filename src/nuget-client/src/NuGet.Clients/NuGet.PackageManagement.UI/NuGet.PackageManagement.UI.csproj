@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Shipping>true</Shipping>
@@ -41,8 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" />
-    <PackageReference Include="Microsoft.NET.StringTools" />
     <PackageReference Include="Microsoft.VisualStudio.Markdown.Platform" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
   </ItemGroup>

@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Versioning;
 
 namespace Microsoft.DotNet.SignTool
@@ -100,6 +101,8 @@ namespace Microsoft.DotNet.SignTool
 
         private string _tarToolPath;
 
+        private string _snPath;
+
         public Configuration(
             string tempDir,
             ITaskItem[] itemsToSign,
@@ -108,6 +111,7 @@ namespace Microsoft.DotNet.SignTool
             Dictionary<string, List<SignInfo>> extensionSignInfo,
             ITaskItem[] dualCertificates,
             string tarToolPath,
+            string snPath,
             TaskLoggingHelper log,
             bool useHashInExtractionPath = false,
             Telemetry telemetry = null)
@@ -136,6 +140,7 @@ namespace Microsoft.DotNet.SignTool
             _hashToCollisionIdMap = new Dictionary<SignedFileContentKey, string>();
             _telemetry = telemetry;
             _tarToolPath = tarToolPath;
+            _snPath = snPath;
         }
 
         internal BatchSignInput GenerateListOfFiles()
@@ -281,7 +286,8 @@ namespace Microsoft.DotNet.SignTool
             var extension = Path.GetExtension(file.FileName);
             string explicitCertificateName = null;
             var fileSpec = string.Empty;
-            var isAlreadySigned = false;
+            var isAlreadyAuthenticodeSigned = false;
+            var isAlreadyStrongNamed = false;
             var matchedNameTokenFramework = false;
             var matchedNameToken = false;
             var matchedName = false;
@@ -356,9 +362,26 @@ namespace Microsoft.DotNet.SignTool
 
             if (FileSignInfo.IsPEFile(file.FullPath))
             {
-                using (var stream = File.OpenRead(file.FullPath))
+                isAlreadyAuthenticodeSigned = ContentUtil.IsAuthenticodeSigned(file.FullPath);
+                isAlreadyStrongNamed = StrongName.IsSigned(file.FullPath, snPath:_snPath, log: _log);
+
+
+                if (!isAlreadyAuthenticodeSigned)
                 {
-                    isAlreadySigned = ContentUtil.IsAuthenticodeSigned(stream);
+                    _log.LogMessage(MessageImportance.Low, $"PE file {file.FullPath} does not have a signature marker.");
+                }
+                else
+                {
+                    _log.LogMessage(MessageImportance.Low, $"PE file {file.FullPath} has a signature marker.");
+                }
+
+                if (!isAlreadyStrongNamed)
+                {
+                    _log.LogMessage(MessageImportance.Low, $"PE file {file.FullPath} does not have a valid strong name signature.");
+                }
+                else
+                {
+                    _log.LogMessage(MessageImportance.Low, $"PE file {file.FullPath} has a valid strong name signature.");
                 }
 
                 peInfo = GetPEInfo(file.FullPath);
@@ -379,13 +402,17 @@ namespace Microsoft.DotNet.SignTool
                         pktBasedSignInfo = pktBasedSignInfos.FirstOrDefault();
                     }
 
+                    // If crossgenned, we cannot strong name sign this binary.
+                    // If the file is already strong name signed, then there is no need to re-sign it. The current signing infra
+                    // does not support replacing the SN sig with a new one so if we got here, we can avoid strong name signing
+                    // altogether.
                     if (peInfo.IsCrossgened)
                     {
                         signInfo = new SignInfo(pktBasedSignInfo.Certificate, collisionPriorityId: _hashToCollisionIdMap[signedFileContentKey]);
                     }
                     else
                     {
-                        signInfo = pktBasedSignInfo;
+                        signInfo = pktBasedSignInfo.WithIsAlreadyStrongNamed(isAlreadyStrongNamed);
                     }
 
                     hasSignInfo = true;
@@ -404,8 +431,8 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsPackage(file.FullPath))
             {
-                isAlreadySigned = VerifySignatures.IsSignedContainer(file.FullPath, _pathToContainerUnpackingDirectory, _tarToolPath);
-                if(!isAlreadySigned)
+                isAlreadyAuthenticodeSigned = VerifySignatures.IsSignedContainer(file.FullPath, _pathToContainerUnpackingDirectory, _tarToolPath);
+                if(!isAlreadyAuthenticodeSigned)
                 {
                     _log.LogMessage(MessageImportance.Low, $"Container {file.FullPath} does not have a signature marker.");
                 }
@@ -416,8 +443,8 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsWix(file.FullPath))
             {
-                isAlreadySigned = VerifySignatures.IsDigitallySigned(file.FullPath);
-                if (!isAlreadySigned)
+                isAlreadyAuthenticodeSigned = VerifySignatures.IsDigitallySigned(file.FullPath);
+                if (!isAlreadyAuthenticodeSigned)
                 {
                     _log.LogMessage(MessageImportance.Low, $"File {file.FullPath} is not digitally signed.");
                 }
@@ -428,8 +455,8 @@ namespace Microsoft.DotNet.SignTool
             }
             else if(FileSignInfo.IsDeb(file.FullPath))
             {
-                isAlreadySigned = VerifySignatures.VerifySignedDeb(_log, file.FullPath);
-                if (!isAlreadySigned)
+                isAlreadyAuthenticodeSigned = VerifySignatures.VerifySignedDeb(_log, file.FullPath);
+                if (!isAlreadyAuthenticodeSigned)
                 {
                     _log.LogMessage(MessageImportance.Low, $"File {file.FullPath} is not signed.");
                 }
@@ -440,8 +467,8 @@ namespace Microsoft.DotNet.SignTool
             }
             else if(FileSignInfo.IsPowerShellScript(file.FullPath))
             {
-                isAlreadySigned = VerifySignatures.VerifySignedPowerShellFile(file.FullPath);
-                if (!isAlreadySigned)
+                isAlreadyAuthenticodeSigned = VerifySignatures.VerifySignedPowerShellFile(file.FullPath);
+                if (!isAlreadyAuthenticodeSigned)
                 {
                     _log.LogMessage(MessageImportance.Low, $"File {file.FullPath} does not have a signature block.");
                 }
@@ -479,9 +506,9 @@ namespace Microsoft.DotNet.SignTool
                         (d.GetMetadata(SignToolConstants.CollisionPriorityId) == "" ||
                         d.GetMetadata(SignToolConstants.CollisionPriorityId) == _hashToCollisionIdMap[signedFileContentKey])).Any();
 
-                if (isAlreadySigned && !dualCerts)
+                if (isAlreadyAuthenticodeSigned && !dualCerts)
                 {
-                    return new FileSignInfo(file, signInfo.WithIsAlreadySigned(isAlreadySigned), wixContentFilePath: wixContentFilePath);
+                    return new FileSignInfo(file, signInfo.WithIsAlreadySigned(isAlreadyAuthenticodeSigned), wixContentFilePath: wixContentFilePath);
                 }
 
                 if (signInfo.ShouldSign && peInfo != null)

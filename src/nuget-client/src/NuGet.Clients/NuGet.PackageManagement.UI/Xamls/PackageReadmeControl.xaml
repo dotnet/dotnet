@@ -1,5 +1,6 @@
 <UserControl
   x:Class="NuGet.PackageManagement.UI.PackageReadmeControl"
+  x:Name="PackageReadmeUserControl"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,7 +14,6 @@
   Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
   Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
   DataContextChanged="UserControl_DataContextChanged"
-  Unloaded="PackageReadmeControl_Unloaded"
   Loaded="PackageReadmeControl_Loaded"
   mc:Ignorable="d"
   d:DesignHeight="300"
@@ -30,11 +30,11 @@
       x:Name="descriptionMarkdownPreview"
       ClipToBounds="True"
       Focusable="False"
-      Visibility="{Binding Path=IsReadmeReady, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+      Visibility="{Binding ElementName=PackageReadmeUserControl, Path=IsReadmeReady, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
     <Grid
       HorizontalAlignment="Center"
       VerticalAlignment="Center"
-      Visibility="{Binding Path=IsBusy, Mode=OneWay, FallbackValue=Visible, Converter={StaticResource BooleanToVisibilityConverter}}" >
+      Visibility="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy, Mode=OneWay, FallbackValue=Visible, Converter={StaticResource BooleanToVisibilityConverter}}" >
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
@@ -60,10 +60,10 @@
         <vs:LiveTextBlock.Resources>
           <Style TargetType="vs:LiveTextBlock">
             <Style.Triggers>
-              <DataTrigger Binding="{Binding Path=IsBusy}" Value="True">
+              <DataTrigger Binding="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy}" Value="True">
                 <Setter Property="Text" Value="{x:Static nuget:Resources.Text_LoadingReadme}"/>
               </DataTrigger>
-              <DataTrigger Binding="{Binding Path=IsBusy}" Value="False">
+              <DataTrigger Binding="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy}" Value="False">
                 <Setter Property="Text" Value="{x:Static nuget:Resources.Text_ReadmeLoaded}"/>
               </DataTrigger>
             </Style.Triggers>
