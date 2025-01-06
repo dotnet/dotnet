@@ -23,8 +23,8 @@ internal sealed partial class CSharpExtractMethodService
         SelectionResult result, ExtractMethodGenerationOptions options, bool localFunction)
         : MethodExtractor(result, options, localFunction)
     {
-        protected override CodeGenerator CreateCodeGenerator(AnalyzerResult analyzerResult)
-            => CSharpCodeGenerator.Create(this.OriginalSelectionResult, analyzerResult, this.Options, this.LocalFunction);
+        protected override CodeGenerator CreateCodeGenerator(SelectionResult selectionResult, AnalyzerResult analyzerResult)
+            => CSharpCodeGenerator.Create(selectionResult, analyzerResult, this.Options, this.LocalFunction);
 
         protected override AnalyzerResult Analyze(CancellationToken cancellationToken)
         {
@@ -45,7 +45,7 @@ internal sealed partial class CSharpExtractMethodService
             {
                 // If we are extracting a local function and are within a local function, then we want the new function to be created within the
                 // existing local function instead of the overarching method.
-                var outermostCapturedVariable = analyzerResult.GetOutermostVariableToMoveIntoMethodDefinition(cancellationToken);
+                var outermostCapturedVariable = analyzerResult.GetOutermostVariableToMoveIntoMethodDefinition();
                 var baseNode = outermostCapturedVariable != null
                     ? outermostCapturedVariable.GetIdentifierTokenAtDeclaration(document).Parent
                     : this.OriginalSelectionResult.GetOutermostCallSiteContainerToProcess(cancellationToken);
@@ -168,12 +168,6 @@ internal sealed partial class CSharpExtractMethodService
             return new CSharpTriviaResult(
                 await semanticDocument.WithSyntaxRootAsync(result.Root, cancellationToken).ConfigureAwait(false),
                 result);
-        }
-
-        protected override Task<GeneratedCode> GenerateCodeAsync(InsertionPoint insertionPoint, SelectionResult selectionResult, AnalyzerResult analyzeResult, ExtractMethodGenerationOptions options, CancellationToken cancellationToken)
-        {
-            var codeGenerator = CSharpCodeGenerator.Create(selectionResult, analyzeResult, options, this.LocalFunction);
-            return codeGenerator.GenerateAsync(insertionPoint, cancellationToken);
         }
 
         protected override AbstractFormattingRule GetCustomFormattingRule(Document document)
