@@ -71,11 +71,11 @@
       "commitSha": "5af96504f10836eca6ce804ab3cdd28c042fa35a"
     },
     {
-      "packageVersion": "17.14.0-preview-25052-07",
+      "packageVersion": "17.14.0-preview-25053-07",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6c6231d8a06b91acc4463f4257f6ec6adc1ce0cf"
+      "commitSha": "89b8461825bfc2fc3d0b37798656438e563d48fe"
     },
     {
       "packageVersion": "6.13.0-rc.106",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "77043ecdde20534144dfa5e1dce8536e9cfde151"
+      "commitSha": "0b55fe48341080cb286d039765d1d4d1ec1d6454"
     },
     {
       "packageVersion": "10.0.563102",
@@ -155,18 +155,18 @@
       "commitSha": "ff1852196a042a124267a6e599d12da20d7ff65a"
     },
     {
-      "packageVersion": "10.0.100-alpha.1.25052.3",
+      "packageVersion": "10.0.100-alpha.1.25053.1",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "45f18275b19053a85a1c5c8a464039c5c0183e62"
+      "commitSha": "6250c1bcf1f319d466a71d7a26b61e18b2a9713e"
     },
     {
-      "packageVersion": "17.13.0-preview-24610-01",
+      "packageVersion": "17.13.0-preview-25055-01",
       "barId": null,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "fc785088a28006c774dcfe0916b69ff54e6f99c1"
+      "commitSha": "f56ab6936969deb42c9ecf2f2193b16f0579be28"
     },
     {
       "packageVersion": "10.0.0-alpha.1.25054.1",
