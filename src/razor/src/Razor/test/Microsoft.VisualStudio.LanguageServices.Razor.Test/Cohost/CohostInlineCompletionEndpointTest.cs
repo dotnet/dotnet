@@ -24,9 +24,9 @@ using RoslynSnippets = Microsoft.CodeAnalysis.Snippets;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Fact]
+    [FuseFact]
     public Task Constructor()
         => VerifyInlineCompletionAsync(
             input: """
@@ -49,7 +49,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
                 }
                 """);
 
-    [Fact]
+    [FuseFact]
     public Task Constructor_SmallIndent()
         => VerifyInlineCompletionAsync(
             input: """
@@ -73,7 +73,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
                 """,
             tabSize: 2);
 
-    [Fact]
+    [FuseFact]
     public Task InHtml_DoesNothing()
         => VerifyInlineCompletionAsync(
             input: """
@@ -82,6 +82,8 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
 
     private async Task VerifyInlineCompletionAsync(TestCode input, string? output = null, int tabSize = 4)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         var document = await CreateProjectAndRazorDocumentAsync(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetLinePosition(input.Position);

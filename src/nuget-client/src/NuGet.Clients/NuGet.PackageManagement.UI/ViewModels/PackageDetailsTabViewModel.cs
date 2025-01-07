@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 using NuGet.VisualStudio.Telemetry;
@@ -34,17 +33,14 @@ namespace NuGet.PackageManagement.UI.ViewModels
             Tabs = new ObservableCollection<TitledPageViewModelBase>();
         }
 
-        public async Task InitializeAsync(DetailControlModel detailControlModel, INuGetPackageFileService nugetPackageFileService, ItemFilter currentFilter, PackageMetadataTab initialSelectedTab)
+        public void Initialize(DetailControlModel detailControlModel, INuGetPackageFileService nugetPackageFileService, ItemFilter currentFilter, PackageMetadataTab initialSelectedTab, bool isReadmeTabEnabled)
         {
-            var nuGetFeatureFlagService = await ServiceLocator.GetComponentModelServiceAsync<INuGetFeatureFlagService>();
-            _readmeTabEnabled = await nuGetFeatureFlagService.IsFeatureEnabledAsync(NuGetFeatureFlagConstants.RenderReadmeInPMUI);
-#pragma warning disable CS0618 // Type or member is obsolete
-            ReadmePreviewViewModel = new ReadmePreviewViewModel(nugetPackageFileService, currentFilter, _readmeTabEnabled);
-#pragma warning restore CS0618 // Type or member is obsolete
+            _readmeTabEnabled = isReadmeTabEnabled;
             DetailControlModel = detailControlModel;
 
             if (_readmeTabEnabled)
             {
+                ReadmePreviewViewModel = new ReadmePreviewViewModel(nugetPackageFileService, currentFilter, _readmeTabEnabled);
                 Tabs.Add(ReadmePreviewViewModel);
             }
 

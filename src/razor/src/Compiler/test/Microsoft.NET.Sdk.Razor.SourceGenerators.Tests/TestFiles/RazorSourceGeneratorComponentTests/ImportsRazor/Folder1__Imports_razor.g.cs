@@ -13,10 +13,10 @@ namespace MyApp.Folder1
 #line (1,2)-(1,36) "Folder1/_Imports.razor"
 using MyApp.MyNamespace.AndAnother
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class _Imports : object
     #nullable disable

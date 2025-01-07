@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>Unit tests for NuGet.Tools.</Description>
@@ -11,7 +11,5 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
-    <PackageReference Include="Microsoft.Build.Framework" />
-    <PackageReference Include="Microsoft.NET.StringTools" />
   </ItemGroup>
 </Project>

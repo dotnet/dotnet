@@ -15,10 +15,10 @@ namespace AspNetCoreGeneratedDocument
 #line (1,2)-(1,34) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
 using System.Collections.Generic
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"4c55c366b179d82f3d2800004985646e9bf0edbf993e2f4a94cbb70079823905", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]

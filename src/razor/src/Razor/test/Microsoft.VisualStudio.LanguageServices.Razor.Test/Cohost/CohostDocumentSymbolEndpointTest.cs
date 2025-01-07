@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -13,9 +14,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput)
+public class CohostDocumentSymbolEndpointTest(FuseTestContext context, ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput), IClassFixture<FuseTestContext>
 {
-    [Theory]
+    [FuseTheory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpClassWithMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
@@ -42,7 +43,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
             
             """, hierarchical);
 
-    [Theory]
+    [FuseTheory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
@@ -68,6 +69,8 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
 
     private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
         var document = await CreateProjectAndRazorDocumentAsync(input);
 

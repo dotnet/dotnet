@@ -17,10 +17,10 @@ using Test
 #line (2,2)-(2,34) "x:\dir\subdir\Test\TestComponent.cshtml"
 using System.Collections.Generic
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

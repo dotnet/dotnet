@@ -57,21 +57,8 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
             }
             """;
 
-        TestCode surveyPromptGeneratedCode = """
-            using Microsoft.AspNetCore.Components;
-
-            namespace SomeProject
-            {
-                public partial class SurveyPrompt : ComponentBase
-                {
-                    [Parameter]
-                    public string Title { get; set; }
-                }
-            }
-            """;
-
-        await VerifyDefinitionAsync(input, surveyPrompt, (FileName("SurveyPrompt.razor"), surveyPrompt.Text),
-            (FileName("SurveyPrompt.razor.g.cs"), surveyPromptGeneratedCode.Text));
+        await VerifyDefinitionAsync(input, surveyPrompt,
+            (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
     }
 
     private async Task VerifyDefinitionAsync(TestCode input, TestCode expectedDocument, params (string fileName, string contents)[]? additionalFiles)

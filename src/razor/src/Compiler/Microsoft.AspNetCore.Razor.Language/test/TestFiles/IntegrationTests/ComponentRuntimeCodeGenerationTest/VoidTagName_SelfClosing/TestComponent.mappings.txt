@@ -6,19 +6,19 @@ Generated Location: (320:11,0 [37] )
 Source Location: (53:3,2 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 |
-Generated Location: (922:28,0 [2] )
+Generated Location: (930:28,0 [2] )
 |
 |
 
 Source Location: (68:5,0 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |    RenderFragment template = |
-Generated Location: (1157:38,0 [30] )
+Generated Location: (1165:38,0 [30] )
 |    RenderFragment template = |
 
 Source Location: (106:5,38 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |;
 |
-Generated Location: (1478:50,0 [3] )
+Generated Location: (1486:50,0 [3] )
 |;
 |
 

@@ -35,6 +35,11 @@ namespace NuGet.PackageManagement.UI.ViewModels
             IsVisible = isReadmeFeatureEnabled;
         }
 
+        public void SetVisibility(bool isVisible)
+        {
+            IsVisible = isVisible;
+        }
+
         public bool IsReadmeReady { get => !IsBusy && !ErrorWithReadme; }
 
         public bool ErrorWithReadme

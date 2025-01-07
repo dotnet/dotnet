@@ -60,8 +60,10 @@ namespace Microsoft.DotNet.SignTool
                 return;
             }
 
-            // Next remove public signing from all of the assemblies; it can interfere with the signing process.
-            RemovePublicSign();
+            // Remove strong name signing, as sn.exe would choke on already signed binaries.
+            // Our new signing infra is more resilient, but sn.exe may be used as a backup
+            // or when not signing locally.
+            RemoveStrongNameSigning();
 
             // Next sign all of the files
             if (!SignFiles())
@@ -96,14 +98,14 @@ namespace Microsoft.DotNet.SignTool
             _log.LogMessage(MessageImportance.High, "Build artifacts signed and validated.");
         }
 
-        private void RemovePublicSign()
+        private void RemoveStrongNameSigning()
         {
             foreach (var fileSignInfo in _batchData.FilesToSign.Where(x => x.IsPEFile()))
             {
-                if (fileSignInfo.SignInfo.StrongName != null && fileSignInfo.SignInfo.ShouldSign)
+                if (fileSignInfo.SignInfo.ShouldStrongName)
                 {
-                    _log.LogMessage($"Removing public sign: '{fileSignInfo.FileName}'");
-                    _signTool.RemovePublicSign(fileSignInfo.FullPath);
+                    _log.LogMessage($"Removing strong name signing from: '{fileSignInfo.FileName}'");
+                    _signTool.RemoveStrongNameSign(fileSignInfo.FullPath);
                 }
             }
         }

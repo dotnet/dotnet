@@ -23,16 +23,18 @@ namespace NuGet.Commands.Restore.Utility
 {
     internal class AuditUtility
     {
-        private readonly ProjectModel.RestoreAuditProperties? _restoreAuditProperties;
+        private readonly RestoreAuditProperties? _restoreAuditProperties;
         private readonly string _projectFullPath;
         private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
         private readonly IReadOnlyList<IVulnerabilityInformationProvider> _vulnerabilityInfoProviders;
         private readonly ILogger _logger;
+        private readonly IList<TargetFrameworkInformation> _targetFrameworks;
 
         internal PackageVulnerabilitySeverity MinSeverity { get; }
         internal NuGetAuditMode AuditMode { get; }
         internal Dictionary<string, bool>? SuppressedAdvisories { get; }
         internal List<string>? DirectPackagesWithAdvisory { get; private set; }
+        internal List<string>? PackageDownloadPackagesWithAdvisory { get; private set; }
         internal List<string>? TransitivePackagesWithAdvisory { get; private set; }
         internal int Sev0DirectMatches { get; private set; }
         internal int Sev1DirectMatches { get; private set; }
@@ -50,14 +52,24 @@ namespace NuGet.Commands.Restore.Utility
         internal int SourcesWithVulnerabilityData { get; private set; }
         internal int DistinctAdvisoriesSuppressedCount { get; private set; }
         internal int TotalWarningsSuppressedCount { get; private set; }
+        internal int TotalPackageDownloadWarningsSuppressedCount { get; private set; }
+        internal int DistinctPackageDownloadAdvisoriesSuppressedCount { get; private set; }
+
+        internal int Sev0PackageDownloadMatches { get; private set; }
+        internal int Sev1PackageDownloadMatches { get; private set; }
+        internal int Sev2PackageDownloadMatches { get; private set; }
+        internal int Sev3PackageDownloadMatches { get; private set; }
+        internal int InvalidSevPackageDownloadMatches { get; private set; }
 
         public AuditUtility(
-            ProjectModel.RestoreAuditProperties? restoreAuditProperties,
+            RestoreAuditProperties? restoreAuditProperties,
             string projectFullPath,
             IEnumerable<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
+            IList<TargetFrameworkInformation> targetFrameworks,
             ILogger logger)
         {
+            _targetFrameworks = targetFrameworks;
             _restoreAuditProperties = restoreAuditProperties;
             _projectFullPath = projectFullPath;
             _targetGraphs = graphs;
@@ -77,6 +89,104 @@ namespace NuGet.Commands.Restore.Utility
                 }
             }
         }
+
+        private int CountPackageDownloads()
+        {
+            int count = 0;
+            foreach (var targetFramework in _targetFrameworks.NoAllocEnumerate())
+            {
+                count += targetFramework.DownloadDependencies.Length;
+            }
+            return count;
+        }
+
+        private void CheckPackageDownloadVulnerabilities(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
+        {
+            Dictionary<DownloadDependency, PackageDownloadAuditInfo>? packagesWithKnownVulnerabilities = FindPackageDownloadsWithKnownVulnerabilities(knownVulnerabilities);
+
+            if (packagesWithKnownVulnerabilities == null)
+            {
+                return;
+            }
+
+            PackageDownloadPackagesWithAdvisory = new(capacity: packagesWithKnownVulnerabilities.Values.Count);
+
+            foreach ((DownloadDependency package, PackageDownloadAuditInfo auditInfo) in packagesWithKnownVulnerabilities)
+            {
+                PackageDownloadPackagesWithAdvisory.Add(package.Name);
+
+                foreach (var advisory in auditInfo.GraphsPerVulnerability.Keys)
+                {
+                    PackageVulnerabilitySeverity severity = advisory.Severity;
+                    if (severity == PackageVulnerabilitySeverity.Low) { Sev0PackageDownloadMatches++; }
+                    else if (severity == PackageVulnerabilitySeverity.Moderate) { Sev1PackageDownloadMatches++; }
+                    else if (severity == PackageVulnerabilitySeverity.High) { Sev2PackageDownloadMatches++; }
+                    else if (severity == PackageVulnerabilitySeverity.Critical) { Sev3PackageDownloadMatches++; }
+                    else { InvalidSevPackageDownloadMatches++; }
+                }
+            }
+        }
+
+        private Dictionary<DownloadDependency, PackageDownloadAuditInfo>? FindPackageDownloadsWithKnownVulnerabilities(
+            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
+        {
+            Dictionary<DownloadDependency, PackageDownloadAuditInfo>? result = null;
+
+            foreach (var targetFramework in _targetFrameworks.NoAllocEnumerate())
+            {
+                foreach (var downloadDependency in targetFramework.DownloadDependencies)
+                {
+                    List<PackageVulnerabilityInfo>? knownVulnerabilitiesForPackage = GetKnownVulnerabilities(downloadDependency.Name, downloadDependency.VersionRange.MaxVersion!, knownVulnerabilities);
+
+                    if (knownVulnerabilitiesForPackage?.Count > 0)
+                    {
+                        foreach (PackageVulnerabilityInfo knownVulnerability in knownVulnerabilitiesForPackage)
+                        {
+                            if ((int)knownVulnerability.Severity < (int)MinSeverity && knownVulnerability.Severity != PackageVulnerabilitySeverity.Unknown)
+                            {
+                                continue;
+                            }
+
+                            if (SuppressedAdvisories?.TryGetValue(knownVulnerability.Url.OriginalString, out bool advisoryUsed) == true)
+                            {
+                                TotalPackageDownloadWarningsSuppressedCount++;
+
+                                if (!advisoryUsed)
+                                {
+                                    SuppressedAdvisories[knownVulnerability.Url.OriginalString] = true;
+                                    DistinctPackageDownloadAdvisoriesSuppressedCount++;
+                                }
+
+                                continue;
+                            }
+
+                            result ??= new();
+
+                            if (!result.TryGetValue(downloadDependency, out PackageDownloadAuditInfo? auditInfo))
+                            {
+                                auditInfo = new(downloadDependency);
+                                result.Add(downloadDependency, auditInfo);
+                            }
+
+                            if (!auditInfo.GraphsPerVulnerability.TryGetValue(knownVulnerability, out List<string>? affectedGraphs))
+                            {
+                                affectedGraphs = new();
+                                auditInfo.GraphsPerVulnerability.Add(knownVulnerability, affectedGraphs);
+                            }
+
+                            // Multiple package sources might list the same known vulnerability, so de-dupe those too.
+                            if (!affectedGraphs.Contains(downloadDependency.Name))
+                            {
+                                affectedGraphs.Add(downloadDependency.Name);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
 
         public async Task<bool> CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
@@ -99,10 +209,16 @@ namespace NuGet.Commands.Restore.Utility
             }
 
             CheckPackageVulnerabilities(allVulnerabilityData);
+            CheckPackageDownloadVulnerabilities(allVulnerabilityData);
             return true;
 
             bool HasPackages()
             {
+                if (CountPackageDownloads() > 0)
+                {
+                    return true;
+                }
+
                 foreach (RestoreTargetGraph graph in _targetGraphs)
                 {
                     if (graph.Flattened.Any(r => r.Key.Type == LibraryType.Package))
@@ -110,6 +226,7 @@ namespace NuGet.Commands.Restore.Utility
                         return true;
                     }
                 }
+
                 return false;
             }
 
@@ -462,6 +579,18 @@ namespace NuGet.Commands.Restore.Utility
             {
                 Identity = identity;
                 IsDirect = false;
+                GraphsPerVulnerability = new();
+            }
+        }
+
+        private class PackageDownloadAuditInfo
+        {
+            public DownloadDependency Identity { get; }
+            public Dictionary<PackageVulnerabilityInfo, List<string>> GraphsPerVulnerability { get; }
+
+            public PackageDownloadAuditInfo(DownloadDependency identity)
+            {
+                Identity = identity;
                 GraphsPerVulnerability = new();
             }
         }

@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -290,10 +290,11 @@ namespace System.Windows
 
                 if( _resources == null )
                 {
-                    _resources = new ResourceDictionary();
-
-                    // A Style ResourceDictionary can be accessed across threads
-                    _resources.CanBeAccessedAcrossThreads = true;
+                    _resources = new ResourceDictionary
+                    {
+                        // A Style ResourceDictionary can be accessed across threads
+                        CanBeAccessedAcrossThreads = true
+                    };
 
                     // If the style has been sealed prior to this the newly
                     // created ResourceDictionary also needs to be sealed
@@ -457,11 +458,13 @@ namespace System.Windows
             else
             {
                 // Store original data
-                PropertyValue propertyValue = new PropertyValue();
-                propertyValue.ValueType = valueType;
-                propertyValue.ChildName = StyleHelper.SelfName;
-                propertyValue.Property = dp;
-                propertyValue.ValueInternal = value;
+                PropertyValue propertyValue = new PropertyValue
+                {
+                    ValueType = valueType,
+                    ChildName = StyleHelper.SelfName,
+                    Property = dp,
+                    ValueInternal = value
+                };
 
                 PropertyValues.Add(propertyValue);
             }
@@ -782,28 +785,26 @@ namespace System.Windows
                         {
                             StyleHelper.AddPropertyTriggerWithAction( trigger, ((Trigger)trigger).Property, ref this.PropertyTriggersWithActions );
                         }
-                        else if( trigger is MultiTrigger )
+                        else if (trigger is MultiTrigger multiTrigger)
                         {
-                            MultiTrigger multiTrigger = (MultiTrigger)trigger;
-                            for( int k = 0; k < multiTrigger.Conditions.Count; k++ )
+                            for (int k = 0; k < multiTrigger.Conditions.Count; k++)
                             {
                                 Condition triggerCondition = multiTrigger.Conditions[k];
 
-                                StyleHelper.AddPropertyTriggerWithAction( trigger, triggerCondition.Property, ref this.PropertyTriggersWithActions );
+                                StyleHelper.AddPropertyTriggerWithAction(trigger, triggerCondition.Property, ref this.PropertyTriggersWithActions);
                             }
                         }
-                        else if( trigger is DataTrigger )
+                        else if (trigger is DataTrigger)
                         {
-                            StyleHelper.AddDataTriggerWithAction( trigger, ((DataTrigger)trigger).Binding, ref this.DataTriggersWithActions );
+                            StyleHelper.AddDataTriggerWithAction(trigger, ((DataTrigger)trigger).Binding, ref this.DataTriggersWithActions);
                         }
-                        else if( trigger is MultiDataTrigger )
+                        else if (trigger is MultiDataTrigger multiDataTrigger)
                         {
-                            MultiDataTrigger multiDataTrigger = (MultiDataTrigger)trigger;
-                            for( int k = 0; k < multiDataTrigger.Conditions.Count; k++ )
+                            for (int k = 0; k < multiDataTrigger.Conditions.Count; k++)
                             {
                                 Condition dataCondition = multiDataTrigger.Conditions[k];
 
-                                StyleHelper.AddDataTriggerWithAction( trigger, dataCondition.Binding, ref this.DataTriggersWithActions );
+                                StyleHelper.AddDataTriggerWithAction(trigger, dataCondition.Binding, ref this.DataTriggersWithActions);
                             }
                         }
                         else

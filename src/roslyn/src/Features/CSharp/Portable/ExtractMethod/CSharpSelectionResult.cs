@@ -25,15 +25,13 @@ internal sealed partial class CSharpExtractMethodService
     internal abstract partial class CSharpSelectionResult(
         SemanticDocument document,
         SelectionType selectionType,
-        TextSpan finalSpan,
-        bool selectionChanged)
+        TextSpan finalSpan)
         : SelectionResult(
-            document, selectionType, finalSpan, selectionChanged)
+            document, selectionType, finalSpan)
     {
         public static async Task<CSharpSelectionResult> CreateAsync(
             SemanticDocument document,
             FinalSelectionInfo selectionInfo,
-            bool selectionChanged,
             CancellationToken cancellationToken)
         {
             Contract.ThrowIfNull(document);
@@ -50,12 +48,9 @@ internal sealed partial class CSharpExtractMethodService
             var finalSpan = selectionInfo.FinalSpan;
 
             return selectionType == SelectionType.Expression
-                ? new ExpressionResult(newDocument, selectionType, finalSpan, selectionChanged)
-                : new StatementResult(newDocument, selectionType, finalSpan, selectionChanged);
+                ? new ExpressionResult(newDocument, selectionType, finalSpan)
+                : new StatementResult(newDocument, selectionType, finalSpan);
         }
-
-        protected override ISyntaxFacts SyntaxFacts
-            => CSharpSyntaxFacts.Instance;
 
         protected override OperationStatus ValidateLanguageSpecificRules(CancellationToken cancellationToken)
         {
@@ -92,39 +87,6 @@ internal sealed partial class CSharpExtractMethodService
             }
 
             return false;
-        }
-
-        public override SyntaxNode GetOutermostCallSiteContainerToProcess(CancellationToken cancellationToken)
-        {
-            if (this.IsExtractMethodOnExpression)
-            {
-                var container = this.GetInnermostStatementContainer();
-
-                Contract.ThrowIfNull(container);
-                Contract.ThrowIfFalse(
-                    container.IsStatementContainerNode() ||
-                    container is BaseListSyntax or TypeDeclarationSyntax or ConstructorDeclarationSyntax or CompilationUnitSyntax);
-
-                return container;
-            }
-
-            if (this.IsExtractMethodOnSingleStatement)
-            {
-                var firstStatement = this.GetFirstStatement();
-                return firstStatement.Parent;
-            }
-
-            if (this.IsExtractMethodOnMultipleStatements)
-            {
-                var firstStatement = this.GetFirstStatementUnderContainer();
-                var container = firstStatement.Parent;
-                if (container is GlobalStatementSyntax)
-                    return container.Parent;
-
-                return container;
-            }
-
-            throw ExceptionUtilities.Unreachable();
         }
 
         public override StatementSyntax GetFirstStatementUnderContainer()
@@ -191,23 +153,11 @@ internal sealed partial class CSharpExtractMethodService
             return last.Parent.Parent;
         }
 
-        public override bool ContainsNonReturnExitPointsStatements(ImmutableArray<SyntaxNode> jumpsOutOfRegion)
-            => jumpsOutOfRegion.Any(n => n is not ReturnStatementSyntax);
+        public override bool ContainsNonReturnExitPointsStatements(ImmutableArray<SyntaxNode> exitPoints)
+            => exitPoints.Any(n => n is not ReturnStatementSyntax);
 
-        public override ImmutableArray<StatementSyntax> GetOuterReturnStatements(SyntaxNode commonRoot, ImmutableArray<SyntaxNode> jumpsOutOfRegion)
-        {
-            var container = commonRoot.GetAncestorsOrThis<SyntaxNode>().Where(a => a.IsReturnableConstruct()).FirstOrDefault();
-            if (container == null)
-                return [];
-
-            // now filter return statements to only include the one under outmost container
-            return jumpsOutOfRegion
-                .OfType<ReturnStatementSyntax>()
-                .Select(returnStatement => (returnStatement, container: returnStatement.GetAncestors<SyntaxNode>().Where(a => a.IsReturnableConstruct()).FirstOrDefault()))
-                .Where(p => p.container == container)
-                .SelectAsArray(p => p.returnStatement)
-                .CastArray<StatementSyntax>();
-        }
+        public override ImmutableArray<StatementSyntax> GetOuterReturnStatements(SyntaxNode commonRoot, ImmutableArray<SyntaxNode> exitPoints)
+            => exitPoints.OfType<ReturnStatementSyntax>().ToImmutableArray().CastArray<StatementSyntax>();
 
         public override bool IsFinalSpanSemanticallyValidSpan(
             ImmutableArray<StatementSyntax> returnStatements, CancellationToken cancellationToken)
@@ -228,22 +178,7 @@ internal sealed partial class CSharpExtractMethodService
             if (body.CloseBraceToken != GetLastTokenInSelection().GetNextToken(includeZeroWidth: true))
                 return false;
 
-            // alright, for these constructs, it must be okay to be extracted
-            switch (container.Kind())
-            {
-                case SyntaxKind.AnonymousMethodExpression:
-                case SyntaxKind.SimpleLambdaExpression:
-                case SyntaxKind.ParenthesizedLambdaExpression:
-                    return true;
-            }
-
-            // now, only method is okay to be extracted out
-            if (body.Parent is not MethodDeclarationSyntax method)
-                return false;
-
-            // make sure this method doesn't have return type.
-            return method.ReturnType is PredefinedTypeSyntax p &&
-                p.Keyword.Kind() == SyntaxKind.VoidKeyword;
+            return true;
         }
     }
 }

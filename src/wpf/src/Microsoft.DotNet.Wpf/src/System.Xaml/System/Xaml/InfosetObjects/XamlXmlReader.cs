@@ -169,8 +169,10 @@ namespace System.Xaml
                 XmlCompatibilityReader mcReader =
                         new XmlCompatibilityReader(givenXmlReader,
                                 new IsXmlNamespaceSupportedCallback(IsXmlNamespaceSupported)
-                        );
-                mcReader.Normalization = true;
+                        )
+                        {
+                            Normalization = true
+                        };
                 myXmlReader = mcReader;
             }
             else
@@ -196,9 +198,8 @@ namespace System.Xaml
                 _mergedSettings.XmlLang = myXmlReader.XmlLang;
             }
 
-            IXmlNamespaceResolver myXmlReaderNS = myXmlReader as IXmlNamespaceResolver;
             Dictionary<string, string> xmlnsDictionary = null;
-            if (myXmlReaderNS is not null)
+            if (myXmlReader is IXmlNamespaceResolver myXmlReaderNS)
             {
                 IDictionary<string, string> rootNamespaces = myXmlReaderNS.GetNamespacesInScope(XmlNamespaceScope.Local);
                 if (rootNamespaces is not null)
@@ -222,8 +223,10 @@ namespace System.Xaml
 
             _endOfStreamNode = new XamlNode(XamlNode.InternalNodeType.EndOfStream);
 
-            _context = new XamlParserContext(schemaContext, _mergedSettings.LocalAssembly);
-            _context.AllowProtectedMembersOnRoot = _mergedSettings.AllowProtectedMembersOnRoot;
+            _context = new XamlParserContext(schemaContext, _mergedSettings.LocalAssembly)
+            {
+                AllowProtectedMembersOnRoot = _mergedSettings.AllowProtectedMembersOnRoot
+            };
             _context.AddNamespacePrefix(KnownStrings.XmlPrefix, XamlLanguage.Xml1998Namespace);
 
             Func<string, string> namespaceResolver = myXmlReader.LookupNamespace;

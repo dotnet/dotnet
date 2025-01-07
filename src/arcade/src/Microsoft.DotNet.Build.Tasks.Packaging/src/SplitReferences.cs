@@ -25,7 +25,6 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             set;
         }
 
-        [Required]
         public ITaskItem[] PackageIndexes
         {
             get;
@@ -51,13 +50,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             if (References == null || References.Length == 0)
                 return true;
 
-            if (PackageIndexes == null && PackageIndexes.Length == 0)
-            {
-                Log.LogError("PackageIndexes argument must be specified");
-                return false;
-            }
-
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            PackageIndex index = PackageIndexes != null && PackageIndexes.Length > 0 ?
+                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                null;
 
             Dictionary<string, ITaskItem> packageReferences = new Dictionary<string, ITaskItem>();
             Dictionary<string, ITaskItem> assemblyReferences = new Dictionary<string, ITaskItem>();
@@ -72,7 +67,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 referencesMscorlib |= referenceName.Equals("mscorlib");
                 string referenceVersion = reference.GetMetadata("Version");
                 reference.SetMetadata("TargetFramework", TargetFramework);
-                if (!string.IsNullOrEmpty(TargetFramework) && index.IsInbox(referenceName, targetFx, referenceVersion))
+                if (!string.IsNullOrEmpty(TargetFramework) && index != null && index.IsInbox(referenceName, targetFx, referenceVersion))
                 {
                     AddReference(assemblyReferences, reference);
                 }

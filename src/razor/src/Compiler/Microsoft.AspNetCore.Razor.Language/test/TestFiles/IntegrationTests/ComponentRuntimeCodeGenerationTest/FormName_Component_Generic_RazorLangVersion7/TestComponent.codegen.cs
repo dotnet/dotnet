@@ -12,10 +12,10 @@ namespace Test
 #line (1,2)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.Web
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent<
 #nullable restore

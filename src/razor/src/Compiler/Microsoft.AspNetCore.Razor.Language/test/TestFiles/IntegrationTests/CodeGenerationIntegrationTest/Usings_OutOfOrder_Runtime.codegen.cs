@@ -51,10 +51,10 @@ using static global::System.Text.Encoding
 #line (32,2)-(32,19) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using System.Text
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"a3144fef15024ccbbb19682bfb110b149c637f2ae64b4499962195e7612ba274", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]

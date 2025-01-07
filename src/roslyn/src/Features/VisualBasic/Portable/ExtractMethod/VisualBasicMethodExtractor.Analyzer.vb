@@ -5,7 +5,6 @@
 Imports System.Collections.Immutable
 Imports System.Threading
 Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.ExtractMethod
 Imports Microsoft.CodeAnalysis.VisualBasic.Symbols
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
@@ -23,19 +22,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ExtractMethod
 
                 Protected Overrides Function IsInPrimaryConstructorBaseType() As Boolean
                     Return False
-                End Function
-
-                Protected Overrides Function CreateFromSymbol(
-                        symbol As ISymbol,
-                        type As ITypeSymbol,
-                        style As VariableStyle,
-                        requiresDeclarationExpressionRewrite As Boolean) As VariableInfo
-                    If symbol.IsFunctionValue() AndAlso style.ParameterStyle.DeclarationBehavior <> DeclarationBehavior.None Then
-                        Contract.ThrowIfFalse(style.ParameterStyle.DeclarationBehavior = DeclarationBehavior.MoveIn OrElse style.ParameterStyle.DeclarationBehavior = DeclarationBehavior.SplitIn)
-                        style = AlwaysReturn(style)
-                    End If
-
-                    Return CreateFromSymbolCommon(symbol, type, style)
                 End Function
 
                 Protected Overrides Function GetRangeVariableType(symbol As IRangeVariableSymbol) As ITypeSymbol
@@ -57,7 +43,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ExtractMethod
                         Return True
                     End If
 
-                    Return Not TypeOf methodBlock.BlockStatement Is SubNewStatementSyntax
+                    Return TypeOf methodBlock.BlockStatement IsNot SubNewStatementSyntax
                 End Function
             End Class
         End Class

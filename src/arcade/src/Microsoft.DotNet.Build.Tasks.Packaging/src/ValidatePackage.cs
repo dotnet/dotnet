@@ -585,7 +585,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             // determine which Frameworks should support inbox
 
             PackageInfo packageInfo;
-            if (_index.Packages.TryGetValue(ContractName, out packageInfo))
+            if (_index != null && _index.Packages.TryGetValue(ContractName, out packageInfo))
             {
                 foreach (var inboxPair in packageInfo.InboxOn.GetInboxVersions())
                 {

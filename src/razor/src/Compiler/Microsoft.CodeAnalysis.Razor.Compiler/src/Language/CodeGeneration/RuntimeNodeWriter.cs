@@ -33,13 +33,18 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
     {
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildEnhancedLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.CodeWriter.BuildEnhancedLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: true))
             {
                 context.CodeWriter.WriteUsing(node.Content, endLine: node.HasExplicitSemicolon);
             }
             if (!node.HasExplicitSemicolon)
             {
                 context.CodeWriter.WriteLine(";");
+            }
+            if (node.AppendLineDefaultAndHidden)
+            {
+                context.CodeWriter.WriteLine("#line default");
+                context.CodeWriter.WriteLine("#line hidden");
             }
         }
         else

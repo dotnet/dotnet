@@ -95,10 +95,10 @@ using System
 #line (1,1)-(1,1) ""test.cshtml""
 using System
 
-#line default
-#line hidden
 #nullable disable
 ;
+#line default
+#line hidden
 ",
             csharp,
             ignoreLineEndingDifferences: true);

@@ -23,9 +23,9 @@ using Microsoft.AspNetCore.Components
 #line (2,4)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
 using System.Reflection;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

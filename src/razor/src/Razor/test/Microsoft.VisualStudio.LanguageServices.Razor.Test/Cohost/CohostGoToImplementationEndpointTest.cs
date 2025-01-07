@@ -17,9 +17,9 @@ using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Fact]
+    [FuseFact]
     public async Task CSharp_Method()
     {
         var input = """
@@ -40,7 +40,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task CSharp_Field()
     {
         var input = """
@@ -64,7 +64,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task CSharp_Multiple()
     {
         var input = """
@@ -85,7 +85,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html()
     {
         // This really just validates Uri remapping, the actual response is largely arbitrary
@@ -119,14 +119,23 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
     private async Task VerifyCSharpGoToImplementationAsync(TestCode input)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);
 
         var requestInvoker = new TestLSPRequestInvoker();
 
-        await VerifyGoToImplementationResultAsync(input, document, requestInvoker);
+        await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
     private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
+    {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
+        await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
+    }
+
+    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
 

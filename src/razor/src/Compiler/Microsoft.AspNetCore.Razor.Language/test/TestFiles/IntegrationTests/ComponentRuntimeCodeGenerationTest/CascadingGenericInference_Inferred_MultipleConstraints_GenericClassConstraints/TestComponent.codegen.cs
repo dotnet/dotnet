@@ -12,9 +12,9 @@ namespace Test
 #line (1,2)-(1,15) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Models;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

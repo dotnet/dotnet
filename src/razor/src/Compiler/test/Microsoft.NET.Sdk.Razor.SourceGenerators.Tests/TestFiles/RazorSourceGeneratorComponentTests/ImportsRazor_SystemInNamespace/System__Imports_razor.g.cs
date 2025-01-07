@@ -13,10 +13,10 @@ namespace MyApp.System
 #line (1,2)-(1,31) "System/_Imports.razor"
 using global::System.Net.Http
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class _Imports : object
     #nullable disable

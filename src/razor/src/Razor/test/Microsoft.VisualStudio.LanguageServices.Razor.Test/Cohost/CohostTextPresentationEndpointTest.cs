@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -10,9 +11,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Fact]
+    [FuseFact]
     public async Task HtmlResponse_TranslatesVirtualDocumentUri()
     {
         await VerifyUriPresentationAsync(
@@ -45,6 +46,8 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
 
     private async Task VerifyUriPresentationAsync(string input, string text, string? expected, WorkspaceEdit? htmlResponse = null)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         TestFileMarkupParser.GetSpan(input, out input, out var span);
         var document = await CreateProjectAndRazorDocumentAsync(input);
         var sourceText = await document.GetTextAsync(DisposalToken);

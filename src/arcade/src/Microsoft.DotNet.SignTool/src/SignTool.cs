@@ -28,7 +28,7 @@ namespace Microsoft.DotNet.SignTool
             _log = log;
         }
 
-        public abstract void RemovePublicSign(string assemblyPath);
+        public abstract void RemoveStrongNameSign(string assemblyPath);
 
         public abstract bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files);
 
@@ -129,7 +129,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 AppendLine(builder, depth: 2, text: $@"<FilesToSign Include=""{Uri.EscapeDataString(fileToSign.FullPath)}"">");
                 AppendLine(builder, depth: 3, text: $@"<Authenticode>{fileToSign.SignInfo.Certificate}</Authenticode>");
-                if (fileToSign.SignInfo.StrongName != null && !fileToSign.SignInfo.ShouldLocallyStrongNameSign)
+                if (fileToSign.SignInfo.ShouldStrongName && !fileToSign.SignInfo.ShouldLocallyStrongNameSign)
                 {
                     AppendLine(builder, depth: 3, text: $@"<StrongName>{fileToSign.SignInfo.StrongName}</StrongName>");
                 }
@@ -187,32 +187,9 @@ namespace Microsoft.DotNet.SignTool
 
         protected bool LocalStrongNameSign(FileSignInfo file)
         {
-            if (!File.Exists(_args.SNBinaryPath) || !_args.SNBinaryPath.EndsWith("sn.exe"))
-            {
-                _log.LogError($"Found file that needs to be strong-name sign ({file.FullPath}), but path to 'sn.exe' wasn't specified.");
-                return false;
-            }
+            _log.LogMessage($"Strong-name signing '{file.FullPath}' locally with key '{file.SignInfo.StrongName}'.");
 
-            _log.LogMessage($"Strong-name signing {file.FullPath} locally.");
-
-            // sn -R <path_to_file> <path_to_snk>
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = _args.SNBinaryPath,
-                Arguments = $@"-R ""{file.FullPath}"" ""{file.SignInfo.StrongName}""",
-                UseShellExecute = false,
-                WorkingDirectory = TempDir,
-            });
-
-            process.WaitForExit();
-
-            if (process.ExitCode != 0)
-            {
-                _log.LogError($"Failed to strong-name sign file {file.FullPath}");
-                return false;
-            }
-
-            return true;
+            return StrongName.Sign(file.FullPath, file.SignInfo.StrongName, _args.SNBinaryPath, _log);
         }
     }
 }

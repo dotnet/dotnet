@@ -20,7 +20,7 @@ namespace Microsoft.DotNet.SignTool
         {
         }
 
-        public override void RemovePublicSign(string assemblyPath)
+        public override void RemoveStrongNameSign(string assemblyPath)
         {
         }
 

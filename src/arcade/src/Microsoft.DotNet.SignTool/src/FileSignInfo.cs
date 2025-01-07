@@ -125,8 +125,8 @@ namespace Microsoft.DotNet.SignTool
         public override string ToString()
             => $"File '{FileName}'" +
                (TargetFramework != null ? $" TargetFramework='{TargetFramework}'" : "") +
-               $" Certificate='{SignInfo.Certificate}'" +
-               (SignInfo.StrongName != null ? $" StrongName='{SignInfo.StrongName}'" : "");
+               (SignInfo.ShouldSign ? $" Certificate='{SignInfo.Certificate}'" : "") +
+               (SignInfo.ShouldStrongName ? $" StrongName='{SignInfo.StrongName}'" : "");
 
         internal FileSignInfo WithSignableParts()
             => new FileSignInfo(File, SignInfo.WithIsAlreadySigned(false), TargetFramework, WixContentFilePath, true);

@@ -12,10 +12,10 @@ namespace Test
 #line (1,2)-(1,12) "x:\dir\subdir\Test\UseTestComponent.cshtml"
 using Test
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class UseTestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

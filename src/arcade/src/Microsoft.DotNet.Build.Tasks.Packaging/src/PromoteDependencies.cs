@@ -33,13 +33,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         
         public override bool Execute()
         {
-            if (PackageIndexes == null && PackageIndexes.Length == 0)
-            {
-                Log.LogError("PackageIndexes argument must be specified");
-                return false;
-            }
-
-            index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            index = PackageIndexes != null && PackageIndexes.Length > 0 ?
+                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                null;
 
             List<ITaskItem> promotedDependencies = new List<ITaskItem>();
 
@@ -92,7 +88,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         {
             foreach (var dependency in dependencies)
             {
-                if (!index.IsInbox(dependency.Id, targetFramework, dependency.Version))
+                if (index == null || !index.IsInbox(dependency.Id, targetFramework, dependency.Version))
                 {
                     var copiedDepenedency = new TaskItem(dependency.OriginalItem);
                     copiedDepenedency.SetMetadata(TargetFrameworkMetadataName, targetFramework.GetShortFolderName());

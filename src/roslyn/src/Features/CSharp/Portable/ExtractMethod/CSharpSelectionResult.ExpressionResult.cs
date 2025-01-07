@@ -25,9 +25,8 @@ internal sealed partial class CSharpExtractMethodService
         private sealed class ExpressionResult(
             SemanticDocument document,
             SelectionType selectionType,
-            TextSpan finalSpan,
-            bool selectionChanged) : CSharpSelectionResult(
-                document, selectionType, finalSpan, selectionChanged)
+            TextSpan finalSpan)
+            : CSharpSelectionResult(document, selectionType, finalSpan)
         {
             public override bool ContainingScopeHasAsyncKeyword()
                 => false;
@@ -46,7 +45,7 @@ internal sealed partial class CSharpExtractMethodService
                 return CSharpSyntaxFacts.Instance.GetRootStandaloneExpression(scope);
             }
 
-            public override (ITypeSymbol? returnType, bool returnsByRef) GetReturnTypeInfo(CancellationToken cancellationToken)
+            protected override (ITypeSymbol? returnType, bool returnsByRef) GetReturnTypeInfoWorker(CancellationToken cancellationToken)
             {
                 if (GetContainingScope() is not ExpressionSyntax node)
                 {
@@ -70,7 +69,7 @@ internal sealed partial class CSharpExtractMethodService
                     // 1. if regular binding returns a meaningful type, we use it as it is
                     // 2. if it doesn't, even if the cast itself wasn't included in the selection, we will treat it 
                     //    as it was in the selection
-                    var (regularType, returnsByRef) = GetRegularExpressionType(model, node);
+                    var (regularType, returnsByRef) = GetRegularExpressionType(model, node, cancellationToken);
                     if (regularType != null)
                         return (regularType, returnsByRef);
 
@@ -78,10 +77,11 @@ internal sealed partial class CSharpExtractMethodService
                         return (model.GetTypeInfo(castExpression, cancellationToken).Type, returnsByRef: false);
                 }
 
-                return GetRegularExpressionType(model, node);
+                return GetRegularExpressionType(model, node, cancellationToken);
             }
 
-            private static (ITypeSymbol? typeSymbol, bool returnsByRef) GetRegularExpressionType(SemanticModel semanticModel, ExpressionSyntax node)
+            private static (ITypeSymbol? typeSymbol, bool returnsByRef) GetRegularExpressionType(
+                SemanticModel semanticModel, ExpressionSyntax node, CancellationToken cancellationToken)
             {
                 // regular case. always use ConvertedType to get implicit conversion right.
                 var expression = node.WalkDownParentheses();
@@ -97,8 +97,8 @@ internal sealed partial class CSharpExtractMethodService
 
                 ITypeSymbol? GetRegularExpressionTypeWorker()
                 {
-                    var info = semanticModel.GetTypeInfo(expression);
-                    var conv = semanticModel.GetConversion(expression);
+                    var info = semanticModel.GetTypeInfo(expression, cancellationToken);
+                    var conv = semanticModel.GetConversion(expression, cancellationToken);
 
                     if (info.ConvertedType == null || info.ConvertedType.IsErrorType())
                     {
@@ -107,7 +107,7 @@ internal sealed partial class CSharpExtractMethodService
                     }
 
                     // always use converted type if method group
-                    if ((!node.IsKind(SyntaxKind.ObjectCreationExpression) && semanticModel.GetMemberGroup(expression).Length > 0) ||
+                    if ((!node.IsKind(SyntaxKind.ObjectCreationExpression) && semanticModel.GetMemberGroup(expression, cancellationToken).Length > 0) ||
                         IsCoClassImplicitConversion(info, conv, semanticModel.Compilation.CoClassType()))
                     {
                         return info.GetConvertedTypeWithAnnotatedNullability();
@@ -130,19 +130,31 @@ internal sealed partial class CSharpExtractMethodService
                     return !info.Type.IsObjectType() ? info.GetTypeWithAnnotatedNullability() : info.GetConvertedTypeWithAnnotatedNullability();
                 }
             }
-        }
 
-        private static bool IsCoClassImplicitConversion(TypeInfo info, Conversion conversion, INamedTypeSymbol? coclassSymbol)
-        {
-            if (!conversion.IsImplicit ||
-                 info.ConvertedType == null ||
-                 info.ConvertedType.TypeKind != TypeKind.Interface)
+            private static bool IsCoClassImplicitConversion(TypeInfo info, Conversion conversion, INamedTypeSymbol? coclassSymbol)
             {
-                return false;
+                if (!conversion.IsImplicit ||
+                     info.ConvertedType == null ||
+                     info.ConvertedType.TypeKind != TypeKind.Interface)
+                {
+                    return false;
+                }
+
+                // let's see whether this interface has coclass attribute
+                return info.ConvertedType.HasAttribute(coclassSymbol);
             }
 
-            // let's see whether this interface has coclass attribute
-            return info.ConvertedType.HasAttribute(coclassSymbol);
+            public override SyntaxNode GetOutermostCallSiteContainerToProcess(CancellationToken cancellationToken)
+            {
+                var container = this.GetInnermostStatementContainer();
+
+                Contract.ThrowIfNull(container);
+                Contract.ThrowIfFalse(
+                    container.IsStatementContainerNode() ||
+                    container is BaseListSyntax or TypeDeclarationSyntax or ConstructorDeclarationSyntax or CompilationUnitSyntax);
+
+                return container;
+            }
         }
     }
 }

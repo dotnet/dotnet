@@ -79,20 +79,9 @@ namespace Microsoft.DotNet.SignTool
             return true;
         }
 
-        public override void RemovePublicSign(string assemblyPath)
+        public override void RemoveStrongNameSign(string assemblyPath)
         {
-            using (var stream = new FileStream(assemblyPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
-            using (var peReader = new PEReader(stream))
-            using (var writer = new BinaryWriter(stream))
-            {
-                if (!ContentUtil.IsPublicSigned(peReader))
-                {
-                    return;
-                }
-
-                stream.Position = peReader.PEHeaders.CorHeaderStartOffset + OffsetFromStartOfCorHeaderToFlags;
-                writer.Write((UInt32)(peReader.PEHeaders.CorHeader.Flags & ~CorFlags.StrongNameSigned));
-            }
+            StrongName.ClearStrongNameSignedBit(assemblyPath);
         }
 
         public override bool VerifySignedPEFile(Stream assemblyStream)
@@ -105,7 +94,6 @@ namespace Microsoft.DotNet.SignTool
 
             return ContentUtil.IsAuthenticodeSigned(assemblyStream);
         }
-
         public override bool VerifyStrongNameSign(string fileFullPath)
         {
             // The assembly won't verify by design when doing test signing.
@@ -114,19 +102,7 @@ namespace Microsoft.DotNet.SignTool
                 return true;
             }
 
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = _snPath,
-                Arguments = $@"-vf ""{fileFullPath}"" > nul",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardError = false,
-                RedirectStandardOutput = false
-            });
-
-            process.WaitForExit();
-
-            return process.ExitCode == 0;
+            return StrongName.IsSigned(fileFullPath, snPath:_snPath, log: _log);
         }
 
         public override bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
@@ -151,14 +127,16 @@ namespace Microsoft.DotNet.SignTool
         
         public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
-            foreach (var file in files)
+            var filesToLocallyStrongNameSign = files.Where(f => f.SignInfo.ShouldLocallyStrongNameSign);
+
+            _log.LogMessage($"Locally strong naming {filesToLocallyStrongNameSign.Count()} files.");
+
+            foreach (var file in filesToLocallyStrongNameSign)
             {
-                if (file.SignInfo.ShouldLocallyStrongNameSign)
+                if (!LocalStrongNameSign(file))
                 {
-                    if (!LocalStrongNameSign(file))
-                    {
-                        return false;
-                    }
+                    _log.LogMessage(MessageImportance.High, $"Failed to locally strong name sign '{file.FileName}'");
+                    return false;
                 }
             }
 
