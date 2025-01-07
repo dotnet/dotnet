@@ -13,26 +13,26 @@
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25052.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25056.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c1862c6a2c01c419b4329513851d5d6c23410412</Sha>
+      <Sha>e58820063a8754d418518bce69ca2df0e3b4ac25</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25052.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25056.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c1862c6a2c01c419b4329513851d5d6c23410412</Sha>
+      <Sha>e58820063a8754d418518bce69ca2df0e3b4ac25</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.563001">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.605602">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>80f1e84b2077a7208943db050067d86c94ace837</Sha>
+      <Sha>72009fb6ce7327430539004be1dcbfb6fb88adab</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.563102">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.605604">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>e452f6325a7e42e4d4dac33e9b8d70f22d306916</Sha>
+      <Sha>aea551f930d24442a37d2b64c279f97d19868b7b</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
