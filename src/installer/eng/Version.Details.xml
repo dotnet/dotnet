@@ -219,18 +219,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.24570.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.24623.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>3c7e11bf80279cde53a6251c4d0fa10e613fc739</Sha>
+      <Sha>278b1dda181ab18a9fbed73da998e50d128eae21</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.24570.5">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.24623.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>3c7e11bf80279cde53a6251c4d0fa10e613fc739</Sha>
+      <Sha>278b1dda181ab18a9fbed73da998e50d128eae21</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.24570.5">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.24623.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>3c7e11bf80279cde53a6251c4d0fa10e613fc739</Sha>
+      <Sha>278b1dda181ab18a9fbed73da998e50d128eae21</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23578.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -243,6 +243,10 @@
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.0-alpha.1.22557.12">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
+    </Dependency>
+    <Dependency Name="System.Text.Json" Version="8.0.5">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.24415.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>

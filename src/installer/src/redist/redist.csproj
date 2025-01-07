@@ -21,6 +21,7 @@
 
   <ItemGroup>
      <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersPackageVersion)" />
+     <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonPackageVersion)"/>
   </ItemGroup>
 
   <ItemGroup>
