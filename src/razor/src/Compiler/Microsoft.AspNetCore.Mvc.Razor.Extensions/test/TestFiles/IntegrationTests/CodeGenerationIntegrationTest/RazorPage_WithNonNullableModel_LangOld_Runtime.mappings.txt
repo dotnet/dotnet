@@ -5,11 +5,11 @@ Generated Location: (1006:16,0 [19] )
 
 Source Location: (54:4,5 [10] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
 |Model.Name|
-Generated Location: (2064:36,0 [10] )
+Generated Location: (2072:36,0 [10] )
 |Model.Name|
 
 Source Location: (78:6,5 [14] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
 |Model?.Address|
-Generated Location: (2320:46,0 [14] )
+Generated Location: (2328:46,0 [14] )
 |Model?.Address|
 

@@ -18,10 +18,10 @@ using static Test2.SomeComponent
 #line (2,2)-(2,19) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Foo = Test3
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

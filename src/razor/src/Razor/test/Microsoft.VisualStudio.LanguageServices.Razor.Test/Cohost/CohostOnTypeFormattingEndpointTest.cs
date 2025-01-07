@@ -19,10 +19,10 @@ using Xunit.Abstractions;
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
-    : CohostEndpointTestBase(testOutputHelper)
+public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
+    : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Fact]
+    [FuseFact]
     public async Task InvalidTrigger()
     {
         await VerifyOnTypeFormattingAsync(
@@ -39,7 +39,7 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             triggerCharacter: 'h');
     }
 
-    [Fact]
+    [FuseFact]
     public async Task CSharp_InvalidTrigger()
     {
         await VerifyOnTypeFormattingAsync(
@@ -56,9 +56,8 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             triggerCharacter: '\n');
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharp(bool fuse)
+    [FuseFact]
+    public async Task CSharp()
     {
         await VerifyOnTypeFormattingAsync(
             input: """
@@ -71,13 +70,11 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
                         if (true) { }
                     }
                     """,
-            triggerCharacter: '}',
-            fuse: fuse);
+            triggerCharacter: '}');
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task FormatsSimpleHtmlTag_OnType(bool fuse)
+    [FuseFact]
+    public async Task FormatsSimpleHtmlTag_OnType()
     {
         await VerifyOnTypeFormattingAsync(
             input: """
@@ -101,13 +98,12 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
                     </html>
                     """,
             triggerCharacter: ';',
-            html: true,
-            fuse: fuse);
+            html: true);
     }
 
-    private async Task VerifyOnTypeFormattingAsync(TestCode input, string expected, char triggerCharacter, bool html = false, bool fuse = false)
+    private async Task VerifyOnTypeFormattingAsync(TestCode input, string expected, char triggerCharacter, bool html = false)
     {
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = fuse });
+        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);

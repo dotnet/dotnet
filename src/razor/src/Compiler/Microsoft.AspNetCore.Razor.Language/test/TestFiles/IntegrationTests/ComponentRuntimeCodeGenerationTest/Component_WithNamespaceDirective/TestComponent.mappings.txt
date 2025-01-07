@@ -10,11 +10,11 @@ Generated Location: (513:19,0 [10] )
 
 Source Location: (56:3,17 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Header|
-Generated Location: (1146:36,0 [6] )
+Generated Location: (1154:36,0 [6] )
 |Header|
 
 Source Location: (109:5,17 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Footer|
-Generated Location: (1574:48,0 [6] )
+Generated Location: (1582:48,0 [6] )
 |Footer|
 

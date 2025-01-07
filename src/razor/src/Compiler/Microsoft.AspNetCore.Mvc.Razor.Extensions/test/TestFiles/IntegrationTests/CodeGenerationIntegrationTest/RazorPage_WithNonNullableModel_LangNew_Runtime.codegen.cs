@@ -16,10 +16,10 @@ namespace AspNetCoreGeneratedDocument
 #line (2,2)-(2,21) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
 using TestNamespace
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"938aa77e05d0524687967a4964c7424054e2f7b837772fe19895341aa7ef5bda", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]

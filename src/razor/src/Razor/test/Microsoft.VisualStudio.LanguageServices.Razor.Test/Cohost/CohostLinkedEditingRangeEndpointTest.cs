@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Microsoft.CodeAnalysis.Testing;
@@ -13,9 +14,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostLinkedEditingRangeEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Theory]
+    [FuseTheory]
     [InlineData("$$PageTitle", "PageTitle")]
     [InlineData("Page$$Title", "PageTitle")]
     [InlineData("PageTitle$$", "PageTitle")]
@@ -35,7 +36,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Theory]
+    [FuseTheory]
     [InlineData("$$div")]
     [InlineData("di$$v")]
     [InlineData("div$$")]
@@ -54,7 +55,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Theory]
+    [FuseTheory]
     [InlineData("$$div")]
     [InlineData("di$$v")]
     [InlineData("div$$")]
@@ -73,7 +74,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html_EndTag_BeforeSlash()
     {
         var input = $"""
@@ -89,7 +90,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html_NotATag()
     {
         var input = $"""
@@ -105,7 +106,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html_NestedTags_Outer()
     {
         var input = $"""
@@ -123,7 +124,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html_NestedTags_Inner()
     {
         var input = $"""
@@ -141,7 +142,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         await VerifyLinkedEditingRangeAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html_SelfClosingTag()
     {
         var input = $"""
@@ -158,6 +159,8 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
 
     private async Task VerifyLinkedEditingRangeAsync(string input)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         TestFileMarkupParser.GetPositionAndSpans(input, out input, out int cursorPosition, out ImmutableArray<TextSpan> spans);
         var document = await CreateProjectAndRazorDocumentAsync(input);
         var sourceText = await document.GetTextAsync(DisposalToken);

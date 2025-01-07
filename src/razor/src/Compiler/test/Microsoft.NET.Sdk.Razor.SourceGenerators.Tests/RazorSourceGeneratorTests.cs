@@ -1062,9 +1062,9 @@ namespace MyApp.Pages
 #line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -1135,9 +1135,9 @@ namespace MyApp.Pages
 #line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

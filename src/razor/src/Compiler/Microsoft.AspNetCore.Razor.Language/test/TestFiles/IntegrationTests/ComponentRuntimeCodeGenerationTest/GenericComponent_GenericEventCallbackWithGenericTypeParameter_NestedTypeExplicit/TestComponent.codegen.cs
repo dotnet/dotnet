@@ -12,10 +12,10 @@ namespace Test
 #line (2,2)-(2,12) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Test
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent<
 #nullable restore

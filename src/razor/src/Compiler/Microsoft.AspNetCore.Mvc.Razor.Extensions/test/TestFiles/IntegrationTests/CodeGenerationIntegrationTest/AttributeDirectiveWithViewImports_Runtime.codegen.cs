@@ -15,10 +15,10 @@ namespace AspNetCoreGeneratedDocument
 #line (1,2)-(1,14) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\_ViewImports.cshtml"
 using System
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
 #nullable restore
 #line (2,12)-(2,26) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\_ViewImports.cshtml"
 [Serializable]

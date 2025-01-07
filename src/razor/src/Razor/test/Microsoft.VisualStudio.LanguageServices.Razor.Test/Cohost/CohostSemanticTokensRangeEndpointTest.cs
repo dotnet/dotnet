@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -18,9 +19,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Theory]
+    [FuseTheory]
     [CombinatorialData]
     public async Task Razor(bool colorBackground, bool precise)
     {
@@ -60,7 +61,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, precise);
     }
 
-    [Theory]
+    [FuseTheory(SkipFuse = "https://github.com/dotnet/razor/issues/10857 and https://github.com/dotnet/razor/issues/11329")]
     [CombinatorialData]
     public async Task Legacy(bool colorBackground, bool precise)
     {
@@ -88,8 +89,35 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: FileKinds.Legacy);
     }
 
+    [FuseTheory]
+    [CombinatorialData]
+    public async Task Legacy_Compatibility(bool colorBackground, bool precise)
+    {
+        // Same test as above, but with only the things that work in FUSE and non-FUSE, to prevent regressions
+
+        var input = """
+            @page "/"
+            @using System
+
+            <div>This is some HTML</div>
+
+            <component type="typeof(Component)" render-mode="ServerPrerendered" />
+
+            @functions
+            {
+                public void M()
+                {
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: FileKinds.Legacy);
+    }
+
     private async Task VerifySemanticTokensAsync(string input, bool colorBackground, bool precise, string? fileKind = null, [CallerMemberName] string? testName = null)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         var document = await CreateProjectAndRazorDocumentAsync(input, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 

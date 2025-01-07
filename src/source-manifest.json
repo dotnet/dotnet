@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25053.3",
+      "packageVersion": "10.0.0-beta.25056.1",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "05d4d46d438eec2d012a0dae7a9118e5fab947af"
+      "commitSha": "e58820063a8754d418518bce69ca2df0e3b4ac25"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -71,11 +71,11 @@
       "commitSha": "5af96504f10836eca6ce804ab3cdd28c042fa35a"
     },
     {
-      "packageVersion": "17.14.0-preview-25056-01",
+      "packageVersion": "17.14.0-preview-25056-07",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "bc0bd0a47c83b9baee88209b5d3d2003e75e1e90"
+      "commitSha": "8d395fd2729ad43428252f37656eb5c97a180987"
     },
     {
       "packageVersion": "6.13.0-rc.108",
@@ -85,11 +85,11 @@
       "commitSha": "89781a27ff255553766e4b9403ea7947072b4335"
     },
     {
-      "packageVersion": "9.0.0-preview.25052.3",
+      "packageVersion": "9.0.0-preview.25056.3",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "dd64bf78c16a7e8fa1900da060100e9338383dea"
+      "commitSha": "be8874d66810dc562e89ac9b4a3381b7ef9eeb4b"
     },
     {
       "packageVersion": "4.13.0-3.25055.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4ddd8ea37617d205c8b7e3f632abba96b868dbb4"
+      "commitSha": "b1171fdca3c6c62249de9936832aba06f7e0198b"
     },
     {
       "packageVersion": "10.0.563102",
@@ -155,11 +155,11 @@
       "commitSha": "ff1852196a042a124267a6e599d12da20d7ff65a"
     },
     {
-      "packageVersion": "10.0.100-alpha.1.25053.1",
+      "packageVersion": "10.0.100-alpha.1.25055.1",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "6250c1bcf1f319d466a71d7a26b61e18b2a9713e"
+      "commitSha": "a39cec86c11fbfd49b0b3544d69df2a9df3454ae"
     },
     {
       "packageVersion": "17.13.0-preview-25055-01",

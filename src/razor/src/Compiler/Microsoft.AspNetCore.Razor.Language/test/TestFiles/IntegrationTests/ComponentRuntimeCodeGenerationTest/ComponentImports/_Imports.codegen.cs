@@ -18,10 +18,10 @@ using System.Text
 #line (2,2)-(2,25) "x:\dir\subdir\Test\_Imports.razor"
 using System.Reflection
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
     #nullable restore
     public partial class _Imports : object

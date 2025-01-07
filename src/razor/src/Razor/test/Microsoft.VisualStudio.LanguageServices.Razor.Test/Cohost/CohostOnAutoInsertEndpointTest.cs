@@ -17,9 +17,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Theory]
+    [FuseTheory]
     [InlineData("PageTitle")]
     [InlineData("div")]
     [InlineData("text")]
@@ -43,7 +43,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             triggerCharacter: ">");
     }
 
-    [Theory]
+    [FuseTheory]
     [InlineData("PageTitle")]
     [InlineData("div")]
     [InlineData("text")]
@@ -62,7 +62,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             autoClosingTags: false);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task AttributeQuotes()
     {
         await VerifyOnAutoInsertAsync(
@@ -84,9 +84,8 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             delegatedResponseText: "\"$0\"");
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharp_OnForwardSlash(bool fuse)
+    [FuseFact]
+    public async Task CSharp_OnForwardSlash()
     {
         await VerifyOnAutoInsertAsync(
             input: """
@@ -103,11 +102,10 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                     void TestMethod() {}
                 }
                 """,
-            triggerCharacter: "/",
-            fuse: fuse);
+            triggerCharacter: "/");
     }
 
-    [Fact]
+    [FuseFact]
     public async Task DoNotAutoInsertCSharp_OnForwardSlashWithFormatOnTypeDisabled()
     {
         await VerifyOnAutoInsertAsync(
@@ -122,9 +120,8 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             formatOnType: false);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharp_OnEnter(bool fuse)
+    [FuseFact]
+    public async Task CSharp_OnEnter()
     {
         await VerifyOnAutoInsertAsync(
             input: """
@@ -159,13 +156,11 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                     }
                 }
                 """,
-            triggerCharacter: "\n",
-            fuse: fuse);
+            triggerCharacter: "\n");
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharp_OnEnter_TwoSpaceIndent(bool fuse)
+    [FuseFact]
+    public async Task CSharp_OnEnter_TwoSpaceIndent()
     {
         await VerifyOnAutoInsertAsync(
             input: """
@@ -183,13 +178,11 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                 }
                 """,
             triggerCharacter: "\n",
-            tabSize: 2,
-            fuse: fuse);
+            tabSize: 2);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharp_OnEnter_UseTabs(bool fuse)
+    [FuseFact]
+    public async Task CSharp_OnEnter_UseTabs()
     {
         const char tab = '\t';
         await VerifyOnAutoInsertAsync(
@@ -208,8 +201,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                 }
                 """,
             triggerCharacter: "\n",
-            insertSpaces: false,
-            fuse: fuse);
+            insertSpaces: false);
     }
 
     private async Task VerifyOnAutoInsertAsync(
@@ -220,10 +212,9 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         bool insertSpaces = true,
         int tabSize = 4,
         bool formatOnType = true,
-        bool autoClosingTags = true,
-        bool fuse = false)
+        bool autoClosingTags = true)
     {
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = fuse });
+        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);

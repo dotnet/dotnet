@@ -12,10 +12,10 @@ namespace Test
 #line (3,2)-(3,13) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Test2
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Components.RouteAttribute(
     // language=Route,Component
 #nullable restore

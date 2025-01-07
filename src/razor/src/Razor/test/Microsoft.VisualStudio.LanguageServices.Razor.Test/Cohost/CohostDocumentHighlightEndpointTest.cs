@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -14,9 +15,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class CohostDocumentHighlightEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [Fact]
+    [FuseFact]
     public async Task Local()
     {
         var input = """
@@ -32,7 +33,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Method()
     {
         var input = """
@@ -50,7 +51,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task AttributeToField()
     {
         var input = """
@@ -68,7 +69,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task FieldToAttribute()
     {
         var input = """
@@ -86,7 +87,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Html()
     {
         var input = """
@@ -104,7 +105,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input, htmlResponse: [new DocumentHighlight()]);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Razor()
     {
         var input = """
@@ -124,7 +125,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         await VerifyDocumentHighlightsAsync(input);
     }
 
-    [Fact]
+    [FuseFact]
     public async Task Inject()
     {
         var input = """
@@ -146,6 +147,8 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
 
     private async Task VerifyDocumentHighlightsAsync(string input, DocumentHighlight[]? htmlResponse = null)
     {
+        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
+
         TestFileMarkupParser.GetPositionAndSpans(input, out var source, out int cursorPosition, out ImmutableArray<TextSpan> spans);
         var document = await CreateProjectAndRazorDocumentAsync(source);
         var inputText = await document.GetTextAsync(DisposalToken);

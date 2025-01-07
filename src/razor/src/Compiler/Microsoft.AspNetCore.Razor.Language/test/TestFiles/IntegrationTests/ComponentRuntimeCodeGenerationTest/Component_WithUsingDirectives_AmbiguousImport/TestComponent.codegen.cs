@@ -18,10 +18,10 @@ using Test2
 #line (2,2)-(2,13) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Test3
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

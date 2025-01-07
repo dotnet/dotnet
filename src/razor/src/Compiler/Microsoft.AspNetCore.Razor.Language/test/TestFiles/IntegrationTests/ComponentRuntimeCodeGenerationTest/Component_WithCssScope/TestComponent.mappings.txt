@@ -10,37 +10,37 @@ Generated Location: (524:18,0 [47] )
 
 Source Location: (192:3,61 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |123|
-Generated Location: (1324:37,0 [3] )
+Generated Location: (1332:37,0 [3] )
 |123|
 
 Source Location: (318:6,30 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |myComponentReference|
-Generated Location: (2178:54,0 [20] )
+Generated Location: (2186:54,0 [20] )
 |myComponentReference|
 
 Source Location: (439:10,1 [34] x:\dir\subdir\Test\TestComponent.cshtml)
 |if (DateTime.Now.Year > 1950)
 {
 |
-Generated Location: (2497:66,0 [34] )
+Generated Location: (2505:66,0 [34] )
 |if (DateTime.Now.Year > 1950)
 {
 |
 
 Source Location: (511:12,38 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |myElementReference|
-Generated Location: (2907:79,0 [18] )
+Generated Location: (2915:79,0 [18] )
 |myElementReference|
 
 Source Location: (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml)
 |myVariable|
-Generated Location: (3568:96,0 [10] )
+Generated Location: (3576:96,0 [10] )
 |myVariable|
 
 Source Location: (639:14,0 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |}
 |
-Generated Location: (4062:108,0 [3] )
+Generated Location: (4070:108,0 [3] )
 |}
 |
 
@@ -55,7 +55,7 @@ Source Location: (651:16,7 [233] x:\dir\subdir\Test\TestComponent.cshtml)
         for (var i = 0; i < 10; i++)
         {
 |
-Generated Location: (4248:118,0 [233] )
+Generated Location: (4256:118,0 [233] )
 |
     ElementReference myElementReference;
     TemplatedComponent myComponentReference;
@@ -69,12 +69,12 @@ Generated Location: (4248:118,0 [233] )
 
 Source Location: (912:25,28 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (4710:136,0 [1] )
+Generated Location: (4718:136,0 [1] )
 |i|
 
 Source Location: (925:25,41 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (4996:147,0 [1] )
+Generated Location: (5004:147,0 [1] )
 |i|
 
 Source Location: (933:26,0 [164] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -85,7 +85,7 @@ Source Location: (933:26,0 [164] x:\dir\subdir\Test\TestComponent.cshtml)
         System.GC.KeepAlive(myVariable);
     }
 |
-Generated Location: (5178:156,0 [164] )
+Generated Location: (5186:156,0 [164] )
 |        }
 
         System.GC.KeepAlive(myElementReference);
