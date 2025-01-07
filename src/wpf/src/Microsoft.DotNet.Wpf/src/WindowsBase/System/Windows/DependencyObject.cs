@@ -195,9 +195,11 @@ namespace System.Windows
                 if (getValueCallback != null)
                 {
                     BaseValueSourceInternal valueSource;
-                    entry = new EffectiveValueEntry(dp);
-                    entry.Value = getValueCallback(this, out valueSource);
-                    entry.BaseValueSourceInternal = valueSource;
+                    entry = new EffectiveValueEntry(dp)
+                    {
+                        Value = getValueCallback(this, out valueSource),
+                        BaseValueSourceInternal = valueSource
+                    };
                     return entry;
                 }
             }
@@ -690,8 +692,10 @@ namespace System.Windows
             EffectiveValueEntry oldEntry;
             if (operationType == OperationType.ChangeMutableDefaultValue)
             {
-                oldEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Default);
-                oldEntry.Value = value;
+                oldEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Default)
+                {
+                    Value = value
+                };
             }
             else
             {
@@ -824,8 +828,7 @@ namespace System.Windows
         //
         internal bool ProvideSelfAsInheritanceContext( object value, DependencyProperty dp )
         {
-            DependencyObject doValue = value as DependencyObject;
-            if (doValue != null)
+            if (value is DependencyObject doValue)
             {
                 return ProvideSelfAsInheritanceContext(doValue, dp);
             }
@@ -869,8 +872,7 @@ namespace System.Windows
         //
         internal bool RemoveSelfAsInheritanceContext( object value, DependencyProperty dp )
         {
-            DependencyObject doValue = value as DependencyObject;
-            if (doValue != null)
+            if (value is DependencyObject doValue)
             {
                 return RemoveSelfAsInheritanceContext(doValue, dp);
             }
@@ -1138,8 +1140,7 @@ namespace System.Windows
 
             // if the target is a Freezable, call FireChanged to kick off
             // notifications to the Freezable's parent chain.
-            Freezable freezable = this as Freezable;
-            if (freezable != null)
+            if (this is Freezable freezable)
             {
                 freezable.FireChanged();
             }
@@ -1179,8 +1180,10 @@ namespace System.Windows
 
             ArgumentNullException.ThrowIfNull(dp);
 
-            EffectiveValueEntry newEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Unknown);
-            newEntry.IsCoercedWithCurrentValue = preserveCurrentValue;
+            EffectiveValueEntry newEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Unknown)
+            {
+                IsCoercedWithCurrentValue = preserveCurrentValue
+            };
 
             UpdateEffectiveValue(
                     LookupEntry(dp.GlobalIndex),
@@ -1902,8 +1905,10 @@ namespace System.Windows
                 // (If local storage not Unset and not an Expression, return)
                 if (value != DependencyProperty.UnsetValue)
                 {
-                    newEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Local);
-                    newEntry.Value = value;
+                    newEntry = new EffectiveValueEntry(dp, BaseValueSourceInternal.Local)
+                    {
+                        Value = value
+                    };
 
                     // Check if an Expression is set
                     if (oldLocalIsExpression)
@@ -2160,8 +2165,7 @@ namespace System.Windows
                 // localValue may still not be a DeferredReference, e.g.
                 // if it is an expression whose value is a DeferredReference.
                 // So a little more work is needed before converting the value.
-                DeferredReference dr = value as DeferredReference;
-                if (dr != null)
+                if (value is DeferredReference dr)
                 {
                     value = dr.GetValue(entry.BaseValueSourceInternal);
                 }
@@ -2626,8 +2630,7 @@ namespace System.Windows
                         object localValue = ReadLocalValueEntry(new EntryIndex(i), dp, allowDeferredReferences: true);
                         if (localValue != DependencyProperty.UnsetValue)
                         {
-                            DependencyObject inheritanceChild = localValue as DependencyObject;
-                            if (inheritanceChild!= null && inheritanceChild.InheritanceContext == this)
+                            if (localValue is DependencyObject inheritanceChild && inheritanceChild.InheritanceContext == this)
                             {
                                 inheritanceChild.OnInheritanceContextChanged(args);
                             }
@@ -3282,8 +3285,10 @@ namespace System.Windows
             }
             else
             {
-                entry = new EffectiveValueEntry();
-                entry.PropertyIndex = targetIndex;
+                entry = new EffectiveValueEntry
+                {
+                    PropertyIndex = targetIndex
+                };
                 InsertEntry(entry, entryIndex.Index);
                 if (metadata != null && metadata.IsInherited)
                 {
