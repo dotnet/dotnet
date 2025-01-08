@@ -1493,13 +1493,9 @@ namespace System.Windows.Controls
                 return Rect.Empty;
             }
 
-#pragma warning disable 1634, 1691
-#pragma warning disable 56506
             // Compute the child's rect relative to (0,0) in our coordinate space.
-            // This is a false positive by PreSharp. visual cannot be null because of the 'if' check above
             GeneralTransform childTransform = visual.TransformToAncestor(this);
-#pragma warning restore 56506
-#pragma warning restore 1634, 1691
+
             rectangle = childTransform.TransformBounds(rectangle);
 
             // We can't do any work unless we're scrolling.
@@ -12121,7 +12117,7 @@ namespace System.Windows.Controls
             }
 
             // for use from VS Immediate window
-            static void Mark(params object[] args)
+            static void Mark(params ReadOnlySpan<object> args)
             {
                 ScrollTraceRecord record = new ScrollTraceRecord(ScrollTraceOp.Mark, null, -1, 0, 0, BuildDetail(args));
                 lock (s_TargetToTraceListMap)
@@ -12233,7 +12229,7 @@ namespace System.Windows.Controls
                 return (sti != null && sti.ScrollTracer != null);
             }
 
-            internal static void Trace(VirtualizingStackPanel vsp, ScrollTraceOp op, params object[] args)
+            internal static void Trace(VirtualizingStackPanel vsp, ScrollTraceOp op, params ReadOnlySpan<object> args)
             {
                 ScrollTracingInfo sti = ScrollTracingInfoField.GetValue(vsp);
                 ScrollTracer tracer = sti.ScrollTracer;
@@ -12276,16 +12272,12 @@ namespace System.Windows.Controls
                 return sb.ToString();
             }
 
-            private static string BuildDetail(object[] args)
+            private static string BuildDetail(ReadOnlySpan<object> args)
             {
-                int length = (args != null) ? args.Length : 0;
-                if (length == 0)
-                    return String.Empty;
-                else
-                    return String.Format(CultureInfo.InvariantCulture, s_format[length], args);
+                return args.IsEmpty ? string.Empty : string.Format(CultureInfo.InvariantCulture, s_format[args.Length], args);
             }
 
-            private static string[] s_format = new string[] {
+            private static readonly string[] s_format = new string[] {
                 "",
                 "{0}",
                 "{0} {1}",
@@ -12396,7 +12388,7 @@ namespace System.Windows.Controls
                 }
             }
 
-            private void AddTrace(VirtualizingStackPanel vsp, ScrollTraceOp op, ScrollTracingInfo sti, params object[] args)
+            private void AddTrace(VirtualizingStackPanel vsp, ScrollTraceOp op, ScrollTracingInfo sti, params ReadOnlySpan<object> args)
             {
                 // the trace list contains references back into the VSP that can lead
                 // to memory leaks if the app removes the VSP.  To avoid this, treat
@@ -12407,10 +12399,8 @@ namespace System.Windows.Controls
                 {
                     if (++_luCount > _luThreshold)
                     {
-                        AddTrace(null, ScrollTraceOp.ID, _nullInfo,
-                            "Inactive at", DateTime.Now);
-                        ItemsControl ic;
-                        if (_wrIC.TryGetTarget(out ic))
+                        AddTrace(null, ScrollTraceOp.ID, _nullInfo, "Inactive at", DateTime.Now);
+                        if (_wrIC.TryGetTarget(out ItemsControl ic))
                         {
                             ic.LayoutUpdated -= OnLayoutUpdated;
                         }
@@ -12425,10 +12415,8 @@ namespace System.Windows.Controls
 
                     if (luCount < 0)
                     {
-                        AddTrace(null, ScrollTraceOp.ID, _nullInfo,
-                            "Reactivate at", DateTime.Now);
-                        ItemsControl ic;
-                        if (_wrIC.TryGetTarget(out ic))
+                        AddTrace(null, ScrollTraceOp.ID, _nullInfo, "Reactivate at", DateTime.Now);
+                        if (_wrIC.TryGetTarget(out ItemsControl ic))
                         {
                             ic.LayoutUpdated += OnLayoutUpdated;
                         }
