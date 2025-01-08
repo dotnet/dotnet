@@ -68,7 +68,7 @@ public class Runner
                         // When the result is a task we need to await it.
                         // TODO: this can be improved with await, imho
                         task.GetAwaiter().GetResult();
-                    };
+                    }
 
                     passed++;
                     logger.WriteTestPassed(method, testStopwatch.Elapsed);

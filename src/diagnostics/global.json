@@ -1,19 +1,17 @@
 {
   "tools": {
-    "dotnet": "9.0.100-rc.2.24474.11",
+    "dotnet": "10.0.100-alpha.1.24611.5",
     "runtimes": {
       "dotnet": [
-        "$(MicrosoftNETCoreApp60Version)",
         "$(MicrosoftNETCoreApp80Version)"
       ],
       "dotnet/x86": [
-        "$(MicrosoftNETCoreApp60Version)",
         "$(MicrosoftNETCoreApp80Version)"
       ]
     }
   },
   "msbuild-sdks": {
     "Microsoft.Build.NoTargets": "3.5.0",
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.24560.1"
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.24626.1"
   }
 }

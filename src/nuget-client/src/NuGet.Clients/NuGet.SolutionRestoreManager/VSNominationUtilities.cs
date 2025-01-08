@@ -818,5 +818,13 @@ namespace NuGet.SolutionRestoreManager
 
             return false;
         }
+
+        internal static NuGetVersion? GetSdkVersion(IReadOnlyList<IVsTargetFrameworkInfo4> targetFrameworks)
+        {
+            string? sdkVersionString = GetSingleNonEvaluatedPropertyOrNull(targetFrameworks, "NETCoreSdkVersion", v => v);
+            NuGetVersion.TryParse(sdkVersionString, out NuGetVersion? sdkVersion);
+
+            return sdkVersion;
+        }
     }
 }

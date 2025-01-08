@@ -872,7 +872,7 @@ namespace NuGet.DependencyResolver
                 // Some node were marked ambiguous, thus we need another run to check if nodes previously not marked ambiguous should be marked ambiguous this time.
                 if (!nodeMarkedAmbiguous)
                     break;
-            };
+            }
         }
 
         private static void RejectCentralTransitiveBecauseOfRejectedParents<TItem>(this GraphNode<TItem> root, Tracker<TItem> tracker, List<GraphNode<TItem>> centralTransitiveNodes)

@@ -2911,6 +2911,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["ForceRestore"] = value => value.Should().Be(false),
                 ["UpdatedAssetsFile"] = value => value.Should().Be(true),
                 ["UpdatedMSBuildFiles"] = value => value.Should().Be(true),
+                ["NETSdkVersion"] = value => value.Should().Be(null),
             };
 
             HashSet<string> actualProperties = new();
@@ -2941,6 +2942,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             packageSpec.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors = true;
             packageSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
             packageSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("9.0.100");
+            packageSpec.RestoreSettings.SdkVersion = NuGetVersion.Parse("10.0.100");
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                 pathContext.PackageSource,
@@ -2985,7 +2987,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(34);
+            projectInformationEvent.Count.Should().Be(35);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -3020,6 +3022,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["ForceRestore"].Should().Be(false);
             projectInformationEvent["UpdatedAssetsFile"].Should().Be(false);
             projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(false);
+            projectInformationEvent["NETSdkVersion"].Should().Be(NuGetVersion.Parse("10.0.100"));
         }
 
         [Fact]
@@ -3077,7 +3080,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(40);
+            projectInformationEvent.Count.Should().Be(41);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);

@@ -392,7 +392,7 @@ namespace NuGet.SolutionRestoreManager
                     UseLegacyDependencyResolver = VSNominationUtilities.GetUseLegacyDependencyResolver(targetFrameworks),
                 },
                 RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(targetFrameworks),
-                RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true },
+                RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true, SdkVersion = VSNominationUtilities.GetSdkVersion(targetFrameworks) },
             };
 
             return packageSpec;

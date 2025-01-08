@@ -505,6 +505,7 @@ namespace NuGet.ProjectModel.Test
             Assert.NotNull(actual);
             Assert.NotNull(actual.RestoreSettings);
             Assert.False(actual.RestoreSettings.HideWarningsAndErrors);
+            Assert.Null(actual.RestoreSettings.SdkVersion);
         }
 
         [Theory]

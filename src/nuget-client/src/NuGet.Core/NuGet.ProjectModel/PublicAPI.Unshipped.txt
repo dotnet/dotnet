@@ -1,6 +1,8 @@
 #nullable enable
 NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.init -> void
 NuGet.ProjectModel.TargetFrameworkInformation.Warn.init -> void
+~NuGet.ProjectModel.ProjectRestoreSettings.SdkVersion.get -> NuGet.Versioning.NuGetVersion
+~NuGet.ProjectModel.ProjectRestoreSettings.SdkVersion.set -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.CentralPackageVersion>
 ~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.LibraryDependency>

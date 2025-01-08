@@ -257,8 +257,6 @@ namespace NuGet.SolutionRestoreManager.Test
 
         private VsTargetFrameworkInfo4[] TargetFrameworkWithSdkAnalysisLevel(string sdkAnalysisLevel)
         {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            keyValuePairs["SdkAnalysisLevel"] = sdkAnalysisLevel;
             var targetFrameworks = new VsTargetFrameworkInfo4[]
             {
                 new VsTargetFrameworkInfo4(
@@ -266,6 +264,21 @@ namespace NuGet.SolutionRestoreManager.Test
                     properties: new Dictionary<string, string>
                     {
                         { ProjectBuildProperties.SdkAnalysisLevel, sdkAnalysisLevel }
+                    })
+            };
+
+            return targetFrameworks;
+        }
+
+        private VsTargetFrameworkInfo4[] TargetFrameworkWithSdkVersion(string sdkAnalysisLevel)
+        {
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        { "NETCoreSdkVersion", sdkAnalysisLevel }
                     })
             };
 
@@ -485,6 +498,22 @@ namespace NuGet.SolutionRestoreManager.Test
 
             // Assert
             Assert.Equal(0, result.Length);
+        }
+
+        [Theory]
+        [InlineData("9.0.100", "9.0.100")]
+        [InlineData("Not a version", null)]
+        public void GetSdkVersion_WithVariousInputs(string sdkVersion, string expectedSdkVersion)
+        {
+            // Arrange
+            var targetFrameworks = TargetFrameworkWithSdkVersion(sdkVersion);
+            NuGetVersion expected = expectedSdkVersion != null ? new NuGetVersion(expectedSdkVersion) : null;
+
+            //Act
+            NuGetVersion actual = VSNominationUtilities.GetSdkVersion(targetFrameworks);
+
+            //Assert
+            Assert.Equal(expected, actual);
         }
     }
 }

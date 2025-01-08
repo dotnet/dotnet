@@ -3,6 +3,8 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using TestClasses;
+
 namespace Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.UnitTests;
 
 [TestClass]
@@ -123,4 +125,18 @@ public class ManagedNameGeneratorTests
         Assert.AreEqual("Method0", managedMethodName);
         Assert.IsNull(hierarchyValues[HierarchyConstants.Levels.NamespaceIndex]);
     }
+
+    [TestMethod]
+    public void SpecialCharacters_HierarchyShouldNotWrapMembersWithSpecialCharactersInSingleQuotes()
+    {
+        var methodBase = typeof(Class狧麱狵錋狾龍龪啊阿埃挨哎唉0u㐀㐁㐂㐃㐄㐅㐆㐇6ⅶ０ǒoU1U2U38丂丄丅丆丏丒丟).GetMethod("Method0")!;
+
+        // Act
+        ManagedNameHelper.GetManagedName(methodBase, out var managedTypeName, out var managedMethodName, out var _);
+
+        // Assert
+        Assert.AreEqual("TestClasses.Class狧麱狵錋狾龍龪啊阿埃挨哎唉0u㐀㐁㐂㐃㐄㐅㐆㐇6ⅶ０ǒoU1U2U38丂丄丅丆丏丒丟", managedTypeName);
+        Assert.AreEqual("Method0", managedMethodName);
+    }
+
 }

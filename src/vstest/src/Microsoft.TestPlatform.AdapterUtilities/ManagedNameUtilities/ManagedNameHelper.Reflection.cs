@@ -563,7 +563,8 @@ public static partial class ManagedNameHelper
         }
 
         if (c == '_'
-            || char.IsLetterOrDigit(c) // Lu, Ll, Lt, Lm, Lo, or Nl
+            // 'Digit' does not include letter numbers, which are valid identifiers as per docs https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/identifier-names'.
+            || char.IsLetterOrDigit(c) // Lu, Ll, Lt, Lm, Lo, or Nd
             )
         {
             return false;
@@ -571,7 +572,8 @@ public static partial class ManagedNameHelper
 
         var category = CharUnicodeInfo.GetUnicodeCategory(c);
         return category
-            is not UnicodeCategory.NonSpacingMark         // Mn
+            is not UnicodeCategory.LetterNumber           // Nl
+            and not UnicodeCategory.NonSpacingMark        // Mn
             and not UnicodeCategory.SpacingCombiningMark  // Mc
             and not UnicodeCategory.ConnectorPunctuation  // Pc
             and not UnicodeCategory.Format;               // Cf

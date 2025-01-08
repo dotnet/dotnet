@@ -61,6 +61,7 @@ namespace NuGet.Commands
         private const string TreatWarningsAsErrors = nameof(TreatWarningsAsErrors);
         private const string SDKAnalysisLevel = nameof(SDKAnalysisLevel);
         private const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
+        private const string NETSdkVersion = nameof(NETSdkVersion);
         private const string UpdatedAssetsFile = nameof(UpdatedAssetsFile);
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
@@ -340,6 +341,7 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[TreatWarningsAsErrors] = _request.Project.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors;
             telemetry.TelemetryEvent[SDKAnalysisLevel] = _request.Project.RestoreMetadata.SdkAnalysisLevel;
             telemetry.TelemetryEvent[UsingMicrosoftNETSdk] = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk;
+            telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
             _operationId = telemetry.OperationId;
 

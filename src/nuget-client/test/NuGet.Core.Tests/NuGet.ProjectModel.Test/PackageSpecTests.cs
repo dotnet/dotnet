@@ -692,6 +692,7 @@ namespace NuGet.ProjectModel.Test
         {
             var prs = new ProjectRestoreSettings();
             prs.HideWarningsAndErrors = true;
+            prs.SdkVersion = new NuGetVersion(10, 0, 100);
             return prs;
         }
 

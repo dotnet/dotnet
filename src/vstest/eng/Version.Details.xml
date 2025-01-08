@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.13.0-preview.24562.1">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.14.0-preview.25056.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>4f6e6afd41ccf30b0be2e0722fe4131106bf1b91</Sha>
+      <Sha>3889f929bc86d4f819c62bfa687b01660c9e195d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.24566.1">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.605501">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
-      <Sha>8c505ca6921b5f7e9b8acc234cc8f15035537ee4</Sha>
+      <Sha>c9233435fbe4a262c4b4b0e72405a495a8663d5d</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.diagnostics" Version="9.0.0-preview.24566.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.diagnostics" Version="9.0.0-preview.25055.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
-      <Sha>8c505ca6921b5f7e9b8acc234cc8f15035537ee4</Sha>
+      <Sha>c9233435fbe4a262c4b4b0e72405a495a8663d5d</Sha>
       <SourceBuild RepoName="diagnostics" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -22,9 +22,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24558.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.605601">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>1ebd9ce245112164207d961c0d2faea741c7c489</Sha>
+      <Sha>67bfe60ba059348bfaec48537acd36157cd2be6e</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
