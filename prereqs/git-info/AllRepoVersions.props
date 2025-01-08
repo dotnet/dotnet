@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>b41381d5cd633471265e9cd72e933a7048e03062</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.24572.2</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>e0e05154656254a735ebf19ffa5a37a8b915039b</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.24623.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>af22effae4069a5dfb9b0735859de48820104f5b</aspnetcoreGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-rtm.24528.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>7a28873e9053e96382178e66f69dff0f7248958f</sdkGitCommitHash>
+    <sdkGitCommitHash>a8279a15faed32c02fe130cd5d521349c54e13b3</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>ab469606a3e6b026dcac301e2dab96117c94faeb</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24575.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c81acaa80719d0ecfadfe41e3c0e3548bdc4e78d</sourcebuildreferencepackagesGitCommitHash>
