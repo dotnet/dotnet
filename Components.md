@@ -40,15 +40,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@b5256ab](https://github.com/dotnet/razor/tree/b5256abf658352440e61aa1372bbc0798e9ceb7d)*
 - `src/roslyn`  
-*[dotnet/roslyn@dfa7fc6](https://github.com/dotnet/roslyn/tree/dfa7fc6bdea31a858a402168384192b633c811fa)*
+*[dotnet/roslyn@da7c6c4](https://github.com/dotnet/roslyn/tree/da7c6c4257b2f661024b9a506773372a09023eee)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@5bfaf6a](https://github.com/dotnet/roslyn-analyzers/tree/5bfaf6aea5cf9d1c924d9adc69916eac3be07880)*
 - `src/runtime`  
 *[_git/dotnet-runtime@c8acea2](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCc8acea22626efab11c13778c028975acdc34678f)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@1009e3b](https://github.com/dotnet/scenario-tests/tree/1009e3b6d23e049de56b91de82fe975fe84444f8)*
+*[dotnet/scenario-tests@6ce5a7b](https://github.com/dotnet/scenario-tests/tree/6ce5a7bf0ef0c62bc0dc0140c45637a5e161823f)*
 - `src/sdk`  
-*[dotnet/sdk@6cd233e](https://github.com/dotnet/sdk/tree/6cd233eeaa4e9ea4900779c4ec652cbc31ada116)*
+*[dotnet/sdk@56d3a1b](https://github.com/dotnet/sdk/tree/56d3a1b33d6b33400bc4afb114e6bf0fb1562951)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@ab46960](https://github.com/dotnet/source-build-externals/tree/ab469606a3e6b026dcac301e2dab96117c94faeb)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -78,7 +78,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@c81acaa](https://github.com/dotnet/source-build-reference-packages/tree/c81acaa80719d0ecfadfe41e3c0e3548bdc4e78d)*
+*[dotnet/source-build-reference-packages@e2b1d16](https://github.com/dotnet/source-build-reference-packages/tree/e2b1d16fd66540b3a5813ec0ac1fd166688c3e0a)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@599ca6d](https://github.com/dotnet/sourcelink/tree/599ca6dd9547cef0c10c1363fade40b044fed3b7)*
 - `src/symreader`  
