@@ -25,8 +25,8 @@
     <msbuildOutputPackageVersion>17.12.18-preview-24610-04</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>c097388782da305f47c395f90bea2d7c83909b6d</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.12.2-rc.1</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>b5256abf658352440e61aa1372bbc0798e9ceb7d</razorGitCommitHash>
-    <razorOutputPackageVersion>9.0.0-preview.24576.1</razorOutputPackageVersion>
+    <razorGitCommitHash>e0c5e5892684a5ce8f4fa0dcc504a0af4c140ac7</razorGitCommitHash>
+    <razorOutputPackageVersion>9.0.0-preview.24616.4</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>5bfaf6aea5cf9d1c924d9adc69916eac3be07880</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24605.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>da7c6c4257b2f661024b9a506773372a09023eee</roslynGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.1-servicing.24610.10</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>6ce5a7bf0ef0c62bc0dc0140c45637a5e161823f</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.25051.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>e8dd359ad46e2a382da00162cf240213ebd22893</sdkGitCommitHash>
+    <sdkGitCommitHash>2c6b6f38bd9aa26f1d52afe4884a24f0e659ebc5</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>ab469606a3e6b026dcac301e2dab96117c94faeb</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24575.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>e2b1d16fd66540b3a5813ec0ac1fd166688c3e0a</sourcebuildreferencepackagesGitCommitHash>
