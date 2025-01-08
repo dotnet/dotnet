@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-rtm.24528.9</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>e979f251507c7e5387b974f1c0ebefbfbc9b24db</sdkGitCommitHash>
+    <sdkGitCommitHash>7a28873e9053e96382178e66f69dff0f7248958f</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>ab469606a3e6b026dcac301e2dab96117c94faeb</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24575.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c81acaa80719d0ecfadfe41e3c0e3548bdc4e78d</sourcebuildreferencepackagesGitCommitHash>
@@ -46,8 +46,8 @@
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
     <templatingGitCommitHash>cdb776d3a6988a56a69e9ceb669bf250f51919ee</templatingGitCommitHash>
     <templatingOutputPackageVersion>9.0.103-servicing.25057.4</templatingOutputPackageVersion>
-    <testtemplatesGitCommitHash>22f4800ed2fe5dbca64c982aa15fd6838016328e</testtemplatesGitCommitHash>
-    <testtemplatesOutputPackageVersion>1.1.0-rtm.24605.1</testtemplatesOutputPackageVersion>
+    <testtemplatesGitCommitHash>8d99bca98e3fd0c8f4e10eb200aed20d9665de0e</testtemplatesGitCommitHash>
+    <testtemplatesOutputPackageVersion>1.1.0-rtm.24606.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>308dc7955704be60afc72ec00902cc18e028c3c2</windowsdesktopGitCommitHash>
@@ -56,8 +56,8 @@
     <winformsOutputPackageVersion>9.0.0-rtm.24529.1</winformsOutputPackageVersion>
     <wpfGitCommitHash>a04736acb8edb533756131d3d5fc55f15cd03d6a</wpfGitCommitHash>
     <wpfOutputPackageVersion>9.0.0-rtm.24529.2</wpfOutputPackageVersion>
-    <xdtGitCommitHash>1a54480f52703fb45fac2a6b955247d33758383e</xdtGitCommitHash>
-    <xdtOutputPackageVersion>9.0.0-preview.24522.2</xdtOutputPackageVersion>
+    <xdtGitCommitHash>63ae81154c50a1cf9287cc47d8351d55b4289e6d</xdtGitCommitHash>
+    <xdtOutputPackageVersion>10.0.0-preview.24609.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
     <xlifftasksOutputPackageVersion>1.0.0-beta.23475.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
