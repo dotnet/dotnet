@@ -59,6 +59,11 @@ namespace NuGet.Commands
         private const string TargetFrameworksCount = nameof(TargetFrameworksCount);
         private const string RuntimeIdentifiersCount = nameof(RuntimeIdentifiersCount);
         private const string TreatWarningsAsErrors = nameof(TreatWarningsAsErrors);
+        private const string SDKAnalysisLevel = nameof(SDKAnalysisLevel);
+        private const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
+        private const string UpdatedAssetsFile = nameof(UpdatedAssetsFile);
+        private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
+        private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -69,6 +74,7 @@ namespace NuGet.Commands
         private const string NoOpRestoreOutputEvaluationResult = nameof(NoOpRestoreOutputEvaluationResult);
         private const string NoOpReplayLogsDuration = nameof(NoOpReplayLogsDuration);
         private const string NoOpCacheFileAgeDays = nameof(NoOpCacheFileAgeDays);
+        private const string ForceRestore = nameof(ForceRestore);
 
         // lock file data names
         private const string EvaluateLockFileDuration = nameof(EvaluateLockFileDuration);
@@ -290,7 +296,7 @@ namespace NuGet.Commands
                 restoreTime.Stop();
 
                 // Create result
-                return new RestoreResult(
+                var restoreResult = new RestoreResult(
                     _success,
                     graphs,
                     checkResults,
@@ -309,6 +315,11 @@ namespace NuGet.Commands
                 {
                     AuditRan = auditRan
                 };
+
+                telemetry.TelemetryEvent[UpdatedAssetsFile] = restoreResult._isAssetsFileDirty.Value;
+                telemetry.TelemetryEvent[UpdatedMSBuildFiles] = restoreResult._dirtyMSBuildFiles.Value.Count > 0;
+
+                return restoreResult;
             }
         }
 
@@ -327,6 +338,9 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[TargetFrameworksCount] = _request.Project.RestoreMetadata.TargetFrameworks.Count;
             telemetry.TelemetryEvent[RuntimeIdentifiersCount] = _request.Project.RuntimeGraph.Runtimes.Count;
             telemetry.TelemetryEvent[TreatWarningsAsErrors] = _request.Project.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors;
+            telemetry.TelemetryEvent[SDKAnalysisLevel] = _request.Project.RestoreMetadata.SdkAnalysisLevel;
+            telemetry.TelemetryEvent[UsingMicrosoftNETSdk] = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk;
+            telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
@@ -352,6 +366,8 @@ namespace NuGet.Commands
             if (NuGetEventSource.IsEnabled) TraceEvents.CalcNoOpRestoreStop(_request.Project.FilePath);
 
             telemetry.TelemetryEvent[NoOpCacheFileEvaluationResult] = noOp;
+            telemetry.TelemetryEvent[ForceRestore] = !_request.AllowNoOp;
+
             telemetry.EndIntervalMeasure(NoOpCacheFileEvaluateDuration);
             if (noOp)
             {
@@ -376,6 +392,9 @@ namespace NuGet.Commands
                     telemetry.TelemetryEvent[RestoreSuccess] = _success;
                     telemetry.TelemetryEvent[TotalUniquePackagesCount] = cacheFile.ExpectedPackageFilePaths?.Count ?? -1;
                     telemetry.TelemetryEvent[NewPackagesInstalledCount] = 0;
+                    telemetry.TelemetryEvent[UpdatedAssetsFile] = false;
+                    telemetry.TelemetryEvent[UpdatedMSBuildFiles] = false;
+
                     if (cacheFileAge.HasValue) { telemetry.TelemetryEvent[NoOpCacheFileAgeDays] = cacheFileAge.Value.TotalDays; }
 
                     return (new NoOpRestoreResult(

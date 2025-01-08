@@ -90,8 +90,8 @@ namespace NuGet.Commands
 
         private readonly DependencyGraphSpec _dependencyGraphSpec;
 
-        private readonly Lazy<bool> _isAssetsFileDirty;
-        private readonly Lazy<List<MSBuildOutputFile>> _dirtyMSBuildFiles;
+        internal readonly Lazy<bool> _isAssetsFileDirty;
+        internal readonly Lazy<List<MSBuildOutputFile>> _dirtyMSBuildFiles;
 
 
         public RestoreResult(
