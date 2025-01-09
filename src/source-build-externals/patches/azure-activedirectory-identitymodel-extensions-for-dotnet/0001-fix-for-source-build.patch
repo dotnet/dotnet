@@ -54,9 +54,11 @@ index 1e6f60cc..3287409f 100644
      <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
 -    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
 +    <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
-     <SystemTextJson>8.0.4</SystemTextJson>
+-    <SystemTextJson>8.0.4</SystemTextJson>
++    <SystemTextJson>8.0.5</SystemTextJson>
    </PropertyGroup>
- 
+
+ </Project>
 diff --git a/build/targets.props b/build/targets.props
 index 6f92780d..1c48acfb 100644
 --- a/build/targets.props
