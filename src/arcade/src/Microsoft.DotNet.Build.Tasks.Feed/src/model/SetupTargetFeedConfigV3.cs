@@ -30,9 +30,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public TaskLoggingHelper Log { get; }
 
-        private string _azureDevOpsOrg;
-
-        public string AzureDevOpsOrg => _azureDevOpsOrg ?? "dnceng";
+        public string AzureDevOpsOrg => "dnceng";
 
         public SetupTargetFeedConfigV3(
             TargetChannelConfig targetChannelConfig,
@@ -51,8 +49,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string stableSymbolsFeed = null,
             ImmutableList<string> filesToExclude = null,
             bool flatten = true,
-            TaskLoggingHelper log = null,
-            string azureDevOpsOrg = null) 
+            TaskLoggingHelper log = null) 
             : base(isInternalBuild, isStableBuild, repositoryName, commitSha, publishInstallersAndChecksums, null, null, null, null, null, null, null, latestLinkShortUrlPrefixes, null)
         {
             _targetChannelConfig = targetChannelConfig;
@@ -67,7 +64,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             FeedOverrides = feedOverrides.ToImmutableDictionary(i => i.ItemSpec, i => i.GetMetadata("Replacement"));
             AzureDevOpsFeedsKey = FeedKeys.TryGetValue("https://pkgs.dev.azure.com/dnceng", out string key) ? key : null;
             Log = log;
-            _azureDevOpsOrg = azureDevOpsOrg;
         }
 
         private static string ConvertFromBase64(string value)

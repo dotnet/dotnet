@@ -156,8 +156,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         targetChannelConfig.SymbolTargetType,
                         filesToExclude: targetChannelConfig.FilenamesToExclude,
                         flatten: targetChannelConfig.Flatten,
-                        log: Log,
-                        azureDevOpsOrg: AzureDevOpsOrg);
+                        log: Log);
 
                     var targetFeedConfigs = targetFeedsSetup.Setup();
 
