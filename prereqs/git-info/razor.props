@@ -2,7 +2,7 @@
 <Project>
   <PropertyGroup>
     <GitCommitHash>46efcec83821d7f0322c01bc9549de83e855dcac</GitCommitHash>
-    <OfficialBuildId>20250106.4</OfficialBuildId>
-    <OutputPackageVersion>9.0.0-preview.25056.4</OutputPackageVersion>
+    <OfficialBuildId>20250108.6</OfficialBuildId>
+    <OutputPackageVersion>9.0.0-preview.25058.6</OutputPackageVersion>
   </PropertyGroup>
 </Project>
