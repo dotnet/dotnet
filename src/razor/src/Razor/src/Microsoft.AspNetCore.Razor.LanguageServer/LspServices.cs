@@ -14,16 +14,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class LspServices : ILspServices
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IEnumerable<IRazorStartupService> _startupServices;
     public bool IsDisposed = false;
 
     public LspServices(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<ILspServices>(this);
         _serviceProvider = serviceCollection.BuildServiceProvider();
-
         // Create all startup services
-        _startupServices = _serviceProvider.GetServices<IRazorStartupService>();
+        _serviceProvider.GetServices<IRazorStartupService>();
     }
 
     public ImmutableArray<Type> GetRegisteredServices()
