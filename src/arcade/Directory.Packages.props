@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <!-- arcade-services -->
-    <PackageVersion Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
+    <PackageVersion Include="Microsoft.DotNet.ProductConstructionService.Client" Version="$(MicrosoftDotNetProductConstructionServiceClientVersion)" />
     <!-- command-line-api -->
     <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
     <!-- corefx -->

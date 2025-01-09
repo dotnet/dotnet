@@ -74,7 +74,7 @@ assets/symbols/Microsoft.AspNetCore.ApiVersioning.Swashbuckle.1.1.0-beta.19521.2
 assets/symbols/Microsoft.DotNet.Darc.1.1.0-beta.19521.2.symbols.nupkg,1.1.0-beta.19521.2,assets/symbols/Microsoft.DotNet.Darc.symbols.nupkg
 assets/symbols/Microsoft.DotNet.DarcLib.1.1.0-beta.19521.2.symbols.nupkg,1.1.0-beta.19521.2,assets/symbols/Microsoft.DotNet.DarcLib.symbols.nupkg
 assets/symbols/Microsoft.DotNet.DarcLib.AzDev.1.1.0-beta.19521.2.symbols.nupkg,1.1.0-beta.19521.2,assets/symbols/Microsoft.DotNet.DarcLib.AzDev.symbols.nupkg
-assets/symbols/Microsoft.DotNet.Maestro.Client.1.1.0-beta.19521.2.symbols.nupkg,1.1.0-beta.19521.2,assets/symbols/Microsoft.DotNet.Maestro.Client.symbols.nupkg
+assets/symbols/Microsoft.DotNet.ProductConstructionService.Client.1.1.0-beta.19521.2.symbols.nupkg,1.1.0-beta.19521.2,assets/symbols/Microsoft.DotNet.ProductConstructionService.Client.symbols.nupkg
 Toolset/5.0.100-alpha1.19521.2/dotnet-toolset-internal-5.0.100-alpha1.19521.2.zip,5.0.100-alpha1.19521.2,Toolset/dotnet-toolset-internal.zip
 Toolset/5.0.100-alpha1.19521.2/dotnet-toolset-langpack-5.0.100-alpha1.19521.2.zip,5.0.100-alpha1.19521.2,Toolset/dotnet-toolset-langpack.zip
 assets/symbols/Microsoft.DotNet.Cli.5.0.100-alpha1.19521.2.symbols.nupkg,5.0.100-alpha1.19521.2,assets/symbols/Microsoft.DotNet.Cli.symbols.nupkg

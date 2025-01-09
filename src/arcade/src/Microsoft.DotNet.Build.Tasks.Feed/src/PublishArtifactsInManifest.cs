@@ -5,7 +5,7 @@ using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 #if !NET472_OR_GREATER
-using Microsoft.DotNet.Maestro.Client;
+using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.VersionTools.Automation;
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -286,12 +286,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     //         https://github.com/dotnet/arcade/issues/5489
                     if (PublishedV3Manifest)
                     {
-                        IMaestroApi client = MaestroApiFactory.GetAuthenticated(
+                        IProductConstructionServiceApi client = PcsApiFactory.GetAuthenticated(
                             MaestroApiEndpoint,
                             BuildAssetRegistryToken,
                             MaestroManagedIdentityId,
                             !AllowInteractiveAuthentication);
-                        Maestro.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);
+                        ProductConstructionService.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);
 
                         var targetChannelsIds = TargetChannels.Split('-').Select(ci => int.Parse(ci));
 
@@ -398,6 +398,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 #else
 public class PublishArtifactsInManifest : Microsoft.Build.Utilities.Task
 {
-    public override bool Execute() => throw new System.NotSupportedException("PublishArtifactsInManifest depends on Maestro.Client, which has discontinued support for desktop frameworks.");
+    public override bool Execute() => throw new System.NotSupportedException("PublishArtifactsInManifest depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
 }
 #endif

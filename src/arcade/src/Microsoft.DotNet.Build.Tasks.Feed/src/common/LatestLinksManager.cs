@@ -22,9 +22,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private string _akaMSCreatedBy { get; }
         private string _akaMSGroupOwner { get; }
 
-        private static HashSet<string> AccountsWithCdns { get; } = new()
+        private static Dictionary<string, string> AccountsWithCdns { get; } = new()
         {
-            "dotnetcli.blob.core.windows.net", "dotnetbuilds.blob.core.windows.net",
+            {"dotnetcli.blob.core.windows.net", "builds.dotnet.microsoft.com" },
+            {"dotnetbuilds.blob.core.windows.net", "ci.dot.net" }
         };
 
         public LatestLinksManager(
@@ -45,8 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(
             HashSet<string> assetsToPublish,
-            TargetFeedConfig feedConfig,
-            int expectedSuffixLength)
+            TargetFeedConfig feedConfig)
         {
             // The link manager should only be used if there are actually links that could
             // be created.
@@ -55,45 +55,54 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 throw new ArgumentException("No link prefixes specified.");
             }
 
-            string feedBaseUrl = feedConfig.SafeTargetURL;
-            if (expectedSuffixLength != 0)
-            {
-                // Strip away the feed expected suffix (index.json)
-                feedBaseUrl = feedBaseUrl.Substring(0, feedBaseUrl.Length - expectedSuffixLength);
-            }
-            if (!feedBaseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
-            {
-                feedBaseUrl += "/";
-            }
-            if (AccountsWithCdns.Any(account => feedBaseUrl.Contains(account)))
-            {
-                // The storage accounts are in a single datacenter in the US and thus download 
-                // times can be painful elsewhere. The CDN helps with this therefore we point the target 
-                // of the aka.ms links to the CDN.
-                feedBaseUrl = feedBaseUrl.Replace(".blob.core.windows.net", ".azureedge.net");
-            }
+            string feedBaseUrl = ComputeLatestLinkBase(feedConfig);
 
             _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
             IEnumerable<AkaMSLink> linksToCreate = assetsToPublish
                 .Where(asset => !feedConfig.FilenamesToExclude.Contains(Path.GetFileName(asset)))
                 .Select(asset =>
+                {
+
+                    // blob path.
+                    string actualTargetUrl = feedBaseUrl + asset;
+
+                    List<AkaMSLink> newLinks = new List<AkaMSLink>();
+                    foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
                     {
+                        newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
+                    }
 
-                        // blob path.
-                        string actualTargetUrl = feedBaseUrl + asset;
-
-                        List<AkaMSLink> newLinks = new List<AkaMSLink>();
-                        foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
-                        {
-                            newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
-                        }
-
-                        return newLinks;
-                    })
+                    return newLinks;
+                })
                 .SelectMany(links => links)
                 .ToList();
 
             await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
+        }
+
+        /// <summary>
+        /// Internal for testing
+        /// </summary>
+        /// <param name="feedConfig"></param>
+        /// <param name="expectedSuffixLength"></param>
+        /// <returns></returns>
+        public static string ComputeLatestLinkBase(TargetFeedConfig feedConfig)
+        {
+            string feedBaseUrl = feedConfig.SafeTargetURL;
+            if (!feedBaseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+            {
+                feedBaseUrl += "/";
+            }
+            var authority = new Uri(feedBaseUrl).Authority;
+            if (AccountsWithCdns.TryGetValue(authority, out var replacementAuthority))
+            {
+                // The storage accounts are in a single datacenter in the US and thus download 
+                // times can be painful elsewhere. The CDN helps with this therefore we point the target 
+                // of the aka.ms links to the CDN.
+                feedBaseUrl = feedBaseUrl.Replace(authority, replacementAuthority);
+            }
+
+            return feedBaseUrl;
         }
 
         /// <sunnary>

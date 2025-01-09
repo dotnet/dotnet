@@ -10,7 +10,7 @@ using System.Threading;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 #if !NET472_OR_GREATER
-using Microsoft.DotNet.Maestro.Client.Models;
+using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using Task = System.Threading.Tasks.Task;
@@ -97,6 +97,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 #else
 public class AzureDevOpsNugetFeedAssetPublisher : Task
 {
-    public override bool Execute() => throw new NotSupportedException("AzureDevOpsNugetFeedAssetPublisher depends on Maestro.Client, which has discontinued support for desktop frameworks.");
+    public override bool Execute() => throw new NotSupportedException("AzureDevOpsNugetFeedAssetPublisher depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
 }
 #endif

@@ -25,8 +25,8 @@ using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 #if !NET472_OR_GREATER
 using Azure.Identity;
-using Microsoft.DotNet.Maestro.Client;
-using Microsoft.DotNet.Maestro.Client.Models;
+using Microsoft.DotNet.ProductConstructionService.Client;
+using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
 #endif
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
@@ -293,7 +293,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         /// <param name="buildInformation">Build information</param>
         /// <returns>Map of asset name -> list of assets with that name.</returns>
-        protected ReadOnlyDictionary<string, Asset> CreateBuildAssetDictionary(Maestro.Client.Models.Build buildInformation)
+        protected ReadOnlyDictionary<string, Asset> CreateBuildAssetDictionary(ProductConstructionService.Client.Models.Build buildInformation)
         {
             Dictionary<string, Asset> buildAssets = new Dictionary<string, Asset>();
 
@@ -341,14 +341,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         ///   Persist in BAR all pending associations of Asset -> AssetLocation stored in `NewAssetLocations`.
         /// </summary>
         /// <param name="client">Maestro++ API client</param>
-        protected async Task PersistPendingAssetLocationAsync(IMaestroApi client)
+        protected async Task PersistPendingAssetLocationAsync(IProductConstructionServiceApi client)
         {
             Log.LogMessage(MessageImportance.High, "\nPersisting new locations of assets in the Build Asset Registry.");
 
             var updates = NewAssetLocations.Keys.Select(nal => new AssetAndLocation(nal.AssetId, (LocationType)nal.LocationType)
             {
                 Location = nal.AssetLocation
-            }).ToImmutableList();
+            }).ToList();
 
             await client.Assets.BulkAddLocationsAsync(updates);
 
@@ -524,7 +524,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <param name="publishSpecialClrFiles">If true, the special coreclr module indexed files like  DBI, DAC and SOS are published</param>
         /// <param name="dryRun">If true, it will log all the operations of extraction and the symbol command that would get used, but never call into the symbol indexing logic.</param>
         public async Task HandleSymbolPublishingAsync(
-            Maestro.Client.Models.Build buildInfo,
+            ProductConstructionService.Client.Models.Build buildInfo,
             ReadOnlyDictionary<string, Asset> buildAssets,
             string pdbArtifactsBasePath,
             string symbolPublishingExclusionsFile,
@@ -1502,10 +1502,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 // dead links in the interim.
                 await LinkManager.CreateOrUpdateLatestLinksAsync(
                     assetsToPublish,
-                    feedConfig,
-                    feedConfig.Type == FeedType.AzureStorageContainer
-                        ? 0
-                        : PublishingConstants.ExpectedFeedUrlSuffix.Length);
+                    feedConfig);
             }
         }
 
@@ -1785,7 +1782,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 #else
     public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities.Task
     {
-        public override bool Execute() => throw new NotSupportedException("PublishArtifactsInManifestBase depends on Maestro.Client, which has discontinued support for desktop frameworks.");
+        public override bool Execute() => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
 
         public abstract Task<bool> ExecuteAsync();
 
@@ -1794,7 +1791,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             TargetFeedConfig feedConfig,
             int maxClients,
             Func<TargetFeedConfig, HttpClient, T, string, string, string, Task> packagePublishAction)  
-            => throw new NotSupportedException("PublishArtifactsInManifestBase depends on Maestro.Client, which has discontinued support for desktop frameworks.");
+            => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
 
         public Task PushNugetPackageAsync(
             TargetFeedConfig feedConfig,
@@ -1807,7 +1804,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string feedName,
             Func<string, string, HttpClient, MsBuildUtils.TaskLoggingHelper, Task<PackageFeedStatus>> CompareLocalPackageToFeedPackageCallBack = null,
             Func<string, string, Task<ProcessExecutionResult>> RunProcessAndGetOutputsCallBack = null
-            ) => throw new NotSupportedException("PublishArtifactsInManifestBase depends on Maestro.Client, which has discontinued support for desktop frameworks.");
+            ) => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
     }
 }
 #endif

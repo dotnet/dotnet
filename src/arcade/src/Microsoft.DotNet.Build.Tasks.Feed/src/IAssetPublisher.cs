@@ -3,7 +3,7 @@
 
 using System.Threading;
 #if !NET472_OR_GREATER
-using Microsoft.DotNet.Maestro.Client.Models;
+using Microsoft.DotNet.ProductConstructionService.Client.Models;
 #endif
 using Task = System.Threading.Tasks.Task;
 

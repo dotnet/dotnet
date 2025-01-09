@@ -8,7 +8,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.CloudTestTasks;
 #if !NET472_OR_GREATER
-using Microsoft.DotNet.Maestro.Client.Models;
+using Microsoft.DotNet.ProductConstructionService.Client.Models;
 #endif
 using Task = System.Threading.Tasks.Task;
 

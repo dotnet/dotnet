@@ -15,7 +15,7 @@
       EnableDefaultArtifacts            Includes packages under "/artifacts/packages/**" for publishing. Defaults to true.
       DotNetBuildPass                   While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
                                           The build pass number gets added to the asset manifest file name to avoid collisions.
-    
+
     Optional items:
       Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
         - ChecksumPath                    The destination path to generate a checksum file for the artifact. Set the `RelativeBlobPathParent`
@@ -58,12 +58,9 @@
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
-  <!-- Allow for repo specific Publish properties such as add additional files to be published -->
-  <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
-
   <PropertyGroup>
     <!-- Default publishing target is 3. -->
-    <PublishingVersion Condition="'$(PublishingVersion)' == ''">3</PublishingVersion>
+    <PublishingVersion>3</PublishingVersion>
     
     <!-- Globally set property. -->
     <IsStableBuild>false</IsStableBuild>
@@ -71,20 +68,17 @@
 
     <!-- If `IsReleaseOnlyPackageVersion` is set to true, package safety checks can be skipped-->
     <IsReleaseOnlyPackageVersion>false</IsReleaseOnlyPackageVersion>
-    <IsReleaseOnlyPackageVersion Condition ="('$(SkipPackagePublishingVersionChecks)' == 'true') or ('$(PreReleaseVersionLabel)' == '' and '$(AutoGenerateAssemblyVersion)' == 'true')">true</IsReleaseOnlyPackageVersion>
+    <IsReleaseOnlyPackageVersion Condition ="'$(SkipPackagePublishingVersionChecks)' == 'true' or ('$(PreReleaseVersionLabel)' == '' and '$(AutoGenerateAssemblyVersion)' == 'true')">true</IsReleaseOnlyPackageVersion>
     
-    <!-- If `AutoGenerateSymbolPackages` is not set we default it to true. -->
-    <!-- Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates. -->
-    <!-- Also do not generate symbol packages if in inner source build, in product build. -->
+    <!-- If `AutoGenerateSymbolPackages` is not set we default it to true.
+         Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates.
+         Also do not generate symbol packages if in inner source build, in product build. -->
     <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
       ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
 
-    <SymbolPackagesDir>$(ArtifactsTmpDir)SymbolPackages\</SymbolPackagesDir>
-
-    <PublishDependsOnTargets Condition="$(PublishToSymbolServer)">$(PublishDependsOnTargets);PublishSymbols</PublishDependsOnTargets>
-    <PublishDependsOnTargets Condition="$(DotNetPublishUsingPipelines)">$(PublishDependsOnTargets);PublishToAzureDevOpsArtifacts</PublishDependsOnTargets>
-
-    <PublishDependsOnTargets>BeforePublish;$(PublishDependsOnTargets)</PublishDependsOnTargets>
+    <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts and PublishSymbols. We can't rename this
+         property as it is used by other repositories already. -->
+    <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -99,44 +93,50 @@
     <AssetManifestFilePath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
+    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" PublishFlatContainer="false" />
+    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" PublishFlatContainer="false" />
+  </ItemGroup>
+
+  <!-- Allow for repo specific Publish properties such as add additional files to be published -->
+  <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
+
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
   <Import Project="$(NuGetPackageRoot)microsoft.symboluploader.build.task\$(MicrosoftSymbolUploaderBuildTaskVersion)\build\PublishSymbols.targets" Condition="$(PublishToSymbolServer)"/>
 
-  <Target Name="Publish"
-          DependsOnTargets="$(PublishDependsOnTargets)" />
+  <Target Name="Publish" DependsOnTargets="PublishSymbols;PublishToAzureDevOpsArtifacts" />
 
-  <Target Name="BeforePublish">
-    <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
-      <ExistingSymbolPackages Include="$(ArtifactsShippingPackagesDir)**/*.symbols.nupkg" IsShipping="true" />
-      <ExistingSymbolPackages Include="$(ArtifactsNonShippingPackagesDir)**/*.symbols.nupkg" IsShipping="false" />
-
-      <PackagesToPublish Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" IsShipping="true" />
-      <PackagesToPublish Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" />
-    </ItemGroup>
-
-    <!-- Respect Artifact item repo extension point for packages -->
-    <ItemGroup Condition="'@(Artifact)' != ''">
-      <ExistingSymbolPackages Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))" />
-      <PackagesToPublish Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' == '.nupkg'" />
+  <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
+    <ItemGroup>
+      <!-- Exclude all existing *.symbols.nupkg in source-only build - we create a unified symbols archive instead. -->
+      <_ExistingSymbolPackage Include="@(Artifact)" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))" />
+      <_PackageToPublish Include="@(Artifact)" Exclude="@(_ExistingSymbolPackage)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' == '.nupkg'" />
     </ItemGroup>
 
     <ItemGroup>
-      <!-- Make sure that PackagesToPublish doesn't contain existing symbol packages. --> 
-      <PackagesToPublish Remove="@(ExistingSymbolPackages)" />
+      <ItemsToPushToBlobFeed Include="@(_PackageToPublish);@(_ExistingSymbolPackage)" Exclude="@(ItemsToPushToBlobFeed)" />
+    </ItemGroup>
+  </Target>
 
-      <!-- Do not generate symbol packages when building from source. The generate package for the source build intermediate
-           will simply contain the same, non-symbol content. -->
-      <PackagesToPublish Update="@(PackagesToPublish)" Condition="'$(AutoGenerateSymbolPackages)' == 'true'">
+  <Target Name="AutoGenerateSymbolPackages" DependsOnTargets="BeforePublish" Condition="'$(AutoGenerateSymbolPackages)' == 'true'">
+    <PropertyGroup>
+      <SymbolPackagesDir Condition="'$(SymbolPackagesDir)' == ''">$(ArtifactsTmpDir)SymbolPackages\</SymbolPackagesDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_PackageToPublish Update="@(_PackageToPublish)">
         <SymbolPackageToGenerate Condition="!Exists('%(RootDir)%(Directory)%(Filename).symbols.nupkg')">$(SymbolPackagesDir)%(Filename).symbols.nupkg</SymbolPackageToGenerate>
-      </PackagesToPublish>
+      </_PackageToPublish>
 
-      <SymbolPackagesToGenerate Include="@(PackagesToPublish->'%(SymbolPackageToGenerate)')" Condition="'%(PackagesToPublish.SymbolPackageToGenerate)' != ''" Exclude="@(ExistingSymbolPackages -> '$(SymbolPackagesDir)%(Filename)%(Extension)')">
-        <OriginalPackage>%(PackagesToPublish.Identity)</OriginalPackage>
-        <IsShipping>%(PackagesToPublish.IsShipping)</IsShipping>
-      </SymbolPackagesToGenerate>
+      <_SymbolPackageToGenerate Include="@(_PackageToPublish->'%(SymbolPackageToGenerate)')"
+                                Exclude="@(_ExistingSymbolPackage -> '$(SymbolPackagesDir)%(Filename)%(Extension)')"
+                                Condition="'%(_PackageToPublish.SymbolPackageToGenerate)' != ''">
+        <OriginalPackage>%(_PackageToPublish.Identity)</OriginalPackage>
+        <IsShipping>%(_PackageToPublish.IsShipping)</IsShipping>
+      </_SymbolPackageToGenerate>
 
       <!-- If PostBuildSign is true, then we need to include newly generated packages in ItemsToSignPostBuild. -->
-      <ItemsToSignPostBuild Include="@(SymbolPackagesToGenerate->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
+      <ItemsToSignPostBuild Include="@(_SymbolPackageToGenerate->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
     </ItemGroup>
 
     <!--
@@ -144,8 +144,8 @@
       Such packages can act as symbol packages since they have the same structure.
       We just need to copy them to *.symbols.nupkg.
     -->
-    <MakeDir Condition="'@(SymbolPackagesToGenerate)' != ''" Directories="$(SymbolPackagesDir)" />
-    <Copy SourceFiles="@(SymbolPackagesToGenerate->'%(OriginalPackage)')" DestinationFiles="@(SymbolPackagesToGenerate)" />
+    <MakeDir Condition="'@(_SymbolPackageToGenerate)' != ''" Directories="$(SymbolPackagesDir)" />
+    <Copy SourceFiles="@(_SymbolPackageToGenerate->'%(OriginalPackage)')" DestinationFiles="@(_SymbolPackageToGenerate)" />
 
     <ItemGroup>
       <!--
@@ -153,17 +153,13 @@
         our current symbol uploader can't handle. Below is a workaround until
         we get issue: https://github.com/dotnet/arcade/issues/2457 sorted.
       -->
-      <SymbolPackagesToGenerate Remove="$(SymbolPackagesDir)**/Microsoft.DotNet.Darc.*" />
-      <SymbolPackagesToGenerate Remove="$(SymbolPackagesDir)**/Microsoft.DotNet.Maestro.Tasks.*" />
-
-      <!-- Exclude all existing *.symbols.nupkg in source-only build - we create a unified symbols archive instead. -->
-      <ExistingSymbolPackages Remove="@(ExistingSymbolPackages)" Condition="'$(DotNetBuildSourceOnly)' == 'true'"/>
-
-      <ItemsToPushToBlobFeed Include="@(PackagesToPublish);@(ExistingSymbolPackages);@(SymbolPackagesToGenerate)" Exclude="@(ItemsToPushToBlobFeed)" />
+      <_SymbolPackageToGenerate Remove="$(SymbolPackagesDir)**/Microsoft.DotNet.Darc.*" />
+      <_SymbolPackageToGenerate Remove="$(SymbolPackagesDir)**/Microsoft.DotNet.Maestro.Tasks.*" />
     </ItemGroup>
-    
-    <Error Condition="'$(AllowEmptySignPostBuildList)' != 'true' AND '@(ItemsToSignPostBuild)' == ''" 
-           Text="List of files to sign post-build is empty. Make sure that ItemsToSignPostBuild is configured correctly." />
+
+    <ItemGroup>
+      <ItemsToPushToBlobFeed Include="@(_SymbolPackageToGenerate)" Exclude="@(ItemsToPushToBlobFeed)" />
+    </ItemGroup>
   </Target>
 
   <!-- Generate checksums from artifact items that set ChecksumPath.
@@ -187,7 +183,8 @@
   </Target>
 
   <Target Name="PublishToAzureDevOpsArtifacts"
-          DependsOnTargets="GenerateChecksumsFromArtifacts">
+          Condition="'$(DotNetPublishUsingPipelines)' == 'true'"
+          DependsOnTargets="$(PublishDependsOnTargets);GenerateChecksumsFromArtifacts">
     <!-- 
       Sadly AzDO doesn't have a variable to tell the account name. Also
       the format of CollectionURI is not precise across different agent 
@@ -256,6 +253,9 @@
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
+    <Error Condition="'$(AllowEmptySignPostBuildList)' != 'true' AND '@(ItemsToSignPostBuild)' == ''" 
+           Text="List of files to sign post-build is empty. Make sure that ItemsToSignPostBuild is configured correctly." />
+
     <!--
       The user can set `PublishingVersion` via eng\Publishing.props
     -->
@@ -319,7 +319,9 @@
       Condition="'@(FilesToPublishToSymbolServer)' != ''"/>
   </Target>
 
-  <Target Name="PublishSymbols">
+  <Target Name="PublishSymbols"
+          Condition="'$(PublishToSymbolServer)' == 'true'"
+          DependsOnTargets="$(PublishDependsOnTargets)">
     <PropertyGroup>
       <DotNetSymbolExpirationInDays Condition="'$(DotNetSymbolExpirationInDays)' == ''">3650</DotNetSymbolExpirationInDays>
       <DryRun>false</DryRun>
@@ -342,7 +344,7 @@
       <!--
         Publish Portable PDBs contained in symbol packages.
       -->
-      <PackagesToPublishToSymbolServer Include="@(ExistingSymbolPackages);@(SymbolPackagesToGenerate)"/>
+      <PackagesToPublishToSymbolServer Include="@(_ExistingSymbolPackage);@(_SymbolPackageToGenerate)"/>
     </ItemGroup>
 
     <PropertyGroup>
