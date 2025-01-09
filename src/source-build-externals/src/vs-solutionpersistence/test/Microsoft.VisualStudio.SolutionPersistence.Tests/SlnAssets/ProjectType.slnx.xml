@@ -1,0 +1,6 @@
+<Solution>
+    <Configurations>
+        <ProjectType Name="NewProj" TypeId="ca072fa1-8724-464f-a6a7-0db7a09b8719" />
+    </Configurations>
+    <Project Path="SingleNativeProject.newProject" Type="NewProj" />
+</Solution>

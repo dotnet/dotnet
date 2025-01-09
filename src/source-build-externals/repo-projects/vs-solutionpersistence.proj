@@ -1,0 +1,32 @@
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <!-- Override default TargetFrameworks to skip building net framework. -->
+    <EnvironmentVariables Include="TargetFrameworks=$(NetCurrent)" />
+
+    <!-- Flag to remove analyzers -->
+    <EnvironmentVariables Include="SourceBuild=true" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Project Paths -->
+    <SlnPersistenceDirectory>$(ProjectDirectory)/src/Microsoft.VisualStudio.SolutionPersistence/</SlnPersistenceDirectory>
+    <SlnPersistenceProjectPath>$(SlnPersistenceDirectory)Microsoft.VisualStudio.SolutionPersistence.csproj</SlnPersistenceProjectPath>
+    <PackagesOutput>$(ProjectDirectory)bin/Packages/$(Configuration)/NuGet/</PackagesOutput>
+
+    <GlobalJsonFile>$(ProjectDirectory)/global.json</GlobalJsonFile>
+    <NuGetConfigFile>$(ProjectDirectory)/nuget.config</NuGetConfigFile>
+
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:Configuration=$(Configuration)</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:TreatWarningsAsErrors=false</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotnetToolCommandArgs>
+
+    <BuildCommand>$(DotnetToolCommand) build $(SlnPersistenceProjectPath) /bl:build.binlog $(DotnetToolCommandArgs)</BuildCommand>
+    <BuildPackagesCommand>$(DotnetToolCommand) pack $(SlnPersistenceProjectPath) /bl:pack.binlog $(DotnetToolCommandArgs)</BuildPackagesCommand>
+    <CleanCommand>$(DotnetToolCommand) clean $(SlnPersistenceProjectPath) $(DotnetToolCommandArgs)</CleanCommand>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

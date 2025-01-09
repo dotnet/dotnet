@@ -1,0 +1,37 @@
+#nullable enable
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.SolutionArgumentException(string? message, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType type) -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.SolutionArgumentException(string? message, string? paramName, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType type) -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.SolutionArgumentException(string? message, string? paramName, System.Exception? innerException, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType type) -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.SolutionArgumentException(string? message, System.Exception? innerException, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType type) -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.Type.get -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionArgumentException.Type.init -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.CannotMoveFolderToChildFolder = 1 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateDefaultProjectType = 2 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateExtension = 3 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateItemRef = 4 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateName = 5 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateProjectName = 6 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateProjectPath = 7 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.DuplicateProjectTypeId = 8 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidConfiguration = 9 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidEncoding = 10 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidFolderPath = 11 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidFolderReference = 12 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidItemRef = 13 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidLoop = 14 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidModelItem = 15 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidName = 16 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidProjectReference = 17 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidProjectTypeReference = 18 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidVersion = 19 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.InvalidXmlDecoratorElementName = 23 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.MissingProjectValue = 20 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.NotSolution = 21 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.Undefined = 0 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType.UnsupportedVersion = 22 -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionException.ErrorType.get -> Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType?
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionException.ErrorType.init -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionException.SolutionException(string! message, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType errorType) -> void
+Microsoft.VisualStudio.SolutionPersistence.Model.SolutionException.SolutionException(string! message, System.Exception! inner, Microsoft.VisualStudio.SolutionPersistence.Model.SolutionErrorType errorType) -> void
