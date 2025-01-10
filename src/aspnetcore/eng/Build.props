@@ -71,7 +71,7 @@
       </ItemGroup>
     </When>
     <When Condition="'$(DotNetBuildPass)' == '2'">
-      <ItemGroup Condition="'$(DotNetBuild)' == 'true' and ('$(TargetOsName)' == 'win' and '$(TargetArchitecture)' == 'x64'">
+      <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(TargetOsName)' == 'win' and '$(TargetArchitecture)' == 'x64'">
         <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
       </ItemGroup>
     </When>
