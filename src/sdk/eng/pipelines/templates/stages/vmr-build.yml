@@ -416,6 +416,41 @@ stages:
         vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
 
+    # Build Pass 2 verticals
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x64
+        runTests: false
+        buildPass: 2
+        reuseBuildArtifactsFrom:
+        - Windows_x64
+        - Windows_x86
+        - Windows_arm64
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: arm64
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x86
+
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
@@ -1206,15 +1241,6 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            pool: ${{ parameters.pool_Windows }}
-            targetOS: windows
-            targetArchitecture: arm64
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
             buildName: Windows_ShortStack_NativeAOT
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -1266,15 +1292,6 @@ stages:
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildMonoCrossAOT=true
             runTests: false
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            pool: ${{ parameters.pool_Windows }}
-            targetOS: windows
-            targetArchitecture: x86
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -1332,23 +1349,6 @@ stages:
             extraProperties: /p:PgoInstrument=true
             runTests: false
             sign: false
-
-        # Build Pass 2 verticals
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            pool: ${{ parameters.pool_Windows }}
-            targetOS: windows
-            targetArchitecture: x64
-            runTests: false
-            buildPass: 2
-            reuseBuildArtifactsFrom:
-            - Windows_x64
-            - Windows_x86
-            - Windows_arm64
 
 ### FINAL JOIN ###
 - ${{ if and(parameters.isBuiltFromVmr, not(parameters.isSourceOnlyBuild), ne(variables['Build.Reason'], 'PullRequest')) }}:
