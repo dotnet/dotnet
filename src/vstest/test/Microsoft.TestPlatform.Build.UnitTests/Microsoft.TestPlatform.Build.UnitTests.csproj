@@ -18,6 +18,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkPackageVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCorePackageVersion)" />
+    <!-- To solve potential vulnerability in Microsoft.Build.Utilities.Core 17.8.3, if the version is updated we can remove this direct dependency. -->
+    <PackageReference Include="Microsoft.IO.Redist" Version="6.0.1" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))" />
   </ItemGroup>
 
 </Project>
