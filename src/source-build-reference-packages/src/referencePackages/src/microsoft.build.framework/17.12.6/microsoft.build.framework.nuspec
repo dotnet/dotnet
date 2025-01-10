@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Build.Framework</id>
+    <version>17.12.6</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</projectUrl>
+    <iconUrl>https://go.microsoft.com/fwlink/?linkid=825694</iconUrl>
+    <description>This package contains the Microsoft.Build.Framework assembly which is a common assembly used by other MSBuild assemblies.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>MSBuild</tags>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/msbuild" commit="db5f6012cb7f6e2dd7066c50c573c0d352713407" />
+    <dependencies>
+      <group targetFramework="net9.0" />
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.Win32.Registry" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Principal.Windows" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>Microsoft.Private.Intellisense</AssemblyName>
-  </PropertyGroup>
-
-</Project>

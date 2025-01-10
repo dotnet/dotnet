@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
+    <AssemblyName>Microsoft.Build.Tasks.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6" />
+    <PackageReference Include="Microsoft.NET.StringTools" Version="17.12.6" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.12.6" />
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6" />
+    <PackageReference Include="Microsoft.NET.StringTools" Version="17.12.6" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.12.6" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>

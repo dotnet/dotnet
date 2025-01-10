@@ -403,11 +403,11 @@ namespace NuGet.Configuration
 
     public partial class NuGetPathContext : Common.INuGetPathContext
     {
-        public System.Collections.Generic.IReadOnlyList<string> FallbackPackageFolders { get { throw null; } }
+        public required System.Collections.Generic.IReadOnlyList<string> FallbackPackageFolders { get { throw null; } init { } }
 
-        public string HttpCacheFolder { get { throw null; } }
+        public required string HttpCacheFolder { get { throw null; } init { } }
 
-        public string UserPackageFolder { get { throw null; } }
+        public required string UserPackageFolder { get { throw null; } init { } }
 
         public static NuGetPathContext Create(ISettings settings) { throw null; }
 

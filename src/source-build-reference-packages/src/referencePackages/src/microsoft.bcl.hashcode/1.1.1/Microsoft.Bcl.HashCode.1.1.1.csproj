@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <AssemblyName>Microsoft.Bcl.HashCode</AssemblyName>
-    <StrongNameKeyId>Open</StrongNameKeyId>
-  </PropertyGroup>
-
-</Project>
