@@ -60,6 +60,7 @@
   <Choose>
     <!-- Project selection can be overridden on the command line by passing in -projects. -->
     <When Condition="'$(ProjectToBuild)' != '' and '$(DotNetBuildPass)' != '2'">
+      <Message Text="Line 63" Importance="High" />
       <ItemGroup>
         <ProjectToBuild Include="$(ProjectToBuild)"
             Exclude="@(ProjectToExclude);$(RepoRoot)**\bin\**\*;$(RepoRoot)**\obj\**\*">
@@ -71,6 +72,7 @@
       </ItemGroup>
     </When>
     <When Condition="'$(DotNetBuildPass)' == '2'">
+      <Message Text="Line 75 $(DotNetBuild) $(TargetOsName) $(TargetArchitecture)" Importance="High" />
       <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(TargetOsName)' == 'win' and '$(TargetArchitecture)' == 'x64'">
         <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
       </ItemGroup>
