@@ -74,10 +74,17 @@
       </ItemGroup>
     </When>
     <When Condition="'$(DotNetBuildPass)' == '2'">
+      <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
+        <MyPassItem Include="$(DotNetBuild)" />
+      </ItemGroup>
+      <ItemGroup Condition="'$(TargetOsName)' == 'win'">
+        <MyOsItem Include="$(DotNetBuild)" />
+      </ItemGroup>
+      <ItemGroup Condition="'$(TargetArchitecture)' == 'x64'">
+        <MyArchItem Include="$(TargetArchitecture)" />
+      </ItemGroup>
       <ItemGroup>
-        <MySweetItem Include="$(DotNetBuild)" />
-        <MySweetItem Include="$(TargetOsName)" />
-        <MySweetItem Include="$(TargetArchitecture)" />
+        <MySweetItem Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
       </ItemGroup>
       <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(TargetOsName)' == 'win' and '$(TargetArchitecture)' == 'x64'">
         <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
