@@ -75,12 +75,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
                     return false;
                 }
 
-                linksToCreate.Add(new AkaMSLink
-                {
-                    ShortUrl = shortUrl,
-                    TargetUrl = targetUrl,
-                    Description = description
-                });
+                linksToCreate.Add(new AkaMSLink(shortUrl, targetUrl, description));
             }
 
             try

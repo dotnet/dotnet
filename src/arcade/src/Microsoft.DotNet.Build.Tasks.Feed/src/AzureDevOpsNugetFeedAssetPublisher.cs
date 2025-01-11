@@ -84,7 +84,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             try
             {
-                var config = new TargetFeedConfig(default, _targetUrl, default, default);
+                var config = new TargetFeedConfig(default, _targetUrl, default, default, default, default, default);
                 await _task.PushNugetPackageAsync(config, _httpClient, file, id, version, _feedAccount, _feedVisibility, _feedName);
             }
             catch (Exception e)

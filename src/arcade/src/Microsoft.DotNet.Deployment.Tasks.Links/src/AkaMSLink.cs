@@ -8,18 +8,25 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
     /// </summary>
     public class AkaMSLink
     {
+        public AkaMSLink(string shortUrl, string targetUrl, string description = "")
+        {
+            ShortUrl = shortUrl;
+            TargetUrl = targetUrl;
+            Description = description;
+        }
+
         /// <summary>
         /// Target of the link
         /// </summary>
-        public string TargetUrl { get; set; }
+        public string TargetUrl { get; }
         /// <summary>
         /// Short url of the link. Should only include the fragment element of the url, not the full aka.ms
         /// link.
         /// </summary>
-        public string ShortUrl { get; set; }
+        public string ShortUrl { get; }
         /// <summary>
         /// Description of the link.
         /// </summary>
-        public string Description { get; set; } = "";
+        public string Description { get; }
     }
 }

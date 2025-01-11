@@ -12,6 +12,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
@@ -95,13 +96,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     StablePackageFeed,
                     FeedType.AzDoNugetFeed,
                     AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                     assetSelection: AssetSelection.ShippingOnly,
                     isolated: true,
                     @internal: isInternalBuild,
                     allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility,
-                    filenamesToExclude: FilesToExclude));
+                    symbolPublishVisibility: symbolVisibility));
 
             expectedFeeds.Add(
                 new TargetFeedConfig(
@@ -109,13 +111,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     StableSymbolsFeed,
                     FeedType.AzDoNugetFeed,
                     AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                     assetSelection: AssetSelection.All,
                     isolated: true,
                     @internal: isInternalBuild,
                     allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility,
-                    filenamesToExclude: FilesToExclude));
+                    symbolPublishVisibility: symbolVisibility));
 
             expectedFeeds.Add(
                 new TargetFeedConfig(
@@ -123,13 +126,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     PublishingConstants.FeedDotNetEng,
                     FeedType.AzDoNugetFeed,
                     AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                     assetSelection: AssetSelection.NonShippingOnly,
                     isolated: false,
                     @internal: isInternalBuild,
                     allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility,
-                    filenamesToExclude: FilesToExclude));
+                    symbolPublishVisibility: symbolVisibility));
 
             if (publishInstallersAndChecksums)
             {
@@ -145,13 +149,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                             PublishingConstants.FeedStagingForInstallers,
                             FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
-                            latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                            latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                            akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                            akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                             assetSelection: AssetSelection.All,
                             isolated: false,
                             @internal: isInternalBuild,
                             allowOverwrite: false,
-                            symbolPublishVisibility: symbolVisibility,
-                            filenamesToExclude: FilesToExclude));
+                            symbolPublishVisibility: symbolVisibility));
                 }
                 expectedFeeds.Add(
                     new TargetFeedConfig(
@@ -159,13 +164,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         PublishingConstants.FeedStagingForChecksums,
                         FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
-                        latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                         assetSelection: AssetSelection.All,
                         isolated: false,
                         @internal: isInternalBuild,
                         allowOverwrite: false,
-                        symbolPublishVisibility: symbolVisibility,
-                        filenamesToExclude: FilesToExclude));
+                        symbolPublishVisibility: symbolVisibility));
             }
 
 
@@ -181,7 +187,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     FeedKeys,
                     Array.Empty<ITaskItem>(),
                     Array.Empty<ITaskItem>(),
-                    new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine,
                     symbolVisibility,
                     StablePackageFeed,
@@ -206,26 +212,28 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 PublishingConstants.FeedDotNetEng,
                 FeedType.AzDoNugetFeed,
                 AzureDevOpsFeedsKey,
-                latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
-                AssetSelection.ShippingOnly,
-                false,
-                true,
-                false,
-                symbolPublishVisibility: symbolVisibility,
-                filenamesToExclude: FilesToExclude));
+                latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                assetSelection: AssetSelection.ShippingOnly,
+                isolated: false,
+                @internal: true,
+                allowOverwrite: false,
+                symbolPublishVisibility: symbolVisibility));
 
             expectedFeeds.Add(new TargetFeedConfig(
                 TargetFeedContentType.Package,
                 PublishingConstants.FeedDotNetEng,
                 FeedType.AzDoNugetFeed,
                 AzureDevOpsFeedsKey,
-                latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
-                AssetSelection.NonShippingOnly,
-                false,
-                true,
-                false,
-                symbolPublishVisibility: symbolVisibility,
-                filenamesToExclude: FilesToExclude));
+                latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                assetSelection: AssetSelection.NonShippingOnly,
+                isolated: false,
+                @internal: true,
+                allowOverwrite: false,
+                symbolPublishVisibility: symbolVisibility));
 
             if (publishInstallersAndChecksums)
             {
@@ -237,13 +245,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                             PublishingConstants.FeedStagingForInstallers,
                             FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
-                            latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                            latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                            akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                            akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                             assetSelection: AssetSelection.All,
                             isolated: false,
                             @internal: true,
                             allowOverwrite: false,
-                            symbolPublishVisibility: symbolVisibility,
-                            filenamesToExclude: FilesToExclude));
+                            symbolPublishVisibility: symbolVisibility));
                 }
 
                 expectedFeeds.Add(
@@ -252,13 +261,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         PublishingConstants.FeedStagingForChecksums,
                         FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
-                        latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                         assetSelection: AssetSelection.All,
                         isolated: false,
                         @internal: true,
                         allowOverwrite: false,
-                        symbolPublishVisibility: symbolVisibility,
-                        filenamesToExclude: FilesToExclude));
+                        symbolPublishVisibility: symbolVisibility));
 
             }
             else
@@ -269,13 +279,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         PublishingConstants.FeedStagingForInstallers,
                         FeedType.AzureStorageContainer,
                         InstallersTargetStaticFeedKey,
-                        latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                         assetSelection: AssetSelection.All,
                         isolated: false,
                         @internal: true,
                         allowOverwrite: false,
-                        symbolPublishVisibility: symbolVisibility,
-                        filenamesToExclude: FilesToExclude));
+                        symbolPublishVisibility: symbolVisibility));
             }
 
             var buildEngine = new MockBuildEngine();
@@ -290,10 +301,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     FeedKeys,
                     Array.Empty<ITaskItem>(),
                     Array.Empty<ITaskItem>(),
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine: buildEngine,
-                    symbolVisibility,
-                    filesToExclude: FilesToExclude
+                    symbolVisibility
                 );
 
             var actualFeeds = config.Setup();
@@ -314,13 +324,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     PublishingConstants.FeedDotNetEng,
                     FeedType.AzDoNugetFeed,
                     AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [ $"{LatestLinkShortUrlPrefix}/{BuildQuality}" ],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                     assetSelection: AssetSelection.ShippingOnly,
                     isolated: false,
                     @internal: false,
                     allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility,
-                    filenamesToExclude: FilesToExclude));
+                    symbolPublishVisibility: symbolVisibility));
 
             expectedFeeds.Add(
                 new TargetFeedConfig(
@@ -328,13 +339,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     PublishingConstants.FeedDotNetEng,
                     FeedType.AzDoNugetFeed,
                     AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                     assetSelection: AssetSelection.NonShippingOnly,
                     isolated: false,
                     @internal: false,
                     allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility,
-                    filenamesToExclude: FilesToExclude));
+                    symbolPublishVisibility: symbolVisibility));
 
             if (publishInstallersAndChecksums)
             {
@@ -346,13 +358,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                             PublishingConstants.FeedStagingForInstallers,
                             FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
-                            latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                            latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                            akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                            akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                             assetSelection: AssetSelection.All,
                             isolated: false,
                             @internal: false,
                             allowOverwrite: false,
-                            symbolPublishVisibility: symbolVisibility,
-                            filenamesToExclude: FilesToExclude));
+                            symbolPublishVisibility: symbolVisibility));
                 }
 
                 expectedFeeds.Add(
@@ -361,13 +374,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         PublishingConstants.FeedStagingForChecksums,
                         FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
-                        latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                         assetSelection: AssetSelection.All,
                         isolated: false,
                         @internal: false,
                         allowOverwrite: false,
-                        symbolPublishVisibility: symbolVisibility,
-                        filenamesToExclude: FilesToExclude));
+                        symbolPublishVisibility: symbolVisibility));
             }
             else
             {
@@ -377,13 +391,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         PublishingConstants.FeedStagingForInstallers,
                         FeedType.AzureStorageContainer,
                         InstallersTargetStaticFeedKey,
-                        latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
                         assetSelection: AssetSelection.All,
                         isolated: false,
                         @internal: false,
                         allowOverwrite: false,
-                        symbolPublishVisibility: symbolVisibility,
-                        filenamesToExclude: FilesToExclude));
+                        symbolPublishVisibility: symbolVisibility));
             }
 
             var buildEngine = new MockBuildEngine();
@@ -398,10 +413,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     FeedKeys,
                     Array.Empty<ITaskItem>(),
                     Array.Empty<ITaskItem>(),
-                    latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine: buildEngine,
-                    symbolVisibility,
-                    filesToExclude: FilesToExclude
+                    symbolVisibility
                 );
 
             var actualFeeds = config.Setup();

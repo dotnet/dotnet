@@ -514,6 +514,13 @@ namespace Microsoft.DotNet.SignTool
             {
                 string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
 
+                // The relative path ocassionally ends with a '/', which is not a valid path given that the path is a file.
+                // Remove the following workaround once https://github.com/dotnet/arcade/issues/15384 is resolved.
+                if (relativePath.EndsWith("/"))
+                {
+                    relativePath = relativePath.TrimEnd('/');
+                }
+
                 if (match == null || relativePath.StartsWith(match))
                 {
                     yield return (relativePath, entry.DataStream, entry.DataStream.Length);

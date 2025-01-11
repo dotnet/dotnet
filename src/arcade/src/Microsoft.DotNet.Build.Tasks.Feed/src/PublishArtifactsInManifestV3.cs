@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -151,10 +152,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         feedKeys: FeedKeys,
                         feedSasUris: FeedSasUris,
                         feedOverrides: AllowFeedOverrides ? FeedOverrides : Array.Empty<ITaskItem>(),
-                        latestLinkShortUrlPrefixes: shortLinkUrls,
+                        latestLinkShortUrlPrefixes: shortLinkUrls.ToImmutableList(),
                         buildEngine: BuildEngine,
                         targetChannelConfig.SymbolTargetType,
-                        filesToExclude: targetChannelConfig.FilenamesToExclude,
                         flatten: targetChannelConfig.Flatten,
                         log: Log);
 

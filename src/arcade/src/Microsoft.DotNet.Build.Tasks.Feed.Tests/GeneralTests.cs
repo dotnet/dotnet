@@ -204,12 +204,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly)  
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             TargetChannelConfig right = new(
@@ -217,12 +218,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly) 
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             bool actualResult = left.Equals(right);
@@ -238,12 +240,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly)
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             TargetChannelConfig right = new(
@@ -251,9 +254,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: Enumerable.Empty<TargetFeedSpecification>(),
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             bool actualResult = left.Equals(right);

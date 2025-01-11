@@ -3,6 +3,7 @@
 
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -20,7 +21,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         protected string AzureDevOpsStaticShippingFeed { get; set; }
         protected string AzureDevOpsStaticTransportFeed { get; set; }
         protected string AzureDevOpsStaticSymbolsFeed { get; set; }
-        protected List<string> LatestLinkShortUrlPrefixes { get; set; }
+        protected ImmutableList<string> LatestLinkShortUrlPrefixes { get; set; }
         protected string AzureDevOpsFeedsKey { get; set; }
 
         protected SetupTargetFeedConfigBase(bool isInternalBuild,
@@ -35,7 +36,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string azureDevOpsStaticShippingFeed,
             string azureDevOpsStaticTransportFeed,
             string azureDevOpsStaticSymbolsFeed,
-            List<string> latestLinkShortUrlPrefixes,
+            ImmutableList<string> latestLinkShortUrlPrefixes,
             string azureDevOpsFeedsKey)
         {
             IsInternalBuild = isInternalBuild;

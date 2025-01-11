@@ -48,16 +48,18 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             var feedConfigsForSymbols = new HashSet<TargetFeedConfig>
             {
                 new TargetFeedConfig(
-                TargetFeedContentType.Symbols,
-                "TargetUrl",
-                FeedType.AzDoNugetFeed,
-                default,
-                new List<string>(),
-                AssetSelection.All,
-                isolated: true,
-                @internal: false,
-                allowOverwrite: true,
-                symbolTargetVisibility)
+                    TargetFeedContentType.Symbols,
+                    "TargetUrl",
+                    FeedType.AzDoNugetFeed,
+                    default,
+                    default,
+                    default,
+                    default,
+                    AssetSelection.All,
+                    isolated: true,
+                    @internal: false,
+                    allowOverwrite: true,
+                    symbolTargetVisibility)
             };
             SymbolPublishVisibility visibility = publishTask.GetSymbolPublishingVisibility(feedConfigsForSymbols);
             Assert.Equal(symbolTargetVisibility, visibility);
@@ -89,6 +91,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     "testUrl" + v,
                     FeedType.AzDoNugetFeed,
                     default,
+                    [],
+                    [],
                     [],
                     AssetSelection.All,
                     isolated: true,
@@ -202,6 +206,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 FeedType.AzDoNugetFeed,
                 default,
                 latestLinkShortUrlPrefixes: [],
+                akaMSCreateLinkPatterns: [],
+                akaMSDoNotCreateLinkPatterns: [],
                 AssetSelection.All,
                 isolated: true,
                 @internal: false,

@@ -22,19 +22,19 @@ namespace Microsoft.DotNet.SignTool
 {
     internal class VerifySignatures
     {
-#if NETFRAMEWORK
-        private static IServiceProvider serviceProvider;
-        private static IHttpClientFactory httpClientFactory;
-        private static HttpClient client;
-#else
+#if !NET472
         private static readonly HttpClient client = new(new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(10) });
 #endif
         internal static bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+# if NET472
+            // Debian unpack tooling is not supported on .NET Framework
+            log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for .NET Framework");
+            return false;
+# else
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                // We cannot check the signature of a .deb file on non-Linux platforms.
-                log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} on non-Linux platform.");
+                log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for Windows.");
                 return false;
             }
 
@@ -44,11 +44,6 @@ namespace Microsoft.DotNet.SignTool
             // https://microsoft.sharepoint.com/teams/prss/esrp/info/SitePages/Linux%20GPG%20Signing.aspx
             try
             {
-#if NETFRAMEWORK
-                serviceProvider = new ServiceCollection().AddHttpClient().BuildServiceProvider();
-                httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-                client = httpClientFactory.CreateClient();
-#endif
                 // Download the Microsoft public key
                 using (Stream stream = client.GetStreamAsync("https://packages.microsoft.com/keys/microsoft.asc").Result)
                 {
@@ -58,13 +53,17 @@ namespace Microsoft.DotNet.SignTool
                     }
                 }
 
-                RunCommand($"ar x {filePath} --output {tempDir}");
                 RunCommand($"gpg --import {tempDir}/microsoft.asc");
-                RunCommand($"cat {tempDir}/debian-binary {tempDir}/control.tar.gz {tempDir}/data.tar.gz > {tempDir}/combined-contents");
+
+                string debianBinary = ExtractDebContainerEntry(filePath, "debian-binary", tempDir);
+                string controlTar = ExtractDebContainerEntry(filePath, "control.tar", tempDir);
+                string dataTar = ExtractDebContainerEntry(filePath, "data.tar", tempDir);
+                RunCommand($"cat {debianBinary} {controlTar} {dataTar} > {tempDir}/combined-contents");
 
                 // 'gpg --verify' will return a non-zero exit code if the signature is invalid
                 // We don't want to throw an exception in that case, so we pass throwOnError: false
-                string output = RunCommand($"gpg --verify {tempDir}/_gpgorigin {tempDir}/combined-contents", throwOnError: false);
+                string gpgOrigin = ExtractDebContainerEntry(filePath, "_gpgorigin", tempDir);
+                string output = RunCommand($"gpg --verify {gpgOrigin} {tempDir}/combined-contents", throwOnError: false);
                 if (output.Contains("Good signature"))
                 {
                     return true;
@@ -80,6 +79,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 Directory.Delete(tempDir, true);
             }
+# endif
         }
 
         internal static bool VerifySignedPowerShellFile(string filePath)
@@ -215,5 +215,16 @@ namespace Microsoft.DotNet.SignTool
                 return $"{output}{error}";
             }
         }
+
+# if !NET472
+        private static string ExtractDebContainerEntry(string debianPackage, string entryName, string workingDir)
+        {
+            var (relativePath, content, contentSize) = ZipData.ReadDebContainerEntries(debianPackage, entryName).Single();
+            string entryPath = Path.Combine(workingDir, relativePath);
+            File.WriteAllBytes(entryPath, ((MemoryStream)content).ToArray());
+
+            return entryPath;
+        }
+# endif
     }
 }
