@@ -72,11 +72,35 @@
     </When>
     <When Condition="'$(DotNetBuildPass)' == '2'">
       <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(TargetOsName)' == 'win' and '$(TargetArchitecture)' == 'x64'">
-        <InstallerProject Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+        <InstallerProject1 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+      
+      <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
+        <InstallerProject2 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
       </ItemGroup>
 
-      <ItemGroup>
-        <ProjectToBuild Condition=" '$(BuildInstallers)' == 'true'" Include="@(InstallerProject)" BuildStep="installer" />
+      <ItemGroup Condition=" '$(DotNetBuild)' == 'true'">
+        <InstallerProject3 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(TargetOsName)' == 'win' ">
+        <InstallerProject4 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(TargetArchitecture)' == 'x64' ">
+        <InstallerProject5 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetOsName)' == 'win' ">
+        <InstallerProject6 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetArchitecture)' == 'x64' ">
+        <InstallerProject7 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
+        <InstallerProject8 Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" AdditionalProperties="Platform=x86" />
       </ItemGroup>
     </When>
     <Otherwise>
