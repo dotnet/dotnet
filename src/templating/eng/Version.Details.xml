@@ -8,9 +8,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.605902">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.606004">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>907f78e35772bb35a32c145fb01c0bc52b655b54</Sha>
+      <Sha>1d0bf118044fc096231bfba85b0cd68aad0d1507</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24528.1">
@@ -19,19 +19,36 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25059.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25061.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>bafe140f743db5c41948218d8ebd68ca0c3db35a</Sha>
+      <Sha>98b4ae348fa01b99dc6fbfc8f601efd9b90090db</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25059.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25061.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>bafe140f743db5c41948218d8ebd68ca0c3db35a</Sha>
+      <Sha>98b4ae348fa01b99dc6fbfc8f601efd9b90090db</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
+    <!-- Dependencies required for source build. We'll still update manually -->
     <Dependency Name="System.Formats.Asn1" Version="9.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.Logging" Version="9.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="9.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
