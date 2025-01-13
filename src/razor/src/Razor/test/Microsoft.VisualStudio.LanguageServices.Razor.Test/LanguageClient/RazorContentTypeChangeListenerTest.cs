@@ -226,7 +226,6 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
             textDocumentFactory,
             lspDocumentManager,
             lspEditorFeatureDetector,
-            Mock.Of<IEditorOptionsFactoryService>(s => s.GetOptions(It.IsAny<ITextBuffer>()) == Mock.Of<IEditorOptions>(MockBehavior.Strict), MockBehavior.Strict),
             fileToContentTypeService);
 
         return listener;
