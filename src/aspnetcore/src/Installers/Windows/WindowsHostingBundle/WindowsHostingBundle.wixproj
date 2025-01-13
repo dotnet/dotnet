@@ -99,6 +99,10 @@
     <BundleRegName>$(BundleNameFull)</BundleRegName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(AddVersionToCrossArchitectureInstallerBasePath)' == 'true'">
+    <CrossArchitectureInstallerBasePath>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime', $(SharedFxMsiVersion)))</CrossArchitectureInstallerBasePath>
+  </PropertyGroup>
+
   <ItemGroup>
     <SharedFxInstallers Include="$(CrossArchitectureInstallerBasePath)$(RuntimeInstallerBaseName)-$(SharedFxMsiVersion)-win-x64.msi">
       <TargetPlatform>x64</TargetPlatform>
