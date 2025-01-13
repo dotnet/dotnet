@@ -100,7 +100,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(AddVersionToCrossArchitectureInstallerBasePath)' == 'true'">
-    <CrossArchitectureInstallerBasePath>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime', $(SharedFxMsiVersion)))</CrossArchitectureInstallerBasePath>
+    <CrossArchitectureInstallerBasePath>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime', '$(SharedFxMsiVersion)'))</CrossArchitectureInstallerBasePath>
   </PropertyGroup>
 
   <ItemGroup>
