@@ -1119,7 +1119,7 @@ internal sealed partial class DesignerHost : Container, IDesignerLoaderHost2, ID
             _state[s_stateLoading] = true;
             Unload();
 
-            List<object> errorList = errorCollection is null ? [] : [..errorCollection.Cast<object>()];
+            List<object> errorList = errorCollection is null ? [] : errorCollection.Cast<object>().ToList();
             errorList.Insert(0, ex);
 
             errorCollection = errorList;

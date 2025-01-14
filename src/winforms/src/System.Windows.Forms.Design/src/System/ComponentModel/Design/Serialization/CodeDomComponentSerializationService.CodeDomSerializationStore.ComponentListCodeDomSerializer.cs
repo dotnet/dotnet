@@ -91,7 +91,7 @@ public sealed partial class CodeDomComponentSerializationService
 
                 // We need to also ensure that for every entry in the statement table we have a
                 // corresponding entry in objectNames. Otherwise, we won't deserialize completely.
-                HashSet<string> completeNames = [..objectNames];
+                HashSet<string> completeNames = new(objectNames);
                 completeNames.UnionWith(_statementsTable.Keys);
 
                 _objectState = new(objectState);

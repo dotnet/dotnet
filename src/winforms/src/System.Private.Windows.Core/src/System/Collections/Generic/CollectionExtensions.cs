@@ -25,7 +25,7 @@ internal static class CollectionExtensions
         }
 
         // Fall back to just setting the count (by removing).
-        List<T> list = [..readOnlyList];
+        List<T> list = new(readOnlyList);
         list.RemoveRange(count, list.Count - count);
         return list;
     }
