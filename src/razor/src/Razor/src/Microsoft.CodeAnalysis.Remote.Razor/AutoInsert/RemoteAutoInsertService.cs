@@ -32,7 +32,6 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
     }
 
     private readonly IAutoInsertService _autoInsertService = args.ExportProvider.GetExportedValue<IAutoInsertService>();
-    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
     private readonly IRazorFormattingService _razorFormattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferHtmlInAttributeValuesDocumentPositionInfoStrategy.Instance;
