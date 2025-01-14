@@ -124,14 +124,14 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e7e13a84a771212323176daf015a02676adf84ca"
+      "commitSha": "21bdb8f143faf73d5490c9e9f11f7e912ce67c8b"
     },
     {
-      "packageVersion": "10.0.605604",
+      "packageVersion": "10.0.606301",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "aea551f930d24442a37d2b64c279f97d19868b7b"
+      "commitSha": "c9e4423c80e00371e43e306ee6e2e97fd2196af9"
     },
     {
       "packageVersion": "10.0.606004",
