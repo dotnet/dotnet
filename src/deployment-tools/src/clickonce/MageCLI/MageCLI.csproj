@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetMinimum)</TargetFramework>
+    <RollForward>Major</RollForward>
     <AssemblyName>dotnet-mage</AssemblyName>
     <OutputType>Exe</OutputType>
     <SignAssemblyAttribute>true</SignAssemblyAttribute>
@@ -9,6 +10,8 @@
     <AssemblyAttributeClsCompliant>false</AssemblyAttributeClsCompliant>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <!-- Suppress obsolete warning for X509Certificate2 constructor -->
+    <NoWarn>$(NoWarn);SYSLIB0057</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
