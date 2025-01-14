@@ -48,7 +48,7 @@ jobs:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
     - task: NuGetAuthenticate@1
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - task: MicroBuildSigningPlugin@2
+    - task: MicroBuildSigningPlugin@4
       displayName: Install MicroBuild plugin for Signing
       inputs:
         signType: $(SignType)
