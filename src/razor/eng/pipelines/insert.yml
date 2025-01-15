@@ -1,4 +1,4 @@
-﻿parameters:
+parameters:
   # These are actually booleans but must be defined as string.
   # Parameters are evaluated at compile time, but all variables are strings at compile time.
   # So in order to pass a parameter that comes from a variable these must be typed as string.
@@ -163,7 +163,7 @@ steps:
   # Now that everything is set, actually perform the insertion.
   - powershell: |
       mv RoslynTools.VisualStudioInsertionTool.* RIT
-      .\RIT\tools\net46\OneOffInsertion.ps1 `
+      .\RIT\tools\net472\OneOffInsertion.ps1 `
         -autoComplete "$(Template.AutoComplete)" `
         -buildQueueName "$(Build.DefinitionName)" `
         -cherryPick "(default)" `
