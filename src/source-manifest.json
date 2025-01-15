@@ -163,10 +163,10 @@
       "commitSha": "62ebdb4b0d5cc7e163b8dc9331dc196e576bf162"
     },
     {
-      "packageVersion": "9.0.0-rtm.24529.2",
+      "packageVersion": "9.0.1-rtm.24610.3",
       "path": "wpf",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-wpf",
-      "commitSha": "a04736acb8edb533756131d3d5fc55f15cd03d6a"
+      "commitSha": "f26d48cd826cfd41bed05708d1cdc9e219bf8514"
     },
     {
       "packageVersion": "10.0.0-preview.24609.2",
