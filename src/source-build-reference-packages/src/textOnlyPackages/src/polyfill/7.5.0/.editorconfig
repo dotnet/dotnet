@@ -1,2 +1,0 @@
-# exclude code from dotnet format https://github.com/dotnet/sdk/issues/38906
-root = true

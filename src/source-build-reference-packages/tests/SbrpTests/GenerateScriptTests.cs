@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
@@ -20,8 +21,8 @@ public class GenerateScriptTests
 
     public static IEnumerable<object[]> Data => new List<object[]>
     {
-        new object[] { "System.Xml.ReaderWriter", "4.0.11", PackageType.Reference },
-        new object[] { "Microsoft.Extensions.Logging.Abstractions", "7.0.1", PackageType.Reference },
+        new object[] { "System.Xml.ReaderWriter", "4.3.0", PackageType.Reference },
+        new object[] { "Microsoft.Extensions.Logging.Abstractions", "8.0.0", PackageType.Reference },
         new object[] { "Microsoft.CodeAnalysis.CSharp", "3.11.0", PackageType.Reference },
         new object[] { "System.Security.Cryptography.Pkcs", "7.0.2", PackageType.Reference },
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text },
@@ -43,7 +44,7 @@ public class GenerateScriptTests
     {
         string command = Path.Combine(PathUtilities.GetRepoRoot(), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "generate.cmd" : "generate.sh");
         string arguments = $"-p {package},{version} -x -d {SandboxDirectory}";
-        string pkgSrcDirectory = string.Empty;
+        string pkgSrcDirectory;
         string pkgSandboxDirectory = Path.Combine(SandboxDirectory, package.ToLower(), version);
 
         switch (type)
@@ -55,15 +56,26 @@ public class GenerateScriptTests
                 arguments += " -t text";
                 pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", "textOnlyPackages", "src", package.ToLower(), version);
                 break;
+            default:
+                throw new ArgumentException($"Unknown package type '{type}'");
         }
+
+        Assert.True(Directory.Exists(pkgSrcDirectory), $"Source directory '{pkgSrcDirectory}' does not exist.");
 
         ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, Output);
 
-        string diff = ExecuteHelper.ExecuteProcess("git", $"diff --no-index {pkgSrcDirectory} {pkgSandboxDirectory}", Output, true).StdOut;
+        (Process Process, string StdOut, string StdErr) result = 
+            ExecuteHelper.ExecuteProcess("git", $"diff --no-index {pkgSrcDirectory} {pkgSandboxDirectory}", Output, true);
+
+        string diff = result.StdOut;
         if (diff != string.Empty)
         {
-            Assert.Fail($"Regenerated package '{package}' does not match the checked-in content.  {Environment.NewLine}"
+            Assert.Fail($"Regenerated package '{package}, {version}' does not match the checked-in content.  {Environment.NewLine}"
                     + $"{diff}{Environment.NewLine}");
+        }
+        else if (result.Process.ExitCode != 0)
+        {
+            Assert.Fail($"Unexpected git diff failure on '{package}, {version}'.  {Environment.NewLine}{result.StdErr}{Environment.NewLine}");
         }
     }
 }
