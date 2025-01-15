@@ -12,4 +12,7 @@
     <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Mono.Cecil.Pdb.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
+  <ItemGroup>
+    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)..\cecil.snk" PublicKeyToken="50cebf1cceb9d05e" CertificateName="CecilStrongName" />
+  </ItemGroup>
 </Project>
