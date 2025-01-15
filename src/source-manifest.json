@@ -97,10 +97,10 @@
       "commitSha": "223fa62ea09457588b4b0f88ee8ac62ea5ab5db5"
     },
     {
-      "packageVersion": "8.0.11-servicing.24517.7",
+      "packageVersion": "8.0.12-servicing.24603.5",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "9cb3b725e3ad2b57ddc9fb2dd48d2d170563a8f5"
+      "commitSha": "89ef51c5d8f5239345127a1e282e11036e590c8b"
     },
     {
       "packageVersion": "8.0.111-servicing.24521.41",
