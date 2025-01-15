@@ -24,15 +24,15 @@
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.606004">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.606402">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>1d0bf118044fc096231bfba85b0cd68aad0d1507</Sha>
+      <Sha>43f2c55c61e6233cc1a5c0d162359367aad8975b</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.605604">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.606301">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>aea551f930d24442a37d2b64c279f97d19868b7b</Sha>
+      <Sha>c9e4423c80e00371e43e306ee6e2e97fd2196af9</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
