@@ -18,14 +18,15 @@
 [assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
 [assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
 [assembly: System.Reflection.AssemblyDescription("Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\r\n\r\nCommonly Used Types:\r\nSystem.Text.Json.JsonSerializer\r\nSystem.Text.Json.JsonDocument\r\nSystem.Text.Json.JsonElement\r\nSystem.Text.Json.Utf8JsonWriter\r\nSystem.Text.Json.Utf8JsonReader")]
-[assembly: System.Reflection.AssemblyFileVersion("6.0.21.52210")]
-[assembly: System.Reflection.AssemblyInformationalVersion("6.0.0+4822e3c3aa77eb82b2fb33c9321f923cf11ddde6")]
+[assembly: System.Reflection.AssemblyFileVersion("6.0.3524.45918")]
+[assembly: System.Reflection.AssemblyInformationalVersion("6.0.35+b357f86ce3bce7c232ea242074b17bebdc50b543")]
 [assembly: System.Reflection.AssemblyProduct("Microsoft® .NET")]
 [assembly: System.Reflection.AssemblyTitle("System.Text.Json")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/dotnet/runtime")]
 [assembly: System.Reflection.AssemblyVersionAttribute("6.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+[assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.IsExternalInit))]
 namespace System.Text.Json
 {
     public enum JsonCommentHandling : byte
@@ -592,7 +593,7 @@ namespace System.Text.Json
         public bool SkipValidation { get { throw null; } set { } }
     }
 
-    public partial struct Utf8JsonReader
+    public ref partial struct Utf8JsonReader
     {
         private object _dummy;
         private int _dummyPrimitive;
@@ -1560,15 +1561,15 @@ namespace System.Text.Json.Serialization.Metadata
 {
     public sealed partial class JsonCollectionInfoValues<TCollection>
     {
-        public JsonTypeInfo ElementInfo { get { throw null; } set { } }
+        public JsonTypeInfo ElementInfo { get { throw null; } init { } }
 
-        public JsonTypeInfo? KeyInfo { get { throw null; } set { } }
+        public JsonTypeInfo? KeyInfo { get { throw null; } init { } }
 
-        public JsonNumberHandling NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling NumberHandling { get { throw null; } init { } }
 
-        public Func<TCollection>? ObjectCreator { get { throw null; } set { } }
+        public Func<TCollection>? ObjectCreator { get { throw null; } init { } }
 
-        public Action<Utf8JsonWriter, TCollection>? SerializeHandler { get { throw null; } set { } }
+        public Action<Utf8JsonWriter, TCollection>? SerializeHandler { get { throw null; } init { } }
     }
 
     public static partial class JsonMetadataServices
@@ -1707,30 +1708,30 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonObjectInfoValues<T>
     {
-        public Func<JsonParameterInfoValues[]>? ConstructorParameterMetadataInitializer { get { throw null; } set { } }
+        public Func<JsonParameterInfoValues[]>? ConstructorParameterMetadataInitializer { get { throw null; } init { } }
 
-        public JsonNumberHandling NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling NumberHandling { get { throw null; } init { } }
 
-        public Func<T>? ObjectCreator { get { throw null; } set { } }
+        public Func<T>? ObjectCreator { get { throw null; } init { } }
 
-        public Func<object[], T>? ObjectWithParameterizedConstructorCreator { get { throw null; } set { } }
+        public Func<object[], T>? ObjectWithParameterizedConstructorCreator { get { throw null; } init { } }
 
-        public Func<JsonSerializerContext, JsonPropertyInfo[]>? PropertyMetadataInitializer { get { throw null; } set { } }
+        public Func<JsonSerializerContext, JsonPropertyInfo[]>? PropertyMetadataInitializer { get { throw null; } init { } }
 
-        public Action<Utf8JsonWriter, T>? SerializeHandler { get { throw null; } set { } }
+        public Action<Utf8JsonWriter, T>? SerializeHandler { get { throw null; } init { } }
     }
 
     public sealed partial class JsonParameterInfoValues
     {
-        public object? DefaultValue { get { throw null; } set { } }
+        public object? DefaultValue { get { throw null; } init { } }
 
-        public bool HasDefaultValue { get { throw null; } set { } }
+        public bool HasDefaultValue { get { throw null; } init { } }
 
-        public string Name { get { throw null; } set { } }
+        public string Name { get { throw null; } init { } }
 
-        public Type ParameterType { get { throw null; } set { } }
+        public Type ParameterType { get { throw null; } init { } }
 
-        public int Position { get { throw null; } set { } }
+        public int Position { get { throw null; } init { } }
     }
 
     public abstract partial class JsonPropertyInfo
@@ -1740,33 +1741,33 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonPropertyInfoValues<T>
     {
-        public JsonConverter<T>? Converter { get { throw null; } set { } }
+        public JsonConverter<T>? Converter { get { throw null; } init { } }
 
-        public Type DeclaringType { get { throw null; } set { } }
+        public Type DeclaringType { get { throw null; } init { } }
 
-        public Func<object, T?>? Getter { get { throw null; } set { } }
+        public Func<object, T?>? Getter { get { throw null; } init { } }
 
-        public bool HasJsonInclude { get { throw null; } set { } }
+        public bool HasJsonInclude { get { throw null; } init { } }
 
-        public JsonIgnoreCondition? IgnoreCondition { get { throw null; } set { } }
+        public JsonIgnoreCondition? IgnoreCondition { get { throw null; } init { } }
 
-        public bool IsExtensionData { get { throw null; } set { } }
+        public bool IsExtensionData { get { throw null; } init { } }
 
-        public bool IsProperty { get { throw null; } set { } }
+        public bool IsProperty { get { throw null; } init { } }
 
-        public bool IsPublic { get { throw null; } set { } }
+        public bool IsPublic { get { throw null; } init { } }
 
-        public bool IsVirtual { get { throw null; } set { } }
+        public bool IsVirtual { get { throw null; } init { } }
 
-        public string? JsonPropertyName { get { throw null; } set { } }
+        public string? JsonPropertyName { get { throw null; } init { } }
 
-        public JsonNumberHandling? NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling? NumberHandling { get { throw null; } init { } }
 
-        public string PropertyName { get { throw null; } set { } }
+        public string PropertyName { get { throw null; } init { } }
 
-        public JsonTypeInfo PropertyTypeInfo { get { throw null; } set { } }
+        public JsonTypeInfo PropertyTypeInfo { get { throw null; } init { } }
 
-        public Action<object, T?>? Setter { get { throw null; } set { } }
+        public Action<object, T?>? Setter { get { throw null; } init { } }
     }
 
     public partial class JsonTypeInfo

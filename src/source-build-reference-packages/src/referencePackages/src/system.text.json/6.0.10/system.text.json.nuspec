@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>System.Text.Json</id>
-    <version>6.0.0</version>
+    <version>6.0.10</version>
     <authors>Microsoft</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
@@ -18,7 +18,7 @@ System.Text.Json.Utf8JsonReader</description>
     <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
-    <repository type="git" url="https://github.com/dotnet/runtime" commit="4822e3c3aa77eb82b2fb33c9321f923cf11ddde6" />
+    <repository type="git" url="https://github.com/dotnet/runtime" commit="b357f86ce3bce7c232ea242074b17bebdc50b543" />
     <dependencies>
       <group targetFramework="net6.0">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.0.0" exclude="Build,Analyzers" />

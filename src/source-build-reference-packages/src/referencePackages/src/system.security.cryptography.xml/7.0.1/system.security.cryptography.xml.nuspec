@@ -55,13 +55,16 @@ System.Security.Cryptography.Xml.XmlLicenseTransform</description>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="d037e070ebe5c83838443f869d5800752b0fcb13" />
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.0" exclude="Build,Analyzers" />
+        <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.2" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net7.0">
-        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.0" exclude="Build,Analyzers" />
+        <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.2" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.0" exclude="Build,Analyzers" />
+        <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+        <dependency id="System.Security.Cryptography.Pkcs" version="7.0.2" exclude="Build,Analyzers" />
         <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
       </group>

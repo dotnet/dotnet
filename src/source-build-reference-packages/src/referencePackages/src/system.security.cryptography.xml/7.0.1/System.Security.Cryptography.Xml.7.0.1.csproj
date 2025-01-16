@@ -7,15 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
+    <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
+    <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
+    <!-- Manual upgrade from 7.0.0 to address CVE-2023-29331 -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
   </ItemGroup>

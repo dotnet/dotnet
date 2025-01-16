@@ -25,7 +25,8 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
       <group targetFramework=".NETCoreApp3.0">
-        <dependency id="System.Formats.Asn1" version="5.0.0" exclude="Compile" />
+        <!-- Manual upgrade from 5.0.0 to address CVE-2024-38095 -->
+        <dependency id="System.Formats.Asn1" version="6.0.1" exclude="Compile" />
       </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="System.IO" version="4.3.0" />

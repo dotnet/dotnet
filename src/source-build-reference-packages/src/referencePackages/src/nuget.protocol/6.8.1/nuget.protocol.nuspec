@@ -19,7 +19,8 @@
       </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="NuGet.Packaging" version="6.8.1" exclude="Build,Analyzers" />
-        <dependency id="System.Text.Json" version="7.0.3" exclude="Build,Analyzers" />
+        <!-- Manual upgrade from 7.0.3 to address CVE-2024-30105 -->
+        <dependency id="System.Text.Json" version="8.0.5" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
