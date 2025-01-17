@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="ERR_EncUpdateFailedMissingSymbol">
         <source>Cannot update '{0}'; attribute '{1}' is missing.</source>
-        <target state="translated">'{0}' を更新できません。属性 '{1}' がありません。</target>
+        <target state="new">Cannot update '{0}'; attribute '{1}' is missing.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_InvalidExperimentalDiagID">
@@ -134,7 +134,7 @@
       </trans-unit>
       <trans-unit id="ERR_TypeReserved">
         <source>The type name '{0}' is reserved to be used by the compiler.</source>
-        <target state="translated">型名 '{0}' は、コンパイラによる使用のために予約されています。</target>
+        <target state="new">The type name '{0}' is reserved to be used by the compiler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_UnimplementedSharedMember">
@@ -149,7 +149,7 @@
       </trans-unit>
       <trans-unit id="ERR_UnmanagedConstraintNotSatisfied">
         <source>Type argument '{0}' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as type parameter '{1}'.</source>
-        <target state="translated">型引数 '{0}' を型パラメーター '{1}' として使用するには、入れ子になっているすべてのレベルにおけるすべてのフィールドとともに、null 非許容値の型である必要があります。</target>
+        <target state="new">Type argument '{0}' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as type parameter '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_UnsupportedCompilerFeature">
@@ -189,7 +189,7 @@
       </trans-unit>
       <trans-unit id="FEATURE_UnmanagedConstraint">
         <source>recognizing 'unmanaged' constraint</source>
-        <target state="translated">'unmanaged' 制約を認識しています</target>
+        <target state="new">recognizing 'unmanaged' constraint</target>
         <note />
       </trans-unit>
       <trans-unit id="IDS_VBCHelp">
@@ -9365,7 +9365,7 @@
       </trans-unit>
       <trans-unit id="ERR_InvalidDebugInfo">
         <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</source>
-        <target state="translated">メソッド '{0}' (トークン 0x{1:X8}) のデバッグ情報をアセンブリ '{2}': {3} から読み取ることができません</target>
+        <target state="new">Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="IConversionExpressionIsNotVisualBasicConversion">

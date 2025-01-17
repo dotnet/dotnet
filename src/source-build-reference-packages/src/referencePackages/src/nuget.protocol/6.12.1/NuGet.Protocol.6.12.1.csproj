@@ -12,7 +12,8 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <!-- Manual upgrade from 8.0.4 to address CVE-2024-43485 -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
 </Project>
