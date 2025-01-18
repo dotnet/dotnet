@@ -85,9 +85,9 @@
     <SystemMemoryVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">4.6.0</SystemMemoryVersion>
     <SystemReflectionEmitVersion>4.7.0</SystemReflectionEmitVersion>
     <SystemReflectionMetadataVersion>$(SystemPackageVersionVersion)</SystemReflectionMetadataVersion>
-    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1-rtm.final</SystemRuntimeCompilerServicesUnsafeVersion>
     <SystemThreadingTasksDataflow>$(SystemPackageVersionVersion)</SystemThreadingTasksDataflow>
-    <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
+    <SystemValueTupleVersion>4.6.0-rtm.final</SystemValueTupleVersion>
     <MicrosoftDiaSymReaderPortablePdbVersion>1.6.0</MicrosoftDiaSymReaderPortablePdbVersion>
     <!-- Versions for package groups -->
     <RoslynVersion>4.11.0-2.24264.2</RoslynVersion>
