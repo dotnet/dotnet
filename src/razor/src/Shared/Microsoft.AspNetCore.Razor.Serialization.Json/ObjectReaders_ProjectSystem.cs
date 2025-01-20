@@ -7,7 +7,6 @@ using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.Strings;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
@@ -43,9 +42,7 @@ internal static partial class ObjectReaders
 #endif
             ));
 
-        var csharpLanguageVersion = (LanguageVersion)reader.ReadInt32OrZero(nameof(ProjectWorkspaceState.CSharpLanguageVersion));
-
-        return ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
+        return ProjectWorkspaceState.Create(tagHelpers);
     }
 
     public static RazorProjectInfo ReadProjectInfoFromProperties(JsonDataReader reader)

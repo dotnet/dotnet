@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -11,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSharpLoweringPhase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument)
+    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentIntermediateNode();
         ThrowForMissingDocumentDependency(documentNode);

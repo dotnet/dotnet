@@ -82,6 +82,11 @@
         <target state="translated">Hedef çok kısa.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Expected_0_to_be_non_null">
+        <source>Expected '{0}' to be non-null.</source>
+        <target state="translated">'{0}' null olmamalıdır.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Expected_condition_to_be_false">
         <source>Expected condition to be false.</source>
         <target state="translated">Koşulun yanlış olması bekleniyordu.</target>

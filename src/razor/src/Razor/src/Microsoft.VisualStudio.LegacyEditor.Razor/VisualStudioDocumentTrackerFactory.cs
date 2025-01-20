@@ -16,7 +16,7 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 [method: ImportingConstructor]
 internal sealed class VisualStudioDocumentTrackerFactory(
     JoinableTaskContext joinableTaskContext,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     IWorkspaceEditorSettings workspaceEditorSettings,
     IProjectPathProvider projectPathProvider,
     ITextDocumentFactoryService textDocumentFactory,
@@ -27,7 +27,7 @@ internal sealed class VisualStudioDocumentTrackerFactory(
     private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
     private readonly IProjectPathProvider _projectPathProvider = projectPathProvider;
     private readonly IImportDocumentManager _importDocumentManager = importDocumentManager;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings = workspaceEditorSettings;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
 

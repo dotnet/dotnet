@@ -10,13 +10,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -35,7 +36,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     private readonly IDocumentContextFactory _documentContextFactory;
     private readonly AsyncLazy<IRazorFormattingService> _formattingService;
     private readonly RazorCompletionOptions _defaultRazorCompletionOptions;
-    private readonly ISolutionQueryOperations _solutionQueryOperations;
+    private readonly IComponentAvailabilityService _componentAvailabilityService;
 
     public DelegatedCompletionItemResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -79,7 +80,9 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
             SnippetsSupported: true,
             AutoInsertAttributeQuotes: true,
             CommitElementsWithSpace: true);
-        _solutionQueryOperations = CreateProjectSnapshotManager().GetQueryOperations();
+
+        var projectManager = CreateProjectSnapshotManager();
+        _componentAvailabilityService = new ComponentAvailabilityService(projectManager);
     }
 
     [Fact]
@@ -95,7 +98,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, notContainingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
+            item, notContainingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Null(resolvedItem);
@@ -114,7 +117,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Null(resolvedItem);
@@ -137,7 +140,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Same(expectedData, server.DelegatedParams.CompletionItem.Data);
@@ -156,7 +159,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams, expectedData);
 
         // Act
-        await resolver.ResolveAsync(item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
+        await resolver.ResolveAsync(item, containingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Same(expectedData, server.DelegatedParams.CompletionItem.Data);
@@ -220,7 +223,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Same(_htmlCompletionParams.Identifier, server.DelegatedParams.Identifier);
@@ -250,7 +253,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         }
 
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, cancellationToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _componentAvailabilityService, cancellationToken);
 
         return resolvedItem;
     }
@@ -303,10 +306,10 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         private TestDelegatedCompletionItemResolverServer(CompletionResolveRequestResponseFactory requestHandler)
             : base(new Dictionary<string, Func<object, Task<object>>>()
-        {
-            [LanguageServerConstants.RazorCompletionResolveEndpointName] = requestHandler.OnCompletionResolveDelegationAsync,
-            [LanguageServerConstants.RazorGetFormattingOptionsEndpointName] = requestHandler.OnGetFormattingOptionsAsync,
-        })
+            {
+                [LanguageServerConstants.RazorCompletionResolveEndpointName] = requestHandler.OnCompletionResolveDelegationAsync,
+                [LanguageServerConstants.RazorGetFormattingOptionsEndpointName] = requestHandler.OnGetFormattingOptionsAsync,
+            })
         {
             _requestHandler = requestHandler;
         }

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,10 +12,7 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
 {
     public DefaultRazorProjectFileSystem(string root)
     {
-        if (string.IsNullOrEmpty(root))
-        {
-            throw new ArgumentException(Resources.ArgumentCannotBeNullOrEmpty, nameof(root));
-        }
+        ArgHelper.ThrowIfNullOrEmpty(root);
 
         Root = root.Replace('\\', '/').TrimEnd('/');
     }
@@ -31,7 +26,7 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
         var directory = new DirectoryInfo(absoluteBasePath);
         if (!directory.Exists)
         {
-            return Enumerable.Empty<RazorProjectItem>();
+            return [];
         }
 
         return directory
@@ -40,13 +35,13 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
             .Select(file =>
             {
                 var relativePhysicalPath = file.FullName.Substring(absoluteBasePath.Length + 1); // Include leading separator
-                    var filePath = "/" + relativePhysicalPath.Replace(Path.DirectorySeparatorChar, '/');
+                var filePath = "/" + relativePhysicalPath.Replace(Path.DirectorySeparatorChar, '/');
 
                 return new DefaultRazorProjectItem(basePath, filePath, relativePhysicalPath, fileKind: null, file, cssScope: null);
             });
     }
 
-    public override RazorProjectItem GetItem(string path, string fileKind)
+    public override RazorProjectItem GetItem(string path, string? fileKind)
     {
         var absoluteBasePath = NormalizeAndEnsureValidPath("/");
         var absolutePath = NormalizeAndEnsureValidPath(path);
@@ -63,18 +58,9 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
         return new DefaultRazorProjectItem("/", filePath, relativePhysicalPath, fileKind, new FileInfo(absolutePath), cssScope: null);
     }
 
-
-    public override RazorProjectItem GetItem(string path)
-    {
-        return GetItem(path, fileKind: null);
-    }
-
     protected override string NormalizeAndEnsureValidPath(string path)
     {
-        if (string.IsNullOrEmpty(path))
-        {
-            throw new ArgumentException(Resources.ArgumentCannotBeNullOrEmpty, nameof(path));
-        }
+        ArgHelper.ThrowIfNullOrEmpty(path);
 
         var absolutePath = path.Replace('\\', '/');
 
@@ -91,14 +77,9 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
             }
 
             // Instead of `C:filename.ext`, we want `C:/filename.ext`.
-            if (Root.EndsWith(":", StringComparison.Ordinal) && !string.IsNullOrEmpty(path))
-            {
-                absolutePath = Root + "/" + path;
-            }
-            else
-            {
-                absolutePath = Path.Combine(Root, path);
-            }
+            absolutePath = Root.EndsWith(':') && !path.IsNullOrEmpty()
+                ? Root + "/" + path
+                : Path.Combine(Root, path);
         }
 
         absolutePath = absolutePath.Replace('\\', '/');

@@ -71,17 +71,5 @@ internal static class ProjectExtensions
     }
 
     private static ImmutableArray<ITagHelperDescriptorProvider> GetTagHelperDescriptorProviders(RazorProjectEngine projectEngine)
-    {
-        using var result = new PooledArrayBuilder<ITagHelperDescriptorProvider>();
-
-        foreach (var feature in projectEngine.Engine.Features)
-        {
-            if (feature is ITagHelperDescriptorProvider provider)
-            {
-                result.Add(provider);
-            }
-        }
-
-        return result.DrainToImmutableOrderedBy(static x => x.Order);
-    }
+        => projectEngine.Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static x => x.Order);
 }

@@ -334,7 +334,7 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         }
     }
 
-    private class DesignTimeOptionsFeature : IConfigureRazorParserOptionsFeature, IConfigureRazorCodeGenerationOptionsFeature
+    private class DesignTimeOptionsFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature, IConfigureRazorCodeGenerationOptionsFeature
     {
         private readonly bool _designTime;
 
@@ -344,8 +344,6 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         }
 
         public int Order { get; }
-
-        public RazorEngine Engine { get; set; }
 
         public void Configure(RazorParserOptionsBuilder options)
         {

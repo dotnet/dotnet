@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 
@@ -17,7 +16,7 @@ internal static class DirectiveVerifier
 
     static DirectiveVerifier()
     {
-        var defaultDirectiveVerifierList = new List<Action<CompletionItem>>(DirectiveCompletionItemProvider.MvcDefaultDirectives.Count() * 2);
+        var defaultDirectiveVerifierList = new List<Action<CompletionItem>>(DirectiveCompletionItemProvider.MvcDefaultDirectives.Length * 2);
 
         foreach (var directive in DirectiveCompletionItemProvider.MvcDefaultDirectives)
         {
@@ -31,7 +30,7 @@ internal static class DirectiveVerifier
     private static void AssertDirectiveSnippet(CompletionItem completionItem, string directive)
     {
         Assert.StartsWith(directive, completionItem.InsertText);
-        Assert.Equal(DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive].InsertText, completionItem.InsertText);
+        Assert.Equal(DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive].InsertText, completionItem.InsertText);
         Assert.Equal(CompletionItemKind.Snippet, completionItem.Kind);
     }
 }

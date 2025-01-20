@@ -32,7 +32,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 [method: ImportingConstructor]
 internal class RazorLanguageServerClient(
     RazorCustomMessageTarget customTarget,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory,
     RazorLogHubTraceProvider traceProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
@@ -50,7 +50,7 @@ internal class RazorLanguageServerClient(
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ILspServerActivationTracker _lspServerActivationTracker = lspServerActivationTracker;
     private readonly RazorCustomMessageTarget _customMessageTarget = customTarget;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly VisualStudioHostServicesProvider _vsHostServicesProvider = vsHostServicesProvider;
     private readonly ILoggerFactory _loggerFactory = loggerFactory;

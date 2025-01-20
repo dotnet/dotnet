@@ -1,17 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
@@ -20,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal class TestRazorProjectService(
     RemoteTextLoaderFactory remoteTextLoaderFactory,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory)
     : RazorProjectService(
         projectManager,
@@ -28,7 +23,7 @@ internal class TestRazorProjectService(
         remoteTextLoaderFactory,
         loggerFactory)
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
 
     private static IRazorProjectInfoDriver CreateProjectInfoDriver()
     {
@@ -44,17 +39,21 @@ internal class TestRazorProjectService(
 
     public async Task AddDocumentToPotentialProjectsAsync(string textDocumentPath, CancellationToken cancellationToken)
     {
+        var document = new DocumentSnapshotHandle(
+            textDocumentPath, textDocumentPath, FileKinds.GetFileKindFromFilePath(textDocumentPath));
+
         foreach (var projectSnapshot in _projectManager.FindPotentialProjects(textDocumentPath))
         {
-            var normalizedProjectPath = FilePathNormalizer.NormalizeDirectory(projectSnapshot.FilePath);
-            var documents = ImmutableArray
-                .CreateRange(projectSnapshot.DocumentFilePaths)
-                .Add(textDocumentPath)
-                .Select(d => new DocumentSnapshotHandle(d, d, FileKinds.GetFileKindFromFilePath(d)))
-                .ToImmutableArray();
+            var projectInfo = projectSnapshot.ToRazorProjectInfo();
 
-            await ((IRazorProjectInfoListener)this).UpdatedAsync(new RazorProjectInfo(projectSnapshot.Key, projectSnapshot.FilePath, projectSnapshot.Configuration, projectSnapshot.RootNamespace, projectSnapshot.DisplayName, projectSnapshot.ProjectWorkspaceState,
-                documents), cancellationToken).ConfigureAwait(false);
+            projectInfo = projectInfo with
+            {
+                Documents = projectInfo.Documents.Add(document)
+            };
+
+            await ((IRazorProjectInfoListener)this)
+                .UpdatedAsync(projectInfo, cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

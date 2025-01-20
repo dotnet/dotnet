@@ -31,6 +31,9 @@ msbuild.ProjectImports.zip
 # Visual Studio 2015
 .vs/
 
+# If MSBUILDDEBUGENGINE=1 and no directory is specified then MSBuild_Logs/ will be the default
+MSBuild_Logs/
+
 # Visual Studio 2015 Pre-CTP6
 *.sln.ide
 *.ide/

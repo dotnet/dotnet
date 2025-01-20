@@ -4,7 +4,6 @@
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -50,11 +49,9 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         Documents = documents.ToImmutable();
     }
 
-    internal ProjectSnapshotManager CreateProjectSnapshotManager()
-    {
-        return new ProjectSnapshotManager(
+    internal static ProjectSnapshotManager CreateProjectSnapshotManager()
+        => new(
             projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
-            languageServerFeatureOptions: new DefaultLanguageServerFeatureOptions(),
+            compilerOptions: RazorCompilerOptions.None,
             loggerFactory: EmptyLoggerFactory.Instance);
-    }
 }

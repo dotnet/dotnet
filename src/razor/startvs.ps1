@@ -14,7 +14,17 @@ Param(
     [Parameter(
         Mandatory=$false,
         HelpMessage="If specified, Roslyn dependencies will be included in the Razor extension when deployed.")]
-    [Switch]$includeRoslynDeps
+    [Switch]$includeRoslynDeps,
+
+    [Parameter(
+        Mandatory=$false,
+        HelpMessage="If specified, bin logs will be enabled for VS. See https://github.com/dotnet/msbuild/blob/main/documentation/wiki/Providing-Binary-Logs.md#capturing-binary-logs-through-visual-studio .")]
+    [Switch]$captureBinLogs,
+
+    [Parameter(
+        Mandatory=$false,
+        HelpMessage="If captureBinLogs is specified, this determines the output folder for them. Ignored if captureBinLogs is false.")]
+    [string]$binLogFolder=$null
 )
 
 if ($solutionFile -eq "") {
@@ -38,6 +48,14 @@ $env:DOTNET_MULTILEVEL_LOOKUP = 0
 
 # Put our local dotnet.exe on PATH first so Visual Studio knows which one to use
 $env:PATH = $env:DOTNET_ROOT + ";" + $env:PATH
+
+if ($captureBinLogs) {
+    $env:MSBUILDDEBUGENGINE = 1
+
+    if ($binLogFolder -ne $null) {
+        $env:MSBUILDDEBUGPATH=$binLogFolder
+    }
+}
 
 $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 

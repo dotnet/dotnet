@@ -16,14 +16,14 @@ namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 internal class ProjectSnapshotSynchronizationService(
     CollaborationSession sessionContext,
     IProjectSnapshotManagerProxy hostProjectManagerProxy,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory,
     JoinableTaskFactory jtf) : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
 {
     private readonly JoinableTaskFactory _jtf = jtf;
     private readonly CollaborationSession _sessionContext = sessionContext;
     private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy = hostProjectManagerProxy;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectSnapshotSynchronizationService>();
 
     public async Task InitializeAsync(CancellationToken cancellationToken)

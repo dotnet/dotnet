@@ -82,7 +82,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             ForceRuntimeCodeGeneration = false,
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
-            UseRoslynTokenizer = false,
+            UseNewFormattingEngine = false,
         };
         UpdateClientInitializationOptions(c => c);
 
@@ -286,7 +286,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             var razorDocument = solution.GetAdditionalDocument(documentId).AssumeNotNull();
             var snapshot = snapshotManager.GetSnapshot(razorDocument);
             // Compile the Razor file
-            var codeDocument = await snapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false, cancellationToken);
+            var codeDocument = await snapshot.GetGeneratedOutputAsync(cancellationToken);
             // Update the generated doc contents
             var filePath = razorDocument.FilePath + CSharpVirtualDocumentSuffix;
             var generatedDocumentIds = solution.GetDocumentIdsWithFilePath(filePath);

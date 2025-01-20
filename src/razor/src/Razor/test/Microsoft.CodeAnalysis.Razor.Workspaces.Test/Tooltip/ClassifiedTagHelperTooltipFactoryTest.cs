@@ -7,12 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Classification;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 using Microsoft.VisualStudio.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
@@ -172,10 +169,11 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Null(classifiedTextElement);
@@ -186,16 +184,19 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
                 "Microsoft.AspNetCore.SomeTagHelper",
                 "<summary>Uses <see cref=\"T:System.Collections.List{System.Collections.List{System.String}}\" />s</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(classifiedTextElement);
@@ -226,16 +227,19 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
                 "Microsoft.AspNetCore.SomeTagHelper.SomeTagHelper",
                 "<summary>Uses <see cref=\"T:A.B.C{C.B}\" />s</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(classifiedTextElement);
@@ -265,6 +269,8 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -273,7 +279,7 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var classifiedTextElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(classifiedTextElement);
@@ -445,10 +451,12 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var containerElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var containerElement = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Null(containerElement);
@@ -459,15 +467,18 @@ End summary description.";
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.OtherTagHelper", "<summary>\nAlso uses <see cref=\"T:System.Collections.List{System.String}\" />s\n\r\n\r\r</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var container = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), DisposalToken);
+        var container = await ClassifiedTagHelperTooltipFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(container);

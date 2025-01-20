@@ -28,7 +28,7 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 internal sealed class FallbackProjectManager : IFallbackProjectManager
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter;
 
@@ -38,7 +38,7 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
     [ImportingConstructor]
     public FallbackProjectManager(
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IWorkspaceProvider workspaceProvider,
         ITelemetryReporter telemetryReporter)
     {
@@ -70,7 +70,7 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
         }
     }
 
-    public bool IsFallbackProject(IProjectSnapshot project)
+    public bool IsFallbackProject(ProjectSnapshot project)
         => _fallbackProjects.Contains(project.Key);
 
     internal void DynamicFileAdded(

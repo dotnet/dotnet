@@ -17,20 +17,22 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
 {
     public ComponentDuplicateAttributeDiagnosticPassTest()
     {
-        Pass = new ComponentMarkupDiagnosticPass();
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
             b =>
             {
-                    // Don't run the markup mutating passes.
-                    b.Features.Remove(b.Features.OfType<ComponentMarkupDiagnosticPass>().Single());
+                // Don't run the markup mutating passes.
+                b.Features.Remove(b.Features.OfType<ComponentMarkupDiagnosticPass>().Single());
                 b.Features.Remove(b.Features.OfType<ComponentMarkupBlockPass>().Single());
                 b.Features.Remove(b.Features.OfType<ComponentMarkupEncodingPass>().Single());
             });
         Engine = ProjectEngine.Engine;
 
-        Pass.Engine = Engine;
+        Pass = new ComponentMarkupDiagnosticPass()
+        {
+            Engine = Engine
+        };
     }
 
     private RazorProjectEngine ProjectEngine { get; }
@@ -162,7 +164,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         content = content.Replace("\n", "\r\n");
 
         var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return ProjectEngine.CreateCodeDocumentCore(source, FileKinds.Component);
+        return ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
     }
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
@@ -178,19 +180,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         }
 
         var document = codeDocument.GetDocumentIntermediateNode();
-        Engine.Features.OfType<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
+        Engine.GetFeatures<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
         return document;
-    }
-
-    private class StaticTagHelperFeature : ITagHelperFeature
-    {
-        public RazorEngine Engine { get; set; }
-
-        public List<TagHelperDescriptor> TagHelpers { get; set; }
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
-        {
-            return TagHelpers;
-        }
     }
 }

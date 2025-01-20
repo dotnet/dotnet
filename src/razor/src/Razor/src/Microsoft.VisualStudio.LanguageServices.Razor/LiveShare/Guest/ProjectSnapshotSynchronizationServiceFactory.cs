@@ -16,7 +16,7 @@ namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 [ExportCollaborationService(typeof(ProjectSnapshotSynchronizationService), Scope = SessionScope.Guest)]
 [method: ImportingConstructor]
 internal class ProjectSnapshotSynchronizationServiceFactory(
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory,
     JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {

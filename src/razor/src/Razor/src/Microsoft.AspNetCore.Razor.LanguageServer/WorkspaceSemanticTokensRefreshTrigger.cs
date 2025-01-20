@@ -12,11 +12,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class WorkspaceSemanticTokensRefreshTrigger : IRazorStartupService
 {
     private readonly IWorkspaceSemanticTokensRefreshNotifier _publisher;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
 
     public WorkspaceSemanticTokensRefreshTrigger(
         IWorkspaceSemanticTokensRefreshNotifier publisher,
-        IProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager)
     {
         _publisher = publisher;
         _projectManager = projectManager;

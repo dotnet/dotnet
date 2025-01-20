@@ -36,8 +36,9 @@ internal class RazorInitializeEndpoint(
         if (!s_reportedFeatureFlagState)
         {
             s_reportedFeatureFlagState = true;
-            _telemetryReporter.ReportEvent("initialize", Severity.Normal, new
-                Property(nameof(LanguageServerFeatureOptions.ForceRuntimeCodeGeneration), _options.ForceRuntimeCodeGeneration));
+            _telemetryReporter.ReportEvent("initialize", Severity.Normal,
+                new Property(nameof(LanguageServerFeatureOptions.ForceRuntimeCodeGeneration), _options.ForceRuntimeCodeGeneration),
+                new Property(nameof(LanguageServerFeatureOptions.UseNewFormattingEngine), _options.UseNewFormattingEngine));
         }
 
         return Task.FromResult(serverCapabilities);

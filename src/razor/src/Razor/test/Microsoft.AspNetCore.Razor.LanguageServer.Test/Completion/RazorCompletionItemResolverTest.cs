@@ -6,13 +6,14 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 public class RazorCompletionItemResolverTest : LanguageServerTestBase
 {
-    private readonly ISolutionQueryOperations _solutionQueryOperations;
+    private readonly IComponentAvailabilityService _componentAvailabilityService;
     private readonly VSInternalCompletionSetting _completionCapability;
     private readonly VSInternalClientCapabilities _defaultClientCapability;
     private readonly VSInternalClientCapabilities _vsClientCapability;
@@ -30,7 +31,7 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     public RazorCompletionItemResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _solutionQueryOperations = CreateProjectSnapshotManager().GetQueryOperations();
+        _componentAvailabilityService = CreateComponentAvailabilityService();
 
         _completionCapability = new VSInternalCompletionSetting()
         {
@@ -63,22 +64,38 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         _elementDescription = new AggregateBoundElementDescription([elementDescriptionInfo]);
     }
 
+    private static IComponentAvailabilityService CreateComponentAvailabilityService()
+    {
+        var mock = new StrictMock<IComponentAvailabilityService>();
+        mock.Setup(x => x.GetComponentAvailabilityAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+
+        return mock.Object;
+    }
+
     [Fact]
     public async Task ResolveAsync_DirectiveCompletion_ReturnsCompletionItemWithDocumentation()
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.Directive);
-        razorCompletionItem.SetDirectiveCompletionDescription(new DirectiveCompletionDescription("Test directive"));
+        var descriptionText = "Test directive";
+        var razorCompletionItem = RazorCompletionItem.CreateDirective(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            sortText: null,
+            descriptionInfo: new(descriptionText),
+            commitCharacters: [],
+            isSnippet: false);
+
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
-        Assert.NotNull(resolvedCompletionItem.Documentation);
+        Assert.Equal(descriptionText, resolvedCompletionItem.Documentation);
     }
 
     [Fact]
@@ -86,17 +103,17 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("@...", "@", RazorCompletionItemKind.MarkupTransition);
-        razorCompletionItem.SetMarkupTransitionCompletionDescription(new MarkupTransitionCompletionDescription("Test description"));
+        var descriptionText = "Test description";
+        var razorCompletionItem = RazorCompletionItem.CreateMarkupTransition("@...", "@", new(descriptionText), commitCharacters: []);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
-        Assert.NotNull(resolvedCompletionItem.Documentation);
+        Assert.Equal(descriptionText, resolvedCompletionItem.Documentation);
     }
 
     [Fact]
@@ -104,14 +121,17 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttribute(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            _attributeDescription,
+            commitCharacters: []);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Documentation);
@@ -122,14 +142,16 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttributeParameter);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            _attributeDescription);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Documentation);
@@ -140,14 +162,17 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperElement);
-        razorCompletionItem.SetTagHelperElementDescriptionInfo(_elementDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateTagHelperElement(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            _elementDescription,
+            commitCharacters: []);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Documentation);
@@ -158,14 +183,20 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateTagHelperAttribute(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            sortText: null,
+            _attributeDescription,
+            commitCharacters: [],
+            isSnippet: false);
+
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Documentation);
@@ -176,14 +207,16 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttribute(
+            displayText: "TestItem",
+            insertText: "TestItem", _attributeDescription,
+            commitCharacters: []);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Description);
@@ -194,14 +227,16 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttributeParameter);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            _attributeDescription);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Description);
@@ -212,14 +247,17 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperElement);
-        razorCompletionItem.SetTagHelperElementDescriptionInfo(_elementDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateTagHelperElement(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            _elementDescription,
+            commitCharacters: []);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Description);
@@ -230,14 +268,20 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new RazorCompletionItemResolver();
-        var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(_attributeDescription);
+        var razorCompletionItem = RazorCompletionItem.CreateTagHelperAttribute(
+            displayText: "TestItem",
+            insertText: "TestItem",
+            sortText: null,
+            _attributeDescription,
+            commitCharacters: [],
+            isSnippet: false);
+
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single() as VSInternalCompletionItem;
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, CreateCompletionResolveContext(razorCompletionItem), _vsClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.NotNull(resolvedCompletionItem.Description);
@@ -253,7 +297,7 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedCompletionItem = await resolver.ResolveAsync(
-            completionItem, completionList, Array.Empty<RazorCompletionItem>(), _defaultClientCapability, _solutionQueryOperations, DisposalToken);
+            completionItem, completionList, Array.Empty<RazorCompletionItem>(), _defaultClientCapability, _componentAvailabilityService, DisposalToken);
 
         // Assert
         Assert.Null(resolvedCompletionItem);

@@ -41,6 +41,9 @@ internal readonly struct TestCode
     public int Position
         => Positions.Single();
 
+    public bool HasSpans
+        => TryGetNamedSpans(string.Empty, out _);
+
     public TextSpan Span
         => Spans.Single();
 

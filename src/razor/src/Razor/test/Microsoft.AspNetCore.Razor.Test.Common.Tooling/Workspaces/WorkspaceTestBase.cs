@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Xunit.Abstractions;
 
@@ -67,11 +68,14 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         }
     }
 
+    private protected RazorCompilerOptions CompilerOptions
+        => LanguageServerFeatureOptions.ToCompilerOptions();
+
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactoryProvider, LanguageServerFeatureOptions);
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => base.CreateProjectSnapshotManager(projectEngineFactoryProvider, LanguageServerFeatureOptions);
+        => CreateProjectSnapshotManager(projectEngineFactoryProvider, LanguageServerFeatureOptions);
 
     protected virtual void ConfigureWorkspace(AdhocWorkspace workspace)
     {
@@ -81,7 +85,12 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
     {
     }
 
-    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_workspaceProvider), nameof(_projectEngineFactoryProvider), nameof(_languageServerFeatureOptions))]
+    [MemberNotNull(
+        nameof(_hostServices),
+        nameof(_workspace),
+        nameof(_workspaceProvider),
+        nameof(_projectEngineFactoryProvider),
+        nameof(_languageServerFeatureOptions))]
     private void EnsureInitialized()
     {
         if (_initialized)
@@ -94,10 +103,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             return;
         }
 
-        _projectEngineFactoryProvider = new TestProjectEngineFactoryProvider()
-        {
-            Configure = ConfigureProjectEngine,
-        };
+        _projectEngineFactoryProvider = TestProjectEngineFactoryProvider.Instance.AddConfigure(ConfigureProjectEngine);
 
         _hostServices = MefHostServices.DefaultHost;
         _workspace = TestWorkspace.Create(_hostServices, ConfigureWorkspace);

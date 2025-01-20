@@ -82,6 +82,11 @@
         <target state="translated">宛先が短すぎます。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Expected_0_to_be_non_null">
+        <source>Expected '{0}' to be non-null.</source>
+        <target state="translated">null 以外の '{0}' が必要です。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Expected_condition_to_be_false">
         <source>Expected condition to be false.</source>
         <target state="translated">予期される条件は false です。</target>

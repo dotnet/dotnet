@@ -25,13 +25,13 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 {
     private readonly Dictionary<DocumentKey, PublishData> _publishedCSharpData;
     private readonly Dictionary<string, PublishData> _publishedHtmlData;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly IClientConnection _clientConnection;
     private readonly LanguageServerFeatureOptions _options;
     private readonly ILogger _logger;
 
     public GeneratedDocumentPublisher(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IClientConnection clientConnection,
         LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)

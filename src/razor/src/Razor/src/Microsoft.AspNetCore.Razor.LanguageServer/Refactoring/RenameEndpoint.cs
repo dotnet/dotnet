@@ -23,7 +23,7 @@ internal sealed class RenameEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
     IEditMappingService editMappingService,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>(
@@ -35,7 +35,7 @@ internal sealed class RenameEndpoint(
     private readonly IRenameService _renameService = renameService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IEditMappingService _editMappingService = editMappingService;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

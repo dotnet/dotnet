@@ -3,14 +3,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -20,7 +23,7 @@ namespace Microsoft.VisualStudio.Razor;
 [Export(typeof(IProjectWorkspaceStateGenerator))]
 [method: ImportingConstructor]
 internal sealed partial class ProjectWorkspaceStateGenerator(
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ITagHelperResolver tagHelperResolver,
     ILoggerFactory loggerFactory,
     ITelemetryReporter telemetryReporter)
@@ -29,7 +32,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
     // SemaphoreSlim is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
 #pragma warning disable RS0030 // Do not use banned APIs
 
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectWorkspaceStateGenerator>();
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
@@ -65,7 +68,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
         _blockBackgroundWorkStart?.Set();
     }
 
-    public void EnqueueUpdate(Project? workspaceProject, IProjectSnapshot projectSnapshot)
+    public void EnqueueUpdate(Project? workspaceProject, ProjectSnapshot projectSnapshot)
     {
         if (_disposed)
         {
@@ -113,7 +116,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
         }
     }
 
-    private async Task UpdateWorkspaceStateAsync(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    private async Task UpdateWorkspaceStateAsync(Project? workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         var projectKey = projectSnapshot.Key;
 
@@ -138,7 +141,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                 return;
             }
 
-            var workspaceState = await GetProjectWorkspaceStateAsync(workspaceProject, projectSnapshot, cancellationToken);
+            var (workspaceState, configuration) = await GetProjectWorkspaceStateAndConfigurationAsync(workspaceProject, projectSnapshot, cancellationToken);
 
             if (workspaceState is null)
             {
@@ -157,7 +160,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                 .UpdateAsync(
                     static (updater, state) =>
                     {
-                        var (projectKey, workspaceState, logger, cancellationToken) = state;
+                        var (projectKey, workspaceState, configuration, logger, cancellationToken) = state;
 
                         if (cancellationToken.IsCancellationRequested)
                         {
@@ -165,9 +168,14 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                         }
 
                         logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
+
+                        var projectSnapshot = updater.GetRequiredProject(projectKey);
+                        var hostProject = projectSnapshot.HostProject with { Configuration = configuration };
+
+                        updater.UpdateProjectConfiguration(hostProject);
                         updater.UpdateProjectWorkspaceState(projectKey, workspaceState);
                     },
-                    state: (projectKey, workspaceState, _logger, cancellationToken),
+                    state: (projectKey, workspaceState, configuration, _logger, cancellationToken),
                     cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -253,19 +261,21 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
     }
 
     /// <summary>
-    ///  Attempts to produce a <see cref="ProjectWorkspaceState"/> from the provide <see cref="Project"/> and <see cref="IProjectSnapshot"/>.
+    ///  Attempts to produce a <see cref="ProjectWorkspaceState"/> from the provide <see cref="Project"/> and <see cref="ProjectSnapshot"/>.
     ///  Returns <see langword="null"/> if an error is encountered.
     /// </summary>
-    private async Task<ProjectWorkspaceState?> GetProjectWorkspaceStateAsync(
+    private async Task<(ProjectWorkspaceState?, RazorConfiguration)> GetProjectWorkspaceStateAndConfigurationAsync(
         Project? workspaceProject,
-        IProjectSnapshot projectSnapshot,
+        ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
     {
+        var configuration = projectSnapshot.Configuration;
+
         // This is the simplest case. If we don't have a project (likely because it is being removed),
         // we just a default ProjectWorkspaceState.
         if (workspaceProject is null)
         {
-            return ProjectWorkspaceState.Default;
+            return (ProjectWorkspaceState.Default, configuration);
         }
 
         _logger.LogTrace($"Starting tag helper discovery for {projectSnapshot.FilePath}");
@@ -279,9 +289,14 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
         try
         {
-            var csharpLanguageVersion = workspaceProject.ParseOptions is CSharpParseOptions csharpParseOptions
-                ? csharpParseOptions.LanguageVersion
-                : LanguageVersion.Default;
+            var csharpParseOptions = workspaceProject.ParseOptions as CSharpParseOptions ?? CSharpParseOptions.Default;
+
+            configuration = configuration with
+            {
+                CSharpLanguageVersion = csharpParseOptions.LanguageVersion,
+                UseRoslynTokenizer = csharpParseOptions.UseRoslynTokenizer(),
+                PreprocessorSymbols = csharpParseOptions.PreprocessorSymbolNames.ToImmutableArray()
+            };
 
             using var _ = StopwatchPool.GetPooledObject(out var watch);
 
@@ -305,7 +320,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                 Project: {projectSnapshot.FilePath}
                 """);
 
-            return ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
+            return (ProjectWorkspaceState.Create(tagHelpers), configuration);
         }
         catch (OperationCanceledException)
         {
@@ -326,7 +341,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                 """);
         }
 
-        return null;
+        return (null, configuration);
     }
 
     private void OnStartingBackgroundWork()

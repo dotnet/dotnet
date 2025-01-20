@@ -1,32 +1,28 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis.Razor.Language;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
+internal sealed class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
 {
     internal const string ImportsFileName = "_ViewImports.cshtml";
 
     public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
     {
-        if (projectItem == null)
-        {
-            throw new ArgumentNullException(nameof(projectItem));
-        }
+        ArgHelper.ThrowIfNull(projectItem);
 
         // Don't add MVC imports for a component
         if (FileKinds.IsComponent(projectItem.FileKind))
         {
-            return Array.Empty<RazorProjectItem>();
+            return [];
         }
 
         var imports = new List<RazorProjectItem>();
@@ -52,14 +48,11 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
         imports.AddRange(importProjectItems);
     }
 
-    private class DefaultDirectivesProjectItem : RazorProjectItem
+    private sealed class DefaultDirectivesProjectItem : RazorProjectItem
     {
-        private readonly byte[] _defaultImportBytes;
+        public static readonly DefaultDirectivesProjectItem Instance = new();
 
-        private DefaultDirectivesProjectItem()
-        {
-            var preamble = Encoding.UTF8.GetPreamble();
-            var content = @"
+        private static readonly InMemoryFileContent s_fileContent = new(@"
 @using global::System
 @using global::System.Collections.Generic
 @using global::System.Linq
@@ -75,13 +68,13 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
 @addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper, Microsoft.AspNetCore.Mvc.Razor
 @addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.HeadTagHelper, Microsoft.AspNetCore.Mvc.Razor
 @addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor
-";
-            var contentBytes = Encoding.UTF8.GetBytes(content);
+");
 
-            _defaultImportBytes = new byte[preamble.Length + contentBytes.Length];
-            preamble.CopyTo(_defaultImportBytes, 0);
-            contentBytes.CopyTo(_defaultImportBytes, preamble.Length);
+        private DefaultDirectivesProjectItem()
+        {
         }
+
+#nullable disable
 
         public override string BasePath => null;
 
@@ -89,10 +82,10 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
 
         public override string PhysicalPath => null;
 
+#nullable enable
+
         public override bool Exists => true;
 
-        public static DefaultDirectivesProjectItem Instance { get; } = new DefaultDirectivesProjectItem();
-
-        public override Stream Read() => new MemoryStream(_defaultImportBytes);
+        public override Stream Read() => s_fileContent.CreateStream();
     }
 }

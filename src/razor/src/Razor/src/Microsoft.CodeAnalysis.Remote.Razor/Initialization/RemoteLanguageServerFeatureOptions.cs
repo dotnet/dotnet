@@ -43,5 +43,5 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool ForceRuntimeCodeGeneration => _options.ForceRuntimeCodeGeneration;
 
-    public override bool UseRoslynTokenizer => _options.UseRoslynTokenizer;
+    public override bool UseNewFormattingEngine => _options.UseNewFormattingEngine;
 }

@@ -44,7 +44,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager)
         : base(commonServices, serviceProvider, projectManager)
     {
     }

@@ -26,8 +26,12 @@ steps:
       -set
       -enable
       -flag "$(FeatureFlag)"
-    displayName: Set Feature Flags
+    displayName: Set Feature Flags From Variable
     condition: and(succeeded(), ne(variables['FeatureFlag'], ''))
+
+  - powershell: eng\scripts\CIFeatureFlags.ps1
+    displayName: CI Feature Flags
+    condition: and(succeeded(), startswith(variables['Build.CronSchedule.DisplayName'], 'FeatureFlags -'))
 
   - powershell: New-ItemProperty
       -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem"

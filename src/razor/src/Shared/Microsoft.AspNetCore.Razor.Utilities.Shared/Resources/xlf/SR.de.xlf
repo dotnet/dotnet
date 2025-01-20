@@ -82,6 +82,11 @@
         <target state="translated">Das Ziel ist zu kurz.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Expected_0_to_be_non_null">
+        <source>Expected '{0}' to be non-null.</source>
+        <target state="translated">Es wurde erwartet, dass '{0}' ungleich NULL ist.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Expected_condition_to_be_false">
         <source>Expected condition to be false.</source>
         <target state="translated">Es wurde erwartet, dass die Bedingung „falsch“ lautet.</target>

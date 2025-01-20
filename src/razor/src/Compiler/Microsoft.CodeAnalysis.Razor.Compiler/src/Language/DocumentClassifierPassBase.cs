@@ -73,7 +73,7 @@ public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRa
         var methodBuilder = IntermediateNodeBuilder.Create(classBuilder.Current);
         methodBuilder.Push(method);
 
-        var visitor = new Visitor(documentBuilder, namespaceBuilder, classBuilder, methodBuilder);
+        var visitor = new Visitor(namespaceBuilder, classBuilder, methodBuilder);
 
         for (var i = 0; i < children.Count; i++)
         {
@@ -117,14 +117,12 @@ public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRa
 
     private class Visitor : IntermediateNodeVisitor
     {
-        private readonly IntermediateNodeBuilder _document;
         private readonly IntermediateNodeBuilder _namespace;
         private readonly IntermediateNodeBuilder _class;
         private readonly IntermediateNodeBuilder _method;
 
-        public Visitor(IntermediateNodeBuilder document, IntermediateNodeBuilder @namespace, IntermediateNodeBuilder @class, IntermediateNodeBuilder method)
+        public Visitor(IntermediateNodeBuilder @namespace, IntermediateNodeBuilder @class, IntermediateNodeBuilder method)
         {
-            _document = document;
             _namespace = @namespace;
             _class = @class;
             _method = method;

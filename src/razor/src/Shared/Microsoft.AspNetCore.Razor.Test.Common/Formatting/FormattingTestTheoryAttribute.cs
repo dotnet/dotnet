@@ -13,4 +13,6 @@ internal sealed class FormattingTestTheoryAttribute : TheoryAttribute
 {
     // NOTE: Property names need to match FormattingTestFactAttribute
     public bool SkipFlipLineEnding { get; set; }
+    public bool SkipFlipLineEndingInOldEngine { get; set; }
+    public bool SkipOldFormattingEngine { get; set; }
 }

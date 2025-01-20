@@ -1,9 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -12,48 +12,51 @@ public sealed class RazorEngine
     public ImmutableArray<IRazorEngineFeature> Features { get; }
     public ImmutableArray<IRazorEnginePhase> Phases { get; }
 
+    private readonly FeatureCache<IRazorEngineFeature> _featureCache;
+
     internal RazorEngine(ImmutableArray<IRazorEngineFeature> features, ImmutableArray<IRazorEnginePhase> phases)
     {
         Features = features;
         Phases = phases;
 
+        _featureCache = new(features);
+
         foreach (var feature in features)
         {
-            feature.Engine = this;
+            feature.Initialize(this);
         }
 
         foreach (var phase in phases)
         {
-            phase.Engine = this;
+            phase.Initialize(this);
         }
     }
 
-    public void Process(RazorCodeDocument document)
+    public void Process(RazorCodeDocument codeDocument, CancellationToken cancellationToken = default)
     {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
+        ArgHelper.ThrowIfNull(codeDocument);
 
         foreach (var phase in Phases)
         {
-            phase.Execute(document);
+            cancellationToken.ThrowIfCancellationRequested();
+            phase.Execute(codeDocument, cancellationToken);
         }
     }
 
-    internal bool TryGetFeature<TFeature>([NotNullWhen(true)] out TFeature? feature)
+    public ImmutableArray<TFeature> GetFeatures<TFeature>()
+        where TFeature : class, IRazorEngineFeature
+        => _featureCache.GetFeatures<TFeature>();
+
+    public bool TryGetFeature<TFeature>([NotNullWhen(true)] out TFeature? result)
         where TFeature : class, IRazorEngineFeature
     {
-        foreach (var item in Features)
+        if (GetFeatures<TFeature>() is [var feature, ..])
         {
-            if (item is TFeature result)
-            {
-                feature = result;
-                return true;
-            }
+            result = feature;
+            return true;
         }
 
-        feature = null;
+        result = null;
         return false;
     }
 }

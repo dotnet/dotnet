@@ -4,6 +4,8 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -12,6 +14,19 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class RazorSyntaxNodeExtensions
 {
+    private static bool IsDirective(SyntaxNode node, DirectiveDescriptor directive, [NotNullWhen(true)] out RazorDirectiveBodySyntax? body)
+    {
+        if (node is RazorDirectiveSyntax { DirectiveDescriptor: { } descriptor, Body: RazorDirectiveBodySyntax directiveBody } &&
+            descriptor == directive)
+        {
+            body = directiveBody;
+            return true;
+        }
+
+        body = null;
+        return false;
+    }
+
     internal static bool IsUsingDirective(this SyntaxNode node, out SyntaxList<SyntaxNode> children)
     {
         // Using directives are weird, because the directive keyword ("using") is part of the C# statement it represents
@@ -26,6 +41,66 @@ internal static class RazorSyntaxNodeExtensions
         }
 
         children = default;
+        return false;
+    }
+
+    internal static bool IsConstrainedTypeParamDirective(this SyntaxNode node, [NotNullWhen(true)] out CSharpStatementLiteralSyntax? typeParamNode, [NotNullWhen(true)] out CSharpStatementLiteralSyntax? conditionsNode)
+    {
+        // Returns true for "@typeparam T where T : IDisposable", but not "@typeparam T"
+        if (node is RazorDirectiveSyntax { DirectiveDescriptor: { } descriptor } &&
+            IsDirective(node, ComponentConstrainedTypeParamDirective.Directive, out var body) &&
+            descriptor.Tokens.Any(t => t.Name == ComponentResources.TypeParamDirective_Constraint_Name) &&
+            // Children is the " T where T : IDisposable" part of the directive
+            body.CSharpCode.Children is [_ /* whitespace */, CSharpStatementLiteralSyntax typeParam, _ /* whitespace */, CSharpStatementLiteralSyntax conditions, ..])
+        {
+            typeParamNode = typeParam;
+            conditionsNode = conditions;
+            return true;
+        }
+
+        typeParamNode = null;
+        conditionsNode = null;
+        return false;
+    }
+
+    internal static bool IsAttributeDirective(this SyntaxNode node, [NotNullWhen(true)] out CSharpStatementLiteralSyntax? attributeNode)
+    {
+        if (IsDirective(node, AttributeDirective.Directive, out var body) &&
+            body.CSharpCode.Children is [_, CSharpStatementLiteralSyntax attribute, ..])
+        {
+            attributeNode = attribute;
+            return true;
+        }
+
+        attributeNode = null;
+        return false;
+    }
+
+    internal static bool IsCodeDirective(this SyntaxNode node, [NotNullWhen(true)] out SyntaxToken? openBraceToken)
+    {
+        if (IsDirective(node, ComponentCodeDirective.Directive, out var body) &&
+            body.CSharpCode is { Children: { Count: > 0 } children } &&
+            children.TryGetOpenBraceToken(out var openBrace))
+        {
+            openBraceToken = openBrace;
+            return true;
+        }
+
+        openBraceToken = null;
+        return false;
+    }
+
+    internal static bool IsFunctionsDirective(this SyntaxNode node, [NotNullWhen(true)] out SyntaxToken? openBraceToken)
+    {
+        if (IsDirective(node, FunctionsDirective.Directive, out var body) &&
+            body.CSharpCode is { Children: { Count: > 0 } children } &&
+            children.TryGetOpenBraceToken(out var openBrace))
+        {
+            openBraceToken = openBrace;
+            return true;
+        }
+
+        openBraceToken = null;
         return false;
     }
 
@@ -379,6 +454,12 @@ internal static class RazorSyntaxNodeExtensions
 
         var startPositionSpan = GetLinePositionSpan(firstToken, source, node.SpanStart);
         var endPositionSpan = GetLinePositionSpan(lastToken, source, node.SpanStart);
+
+        if (endPositionSpan.End < startPositionSpan.Start)
+        {
+            linePositionSpan = default;
+            return false;
+        }
 
         linePositionSpan = new LinePositionSpan(startPositionSpan.Start, endPositionSpan.End);
         return true;

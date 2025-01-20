@@ -4,42 +4,30 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
+internal sealed class RemoteRazorProjectFileSystem : RazorProjectFileSystem
 {
     private readonly string _root;
 
     public RemoteRazorProjectFileSystem(string root)
     {
-        if (root is null)
-        {
-            throw new ArgumentNullException(nameof(root));
-        }
+        ArgHelper.ThrowIfNull(root);
 
         _root = FilePathNormalizer.NormalizeDirectory(root);
     }
 
     public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override RazorProjectItem GetItem(string path)
-    {
-        return GetItem(path, fileKind: null);
-    }
+        => throw new NotSupportedException();
 
     public override RazorProjectItem GetItem(string path, string? fileKind)
     {
-        if (path is null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
+        ArgHelper.ThrowIfNull(path);
 
         var physicalPath = NormalizeAndEnsureValidPath(path);
         if (FilePathRootedBy(physicalPath, _root))
@@ -60,6 +48,7 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
     protected override string NormalizeAndEnsureValidPath(string path)
     {
         var absolutePath = path;
+
         if (!FilePathRootedBy(absolutePath, _root))
         {
             if (IsPathRootedForPlatform(absolutePath))
@@ -68,15 +57,13 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
                 return absolutePath;
             }
 
-            if (path[0] == '/' || path[0] == '\\')
-            {
-                path = path[1..];
-            }
-
-            absolutePath = _root + path;
+            absolutePath = path[0] is '/' or '\\'
+                ? _root + path[1..]
+                : _root + path;
         }
 
         absolutePath = FilePathNormalizer.Normalize(absolutePath);
+
         return absolutePath;
 
         static bool IsPathRootedForPlatform(string path)
@@ -87,28 +74,19 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
                 return false;
             }
 
-            if (!Path.IsPathRooted(path))
-            {
-                return false;
-            }
-
-            return true;
+            return Path.IsPathRooted(path);
         }
     }
 
-    internal bool FilePathRootedBy(string path, string root)
+    private static bool FilePathRootedBy(string path, string root)
     {
         if (path.Length < root.Length)
         {
             return false;
         }
 
-        var potentialRoot = path[..root.Length];
-        if (FilePathComparer.Instance.Equals(potentialRoot, root))
-        {
-            return true;
-        }
+        var potentialRoot = path.AsSpan(0, root.Length);
 
-        return false;
+        return potentialRoot.Equals(root.AsSpan(), FilePathComparison.Instance);
     }
 }

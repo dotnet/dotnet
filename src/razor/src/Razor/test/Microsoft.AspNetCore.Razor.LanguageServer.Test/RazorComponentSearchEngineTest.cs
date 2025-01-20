@@ -40,7 +40,7 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
     private static readonly string s_componentFilePath3 = Path.Combine(s_project2BasePath, "Component3.razor");
 
 #nullable disable
-    private IProjectSnapshotManager _projectManager;
+    private ProjectSnapshotManager _projectManager;
 #nullable enable
 
     protected override async Task InitializeAsync()

@@ -312,14 +312,6 @@ internal partial class JsonDataWriter
         }
     }
 
-    public void WriteArrayIfNotNullOrEmpty<T>(string propertyName, IReadOnlyList<T>? elements, WriteValue<T> writeElement)
-    {
-        if (elements is { Count: > 0 })
-        {
-            WriteArray(propertyName, elements, writeElement);
-        }
-    }
-
     public void WriteArrayIfNotDefaultOrEmpty<T>(string propertyName, ImmutableArray<T> elements, WriteValue<T> writeElement)
     {
         if (!elements.IsDefaultOrEmpty)

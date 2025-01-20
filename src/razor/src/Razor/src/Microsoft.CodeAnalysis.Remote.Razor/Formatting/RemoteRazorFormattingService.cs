@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.Formatting;
 
 [Export(typeof(IRazorFormattingService)), Shared]
 [method: ImportingConstructor]
-internal sealed class RemoteRazorFormattingService(IDocumentMappingService documentMappingService, IHostServicesProvider hostServicesProvider, ILoggerFactory loggerFactory)
-    : RazorFormattingService(documentMappingService, hostServicesProvider, loggerFactory)
+internal sealed class RemoteRazorFormattingService(IDocumentMappingService documentMappingService, IHostServicesProvider hostServicesProvider, LanguageServerFeatureOptions languageServerFeatureOptions, ILoggerFactory loggerFactory)
+    : RazorFormattingService(documentMappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory)
 {
 }

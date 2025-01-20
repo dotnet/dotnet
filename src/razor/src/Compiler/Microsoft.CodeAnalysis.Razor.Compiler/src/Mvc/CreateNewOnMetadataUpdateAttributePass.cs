@@ -34,7 +34,7 @@ internal sealed class CreateNewOnMetadataUpdateAttributePass : IntermediateNodeP
             return;
         }
 
-        var identifierFeature = Engine.Features.OfType<IMetadataIdentifierFeature>().First();
+        var identifierFeature = Engine.GetFeatures<IMetadataIdentifierFeature>().First();
         var identifier = identifierFeature.GetIdentifier(codeDocument, codeDocument.Source);
 
         var metadataAttributeNode = new CreateNewOnMetadataUpdateAttributeIntermediateNode();

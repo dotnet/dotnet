@@ -128,7 +128,7 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
                 completionItems.Add(completionItem);
                 completionItemKinds.Add(razorCompletionItem.Kind);
 
-                var completionDescription = razorCompletionItem.GetAttributeCompletionDescription();
+                var completionDescription = razorCompletionItem.DescriptionInfo as AggregateBoundAttributeDescription;
                 completionItem.Properties[DescriptionKey] = completionDescription;
             }
 

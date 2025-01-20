@@ -23,7 +23,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 /// <summary>
-/// Maintains the language server's <see cref="IProjectSnapshotManager"/> with the semantics of Razor's project model.
+/// Maintains the language server's <see cref="ProjectSnapshotManager"/> with the semantics of Razor's project model.
 /// </summary>
 /// <remarks>
 /// This service implements <see cref="IRazorStartupService"/> to ensure it is created early so it can begin
@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 internal partial class RazorProjectService : IRazorProjectService, IRazorProjectInfoListener, IRazorStartupService, IDisposable
 {
     private readonly IRazorProjectInfoDriver _projectInfoDriver;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory;
     private readonly ILogger _logger;
 
@@ -40,7 +40,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
     private readonly Task _initializeTask;
 
     public RazorProjectService(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IRazorProjectInfoDriver projectInfoDriver,
         RemoteTextLoaderFactory remoteTextLoaderFactory,
         ILoggerFactory loggerFactory)
@@ -198,10 +198,10 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
                 ActOnDocumentInMultipleProjects(
                     filePath,
-                    (projectSnapshot, textDocumentPath) =>
+                    (project, textDocumentPath) =>
                     {
-                        _logger.LogInformation($"Opening document '{textDocumentPath}' in project '{projectSnapshot.Key}'.");
-                        updater.OpenDocument(projectSnapshot.Key, textDocumentPath, sourceText);
+                        _logger.LogInformation($"Opening document '{textDocumentPath}' in project '{project.Key}'.");
+                        updater.OpenDocument(project.Key, textDocumentPath, sourceText);
                     });
             },
             cancellationToken)
@@ -217,12 +217,12 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             {
                 ActOnDocumentInMultipleProjects(
                     filePath,
-                    (projectSnapshot, textDocumentPath) =>
+                    (project, textDocumentPath) =>
                     {
                         var textLoader = _remoteTextLoaderFactory.Create(filePath);
-                        _logger.LogInformation($"Closing document '{textDocumentPath}' in project '{projectSnapshot.Key}'.");
+                        _logger.LogInformation($"Closing document '{textDocumentPath}' in project '{project.Key}'.");
 
-                        updater.CloseDocument(projectSnapshot.Key, textDocumentPath, textLoader);
+                        updater.CloseDocument(project.Key, textDocumentPath, textLoader);
                     });
             },
             cancellationToken)
@@ -238,15 +238,15 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             {
                 ActOnDocumentInMultipleProjects(
                     filePath,
-                    (projectSnapshot, textDocumentPath) =>
+                    (project, textDocumentPath) =>
                     {
-                        if (!projectSnapshot.DocumentFilePaths.Contains(textDocumentPath, FilePathComparer.Instance))
+                        if (!project.DocumentFilePaths.Contains(textDocumentPath, FilePathComparer.Instance))
                         {
                             _logger.LogInformation($"Containing project is not tracking document '{textDocumentPath}'");
                             return;
                         }
 
-                        if (projectSnapshot.GetDocument(textDocumentPath) is not DocumentSnapshot documentSnapshot)
+                        if (!project.TryGetDocument(textDocumentPath, out var document))
                         {
                             _logger.LogError($"Containing project does not contain document '{textDocumentPath}'");
                             return;
@@ -257,18 +257,18 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                         // a remove via the project.razor.bin
                         if (_projectManager.IsDocumentOpen(textDocumentPath))
                         {
-                            _logger.LogInformation($"Moving document '{textDocumentPath}' from project '{projectSnapshot.Key}' to misc files because it is open.");
-                            if (!projectSnapshot.IsMiscellaneousProject())
+                            _logger.LogInformation($"Moving document '{textDocumentPath}' from project '{project.Key}' to misc files because it is open.");
+                            if (!project.IsMiscellaneousProject())
                             {
                                 var miscellaneousProject = _projectManager.GetMiscellaneousProject();
-                                MoveDocument(updater, textDocumentPath, fromProject: projectSnapshot, toProject: miscellaneousProject);
+                                MoveDocument(updater, textDocumentPath, fromProject: project, toProject: miscellaneousProject);
                             }
                         }
                         else
                         {
-                            _logger.LogInformation($"Removing document '{textDocumentPath}' from project '{projectSnapshot.Key}'.");
+                            _logger.LogInformation($"Removing document '{textDocumentPath}' from project '{project.Key}'.");
 
-                            updater.RemoveDocument(projectSnapshot.Key, documentSnapshot.FilePath);
+                            updater.RemoveDocument(project.Key, document.FilePath);
                         }
                     });
             },
@@ -296,7 +296,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             .ConfigureAwait(false);
     }
 
-    private void ActOnDocumentInMultipleProjects(string filePath, Action<IProjectSnapshot, string> action)
+    private void ActOnDocumentInMultipleProjects(string filePath, Action<ProjectSnapshot, string> action)
     {
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
         if (!_projectManager.TryResolveAllProjects(textDocumentPath, out var projects))
@@ -364,17 +364,17 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
                 if (!projectWorkspaceState.Equals(ProjectWorkspaceState.Default))
                 {
-                    _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}) and C# Language Version ({projectWorkspaceState.CSharpLanguageVersion}).");
+                    _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}).");
                 }
 
                 updater.UpdateProjectWorkspaceState(project.Key, projectWorkspaceState);
 
                 var currentConfiguration = project.Configuration;
                 var currentRootNamespace = project.RootNamespace;
-                if (currentConfiguration.ConfigurationName == configuration?.ConfigurationName &&
+                if (currentConfiguration == configuration &&
                     currentRootNamespace == rootNamespace)
                 {
-                    _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.");
+                    _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}' and C# lang version '{configuration.CSharpLanguageVersion}'.");
                     return;
                 }
 
@@ -383,9 +383,9 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     configuration = FallbackRazorConfiguration.Latest;
                     _logger.LogInformation($"Updating project '{project.Key}' to use the latest configuration ('{configuration.ConfigurationName}')'.");
                 }
-                else if (currentConfiguration.ConfigurationName != configuration.ConfigurationName)
+                else
                 {
-                    _logger.LogInformation($"Updating project '{project.Key}' to Razor configuration '{configuration.ConfigurationName}' with language version '{configuration.LanguageVersion}'.");
+                    _logger.LogInformation($"Updating project '{project.Key}' to Razor configuration '{configuration.ConfigurationName}' with language version '{configuration.LanguageVersion}' and C# lang version '{configuration.CSharpLanguageVersion}'.");
                 }
 
                 if (currentRootNamespace != rootNamespace)
@@ -438,12 +438,12 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                 continue;
             }
 
-            if (project.GetDocument(documentFilePath) is not DocumentSnapshot documentSnapshot)
+            if (!project.TryGetDocument(documentFilePath, out var document))
             {
                 continue;
             }
 
-            var currentHostDocument = documentSnapshot.HostDocument;
+            var currentHostDocument = document.HostDocument;
             var newFilePath = EnsureFullPath(documentHandle.FilePath, projectDirectory);
             var newHostDocument = new HostDocument(newFilePath, documentHandle.TargetPath, documentHandle.FileKind);
 
@@ -459,7 +459,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             // it has received text change info from LSP. eg, if someone changes the TargetPath of the file while its open in the editor
             // with unsaved changes, we don't want to reload it from disk.
             var textLoader = FilePathComparer.Instance.Equals(currentHostDocument.FilePath, newHostDocument.FilePath)
-                ? new DocumentSnapshotTextLoader(documentSnapshot)
+                ? new DocumentSnapshotTextLoader(document)
                 : _remoteTextLoaderFactory.Create(newFilePath);
 
             updater.RemoveDocument(currentProjectKey, currentHostDocument.FilePath);
@@ -499,32 +499,32 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
     private void MoveDocument(
         ProjectSnapshotManager.Updater updater,
         string documentFilePath,
-        IProjectSnapshot fromProject,
-        IProjectSnapshot toProject)
+        ProjectSnapshot fromProject,
+        ProjectSnapshot toProject)
     {
-        Debug.Assert(fromProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
-        Debug.Assert(!toProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
+        Debug.Assert(fromProject.ContainsDocument(documentFilePath));
+        Debug.Assert(!toProject.ContainsDocument(documentFilePath));
 
-        if (fromProject.GetDocument(documentFilePath) is not DocumentSnapshot documentSnapshot)
+        if (!fromProject.TryGetDocument(documentFilePath, out var document))
         {
             return;
         }
 
-        var currentHostDocument = documentSnapshot.HostDocument;
+        var currentHostDocument = document.HostDocument;
 
-        var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
+        var textLoader = new DocumentSnapshotTextLoader(document);
 
         // If we're moving from the misc files project to a real project, then target path will be the full path to the file
         // and the next update to the project will update it to be a relative path. To save a bunch of busy work if that is
         // the only change necessary, we can proactively do that work here.
         var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(toProject.FilePath);
-        var newTargetPath = documentSnapshot.TargetPath;
+        var newTargetPath = document.TargetPath;
         if (FilePathNormalizer.Normalize(newTargetPath).StartsWith(projectDirectory))
         {
             newTargetPath = newTargetPath[projectDirectory.Length..];
         }
 
-        var newHostDocument = new HostDocument(documentSnapshot.FilePath, newTargetPath, documentSnapshot.FileKind);
+        var newHostDocument = new HostDocument(document.FilePath, newTargetPath, document.FileKind);
 
         _logger.LogInformation($"Moving '{documentFilePath}' from the '{fromProject.Key}' project to '{toProject.Key}' project.");
 

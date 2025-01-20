@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor;
 
 internal partial class WorkspaceProjectStateChangeDetector
 {
-    private sealed class Comparer : IEqualityComparer<(Project?, IProjectSnapshot)>
+    private sealed class Comparer : IEqualityComparer<(Project?, ProjectSnapshot)>
     {
         public static readonly Comparer Instance = new();
 
@@ -18,7 +18,7 @@ internal partial class WorkspaceProjectStateChangeDetector
         {
         }
 
-        public bool Equals((Project?, IProjectSnapshot) x, (Project?, IProjectSnapshot) y)
+        public bool Equals((Project?, ProjectSnapshot) x, (Project?, ProjectSnapshot) y)
         {
             var (_, snapshotX) = x;
             var (_, snapshotY) = y;
@@ -26,7 +26,7 @@ internal partial class WorkspaceProjectStateChangeDetector
             return FilePathComparer.Instance.Equals(snapshotX.Key.Id, snapshotY.Key.Id);
         }
 
-        public int GetHashCode((Project?, IProjectSnapshot) obj)
+        public int GetHashCode((Project?, ProjectSnapshot) obj)
         {
             var (_, snapshot) = obj;
 

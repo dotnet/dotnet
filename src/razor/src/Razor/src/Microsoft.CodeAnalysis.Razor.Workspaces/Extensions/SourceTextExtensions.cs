@@ -61,10 +61,19 @@ internal static class SourceTextExtensions
     }
 
     public static bool NonWhitespaceContentEquals(this SourceText text, SourceText other)
+        => NonWhitespaceContentEquals(text, other, 0, text.Length, 0, other.Length);
+
+    public static bool NonWhitespaceContentEquals(
+        this SourceText text,
+        SourceText other,
+        int textStart,
+        int textEnd,
+        int otherStart,
+        int otherEnd)
     {
-        var i = 0;
-        var j = 0;
-        while (i < text.Length && j < other.Length)
+        var i = textStart;
+        var j = otherStart;
+        while (i < textEnd && j < otherEnd)
         {
             if (char.IsWhiteSpace(text[i]))
             {
@@ -85,17 +94,17 @@ internal static class SourceTextExtensions
             j++;
         }
 
-        while (i < text.Length && char.IsWhiteSpace(text[i]))
+        while (i < textEnd && char.IsWhiteSpace(text[i]))
         {
             i++;
         }
 
-        while (j < other.Length && char.IsWhiteSpace(other[j]))
+        while (j < otherEnd && char.IsWhiteSpace(other[j]))
         {
             j++;
         }
 
-        return i == text.Length && j == other.Length;
+        return i == textEnd && j == otherEnd;
     }
 
     public static bool TryGetFirstNonWhitespaceOffset(this SourceText text, out int offset)

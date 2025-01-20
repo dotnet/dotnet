@@ -31,6 +31,20 @@ schedules:
     - main
   always: true # run the pipeline even if there are no code changes
 
+- cron: '0 */24 * * *'
+  displayName: FeatureFlags - ForceRuntimeCodeGeneration
+  branches:
+    include:
+    - main
+  always: true # run the pipeline even if there are no code changes
+
+- cron: '0 */24 * * *'
+  displayName: FeatureFlags - ForceRuntimeCodeGeneration,UseRazorCohostServer
+  branches:
+    include:
+    - main
+  always: true # run the pipeline even if there are no code changes
+
 stages:
 - stage: build
   displayName: Build

@@ -1,8 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable enable
-
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,32 +9,45 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 
-internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
+internal sealed class SourceGeneratorProjectEngine
 {
-    private readonly int _discoveryPhaseIndex = -1;
+    private readonly RazorProjectEngine _projectEngine;
 
+    private readonly IRazorEnginePhase _discoveryPhase;
+    private readonly int _discoveryPhaseIndex = -1;
     private readonly int _rewritePhaseIndex = -1;
 
-    public SourceGeneratorProjectEngine(RazorProjectEngine projectEngine)
-        : base(projectEngine.Configuration, projectEngine.Engine, projectEngine.FileSystem, projectEngine.ProjectFeatures)
-    {
-        var phases = Engine.Phases;
+    private ReadOnlySpan<IRazorEnginePhase> Phases => _projectEngine.Engine.Phases.AsSpan();
 
-        for (int i = 0; i < phases.Length; i++)
+    public SourceGeneratorProjectEngine(RazorProjectEngine projectEngine)
+    {
+        _projectEngine = projectEngine;
+
+        var index = 0;
+
+        foreach (var phase in Phases)
         {
-            if (phases[i] is DefaultRazorTagHelperContextDiscoveryPhase)
-            {
-                _discoveryPhaseIndex = i;
-            }
-            else if (phases[i] is DefaultRazorTagHelperRewritePhase)
-            {
-                _rewritePhaseIndex = i;
-            }
-            else if (_discoveryPhaseIndex >= 0 && _rewritePhaseIndex >= 0)
+            if (_discoveryPhaseIndex >= 0 && _rewritePhaseIndex >= 0)
             {
                 break;
             }
+
+            switch (phase)
+            {
+                case DefaultRazorTagHelperContextDiscoveryPhase:
+                    _discoveryPhase = phase;
+                    _discoveryPhaseIndex = index;
+                    break;
+
+                case DefaultRazorTagHelperRewritePhase:
+                    _rewritePhaseIndex = index;
+                    break;
+            }
+
+            index++;
         }
+
+        Debug.Assert(_discoveryPhase is not null);
         Debug.Assert(_discoveryPhaseIndex >= 0);
         Debug.Assert(_rewritePhaseIndex >= 0);
         Debug.Assert(_discoveryPhaseIndex < _rewritePhaseIndex);
@@ -43,12 +55,9 @@ internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
 
     public SourceGeneratorRazorCodeDocument ProcessInitialParse(RazorProjectItem projectItem, bool designTime)
     {
-        var codeDocument = designTime 
-                            ? CreateCodeDocumentDesignTimeCore(projectItem)
-                            : CreateCodeDocumentCore(projectItem);
+        var codeDocument = _projectEngine.CreateCodeDocument(projectItem, designTime);
 
-
-        ProcessPartial(codeDocument, 0, _discoveryPhaseIndex);
+        ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument);
 
         // record the syntax tree, before the tag helper re-writing occurs
         codeDocument.SetPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
@@ -62,6 +71,7 @@ internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
         int startIndex = _discoveryPhaseIndex;
         var codeDocument = sgDocument.CodeDocument;
         var previousTagHelpers = codeDocument.GetTagHelpers();
+
         if (checkForIdempotency && previousTagHelpers is not null)
         {
             // compare the tag helpers with the ones the document last used
@@ -78,11 +88,11 @@ internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
 
                 // re-run discovery to figure out which tag helpers are now in scope for this document
                 codeDocument.SetTagHelpers(tagHelpers);
-                Engine.Phases[_discoveryPhaseIndex].Execute(codeDocument);
+                _discoveryPhase.Execute(codeDocument);
                 var tagHelpersInScope = codeDocument.GetTagHelperContext().TagHelpers;
 
                 // Check if any new tag helpers were added or ones we previously used were removed
-                var newVisibleTagHelpers = tagHelpersInScope.Except(previousTagHelpersInScope); 
+                var newVisibleTagHelpers = tagHelpersInScope.Except(previousTagHelpersInScope);
                 var newUnusedTagHelpers = previousUsedTagHelpers.Except(tagHelpersInScope);
                 if (!newVisibleTagHelpers.Any() && !newUnusedTagHelpers.Any())
                 {
@@ -99,7 +109,8 @@ internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
             codeDocument.SetTagHelpers(tagHelpers);
         }
 
-        ProcessPartial(codeDocument, startIndex, _rewritePhaseIndex + 1);
+        ExecutePhases(Phases[startIndex..(_rewritePhaseIndex + 1)], codeDocument);
+
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
@@ -108,16 +119,16 @@ internal sealed class SourceGeneratorProjectEngine : RazorProjectEngine
         var codeDocument = sgDocument.CodeDocument;
         Debug.Assert(codeDocument.GetReferencedTagHelpers() is not null);
 
-        ProcessPartial(sgDocument.CodeDocument, _rewritePhaseIndex, Engine.Phases.Length);
+        ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument);
+
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    private void ProcessPartial(RazorCodeDocument codeDocument, int startIndex, int endIndex)
+    private static void ExecutePhases(ReadOnlySpan<IRazorEnginePhase> phases, RazorCodeDocument codeDocument)
     {
-        Debug.Assert(startIndex >= 0 && startIndex <= endIndex && endIndex <= Engine.Phases.Length);
-        for (var i = startIndex; i < endIndex; i++)
+        foreach (var phase in phases)
         {
-            Engine.Phases[i].Execute(codeDocument);
+            phase.Execute(codeDocument);
         }
     }
 }

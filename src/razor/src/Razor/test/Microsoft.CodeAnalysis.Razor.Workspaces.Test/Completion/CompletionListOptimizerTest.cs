@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -10,13 +8,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class CompletionListOptimizerTest : ToolingTestBase
+public class CompletionListOptimizerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public CompletionListOptimizerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void Convert_CommitCharactersTrue_RemovesCommitCharactersFromItems()
     {
@@ -45,9 +38,12 @@ public class CompletionListOptimizerTest : ToolingTestBase
         var vsCompletionList = CompletionListOptimizer.Optimize(completionList, capabilities);
 
         // Assert
-        Assert.Collection(vsCompletionList.Items, (item) => Assert.Null(item.CommitCharacters));
+        var item = Assert.Single(vsCompletionList.Items);
+        Assert.Null(item.CommitCharacters);
 
-        Assert.Collection(vsCompletionList.CommitCharacters.Value.First, (e) => Assert.Equal("<", e));
+        Assert.NotNull(vsCompletionList.CommitCharacters);
+        var commitCharacter = Assert.Single(vsCompletionList.CommitCharacters.Value.First);
+        Assert.Equal("<", commitCharacter);
     }
 
     [Fact]
@@ -57,14 +53,13 @@ public class CompletionListOptimizerTest : ToolingTestBase
         var commitCharacters = new[] { "<" };
         var completionList = new VSInternalCompletionList()
         {
-            Items = new[]
-            {
+            Items = [
                 new VSInternalCompletionItem()
                 {
                     Label = "Test",
                     VsCommitCharacters = commitCharacters
                 }
-            }
+            ]
         };
         var capabilities = new VSInternalCompletionSetting()
         {
@@ -78,7 +73,8 @@ public class CompletionListOptimizerTest : ToolingTestBase
         var vsCompletionList = CompletionListOptimizer.Optimize(completionList, capabilities);
 
         // Assert
-        Assert.Collection(vsCompletionList.Items, item => Assert.Equal(commitCharacters, ((VSInternalCompletionItem)item).VsCommitCharacters));
+        var item = Assert.Single(vsCompletionList.Items);
+        Assert.Equal(commitCharacters, ((VSInternalCompletionItem)item).VsCommitCharacters);
         Assert.Null(vsCompletionList.CommitCharacters);
     }
 }

@@ -34,7 +34,6 @@ internal static partial class ObjectWriters
     public static void WriteProperties(JsonDataWriter writer, ProjectWorkspaceState value)
     {
         writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.TagHelpers), value.TagHelpers, Write);
-        writer.WriteIfNotZero(nameof(value.CSharpLanguageVersion), (int)value.CSharpLanguageVersion);
     }
 
     public static void Write(JsonDataWriter writer, RazorProjectInfo value)

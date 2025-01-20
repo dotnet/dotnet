@@ -10,13 +10,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class GeneratedDocumentSynchronizer(
     IGeneratedDocumentPublisher publisher,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    IProjectSnapshotManager projectManager) : IDocumentProcessedListener
+    ProjectSnapshotManager projectManager) : IDocumentProcessedListener
 {
     private readonly IGeneratedDocumentPublisher _publisher = publisher;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
 
-    public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
+    public void DocumentProcessed(RazorCodeDocument codeDocument, DocumentSnapshot document)
     {
         var hostDocumentVersion = document.Version;
         var filePath = document.FilePath;

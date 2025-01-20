@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -181,7 +179,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
         // Assert
         Assert.True(result);
         Assert.Equal("input", tagName);
-        Assert.Equal(new[] { "type", "@bind" }, attributes);
+        Assert.Equal<string>(["type", "@bind"], attributes);
     }
 
     [Fact]
@@ -227,7 +225,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
 
         // Assert
         Assert.True(result);
-        Assert.Equal(new[] { "type", "@bind:format", "something", "@bind" }, attributes);
+        Assert.Equal<string>(["type", "@bind:format", "something", "@bind"], attributes);
     }
 
     private RazorSyntaxNode GetNodeAt(string content, int index)
@@ -236,6 +234,8 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
         var syntaxTree = result.CodeDocument.GetSyntaxTree();
         var owner = syntaxTree.Root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);
+
+        Assert.NotNull(owner);
 
         return owner;
     }

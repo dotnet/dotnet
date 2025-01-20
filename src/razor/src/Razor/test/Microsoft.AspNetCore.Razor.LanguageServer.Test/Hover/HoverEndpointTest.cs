@@ -201,6 +201,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new ComponentAvailabilityService(projectManager);
 
         var clientCapabilities = new VSInternalClientCapabilities()
         {
@@ -211,7 +212,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
 
         var endpoint = new HoverEndpoint(
-            projectManager,
+            componentAvailabilityService,
             clientCapabilitiesService,
             languageServerFeatureOptions,
             documentMappingService,
@@ -255,7 +256,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock
-            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(codeDocument);
         documentSnapshotMock
             .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))
@@ -293,6 +294,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         clientConnection ??= StrictMock.Of<IClientConnection>();
 
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new ComponentAvailabilityService(projectManager);
 
         var clientCapabilities = new VSInternalClientCapabilities()
         {
@@ -303,7 +305,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
 
         var endpoint = new HoverEndpoint(
-            projectManager,
+            componentAvailabilityService,
             clientCapabilitiesService,
             languageServerFeatureOptions,
             documentMappingService,

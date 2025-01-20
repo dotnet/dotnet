@@ -30,7 +30,12 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
             projectId,
             new(RazorLanguageVersion.Version_1_1,
                 "Test",
-                [new("Test-Extension1"), new("Test-Extension2")]),
+                [new("Test-Extension1"), new("Test-Extension2")],
+                CodeAnalysis.CSharp.LanguageVersion.CSharp7,
+                UseConsolidatedMvcViews: false,
+                SuppressAddComponentParameter: true,
+                UseRoslynTokenizer: true,
+                PreprocessorSymbols: ["DEBUG", "TRACE", "DAVID"]),
             "Test");
 
         // Act
@@ -49,6 +54,14 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
             e => Assert.Equal("Test-Extension2", e.ExtensionName));
         Assert.Equal(expectedSnapshot.Configuration.LanguageVersion, actualSnapshot.Configuration.LanguageVersion);
         Assert.Equal(expectedSnapshot.RootNamespace, actualSnapshot.RootNamespace);
+        Assert.Equal(expectedSnapshot.Configuration.CSharpLanguageVersion, actualSnapshot.Configuration.CSharpLanguageVersion);
+        Assert.Equal(expectedSnapshot.Configuration.UseConsolidatedMvcViews, actualSnapshot.Configuration.UseConsolidatedMvcViews);
+        Assert.Equal(expectedSnapshot.Configuration.SuppressAddComponentParameter, actualSnapshot.Configuration.SuppressAddComponentParameter);
+        Assert.Equal(expectedSnapshot.Configuration.UseRoslynTokenizer, actualSnapshot.Configuration.UseRoslynTokenizer);
+        Assert.Collection(actualSnapshot.Configuration.PreprocessorSymbols,
+            s => Assert.Equal("DEBUG", s),
+            s => Assert.Equal("TRACE", s),
+            s => Assert.Equal("DAVID", s));
     }
 
     [Fact]

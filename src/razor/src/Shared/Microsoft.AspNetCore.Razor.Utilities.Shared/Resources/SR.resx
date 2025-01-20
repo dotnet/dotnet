@@ -156,6 +156,9 @@
   <data name="Expected_condition_to_be_false" xml:space="preserve">
     <value>Expected condition to be false.</value>
   </data>
+  <data name="Expected_0_to_be_non_null" xml:space="preserve">
+    <value>Expected '{0}' to be non-null.</value>
+  </data>
   <data name="Expected_condition_to_be_true" xml:space="preserve">
     <value>Expected condition to be true.</value>
   </data>

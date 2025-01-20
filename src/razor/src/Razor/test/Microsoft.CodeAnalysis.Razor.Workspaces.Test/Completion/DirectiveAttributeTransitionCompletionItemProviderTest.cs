@@ -1,9 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -308,7 +305,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
         Assert.Same(item, s_transitionCompletionItem);
     }
 
-    private static RazorSyntaxTree GetSyntaxTree(string text, string fileKind = null)
+    private static RazorSyntaxTree GetSyntaxTree(string text, string? fileKind = null)
     {
         fileKind ??= FileKinds.Component;
         var sourceDocument = TestRazorSourceDocument.Create(text);
@@ -316,18 +313,18 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
         {
             builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, Array.Empty<TagHelperDescriptor>());
-        var syntaxTree = codeDocument.GetSyntaxTree();
 
-        return syntaxTree;
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers: []);
+
+        return codeDocument.GetSyntaxTree();
     }
 
-    private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, string fileKind = null)
+    private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, string? fileKind = null)
     {
         var syntaxTree = GetSyntaxTree(documentContent, fileKind);
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        var context = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
-        return context;
+
+        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
     }
 }
