@@ -4,7 +4,7 @@
   <PropertyGroup>
     <UsingToolXliff>true</UsingToolXliff>
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
-    <VersionPrefix>8.0.112</VersionPrefix>
+    <VersionPrefix>8.0.113</VersionPrefix>
     <!-- When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages -->
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">true</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
@@ -25,5 +25,9 @@
   <PropertyGroup>
     <!-- Non-maestro versions -->
     <SystemFormatsAsn1Version>8.0.1</SystemFormatsAsn1Version>
+    <MicrosoftExtensionsLoggingPackageVersion>8.0.1</MicrosoftExtensionsLoggingPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>8.0.2</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>8.0.1</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>8.0.2</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
   </PropertyGroup>
 </Project>
