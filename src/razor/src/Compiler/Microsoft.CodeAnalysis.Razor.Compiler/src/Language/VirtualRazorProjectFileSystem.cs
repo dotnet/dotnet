@@ -1,12 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -18,27 +15,18 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
     {
         basePath = NormalizeAndEnsureValidPath(basePath);
         var directory = _root.GetDirectory(basePath);
-        return directory?.EnumerateItems() ?? Enumerable.Empty<RazorProjectItem>();
+        return directory?.EnumerateItems() ?? [];
     }
 
-
-    public override RazorProjectItem GetItem(string path)
-    {
-        return GetItem(path, fileKind: null);
-    }
-
-    public override RazorProjectItem GetItem(string path, string fileKind)
+    public override RazorProjectItem GetItem(string path, string? fileKind)
     {
         path = NormalizeAndEnsureValidPath(path);
-        return _root.GetItem(path) ?? new NotFoundProjectItem(string.Empty, path, fileKind);
+        return _root.GetItem(path) ?? new NotFoundProjectItem(path, fileKind);
     }
 
     public void Add(RazorProjectItem projectItem)
     {
-        if (projectItem == null)
-        {
-            throw new ArgumentNullException(nameof(projectItem));
-        }
+        ArgHelper.ThrowIfNull(projectItem);
 
         var filePath = NormalizeAndEnsureValidPath(projectItem.FilePath);
         _root.AddFile(new FileNode(filePath, projectItem));
@@ -46,18 +34,12 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
 
     // Internal for testing
     [DebuggerDisplay("{Path}")]
-    internal class DirectoryNode
+    internal sealed class DirectoryNode(string path)
     {
-        public DirectoryNode(string path)
-        {
-            Path = path;
-        }
+        public string Path { get; } = path;
 
-        public string Path { get; }
-
-        public List<DirectoryNode> Directories { get; } = new List<DirectoryNode>();
-
-        public List<FileNode> Files { get; } = new List<FileNode>();
+        public List<DirectoryNode> Directories { get; } = [];
+        public List<FileNode> Files { get; } = [];
 
         public void AddFile(FileNode fileNode)
         {
@@ -75,7 +57,7 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
             directory.Files.Add(fileNode);
         }
 
-        public DirectoryNode GetDirectory(string path)
+        public DirectoryNode? GetDirectory(string path)
         {
             if (!path.StartsWith(Path, StringComparison.OrdinalIgnoreCase))
             {
@@ -102,7 +84,7 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
             }
         }
 
-        public RazorProjectItem GetItem(string path)
+        public RazorProjectItem? GetItem(string path)
         {
             if (!path.StartsWith(Path, StringComparison.OrdinalIgnoreCase))
             {
@@ -137,21 +119,19 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
         {
             // /dir1/dir2/file.cshtml -> /dir1/dir2/
             var fileNameIndex = path.LastIndexOf('/');
-            if (fileNameIndex == -1)
-            {
-                return path;
-            }
 
-            return path.Substring(0, fileNameIndex + 1);
+            return fileNameIndex >= 0
+                ? path[..(fileNameIndex + 1)]
+                : path;
         }
 
-        private static DirectoryNode GetOrAddDirectory(
+        private static DirectoryNode? GetOrAddDirectory(
             DirectoryNode directory,
             string path,
             bool createIfNotExists = false)
         {
             Debug.Assert(!string.IsNullOrEmpty(path));
-            if (path[path.Length - 1] != '/')
+            if (path[^1] != '/')
             {
                 path += '/';
             }
@@ -181,7 +161,7 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
             return directory;
         }
 
-        private static DirectoryNode FindSubDirectory(DirectoryNode parentDirectory, string path)
+        private static DirectoryNode? FindSubDirectory(DirectoryNode parentDirectory, string path)
         {
             for (var i = 0; i < parentDirectory.Directories.Count; i++)
             {
@@ -207,16 +187,9 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
 
     // Internal for testing
     [DebuggerDisplay("{Path}")]
-    internal struct FileNode
+    internal readonly struct FileNode(string path, RazorProjectItem projectItem)
     {
-        public FileNode(string path, RazorProjectItem projectItem)
-        {
-            Path = path;
-            ProjectItem = projectItem;
-        }
-
-        public string Path { get; }
-
-        public RazorProjectItem ProjectItem { get; }
+        public string Path => path;
+        public RazorProjectItem ProjectItem => projectItem;
     }
 }

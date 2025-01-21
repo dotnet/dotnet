@@ -1,20 +1,18 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorCodeGenerationOptionsFactoryProjectFeature : RazorProjectEngineFeatureBase, IRazorCodeGenerationOptionsFactoryProjectFeature
 {
-    private IConfigureRazorCodeGenerationOptionsFeature[] _configureOptions;
+    private ImmutableArray<IConfigureRazorCodeGenerationOptionsFeature> _configureOptions;
 
     protected override void OnInitialized()
     {
-        _configureOptions = ProjectEngine.EngineFeatures.OfType<IConfigureRazorCodeGenerationOptionsFeature>().ToArray();
+        _configureOptions = ProjectEngine.Engine.GetFeatures<IConfigureRazorCodeGenerationOptionsFeature>();
     }
 
     public RazorCodeGenerationOptions Create(Action<RazorCodeGenerationOptionsBuilder> configure)
@@ -22,12 +20,11 @@ internal class DefaultRazorCodeGenerationOptionsFactoryProjectFeature : RazorPro
         var builder = new RazorCodeGenerationOptionsBuilder(ProjectEngine.Configuration);
         configure?.Invoke(builder);
 
-        for (var i = 0; i < _configureOptions.Length; i++)
+        foreach (var options in _configureOptions)
         {
-            _configureOptions[i].Configure(builder);
+            options.Configure(builder);
         }
 
-        var options = builder.Build();
-        return options;
+        return builder.Build();
     }
 }

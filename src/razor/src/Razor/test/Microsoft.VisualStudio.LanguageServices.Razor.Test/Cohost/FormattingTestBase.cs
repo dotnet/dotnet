@@ -65,7 +65,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         Assert.NotNull(generatedHtml);
 
         var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
-        var htmlEdits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces: true, tabSize: 4);
+        var htmlEdits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces, tabSize);
 
         var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
 
@@ -157,7 +157,11 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     {
         Assert.True(_context.CreatedByFormattingDiscoverer, "Test class is using FormattingTestContext, but not using [FormattingTestFact] or [FormattingTestTheory]");
 
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = _context.ForceRuntimeCodeGeneration });
+        UpdateClientInitializationOptions(opt => opt with
+        {
+            ForceRuntimeCodeGeneration = _context.ForceRuntimeCodeGeneration,
+            UseNewFormattingEngine = _context.UseNewFormattingEngine
+        });
 
         if (_context.ShouldFlipLineEndings)
         {

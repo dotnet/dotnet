@@ -30,9 +30,9 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     private RazorDynamicFileInfoProvider _provider;
     private TestAccessor _testAccessor;
     private TestProjectSnapshotManager _projectManager;
-    private IProjectSnapshot _project;
-    private IDocumentSnapshot _document1;
-    private IDocumentSnapshot _document2;
+    private ProjectSnapshot _project;
+    private DocumentSnapshot _document1;
+    private DocumentSnapshot _document2;
     private IDynamicDocumentContainer _lspDocumentContainer;
 #nullable enable
 
@@ -50,8 +50,8 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         await _projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject);
-            updater.AddDocument(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
-            updater.AddDocument(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
+            updater.AddDocument(hostProject.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
         _project = _projectManager.GetRequiredProject(hostProject.Key);
@@ -84,7 +84,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
             .Verifiable();
         lspDocumentContainerMock
             .Setup(container => container.GetTextLoader(It.IsAny<string>()))
-            .Returns(new EmptyTextLoader(string.Empty));
+            .Returns(EmptyTextLoader.Instance);
         _lspDocumentContainer = lspDocumentContainerMock.Object;
 
         var projectInfo = ProjectInfo.Create(
@@ -162,7 +162,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         await _projectManager.UpdateAsync(updater =>
         {
             updater.SolutionClosed();
-            updater.CloseDocument(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
+            updater.CloseDocument(_project.Key, _document1.FilePath, EmptyTextLoader.Instance);
         });
 
         // Act & Assert

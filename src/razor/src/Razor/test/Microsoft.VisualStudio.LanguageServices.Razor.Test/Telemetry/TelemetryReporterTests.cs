@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -25,13 +27,11 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
     {
         using var reporter = new TestTelemetryReporter(LoggerFactory);
         reporter.ReportEvent("EventName", Severity.Normal);
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.False(e1.HasProperties);
-            });
+
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.False(actualEvent.HasProperties);
     }
 
     [Fact]
@@ -39,16 +39,14 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
     {
         using var reporter = new TestTelemetryReporter(LoggerFactory);
         reporter.ReportEvent("EventName", Severity.Normal, new Property("P1", false));
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
-                Assert.Single(e1.Properties);
 
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-            });
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
+        Assert.Single(actualEvent.Properties);
+
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
     }
 
     [Fact]
@@ -56,16 +54,14 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
     {
         using var reporter = new TestTelemetryReporter(LoggerFactory);
         reporter.ReportEvent("EventName", Severity.Normal, new("P1", false), new("P2", "test"));
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
 
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
-            });
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
+
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
     }
 
     [Fact]
@@ -79,20 +75,16 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             new("P2", "test"),
             new("P3", p3Value));
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
 
-                var p3 = e1.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
-                Assert.NotNull(p3);
-                Assert.Equal(p3Value, p3.Value);
-            });
+        var p3 = Assert.IsType<TelemetryComplexProperty>(actualEvent.Properties["dotnet.razor.p3"]);
+        Assert.Equal(p3Value, p3.Value);
     }
 
     [Fact]
@@ -107,22 +99,18 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             new("P3", p3Value),
             new("P4", 100));
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
 
-                var p3 = e1.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
-                Assert.NotNull(p3);
-                Assert.Equal(p3Value, p3.Value);
+        var p3 = Assert.IsType<TelemetryComplexProperty>(actualEvent.Properties["dotnet.razor.p3"]);
+        Assert.Equal(p3Value, p3.Value);
 
-                Assert.Equal(100, e1.Properties["dotnet.razor.p4"]);
-            });
+        Assert.Equal(100, actualEvent.Properties["dotnet.razor.p4"]);
     }
 
     [Fact]
@@ -133,15 +121,12 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-            });
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
     }
 
     [Fact]
@@ -152,16 +137,13 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-            });
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
     }
 
     [Fact]
@@ -172,17 +154,14 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
-            });
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
     }
 
     [Fact]
@@ -199,21 +178,18 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
 
-                var p3 = e1.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
-                Assert.NotNull(p3);
-                Assert.Equal(p3Value, p3.Value);
-            });
+        var p3 = actualEvent.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
+        Assert.NotNull(p3);
+        Assert.Equal(p3Value, p3.Value);
     }
 
     [Fact]
@@ -231,23 +207,20 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/eventname", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/eventname", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-                Assert.Equal(false, e1.Properties["dotnet.razor.p1"]);
-                Assert.Equal("test", e1.Properties["dotnet.razor.p2"]);
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
+        Assert.Equal(false, actualEvent.Properties["dotnet.razor.p1"]);
+        Assert.Equal("test", actualEvent.Properties["dotnet.razor.p2"]);
 
-                var p3 = e1.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
-                Assert.NotNull(p3);
-                Assert.Equal(p3Value, p3.Value);
+        var p3 = actualEvent.Properties["dotnet.razor.p3"] as TelemetryComplexProperty;
+        Assert.NotNull(p3);
+        Assert.Equal(p3Value, p3.Value);
 
-                Assert.Equal(100, e1.Properties["dotnet.razor.p4"]);
-            });
+        Assert.Equal(100, actualEvent.Properties["dotnet.razor.p4"]);
     }
 
     [Fact]
@@ -260,16 +233,13 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
 
         reporter.ReportFault(rie, rie.Message);
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.High, e1.Severity);
-                Assert.Equal("dotnet/razor/fault", e1.Name);
-                // faultEvent doesn't expose any interesting properties,
-                // like the ExceptionObject, or the resulting Description,
-                // or really anything we would explicitly want to verify against.
-                Assert.IsType<FaultEvent>(e1);
-            });
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.High, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/fault", actualEvent.Name);
+        // faultEvent doesn't expose any interesting properties,
+        // like the ExceptionObject, or the resulting Description,
+        // or really anything we would explicitly want to verify against.
+        Assert.IsType<FaultEvent>(actualEvent);
     }
 
     [Fact]
@@ -281,16 +251,13 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
 
         reporter.ReportFault(rie, rie.Message);
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.High, e1.Severity);
-                Assert.Equal("dotnet/razor/fault", e1.Name);
-                // faultEvent doesn't expose any interesting properties,
-                // like the ExceptionObject, or the resulting Description,
-                // or really anything we would explicitly want to verify against.
-                Assert.IsType<FaultEvent>(e1);
-            });
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.High, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/fault", actualEvent.Name);
+        // faultEvent doesn't expose any interesting properties,
+        // like the ExceptionObject, or the resulting Description,
+        // or really anything we would explicitly want to verify against.
+        Assert.IsType<FaultEvent>(actualEvent);
     }
 
     [Fact]
@@ -302,21 +269,18 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         {
         }
 
-        Assert.Collection(reporter.Events,
-            e1 =>
-            {
-                Assert.Equal(TelemetrySeverity.Normal, e1.Severity);
-                Assert.Equal("dotnet/razor/tracklsprequest", e1.Name);
-                Assert.True(e1.HasProperties);
+        var actualEvent = Assert.Single(reporter.Events);
+        Assert.Equal(TelemetrySeverity.Normal, actualEvent.Severity);
+        Assert.Equal("dotnet/razor/tracklsprequest", actualEvent.Name);
+        Assert.True(actualEvent.HasProperties);
 
-                Assert.True(e1.Properties["dotnet.razor.eventscope.ellapsedms"] is long);
-                Assert.Equal("MethodName", e1.Properties["dotnet.razor.eventscope.method"]);
-                Assert.Equal("ServerName", e1.Properties["dotnet.razor.eventscope.languageservername"]);
+        Assert.IsType<long>(actualEvent.Properties["dotnet.razor.eventscope.ellapsedms"]);
+        Assert.Equal("MethodName", actualEvent.Properties["dotnet.razor.eventscope.method"]);
+        Assert.Equal("ServerName", actualEvent.Properties["dotnet.razor.eventscope.languageservername"]);
 
-                var correlationProperty = e1.Properties["dotnet.razor.eventscope.correlationid"] as TelemetryComplexProperty;
-                Assert.NotNull(correlationProperty);
-                Assert.Equal(correlationId, correlationProperty.Value);
-            });
+        var correlationProperty = actualEvent.Properties["dotnet.razor.eventscope.correlationid"] as TelemetryComplexProperty;
+        Assert.NotNull(correlationProperty);
+        Assert.Equal(correlationId, correlationProperty.Value);
     }
 
     [Fact]
@@ -447,12 +411,10 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
 
                 var telemetryEvent = evt.Event;
                 Assert.Equal("dotnet/razor/lsp_timeinqueue", telemetryEvent.Name);
-                Assert.Collection(telemetryEvent.Properties,
-                    static prop =>
-                    {
-                        Assert.Equal("dotnet.razor.method", prop.Key);
-                        Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
-                    });
+
+                var prop = Assert.Single(telemetryEvent.Properties);
+                Assert.Equal("dotnet.razor.method", prop.Key);
+                Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
             },
             static evt =>
             {
@@ -461,12 +423,10 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
 
                 var telemetryEvent = evt.Event;
                 Assert.Equal("dotnet/razor/lsp_requestduration", telemetryEvent.Name);
-                Assert.Collection(telemetryEvent.Properties,
-                    static prop =>
-                    {
-                        Assert.Equal("dotnet.razor.method", prop.Key);
-                        Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
-                    });
+
+                var prop = Assert.Single(telemetryEvent.Properties);
+                Assert.Equal("dotnet.razor.method", prop.Key);
+                Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
             },
             static evt =>
             {
@@ -475,12 +435,10 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
 
                 var telemetryEvent = evt.Event;
                 Assert.Equal("dotnet/razor/lsp_requestduration", telemetryEvent.Name);
-                Assert.Collection(telemetryEvent.Properties,
-                    static prop =>
-                    {
-                        Assert.Equal("dotnet.razor.method", prop.Key);
-                        Assert.Equal(Methods.TextDocumentCompletionName, prop.Value);
-                    });
+
+                var prop = Assert.Single(telemetryEvent.Properties);
+                Assert.Equal("dotnet.razor.method", prop.Key);
+                Assert.Equal(Methods.TextDocumentCompletionName, prop.Value);
             });
 
         Assert.Collection(reporter.Events,
@@ -536,32 +494,26 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             });
     }
 
-    [Theory, MemberData(nameof(s_throwFunctions))]
-    public void GetModifiedFaultParameters_FiltersCorrectly(Func<object> throwAction)
+    [Fact]
+    public void GetModifiedFaultParameters_FiltersCorrectly()
     {
-        try
-        {
-            throwAction();
-        }
-        catch (Exception ex)
-        {
-            var (param1, param2) = TestTelemetryReporter.GetModifiedFaultParameters(ex);
+        // The expected module name should be the primary module of this test assembly.
+        // The expected method name should be AssumeNotNullFailure() below.
+        var currentModule = Assert.Single(Assembly.GetExecutingAssembly().Modules);
+        var expectedModuleName = Path.GetFileNameWithoutExtension(currentModule.Name);
+        var expectedMethodName = nameof(AssumeNotNullFailure);
 
-            Assert.Equal("Microsoft.VisualStudio.LanguageServices.Razor.Test", param1);
-            Assert.NotNull(param2);
+        var exception = Assert.Throws<InvalidOperationException>(AssumeNotNullFailure);
 
-            // Depending on debug/release the stack can contain a constructor or
-            // a call to this method. We expect one or the other and both
-            // are valid
-#if DEBUG
-            Assert.StartsWith("<.cctor>", param2);
-#else 
-            Assert.Equal("GetModifiedFaultParameters_FiltersCorrectly", param2);
-#endif
-        }
+        var (moduleName, methodName) = TestTelemetryReporter.GetModifiedFaultParameters(exception);
+
+        Assert.Equal(expectedModuleName, moduleName);
+        Assert.Equal(expectedMethodName, methodName);
     }
 
-    public static readonly IEnumerable<object[]> s_throwFunctions = [
-        [() => ((object?)null).AssumeNotNull()]
-    ];
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void AssumeNotNullFailure()
+    {
+        ((object?)null).AssumeNotNull();
+    }
 }

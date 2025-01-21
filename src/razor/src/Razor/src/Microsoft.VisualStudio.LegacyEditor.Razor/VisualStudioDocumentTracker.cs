@@ -7,9 +7,11 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Extensions;
@@ -25,14 +27,14 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly string _filePath;
     private readonly string _projectPath;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings;
     private readonly ITextBuffer _textBuffer;
     private readonly IImportDocumentManager _importDocumentManager;
     private readonly List<ITextView> _textViews;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private bool _isSupportedProject;
-    private IProjectSnapshot? _projectSnapshot;
+    private ILegacyProjectSnapshot? _projectSnapshot;
 
     private int _subscribeCount;
 
@@ -42,7 +44,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         JoinableTaskContext joinableTaskContext,
         string filePath,
         string projectPath,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IWorkspaceEditorSettings workspaceEditorSettings,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ITextBuffer textBuffer,
@@ -70,13 +72,13 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     public ClientSpaceSettings EditorSettings => _workspaceEditorSettings.Current.ClientSpaceSettings;
 
     public ImmutableArray<TagHelperDescriptor> TagHelpers
-        => _projectSnapshot is { ProjectWorkspaceState.TagHelpers: var tagHelpers }
+        => _projectSnapshot is { TagHelpers: var tagHelpers }
             ? tagHelpers
             : [];
 
     public bool IsSupportedProject => _isSupportedProject;
 
-    public IProjectSnapshot? ProjectSnapshot => _projectSnapshot;
+    public ILegacyProjectSnapshot? ProjectSnapshot => _projectSnapshot;
 
     public ITextBuffer TextBuffer => _textBuffer;
 
@@ -147,16 +149,16 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
         _importDocumentManager.OnSubscribed(this);
 
-        _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
+        OnContextChangedAsync(ContextChangeKind.ProjectChanged).Forget();
     }
 
-    private IProjectSnapshot GetOrCreateProject(string projectFilePath)
+    private ILegacyProjectSnapshot GetOrCreateProject(string projectFilePath)
     {
         var projectKeys = _projectManager.GetProjectKeysWithFilePath(projectFilePath);
 
         if (projectKeys is [var projectKey, ..] && _projectManager.TryGetProject(projectKey, out var project))
         {
-            return project;
+            return (ILegacyProjectSnapshot)project;
         }
 
         return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectFilePath);
@@ -179,7 +181,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         _isSupportedProject = false;
         _projectSnapshot = null;
 
-        _ = OnContextChangedAsync(kind: ContextChangeKind.ProjectChanged);
+        OnContextChangedAsync(ContextChangeKind.ProjectChanged).Forget();
     }
 
     private async Task OnContextChangedAsync(ContextChangeKind kind)
@@ -200,40 +202,35 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         if (_projectPath is not null &&
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
         {
-            // This will be the new snapshot unless the project was removed.
-            if (!_projectManager.TryGetProject(e.ProjectKey, out _projectSnapshot))
-            {
-                _projectSnapshot = null;
-            }
-
             switch (e.Kind)
             {
                 case ProjectChangeKind.DocumentAdded:
                 case ProjectChangeKind.DocumentRemoved:
                 case ProjectChangeKind.DocumentChanged:
-
-                    // Nothing to do.
+                    _projectSnapshot = (e.Newer as ILegacyProjectSnapshot).AssumeNotNull();
                     break;
 
                 case ProjectChangeKind.ProjectAdded:
                 case ProjectChangeKind.ProjectChanged:
+                    var newer = (e.Newer as ILegacyProjectSnapshot).AssumeNotNull();
+                    _projectSnapshot = newer;
 
                     // Just an update
-                    _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
+                    OnContextChangedAsync(ContextChangeKind.ProjectChanged).Forget();
 
-                    if (e.Older is null ||
-                        !e.Older.ProjectWorkspaceState.TagHelpers.SequenceEqual(e.Newer!.ProjectWorkspaceState.TagHelpers))
+                    if (e.Older is not ILegacyProjectSnapshot older ||
+                        !older.TagHelpers.SequenceEqual(newer.TagHelpers))
                     {
-                        _ = OnContextChangedAsync(ContextChangeKind.TagHelpersChanged);
+                        OnContextChangedAsync(ContextChangeKind.TagHelpersChanged).Forget();
                     }
 
                     break;
 
                 case ProjectChangeKind.ProjectRemoved:
-
                     // Fall back to ephemeral project
                     _projectSnapshot = GetOrCreateProject(ProjectPath);
-                    _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
+                    OnContextChangedAsync(ContextChangeKind.ProjectChanged).Forget();
+
                     break;
 
                 default:
@@ -244,7 +241,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     // Internal for testing
     internal void EditorSettingsManager_Changed(object sender, ClientSettingsChangedEventArgs args)
-        => _ = OnContextChangedAsync(ContextChangeKind.EditorSettingsChanged);
+        => OnContextChangedAsync(ContextChangeKind.EditorSettingsChanged).Forget();
 
     // Internal for testing
     internal void Import_Changed(object sender, ImportChangedEventArgs args)
@@ -253,7 +250,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         {
             if (string.Equals(_filePath, path, StringComparison.OrdinalIgnoreCase))
             {
-                _ = OnContextChangedAsync(ContextChangeKind.ImportsChanged);
+                OnContextChangedAsync(ContextChangeKind.ImportsChanged).Forget();
                 break;
             }
         }

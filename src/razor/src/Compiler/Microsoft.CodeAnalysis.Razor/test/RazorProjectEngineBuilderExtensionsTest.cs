@@ -28,7 +28,7 @@ public class RazorProjectEngineBuilderExtensionsTest
         });
 
         // Assert
-        var feature = projectEngine.EngineFeatures.OfType<ConfigureParserForCSharpVersionFeature>().FirstOrDefault();
+        var feature = projectEngine.Engine.GetFeatures<ConfigureParserForCSharpVersionFeature>().FirstOrDefault();
         Assert.NotNull(feature);
         Assert.NotEqual(csharpLanguageVersion, feature.CSharpLanguageVersion);
     }

@@ -199,7 +199,7 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
         }
 
         var tagHelpers = await documentContext.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-        var tagHelperCount = tagHelpers.Count();
+        var tagHelperCount = tagHelpers.Length;
         var shouldReport = false;
 
         ImmutableInterlocked.AddOrUpdate(

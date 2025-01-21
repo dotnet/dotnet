@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -22,8 +23,6 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     private readonly GeneratedDocumentSynchronizer _synchronizer;
     private readonly TestGeneratedDocumentPublisher _publisher;
     private readonly TestProjectSnapshotManager _projectManager;
-    private readonly IDocumentSnapshot _document;
-    private readonly RazorCodeDocument _codeDocument;
 
     public GeneratedDocumentSynchronizerTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -31,8 +30,6 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         _publisher = new TestGeneratedDocumentPublisher();
         _projectManager = CreateProjectSnapshotManager();
         _synchronizer = new GeneratedDocumentSynchronizer(_publisher, TestLanguageServerFeatureOptions.Instance, _projectManager);
-        _document = TestDocumentSnapshot.Create(s_hostDocument.FilePath);
-        _codeDocument = CreateCodeDocument("<p>Hello World</p>");
     }
 
     protected override async Task InitializeAsync()
@@ -40,7 +37,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(s_hostProject);
-            updater.AddDocument(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
+            updater.AddDocument(s_hostProject.Key, s_hostDocument, TestMocks.CreateTextLoader("<p>Hello World</p>"));
         });
     }
 
@@ -53,8 +50,11 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
             updater.OpenDocument(s_hostProject.Key, s_hostDocument.FilePath, SourceText.From("<p>Hello World</p>"));
         });
 
+        var document = _projectManager.GetRequiredDocument(s_hostProject.Key, s_hostDocument.FilePath);
+        var codeDocument = await document.GetGeneratedOutputAsync(DisposalToken);
+
         // Act
-        _synchronizer.DocumentProcessed(_codeDocument, _document);
+        _synchronizer.DocumentProcessed(codeDocument, document);
 
         // Assert
         Assert.True(_publisher.PublishedCSharp);
@@ -62,13 +62,16 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void DocumentProcessed_CloseDocument_WithOption_Publishes()
+    public async Task DocumentProcessed_CloseDocument_WithOption_Publishes()
     {
         var options = new TestLanguageServerFeatureOptions(updateBuffersForClosedDocuments: true);
         var synchronizer = new GeneratedDocumentSynchronizer(_publisher, options, _projectManager);
 
+        var document = _projectManager.GetRequiredDocument(s_hostProject.Key, s_hostDocument.FilePath);
+        var codeDocument = await document.GetGeneratedOutputAsync(DisposalToken);
+
         // Act
-        synchronizer.DocumentProcessed(_codeDocument, _document);
+        synchronizer.DocumentProcessed(codeDocument, document);
 
         // Assert
         Assert.True(_publisher.PublishedCSharp);
@@ -76,10 +79,13 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void DocumentProcessed_CloseDocument_DoesntPublish()
+    public async Task DocumentProcessed_CloseDocument_DoesntPublish()
     {
+        var document = _projectManager.GetRequiredDocument(s_hostProject.Key, s_hostDocument.FilePath);
+        var codeDocument = await document.GetGeneratedOutputAsync(DisposalToken);
+
         // Act
-        _synchronizer.DocumentProcessed(_codeDocument, _document);
+        _synchronizer.DocumentProcessed(codeDocument, document);
 
         // Assert
         Assert.False(_publisher.PublishedCSharp);
@@ -87,12 +93,20 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void DocumentProcessed_RemovedDocument_DoesntPublish()
+    public async Task DocumentProcessed_RemovedDocument_DoesntPublish()
     {
-        var document = TestDocumentSnapshot.Create("/path/to/non.existent.file.razor");
+        var document = await _projectManager.UpdateAsync(updater =>
+        {
+            var removedDocument = updater.GetRequiredDocument(s_hostProject.Key, s_hostDocument.FilePath);
+            updater.RemoveDocument(s_hostProject.Key, s_hostDocument.FilePath);
+
+            return removedDocument;
+        });
+
+        var codeDocument = await document.GetGeneratedOutputAsync(DisposalToken);
 
         // Act
-        _synchronizer.DocumentProcessed(_codeDocument, document);
+        _synchronizer.DocumentProcessed(codeDocument, document);
 
         // Assert
         Assert.False(_publisher.PublishedCSharp);

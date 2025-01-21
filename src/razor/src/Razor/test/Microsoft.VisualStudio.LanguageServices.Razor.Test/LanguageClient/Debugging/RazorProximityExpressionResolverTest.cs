@@ -9,7 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
@@ -113,11 +115,14 @@ public class RazorProximityExpressionResolverTest : ToolingTestBase
         documentManager ??= Mock.Of<LSPDocumentManager>(
             manager => manager.TryGetDocument(_documentUri, out documentSnapshot) == true,
             MockBehavior.Strict);
+        var remoteServiceInvoker = StrictMock.Of<IRemoteServiceInvoker>();
 
         var razorProximityExpressionResolver = new RazorProximityExpressionResolver(
             uriProvider,
             documentManager,
-            TestLSPProximityExpressionProvider.Instance);
+            TestLSPProximityExpressionProvider.Instance,
+            TestLanguageServerFeatureOptions.Instance,
+            remoteServiceInvoker);
 
         return razorProximityExpressionResolver;
     }

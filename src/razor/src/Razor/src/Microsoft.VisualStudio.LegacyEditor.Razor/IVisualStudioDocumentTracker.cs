@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -20,7 +20,7 @@ internal interface IVisualStudioDocumentTracker
     bool IsSupportedProject { get; }
     string FilePath { get; }
     string ProjectPath { get; }
-    IProjectSnapshot? ProjectSnapshot { get; }
+    ILegacyProjectSnapshot? ProjectSnapshot { get; }
     ITextBuffer TextBuffer { get; }
     IReadOnlyList<ITextView> TextViews { get; }
 

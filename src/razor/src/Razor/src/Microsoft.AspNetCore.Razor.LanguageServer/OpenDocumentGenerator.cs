@@ -28,16 +28,16 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
     private static readonly TimeSpan s_delay = TimeSpan.FromMilliseconds(10);
 
     private readonly ImmutableArray<IDocumentProcessedListener> _listeners;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _options;
     private readonly ILogger _logger;
 
-    private readonly AsyncBatchingWorkQueue<IDocumentSnapshot> _workQueue;
+    private readonly AsyncBatchingWorkQueue<DocumentSnapshot> _workQueue;
     private readonly CancellationTokenSource _disposeTokenSource;
 
     public OpenDocumentGenerator(
         IEnumerable<IDocumentProcessedListener> listeners,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)
     {
@@ -46,7 +46,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
         _options = options;
 
         _disposeTokenSource = new();
-        _workQueue = new AsyncBatchingWorkQueue<IDocumentSnapshot>(
+        _workQueue = new AsyncBatchingWorkQueue<DocumentSnapshot>(
             s_delay,
             ProcessBatchAsync,
             _disposeTokenSource.Token);
@@ -66,7 +66,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
         _disposeTokenSource.Dispose();
     }
 
-    private async ValueTask ProcessBatchAsync(ImmutableArray<IDocumentSnapshot> items, CancellationToken token)
+    private async ValueTask ProcessBatchAsync(ImmutableArray<DocumentSnapshot> items, CancellationToken token)
     {
         foreach (var document in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
@@ -167,7 +167,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
                 }
         }
 
-        void EnqueueIfNecessary(IDocumentSnapshot document)
+        void EnqueueIfNecessary(DocumentSnapshot document)
         {
             if (!_projectManager.IsDocumentOpen(document.FilePath) &&
                 !_options.UpdateBuffersForClosedDocuments)

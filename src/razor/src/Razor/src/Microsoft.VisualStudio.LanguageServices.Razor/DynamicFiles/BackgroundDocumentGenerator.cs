@@ -22,20 +22,20 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 {
     private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(2);
 
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly IFallbackProjectManager _fallbackProjectManager;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
 
     private readonly CancellationTokenSource _disposeTokenSource;
-    private readonly AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)> _workQueue;
+    private readonly AsyncBatchingWorkQueue<(ProjectSnapshot, DocumentSnapshot)> _workQueue;
     private ImmutableHashSet<string> _suppressedDocuments;
     private bool _solutionIsClosing;
 
     [ImportingConstructor]
     public BackgroundDocumentGenerator(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
         ILoggerFactory loggerFactory)
@@ -45,7 +45,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
     // Provided for tests to be able to modify the timer delay
     protected BackgroundDocumentGenerator(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
         ILoggerFactory loggerFactory,
@@ -58,7 +58,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
         _logger = loggerFactory.GetOrCreateLogger<BackgroundDocumentGenerator>();
 
         _disposeTokenSource = new();
-        _workQueue = new AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)>(
+        _workQueue = new AsyncBatchingWorkQueue<(ProjectSnapshot, DocumentSnapshot)>(
             delay,
             processBatchAsync: ProcessBatchAsync,
             equalityComparer: null,
@@ -82,14 +82,14 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     protected Task WaitUntilCurrentBatchCompletesAsync()
         => _workQueue.WaitUntilCurrentBatchCompletesAsync();
 
-    protected virtual async Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document, CancellationToken cancellationToken)
+    protected virtual async Task ProcessDocumentAsync(ProjectSnapshot project, DocumentSnapshot document, CancellationToken cancellationToken)
     {
         await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateFileInfo(project, document);
     }
 
-    public virtual void Enqueue(IProjectSnapshot project, IDocumentSnapshot document)
+    public virtual void Enqueue(ProjectSnapshot project, DocumentSnapshot document)
     {
         if (_disposeTokenSource.IsCancellationRequested)
         {
@@ -110,7 +110,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
         _workQueue.AddWork((project, document));
     }
 
-    protected virtual async ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot, IDocumentSnapshot)> items, CancellationToken token)
+    protected virtual async ValueTask ProcessBatchAsync(ImmutableArray<(ProjectSnapshot, DocumentSnapshot)> items, CancellationToken token)
     {
         foreach (var (project, document) in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
@@ -145,7 +145,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
         }
     }
 
-    private bool Suppressed(IProjectSnapshot project, IDocumentSnapshot document)
+    private bool Suppressed(ProjectSnapshot project, DocumentSnapshot document)
     {
         var filePath = document.FilePath;
 
@@ -160,7 +160,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
         return false;
     }
 
-    private void UpdateFileInfo(IProjectSnapshot project, IDocumentSnapshot document)
+    private void UpdateFileInfo(ProjectSnapshot project, DocumentSnapshot document)
     {
         var filePath = document.FilePath;
 

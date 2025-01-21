@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -165,10 +163,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["visible"] = [documentDescriptors[0].BoundAttributes.Last()]
         });
 
-        var existingCompletions = new[] { "onclick" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["onclick"],
             attributes: [
                 KeyValuePair.Create("class", "something"),
                 KeyValuePair.Create("repeat", "4")],
@@ -212,10 +209,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["visible"] = [documentDescriptors[0].BoundAttributes.Last()]
         });
 
-        var existingCompletions = new[] { "onclick" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["onclick"],
             attributes: [
                 KeyValuePair.Create("class", "something"),
                 KeyValuePair.Create("repeat", "4"),
@@ -260,10 +256,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["onclick"] = []
         });
 
-        var existingCompletions = new[] { "onclick" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["onclick"],
             attributes: [
                 KeyValuePair.Create("class", "something"),
                 KeyValuePair.Create("repeat", "4"),
@@ -304,10 +299,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["repeat"] = []
         });
 
-        var existingCompletions = new[] { "onclick", "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["onclick", "class"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -355,10 +349,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["repeat"] = [documentDescriptors[0].BoundAttributes.First()]
         });
 
-        var existingCompletions = new[] { "onclick" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["onclick"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -412,10 +405,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["visible"] = [documentDescriptors[0].BoundAttributes.Last(), documentDescriptors[2].BoundAttributes.First()]
         });
 
-        var existingCompletions = new[] { "class", "onclick" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class", "onclick"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -448,10 +440,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["repeat"] = [.. documentDescriptors[0].BoundAttributes]
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "custom");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -482,10 +473,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["repeat"] = [.. documentDescriptors[0].BoundAttributes]
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "custom");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -514,13 +504,12 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
         var expectedCompletions = AttributeCompletionResult.Create(new()
         {
             ["class"] = [],
-            ["repeat"] = [..documentDescriptors[0].BoundAttributes]
+            ["repeat"] = [.. documentDescriptors[0].BoundAttributes]
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -540,10 +529,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["class"] = [],
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             descriptors: [],
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -572,10 +560,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["class"] = [],
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "div",
             tagHelperPrefix: "th:");
         var service = CreateTagHelperCompletionFactsService();
@@ -605,10 +592,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["class"] = [],
         });
 
-        var existingCompletions = new[] { "class" };
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["class"],
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -638,12 +624,11 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
 
         var expectedCompletions = ElementCompletionResult.Create([]);
 
-        var existingCompletions = new[] { "table" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["table"],
             containingTagName: "body",
-            containingParentTagName: null);
+            containingParentTagName: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -682,7 +667,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             documentDescriptors,
             existingCompletions: [],
             containingTagName: "body",
-            containingParentTagName: null);
+            containingParentTagName: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -713,12 +698,11 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["my-table"] = [documentDescriptors[0]]
         });
 
-        var existingCompletions = new[] { "table", "div" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["table", "div"],
             containingTagName: "body",
-            containingParentTagName: null);
+            containingParentTagName: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -747,10 +731,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["th:li"] = [documentDescriptors[1], documentDescriptors[0]],
         });
 
-        var existingCompletions = new[] { "li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["li"],
             containingTagName: "ul",
             tagHelperPrefix: "th:");
         var service = CreateTagHelperCompletionFactsService();
@@ -782,10 +765,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["th:li"] = [documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["li"],
             containingTagName: "ul",
             tagHelperPrefix: "th:");
         var service = CreateTagHelperCompletionFactsService();
@@ -819,12 +801,11 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["MYLI"] = [documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["li"],
             containingTagName: "ul",
-            tagHelperPrefix: null);
+            tagHelperPrefix: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -856,12 +837,11 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["li"] = [documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["li"],
             containingTagName: "ul",
-            tagHelperPrefix: null);
+            tagHelperPrefix: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -890,10 +870,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["superli"] = [documentDescriptors[0], documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["li"],
             containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -923,10 +902,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["th:superli"] = [documentDescriptors[0], documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "th:li" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["th:li"],
             containingTagName: "ul",
             tagHelperPrefix: "th:");
         var service = CreateTagHelperCompletionFactsService();
@@ -961,10 +939,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["bold"] = [documentDescriptors[0]],
         });
 
-        var existingCompletions = new[] { "strong", "b", "bold" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["strong", "b", "bold"],
             containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -994,8 +971,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["li"] = [documentDescriptors[0], documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
-        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions, containingTagName: "ul");
+        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions: ["li"], containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1029,8 +1005,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["superli"] = [documentDescriptors[0]],
         });
 
-        var existingCompletions = new[] { "li" };
-        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions, containingTagName: "ul");
+        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions: ["li"], containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1062,8 +1037,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["li"] = [documentDescriptors[1]],
         });
 
-        var existingCompletions = new[] { "li" };
-        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions, containingTagName: "ul");
+        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions: ["li"], containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1092,8 +1066,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["li"] = [documentDescriptors[0]],
         });
 
-        var existingCompletions = new[] { "li" };
-        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions, containingTagName: "ul");
+        var completionContext = BuildElementCompletionContext(documentDescriptors, existingCompletions: ["li"], containingTagName: "ul");
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1128,8 +1101,8 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
             existingCompletions: [],
-            containingTagName: null,
-            containingParentTagName: null);
+            containingTagName: null!,
+            containingParentTagName: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1193,8 +1166,8 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
             existingCompletions: [],
-            containingTagName: null,
-            containingParentTagName: null);
+            containingTagName: null!,
+            containingParentTagName: null!);
         var service = CreateTagHelperCompletionFactsService();
 
         // Act
@@ -1225,10 +1198,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
             ["div"] = [documentDescriptors[0]]
         });
 
-        var existingCompletions = new[] { "p", "em" };
         var completionContext = BuildElementCompletionContext(
             documentDescriptors,
-            existingCompletions,
+            existingCompletions: ["p", "em"],
             containingTagName: "thing",
             containingParentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
@@ -1464,11 +1436,11 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
     {
         Assert.Equal(expected.Completions.Count, actual.Completions.Count);
 
-        foreach (var expectedCompletion in expected.Completions)
+        foreach (var (key, value) in expected.Completions)
         {
-            var actualValue = actual.Completions[expectedCompletion.Key];
+            var actualValue = actual.Completions[key];
             Assert.NotNull(actualValue);
-            Assert.Equal(expectedCompletion.Value, actualValue);
+            Assert.Equal(value, actualValue);
         }
     }
 
@@ -1486,7 +1458,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
 
     private static ElementCompletionContext BuildElementCompletionContext(
         ImmutableArray<TagHelperDescriptor> descriptors,
-        IEnumerable<string> existingCompletions,
+        ImmutableArray<string> existingCompletions,
         string containingTagName,
         string containingParentTagName = "body",
         bool containingParentIsTagHelper = false,
@@ -1510,9 +1482,9 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
 
     private static AttributeCompletionContext BuildAttributeCompletionContext(
         ImmutableArray<TagHelperDescriptor> descriptors,
-        IEnumerable<string> existingCompletions,
+        ImmutableArray<string> existingCompletions,
         string currentTagName,
-        string currentAttributeName = null,
+        string? currentAttributeName = null!,
         ImmutableArray<KeyValuePair<string, string>> attributes = default,
         string tagHelperPrefix = "")
     {

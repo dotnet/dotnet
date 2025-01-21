@@ -1,17 +1,16 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
+
 #pragma warning disable CS0618 // Type or member is obsolete
 internal class DefaultRazorCodeGenerationOptionsFeature : RazorEngineFeatureBase, IRazorCodeGenerationOptionsFeature
 #pragma warning restore CS0618 // Type or member is obsolete
 {
     private readonly bool _designTime;
-    private IConfigureRazorCodeGenerationOptionsFeature[] _configureOptions;
+    private ImmutableArray<IConfigureRazorCodeGenerationOptionsFeature> _configureOptions;
 
     public DefaultRazorCodeGenerationOptionsFeature(bool designTime)
     {
@@ -20,7 +19,7 @@ internal class DefaultRazorCodeGenerationOptionsFeature : RazorEngineFeatureBase
 
     protected override void OnInitialized()
     {
-        _configureOptions = Engine.Features.OfType<IConfigureRazorCodeGenerationOptionsFeature>().ToArray();
+        _configureOptions = Engine.GetFeatures<IConfigureRazorCodeGenerationOptionsFeature>();
     }
 
     public RazorCodeGenerationOptions GetOptions()
@@ -30,9 +29,9 @@ internal class DefaultRazorCodeGenerationOptionsFeature : RazorEngineFeatureBase
 
     private void ConfigureOptions(RazorCodeGenerationOptionsBuilder builder)
     {
-        for (var i = 0; i < _configureOptions.Length; i++)
+        foreach (var options in _configureOptions)
         {
-            _configureOptions[i].Configure(builder);
+            options.Configure(builder);
         }
     }
 }

@@ -17,17 +17,24 @@ public class DefaultRazorProjectFileSystemTest
         "TestFiles",
         "DefaultRazorProjectFileSystem");
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsNullOrEmpty(string path)
+    [Fact]
+    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsNull()
     {
         // Arrange
         var fileSystem = new TestRazorProjectFileSystem("C:/some/test/path/root");
 
         // Act and Assert
-        var exception = Assert.Throws<ArgumentException>(() => fileSystem.NormalizeAndEnsureValidPath(path));
-        Assert.Equal("path", exception.ParamName);
+        Assert.Throws<ArgumentNullException>(paramName: "path", () => fileSystem.NormalizeAndEnsureValidPath(null!));
+    }
+
+    [Fact]
+    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsEmpty()
+    {
+        // Arrange
+        var fileSystem = new TestRazorProjectFileSystem("C:/some/test/path/root");
+
+        // Act and Assert
+        Assert.Throws<ArgumentException>(paramName: "path", () => fileSystem.NormalizeAndEnsureValidPath(""));
     }
 
     [Fact]

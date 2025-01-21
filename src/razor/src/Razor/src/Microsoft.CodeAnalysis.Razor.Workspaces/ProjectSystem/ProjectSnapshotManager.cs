@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -25,10 +24,10 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 // (language version, extensions, named configuration).
 //
 // The implementation will create a ProjectSnapshot for each HostProject.
-internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDisposable
+internal partial class ProjectSnapshotManager : IDisposable
 {
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly RazorCompilerOptions _compilerOptions;
     private readonly Dispatcher _dispatcher;
     private readonly ILogger _logger;
     private readonly bool _initialized;
@@ -83,19 +82,19 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
     /// </summary>
     /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
     /// use when creating <see cref="ProjectState"/>.</param>
-    /// <param name="languageServerFeatureOptions">The options that were used to start the language server</param>
+    /// <param name="compilerOptions">Options used to control Razor compilation.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
     /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
     /// Note that this is called during construction, so it does not run on the dispatcher and notifications
     /// will not be sent.</param>
     public ProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
+        RazorCompilerOptions compilerOptions,
         ILoggerFactory loggerFactory,
         Action<Updater>? initializer = null)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _compilerOptions = compilerOptions;
         _dispatcher = new(loggerFactory);
         _logger = loggerFactory.GetOrCreateLogger(GetType());
 
@@ -121,11 +120,11 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         }
     }
 
-    public ImmutableArray<IProjectSnapshot> GetProjects()
+    public ImmutableArray<ProjectSnapshot> GetProjects()
     {
         using (_readerWriterLock.DisposableRead())
         {
-            using var builder = new PooledArrayBuilder<IProjectSnapshot>(_projectMap.Count);
+            using var builder = new PooledArrayBuilder<ProjectSnapshot>(_projectMap.Count);
 
             foreach (var (_, entry) in _projectMap)
             {
@@ -152,7 +151,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         }
     }
 
-    public bool TryGetProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
+    public bool TryGetProject(ProjectKey projectKey, [NotNullWhen(true)] out ProjectSnapshot? project)
     {
         using (_readerWriterLock.DisposableRead())
         {
@@ -354,7 +353,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         }
     }
 
-    private bool TryAddProject(HostProject hostProject, [NotNullWhen(true)] out IProjectSnapshot? newProject, out bool isSolutionClosing)
+    private bool TryAddProject(HostProject hostProject, [NotNullWhen(true)] out ProjectSnapshot? newProject, out bool isSolutionClosing)
     {
         if (_initialized)
         {
@@ -372,11 +371,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
             return false;
         }
 
-        var state = ProjectState.Create(
-            _projectEngineFactoryProvider,
-            _languageServerFeatureOptions,
-            hostProject,
-            ProjectWorkspaceState.Default);
+        var state = ProjectState.Create(hostProject, _compilerOptions, _projectEngineFactoryProvider);
 
         var newEntry = new Entry(state);
 
@@ -387,7 +382,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         return true;
     }
 
-    private bool TryRemoveProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? oldProject, out bool isSolutionClosing)
+    private bool TryRemoveProject(ProjectKey projectKey, [NotNullWhen(true)] out ProjectSnapshot? oldProject, out bool isSolutionClosing)
     {
         if (_initialized)
         {
@@ -415,8 +410,8 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
     private bool TryUpdateProject(
         ProjectKey projectKey,
         Func<ProjectState, ProjectState> transformer,
-        [NotNullWhen(true)] out IProjectSnapshot? oldProject,
-        [NotNullWhen(true)] out IProjectSnapshot? newProject,
+        [NotNullWhen(true)] out ProjectSnapshot? oldProject,
+        [NotNullWhen(true)] out ProjectSnapshot? newProject,
         out bool isSolutionClosing)
         => TryUpdateProject(projectKey, transformer, onAfterUpdate: null, out oldProject, out newProject, out isSolutionClosing);
 
@@ -424,8 +419,8 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         ProjectKey projectKey,
         Func<ProjectState, ProjectState> transformer,
         Action? onAfterUpdate,
-        [NotNullWhen(true)] out IProjectSnapshot? oldProject,
-        [NotNullWhen(true)] out IProjectSnapshot? newProject,
+        [NotNullWhen(true)] out ProjectSnapshot? oldProject,
+        [NotNullWhen(true)] out ProjectSnapshot? newProject,
         out bool isSolutionClosing)
     {
         if (_initialized)

@@ -1,9 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -40,17 +38,17 @@ public class CompletionListMergerTest : ToolingTestBase
 
         _completionListWith1 = new VSInternalCompletionList()
         {
-            Items = new[] { _completionItem1 }
+            Items = [_completionItem1]
         };
 
         _completionListWith2 = new VSInternalCompletionList()
         {
-            Items = new[] { _completionItem2 }
+            Items = [_completionItem2]
         };
 
         _completionListWith13 = new VSInternalCompletionList()
         {
-            Items = new[] { _completionItem1, _completionItem3 }
+            Items = [_completionItem1, _completionItem3]
         };
     }
 
@@ -88,6 +86,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         AssertCompletionItemsEqual(expected, merged.Items);
     }
 
@@ -102,6 +101,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.True(merged.IsIncomplete);
     }
 
@@ -116,6 +116,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.True(merged.SuggestionMode);
     }
 
@@ -130,6 +131,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.Equal(expectedCommitCharacters, merged.CommitCharacters);
     }
 
@@ -146,6 +148,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith2, _completionListWith13);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.Equal(expectedCommitCharacters, merged.CommitCharacters);
 
         // Inherited commit characters got populated onto the non-chosen item.
@@ -164,6 +167,7 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.Same(expectedData, merged.Data);
         Assert.NotNull(_completionItem2.Data);
         Assert.NotSame(expectedData, _completionItem2.Data);
@@ -182,14 +186,15 @@ public class CompletionListMergerTest : ToolingTestBase
         var merged = CompletionListMerger.Merge(_completionListWith1, _completionListWith2);
 
         // Assert
+        Assert.NotNull(merged);
         Assert.NotSame(data1, merged.Data);
         Assert.NotSame(data2, merged.Data);
     }
 
-    private void AssertCompletionItemsEqual(VSInternalCompletionItem[] expected, CompletionItem[] actual)
+    private static void AssertCompletionItemsEqual(VSInternalCompletionItem[] expected, CompletionItem[] actual)
     {
-        var sortedExpected = expected.OrderBy(item => item.Label).ToArray();
-        var sortedActual = actual.OrderBy(item => item.Label).ToArray();
+        var sortedExpected = expected.OrderByAsArray(item => item.Label);
+        var sortedActual = actual.OrderByAsArray(item => item.Label);
 
         Assert.Equal(sortedExpected.Length, sortedActual.Length);
 

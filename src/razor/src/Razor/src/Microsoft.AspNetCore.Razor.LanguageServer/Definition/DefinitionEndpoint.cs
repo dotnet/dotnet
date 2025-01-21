@@ -25,7 +25,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 internal sealed class DefinitionEndpoint(
     IRazorComponentDefinitionService componentDefinitionService,
     IDocumentMappingService documentMappingService,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
@@ -37,7 +37,7 @@ internal sealed class DefinitionEndpoint(
 {
     private readonly IRazorComponentDefinitionService _componentDefinitionService = componentDefinitionService;
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 

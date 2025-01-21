@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -20,7 +19,4 @@ internal static class TestHostDocument
 
         return new(documentFilePath, targetPath);
     }
-
-    public static TextLoader CreateEmptyTextLoader(this HostDocument hostDocument)
-        => TestMocks.CreateTextLoader(hostDocument.FilePath, string.Empty);
 }

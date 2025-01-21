@@ -24,7 +24,7 @@ internal class CSharpVirtualDocumentManager : IRazorStartupService, IDisposable
     [ImportingConstructor]
     public CSharpVirtualDocumentManager(
         LSPDocumentManager lspDocumentManager,
-        IProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager)
     {
         _lspDocumentManager = lspDocumentManager;
 

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -33,7 +34,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
     private static readonly TimeSpan s_publishDelay = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan s_clearClosedDocumentsDelay = TimeSpan.FromSeconds(5);
 
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly IClientConnection _clientConnection;
     private readonly ILogger _logger;
     private readonly LanguageServerFeatureOptions _options;
@@ -41,13 +42,13 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
     private readonly Lazy<IDocumentContextFactory> _documentContextFactory;
 
     private readonly CancellationTokenSource _disposeTokenSource;
-    private readonly AsyncBatchingWorkQueue<IDocumentSnapshot> _workQueue;
+    private readonly AsyncBatchingWorkQueue<DocumentSnapshot> _workQueue;
     private readonly Dictionary<string, PublishedDiagnostics> _publishedDiagnostics;
 
     private Task _clearClosedDocumentsTask = Task.CompletedTask;
 
     public RazorDiagnosticsPublisher(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IClientConnection clientConnection,
         LanguageServerFeatureOptions options,
         Lazy<RazorTranslateDiagnosticsService> translateDiagnosticsService,
@@ -61,7 +62,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
 
     // Present for test to specify publish delay
     protected RazorDiagnosticsPublisher(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IClientConnection clientConnection,
         LanguageServerFeatureOptions options,
         Lazy<RazorTranslateDiagnosticsService> translateDiagnosticsService,
@@ -76,7 +77,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
         _documentContextFactory = documentContextFactory;
 
         _disposeTokenSource = new();
-        _workQueue = new AsyncBatchingWorkQueue<IDocumentSnapshot>(publishDelay, ProcessBatchAsync, _disposeTokenSource.Token);
+        _workQueue = new AsyncBatchingWorkQueue<DocumentSnapshot>(publishDelay, ProcessBatchAsync, _disposeTokenSource.Token);
 
         _publishedDiagnostics = new Dictionary<string, PublishedDiagnostics>(FilePathComparer.Instance);
         _logger = loggerFactory.GetOrCreateLogger<RazorDiagnosticsPublisher>();
@@ -93,14 +94,14 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
         _disposeTokenSource.Dispose();
     }
 
-    public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
+    public void DocumentProcessed(RazorCodeDocument codeDocument, DocumentSnapshot document)
     {
         _workQueue.AddWork(document);
 
         StartDelayToClearDocuments();
     }
 
-    private async ValueTask ProcessBatchAsync(ImmutableArray<IDocumentSnapshot> items, CancellationToken token)
+    private async ValueTask ProcessBatchAsync(ImmutableArray<DocumentSnapshot> items, CancellationToken token)
     {
         foreach (var document in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
@@ -113,7 +114,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
         }
     }
 
-    private async Task PublishDiagnosticsAsync(IDocumentSnapshot document, CancellationToken cancellationToken)
+    private async Task PublishDiagnosticsAsync(DocumentSnapshot document, CancellationToken cancellationToken)
     {
         var result = await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var csharpDiagnostics = await GetCSharpDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);

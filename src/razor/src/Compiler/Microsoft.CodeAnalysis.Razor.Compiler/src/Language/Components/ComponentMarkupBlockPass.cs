@@ -264,15 +264,11 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
     private class RewriteVisitor : IntermediateNodeWalker
     {
-        private readonly StringBuilder _encodingBuilder;
-
         private readonly List<IntermediateNodeReference> _trees;
 
         public RewriteVisitor(List<IntermediateNodeReference> trees)
         {
             _trees = trees;
-
-            _encodingBuilder = new StringBuilder();
         }
 
         public StringBuilder Builder { get; } = new StringBuilder();

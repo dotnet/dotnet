@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Hover;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using LspHover = Microsoft.VisualStudio.LanguageServer.Protocol.Hover;
@@ -22,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentHoverName)]
 internal sealed class HoverEndpoint(
-    IProjectSnapshotManager projectManager,
+    IComponentAvailabilityService componentAvailabilityService,
     IClientCapabilitiesService clientCapabilitiesService,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
@@ -34,7 +35,7 @@ internal sealed class HoverEndpoint(
         clientConnection,
         loggerFactory.GetOrCreateLogger<HoverEndpoint>()), ICapabilitiesProvider
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly IComponentAvailabilityService _componentAvailabilityService = componentAvailabilityService;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
@@ -92,7 +93,7 @@ internal sealed class HoverEndpoint(
             codeDocument,
             positionInfo.HostDocumentIndex,
             options,
-            _projectManager.GetQueryOperations(),
+            _componentAvailabilityService,
             cancellationToken)
             .ConfigureAwait(false);
     }

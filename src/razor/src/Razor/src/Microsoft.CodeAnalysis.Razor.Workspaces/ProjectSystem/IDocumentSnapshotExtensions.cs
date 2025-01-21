@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -53,12 +54,5 @@ internal static class IDocumentSnapshotExtensions
 
         var fileName = Path.GetFileNameWithoutExtension(documentSnapshot.FilePath);
         return fileName.AsSpan().Equals(path.Span, FilePathComparison.Instance);
-    }
-
-    public static ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(
-        this IDocumentSnapshot documentSnapshot,
-        CancellationToken cancellationToken)
-    {
-        return documentSnapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false, cancellationToken);
     }
 }

@@ -13,11 +13,11 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class DocumentContextFactory(
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory)
     : IDocumentContextFactory
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentContextFactory>();
 
     public bool TryCreate(
@@ -41,7 +41,7 @@ internal sealed class DocumentContextFactory(
     private bool TryResolveDocument(
         string filePath,
         VSProjectContext? projectContext,
-        [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
+        [NotNullWhen(true)] out DocumentSnapshot? documentSnapshot)
     {
         if (projectContext is null)
         {

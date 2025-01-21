@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Moq;
 using Xunit;
@@ -20,7 +21,7 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
 public class VisualStudioRazorParserTest : VisualStudioTestBase
 {
-    private readonly IProjectSnapshot _projectSnapshot;
+    private readonly ILegacyProjectSnapshot _projectSnapshot;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly CodeAnalysis.Workspace _workspace;
 

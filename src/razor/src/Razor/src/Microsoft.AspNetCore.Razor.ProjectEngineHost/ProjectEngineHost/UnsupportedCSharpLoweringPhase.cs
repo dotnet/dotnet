@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
@@ -9,7 +10,7 @@ internal class UnsupportedCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSha
 {
     internal const string UnsupportedDisclaimer = "// Razor CSharp output is not supported for this project's version of Razor.";
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument)
+    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentIntermediateNode();
         ThrowForMissingDocumentDependency(documentNode);

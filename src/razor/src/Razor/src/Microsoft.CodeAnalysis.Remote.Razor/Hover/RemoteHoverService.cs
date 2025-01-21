@@ -102,8 +102,15 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
         // If this is Html or Razor, try to retrieve a hover from Razor.
         var options = HoverDisplayOptions.From(clientCapabilities);
 
+        // In co-hosting, there isn't a singleton IComponentAvailabilityService in the MEF composition.
+        // So, we construct one using the current solution snapshot.
+        // All of this will change when solution snapshots are available in the core Razor project model.
+
+        // TODO: Remove this when solution snapshots are available in the core Razor project model.
+        var componentAvailabilityService = new ComponentAvailabilityService(context.Snapshot.ProjectSnapshot.SolutionSnapshot);
+
         var razorHover = await HoverFactory
-            .GetHoverAsync(codeDocument, hostDocumentIndex, options, context.GetSolutionQueryOperations(), cancellationToken)
+            .GetHoverAsync(codeDocument, hostDocumentIndex, options, componentAvailabilityService, cancellationToken)
             .ConfigureAwait(false);
 
         // Roslyn couldn't provide a hover, so we're done.

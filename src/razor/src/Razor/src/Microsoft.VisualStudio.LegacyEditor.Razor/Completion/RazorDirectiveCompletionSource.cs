@@ -104,7 +104,7 @@ internal class RazorDirectiveCompletionSource : IAsyncCompletionSource
                     sortText: razorCompletionItem.DisplayText,
                     attributeIcons: ImmutableArray<ImageElement>.Empty);
 
-                var completionDescription = razorCompletionItem.GetDirectiveCompletionDescription();
+                var completionDescription = razorCompletionItem.DescriptionInfo as DirectiveCompletionDescription;
                 completionItem.Properties.AddProperty(DescriptionKey, completionDescription);
                 completionItems.Add(completionItem);
             }

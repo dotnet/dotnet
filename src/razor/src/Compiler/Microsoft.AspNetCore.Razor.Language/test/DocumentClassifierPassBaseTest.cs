@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-
 #nullable disable
 
 using System;
@@ -29,8 +28,10 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
             Options = RazorCodeGenerationOptions.Default,
         };
 
-        var pass = new TestDocumentClassifierPass();
-        pass.Engine = Engine;
+        var pass = new TestDocumentClassifierPass()
+        {
+            Engine = Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
@@ -78,15 +79,16 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
                 new MyExtension2(),
         };
 
-        var pass = new TestDocumentClassifierPass();
-        pass.Engine = RazorProjectEngine.CreateEmpty(b =>
+        var pass = new TestDocumentClassifierPass()
         {
-            for (var i = 0; i < expected.Length; i++)
+            Engine = RazorProjectEngine.CreateEmpty(b =>
             {
-                b.AddTargetExtension(expected[i]);
-            }
-        }).Engine;
-
+                for (var i = 0; i < expected.Length; i++)
+                {
+                    b.AddTargetExtension(expected[i]);
+                }
+            }).Engine
+        };
         ICodeTargetExtension[] extensions = null;
 
         pass.CodeTargetCallback = (builder) => extensions = builder.TargetExtensions.ToArray();
@@ -107,8 +109,10 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
             Options = RazorCodeGenerationOptions.Default,
         };
 
-        var pass = new TestDocumentClassifierPass();
-        pass.Engine = Engine;
+        var pass = new TestDocumentClassifierPass()
+        {
+            Engine = Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
@@ -135,8 +139,10 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new UsingDirectiveIntermediateNode());
 
-        var pass = new TestDocumentClassifierPass();
-        pass.Engine = Engine;
+        var pass = new TestDocumentClassifierPass()
+        {
+            Engine = Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
@@ -162,8 +168,10 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         builder.Add(new HtmlContentIntermediateNode());
         builder.Add(new CSharpCodeIntermediateNode());
 
-        var pass = new TestDocumentClassifierPass();
-        pass.Engine = Engine;
+        var pass = new TestDocumentClassifierPass()
+        {
+            Engine = Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);

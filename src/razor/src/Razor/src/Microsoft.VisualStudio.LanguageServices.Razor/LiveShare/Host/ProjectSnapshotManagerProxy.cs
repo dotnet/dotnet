@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Threading;
@@ -19,7 +19,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 #pragma warning disable RS0030 // Do not use banned APIs
 
     private readonly CollaborationSession _session;
-    private readonly IProjectSnapshotManager _projectSnapshotManager;
+    private readonly ProjectSnapshotManager _projectSnapshotManager;
     private readonly JoinableTaskFactory _jtf;
     private readonly AsyncSemaphore _latestStateSemaphore;
     private bool _disposed;
@@ -29,7 +29,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 
     public ProjectSnapshotManagerProxy(
         CollaborationSession session,
-        IProjectSnapshotManager projectSnapshotManager,
+        ProjectSnapshotManager projectSnapshotManager,
         JoinableTaskFactory jtf)
     {
         _session = session;
@@ -66,7 +66,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
     }
 
     // Internal for testing
-    internal async Task<IReadOnlyList<IProjectSnapshot>> GetLatestProjectsAsync()
+    internal async Task<IReadOnlyList<ProjectSnapshot>> GetLatestProjectsAsync()
     {
         if (!_jtf.Context.IsOnMainThread)
         {
@@ -77,7 +77,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
     }
 
     // Internal for testing
-    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<IProjectSnapshot> projects)
+    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<ProjectSnapshot> projects)
     {
         using (await _latestStateSemaphore.EnterAsync().ConfigureAwait(false))
         {
@@ -93,19 +93,19 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
         }
     }
 
-    private async Task<ProjectSnapshotHandleProxy?> ConvertToProxyAsync(IProjectSnapshot? project)
+    private Task<ProjectSnapshotHandleProxy?> ConvertToProxyAsync(ProjectSnapshot? project)
     {
         if (project is null)
         {
-            return null;
+            return SpecializedTasks.Null<ProjectSnapshotHandleProxy>();
         }
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, project.CSharpLanguageVersion);
         var projectFilePath = _session.ConvertLocalPathToSharedUri(project.FilePath);
         var intermediateOutputPath = _session.ConvertLocalPathToSharedUri(project.IntermediateOutputPath);
-        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, intermediateOutputPath, project.Configuration, project.RootNamespace, projectWorkspaceState);
-        return projectHandleProxy;
+        var projectHandleProxy = new ProjectSnapshotHandleProxy(
+            projectFilePath, intermediateOutputPath, project.Configuration, project.RootNamespace, project.ProjectWorkspaceState);
+
+        return Task.FromResult(projectHandleProxy).AsNullable();
     }
 
     private void ProjectSnapshotManager_Changed(object sender, ProjectChangeEventArgs args)

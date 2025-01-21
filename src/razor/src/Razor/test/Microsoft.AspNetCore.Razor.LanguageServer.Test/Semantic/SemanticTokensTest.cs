@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -945,17 +946,14 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
     {
         var document = CreateCodeDocument(documentText, isRazorFile, tagHelpers);
 
-        var projectSnapshot = new StrictMock<IProjectSnapshot>();
-        projectSnapshot
-            .SetupGet(p => p.Version)
-            .Returns(VersionStamp.Default);
+        var projectSnapshot = StrictMock.Of<IProjectSnapshot>();
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock
             .SetupGet(x => x.Project)
-            .Returns(projectSnapshot.Object);
+            .Returns(projectSnapshot);
         documentSnapshotMock
-            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
         documentSnapshotMock
             .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))

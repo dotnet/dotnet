@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using Moq;
+using System.Threading;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -13,13 +13,13 @@ public class RazorEngineTest
     public void Ctor_InitializesPhasesAndFeatures()
     {
         // Arrange
-        var features = ImmutableArray.Create(
-            Mock.Of<IRazorEngineFeature>(),
-            Mock.Of<IRazorEngineFeature>());
+        ImmutableArray<IRazorEngineFeature> features = [
+            new TestFeature(),
+            new TestFeature()];
 
-        var phases = ImmutableArray.Create(
-            Mock.Of<IRazorEnginePhase>(),
-            Mock.Of<IRazorEnginePhase>());
+        ImmutableArray<IRazorEnginePhase> phases = [
+            new TestPhase(),
+            new TestPhase()];
 
         // Act
         var engine = new RazorEngine(features, phases);
@@ -40,13 +40,13 @@ public class RazorEngineTest
     public void Process_CallsAllPhases()
     {
         // Arrange
-        var features = ImmutableArray.Create(
-            Mock.Of<IRazorEngineFeature>(),
-            Mock.Of<IRazorEngineFeature>());
+        ImmutableArray<IRazorEngineFeature> features = [
+            new TestFeature(),
+            new TestFeature()];
 
-        var phases = ImmutableArray.Create(
-            Mock.Of<IRazorEnginePhase>(),
-            Mock.Of<IRazorEnginePhase>());
+        ImmutableArray<IRazorEnginePhase> phases = [
+            new TestPhase(),
+            new TestPhase()];
 
         var engine = new RazorEngine(features, phases);
         var document = TestRazorCodeDocument.CreateEmpty();
@@ -57,8 +57,22 @@ public class RazorEngineTest
         // Assert
         foreach (var phase in phases)
         {
-            var mock = Mock.Get(phase);
-            mock.Verify(p => p.Execute(document), Times.Once());
+            var testPhase = Assert.IsType<TestPhase>(phase);
+            Assert.Equal(1, testPhase.CallCount);
+        }
+    }
+
+    private sealed class TestFeature : RazorEngineFeatureBase
+    {
+    }
+
+    private sealed class TestPhase : RazorEnginePhaseBase
+    {
+        public int CallCount;
+
+        protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref CallCount);
         }
     }
 }

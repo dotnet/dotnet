@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,8 +16,7 @@ public class JsonSerializationTest(ITestOutputHelper testOutput) : ToolingTestBa
     private readonly RazorConfiguration _configuration = new(RazorLanguageVersion.Experimental, ConfigurationName: "Custom", [new("TestExtension")]);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState = ProjectWorkspaceState.Create(
-        tagHelpers: [TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()],
-        csharpLanguageVersion: LanguageVersion.LatestMajor);
+        tagHelpers: [TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()]);
 
     [Fact]
     public void RazorProjectInfo_InvalidVersionThrows()

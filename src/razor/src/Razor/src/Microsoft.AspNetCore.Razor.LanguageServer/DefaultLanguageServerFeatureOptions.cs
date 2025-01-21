@@ -39,5 +39,5 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool ForceRuntimeCodeGeneration => false;
 
-    public override bool UseRoslynTokenizer => false;
+    public override bool UseNewFormattingEngine => false;
 }

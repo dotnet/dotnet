@@ -8,7 +8,7 @@ namespace Microsoft.VisualStudio.Razor;
 
 internal interface IProjectWorkspaceStateGenerator
 {
-    void EnqueueUpdate(Project? workspaceProject, IProjectSnapshot projectSnapshot);
+    void EnqueueUpdate(Project? workspaceProject, ProjectSnapshot projectSnapshot);
 
     void CancelUpdates();
 }

@@ -42,10 +42,10 @@ public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : Language
         await projectManager.UpdateAsync(static updater =>
         {
             updater.AddProject(s_hostProject1);
-            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader(s_hostDocument1.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader("<p>Hello World</p>"));
 
             updater.AddProject(s_hostProject2);
-            updater.AddDocument(s_hostProject2.Key, s_hostDocument2, TestMocks.CreateTextLoader(s_hostDocument2.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject2.Key, s_hostDocument2, TestMocks.CreateTextLoader("<p>Hello World</p>"));
         });
 
         var (driver, testAccessor) = await CreateDriverAndInitializeAsync(projectManager);
@@ -94,10 +94,10 @@ public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : Language
         await projectManager.UpdateAsync(static updater =>
         {
             updater.AddProject(s_hostProject1);
-            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader(s_hostDocument1.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader("<p>Hello World</p>"));
 
             updater.AddProject(s_hostProject2);
-            updater.AddDocument(s_hostProject2.Key, s_hostDocument2, TestMocks.CreateTextLoader(s_hostDocument2.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject2.Key, s_hostDocument2, TestMocks.CreateTextLoader("<p>Hello World</p>"));
         });
 
         await testAccessor.WaitUntilCurrentBatchCompletesAsync();
@@ -135,7 +135,7 @@ public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : Language
 
         await projectManager.UpdateAsync(static updater =>
         {
-            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader(s_hostDocument1.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader("<p>Hello World</p>"));
         });
 
         await testAccessor.WaitUntilCurrentBatchCompletesAsync();
@@ -205,7 +205,7 @@ public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : Language
 
         await projectManager.UpdateAsync(static updater =>
         {
-            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader(s_hostDocument1.FilePath, "<p>Hello World</p>"));
+            updater.AddDocument(s_hostProject1.Key, s_hostDocument1, TestMocks.CreateTextLoader("<p>Hello World</p>"));
         });
 
         await testAccessor.WaitUntilCurrentBatchCompletesAsync();
@@ -249,7 +249,7 @@ public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : Language
     }
 
     private async Task<(RazorProjectInfoDriver, AbstractRazorProjectInfoDriver.TestAccessor)> CreateDriverAndInitializeAsync(
-        IProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager)
     {
         var driver = new RazorProjectInfoDriver(projectManager, LoggerFactory, delay: TimeSpan.FromMilliseconds(5));
         AddDisposable(driver);

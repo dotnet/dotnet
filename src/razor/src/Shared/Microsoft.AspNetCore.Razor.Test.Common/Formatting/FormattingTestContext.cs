@@ -9,6 +9,8 @@ public sealed class FormattingTestContext
 
     public required bool ForceRuntimeCodeGeneration { get; init; }
 
+    public required bool UseNewFormattingEngine { get; init; }
+
     public required bool CreatedByFormattingDiscoverer { get; init; }
 
     public string FlipLineEndings(string input)

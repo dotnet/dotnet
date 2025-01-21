@@ -214,13 +214,14 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
 
                 services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
+
+                services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
+                services.AddHandler<RazorBreakpointSpanEndpoint>();
+                services.AddHandler<RazorProximityExpressionsEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
-            services.AddHandler<RazorBreakpointSpanEndpoint>();
-            services.AddHandler<RazorProximityExpressionsEndpoint>();
 
-            services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<MapCodeEndpoint>();
         }
     }

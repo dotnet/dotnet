@@ -810,7 +810,7 @@ public abstract class IntegrationTestBase
         {
             if (_inner != null)
             {
-                _inner.ProjectEngine = ProjectEngine;
+                _inner.Initialize(ProjectEngine);
             }
         }
 
