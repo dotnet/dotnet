@@ -1,0 +1,51 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+- main
+- release/*
+
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+variables:
+  - name: TeamName
+    value: dotnet-core-acquisition
+  # Skip Running CI tests
+  - name: SkipTests
+    value: false
+  # Produce test-signed build for PR and Public builds
+  - name: SignType
+    value: test
+
+stages:
+- stage: Build
+  jobs:
+  # -------- Build Windows legs --------
+  # Windows x64
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: Windows_x64
+      publishRidAgnosticPackages: true
+      targetArchitecture: x64
+      codeql: true
+
+  # Windows x86
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: Windows_x86
+      targetArchitecture: x86
+
+  # Windows arm64
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: Windows_arm64
+      targetArchitecture: arm64
+  
+  # Source-build
+  - template: /eng/common/templates/jobs/source-build.yml
+

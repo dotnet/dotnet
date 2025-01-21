@@ -1,0 +1,61 @@
+parameters:
+  additionalMSBuildArguments: ''
+  displayName: ''
+  publishRidAgnosticPackages: false
+  skipTests: $(SkipTests)
+  targetArchitecture: null
+  timeoutInMinutes: 120
+  codeql: false
+
+jobs:
+  - job: ${{ parameters.name }}
+    displayName: ${{ parameters.name }}
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    pool:
+      # Use a hosted pool when possible.
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        name: NetCore-Public
+        demands: ImageOverride -equals windows.vs2019.amd64.open
+      ${{ if ne(variables['System.TeamProject'], 'public') }}:
+        name: NetCore1ESPool-Internal
+        demands: ImageOverride -equals windows.vs2019.amd64
+    strategy:
+      matrix: 
+        debug:
+          _BuildConfig: Debug
+        release:
+          _BuildConfig: Release
+    workspace:
+      clean: all
+    variables: 
+      CommonMSBuildArgs: >-
+        /p:Configuration=$(_BuildConfig)
+        /p:OfficialBuildId=$(OfficialBuildId)
+        /p:TargetArchitecture=${{ parameters.targetArchitecture }}
+        /p:PortableBuild=true
+        /p:ContinuousIntegrationBuild=true
+        /p:SkipTests=${{ parameters.skipTests }}
+      MsbuildSigningArguments: >-
+        /p:CertificateId=400
+        /p:DotNetSignType=$(SignType)
+      TargetArchitecture: ${{ parameters.targetArchitecture }}
+      Codeql.Enabled: ${{ parameters.codeql }}
+
+    steps:
+
+    - script: >-
+        build.cmd -subset clickonce+installer+dotnet_releases -ci -test
+        $(CommonMSBuildArgs)
+        $(MsbuildSigningArguments)
+        /p:LocalizedBuild=true
+      displayName: Build
+
+    - script: >-
+        build.cmd -subset clickonce+installer+dotnet_releases -ci -pack
+        $(CommonMSBuildArgs)
+        $(MsbuildSigningArguments)
+      displayName: Package
+
+    - template: steps/upload-job-artifacts.yml
+      parameters:
+        name: ${{ parameters.name }}
