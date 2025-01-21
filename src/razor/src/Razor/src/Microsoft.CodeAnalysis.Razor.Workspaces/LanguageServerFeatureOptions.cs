@@ -40,5 +40,5 @@ internal abstract class LanguageServerFeatureOptions
     /// </summary>
     public abstract bool ForceRuntimeCodeGeneration { get; }
 
-    public abstract bool UseRoslynTokenizer { get; }
+    public abstract bool UseNewFormattingEngine { get; }
 }

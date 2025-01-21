@@ -42,7 +42,7 @@ public static class RazorProjectEngineBuilderExtensions
     }
 
     // Internal for testing
-    internal class ConfigureParserForCSharpVersionFeature : IConfigureRazorCodeGenerationOptionsFeature
+    internal class ConfigureParserForCSharpVersionFeature : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
     {
         public ConfigureParserForCSharpVersionFeature(LanguageVersion csharpLanguageVersion)
         {
@@ -52,8 +52,6 @@ public static class RazorProjectEngineBuilderExtensions
         public LanguageVersion CSharpLanguageVersion { get; }
 
         public int Order { get; set; }
-
-        public RazorEngine Engine { get; set; }
 
         public void Configure(RazorCodeGenerationOptionsBuilder options)
         {

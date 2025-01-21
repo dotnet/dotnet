@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
@@ -93,7 +91,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var documentContext = TagHelperDocumentContext.Create(string.Empty, tagHelpers: []);
 
         // Act
-        var completions = _provider.GetAttributeParameterCompletions("@bin", string.Empty, "foobarbaz", [], documentContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bin", string.Empty, "foobarbaz", [], documentContext);
 
         // Assert
         Assert.Empty(completions);
@@ -109,7 +107,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var documentContext = TagHelperDocumentContext.Create(string.Empty, [descriptor.Build()]);
 
         // Act
-        var completions = _provider.GetAttributeParameterCompletions("@bin", string.Empty, "input", [], documentContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bin", string.Empty, "input", [], documentContext);
 
         // Assert
         Assert.Empty(completions);
@@ -122,7 +120,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var attributeNames = ImmutableArray.Create("@bind");
 
         // Act
-        var completions = _provider.GetAttributeParameterCompletions("@bind", "format", "input", attributeNames, _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", "format", "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertDoesNotContain(completions, "format");
@@ -134,7 +132,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         // Arrange
 
         // Act
-        var completions = _provider.GetAttributeParameterCompletions("@bind", string.Empty, "input", [], _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", [], _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "format");
@@ -151,7 +149,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
             "@");
 
         // Act
-        var completions = _provider.GetAttributeParameterCompletions("@bind", string.Empty, "input", attributeNames, _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertDoesNotContain(completions, "format");

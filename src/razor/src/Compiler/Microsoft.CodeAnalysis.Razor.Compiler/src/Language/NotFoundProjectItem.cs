@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.IO;
 
@@ -11,29 +9,19 @@ namespace Microsoft.AspNetCore.Razor.Language;
 /// <summary>
 /// A <see cref="RazorProjectItem"/> that does not exist.
 /// </summary>
-internal class NotFoundProjectItem : RazorProjectItem
+/// <param name="basePath">The base path.</param>
+/// <param name="path">The path.</param>
+/// <param name="fileKind">The file kind</param>
+internal class NotFoundProjectItem(string path, string? fileKind) : RazorProjectItem
 {
-    /// <summary>
-    /// Initializes a new instance of <see cref="NotFoundProjectItem"/>.
-    /// </summary>
-    /// <param name="basePath">The base path.</param>
-    /// <param name="path">The path.</param>
-    /// <param name="fileKind">The file kind</param>
-    public NotFoundProjectItem(string basePath, string path, string fileKind)
-    {
-        BasePath = basePath;
-        FilePath = path;
-        FileKind = fileKind ?? FileKinds.GetFileKindFromFilePath(path);
-    }
+    /// <inheritdoc />
+    public override string BasePath => string.Empty;
 
     /// <inheritdoc />
-    public override string BasePath { get; }
+    public override string FilePath => path;
 
     /// <inheritdoc />
-    public override string FilePath { get; }
-
-    /// <inheritdoc />
-    public override string FileKind { get; }
+    public override string FileKind { get; } = fileKind ?? FileKinds.GetFileKindFromFilePath(path);
 
     /// <inheritdoc />
     public override bool Exists => false;

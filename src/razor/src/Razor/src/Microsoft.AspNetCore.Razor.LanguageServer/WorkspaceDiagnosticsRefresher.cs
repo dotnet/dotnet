@@ -17,14 +17,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal sealed class WorkspaceDiagnosticsRefresher : IRazorStartupService, IDisposable
 {
     private readonly AsyncBatchingWorkQueue _queue;
-    private readonly IProjectSnapshotManager _projectSnapshotManager;
+    private readonly ProjectSnapshotManager _projectSnapshotManager;
     private readonly IClientCapabilitiesService _clientCapabilitiesService;
     private readonly IClientConnection _clientConnection;
     private bool? _supported;
     private CancellationTokenSource _disposeTokenSource = new();
 
     public WorkspaceDiagnosticsRefresher(
-        IProjectSnapshotManager projectSnapshotManager,
+        ProjectSnapshotManager projectSnapshotManager,
         IClientCapabilitiesService clientCapabilitiesService,
         IClientConnection clientConnection,
         TimeSpan? delay = null)

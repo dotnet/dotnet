@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -103,7 +104,7 @@ public class WorkspaceDiagnosticRefreshTest(ITestOutputHelper testOutputHelper) 
         await projectSnapshotManager.UpdateAsync(
             updater =>
             {
-                updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+                updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
             });
 
         await testAccessor.WaitForRefreshAsync();

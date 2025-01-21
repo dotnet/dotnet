@@ -15,7 +15,6 @@ public class ComponentWhitespacePassTest
 {
     public ComponentWhitespacePassTest()
     {
-        Pass = new ComponentWhitespacePass();
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
@@ -28,7 +27,10 @@ public class ComponentWhitespacePassTest
             });
         Engine = ProjectEngine.Engine;
 
-        Pass.Engine = Engine;
+        Pass = new ComponentWhitespacePass()
+        {
+            Engine = Engine
+        };
     }
 
     private RazorProjectEngine ProjectEngine { get; }
@@ -152,7 +154,7 @@ public class ComponentWhitespacePassTest
     private RazorCodeDocument CreateDocument(string content)
     {
         var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return ProjectEngine.CreateCodeDocumentCore(source, FileKinds.Component);
+        return ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
     }
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)

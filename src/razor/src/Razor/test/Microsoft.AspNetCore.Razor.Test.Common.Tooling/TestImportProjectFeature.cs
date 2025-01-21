@@ -12,10 +12,7 @@ public class TestImportProjectFeature : RazorProjectEngineFeatureBase, IImportPr
 {
     public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
     {
-        if (projectItem is null)
-        {
-            throw new ArgumentNullException(nameof(projectItem));
-        }
+        ArgHelper.ThrowIfNull(projectItem);
 
         var imports = new List<RazorProjectItem>();
         AddHierarchicalImports(projectItem, imports);

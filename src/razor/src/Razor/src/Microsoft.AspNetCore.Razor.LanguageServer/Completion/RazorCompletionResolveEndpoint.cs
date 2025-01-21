@@ -5,32 +5,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentCompletionResolveName)]
-internal class RazorCompletionResolveEndpoint
-    : IRazorDocumentlessRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem>,
-      ICapabilitiesProvider
+internal class RazorCompletionResolveEndpoint(
+    AggregateCompletionItemResolver completionItemResolver,
+    CompletionListCache completionListCache,
+    IComponentAvailabilityService componentAvailabilityService)
+    : IRazorDocumentlessRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem>, ICapabilitiesProvider
 {
-    private readonly AggregateCompletionItemResolver _completionItemResolver;
-    private readonly CompletionListCache _completionListCache;
-    private readonly IProjectSnapshotManager _projectSnapshotManager;
-    private VSInternalClientCapabilities? _clientCapabilities;
+    private readonly AggregateCompletionItemResolver _completionItemResolver = completionItemResolver;
+    private readonly CompletionListCache _completionListCache = completionListCache;
+    private readonly IComponentAvailabilityService _componentAvailabilityService = componentAvailabilityService;
 
-    public RazorCompletionResolveEndpoint(
-        AggregateCompletionItemResolver completionItemResolver,
-        CompletionListCache completionListCache,
-        IProjectSnapshotManager projectSnapshotManager)
-    {
-        _completionItemResolver = completionItemResolver;
-        _completionListCache = completionListCache;
-        _projectSnapshotManager = projectSnapshotManager;
-    }
+    private VSInternalClientCapabilities? _clientCapabilities;
 
     public bool MutatesSolutionState => false;
 
@@ -75,13 +67,16 @@ internal class RazorCompletionResolveEndpoint
             return completionItem;
         }
 
-        var resolvedCompletionItem = await _completionItemResolver.ResolveAsync(
-            completionItem,
-            containingCompletionList,
-            originalRequestContext,
-            _clientCapabilities,
-            _projectSnapshotManager.GetQueryOperations(),
-            cancellationToken).ConfigureAwait(false);
+        var resolvedCompletionItem = await _completionItemResolver
+            .ResolveAsync(
+                completionItem,
+                containingCompletionList,
+                originalRequestContext,
+                _clientCapabilities,
+                _componentAvailabilityService,
+                cancellationToken)
+            .ConfigureAwait(false);
+
         resolvedCompletionItem ??= completionItem;
 
         return resolvedCompletionItem;

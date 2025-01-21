@@ -1,7 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#if !NET
 using System;
+#endif
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -14,49 +16,35 @@ internal class DirectiveAttributeTransitionCompletionItemProvider : DirectiveAtt
     private static RazorCompletionItem? s_transitionCompletionItem;
 
     public static RazorCompletionItem TransitionCompletionItem
-    {
-        get
-        {
-            if (s_transitionCompletionItem is null)
-            {
-                s_transitionCompletionItem = new RazorCompletionItem(
-                    displayText: "@...",
-                    insertText: "@",
-                    kind: RazorCompletionItemKind.Directive,
+        => s_transitionCompletionItem ??= RazorCompletionItem.CreateDirective(
+            displayText: "@...",
+            insertText: "@",
+            sortText: null,
+            descriptionInfo: new(SR.Blazor_directive_attributes),
 
-                    // We specify these three commit characters to work around a Visual Studio interaction where
-                    // completion items that get "soft selected" will cause completion to re-trigger if a user
-                    // types one of the soft-selected completion item's commit characters.
-                    // In practice this happens in the `<button |` scenario where the "space" results in completions
-                    // where this directive attribute transition character ("@...") gets provided and then typing
-                    // `@` should re-trigger OR typing `/` should re-trigger.
-                    commitCharacters: RazorCommitCharacter.CreateArray(["@", "/", ">"]));
-                s_transitionCompletionItem.SetDirectiveCompletionDescription(new DirectiveCompletionDescription(SR.Blazor_directive_attributes));
-            }
+            // We specify these three commit characters to work around a Visual Studio interaction where
+            // completion items that get "soft selected" will cause completion to re-trigger if a user
+            // types one of the soft-selected completion item's commit characters.
+            // In practice this happens in the `<button |` scenario where the "space" results in completions
+            // where this directive attribute transition character ("@...") gets provided and then typing
+            // `@` should re-trigger OR typing `/` should re-trigger.
+            commitCharacters: RazorCommitCharacter.CreateArray(["@", "/", ">"]),
+            isSnippet: false);
 
-            return s_transitionCompletionItem;
-        }
-    }
-
-    private static readonly ImmutableArray<RazorCompletionItem> s_completions = ImmutableArray.Create(TransitionCompletionItem);
+    private static readonly ImmutableArray<RazorCompletionItem> s_completions = [TransitionCompletionItem];
 
     public override ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (!FileKinds.IsComponent(context.SyntaxTree.Options.FileKind))
         {
             // Directive attributes are only supported in components
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         var owner = context.Owner;
         if (owner is null)
         {
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         var attribute = owner.Parent;
@@ -68,19 +56,19 @@ internal class DirectiveAttributeTransitionCompletionItemProvider : DirectiveAtt
 
         if (!TryGetAttributeInfo(owner, out var prefixLocation, out var attributeName, out var attributeNameLocation, out _, out _))
         {
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
-        if (attributeNameLocation.IntersectsWith(context.AbsoluteIndex) && attributeName.StartsWith("@", StringComparison.Ordinal))
+        if (attributeNameLocation.IntersectsWith(context.AbsoluteIndex) && attributeName.StartsWith('@'))
         {
             // The transition is already provided for the attribute name
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         if (!IsValidCompletionPoint(context.AbsoluteIndex, prefixLocation, attributeNameLocation))
         {
             // Not operating in the attribute name area
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         // This represents a tag when there's no attribute content <InputText | />.

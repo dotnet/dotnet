@@ -31,7 +31,7 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 internal class DefaultWindowsRazorProjectHost(
     IUnconfiguredProjectCommonServices commonServices,
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    IProjectSnapshotManager projectManager)
+    ProjectSnapshotManager projectManager)
     : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager)
 {
     private const string RootNamespaceProperty = "RootNamespace";

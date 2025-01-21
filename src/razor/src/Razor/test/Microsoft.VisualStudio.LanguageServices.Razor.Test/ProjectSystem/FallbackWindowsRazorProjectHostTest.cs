@@ -644,7 +644,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         internal TestFallbackRazorProjectHost(
             IUnconfiguredProjectCommonServices commonServices,
             IServiceProvider serviceProvider,
-            IProjectSnapshotManager projectManager)
+            ProjectSnapshotManager projectManager)
             : base(commonServices, serviceProvider, projectManager)
         {
             SkipIntermediateOutputPathExistCheck_TestOnly = true;

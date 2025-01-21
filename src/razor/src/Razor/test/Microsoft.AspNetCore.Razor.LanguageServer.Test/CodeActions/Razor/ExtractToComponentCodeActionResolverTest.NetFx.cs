@@ -3,20 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
@@ -342,76 +335,5 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             .SelectMany(change => change.Edits.Select(sourceText.GetTextChange));
         var documentText = sourceText.WithChanges(originalDocumentEdits).ToString();
         AssertEx.EqualOrDiff(expectedOriginalDocument, documentText);
-    }
-
-    private class ExtractToComponentResolverDocumentContextFactory : TestDocumentContextFactory
-    {
-        private readonly List<TagHelperDescriptor> _tagHelperDescriptors;
-
-        public ExtractToComponentResolverDocumentContextFactory
-            (string filePath,
-            RazorCodeDocument codeDocument,
-            TagHelperDescriptor[]? tagHelpers = null)
-            : base(filePath, codeDocument)
-        {
-            _tagHelperDescriptors = CreateTagHelperDescriptors();
-            if (tagHelpers is not null)
-            {
-                _tagHelperDescriptors.AddRange(tagHelpers);
-            }
-        }
-
-        public override bool TryCreate(
-            Uri documentUri,
-            VSProjectContext? projectContext,
-            [NotNullWhen(true)] out DocumentContext? context)
-        {
-            if (FilePath is null || CodeDocument is null)
-            {
-                context = null;
-                return false;
-            }
-
-            var projectWorkspaceState = ProjectWorkspaceState.Create(_tagHelperDescriptors.ToImmutableArray());
-            var testDocumentSnapshot = TestDocumentSnapshot.Create(FilePath, CodeDocument, projectWorkspaceState);
-
-            context = CreateDocumentContext(new Uri(FilePath), testDocumentSnapshot);
-            return true;
-        }
-
-        private static List<TagHelperDescriptor> CreateTagHelperDescriptors()
-        {
-            return BuildTagHelpers().ToList();
-
-            static IEnumerable<TagHelperDescriptor> BuildTagHelpers()
-            {
-                var builder = TagHelperDescriptorBuilder.Create("oncontextmenu", "Microsoft.AspNetCore.Components");
-                builder.SetMetadata(
-                    new KeyValuePair<string, string>(ComponentMetadata.EventHandler.EventArgsType, "Microsoft.AspNetCore.Components.Web.MouseEventArgs"),
-                    new KeyValuePair<string, string>(ComponentMetadata.SpecialKindKey, ComponentMetadata.EventHandler.TagHelperKind));
-                yield return builder.Build();
-
-                builder = TagHelperDescriptorBuilder.Create("onclick", "Microsoft.AspNetCore.Components");
-                builder.SetMetadata(
-                    new KeyValuePair<string, string>(ComponentMetadata.EventHandler.EventArgsType, "Microsoft.AspNetCore.Components.Web.MouseEventArgs"),
-                    new KeyValuePair<string, string>(ComponentMetadata.SpecialKindKey, ComponentMetadata.EventHandler.TagHelperKind));
-
-                yield return builder.Build();
-
-                builder = TagHelperDescriptorBuilder.Create("oncopy", "Microsoft.AspNetCore.Components");
-                builder.SetMetadata(
-                    new KeyValuePair<string, string>(ComponentMetadata.EventHandler.EventArgsType, "Microsoft.AspNetCore.Components.Web.ClipboardEventArgs"),
-                    new KeyValuePair<string, string>(ComponentMetadata.SpecialKindKey, ComponentMetadata.EventHandler.TagHelperKind));
-
-                yield return builder.Build();
-
-                builder = TagHelperDescriptorBuilder.Create("ref", "Microsoft.AspNetCore.Components");
-                builder.SetMetadata(
-                    new KeyValuePair<string, string>(ComponentMetadata.SpecialKindKey, ComponentMetadata.Ref.TagHelperKind),
-                    new KeyValuePair<string, string>(ComponentMetadata.Common.DirectiveAttribute, bool.TrueString));
-
-                yield return builder.Build();
-            }
-        }
     }
 }

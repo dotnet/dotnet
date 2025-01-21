@@ -7,5 +7,5 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal interface IFallbackProjectManager
 {
-    bool IsFallbackProject(IProjectSnapshot project);
+    bool IsFallbackProject(ProjectSnapshot project);
 }

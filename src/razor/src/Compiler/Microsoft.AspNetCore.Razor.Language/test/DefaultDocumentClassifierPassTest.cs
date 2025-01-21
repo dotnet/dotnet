@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-
 #nullable disable
 
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -26,8 +25,10 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
             Options = RazorCodeGenerationOptions.Default,
         };
 
-        var pass = new DefaultDocumentClassifierPass();
-        pass.Engine = CreateProjectEngine().Engine;
+        var pass = new DefaultDocumentClassifierPass()
+        {
+            Engine = CreateProjectEngine().Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
@@ -46,8 +47,10 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
             Options = RazorCodeGenerationOptions.Default,
         };
 
-        var pass = new DefaultDocumentClassifierPass();
-        pass.Engine = CreateProjectEngine().Engine;
+        var pass = new DefaultDocumentClassifierPass()
+        {
+            Engine = CreateProjectEngine().Engine
+        };
 
         // Act
         pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);

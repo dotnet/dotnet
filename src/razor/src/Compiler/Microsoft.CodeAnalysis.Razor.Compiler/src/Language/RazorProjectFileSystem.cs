@@ -1,15 +1,147 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorProjectFileSystem : RazorProject
+/// <summary>
+/// An abstraction for working with a project containing Razor files.
+/// </summary>
+public abstract partial class RazorProjectFileSystem
 {
-    internal static readonly RazorProjectFileSystem Empty = new EmptyProjectFileSystem();
+    public static readonly RazorProjectFileSystem Empty = new EmptyFileSystem();
+
+    /// <summary>
+    /// Gets a sequence of <see cref="RazorProjectItem"/> under the specific path in the project.
+    /// </summary>
+    /// <param name="basePath">The base path.</param>
+    /// <returns>The sequence of <see cref="RazorProjectItem"/>.</returns>
+    /// <remarks>
+    /// Project items returned by this method have inferred FileKinds from their corresponding file paths.
+    /// </remarks>
+    public abstract IEnumerable<RazorProjectItem> EnumerateItems(string basePath);
+
+    /// <summary>
+    /// Gets a <see cref="RazorProjectItem"/> for the specified path.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The <see cref="RazorProjectItem"/>.</returns>
+    public RazorProjectItem GetItem(string path)
+        => GetItem(path, fileKind: null);
+
+    /// <summary>
+    /// Gets a <see cref="RazorProjectItem"/> for the specified path.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <param name="fileKind">The file kind</param>
+    /// <returns>The <see cref="RazorProjectItem"/>.</returns>
+    public abstract RazorProjectItem GetItem(string path, string? fileKind);
+
+    /// <summary>
+    /// Gets the sequence of files named <paramref name="fileName"/> that are applicable to the specified path.
+    /// </summary>
+    /// <param name="path">The path of a project item.</param>
+    /// <param name="fileName">The file name to seek.</param>
+    /// <returns>A sequence of applicable <see cref="RazorProjectItem"/> instances.</returns>
+    /// <remarks>
+    /// This method returns paths starting from the directory of <paramref name="path"/> and
+    /// traverses to the project root.
+    /// e.g.
+    /// /Views/Home/View.cshtml -> [ /Views/Home/FileName.cshtml, /Views/FileName.cshtml, /FileName.cshtml ]
+    ///
+    /// Project items returned by this method have inferred FileKinds from their corresponding file paths.
+    /// </remarks>
+    public IEnumerable<RazorProjectItem> FindHierarchicalItems(string path, string fileName)
+    {
+        return FindHierarchicalItems(basePath: "/", path, fileName);
+    }
+
+    /// <summary>
+    /// Gets the sequence of files named <paramref name="fileName"/> that are applicable to the specified path.
+    /// </summary>
+    /// <param name="basePath">The base path.</param>
+    /// <param name="path">The path of a project item.</param>
+    /// <param name="fileName">The file name to seek.</param>
+    /// <returns>A sequence of applicable <see cref="RazorProjectItem"/> instances.</returns>
+    /// <remarks>
+    /// This method returns paths starting from the directory of <paramref name="path"/> and
+    /// traverses to the <paramref name="basePath"/>.
+    /// e.g.
+    /// (/Views, /Views/Home/View.cshtml) -> [ /Views/Home/FileName.cshtml, /Views/FileName.cshtml ]
+    ///
+    /// Project items returned by this method have inferred FileKinds from their corresponding file paths.
+    /// </remarks>
+    public virtual IEnumerable<RazorProjectItem> FindHierarchicalItems(string basePath, string path, string fileName)
+    {
+        ArgHelper.ThrowIfNullOrEmpty(fileName);
+
+        basePath = NormalizeAndEnsureValidPath(basePath);
+        path = NormalizeAndEnsureValidPath(path);
+
+        Debug.Assert(!string.IsNullOrEmpty(path));
+
+        if (path.Length == 1)
+        {
+            yield break;
+        }
+
+        if (!path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
+        {
+            yield break;
+        }
+
+        StringBuilder builder;
+        var fileNameIndex = path.LastIndexOf('/');
+        var length = path.Length;
+
+        if (fileNameIndex == -1)
+        {
+            throw new InvalidOperationException($"Cannot find file name in path '{path}'");
+        }
+
+        if (string.Compare(path, fileNameIndex + 1, fileName, 0, fileName.Length, StringComparison.Ordinal) == 0)
+        {
+            // If the specified path is for the file hierarchy being constructed, then the first file that applies
+            // to it is in a parent directory.
+            builder = new StringBuilder(path, 0, fileNameIndex, fileNameIndex + fileName.Length);
+            length = fileNameIndex;
+        }
+        else
+        {
+            builder = new StringBuilder(path);
+        }
+
+        var maxDepth = 255;
+        var index = length;
+        while (maxDepth-- > 0 && index > basePath.Length && (index = path.LastIndexOf('/', index - 1)) != -1)
+        {
+            builder.Length = index + 1;
+            builder.Append(fileName);
+
+            var itemPath = builder.ToString();
+            yield return GetItem(itemPath, fileKind: null);
+        }
+    }
+
+    /// <summary>
+    /// Performs validation for paths passed to methods of <see cref="RazorProjectFileSystem"/>.
+    /// </summary>
+    /// <param name="path">The path to validate.</param>
+    protected virtual string NormalizeAndEnsureValidPath(string path)
+    {
+        ArgHelper.ThrowIfNullOrEmpty(path);
+
+        if (path[0] != '/')
+        {
+            throw new ArgumentException(Resources.RazorProjectFileSystem_PathMustStartWithForwardSlash, nameof(path));
+        }
+
+        return path;
+    }
 
     /// <summary>
     /// Create a Razor project file system based off of a root directory.
@@ -18,10 +150,7 @@ public abstract class RazorProjectFileSystem : RazorProject
     /// <returns>A <see cref="RazorProjectFileSystem"/></returns>
     public static RazorProjectFileSystem Create(string rootDirectoryPath)
     {
-        if (string.IsNullOrEmpty(rootDirectoryPath))
-        {
-            throw new ArgumentException(Resources.ArgumentCannotBeNullOrEmpty, nameof(rootDirectoryPath));
-        }
+        ArgHelper.ThrowIfNullOrEmpty(rootDirectoryPath);
 
         return new DefaultRazorProjectFileSystem(rootDirectoryPath);
     }

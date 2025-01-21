@@ -19,7 +19,7 @@ internal sealed class CapabilitiesManager : IInitializeManager<InitializeParams,
 {
     private readonly ILspServices _lspServices;
     private readonly TaskCompletionSource<InitializeParams> _initializeParamsTaskSource;
-    private readonly AsyncLazy<string> _lazyRootPath;
+    private readonly VisualStudio.Threading.AsyncLazy<string> _lazyRootPath;
 
     public bool HasInitialized => _initializeParamsTaskSource.Task.IsCompleted;
 

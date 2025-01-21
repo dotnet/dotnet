@@ -43,7 +43,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         ILspEditorFeatureDetector lspEditorFeatureDetector,
         IFilePathService filePathService,
         IWorkspaceProvider workspaceProvider,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         FallbackProjectManager fallbackProjectManager)
     {
         _factory = factory;

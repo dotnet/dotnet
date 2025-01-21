@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -18,7 +17,7 @@ internal static class MarkupTagHelperTooltipFactory
     public static async Task<MarkupContent?> TryCreateTooltipAsync(
         string? documentFilePath,
         AggregateBoundElementDescription elementDescriptionInfo,
-        ISolutionQueryOperations solutionQueryOperations,
+        IComponentAvailabilityService componentAvailabilityService,
         MarkupKind markupKind,
         CancellationToken cancellationToken)
     {
@@ -75,7 +74,7 @@ internal static class MarkupTagHelperTooltipFactory
 
             if (documentFilePath is not null)
             {
-                var availability = await solutionQueryOperations
+                var availability = await componentAvailabilityService
                     .GetProjectAvailabilityTextAsync(documentFilePath, tagHelperType, cancellationToken)
                     .ConfigureAwait(false);
 

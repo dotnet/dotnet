@@ -1,21 +1,20 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
+
 #pragma warning disable CS0618 // Type or member is obsolete
 internal class DefaultRazorParserOptionsFeature : RazorEngineFeatureBase, IRazorParserOptionsFeature
 #pragma warning restore CS0618 // Type or member is obsolete
 {
     private readonly bool _designTime;
     private readonly RazorLanguageVersion _version;
-    private readonly string _fileKind;
-    private IConfigureRazorParserOptionsFeature[] _configureOptions;
+    private readonly string? _fileKind;
+    private ImmutableArray<IConfigureRazorParserOptionsFeature> _configureOptions;
 
-    public DefaultRazorParserOptionsFeature(bool designTime, RazorLanguageVersion version, string fileKind)
+    public DefaultRazorParserOptionsFeature(bool designTime, RazorLanguageVersion version, string? fileKind)
     {
         _designTime = designTime;
         _version = version;
@@ -24,19 +23,18 @@ internal class DefaultRazorParserOptionsFeature : RazorEngineFeatureBase, IRazor
 
     protected override void OnInitialized()
     {
-        _configureOptions = Engine.Features.OfType<IConfigureRazorParserOptionsFeature>().ToArray();
+        _configureOptions = Engine.GetFeatures<IConfigureRazorParserOptionsFeature>();
     }
 
     public RazorParserOptions GetOptions()
     {
         var builder = new RazorParserOptionsBuilder(_designTime, _version, _fileKind);
-        for (var i = 0; i < _configureOptions.Length; i++)
+
+        foreach (var options in _configureOptions)
         {
-            _configureOptions[i].Configure(builder);
+            options.Configure(builder);
         }
 
-        var options = builder.Build();
-
-        return options;
+        return builder.Build();
     }
 }

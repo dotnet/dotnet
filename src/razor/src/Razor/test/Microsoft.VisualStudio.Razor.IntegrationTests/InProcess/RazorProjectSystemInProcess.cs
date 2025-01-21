@@ -40,7 +40,7 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
     {
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
         await Helper.RetryAsync(ct =>
         {
@@ -55,7 +55,7 @@ internal partial class RazorProjectSystemInProcess
     public async Task WaitForComponentTagNameAsync(string projectName, string componentName, CancellationToken cancellationToken)
     {
         var projectFilePath = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
         await Helper.RetryAsync(async ct =>
         {
@@ -73,7 +73,7 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
 
         await Helper.RetryAsync(ct =>
@@ -88,7 +88,7 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task<ImmutableArray<string>> GetProjectKeyIdsForProjectAsync(string projectFilePath, CancellationToken cancellationToken)
     {
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
 
         return projectManager.GetProjectKeysWithFilePath(projectFilePath).SelectAsArray(static key => key.Id);

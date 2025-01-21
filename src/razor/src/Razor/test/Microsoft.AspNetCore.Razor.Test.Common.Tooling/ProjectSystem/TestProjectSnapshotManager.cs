@@ -17,7 +17,7 @@ internal partial class TestProjectSnapshotManager(
     ILoggerFactory loggerFactory,
     CancellationToken disposalToken,
     Action<ProjectSnapshotManager.Updater>? initializer = null)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions, loggerFactory, initializer)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions.ToCompilerOptions(), loggerFactory, initializer)
 {
     private readonly CancellationToken _disposalToken = disposalToken;
 

@@ -75,10 +75,10 @@
 "Title"="Force use of runtime code generation for Razor (requires restart)"
 "PreviewPaneChannels"="*"
 
-[$RootKey$\FeatureFlags\Razor\LSP\UseRoslynTokenizer]
-"Description"="Enables some new C# features, like interpolated and raw strings, in Razor files opened in Visual Studio. This matches using '<features>use-roslyn-tokenizer</features>' in a project file for command line builds, and may result in inconsistencies if this option and your project files do not match."
+[$RootKey$\FeatureFlags\Razor\LSP\UseNewFormattingEngine]
+"Description"="Enables the new Razor formatting engine, which provides formatting results that more closely match C# formatting."
 "Value"=dword:00000000
-"Title"="Use the C# tokenizer for Razor files in the IDE (requires restart)"
+"Title"="Use the new Razor formatting engine in the IDE (requires restart)"
 "PreviewPaneChannels"="*"
 
 // CacheTag value should be changed when registration file changes

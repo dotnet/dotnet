@@ -10,8 +10,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal sealed class ProjectChangeEventArgs : EventArgs
 {
     public ProjectChangeKind Kind { get; }
-    public IProjectSnapshot? Older { get; }
-    public IProjectSnapshot? Newer { get; }
+    public ProjectSnapshot? Older { get; }
+    public ProjectSnapshot? Newer { get; }
     public ProjectKey ProjectKey { get; }
     public string ProjectFilePath { get; }
     public string? DocumentFilePath { get; }
@@ -19,8 +19,8 @@ internal sealed class ProjectChangeEventArgs : EventArgs
 
     private ProjectChangeEventArgs(
         ProjectChangeKind kind,
-        IProjectSnapshot? older,
-        IProjectSnapshot? newer,
+        ProjectSnapshot? older,
+        ProjectSnapshot? newer,
         string? documentFilePath,
         bool isSolutionClosing)
     {
@@ -38,21 +38,21 @@ internal sealed class ProjectChangeEventArgs : EventArgs
         IsSolutionClosing = isSolutionClosing;
     }
 
-    public static ProjectChangeEventArgs ProjectAdded(IProjectSnapshot project, bool isSolutionClosing)
+    public static ProjectChangeEventArgs ProjectAdded(ProjectSnapshot project, bool isSolutionClosing)
         => new(ProjectChangeKind.ProjectAdded, older: null, newer: project, documentFilePath: null, isSolutionClosing);
 
-    public static ProjectChangeEventArgs ProjectRemoved(IProjectSnapshot project, bool isSolutionClosing)
+    public static ProjectChangeEventArgs ProjectRemoved(ProjectSnapshot project, bool isSolutionClosing)
         => new(ProjectChangeKind.ProjectRemoved, older: project, newer: null, documentFilePath: null, isSolutionClosing);
 
-    public static ProjectChangeEventArgs ProjectChanged(IProjectSnapshot older, IProjectSnapshot newer, bool isSolutionClosing)
+    public static ProjectChangeEventArgs ProjectChanged(ProjectSnapshot older, ProjectSnapshot newer, bool isSolutionClosing)
         => new(ProjectChangeKind.ProjectChanged, older, newer, documentFilePath: null, isSolutionClosing);
 
-    public static ProjectChangeEventArgs DocumentAdded(IProjectSnapshot older, IProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
+    public static ProjectChangeEventArgs DocumentAdded(ProjectSnapshot older, ProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
         => new(ProjectChangeKind.DocumentAdded, older, newer, documentFilePath, isSolutionClosing);
 
-    public static ProjectChangeEventArgs DocumentRemoved(IProjectSnapshot older, IProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
+    public static ProjectChangeEventArgs DocumentRemoved(ProjectSnapshot older, ProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
         => new(ProjectChangeKind.DocumentRemoved, older, newer, documentFilePath, isSolutionClosing);
 
-    public static ProjectChangeEventArgs DocumentChanged(IProjectSnapshot older, IProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
+    public static ProjectChangeEventArgs DocumentChanged(ProjectSnapshot older, ProjectSnapshot newer, string documentFilePath, bool isSolutionClosing)
         => new(ProjectChangeKind.DocumentChanged, older, newer, documentFilePath, isSolutionClosing);
 }

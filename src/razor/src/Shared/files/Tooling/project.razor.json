@@ -1,10 +1,11 @@
 {
-  "__Version": 6,
+  "__Version": 7,
   "ProjectKey": "C:/Users/admin/location/blazorserver/obj/Debug/net7.0/",
   "FilePath": "C:\\Users\\admin\\location\\blazorserver\\blazorserver.csproj",
   "Configuration": {
     "ConfigurationName": "MVC-3.0",
     "LanguageVersion": "3.0",
+    "CSharpLanguageVersion": 800,
     "Extensions": [
       "MVC-3.0"
     ]
@@ -17805,8 +17806,7 @@
           "Runtime.Name": "Components.None"
         }
       }
-    ],
-    "CSharpLanguageVersion": 800
+    ]
   },
   "RootNamespace": "blazorserver",
   "Documents": [

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
@@ -9,26 +10,51 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal class TestProjectEngineFactoryProvider : IProjectEngineFactoryProvider
 {
-    public Action<RazorProjectEngineBuilder>? Configure { get; set; }
+    public static TestProjectEngineFactoryProvider Instance { get; } = new(baseProvider: null, configure: default);
 
-    public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
+    public IProjectEngineFactoryProvider BaseProvider { get; }
+    private readonly ImmutableArray<Action<RazorProjectEngineBuilder>> _configure;
+
+    private TestProjectEngineFactoryProvider(
+        IProjectEngineFactoryProvider? baseProvider,
+        ImmutableArray<Action<RazorProjectEngineBuilder>> configure)
     {
-        return new Factory(Configure);
+        BaseProvider = baseProvider ?? ProjectEngineFactories.DefaultProvider;
+        _configure = configure.NullToEmpty();
     }
 
-    private sealed class Factory(Action<RazorProjectEngineBuilder>? outerConfigure) : IProjectEngineFactory
+    public TestProjectEngineFactoryProvider WithBaseProvider(IProjectEngineFactoryProvider baseProvider)
+        => new(baseProvider, _configure);
+
+    public TestProjectEngineFactoryProvider AddConfigure(Action<RazorProjectEngineBuilder> configure)
+        => new(BaseProvider, _configure.Add(configure));
+
+    public TestProjectEngineFactoryProvider WithTestImportFeature()
+        => AddConfigure(static b => b.SetImportFeature(new TestImportProjectFeature()));
+
+    public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
+        => new FactoryWrapper(this, BaseProvider.GetFactory(configuration));
+
+    private sealed class FactoryWrapper(
+        TestProjectEngineFactoryProvider parent,
+        IProjectEngineFactory factory)
+        : IProjectEngineFactory
     {
-        public string ConfigurationName => "Test";
+        public string ConfigurationName => factory.ConfigurationName;
 
         public RazorProjectEngine Create(
             RazorConfiguration configuration,
             RazorProjectFileSystem fileSystem,
-            Action<RazorProjectEngineBuilder>? innerConfigure)
+            Action<RazorProjectEngineBuilder>? configure)
         {
             return RazorProjectEngine.Create(configuration, fileSystem, b =>
             {
-                innerConfigure?.Invoke(b);
-                outerConfigure?.Invoke(b);
+                configure?.Invoke(b);
+
+                foreach (var c in parent._configure)
+                {
+                    c.Invoke(b);
+                }
             });
         }
     }

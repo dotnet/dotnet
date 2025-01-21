@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -167,7 +165,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var documentContext = TagHelperDocumentContext.Create(string.Empty, tagHelpers: []);
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@bin", "foobarbaz", [], documentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@bin", "foobarbaz", [], documentContext);
 
         // Assert
         Assert.Empty(completions);
@@ -183,7 +181,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var documentContext = TagHelperDocumentContext.Create(string.Empty, [descriptor.Build()]);
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@bin", "input", [], documentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@bin", "input", [], documentContext);
 
         // Assert
         Assert.Empty(completions);
@@ -196,7 +194,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var attributeNames = ImmutableArray.Create("@bind");
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@bind", "input", attributeNames, _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@bind", "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "bind", "@bind", ["=", ":"]);
@@ -208,7 +206,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         // Arrange
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@", "input", [], _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@", "input", [], _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "bind", "@bind", ["=", ":"]);
@@ -220,7 +218,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         // Arrange
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@", "input", [], _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@", "input", [], _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "bind-", "@bind-...", []);
@@ -233,7 +231,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var attributeNames = ImmutableArray.Create("@bind", "@");
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@", "input", attributeNames, _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@", "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "bind", "@bind", ["=", ":"]);
@@ -254,13 +252,13 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
             "@");
 
         // Act
-        var completions = _provider.GetAttributeCompletions("@", "input", attributeNames, _defaultTagHelperDocumentContext);
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions("@", "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertDoesNotContain(completions, "bind", "@bind");
     }
 
-    private static void AssertContains(IReadOnlyList<RazorCompletionItem> completions, string insertText, string displayText, IReadOnlyCollection<string> commitCharacters)
+    private static void AssertContains(ImmutableArray<RazorCompletionItem> completions, string insertText, string displayText, ImmutableArray<string> commitCharacters)
     {
         displayText ??= insertText;
 
@@ -288,6 +286,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
+
         return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 }

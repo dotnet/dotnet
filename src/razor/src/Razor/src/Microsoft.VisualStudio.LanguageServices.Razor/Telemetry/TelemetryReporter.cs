@@ -6,7 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -14,22 +16,20 @@ using Microsoft.VisualStudio.Telemetry;
 using static Microsoft.VisualStudio.Razor.Telemetry.AggregatingTelemetryLog;
 using TelemetryResult = Microsoft.AspNetCore.Razor.Telemetry.TelemetryResult;
 
-#if DEBUG
-using System.Linq;
-#endif
-
 namespace Microsoft.VisualStudio.Razor.Telemetry;
 
 internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposable
 {
-    private const string CodeAnalysisNamespace = nameof(Microsoft) + "." + nameof(CodeAnalysis);
-    private const string AspNetCoreNamespace = nameof(Microsoft) + "." + nameof(AspNetCore);
-    private const string MicrosoftVSRazorNamespace = $"{nameof(Microsoft)}.{nameof(VisualStudio)}.{nameof(Razor)}";
+    private const string CodeAnalysisNamespace = $"{nameof(Microsoft)}.{nameof(CodeAnalysis)}.";
+    private const string AspNetCoreNamespace = $"{nameof(Microsoft)}.{nameof(AspNetCore)}.";
+    private const string MicrosoftVSRazorNamespace = $"{nameof(Microsoft)}.{nameof(VisualStudio)}.{nameof(Razor)}.";
 
     // Types that will not contribute to fault bucketing. Fully qualified name is
     // required in order to match correctly.
     private static readonly FrozenSet<string> s_faultIgnoredTypeNames = new string[] {
-        "Microsoft.AspNetCore.Razor.NullableExtensions"
+        typeof(Assumed).FullName.AssumeNotNull(),
+        typeof(NullableExtensions).FullName.AssumeNotNull(),
+        typeof(ThrowHelper).FullName.AssumeNotNull()
     }.ToFrozenSet();
 
     private TelemetrySessionManager? _manager;
@@ -293,39 +293,63 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
         // In debug we only log to normal logging. This makes it much easier to add and debug telemetry events
         // before we're ready to send them to the cloud
         var name = telemetryEvent.Name;
-        var propertyString = string.Join(",", telemetryEvent.Properties.Select(kvp => $"[ {kvp.Key}:{kvp.Value} ]"));
-        LogTrace($"Telemetry Event: {name} \n Properties: {propertyString}\n");
+        var propertiesString = GetPropertiesString(telemetryEvent.Properties);
+
+        LogTrace($"Telemetry Event: {name} \n Properties: {propertiesString}\n");
 
         if (telemetryEvent is FaultEvent)
         {
-            var eventType = telemetryEvent.GetType();
-            var description = eventType.GetProperty("Description", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(telemetryEvent, null);
-            var exception = eventType.GetProperty("ExceptionObject", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(telemetryEvent, null);
-            var message = $"Fault Event: {name} \n Exception Info: {exception ?? description} \n Properties: {propertyString}";
+            var telemetryEventType = telemetryEvent.GetType();
+
+            var description = telemetryEventType
+                .GetProperty("Description", BindingFlags.NonPublic | BindingFlags.Instance)?
+                .GetValue(telemetryEvent, index: null);
+
+            var exception = telemetryEventType
+                .GetProperty("ExceptionObject", BindingFlags.NonPublic | BindingFlags.Instance)?
+                .GetValue(telemetryEvent, index: null);
+
+            var message = $"Fault Event: {name} \n Exception Info: {exception ?? description} \n Properties: {propertiesString}";
 
             Debug.Fail(message);
+        }
+
+        static string GetPropertiesString(IDictionary<string, object> properties)
+        {
+            using var _ = AspNetCore.Razor.PooledObjects.StringBuilderPool.GetPooledObject(out var builder);
+
+            var first = true;
+
+            foreach (var (key, value) in properties)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    builder.Append(',');
+                }
+
+                builder.Append("[ ");
+                builder.Append(key);
+                builder.Append(':');
+                builder.Append(value);
+                builder.Append(" ]");
+            }
+
+            return builder.ToString();
         }
     }
 #endif
 
     /// <summary>
     /// Returns values that should be set to (failureParameter1, failureParameter2) when reporting a fault.
-    /// Those values represent the blamed stackframe module and method name.
+    /// Those values represent the blamed stack frame module and method name.
     /// </summary>
-    internal static (string?, string?) GetModifiedFaultParameters(Exception exception)
+    internal static (string? moduleName, string? methodName) GetModifiedFaultParameters(Exception exception)
     {
-        var frame = FindFirstRazorStackFrame(exception, static (declaringTypeName, _) =>
-        {
-            if (s_faultIgnoredTypeNames.Contains(declaringTypeName))
-            {
-                return false;
-            }
-
-            return true;
-        });
-
-        var method = frame?.GetMethod();
-        if (method is null)
+        if (!TryGetFirstRazorMethodOnCallStack(exception, SkipIfDeclaringTypeIsIgnored, out var method))
         {
             return (null, null);
         }
@@ -336,90 +360,64 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
 
     private static string GetExceptionDetails(Exception exception)
     {
-        var frame = FindFirstRazorStackFrame(exception);
-
-        if (frame is null)
+        if (!TryGetFirstRazorMethodOnCallStack(exception, shouldSkipMethod: null, out var method) ||
+            !TryGetDeclaringTypeName(method, out var declaringTypeName))
         {
             return exception.Message;
         }
 
-        var method = frame.GetMethod();
-
-        // These are checked in FindFirstRazorStackFrame
-        method.AssumeNotNull();
-        method.DeclaringType.AssumeNotNull();
-
-        var declaringTypeName = method.DeclaringType.FullName;
-        var methodName = method.Name;
-
-        return declaringTypeName + "." + methodName;
+        return $"{declaringTypeName}.{method.Name}";
     }
 
     /// <summary>
-    /// Finds the first stack frame in exception stack that originates from razor code based on namespace
+    /// Gets the first stack frame in exception stack that originates from razor code based on namespace
     /// </summary>
-    /// <param name="exception">The exception to get the stack from</param>
-    /// <param name="predicate">Optional predicate to filter by declaringTypeName and methodName</param>
-    /// <returns></returns>
-    private static StackFrame? FindFirstRazorStackFrame(
+    /// <param name="exception">The <see cref="Exception"/> containg the stack.</param>
+    /// <param name="shouldSkipMethod">Optional predicate that determines whether a particular method should be skipped.</param>
+    /// <param name="result">The result</param>
+    private static bool TryGetFirstRazorMethodOnCallStack(
         Exception exception,
-        Func<string, string, bool>? predicate = null)
+        Func<MethodBase, bool>? shouldSkipMethod,
+        [NotNullWhen(true)] out MethodBase? result)
     {
         // Be resilient to failing here.  If we can't get a suitable name, just fall back to the standard name we
         // used to report.
         try
         {
             // walk up the stack looking for the first call from a type that isn't in the ErrorReporting namespace.
-            var frames = new StackTrace(exception).GetFrames();
+            var stackTrace = new StackTrace(exception);
 
             // On the .NET Framework, GetFrames() can return null even though it's not documented as such.
             // At least one case here is if the exception's stack trace itself is null.
-            if (frames != null)
+            if (stackTrace.GetFrames() is { } frames)
             {
                 foreach (var frame in frames)
                 {
-                    if (frame is null)
+                    var method = frame?.GetMethod();
+
+                    if (method is null || !IsInOwnedNamespace(method))
                     {
                         continue;
                     }
 
-                    var method = frame.GetMethod();
-                    var methodName = method?.Name;
-                    if (methodName is null)
+                    if (shouldSkipMethod is null || !shouldSkipMethod(method))
                     {
-                        continue;
-                    }
-
-                    var declaringTypeName = method?.DeclaringType?.FullName;
-                    if (declaringTypeName == null)
-                    {
-                        continue;
-                    }
-
-                    if (!IsInOwnedNamespace(declaringTypeName))
-                    {
-                        continue;
-                    }
-
-                    if (predicate is null)
-                    {
-                        return frame;
-                    }
-
-                    if (predicate(declaringTypeName, methodName))
-                    {
-                        return frame;
+                        result = method;
+                        return true;
                     }
                 }
             }
-
-            return null;
         }
         catch
         {
-            return null;
         }
+
+        result = null;
+        return false;
     }
+
+    private static bool TryGetDeclaringTypeName(MethodBase method, [NotNullWhen(true)] out string? declaringTypeName)
+        => (declaringTypeName = method.DeclaringType?.FullName) is not null;
 
     private static TelemetrySeverity ConvertSeverity(Severity severity)
         => severity switch
@@ -430,10 +428,18 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
             _ => throw new InvalidOperationException($"Unknown severity: {severity}")
         };
 
+    private static bool IsInOwnedNamespace(MethodBase method)
+        => TryGetDeclaringTypeName(method, out var declaringTypeName) &&
+           IsInOwnedNamespace(declaringTypeName);
+
     private static bool IsInOwnedNamespace(string declaringTypeName)
         => declaringTypeName.StartsWith(CodeAnalysisNamespace) ||
-            declaringTypeName.StartsWith(AspNetCoreNamespace) ||
-            declaringTypeName.StartsWith(MicrosoftVSRazorNamespace);
+           declaringTypeName.StartsWith(AspNetCoreNamespace) ||
+           declaringTypeName.StartsWith(MicrosoftVSRazorNamespace);
+
+    private static bool SkipIfDeclaringTypeIsIgnored(MethodBase method)
+        => TryGetDeclaringTypeName(method, out var declaringTypeName) &&
+           s_faultIgnoredTypeNames.Contains(declaringTypeName);
 
     private sealed class TelemetrySessionManager : IDisposable
     {

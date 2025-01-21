@@ -16,44 +16,34 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 {
     public override ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (context.TagHelperDocumentContext is null)
-        {
-            throw new ArgumentNullException(nameof(context.TagHelperDocumentContext));
-        }
-
         if (!FileKinds.IsComponent(context.SyntaxTree.Options.FileKind))
         {
             // Directive attributes are only supported in components
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         var owner = context.Owner;
         if (owner is null)
         {
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         if (!TryGetAttributeInfo(owner, out _, out var attributeName, out var attributeNameLocation, out _, out _))
         {
             // Either we're not in an attribute or the attribute is so malformed that we can't provide proper completions.
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         if (!attributeNameLocation.IntersectsWith(context.AbsoluteIndex))
         {
             // We're trying to retrieve completions on a portion of the name that is not supported (such as a parameter).
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         if (!TryGetElementInfo(owner.Parent.Parent, out var containingTagName, out var attributes))
         {
             // This should never be the case, it means that we're operating on an attribute that doesn't have a tag.
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
         // At this point we've determined that completions have been requested for the name portion of the selected attribute.
@@ -63,16 +53,16 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         // We don't provide Directive Attribute completions when we're in the middle of
         // another unrelated (doesn't start with @) partially completed attribute.
         // <svg xml:| ></svg> (attributeName = "xml:") should not get any directive attribute completions.
-        if (string.IsNullOrWhiteSpace(attributeName) || attributeName.StartsWith("@", StringComparison.Ordinal))
+        if (attributeName.IsNullOrWhiteSpace() || attributeName.StartsWith('@'))
         {
             return completionItems;
         }
 
-        return ImmutableArray<RazorCompletionItem>.Empty;
+        return [];
     }
 
     // Internal for testing
-    internal ImmutableArray<RazorCompletionItem> GetAttributeCompletions(
+    internal static ImmutableArray<RazorCompletionItem> GetAttributeCompletions(
         string selectedAttributeName,
         string containingTagName,
         ImmutableArray<string> attributes,
@@ -82,11 +72,11 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         if (descriptorsForTag.Length == 0)
         {
             // If the current tag has no possible descriptors then we can't have any directive attributes.
-            return ImmutableArray<RazorCompletionItem>.Empty;
+            return [];
         }
 
-        // Attributes are case sensitive when matching
-        var attributeCompletions = new Dictionary<string, (HashSet<BoundAttributeDescriptionInfo>, HashSet<string>)>(StringComparer.Ordinal);
+        // Use ordinal dictionary because attributes are case sensitive when matching
+        using var _ = StringDictionaryPool<(HashSet<BoundAttributeDescriptionInfo>, HashSet<string>)>.Ordinal.GetPooledObject(out var attributeCompletions);
 
         foreach (var descriptor in descriptorsForTag)
         {
@@ -114,7 +104,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                     }
                 }
 
-                if (!string.IsNullOrEmpty(attributeDescriptor.IndexerNamePrefix))
+                if (!attributeDescriptor.IndexerNamePrefix.IsNullOrEmpty())
                 {
                     TryAddCompletion(attributeDescriptor.IndexerNamePrefix + "...", attributeDescriptor, descriptor);
                 }
@@ -123,24 +113,23 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
         using var completionItems = new PooledArrayBuilder<RazorCompletionItem>(capacity: attributeCompletions.Count);
 
-        foreach (var completion in attributeCompletions)
+        foreach (var (displayText, (attributeDescriptions, commitCharacters)) in attributeCompletions)
         {
-            var insertText = completion.Key;
-            if (insertText.EndsWith("...", StringComparison.Ordinal))
-            {
-                // Indexer attribute, we don't want to insert with the triple dot.
-                insertText = insertText[..^3];
-            }
+            var insertText = displayText;
 
-            if (insertText.StartsWith("@", StringComparison.Ordinal))
-            {
-                // Strip off the @ from the insertion text. This change is here to align the insertion text with the
-                // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
-                // want to insert `@bind` because `@` already exists.
-                insertText = insertText[1..];
-            }
+            // Strip off the @ from the insertion text. This change is here to align the insertion text with the
+            // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
+            // want to insert `@bind` because `@` already exists.
+            var startIndex = insertText.StartsWith('@') ? 1 : 0;
 
-            var (attributeDescriptionInfos, commitCharacters) = completion.Value;
+            // Indexer attribute, we don't want to insert with the triple dot.
+            var endIndex = insertText.EndsWith("...", StringComparison.Ordinal) ? ^3 : ^0;
+
+            // Don't allocate a new string unless we need to make a change.
+            if (startIndex > 0 || endIndex.Value > 0)
+            {
+                insertText = insertText[startIndex..endIndex];
+            }
 
             using var razorCommitCharacters = new PooledArrayBuilder<RazorCommitCharacter>(capacity: commitCharacters.Count);
 
@@ -149,13 +138,11 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 razorCommitCharacters.Add(new(c));
             }
 
-            var razorCompletionItem = new RazorCompletionItem(
-                completion.Key,
+            var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttribute(
+                displayText,
                 insertText,
-                RazorCompletionItemKind.DirectiveAttribute,
+                descriptionInfo: new([.. attributeDescriptions]),
                 commitCharacters: razorCommitCharacters.DrainToImmutable());
-            var completionDescription = new AggregateBoundAttributeDescription(attributeDescriptionInfos.ToImmutableArray());
-            razorCompletionItem.SetAttributeCompletionDescription(completionDescription);
 
             completionItems.Add(razorCompletionItem);
         }
@@ -164,8 +151,8 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
         bool TryAddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor)
         {
-            if (attributes.Any(name => string.Equals(name, attributeName, StringComparison.Ordinal)) &&
-                !string.Equals(selectedAttributeName, attributeName, StringComparison.Ordinal))
+            if (selectedAttributeName != attributeName &&
+                attributes.Any(attributeName, static (name, attributeName) => name == attributeName))
             {
                 // Attribute is already present on this element and it is not the selected attribute.
                 // It shouldn't exist in the completion list.
@@ -180,16 +167,16 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         {
             if (!attributeCompletions.TryGetValue(attributeName, out var attributeDetails))
             {
-                attributeDetails = (new HashSet<BoundAttributeDescriptionInfo>(), new HashSet<string>());
+                attributeDetails = ([], []);
                 attributeCompletions[attributeName] = attributeDetails;
             }
 
-            (var attributeDescriptionInfos, var commitCharacters) = attributeDetails;
+            (var attributeDescriptions, var commitCharacters) = attributeDetails;
 
             var indexerCompletion = attributeName.EndsWith("...", StringComparison.Ordinal);
             var tagHelperTypeName = tagHelperDescriptor.GetTypeName();
             var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttributeDescriptor, isIndexer: indexerCompletion, tagHelperTypeName);
-            attributeDescriptionInfos.Add(descriptionInfo);
+            attributeDescriptions.Add(descriptionInfo);
 
             if (indexerCompletion)
             {
@@ -199,14 +186,28 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
             commitCharacters.Add("=");
 
-            if (tagHelperDescriptor.BoundAttributes.Any(b => b.IsBooleanProperty))
-            {
-                commitCharacters.Add(" ");
-            }
+            var spaceAdded = commitCharacters.Contains(" ");
+            var colonAdded = commitCharacters.Contains(":");
 
-            if (tagHelperDescriptor.BoundAttributes.Any(b => b.Parameters.Length > 0))
+            if (!spaceAdded || !colonAdded)
             {
-                commitCharacters.Add(":");
+                foreach (var boundAttribute in tagHelperDescriptor.BoundAttributes)
+                {
+                    if (!spaceAdded && boundAttribute.IsBooleanProperty)
+                    {
+                        commitCharacters.Add(" ");
+                        spaceAdded = true;
+                    }
+                    else if (!colonAdded && boundAttribute.Parameters.Length > 0)
+                    {
+                        commitCharacters.Add(":");
+                        colonAdded = true;
+                    }
+                    else if (spaceAdded && colonAdded)
+                    {
+                        break;
+                    }
+                }
             }
         }
     }

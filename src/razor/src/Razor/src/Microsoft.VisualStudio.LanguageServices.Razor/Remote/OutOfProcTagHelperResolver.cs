@@ -38,7 +38,7 @@ internal class OutOfProcTagHelperResolver(
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
         Project project,
-        IProjectSnapshot projectSnapshot,
+        ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
     {
         // First, try to retrieve tag helpers out-of-proc. If that fails, try in-proc.
@@ -70,7 +70,7 @@ internal class OutOfProcTagHelperResolver(
         }
     }
 
-    protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project project, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         if (!_resultCache.TryGetId(project.Id, out var lastResultId))
         {
@@ -176,7 +176,7 @@ internal class OutOfProcTagHelperResolver(
 
     protected virtual ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersInProcessAsync(
         Project project,
-        IProjectSnapshot projectSnapshot,
+        ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
-        => project.GetTagHelpersAsync(projectSnapshot.GetProjectEngine(), _telemetryReporter, cancellationToken);
+        => project.GetTagHelpersAsync(projectSnapshot.ProjectEngine, _telemetryReporter, cancellationToken);
 }

@@ -4,11 +4,8 @@
 #nullable disable
 
 using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -68,10 +65,11 @@ World", cleanedSummary);
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), MarkupKind.Markdown, DisposalToken);
+        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, MarkupKind.Markdown, DisposalToken);
 
         // Assert
         Assert.Null(markdown);
@@ -82,13 +80,16 @@ World", cleanedSummary);
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
         // Act
-        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), MarkupKind.Markdown, DisposalToken);
+        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, MarkupKind.Markdown, DisposalToken);
 
         // Assert
         Assert.NotNull(markdown);
@@ -103,14 +104,17 @@ Uses `List<System.String>`s", markdown.Value);
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), MarkupKind.PlainText, DisposalToken);
+        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, MarkupKind.PlainText, DisposalToken);
 
         // Assert
         Assert.NotNull(markdown);
@@ -132,6 +136,7 @@ Uses `List<System.String>`s", markdown.Value);
                 PropertyName: "SomeProperty",
                 Documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>")
         };
+
         var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions.ToImmutableArray());
 
         // Act
@@ -150,15 +155,18 @@ Uses `List<System.String>`s", markdown.Value);
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
+        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.OtherTagHelper", "<summary>\nAlso uses <see cref=\"T:System.Collections.List{System.String}\" />s\n\r\n\r\r</summary>"),
         };
+
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, projectManager.GetQueryOperations(), MarkupKind.Markdown, DisposalToken);
+        var markdown = await MarkupTagHelperTooltipFactory.TryCreateTooltipAsync("file.razor", elementDescription, componentAvailabilityService, MarkupKind.Markdown, DisposalToken);
 
         // Assert
         Assert.NotNull(markdown);

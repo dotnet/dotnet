@@ -16,7 +16,6 @@ public class ComponentMarkupBlockPassTest
 {
     public ComponentMarkupBlockPassTest()
     {
-        Pass = new ComponentMarkupBlockPass(RazorLanguageVersion.Latest);
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
@@ -29,7 +28,10 @@ public class ComponentMarkupBlockPassTest
             });
         Engine = ProjectEngine.Engine;
 
-        Pass.Engine = Engine;
+        Pass = new ComponentMarkupBlockPass(RazorLanguageVersion.Latest)
+        {
+            Engine = Engine
+        };
     }
 
     private RazorProjectEngine ProjectEngine { get; }
@@ -450,7 +452,7 @@ public class ComponentMarkupBlockPassTest
         content = content.Replace("\n", "\r\n");
 
         var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return ProjectEngine.CreateCodeDocumentCore(source, FileKinds.Component);
+        return ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
     }
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
@@ -466,20 +468,8 @@ public class ComponentMarkupBlockPassTest
         }
 
         var document = codeDocument.GetDocumentIntermediateNode();
-        Engine.Features.OfType<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
-        Engine.Features.OfType<ComponentMarkupDiagnosticPass>().Single().Execute(codeDocument, document);
+        Engine.GetFeatures<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
+        Engine.GetFeatures<ComponentMarkupDiagnosticPass>().Single().Execute(codeDocument, document);
         return document;
-    }
-
-    private class StaticTagHelperFeature : ITagHelperFeature
-    {
-        public RazorEngine Engine { get; set; }
-
-        public List<TagHelperDescriptor> TagHelpers { get; set; }
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
-        {
-            return TagHelpers;
-        }
     }
 }

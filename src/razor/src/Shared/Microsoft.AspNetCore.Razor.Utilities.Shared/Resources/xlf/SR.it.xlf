@@ -82,6 +82,11 @@
         <target state="translated">La destinazione è troppo breve.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Expected_0_to_be_non_null">
+        <source>Expected '{0}' to be non-null.</source>
+        <target state="translated">Previsto '{0}' non Null.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Expected_condition_to_be_false">
         <source>Expected condition to be false.</source>
         <target state="translated">La condizione prevista deve essere false.</target>

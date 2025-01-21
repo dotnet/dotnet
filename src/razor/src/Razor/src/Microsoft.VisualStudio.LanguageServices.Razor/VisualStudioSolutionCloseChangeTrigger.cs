@@ -18,7 +18,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
 {
     private IVsSolution? _solution;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly JoinableTaskContext _joinableTaskContext;
 
     private uint _cookie;
@@ -26,7 +26,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
     [ImportingConstructor]
     public VisualStudioSolutionCloseChangeTrigger(
        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-       IProjectSnapshotManager projectManager,
+       ProjectSnapshotManager projectManager,
        JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;

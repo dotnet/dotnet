@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 
@@ -61,16 +60,14 @@ internal static class RazorProjectInfoFactory
             return new(null, "No razor documents in project");
         }
 
-        var csharpLanguageVersion = (project.ParseOptions as CSharpParseOptions)?.LanguageVersion ?? LanguageVersion.Default;
-
         var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
         if (compilation is null)
         {
             return new(null, "Failed to get compilation for project");
         }
 
-        var options = project.AnalyzerOptions.AnalyzerConfigOptionsProvider;
-        var configuration = ComputeRazorConfigurationOptions(options, compilation, out var defaultNamespace);
+        var configuration = ComputeRazorConfigurationOptions(project, compilation, out var defaultNamespace);
+
         var fileSystem = RazorProjectFileSystem.Create(projectPath);
 
         var defaultConfigure = (RazorProjectEngineBuilder builder) =>
@@ -80,7 +77,7 @@ internal static class RazorProjectInfoFactory
                 builder.SetRootNamespace(defaultNamespace);
             }
 
-            builder.SetCSharpLanguageVersion(csharpLanguageVersion);
+            builder.SetCSharpLanguageVersion(configuration.CSharpLanguageVersion);
             builder.SetSupportLocalizedComponentNames(); // ProjectState in MS.CA.Razor.Workspaces does this, so I'm doing it too!
         };
 
@@ -93,7 +90,7 @@ internal static class RazorProjectInfoFactory
 
         var tagHelpers = await project.GetTagHelpersAsync(engine, NoOpTelemetryReporter.Instance, cancellationToken).ConfigureAwait(false);
 
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
 
         var projectInfo = new RazorProjectInfo(
             projectKey: new ProjectKey(intermediateOutputPath),
@@ -107,11 +104,10 @@ internal static class RazorProjectInfoFactory
         return new(projectInfo, null);
     }
 
-    private static RazorConfiguration ComputeRazorConfigurationOptions(AnalyzerConfigOptionsProvider options, Compilation compilation, out string defaultNamespace)
+    public static RazorConfiguration ComputeRazorConfigurationOptions(Project project, Compilation? compilation, out string defaultNamespace)
     {
         // See RazorSourceGenerator.RazorProviders.cs
-
-        var globalOptions = options.GlobalOptions;
+        var globalOptions = project.AnalyzerOptions.AnalyzerConfigOptionsProvider.GlobalOptions;
 
         globalOptions.TryGetValue("build_property.RazorConfiguration", out var configurationName);
 
@@ -125,14 +121,19 @@ internal static class RazorProjectInfoFactory
             razorLanguageVersion = RazorLanguageVersion.Latest;
         }
 
-        var suppressAddComponentParameter = !compilation.HasAddComponentParameter();
+        var suppressAddComponentParameter = compilation is not null && !compilation.HasAddComponentParameter();
+
+        var csharpParseOptions = project.ParseOptions as CSharpParseOptions ?? CSharpParseOptions.Default;
 
         var razorConfiguration = new RazorConfiguration(
             razorLanguageVersion,
             configurationName,
             Extensions: [],
+            CSharpLanguageVersion: csharpParseOptions.LanguageVersion,
             UseConsolidatedMvcViews: true,
-            suppressAddComponentParameter);
+            suppressAddComponentParameter,
+            UseRoslynTokenizer: csharpParseOptions.UseRoslynTokenizer(),
+            PreprocessorSymbols: csharpParseOptions.PreprocessorSymbolNames.ToImmutableArray());
 
         defaultNamespace = rootNamespace ?? "ASP"; // TODO: Source generator does this. Do we want it?
 

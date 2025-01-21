@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]?>, ICapabilitiesProvider
 {
     private readonly IFilePathService _filePathService;
-    private readonly IProjectSnapshotManager _projectSnapshotManager;
+    private readonly ProjectSnapshotManager _projectSnapshotManager;
     private readonly IDocumentMappingService _documentMappingService;
 
     public FindAllReferencesEndpoint(
@@ -36,7 +36,7 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
         IClientConnection clientConnection,
         ILoggerFactory loggerFactory,
         IFilePathService filePathService,
-        IProjectSnapshotManager projectSnapshotManager)
+        ProjectSnapshotManager projectSnapshotManager)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<FindAllReferencesEndpoint>())
     {
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));

@@ -3,24 +3,26 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 
 internal static class IProjectSnapshotManagerExtensions
 {
-    public static ISolutionQueryOperations GetQueryOperations(this IProjectSnapshotManager projectManager)
+    public static ISolutionQueryOperations GetQueryOperations(this ProjectSnapshotManager projectManager)
         => new TestSolutionQueryOperations(projectManager);
 }
 
-file sealed class TestSolutionQueryOperations(IProjectSnapshotManager projectManager) : ISolutionQueryOperations
+file sealed class TestSolutionQueryOperations(ProjectSnapshotManager projectManager) : ISolutionQueryOperations
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
 
     public IEnumerable<IProjectSnapshot> GetProjects()
     {
-        return _projectManager.GetProjects();
+        return _projectManager.GetProjects().Cast<IProjectSnapshot>();
     }
 
     public ImmutableArray<IProjectSnapshot> GetProjectsContainingDocument(string documentFilePath)

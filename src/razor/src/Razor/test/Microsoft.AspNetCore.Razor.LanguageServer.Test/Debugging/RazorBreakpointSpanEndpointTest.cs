@@ -68,7 +68,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
+            HostDocumentSyncVersion = 1,
         };
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -94,7 +94,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
+            HostDocumentSyncVersion = 1,
         };
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -120,7 +120,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
+            HostDocumentSyncVersion = 1,
         };
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -146,7 +146,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
+            HostDocumentSyncVersion = 1,
         };
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -173,7 +173,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
+            HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

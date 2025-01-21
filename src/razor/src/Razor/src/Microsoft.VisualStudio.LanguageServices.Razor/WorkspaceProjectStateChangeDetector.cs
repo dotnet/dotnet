@@ -25,19 +25,19 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
     private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(1);
 
     private readonly IProjectWorkspaceStateGenerator _generator;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _options;
     private readonly CodeAnalysis.Workspace _workspace;
 
     private readonly CancellationTokenSource _disposeTokenSource;
-    private readonly AsyncBatchingWorkQueue<(Project?, IProjectSnapshot)> _workQueue;
+    private readonly AsyncBatchingWorkQueue<(Project?, ProjectSnapshot)> _workQueue;
 
     private WorkspaceChangedListener? _workspaceChangedListener;
 
     [ImportingConstructor]
     public WorkspaceProjectStateChangeDetector(
         IProjectWorkspaceStateGenerator generator,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider)
         : this(generator, projectManager, options, workspaceProvider, s_delay)
@@ -46,7 +46,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
     public WorkspaceProjectStateChangeDetector(
         IProjectWorkspaceStateGenerator generator,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider,
         TimeSpan delay)
@@ -56,7 +56,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         _options = options;
 
         _disposeTokenSource = new();
-        _workQueue = new AsyncBatchingWorkQueue<(Project?, IProjectSnapshot)>(
+        _workQueue = new AsyncBatchingWorkQueue<(Project?, ProjectSnapshot)>(
             delay,
             ProcessBatchAsync,
             _disposeTokenSource.Token);
@@ -85,7 +85,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         _disposeTokenSource.Dispose();
     }
 
-    private ValueTask ProcessBatchAsync(ImmutableArray<(Project? Project, IProjectSnapshot ProjectSnapshot)> items, CancellationToken token)
+    private ValueTask ProcessBatchAsync(ImmutableArray<(Project? Project, ProjectSnapshot ProjectSnapshot)> items, CancellationToken token)
     {
         foreach (var (project, projectSnapshot) in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
@@ -377,7 +377,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         }
     }
 
-    private void EnqueueUpdateOnProjectAndDependencies(ProjectId projectId, Project? project, Solution solution, IProjectSnapshot projectSnapshot)
+    private void EnqueueUpdateOnProjectAndDependencies(ProjectId projectId, Project? project, Solution solution, ProjectSnapshot projectSnapshot)
     {
         EnqueueUpdate(project, projectSnapshot);
 
@@ -394,12 +394,12 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         }
     }
 
-    private void EnqueueUpdate(Project? project, IProjectSnapshot projectSnapshot)
+    private void EnqueueUpdate(Project? project, ProjectSnapshot projectSnapshot)
     {
         _workQueue.AddWork((project, projectSnapshot));
     }
 
-    private bool TryGetProjectSnapshot(Project? project, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
+    private bool TryGetProjectSnapshot(Project? project, [NotNullWhen(true)] out ProjectSnapshot? projectSnapshot)
     {
         if (project?.CompilationOutputInfo.AssemblyPath is null)
         {

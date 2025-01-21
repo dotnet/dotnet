@@ -78,7 +78,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            StrictMock.Of<IProjectSnapshotManager>(),
+            CreateProjectSnapshotManager(),
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -105,7 +105,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            StrictMock.Of<IProjectSnapshotManager>(),
+            CreateProjectSnapshotManager(),
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -137,7 +137,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         await projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject);
-            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
         });
 
         var factory = new CSharpVirtualDocumentFactory(
@@ -187,10 +187,10 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         await projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject1);
-            updater.AddDocument(hostProject1.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject1.Key, hostDocument1, EmptyTextLoader.Instance);
 
             updater.AddProject(hostProject2);
-            updater.AddDocument(hostProject2.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject2.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);

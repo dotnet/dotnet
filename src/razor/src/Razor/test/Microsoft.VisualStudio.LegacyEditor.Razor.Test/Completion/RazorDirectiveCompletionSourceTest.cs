@@ -166,7 +166,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         if (isSnippet)
         {
             Assert.StartsWith(directive.Directive, item.InsertText);
-            Assert.Equal(item.InsertText, DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive.Directive].InsertText);
+            Assert.Equal(item.InsertText, DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive.Directive].InsertText);
         }
         else
         {
@@ -176,7 +176,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         Assert.Same(item.Source, source);
         Assert.True(item.Properties.TryGetProperty<DirectiveCompletionDescription>(RazorDirectiveCompletionSource.DescriptionKey, out var actualDescription));
 
-        var description = isSnippet ? "@" + DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive.Directive].DisplayText
+        var description = isSnippet ? "@" + DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive.Directive].DisplayText
                          + Environment.NewLine
                          + WorkspacesSR.DirectiveSnippetDescription
                          : directive.Description;

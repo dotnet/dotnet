@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
@@ -169,8 +171,9 @@ public class RazorBreakpointResolverTest : ToolingTestBase
                     DisposalToken))
                 .ReturnsAsync(value: null);
         }
+        var remoteServiceInvoker = StrictMock.Of<IRemoteServiceInvoker>();
 
-        var razorBreakpointResolver = new RazorBreakpointResolver(uriProvider, documentManager, projectionProvider);
+        var razorBreakpointResolver = new RazorBreakpointResolver(uriProvider, documentManager, projectionProvider, TestLanguageServerFeatureOptions.Instance, remoteServiceInvoker);
 
         return razorBreakpointResolver;
     }

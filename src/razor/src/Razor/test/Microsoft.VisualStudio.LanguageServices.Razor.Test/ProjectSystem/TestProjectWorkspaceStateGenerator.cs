@@ -14,7 +14,7 @@ internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenera
 
     public IReadOnlyList<TestUpdate> Updates => _updates;
 
-    public void EnqueueUpdate(Project? workspaceProject, IProjectSnapshot projectSnapshot)
+    public void EnqueueUpdate(Project? workspaceProject, ProjectSnapshot projectSnapshot)
     {
         var update = new TestUpdate(workspaceProject, projectSnapshot);
         _updates.Add(update);
@@ -33,7 +33,7 @@ internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenera
         _updates.Clear();
     }
 
-    public record TestUpdate(Project? WorkspaceProject, IProjectSnapshot ProjectSnapshot)
+    public record TestUpdate(Project? WorkspaceProject, ProjectSnapshot ProjectSnapshot)
     {
         public bool IsCancelled { get; set; }
 

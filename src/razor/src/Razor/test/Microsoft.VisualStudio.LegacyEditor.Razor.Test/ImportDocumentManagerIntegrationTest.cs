@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.VisualStudio.Razor.Documents;
 using Moq;
 using Xunit;
@@ -43,16 +44,16 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
         var tracker = StrictMock.Of<IVisualStudioDocumentTracker>(t =>
             t.FilePath == Path.Combine(_directoryPath, "Views", "Home", "_ViewImports.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
+            t.ProjectSnapshot == StrictMock.Of<ILegacyProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
-                p.TryGetDocument(It.IsAny<string>(), out It.Ref<IDocumentSnapshot?>.IsAny) == false));
+                p.GetDocument(It.IsAny<string>()) == null));
 
         var anotherTracker = StrictMock.Of<IVisualStudioDocumentTracker>(t =>
             t.FilePath == Path.Combine(_directoryPath, "anotherFile.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
+            t.ProjectSnapshot == StrictMock.Of<ILegacyProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
-                p.TryGetDocument(It.IsAny<string>(), out It.Ref<IDocumentSnapshot?>.IsAny) == false));
+                p.GetDocument(It.IsAny<string>()) == null));
 
         var fileChangeTrackerFactoryMock = new StrictMock<IFileChangeTrackerFactory>();
         var fileChangeTracker1Mock = new StrictMock<IFileChangeTracker>();

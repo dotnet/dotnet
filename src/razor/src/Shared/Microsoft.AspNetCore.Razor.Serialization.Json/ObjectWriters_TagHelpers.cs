@@ -24,11 +24,11 @@ internal static partial class ObjectWriters
         WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
         writer.WriteIfNotNull(nameof(value.TagOutputHint), value.TagOutputHint);
         writer.Write(nameof(value.CaseSensitive), value.CaseSensitive);
-        writer.WriteArrayIfNotNullOrEmpty(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
-        writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributes), value.BoundAttributes, WriteBoundAttribute);
-        writer.WriteArrayIfNotNullOrEmpty(nameof(value.AllowedChildTags), value.AllowedChildTags, WriteAllowedChildTag);
+        writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
+        writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.BoundAttributes), value.BoundAttributes, WriteBoundAttribute);
+        writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.AllowedChildTags), value.AllowedChildTags, WriteAllowedChildTag);
         WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
-        writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+        writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
 
         static void WriteDocumentationObject(JsonDataWriter writer, string propertyName, DocumentationObject documentationObject)
         {
@@ -68,8 +68,8 @@ internal static partial class ObjectWriters
                 writer.WriteIfNotNull(nameof(value.ParentTag), value.ParentTag);
                 writer.WriteIfNotZero(nameof(value.TagStructure), (int)value.TagStructure);
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Attributes), value.Attributes, WriteRequiredAttribute);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Attributes), value.Attributes, WriteRequiredAttribute);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 
@@ -85,7 +85,7 @@ internal static partial class ObjectWriters
                 writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
 
                 WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 
@@ -105,10 +105,10 @@ internal static partial class ObjectWriters
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
                 writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
-                writer.WriteArrayIfNotNullOrEmpty("BoundAttributeParameters", value.Parameters, WriteBoundAttributeParameter);
+                writer.WriteArrayIfNotDefaultOrEmpty("BoundAttributeParameters", value.Parameters, WriteBoundAttributeParameter);
 
                 WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 
@@ -125,7 +125,7 @@ internal static partial class ObjectWriters
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
 
                 WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 

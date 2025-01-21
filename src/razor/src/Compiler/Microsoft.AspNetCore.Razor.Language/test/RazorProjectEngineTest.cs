@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Moq;
 using Xunit;
 
@@ -47,7 +48,7 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultFeatures(RazorProjectEngine engine)
     {
-        var features = engine.EngineFeatures.OrderBy(f => f.GetType().Name).ToArray();
+        var features = engine.Engine.Features.OrderByAsArray(static x => x.GetType().Name);
         Assert.Collection(
             features,
             feature => Assert.IsType<AttributeDirectivePass>(feature),
@@ -96,7 +97,7 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultDirectives(RazorProjectEngine engine)
     {
-        var feature = engine.EngineFeatures.OfType<IRazorDirectiveFeature>().FirstOrDefault();
+        var feature = engine.Engine.GetFeatures<IRazorDirectiveFeature>().FirstOrDefault();
         Assert.NotNull(feature);
         Assert.Collection(
             feature.Directives,
@@ -109,7 +110,7 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultTargetExtensions(RazorProjectEngine engine)
     {
-        var feature = engine.EngineFeatures.OfType<IRazorTargetExtensionFeature>().FirstOrDefault();
+        var feature = engine.Engine.GetFeatures<IRazorTargetExtensionFeature>().FirstOrDefault();
         Assert.NotNull(feature);
 
         var extensions = feature.TargetExtensions.OrderBy(f => f.GetType().Name).ToArray();
@@ -127,10 +128,10 @@ public class RazorProjectEngineTest
         // Arrange
         var existingItem = new TestRazorProjectItem("Index.cshtml");
         var nonExistentItem = Mock.Of<RazorProjectItem>(item => item.Exists == false);
-        var items = ImmutableArray.Create(existingItem, nonExistentItem);
+        using PooledArrayBuilder<RazorProjectItem> items = [existingItem, nonExistentItem];
 
         // Act
-        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items);
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(in items);
 
         // Assert
         var sourceDocument = Assert.Single(sourceDocuments);
@@ -145,10 +146,10 @@ public class RazorProjectEngineTest
         projectItem.SetupGet(p => p.Exists).Returns(true);
         projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
         projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        var items = ImmutableArray.Create(projectItem.Object);
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem.Object];
 
         // Act & Assert
-        var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(items));
+        var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(in items));
         Assert.Equal("Couldn't read file.", exception.Message);
     }
 
@@ -162,10 +163,10 @@ public class RazorProjectEngineTest
         projectItem.SetupGet(p => p.FilePath).Returns("path/to/file.cshtml");
         projectItem.SetupGet(p => p.RelativePhysicalPath).Returns("path/to/file.cshtml");
         projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        var items = ImmutableArray.Create(projectItem.Object);
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem.Object];
 
         // Act
-        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items, suppressExceptions: true);
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(in items, suppressExceptions: true);
 
         // Assert - Does not throw
         Assert.Empty(sourceDocuments);

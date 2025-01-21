@@ -35,6 +35,7 @@ internal static class FindAllReferencesHelper
         // To identify which situation we're in, we try to map the start and the end of the line to C#, as an indicator. If
         // either start or end fail to map, it means the entire line is not C#
 
+        // TODO: Note the call to ISolutionQueryOperations.GetProjectsContainingDocument(...) will be removed with the introduction of solution snapshots.
         if (solutionQueryOperations.GetProjectsContainingDocument(filePath).FirstOrDefault() is { } project &&
             project.TryGetDocument(filePath, out var document))
         {

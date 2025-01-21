@@ -34,7 +34,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     private static IContentType? s_csharpContentType;
     private readonly FileUriProvider _fileUriProvider;
     private readonly IFilePathService _filePathService;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
     private readonly ITelemetryReporter _telemetryReporter;
@@ -46,7 +46,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         ITextDocumentFactoryService textDocumentFactory,
         FileUriProvider fileUriProvider,
         IFilePathService filePathService,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)

@@ -18,6 +18,70 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
+    private readonly bool _useNewFormattingEngine = context.UseNewFormattingEngine;
+
+    [FormattingTestFact]
+    public async Task EmptyDocument()
+    {
+        await RunFormattingTestAsync(
+            input: "",
+            expected: "");
+    }
+
+    [FormattingTestFact]
+    public async Task AllWhitespaceDocument()
+    {
+        // The Html formatter shrinks this down to one line
+        await RunFormattingTestAsync(
+            input: """
+
+                
+                
+
+            """,
+            expected: """
+
+            """);
+    }
+
+    [FormattingTestFact]
+    public async Task StartsWithWhitespace()
+    {
+        await RunFormattingTestAsync(
+            input: """
+
+                
+
+            <div></div>
+
+            """,
+            expected: """
+            
+            
+            
+            <div></div>
+            
+            """);
+    }
+
+    [FormattingTestFact]
+    public async Task EndsWithWhitespace()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div></div>
+
+                
+
+                """,
+            expected: """
+                <div></div>
+                
+                
+                
+                """);
+    }
+
     [FormattingTestFact]
     public async Task Section_BraceOnNextLine()
     {
@@ -660,7 +724,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
-    public async Task Attribute()
+    public async Task Attribute1()
     {
         await RunFormattingTestAsync(
             input: """
@@ -672,7 +736,59 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
-    public async Task TypeParam()
+    public async Task Attribute2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @attribute     [Attr(   "asdf"   , error:    false)]
+                    @attribute   [Attribute(   "asdf"   , error:    false)]
+                    @attribute [ALongAttributeName(   "asdf"   , error:    false)]
+                    """,
+            expected: """
+                    @attribute [Attr("asdf", error: false)]
+                    @attribute [Attribute("asdf", error: false)]
+                    @attribute [ALongAttributeName("asdf", error: false)]
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task Attribute3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div></div>
+                    @attribute     [Obsolete(   "asdf"   , error:    false)]
+                    <div></div>
+                    @attribute     [Obsolete(   "asdf"   , error:    false)]
+                    <div></div>
+                    @attribute     [Obsolete(   "asdf"   , error:    false)]
+                    <div></div>
+                    """,
+            expected: """
+                    <div></div>
+                    @attribute [Obsolete("asdf", error: false)]
+                    <div></div>
+                    @attribute [Obsolete("asdf", error: false)]
+                    <div></div>
+                    @attribute [Obsolete("asdf", error: false)]
+                    <div></div>
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task TypeParam_Unconstrained()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @typeparam     T
+                    """,
+            expected: """
+                    @typeparam T
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task TypeParam1()
     {
         await RunFormattingTestAsync(
             input: """
@@ -680,6 +796,76 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     @typeparam T where T : IDisposable
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task TypeParam2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @typeparam     TItem     where    TItem    :   IDisposable
+                    """,
+            expected: """
+                    @typeparam TItem where TItem : IDisposable
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task TypeParam3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using System
+                    @typeparam     TItem     where    TItem    :   IDisposable
+
+                    <div>
+                    @{
+                    if (true)
+                    {
+                    // Hello
+                    }
+                    }
+                    </div>
+                    """,
+            expected: """
+                    @using System
+                    @typeparam TItem where TItem : IDisposable
+                    
+                    <div>
+                        @{
+                            if (true)
+                            {
+                                // Hello
+                            }
+                        }
+                    </div>
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task TypeParam4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using System
+                    @typeparam     TItem     where    TItem    :   IDisposable
+                    @typeparam TParent where TParent : string
+
+                    @if (true)
+                    {
+                    // Hello
+                    }
+                    """,
+            expected: """
+                    @using System
+                    @typeparam TItem where TItem : IDisposable
+                    @typeparam TParent where TParent : string
+                    
+                    @if (true)
+                    {
+                        // Hello
+                    }
                     """);
     }
 
@@ -710,7 +896,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
-    public async Task MultiLineComment_WithinHtml()
+    public async Task MultiLineComment_WithinHtml1()
     {
         await RunFormattingTestAsync(
             input: """
@@ -734,7 +920,54 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: FileKinds.Legacy);
     }
 
-    // Regression prevention tests:
+    [FormattingTestFact]
+    public async Task MultiLineComment_WithinHtml2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>                        *@
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>                        *@
+                    </div>
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
+    public async Task MultiLineComment_WithinHtml3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>
+                    *@
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>
+                    *@
+                    </div>
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
     [FormattingTestFact]
     public async Task Using()
     {
@@ -1235,7 +1468,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
     public async Task FormatsShortBlock()
     {
         await RunFormattingTestAsync(
@@ -1246,7 +1479,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @{
                         <p></p>
                     }
-                    """); // tracked by https://github.com/dotnet/razor/issues/10836
+                    """);
     }
 
     [FormattingTestFact]
@@ -1402,6 +1635,52 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1273468/")]
+    public async Task FormatHtmlWithTabs3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+
+                     <hr />
+                     <div class="row">
+                      <div class="col-md-4"
+                      label="label">
+                       <form method="post">
+                        <div class="form-group">
+                         <label asp-for="Movie.Title"
+                         class="control-label"></label>
+                         <input asp-for="Movie.Title" class="form-control" />
+                         <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                        </div>
+                       </form>
+                      </div>
+                     </div>
+                    """,
+            expected: """
+                    @page "/"
+
+                    <hr />
+                    <div class="row">
+                    	<div class="col-md-4"
+                    		 label="label">
+                    		<form method="post">
+                    			<div class="form-group">
+                    				<label asp-for="Movie.Title"
+                    					   class="control-label"></label>
+                    				<input asp-for="Movie.Title" class="form-control" />
+                    				<span asp-validation-for="Movie.Title" class="text-danger"></span>
+                    			</div>
+                    		</form>
+                    	</div>
+                    </div>
+                    """,
+            tabSize: 4, // Due to a bug in the HTML formatter, this needs to be 4
+            insertSpaces: false,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/30382")]
     public async Task FormatNestedComponents()
     {
@@ -1538,7 +1817,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/5749")]
-    public async Task FormatRenderFragmentInCSharpCodeBlock()
+    public async Task FormatRenderFragmentInCSharpCodeBlock1()
     {
         // Sadly the first thing the HTML formatter does with this input
         // is put a newline after the @, which means <SurveyPrompt /> won't be
@@ -1552,7 +1831,10 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         public void DoStuff(RenderFragment renderFragment)
                         {
+                            DoThings();
                             renderFragment(@<SurveyPrompt Title="Foo" />);
+                    DoThings();
+                    renderFragment(@<SurveyPrompt          Title="Foo"             />);
 
                             @* comment *@
                     <div></div>
@@ -1566,6 +1848,9 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         public void DoStuff(RenderFragment renderFragment)
                         {
+                            DoThings();
+                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            DoThings();
                             renderFragment(@<SurveyPrompt Title="Foo" />);
 
                             @* comment *@
@@ -1575,6 +1860,82 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             <div></div>
                         }
                     }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/5749")]
+    public async Task FormatRenderFragmentInCSharpCodeBlock2()
+    {
+        // Sadly the first thing the HTML formatter does with this input
+        // is put a newline after the @, which means <SurveyPrompt /> won't be
+        // seen as a component any more, so we have to turn off our validation,
+        // or the test fails before we have a chance to fix the formatting.
+        FormattingContext.SkipValidateComponents = true;
+
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    @{
+                        renderFragment(@<SurveyPrompt Title="Foo" />);
+
+                            @* comment *@
+                    <div></div>
+
+                            @* comment *@<div></div>
+                        }
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @{
+                            renderFragment(@<SurveyPrompt Title="Foo" />);
+
+                            @* comment *@
+                            <div></div>
+
+                            @* comment *@
+                            <div></div>
+                        }
+                    </div>
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/5749")]
+    public async Task FormatRenderFragmentInCSharpCodeBlock3()
+    {
+        // Sadly the first thing the HTML formatter does with this input
+        // is put a newline after the @, which means <SurveyPrompt /> won't be
+        // seen as a component any more, so we have to turn off our validation,
+        // or the test fails before we have a chance to fix the formatting.
+        FormattingContext.SkipValidateComponents = true;
+
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    @{
+                        renderFragment    (@<SurveyPrompt      Title=  "Foo"     />);
+
+                            @* comment *@
+                    <div></div>
+
+                            @* comment *@<div></div>
+                        }
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @{
+                            renderFragment(@<SurveyPrompt Title="Foo" />);
+
+                            @* comment *@
+                            <div></div>
+
+                            @* comment *@
+                            <div></div>
+                        }
+                    </div>
                     """);
     }
 
@@ -1635,6 +1996,43 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             <!--asdfasd-->
                             <input type="text" />
                             <!--adfasfd-->
+                        </span>
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/6090")]
+    public async Task FormatHtmlCommentsInsideCSharp3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @foreach (var num in Enumerable.Range(1, 10))
+                    {
+                        <span class="skill_result btn">
+                                <!-- this is a
+                                very long
+                            comment in Html -->
+                            <input type="text" />
+                                    <!-- this is a
+                            very long
+                            comment in Html
+                                -->
+                        </span>
+                    }
+                    """,
+            expected: """
+                    @foreach (var num in Enumerable.Range(1, 10))
+                    {
+                        <span class="skill_result btn">
+                            <!-- this is a
+                                very long
+                            comment in Html -->
+                            <input type="text" />
+                            <!-- this is a
+                            very long
+                            comment in Html
+                                -->
                         </span>
                     }
                     """);
@@ -1702,7 +2100,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: FileKinds.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue2()
     {
@@ -1820,7 +2218,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: FileKinds.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue4()
     {
@@ -1869,10 +2267,10 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         public bool VarBool { get; set; }
                     }
                     """,
-            fileKind: FileKinds.Component); // tracked by https://github.com/dotnet/razor/issues/10836
+            fileKind: FileKinds.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue5()
     {
@@ -1927,7 +2325,69 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         public bool VarBool { get; set; }
                     }
                     """,
-            fileKind: FileKinds.Component); // tracked by https://github.com/dotnet/razor/issues/10836
+            fileKind: FileKinds.Component);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
+    public async Task FormatNestedCascadingValue6()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @if (Object1!= null)
+                    {
+                        <CascadingValue Value="Variable1">
+                        <div>
+                                <SurveyPrompt  />
+                                @if (VarBool)
+                            {
+                                <div class="mb-16">
+                                    <SurveyPrompt  />
+                                    <SurveyPrompt  />
+                                </div>
+                            }
+                            </div>
+                    </CascadingValue>
+                    }
+
+                    @code
+                    {
+                        public object Object1 {get;set;}
+                        public object Variable1 {get;set;}
+                    public object Variable2 {get;set;}
+                    public bool VarBool {get;set;}
+                    }
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @if (Object1 != null)
+                    {
+                        <CascadingValue Value="Variable1">
+                            <div>
+                                <SurveyPrompt />
+                                @if (VarBool)
+                                {
+                                    <div class="mb-16">
+                                        <SurveyPrompt />
+                                        <SurveyPrompt />
+                                    </div>
+                                }
+                            </div>
+                        </CascadingValue>
+                    }
+
+                    @code
+                    {
+                        public object Object1 { get; set; }
+                        public object Variable1 { get; set; }
+                        public object Variable2 { get; set; }
+                        public bool VarBool { get; set; }
+                    }
+                    """,
+            fileKind: FileKinds.Component);
     }
 
     [FormattingTestFact]
@@ -2156,6 +2616,129 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: FileKinds.Component);
     }
 
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task FormatEventHandlerAttributes()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <p>Current count: @currentCount</p>
+
+                    <button @onclick="IncrementCount">Increment</button>
+                    <button @onclick="@(e=>currentCount=4)">Update to 4</button>
+                    <button @onclick="e=>currentCount=5">Update to 5</button>
+
+                    @code {
+                        private int currentCount=0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    <p>Current count: @currentCount</p>
+
+                    <button @onclick="IncrementCount">Increment</button>
+                    <button @onclick="@(e => currentCount = 4)">Update to 4</button>
+                    <button @onclick="e => currentCount = 5">Update to 5</button>
+
+                    @code {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Component);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task FormatEventCallbackAttributes()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    <p>Current count: @currentCount</p>
+
+                    <InputText ValueChanged="IncrementCount">Increment</InputText>
+                    <InputText ValueChanged="@(e=>currentCount=4)">Update to 4</InputText>
+                    <InputText ValueChanged="e=>currentCount=5">Update to 5</InputText>
+
+                    @code {
+                        private int currentCount=0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    <p>Current count: @currentCount</p>
+
+                    <InputText ValueChanged="IncrementCount">Increment</InputText>
+                    <InputText ValueChanged="@(e => currentCount = 4)">Update to 4</InputText>
+                    <InputText ValueChanged="e => currentCount = 5">Update to 5</InputText>
+
+                    @code {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Component);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task FormatBindAttributes()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    <p>Current count: @currentCount</p>
+
+                    <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
+                    <InputText @bind-Value="currentCount" @bind-Value:after="e=>currentCount=5">Update to 5</InputText>
+
+                    @code {
+                        private int currentCount=0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    <p>Current count: @currentCount</p>
+
+                    <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
+                    <InputText @bind-Value="currentCount" @bind-Value:after="e => currentCount = 5">Update to 5</InputText>
+
+                    @code {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Component);
+    }
+
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/9337")]
     public async Task FormatMinimizedTagHelperAttributes()
@@ -2202,7 +2785,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6110")]
-    public async Task FormatExplicitCSharpInsideHtml()
+    public async Task FormatExplicitCSharpInsideHtml1()
     {
         await RunFormattingTestAsync(
             input: """
@@ -2290,6 +2873,78 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             C M(Func<string, C> a) => this;
                         }
                     }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/6110")]
+    public async Task FormatExplicitCSharpInsideHtml2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                         @(   Html.DisplayNameFor (@<text>
+                            <p >
+                            <h2 ></h2>
+                            </p>
+                            </text>)
+                            .ToString())
+
+                         @(   Html.DisplayNameFor (@<div></div>,
+                            1,   3,    4))
+
+                         @(   Html.DisplayNameFor (@<div></div>,
+                            1,   3, @<div></div>,
+                            2, 4))
+
+                         @(   Html.DisplayNameFor (
+                            1,   3, @<div></div>,
+                            2, 4))
+
+                         @(   Html.DisplayNameFor (
+                            1,   3,
+                            2,  4))
+
+                         @(   Html.DisplayNameFor (
+                            2, 4,
+                            1,   3, @<div></div>,
+                            2, 4,
+                            1,   3, @<div></div>,
+                            4))
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @(Html.DisplayNameFor(@<text>
+                            <p>
+                                <h2></h2>
+                            </p>
+                        </text>)
+                            .ToString())
+
+                        @(Html.DisplayNameFor(@<div></div>,
+                            1, 3, 4))
+                    
+                        @(Html.DisplayNameFor(@<div></div>,
+                            1, 3, @<div></div>,
+                            2, 4))
+
+                        @(Html.DisplayNameFor(
+                            1, 3, @<div></div>,
+                            2, 4))
+
+                        @(Html.DisplayNameFor(
+                            1, 3,
+                            2, 4))
+                    
+                        @(Html.DisplayNameFor(
+                            2, 4,
+                            1, 3, @<div></div>,
+                            2, 4,
+                            1, 3, @<div></div>,
+                            4))
+                    </div>
                     """,
             fileKind: FileKinds.Legacy);
     }
@@ -2398,8 +3053,16 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                      align="center">
                     </div>
 
-                    <SurveyPrompt Title="How is Blazor working for you?"
+                    <PageTitle Title="How is Blazor working for you?"
                      Color="Red" />
+
+                    <PageTitle Title="How is Blazor working for you?"
+                     Color="Red"></PageTitle>
+
+                    <PageTitle Title="How is Blazor working for you?"
+                     Color="Red">
+                     Hello
+                     </PageTitle>
 
                     @if (true)
                     {
@@ -2407,13 +3070,23 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                      align="center">
                     </div>
 
-                    <SurveyPrompt Title="How is Blazor working for you?"
+                    <PageTitle Title="How is Blazor working for you?"
                        Color="Red" />
 
                        <tag attr1="value1"
                        attr2="value2"
                        attr3="value3"
                        />
+
+                     <tag attr1="value1"
+                       attr2="value2"
+                       attr3="value3"></tag>
+
+                     <tag attr1="value1"
+                       attr2="value2"
+                       attr3="value3">
+                    Hello
+                        </tag>
 
                        @if (true)
                        {
@@ -2438,8 +3111,16 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                          align="center">
                     </div>
 
-                    <SurveyPrompt Title="How is Blazor working for you?"
-                                  Color="Red" />
+                    <PageTitle Title="How is Blazor working for you?"
+                               Color="Red" />
+
+                    <PageTitle Title="How is Blazor working for you?"
+                               Color="Red"></PageTitle>
+                    
+                    <PageTitle Title="How is Blazor working for you?"
+                               Color="Red">
+                        Hello
+                    </PageTitle>
 
                     @if (true)
                     {
@@ -2447,12 +3128,22 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                              align="center">
                         </div>
 
-                        <SurveyPrompt Title="How is Blazor working for you?"
-                                      Color="Red" />
+                        <PageTitle Title="How is Blazor working for you?"
+                                   Color="Red" />
 
                         <tag attr1="value1"
                              attr2="value2"
                              attr3="value3" />
+
+                        <tag attr1="value1"
+                             attr2="value2"
+                             attr3="value3"></tag>
+                    
+                        <tag attr1="value1"
+                             attr2="value2"
+                             attr3="value3">
+                            Hello
+                        </tag>
 
                         @if (true)
                         {
@@ -2547,7 +3238,30 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         </div>
                     </section>
                     """,
-            expected: """
+            expected: _useNewFormattingEngine
+                ? """
+                    @page
+                    @model BlazorApp58.Pages.Index2Model
+                    @{
+                    }
+
+                    <section class="section">
+                        <div class="container">
+                            <h1 class="title">Managed pohotos</h1>
+                            <p class="subtitle">@Model.ReferenceNumber</p>
+                        </div>
+                    </section>
+                    <section class="section">
+                        <div class="container">
+                    @foreach (var item in Model.Images)
+                    {
+                                <div>
+                                    <div>
+                                        }
+                                    </div>
+                        </section>
+                    """
+                : """
                     @page
                     @model BlazorApp58.Pages.Index2Model
                     @{
@@ -2695,6 +3409,62 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             }
                         }
                     }
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task Formats_ImplicitExpressions()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                        It is @DateTime.Now.ToString(   "d MM yyy"   ). Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
+
+                        @DateTime.Now.ToString(   "d MM yyy"   ) it is.
+
+                        @DateTime.Now.ToString(   "d MM yyy"   ). Is what it is today. Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
+
+                        @DateTime.Now.ToString(   "d MM yyy"   ) <span>Today!</span>
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        It is @DateTime.Now.ToString("d MM yyy"). Or is it @DateTime.Now.ToString("d MM yyy").
+                    
+                        @DateTime.Now.ToString("d MM yyy") it is.
+                    
+                        @DateTime.Now.ToString("d MM yyy"). Is what it is today. Or is it @DateTime.Now.ToString("d MM yyy").
+                    
+                        @DateTime.Now.ToString("d MM yyy") <span>Today!</span>
+                    </div>
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task Formats_ExplicitExpressions()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                        It is @(DateTime.    Now). Or is it @(DateTime.    Now).
+
+                        @(DateTime.    Now) it is.
+
+                        @(DateTime.    Now). Is what it is today. Or is it @(DateTime.    Now).
+
+                        @(DateTime.    Now) <span>Today!</span>
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        It is @(DateTime.Now). Or is it @(DateTime.Now).
+                    
+                        @(DateTime.Now) it is.
+                    
+                        @(DateTime.Now). Is what it is today. Or is it @(DateTime.Now).
+                    
+                        @(DateTime.Now) <span>Today!</span>
+                    </div>
                     """);
     }
 
@@ -3144,6 +3914,78 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             @* This is a Razor Comment *@
                         }
                     }
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task Formats_ExplicitStatements1()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                   @{
+                    <text>Hello</text>
+                   }
+
+                   @{ <text>Hello</text> }
+
+                   <div></div>
+
+                   @{ }
+
+                   <div></div>
+                   """,
+            expected: """
+                    @{
+                        <text>Hello</text>
+                    }
+                    
+                    @{
+                        <text>Hello</text>
+                    }
+                    
+                    <div></div>
+                    
+                    @{ }
+                    
+                    <div></div>
+                    """);
+    }
+
+    [FormattingTestFact]
+    public async Task Formats_ExplicitStatements2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                   <div>
+                   @{
+                    <text>Hello</text>
+                   }
+
+                   @{ <text>Hello</text> }
+
+                   <div></div>
+
+                   @{ }
+
+                   <div></div>
+                   </div>
+                   """,
+            expected: """
+                    <div>
+                        @{
+                            <text>Hello</text>
+                        }
+                    
+                        @{
+                            <text>Hello</text>
+                        }
+                    
+                        <div></div>
+                    
+                        @{ }
+                    
+                        <div></div>
+                    </div>
                     """);
     }
 
@@ -3733,7 +4575,26 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             };
                     }
                     """,
-            expected: """
+            expected: _useNewFormattingEngine
+                ? """
+                    @code {
+                        private object _x = new()
+                        {
+                            Name = "One",
+                            Goo = new
+                            {
+                                First = 1,
+                                Second = 2
+                            },
+                            Bar = new string[]
+                                {
+                                    "Hello",
+                                    "There"
+                                },
+                        };
+                    }
+                    """
+                : """
                     @code {
                         private object _x = new()
                             {
@@ -3842,21 +4703,50 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             };
 
                             object gridOptions = new()
+                            {
+                                Columns = new GridColumn<WorkOrderModel>[]
                                 {
-                                    Columns = new GridColumn<WorkOrderModel>[]
-                                    {
-                                        new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
-                                        new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
-                                        new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
-                                                new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
-                                    },
-                                    Data = Model.WorkOrders,
-                                    Title = "Work Orders"
-                                };
+                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
+                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
+                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
+                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
+                                },
+                                Data = Model.WorkOrders,
+                                Title = "Work Orders"
+                            };
                         }
                     }
                     """,
-            expected: """
+            expected: _useNewFormattingEngine
+                ? """
+                    <p></p>
+                    
+                    @code {
+                        private void M()
+                        {
+                            var entries = new string[]
+                            {
+                                "a",
+                                "b",
+                                "c"
+                            };
+                    
+                            object gridOptions = new()
+                            {
+                                Columns = new GridColumn<WorkOrderModel>[]
+                                {
+                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
+                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
+                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
+                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
+                                },
+                                Data = Model.WorkOrders,
+                                Title = "Work Orders"
+                            };
+                        }
+                    }
+                    """
+                : """
                     <p></p>
                     
                     @code {
@@ -3872,12 +4762,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             object gridOptions = new()
                                 {
                                     Columns = new GridColumn<WorkOrderModel>[]
-                                    {
-                                        new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
-                                        new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
-                                        new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
-                                                new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
-                                    },
+                                {
+                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
+                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
+                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
+                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
+                                },
                                     Data = Model.WorkOrders,
                                     Title = "Work Orders"
                                 };
@@ -3988,14 +4878,27 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         private void M()
                         {
                             object entries = new()
-                                {
-                                    First = 1,
-                                    Second = 2
-                                };
+                            {
+                                First = 1,
+                                Second = 2
+                            };
                         }
                     }
                     """,
-            expected: """
+            expected: _useNewFormattingEngine
+                ? """
+                    @code {
+                        private void M()
+                        {
+                            object entries = new()
+                            {
+                                First = 1,
+                                Second = 2
+                            };
+                        }
+                    }
+                    """
+                : """
                     @code {
                         private void M()
                         {
@@ -4011,7 +4914,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/6092")]
-    public async Task CodeBlock_CollectionInitializers()
+    public async Task CodeBlock_CollectionInitializers1()
     {
         // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
         // just verifies we don't regress things and start moving code around.
@@ -4031,6 +4934,43 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     @code {
+                        private void M()
+                        {
+                            var entries = new List<string>()
+                            {
+                                "a",
+                                "b",
+                                "c"
+                            };
+                        }
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6092")]
+    public async Task CodeBlock_CollectionInitializers2()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                    @code
+                    {
+                        private void M()
+                        {
+                            var entries = new List<string>()
+                            {
+                                "a",
+                                "b",
+                                "c"
+                            };
+                        }
+                    }
+                    """,
+            expected: """
+                    @code
+                    {
                         private void M()
                         {
                             var entries = new List<string>()
@@ -4109,7 +5049,6 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                     """);
     }
-
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11325")]
@@ -4669,6 +5608,194 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             };
                         }
                     }
+                    """);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/9254")]
+    public async Task RenderFragmentPresent()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            . Select(s => s.Trim())
+                            . ToArray();
+
+                    RenderFragment R => @<div></div>;
+                    }
+                    """,
+            expected: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                        string[] S(string s) =>
+                                s.Split(',')
+                                .Select(s => s.Trim())
+                                .ToArray();
+
+                        RenderFragment R => @<div></div>;
+                    }
+                    """);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/6150")]
+    public async Task RenderFragment_InLambda()
+    {
+        // Formatting result here is not necessarily perfect, but in the new engine is stable
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+                    @using RazorClassLibrary2.Models
+
+                    @code{
+                        private DateTime? date1;
+
+                        Gopt<int> gopt = new Gopt<int>()
+                        {
+                            Name = "hi"
+                        }
+                        .Editor(m =>
+                        {
+                        return
+                        @<text>hi</text>
+                        ; }
+                        );    
+                    }
+                    """,
+            expected: """
+                    @page "/"
+                    @using RazorClassLibrary2.Models
+
+                    @code {
+                        private DateTime? date1;
+
+                        Gopt<int> gopt = new Gopt<int>()
+                        {
+                            Name = "hi"
+                        }
+                        .Editor(m =>
+                        {
+                            return
+                            @<text>hi</text>
+                            ;
+                        }
+                        );
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9119")]
+    public async Task CollectionInitializers()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+                        // Stable
+                        var formatMe = new string[] {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+
+                        // Closing brace advances to the right
+                        var formatMeTwo = new string[]
+                        {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+
+                        // Stable
+                        var formatMeThree = new List<string> {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    
+                        // Opening brace advances to the right
+                        var formatMeFour = new List<string>
+                        {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    }
+                    """,
+            expected: """
+                    @{
+                        // Stable
+                        var formatMe = new string[] {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    
+                        // Closing brace advances to the right
+                        var formatMeTwo = new string[]
+                        {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    
+                        // Stable
+                        var formatMeThree = new List<string> {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    
+                        // Opening brace advances to the right
+                        var formatMeFour = new List<string>
+                        {
+                            "One",
+                            "Two",
+                            "Three",
+                        };
+                    }
+                    """);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/9711")]
+    public async Task Directives()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                            @page "/"
+
+                            @using System
+                            @inject object Foo
+
+
+                    """,
+            expected: """
+                    @page "/"
+                    
+                    @using System
+                    @inject object Foo
+                    
+                    
                     """);
     }
 }

@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
@@ -36,7 +35,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     private static readonly HostProject s_hostProject2 = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
 
     private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
-        x.IsFallbackProject(It.IsAny<IProjectSnapshot>()) == false);
+        x.IsFallbackProject(It.IsAny<ProjectSnapshot>()) == false);
 
     private readonly TestDynamicFileInfoProvider _dynamicFileInfoProvider = new();
 
@@ -189,8 +188,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         {
             updater.AddProject(s_hostProject1);
             updater.AddProject(s_hostProject2);
-            updater.AddDocument(s_hostProject1.Key, s_documents[0], s_documents[0].CreateEmptyTextLoader());
-            updater.AddDocument(s_hostProject1.Key, s_documents[1], s_documents[1].CreateEmptyTextLoader());
+            updater.AddDocument(s_hostProject1.Key, s_documents[0], EmptyTextLoader.Instance);
+            updater.AddDocument(s_hostProject1.Key, s_documents[1], EmptyTextLoader.Instance);
         });
 
         var project = projectManager.GetRequiredProject(s_hostProject1.Key);
@@ -228,8 +227,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         {
             updater.AddProject(hostProject1);
             updater.AddProject(hostProject2);
-            updater.AddDocument(hostProject1.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
-            updater.AddDocument(hostProject1.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject1.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject1.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
         var project = projectManager.GetRequiredProject(hostProject1.Key);
@@ -277,7 +276,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddProject(s_hostProject1);
             for (var i = 0; i < documents.Length; i++)
             {
-                updater.AddDocument(s_hostProject1.Key, documents[i], documents[i].CreateEmptyTextLoader());
+                updater.AddDocument(s_hostProject1.Key, documents[i], EmptyTextLoader.Instance);
             }
         });
 
@@ -321,8 +320,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(s_hostProject1);
-            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, TestProjectData.SomeProjectComponentFile1.CreateEmptyTextLoader());
-            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, TestProjectData.SomeProjectImportFile.CreateEmptyTextLoader());
+            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, EmptyTextLoader.Instance);
+            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, EmptyTextLoader.Instance);
         });
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
@@ -350,7 +349,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     }
 
     private class TestBackgroundDocumentGenerator(
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         IFallbackProjectManager fallbackProjectManager,
         IRazorDynamicFileInfoProviderInternal dynamicFileInfoProvider,
         ILoggerFactory loggerFactory)
@@ -385,10 +384,10 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             _blockBatchProcessingSource.Set();
         }
 
-        private static DocumentKey GetKey(IProjectSnapshot project, IDocumentSnapshot document)
+        private static DocumentKey GetKey(ProjectSnapshot project, DocumentSnapshot document)
             => new(project.Key, document.FilePath);
 
-        protected override async ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot, IDocumentSnapshot)> items, CancellationToken token)
+        protected override async ValueTask ProcessBatchAsync(ImmutableArray<(ProjectSnapshot, DocumentSnapshot)> items, CancellationToken token)
         {
             if (_blockBatchProcessingSource is { } blockEvent)
             {
@@ -404,14 +403,14 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             await base.ProcessBatchAsync(items, token);
         }
 
-        public override void Enqueue(IProjectSnapshot project, IDocumentSnapshot document)
+        public override void Enqueue(ProjectSnapshot project, DocumentSnapshot document)
         {
             PendingWork.Add(GetKey(project, document));
 
             base.Enqueue(project, document);
         }
 
-        protected override Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document, CancellationToken cancellationToken)
+        protected override Task ProcessDocumentAsync(ProjectSnapshot project, DocumentSnapshot document, CancellationToken cancellationToken)
         {
             var key = GetKey(project, document);
             PendingWork.Remove(key);

@@ -33,7 +33,7 @@ internal partial class RazorCustomMessageTarget
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly SnippetCompletionItemProvider _snippetCompletionItemProvider;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer;
@@ -54,7 +54,7 @@ internal partial class RazorCustomMessageTarget
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IProjectSnapshotManager projectManager,
+        ProjectSnapshotManager projectManager,
         SnippetCompletionItemProvider snippetCompletionItemProvider,
         IWorkspaceProvider workspaceProvider,
         IHtmlDocumentSynchronizer htmlDocumentSynchronizer,

@@ -42,7 +42,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
             var hostProject = MiscFilesProject.HostProject with { Configuration = FallbackRazorConfiguration.Latest };
             var hostDocument = new HostDocument(normalizedFilePath, targetPath: "document.cshtml");
 
-            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
         });
 
         // Act
@@ -135,7 +135,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
         {
             updater.AddProject(hostProject);
             updater.AddProject(otherHostProject);
-            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
 
             return updater.GetRequiredProject(hostProject.Key);
         });
@@ -163,7 +163,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         var miscProject = await projectManager.UpdateAsync(updater =>
         {
-            updater.AddDocument(miscFilesHostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(miscFilesHostProject.Key, hostDocument, EmptyTextLoader.Instance);
             updater.AddProject(hostProject);
 
             return updater.GetRequiredProject(miscFilesHostProject.Key);
@@ -189,7 +189,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
         var ownerProject = await projectManager.UpdateAsync(updater =>
         {
             updater.AddProject(hostProject);
-            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
 
             return updater.GetRequiredProject(hostProject.Key);
         });
@@ -257,13 +257,13 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddDocument(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.AddDocument(hostProject.Key, hostDocument, EmptyTextLoader.Instance);
         });
 
         return projectManager;
     }
 
-    private static void AssertSnapshotsEqual(IProjectSnapshot first, IProjectSnapshot second)
+    private static void AssertSnapshotsEqual(ProjectSnapshot first, ProjectSnapshot second)
     {
         Assert.Equal(first.FilePath, second.FilePath);
         Assert.Equal(first.CSharpLanguageVersion, second.CSharpLanguageVersion);

@@ -7,9 +7,9 @@ internal partial class ProjectSnapshotManager
 {
     private sealed record Entry(ProjectState State)
     {
-        private IProjectSnapshot? _snapshotUnsafe;
+        private ProjectSnapshot? _snapshotUnsafe;
 
-        public IProjectSnapshot GetSnapshot()
+        public ProjectSnapshot GetSnapshot()
         {
             return _snapshotUnsafe ??= new ProjectSnapshot(State);
         }

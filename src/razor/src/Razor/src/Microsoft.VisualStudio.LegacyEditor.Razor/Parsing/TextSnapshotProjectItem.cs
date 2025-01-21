@@ -1,44 +1,25 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
-internal class TextSnapshotProjectItem : RazorProjectItem
+internal sealed class TextSnapshotProjectItem : RazorProjectItem
 {
     private readonly ITextSnapshot _snapshot;
 
     public TextSnapshotProjectItem(ITextSnapshot snapshot, string projectDirectory, string relativeFilePath, string filePath, string fileKind)
     {
-        if (snapshot is null)
-        {
-            throw new ArgumentNullException(nameof(snapshot));
-        }
-
-        if (string.IsNullOrEmpty(projectDirectory))
-        {
-            throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(projectDirectory));
-        }
-
-        if (string.IsNullOrEmpty(relativeFilePath))
-        {
-            throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(relativeFilePath));
-        }
-
-        if (string.IsNullOrEmpty(filePath))
-        {
-            throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(filePath));
-        }
-
-        if (fileKind is null)
-        {
-            throw new ArgumentNullException(nameof(fileKind));
-        }
+        ArgHelper.ThrowIfNull(snapshot);
+        ArgHelper.ThrowIfNullOrEmpty(projectDirectory);
+        ArgHelper.ThrowIfNullOrEmpty(relativeFilePath);
+        ArgHelper.ThrowIfNullOrEmpty(filePath);
+        ArgHelper.ThrowIfNull(fileKind);
 
         _snapshot = snapshot;
         BasePath = projectDirectory;
@@ -48,10 +29,8 @@ internal class TextSnapshotProjectItem : RazorProjectItem
     }
 
     public override string BasePath { get; }
-
     public override string FileKind { get; }
     public override string FilePath { get; }
-
     public override string PhysicalPath { get; }
 
     public override bool Exists => true;
