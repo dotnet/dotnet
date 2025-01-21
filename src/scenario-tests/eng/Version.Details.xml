@@ -13,14 +13,14 @@
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25070.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0c4a0fd523decdd2a1f39bee8499cd977697cd21</Sha>
+      <Sha>0a21d8d2b1fb57289bd543b0fe90d3ed7621de78</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25070.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0c4a0fd523decdd2a1f39bee8499cd977697cd21</Sha>
+      <Sha>0a21d8d2b1fb57289bd543b0fe90d3ed7621de78</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
