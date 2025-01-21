@@ -109,10 +109,10 @@
       "commitSha": "415951d27e013364267f45602c4ba197b53110c7"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.24516.2",
+      "packageVersion": "8.0.0-alpha.1.25060.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "3b85d089311e89b47758ba6a84eeb79374476dc8"
+      "commitSha": "c7cb4da26e74ef645e3e98fcb4534a7d66247a82"
     },
     {
       "packageVersion": "8.0.0-alpha.1.25060.2",
@@ -200,14 +200,9 @@
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.0",
+      "path": "source-build-externals/src/docker-creds-provider",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
-      "commitSha": "5701f6667c1fbd805684857baaa860383bbdfed7"
-    },
-    {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.1",
-      "remoteUri": "https://github.com/mthalman/docker-creds-provider",
-      "commitSha": "b381eafbeecb1039f5839fc98ef45e7b3e52dee9"
+      "commitSha": "6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e"
     },
     {
       "path": "source-build-externals/src/humanizer",
