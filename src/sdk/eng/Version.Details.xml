@@ -73,18 +73,18 @@
       <Sha>0de3165cb0d56323b6caaf8e9916d4d9e72da32d</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25067-08">
+    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25071-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>c81c498d4efee2ac3360bbfb9f161016a5969994</Sha>
+      <Sha>ffe5c860f320bb64d1959b6ea457fc8dc58da538</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25067-08">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25071-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>c81c498d4efee2ac3360bbfb9f161016a5969994</Sha>
+      <Sha>ffe5c860f320bb64d1959b6ea457fc8dc58da538</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25067-08">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25071-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>c81c498d4efee2ac3360bbfb9f161016a5969994</Sha>
+      <Sha>ffe5c860f320bb64d1959b6ea457fc8dc58da538</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.300-beta.25070.6">
@@ -471,34 +471,34 @@
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>3290a7fed58682b6796e6fc916d12c0eb2070ef5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.25066.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.25070.1">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>762b0e8b055fe9f203755b651e67c829e759f44d</Sha>
+      <Sha>e7f8cc9eeb08b0549eeb1b31ddd9b134ada275e5</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -675,13 +675,13 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>e77011b31a3e5c47d931248a64b47f9b2d47853d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="1.6.0-preview.25069.4">
+    <Dependency Name="Microsoft.Testing.Platform" Version="1.6.0-preview.25070.2">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>db85b7ec3d25a73d13c467386e1dde91e966f21a</Sha>
+      <Sha>0c343f875d0990d0d409cc0a4f4fddf740c8b1ec</Sha>
     </Dependency>
-    <Dependency Name="MSTest" Version="3.8.0-preview.25069.4">
+    <Dependency Name="MSTest" Version="3.8.0-preview.25070.2">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>db85b7ec3d25a73d13c467386e1dde91e966f21a</Sha>
+      <Sha>0c343f875d0990d0d409cc0a4f4fddf740c8b1ec</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
