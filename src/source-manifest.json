@@ -106,11 +106,11 @@
       "commitSha": "45caa455b34553e7ef3ff7cb1def454eef78037c"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.25068.1",
+      "packageVersion": "10.0.0-alpha.1.25070.4",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "29013d8ae50f5bc35427a9155234ccebfa5e227c"
+      "commitSha": "4c224ab16d287c17dbc54236638db91266071465"
     },
     {
       "packageVersion": "10.0.0-preview.25062.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a39481284c962b22cf15e212f8701bc3f656fb75"
+      "commitSha": "c3e53f983a70813ae3f8637f28715b9541ca4908"
     },
     {
       "packageVersion": "10.0.606301",
@@ -169,11 +169,11 @@
       "commitSha": "bcef12d909709f13027afe1557c724f11bc8df05"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.25070.1",
+      "packageVersion": "10.0.0-alpha.1.25070.2",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "cfc3f6db855f1eee07ba33e2a1efa07a6bdb0e88"
+      "commitSha": "9628f39ee9f588c44c2b39b9fccc2fbca2b1d563"
     },
     {
       "packageVersion": "10.0.0-alpha.1.25068.2",
