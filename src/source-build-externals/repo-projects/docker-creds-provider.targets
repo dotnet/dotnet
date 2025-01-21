@@ -6,6 +6,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
+    <GlobalJsonFile>$(ProjectDirectory)/global.json</GlobalJsonFile>
     <PackagesOutput>$(ProjectDirectory)/src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
   </PropertyGroup>
 

@@ -14,6 +14,7 @@
     <!-- These are coming in via runtime but the source-build infra isn't able to automatically pick up the right intermediate. -->
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Crossgen2.linux-x64/*8.0.*" />
     
+    <UsagePattern IdentityGlob="System.Formats.Asn1/*8.0.1*" />
     <UsagePattern IdentityGlob="System.Reflection.Metadata/*8.0.0*" />
   </IgnorePatterns>
 </UsageData>
