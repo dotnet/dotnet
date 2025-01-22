@@ -284,7 +284,8 @@
       ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
       NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
       AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"
-      ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)" />
+      ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)"
+      UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)" />
 
     <!-- 
         Publish Windows PDBs produced by SymStore.targets (by default, only shipping PDBs are placed there).
