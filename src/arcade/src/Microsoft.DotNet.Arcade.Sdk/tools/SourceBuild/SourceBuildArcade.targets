@@ -216,7 +216,8 @@
     <MakeDir Directories="$(SourceBuiltSymbolsDir)" />
     <Copy
       SourceFiles="@(AbsoluteSymbolPath)"
-      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)" />
+      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)"
+      UseHardlinksIfPossible="true" />
   </Target>
   <!--
     This target can be removed once we enable standard repo assets manifests and SB orchestrator
