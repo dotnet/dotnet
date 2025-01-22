@@ -74,6 +74,7 @@ src/format/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 # False positive
 src/fsharp/tests/EndToEndBuildTests/ProvidedTypes/ProvidedTypes.fs|unknown-license-reference
+src/fsharp/tests/fsharp/core/members/ops/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/fsharp/tests/service/data/TestTP/ProvidedTypes.fs|unknown-license-reference
 src/fsharp/vsintegration/tests/MockTypeProviders/DummyProviderForLanguageServiceTesting/ProvidedTypes.fs|unknown-license-reference
 
@@ -122,6 +123,7 @@ src/nuget-client/test/TestExtensions/GenerateLicenseList/Program.cs|json
 src/nuget-client/test/**/resources/*.json
 src/nuget-client/test/**/resources/*.xml
 src/nuget-client/test/NuGet.Clients.Tests/NuGet.PackageManagement.UI.Test/PackageLicenseUtilitiesTests.cs
+src/nuget-client/test/NuGet.Core.FuncTests/Dotnet.Integration.Test/PackCommandTests.cs|389-exception
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/DefaultManifestValuesRuleTests.cs
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/LicensesTests/LicenseExpressionTokenizerTests.cs
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/LicensesTests/NuGetLicenseExpressionParserTests.cs
@@ -180,6 +182,7 @@ src/runtime/src/mono/mono/mini/mini-posix.c|unknown-license-reference
 src/runtime/src/mono/mono/mini/mini-windows.c|unknown-license-reference
 src/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
 src/runtime/src/tests/JIT/Performance/CodeQuality/V8/Crypto/Crypto.cs|unknown-license-reference
+src/runtime/src/tests/sizeondisk/sodbench/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 # Test data
 src/runtime/src/libraries/System.Private.Xml.Linq/tests/XDocument.Common/InputSpace.cs|other-permissive
