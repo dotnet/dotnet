@@ -203,6 +203,16 @@
     -->
     <MicrosoftNETCoreAppRuntimeVersion>$(MicrosoftNETCoreAppRuntimewinx64Version)</MicrosoftNETCoreAppRuntimeVersion>
   </PropertyGroup>
+    <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
+  <PropertyGroup Label="Dependencies from dotnet/maintenance-packages (build-source-only)" Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1-rtm.final</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemValueTupleVersion>4.6.0-rtm.final</SystemValueTupleVersion>
+  </PropertyGroup>
+  <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
+  <PropertyGroup Label="Dependencies from dotnet/maintenance-packages (not build-source-only)" Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.0.0</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
+  </PropertyGroup>
   <PropertyGroup Label="Manual">
     <!-- DiagnosticAdapter package pinned temporarily (??) until migrated/deprecated -->
     <!-- This is the latest version found in dotnet-public. -->
@@ -223,7 +233,6 @@
     <SystemSecurityCryptographyX509CertificatesVersion>4.3.2</SystemSecurityCryptographyX509CertificatesVersion>
     <SystemRuntimeInteropServicesRuntimeInformationVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationVersion>
     <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
-    <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
     <!-- Packages developed by @aspnet, but manually updated as necessary. -->
     <MicrosoftAspNetWebApiClientVersion>5.2.6</MicrosoftAspNetWebApiClientVersion>
     <MicrosoftAspNetCoreRazorLanguageVersion>6.0.0</MicrosoftAspNetCoreRazorLanguageVersion>
