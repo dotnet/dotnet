@@ -87,11 +87,17 @@
 
   <!--
     Default values.
-    If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln files in the repo root.
+    If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln(x) files in the repo root.
     For build passes after the first, build nothing by default.
   -->
+  <ItemGroup>
+    <RepoRootSlnFile Include="$(RepoRoot)*.sln" />
+    <RepoRootSlnxFile Include="$(RepoRoot)*.slnx" />
+  </ItemGroup>
+
   <ItemGroup Condition="'@(ProjectToBuild)' == '' and '$(_DotNetBuildPassNormalized)' == '1'">
-    <ProjectToBuild Include="$(RepoRoot)*.sln" />
+    <ProjectToBuild Include="@(RepoRootSlnFile)" />
+    <ProjectToBuild Include="@(RepoRootSlnxFile)" Condition="'@(ProjectToBuild)' == ''"/>
   </ItemGroup>
 
   <Target Name="InitializeSolutionBuildInputs">
@@ -137,6 +143,7 @@
   </Target>
 
   <Target Name="Execute" DependsOnTargets="InitializeSolutionBuildInputs">
+    <Error Text="Both .sln and .slnx files found. Please specify one to use in the eng/Build.props file." Condition="'@(RepoRootSlnFile)' != '' and '@(RepoRootSlnxFile)' != ''" />
     <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
     <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
     <Error Text="File 'global.json' must exist in directory specified by RepoRoot: '$(RepoRoot)'" Condition="'$(RepoRoot)' != '' and !Exists('$(RepoRoot)global.json')"/>

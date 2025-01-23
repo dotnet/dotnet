@@ -11,14 +11,6 @@
   </PropertyGroup>
 
   <!--
-    Public signing (as performed under DotNetBuildSourceOnly) fails with the F# compiler.
-    https://github.com/dotnet/fsharp/issues/17451
-  -->
-  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' and '$(MSBuildProjectExtension)' == '.fsproj' ">
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-
-  <!--
     WPF temp-projects do not import .props and .targets files from NuGet packages.
     (see https://github.com/dotnet/sourcelink/issues/91).
     

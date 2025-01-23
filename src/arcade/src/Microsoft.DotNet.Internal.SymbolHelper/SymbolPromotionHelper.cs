@@ -289,8 +289,8 @@ public static class SymbolPromotionHelper
 
         string? tokenResource = env switch
         {
-            Environment.PPE => "api://2748228d-54c2-4c34-a8ed-c4ae31661b39",
-            Environment.Prod => "api://30471ccf-0966-45b9-a979-065dbedb24c1",
+            Environment.PPE => "api://2748228d-54c2-4c34-a8ed-c4ae31661b39/.default",
+            Environment.Prod => "api://30471ccf-0966-45b9-a979-065dbedb24c1/.default",
             _ => default
         };
 

@@ -50,7 +50,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             _taskLoggingHelper = new TaskLoggingHelper(_stubTask);
 
             ServiceProvider provider = new ServiceCollection()
-                .AddSingleton<ISigningInformationModelFactory, SigningInformationModelFactory>()
                 .AddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>()
                 .AddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>()
                 .AddSingleton<IPackageArchiveReaderFactory, PackageArchiveReaderFactory>()
@@ -393,6 +392,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 new TaskItem("MyOtherCert", new Dictionary<string, string>()
                 {
                     { "DualSigningAllowed", "true" }
+                }),
+                new TaskItem("MySpecialCert", new Dictionary<string, string>()
+                {
+                    { "MacCertificate", "MacMac" },
+                    { "MacNotarizationAppName", "dotnet" }
                 })
             };
 
@@ -424,8 +428,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         modelFromItems.Identity.Attributes.Select(kv => $"{kv.Key}={kv.Value}").ToArray(),
                         modelFromItems.Identity.IsStable,
                         modelFromItems.Identity.PublishingVersion,
-                        modelFromItems.Identity.IsReleaseOnlyPackageVersion,
-                        modelFromItems.SigningInformation);
+                        modelFromItems.Identity.IsReleaseOnlyPackageVersion);
 
                 // Read the xml file back in and create a model from it.
                 var modelFromFile = _buildModelFactory.ManifestFileToModel(tempXmlFile);
@@ -479,61 +482,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         package.Attributes.Should().Contain("ShouldWePushDaNorpKeg", "YES");
                         package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     });
-
-                modelFromFile.SigningInformation.Should().NotBeNull();
-                modelFromFile.SigningInformation.ItemsToSign.Should().SatisfyRespectively(
-                    item =>
-                    {
-                        item.Include.Should().Be("bing.zip");
-                    },
-                    item =>
-                    {
-                        item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                    });
-                modelFromFile.SigningInformation.StrongNameSignInfo.Should().SatisfyRespectively(
-                    item =>
-                    {
-                        item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                        item.CertificateName.Should().Be("IHasACert");
-                        item.PublicKeyToken.Should().Be("abcdabcdabcdabcd");
-                    });
-                modelFromFile.SigningInformation.FileSignInfo.Should().SatisfyRespectively(
-                    item =>
-                    {
-                        item.Include.Should().Be("Microsoft.DiaSymReader.dll");
-                        item.CertificateName.Should().Be("Microsoft101240624"); // lgtm [cs/common-default-passwords] Safe, these certificate names
-                        item.TargetFramework.Should().Be(".NETStandard,Version=v1.1");
-                        item.PublicKeyToken.Should().Be("31bf3856ad364e35");
-                    },
-                    item =>
-                    {
-                        item.Include.Should().Be("Microsoft.DiaSymReader.dll");
-                        item.CertificateName.Should().Be("MicrosoftWin8WinBlue");
-                        item.TargetFramework.Should().Be(".NETFramework,Version=v2.0");
-                        item.PublicKeyToken.Should().Be("31bf3856ad364e35");
-                    },
-                    item =>
-                    {
-                        item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                        item.CertificateName.Should().Be("IHasACert2");
-                    });
-                modelFromFile.SigningInformation.CertificatesSignInfo.Should().SatisfyRespectively(
-                    item =>
-                    {
-                        item.Include.Should().Be("MyCert");
-                        item.DualSigningAllowed.Should().Be(false);
-                    },
-                    item =>
-                    {
-                        item.Include.Should().Be("MyOtherCert");
-                        item.DualSigningAllowed.Should().Be(true);
-                    });
-                modelFromFile.SigningInformation.FileExtensionSignInfo.Should().SatisfyRespectively(
-                    item =>
-                    {
-                        item.Include.Should().Be(".dll");
-                        item.CertificateName.Should().Be("MyCert");
-                    });
             }
             finally
             {
@@ -571,157 +519,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
-            model.SigningInformation.Should().NotBeNull();
-            model.SigningInformation.ItemsToSign.Should().BeEmpty();
-            model.SigningInformation.CertificatesSignInfo.Should().BeEmpty();
-            model.SigningInformation.FileExtensionSignInfo.Should().BeEmpty();
-            model.SigningInformation.FileSignInfo.Should().BeEmpty();
-            model.SigningInformation.StrongNameSignInfo.Should().BeEmpty();
-        }
-
-        /// <summary>
-        /// Validate the strong name signing information is correctly propagated to the model
-        /// </summary>
-        [Fact]
-        public void SignInfoIsCorrectlyPopulatedFromItems()
-        {
-            var localPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
-            var zipPath = @"this/is/a/zip.zip";
-
-            var artifacts = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()),
-                new TaskItem(zipPath, new Dictionary<string, string>()
-                {
-                    { "RelativeBlobPath", zipPath },
-                })
-            };
-
-            var itemsToSign = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath),
-                new TaskItem(zipPath)
-            };
-
-            var strongNameSignInfo = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()
-                {
-                    { "CertificateName", "IHasACert" },
-                    { "PublicKeyToken", "abcdabcdabcdabcd" }
-                })
-            };
-
-            var fileSignInfo = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()
-                {
-                    { "CertificateName", "IHasACert2" }
-                })
-            };
-
-            var certificatesSignInfo = new ITaskItem[]
-            {
-                new TaskItem("MyCert", new Dictionary<string, string>()
-                {
-                    { "DualSigningAllowed", "false" }
-                }),
-                new TaskItem("MyOtherCert", new Dictionary<string, string>()
-                {
-                    { "DualSigningAllowed", "true" }
-                })
-            };
-
-            var fileExtensionSignInfo = new ITaskItem[]
-            {
-                new TaskItem(".dll", new Dictionary<string, string>()
-                {
-                    { "CertificateName", "MyCert" }
-                })
-            };
-
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
-                strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo,
-                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
-
-            _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
-            model.SigningInformation.Should().NotBeNull();
-            model.SigningInformation.ItemsToSign.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                },
-                item =>
-                {
-                    item.Include.Should().Be("zip.zip");
-                });
-            model.SigningInformation.StrongNameSignInfo.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                    item.CertificateName.Should().Be("IHasACert");
-                    item.PublicKeyToken.Should().Be("abcdabcdabcdabcd");
-                });
-            model.SigningInformation.FileSignInfo.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.Include.Should().Be("test-package-a.1.0.0.nupkg");
-                    item.CertificateName.Should().Be("IHasACert2");
-                });
-            model.SigningInformation.CertificatesSignInfo.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.Include.Should().Be("MyCert");
-                    item.DualSigningAllowed.Should().Be(false);
-                },
-                item =>
-                {
-                    item.Include.Should().Be("MyOtherCert");
-                    item.DualSigningAllowed.Should().Be(true);
-                });
-            model.SigningInformation.FileExtensionSignInfo.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.Include.Should().Be(".dll");
-                    item.CertificateName.Should().Be("MyCert");
-                });
-        }
-
-        /// <summary>
-        /// If a file is in ItemsToSign, it should also be in the artifacts.
-        /// </summary>
-        [Fact]
-        public void ArtifactToSignMustExistInArtifacts()
-        {
-            var localPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
-            const string zipPath = @"this/is/a/zip.zip";
-            const string bogusNupkgToSign = "totallyboguspackage.nupkg";
-
-            var artifacts = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()),
-                new TaskItem(zipPath, new Dictionary<string, string>()
-                {
-                    { "RelativeBlobPath", zipPath },
-                })
-            };
-
-            var itemsToSign = new ITaskItem[]
-            {
-                new TaskItem(bogusNupkgToSign),
-                new TaskItem(Path.GetFileName(zipPath)),
-                new TaskItem(Path.GetFileName(localPackagePath)),
-            };
-
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
-                null, null, null, null,
-                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
-
-            _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
-            _buildEngine.BuildErrorEvents.Should().HaveCount(1);
-            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Equals($"Item to sign '{bogusNupkgToSign}' was not found in the artifacts"));
         }
 
         #endregion
