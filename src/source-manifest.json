@@ -29,11 +29,11 @@
       "commitSha": "9e8bd520939ddfee686261267a1646c1b113d9e1"
     },
     {
-      "packageVersion": "0.1.552801",
+      "packageVersion": "0.1.607102",
       "barId": null,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "feb61c7f328a2401d74f4317b39d02126cfdfe24"
+      "commitSha": "3bbb940ceeb3254790899d751a8d418348563d40"
     },
     {
       "packageVersion": "9.0.0-preview.1.25063.2",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0221ab12f8034768a7231a59cb380c90af8a6928"
+      "commitSha": "296990b44f4e0692cc801e247912f282b80084d0"
     },
     {
       "packageVersion": "10.0.607101",
