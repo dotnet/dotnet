@@ -3,18 +3,24 @@
 
 <UsageData>
   <IgnorePatterns>
-    <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
+    <!-- 
+      These dependencies are replaced with their live versions when building in real source build.
+       https://github.com/dotnet/dotnet/blob/d966d07fa1f7a5bdddbb9aa39603f1a9c739eb1d/repo-projects/vstest.proj#L13
+    -->
+    <!-- Caused by dependency on System.ComponentModel.Composition.8.0.0. This version is overridden in full source-build. -->
     <UsagePattern IdentityGlob="Microsoft.NETCore.Platforms/2.0.0" />
     <!-- This version is overridden in full source-build. -->
-    <UsagePattern IdentityGlob="System.ComponentModel.Composition/4.5.0" />
-    <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
-    <UsagePattern IdentityGlob="System.Security.AccessControl/4.5.0" />
-    <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
-    <UsagePattern IdentityGlob="System.Security.Permissions/4.5.0" />
-    <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
-    <UsagePattern IdentityGlob="System.Security.Principal.Windows/4.5.0" />
-    <UsagePattern IdentityGlob="Microsoft.Diagnostics.NETCore.Client/0.2.452401" />
+    <UsagePattern IdentityGlob="System.ComponentModel.Composition/8.0.0" />
+    <!-- Caused by dependency on System.ComponentModel.Composition.8.0.0. This version is overridden in full source-build. -->
+    <UsagePattern IdentityGlob="System.Security.AccessControl/8.0.0" />
+    <!-- Caused by dependency on System.ComponentModel.Composition.8.0.0. This version is overridden in full source-build. -->
+    <UsagePattern IdentityGlob="System.Security.Permissions/8.0.0" />
+    <!-- Caused by dependency on System.ComponentModel.Composition.8.0.0. This version is overridden in full source-build. -->
+    <UsagePattern IdentityGlob="System.Security.Principal.Windows/8.0.0" />
+    
+
     <!-- Caused by multi-targeting source build for repo builds/CI. Product source build only targets NetCurrent. -->
+    <UsagePattern IdentityGlob="Microsoft.Diagnostics.NETCore.Client/0.2.*" />
     <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host.linux-x64/8.0.*" />

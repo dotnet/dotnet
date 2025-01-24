@@ -97,8 +97,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Task
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.RemoteExecutor.Tests", "src\Microsoft.DotNet.RemoteExecutor\tests\Microsoft.DotNet.RemoteExecutor.Tests.csproj", "{D6AC20A4-1719-49FE-B112-B2AB564496F8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestProjects", "TestProjects", "{6F517597-E9E2-43B2-B7E2-757132EA525C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Tasks.Archives", "src\Microsoft.DotNet.Build.Tasks.Archives\Microsoft.DotNet.Build.Tasks.Archives.csproj", "{5579768A-CC07-477C-ACE4-06FE9B0686A7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.SourceBuild.Tasks", "src\Microsoft.DotNet.SourceBuild\tasks\Microsoft.DotNet.SourceBuild.Tasks.csproj", "{F9D72AF5-9320-43C8-A24F-CBE294FCED0A}"
@@ -129,10 +127,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Task
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Tasks.Templating.Tests", "src\Microsoft.DotNet.Build.Tasks.Templating\test\Microsoft.DotNet.Build.Tasks.Templating.Tests.csproj", "{FB4168D5-6EA6-4777-AD4F-95758C177FE8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6DA9F58A-34D5-45A6-998E-5D2B8037C3FE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.DotNet.XUnitAssert", "Microsoft.DotNet.XUnitAssert", "{3C542789-2576-48C8-9772-C9D7575F7E42}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAssert", "src\Microsoft.DotNet.XUnitAssert\src\Microsoft.DotNet.XUnitAssert.csproj", "{AB8D5F86-60FA-416A-B047-83B1E9118425}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAssert.Tests", "src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj", "{14462553-E4E1-4F67-B954-4BF24B1DAAFE}"
@@ -151,9 +145,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Internal.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.ArcadeAzureIntegration", "src\Microsoft.DotNet.ArcadeAzureIntegration\Microsoft.DotNet.ArcadeAzureIntegration.csproj", "{CA159C84-CD7D-4364-9121-3842F97D4B60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DotNet.MacOsPkg", "src\Microsoft.DotNet.MacOsPkg\Microsoft.DotNet.MacOsPkg.csproj", "{CE0FAEB2-4B8A-4A37-840D-7FF88ECB42A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.MacOsPkg", "src\Microsoft.DotNet.MacOsPkg\Microsoft.DotNet.MacOsPkg.csproj", "{CE0FAEB2-4B8A-4A37-840D-7FF88ECB42A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DotNet.MacOsPkg.Tests", "src\Microsoft.DotNet.MacOsPkg.Tests\Microsoft.DotNet.MacOsPkg.Tests.csproj", "{1F5118A8-A5C5-4D18-AF34-FFB60FECCD45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.MacOsPkg.Tests", "src\Microsoft.DotNet.MacOsPkg.Tests\Microsoft.DotNet.MacOsPkg.Tests.csproj", "{1F5118A8-A5C5-4D18-AF34-FFB60FECCD45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1009,13 +1003,10 @@ Global
 		{B5E9D9D8-59E0-49F8-9C3C-75138A2D452C} = {C53DD924-C212-49EA-9BC4-1827421361EF}
 		{0B5D3C20-EB58-4A82-A3AA-2E626A17B35D} = {C53DD924-C212-49EA-9BC4-1827421361EF}
 		{FB4168D5-6EA6-4777-AD4F-95758C177FE8} = {C53DD924-C212-49EA-9BC4-1827421361EF}
-		{3C542789-2576-48C8-9772-C9D7575F7E42} = {6DA9F58A-34D5-45A6-998E-5D2B8037C3FE}
-		{AB8D5F86-60FA-416A-B047-83B1E9118425} = {3C542789-2576-48C8-9772-C9D7575F7E42}
-		{14462553-E4E1-4F67-B954-4BF24B1DAAFE} = {3C542789-2576-48C8-9772-C9D7575F7E42}
+		{14462553-E4E1-4F67-B954-4BF24B1DAAFE} = {C53DD924-C212-49EA-9BC4-1827421361EF}
 		{650B7526-7B8A-45B5-B14E-C16D828891B2} = {C53DD924-C212-49EA-9BC4-1827421361EF}
 		{6BA81447-C61D-4F91-BF0F-5B17AF4CFFAC} = {C53DD924-C212-49EA-9BC4-1827421361EF}
-		{CE0FAEB2-4B8A-4A37-840D-7FF88ECB42A0} = {6DA9F58A-34D5-45A6-998E-5D2B8037C3FE}
-		{1F5118A8-A5C5-4D18-AF34-FFB60FECCD45} = {6DA9F58A-34D5-45A6-998E-5D2B8037C3FE}
+		{1F5118A8-A5C5-4D18-AF34-FFB60FECCD45} = {C53DD924-C212-49EA-9BC4-1827421361EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32B9C883-432E-4FC8-A1BF-090EB033DD5B}

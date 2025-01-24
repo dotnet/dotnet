@@ -6,7 +6,6 @@
     <dependencies>
       <group targetFramework="netstandard2.0" />
       <group targetFramework="net462" />
-      <group targetFramework="net6.0" />
       <group targetFramework="net8.0" />
       <group targetFramework="net9.0" />
     </dependencies>
@@ -17,7 +16,6 @@
 
     <file src="netstandard2.0\Microsoft.TestPlatform.AdapterUtilities.dll" target="lib\netstandard2.0" />
     <file src="net462\Microsoft.TestPlatform.AdapterUtilities.dll" target="lib\net462" />
-    <file src="net6.0\Microsoft.TestPlatform.AdapterUtilities.dll" target="lib\net6.0" />
     <file src="net8.0\Microsoft.TestPlatform.AdapterUtilities.dll" target="lib\net8.0" />
     <file src="net9.0\Microsoft.TestPlatform.AdapterUtilities.dll" target="lib\net9.0" />
 
@@ -48,20 +46,6 @@
     <file src="netstandard2.0\tr\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\netstandard2.0\tr" />
     <file src="netstandard2.0\zh-Hans\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\netstandard2.0\zh-Hans" />
     <file src="netstandard2.0\zh-Hant\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\netstandard2.0\zh-Hant" />
-
-    <file src="net6.0\cs\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\cs" />
-    <file src="net6.0\de\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\de" />
-    <file src="net6.0\es\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\es" />
-    <file src="net6.0\fr\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\fr" />
-    <file src="net6.0\it\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\it" />
-    <file src="net6.0\ja\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\ja" />
-    <file src="net6.0\ko\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\ko" />
-    <file src="net6.0\pl\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\pl" />
-    <file src="net6.0\pt-BR\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\pt-BR" />
-    <file src="net6.0\ru\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\ru" />
-    <file src="net6.0\tr\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\tr" />
-    <file src="net6.0\zh-Hans\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\zh-Hans" />
-    <file src="net6.0\zh-Hant\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net6.0\zh-Hant" />
 
     <file src="net8.0\cs\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net8.0\cs" />
     <file src="net8.0\de\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\net8.0\de" />

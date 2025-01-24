@@ -22,7 +22,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
         // Arrange
         SetTestEnvironment(_testEnvironment, runnerInfo);
         const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
-        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core31TargetFramework);
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core80TargetFramework);
         UpdateRuntimeConfigJsonWithInvalidFramework(assemblyPath, testAssetProjectName);
 
         // Act
@@ -39,7 +39,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
             // that's only meant to be used by this project.
             var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");
             var fileContent = File.ReadAllText(runtimeConfigJson);
-            var updatedContent = fileContent.Replace("\"version\": \"3.1.0\"", "\"version\": \"0.0.0\"");
+            var updatedContent = fileContent.Replace("\"version\": \"8.0.0\"", "\"version\": \"0.0.0\"");
             File.WriteAllText(runtimeConfigJson, updatedContent);
         }
     }

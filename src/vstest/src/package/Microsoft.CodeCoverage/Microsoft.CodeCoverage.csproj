@@ -1,6 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
+    <!--
+      This is shipped as nuget package, it needs to be installable to all projects that would be able to run
+      via testhost. The dlls will then be loaded by datacollector, which will have the same or newer TFMs.
+    -->
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>

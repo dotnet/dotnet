@@ -25,7 +25,7 @@ public class DataCollectorTestsCoverlets : IntegrationTestBase
         }
 
         // We use netcoreapp runner
-        // "...\vstest\tools\dotnet\dotnet.exe "...\vstest\artifacts\Debug\netcoreapp3.1\vstest.console.dll" --collect:"XPlat Code Coverage" ...
+        // "...\vstest\tools\dotnet\dotnet.exe "...\vstest\artifacts\Debug\net8.0\vstest.console.dll" --collect:"XPlat Code Coverage" ...
         _testEnvironment.RunnerFramework = CoreRunnerFramework;
         var resultsDir = new TempDirectory();
 

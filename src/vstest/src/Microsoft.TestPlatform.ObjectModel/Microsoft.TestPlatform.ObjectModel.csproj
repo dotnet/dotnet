@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.ObjectModel</AssemblyName>
-    <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum);netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <!-- Suppress warning that is caused by Nuget.Frameworks code that we copy. -->
     <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
   </PropertyGroup>
@@ -23,7 +23,7 @@
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Xml" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Runtime" />
@@ -33,7 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
+    <!-- net48 includes tuple, we need to reference it in previous versions but only on .net framework. -->
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" 
+        Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net48')) != true
+                    and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net4'))" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,18 +11,20 @@
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
       <IsShipping>true</IsShipping>
-      <Visibility>External</Visibility>
     </Artifact>
   </ItemDefinitionGroup>
 
   <ItemGroup>
     <!--
       This is intended to hold information about the certificates used for signing.
-      For now the only information required is whether or not the certificate can be
-      used for signing already signed files - DualSigningAllowed==true.
     -->
     <CertificatesSignInfo Include="3PartyDual" DualSigningAllowed="true" />
     <CertificatesSignInfo Include="3PartySHA2" DualSigningAllowed="true" />
+    <!-- This signing information indicates certificates that represent a sign and notarize operation. -->
+    <CertificatesSignInfo Include="MacDeveloperHardenWithNotarization" MacCertificate="MacDeveloperHarden" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperWithNotarization" MacCertificate="MacDeveloper" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperVNextWithNotarization" MacCertificate="MacDeveloperVNext" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperVNextHardenWithNotarization" MacCertificate="MacDeveloperVNextHarden" MacNotarizationAppName="dotnet" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
@@ -31,9 +33,8 @@
     <_DefaultItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
     <_DefaultItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
 
-    <!-- If PostBuildSign == true, these are added to ItemsToSignPostBuild, otherwise these are added to ItemsToSign -->
+    <!-- PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
     <ItemsToSign Include="@(_DefaultItemsToSign)" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="@(_DefaultItemsToSign->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +61,15 @@
     <FileExtensionSignInfo Include=".zip" CertificateName="None" />
     <FileExtensionSignInfo Include=".tgz" CertificateName="None" />
     <FileExtensionSignInfo Include=".tar.gz" CertificateName="None" />
+    <!-- Note, RPMs can only be unpack/repacked on Linux. They can be signed on non-Linux -->
+    <FileExtensionSignInfo Include=".rpm" CertificateName="LinuxSign" />
+    <!-- Note, these can only be unpack/repacked on Mac. They can be signed on a non-Mac -->
+    <FileExtensionSignInfo Include=".pkg" CertificateName="MacDeveloper" />
+    <!-- .app bundles are technically directories, but the Microsoft.DotNet.MacOsPkg
+    tool packs these bundles into zips when unpacking .pkgs -->
+    <FileExtensionSignInfo Include=".app" CertificateName="MacDeveloper" />
+    <!-- Runtime hardening is required for notarization. -->
+    <FileExtensionSignInfo Include=".dylib" CertificateName="MacDeveloperHarden" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400
@@ -77,9 +87,6 @@
     <!-- Control whether an empty ItemsToSign item group is allowed when calling SignToolTask. -->
     <AllowEmptySignList Condition="'$(PostBuildSign)' != 'true'">false</AllowEmptySignList>
     <AllowEmptySignList Condition="'$(PostBuildSign)' == 'true'">true</AllowEmptySignList>
-    <!-- Control whether an empty ItemsToSignPostBuild item group is allowed during publishing -->
-    <AllowEmptySignPostBuildList Condition="'$(PostBuildSign)' != 'true'">true</AllowEmptySignPostBuildList>
-    <AllowEmptySignPostBuildList Condition="'$(PostBuildSign)' == 'true'">false</AllowEmptySignPostBuildList>
 
     <NETCORE_ENGINEERING_TELEMETRY>Signing</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
@@ -97,9 +104,7 @@
 
   <!-- Respect Artifact item repo extension point -->
   <ItemGroup Condition="'@(Artifact)' != ''">
-    <!-- If PostBuildSign == true, these are added to ItemsToSignPostBuild, otherwise these are added to ItemsToSign -->
     <ItemsToSign Include="@(Artifact)" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="@(Artifact->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
   </ItemGroup>
 
 </Project>

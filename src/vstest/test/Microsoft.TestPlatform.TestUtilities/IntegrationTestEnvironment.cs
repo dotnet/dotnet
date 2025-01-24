@@ -92,7 +92,7 @@ public class IntegrationTestEnvironment
 
     /// <summary>
     /// Gets the target framework.
-    /// Supported values = <c>net462</c>, <c>netcoreapp3.1</c>.
+    /// Supported values = <c>net462</c>, <c>net8.0</c>.
     /// </summary>
     [NotNull]
     public string? TargetFramework { get; set; }
@@ -143,7 +143,7 @@ public class IntegrationTestEnvironment
 
     /// <summary>
     /// Gets the application type.
-    /// Supported values = <c>net462</c>, <c>netcoreapp3.1</c>.
+    /// Supported values = <c>net462</c>, <c>net8.0</c>.
     /// </summary>
     public string RunnerFramework { get; set; }
 

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 namespace Microsoft.DotNet.SignTool
@@ -18,7 +17,6 @@ namespace Microsoft.DotNet.SignTool
     /// </summary>
     internal sealed class RealSignTool : SignTool
     {
-        private readonly string _msbuildPath;
         private readonly string _dotnetPath;
         private readonly string _logDir;
         private readonly string _snPath;
@@ -37,7 +35,6 @@ namespace Microsoft.DotNet.SignTool
         internal RealSignTool(SignToolArgs args, TaskLoggingHelper log) : base(args, log)
         {
             TestSign = args.TestSign;
-            _msbuildPath = args.MSBuildPath;
             _dotnetPath = args.DotNetPath;
             _snPath = args.SNBinaryPath;
             _logDir = args.LogDir;
@@ -45,25 +42,17 @@ namespace Microsoft.DotNet.SignTool
 
         public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
         {
-            if (_msbuildPath == null && _dotnetPath == null)
+            if (_dotnetPath == null)
             {
                 return buildEngine.BuildProjectFile(projectFilePath, null, null, null);
             }
 
             Directory.CreateDirectory(_logDir);
 
-            string processFileName = _dotnetPath;
-            string processArguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                processFileName = _msbuildPath;
-                processArguments = $@"""{projectFilePath}"" /bl:""{binLogPath}""";
-            }
-
             var process = Process.Start(new ProcessStartInfo()
             {
-                FileName = processFileName,
-                Arguments = processArguments,
+                FileName = _dotnetPath,
+                Arguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""",
                 UseShellExecute = false,
                 WorkingDirectory = TempDir,
             });
@@ -84,59 +73,73 @@ namespace Microsoft.DotNet.SignTool
             StrongName.ClearStrongNameSignedBit(assemblyPath);
         }
 
-        public override bool VerifySignedPEFile(Stream assemblyStream)
+        public override SigningStatus VerifySignedPEFile(Stream assemblyStream)
+        {
+            // The assembly won't verify by design when doing test signing, but pretend it is.
+            if (TestSign)
+            {
+                return SigningStatus.Signed;
+            }
+
+            return VerifySignatures.IsSignedPE(assemblyStream);
+        }
+        public override SigningStatus VerifyStrongNameSign(string fileFullPath)
         {
             // The assembly won't verify by design when doing test signing.
             if (TestSign)
             {
-                return true;
+                return SigningStatus.Signed;
             }
 
-            return ContentUtil.IsAuthenticodeSigned(assemblyStream);
-        }
-        public override bool VerifyStrongNameSign(string fileFullPath)
-        {
-            // The assembly won't verify by design when doing test signing.
-            if (TestSign)
-            {
-                return true;
-            }
-
-            return StrongName.IsSigned(fileFullPath, snPath:_snPath, log: _log);
+            return StrongName.IsSigned(fileFullPath, snPath:_snPath, log: _log) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        public override bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
+        public override SigningStatus VerifySignedDeb(TaskLoggingHelper log, string filePath)
         {
-            return VerifySignatures.VerifySignedDeb(log, filePath);
+            return VerifySignatures.IsSignedDeb(log, filePath);
         }
 
-        public override bool VerifySignedPowerShellFile(string filePath)
+        public override SigningStatus VerifySignedRpm(TaskLoggingHelper log, string filePath)
         {
-            return VerifySignatures.VerifySignedPowerShellFile(filePath);
+            return VerifySignatures.IsSignedRpm(log, filePath);
         }
 
-        public override bool VerifySignedNugetFileMarker(string filePath)
+        public override SigningStatus VerifySignedPowerShellFile(string filePath)
         {
-            return VerifySignatures.VerifySignedNupkgByFileMarker(filePath);
+            return VerifySignatures.IsSignedPowershellFile(filePath);
         }
 
-        public override bool VerifySignedVSIXFileMarker(string filePath)
+        public override SigningStatus VerifySignedNuGet(string filePath)
         {
-            return VerifySignatures.VerifySignedVSIXByFileMarker(filePath);
+            return VerifySignatures.IsSignedNupkg(filePath);
         }
-        
+
+        public override SigningStatus VerifySignedVSIX(string filePath)
+        {
+            // Open the VSIX and check for the digital signature file.
+            return VerifySignatures.IsSignedVSIXByFileMarker(filePath);
+        }
+
+        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string fullPath, string pkgToolPath)
+        {
+            return VerifySignatures.IsSignedPkgOrAppBundle(log, fullPath, pkgToolPath);
+        }
+
         public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
             var filesToLocallyStrongNameSign = files.Where(f => f.SignInfo.ShouldLocallyStrongNameSign);
 
-            _log.LogMessage($"Locally strong naming {filesToLocallyStrongNameSign.Count()} files.");
-
-            foreach (var file in filesToLocallyStrongNameSign)
+            if (filesToLocallyStrongNameSign.Any())
             {
-                if (!LocalStrongNameSign(file))
+                _log.LogMessage($"Locally strong naming {filesToLocallyStrongNameSign.Count()} files.");
+
+                foreach (var file in filesToLocallyStrongNameSign)
                 {
-                    _log.LogMessage(MessageImportance.High, $"Failed to locally strong name sign '{file.FileName}'");
-                    return false;
+                    if (!LocalStrongNameSign(file))
+                    {
+                        _log.LogMessage(MessageImportance.High, $"Failed to locally strong name sign '{file.FileName}'");
+                        return false;
+                    }
                 }
             }
 

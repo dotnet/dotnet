@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -25,17 +27,17 @@ namespace Microsoft.DotNet.SignTool
 #if !NET472
         private static readonly HttpClient client = new(new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(10) });
 #endif
-        internal static bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
+        internal static SigningStatus IsSignedDeb(TaskLoggingHelper log, string filePath)
         {
 # if NET472
             // Debian unpack tooling is not supported on .NET Framework
             log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for .NET Framework");
-            return false;
+            return SigningStatus.Unknown;
 # else
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for Windows.");
-                return false;
+                return SigningStatus.Unknown;
             }
 
             string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -66,14 +68,14 @@ namespace Microsoft.DotNet.SignTool
                 string output = RunCommand($"gpg --verify {gpgOrigin} {tempDir}/combined-contents", throwOnError: false);
                 if (output.Contains("Good signature"))
                 {
-                    return true;
+                    return SigningStatus.Signed;
                 }
-                return false;
+                return SigningStatus.NotSigned;
             }
             catch(Exception e)
             {
                 log.LogMessage(MessageImportance.Low, $"Failed to verify signature of {filePath} with the following error: {e}");
-                return false;
+                return SigningStatus.NotSigned;
             }
             finally
             {
@@ -82,15 +84,20 @@ namespace Microsoft.DotNet.SignTool
 # endif
         }
 
-        internal static bool VerifySignedPowerShellFile(string filePath)
+        internal static SigningStatus IsSignedRpm(TaskLoggingHelper log, string filePath)
         {
-            return File.ReadLines(filePath).Any(line => line.IndexOf("# SIG # Begin Signature Block", StringComparison.OrdinalIgnoreCase) >= 0);
+            // RPM signature verification is not yet implemented
+            log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} - not yet implemented.");
+            return SigningStatus.Unknown;
         }
-        internal static bool VerifySignedNupkgByFileMarker(string filePath)
+
+        internal static SigningStatus IsSignedPowershellFile(string filePath)
         {
-            return Path.GetFileName(filePath).Equals(".signature.p7s", StringComparison.OrdinalIgnoreCase);
+            return File.ReadLines(filePath).Any(line => line.IndexOf("# SIG # Begin Signature Block", StringComparison.OrdinalIgnoreCase) >= 0) 
+                ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
-        internal static bool VerifySignedNupkgIntegrity(string filePath)
+
+        internal static SigningStatus IsSignedNupkg(string filePath)
         {
             bool isSigned = false;
             using (BinaryReader binaryReader = new BinaryReader(File.OpenRead(filePath)))
@@ -123,47 +130,47 @@ namespace Microsoft.DotNet.SignTool
                 }
 #endif
             }
-            return isSigned;
+            return isSigned ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        internal static bool VerifySignedVSIXByFileMarker(string filePath)
+        internal static SigningStatus IsSignedVSIXByFileMarker(string filePath)
         {
-            return filePath.StartsWith("package/services/digital-signature/", StringComparison.OrdinalIgnoreCase);
+            using var archive = new ZipArchive(File.OpenRead(filePath), ZipArchiveMode.Read, leaveOpen: false);
+            return archive.GetFiles().Any(f => f.StartsWith("package/services/digital-signature/", StringComparison.OrdinalIgnoreCase)) ? 
+                SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        internal static bool IsSignedContainer(string fullPath, string tempDir, string tarToolPath)
+        internal static SigningStatus IsSignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath)
         {
-            if (FileSignInfo.IsZipContainer(fullPath))
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                bool signedContainer = false;
-
-                foreach (var (relativePath, _, _) in ZipData.ReadEntries(fullPath, tempDir, tarToolPath, ignoreContent: false))
-                {
-                    if (FileSignInfo.IsNupkg(fullPath) && VerifySignedNupkgByFileMarker(relativePath))
-                    {
-                        if (!VerifySignedNupkgIntegrity(fullPath))
-                        {
-                            return false;
-                        }
-                        signedContainer = true;
-                        break;
-                    }
-                    else if (FileSignInfo.IsVsix(fullPath) && VerifySignedVSIXByFileMarker(relativePath))
-                    {
-                        signedContainer = true;
-                        break;
-                    }
-                }
-
-                if (!signedContainer)
-                {
-                    return false;
-                }
+                log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for non-OSX.");
+                return SigningStatus.Unknown;
             }
-            return true;
+
+            return ZipData.RunPkgProcess(filePath, null, "verify", pkgToolPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        internal static bool IsDigitallySigned(string fullPath)
+        public static SigningStatus IsSignedPE(string filePath)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                return IsSignedPE(stream);
+            }
+        }
+
+        public static SigningStatus IsSignedPE(Stream assemblyStream)
+        {
+            using (var peReader = new PEReader(assemblyStream))
+            {
+                var headers = peReader.PEHeaders;
+                var entry = headers.PEHeader.CertificateTableDirectory;
+
+                return entry.Size > 0 ? SigningStatus.Signed : SigningStatus.NotSigned;
+            }
+        }
+
+        internal static SigningStatus IsWixSigned(string fullPath)
         {
             X509Certificate2 certificate;
             try
@@ -173,7 +180,7 @@ namespace Microsoft.DotNet.SignTool
                 var certContentType = X509Certificate2.GetCertContentType(fullPath);
                 if (certContentType != X509ContentType.Authenticode)
                 {
-                    return false;
+                    return SigningStatus.NotSigned;
                 }
 
                 #pragma warning disable SYSLIB0057 // Suppress obsoletion warning for CreateFromSignedFile
@@ -183,9 +190,9 @@ namespace Microsoft.DotNet.SignTool
             }
             catch (Exception)
             {
-                return false;
+                return SigningStatus.NotSigned;
             }
-            return certificate.Verify();
+            return certificate.Verify() ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
         private static string RunCommand(string command, bool throwOnError = true)

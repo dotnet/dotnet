@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities.UnitTests</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);RS1024</NoWarn>

@@ -80,17 +80,17 @@ public class FrameworkTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        // When this test runs it provides an incorrect desired framework for the run. E.g. the dll is actually netcoreapp3.1
-        // but we request to run as .NET Framework 4.0. On windows this has predictable results, for netcoreapp3.1 dll we fail
+        // When this test runs it provides an incorrect desired framework for the run. E.g. the dll is actually net8.0
+        // but we request to run as .NET Framework 4.0. On windows this has predictable results, for net8.0 dll we fail
         // to load it into .NET Framework testhost.exe, and fail with "No test is available". For .NET Framework dll, we
         // just log a warning saying that we provided .NET Framework 472 dlls (or whatever the current tfm for test dlls is),
         // but the settings requested .NET Framework 4.0. The test will still run because .NET Framework is compatible, and in reality
         // the system has .NET Framework 472 or newer installed, which runs even if we ask for .NET Framework 4.0 testhost.
         //
-        // On Linux and Mac we execute only netcoreapp3.1 tests, and even though we force .NET Framework, we end up running on mono
+        // On Linux and Mac we execute only net8.0 tests, and even though we force .NET Framework, we end up running on mono
         // which is suprisingly able to run the .NET CoreApp 3.1 dll, so we still just see a warning and 1 completed test.
         var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
-        if (runnerInfo.TargetFramework.Contains("netcore") && isWindows)
+        if (runnerInfo.TargetFramework.Contains("net8") && isWindows)
         {
             StdOutputContains("No test is available");
         }

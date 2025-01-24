@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+//using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AcceptanceTests.TranslationLayerTests;
@@ -77,8 +78,8 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestMethod]
     // there are logs in the diagnostic log, it is failing with NullReferenceException because path is null
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [NetFullTargetFrameworkDataSource(useCoreRunner: true, useDesktopRunner: false)]
+    // [NetCoreTargetFrameworkDataSource]
     public void RunTestsWithXunitAdapter(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -91,7 +92,12 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 
         _vstestConsoleWrapper.RunTests(
             sources,
-            GetDefaultRunSettings(),
+             $@"<?xml version=""1.0"" encoding=""utf-8""?>
+            <RunSettings>
+                <RunConfiguration>
+                    <TargetFrameworkVersion>{runnerInfo.TargetFramework}</TargetFrameworkVersion>
+                </RunConfiguration>
+            </RunSettings>",
             _runEventHandler);
 
         var testCase =

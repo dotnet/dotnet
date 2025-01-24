@@ -3,15 +3,9 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.Utilities</AssemblyName>
-    <TargetFrameworks>net7.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetFrameworkMinimum);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
-    <Reference Include="System" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />

@@ -28,6 +28,7 @@ using Azure.Identity;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
+using Microsoft.DotNet.ArcadeAzureIntegration;
 #endif
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Newtonsoft.Json;
@@ -573,18 +574,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     $"\tSymbol package count: {symbolPackageNames.Length}" + Environment.NewLine +
                     $"\tLoose symbol file count: {looseFileCount}");
 
-            // The OIDC token that the AzureCLI task generates is short lived (10 mins). The operations below can take longer than that.
-            // So we send at least one request to symbolrequest to ensure the CLI caches a valid token. We will need to revisit this if we
-            // run this for over the token's validity period (1hr). At that point, we might need to inject OIDC refreshes to the task call site.
-            DefaultAzureCredential creds = new(new DefaultAzureCredentialOptions
-            {
-                ExcludeVisualStudioCodeCredential = true,
-                ExcludeVisualStudioCredential = true,
-                ExcludeAzureDeveloperCliCredential = true,
-                ExcludeInteractiveBrowserCredential = true,
-                ManagedIdentityClientId = ManagedIdentityClientId,
-                CredentialProcessTimeout = TimeSpan.FromSeconds(60.0)
-            });
+            var creds = new DefaultIdentityTokenCredential(
+                new DefaultIdentityTokenCredentialOptions
+                {
+                    ManagedIdentityClientId = ManagedIdentityClientId
+                }
+            );
             TaskTracer tracer = new(Log, verbose: true);
 
             _ = await SymbolPromotionHelper.CheckRequestRegistration(tracer, creds, env, SymbolRequestProject, requestName);
@@ -684,7 +679,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     isDryRun: dryRun);
 
                 // In dry run mode, we never hit the symbol server. Don't download symbol.exe in such scenario.
-                return dryRun ? Task.FromResult(SymbolUploadHelperFactory.GetSymbolHelperFromLocalTool(tracer, options, ".")) 
+                return dryRun ? Task.FromResult(SymbolUploadHelperFactory.GetSymbolHelperFromLocalTool(tracer, options, "."))
                     : SymbolUploadHelperFactory.GetSymbolHelperWithDownloadAsync(tracer, options);
 
                 FrozenSet<string> LoadExclusions(string symbolPublishingExclusionsFile)
@@ -1473,7 +1468,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 await PublishAssetsWithoutStreamingPublishingAsync(assetPublisher, assetsToPublish, buildAssets, feedConfig);
             }
 
-            if (feedConfig.Type == FeedType.AzureStorageContainer && 
+            if (feedConfig.Type == FeedType.AzureStorageContainer &&
                 feedConfig.LatestLinkShortUrlPrefixes.Any())
             {
 

@@ -3,16 +3,16 @@
   <Import Project="$(RepoRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
   <PropertyGroup>
     <AssemblyName>vstest.console.arm64</AssemblyName>
-    <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(RunnerTargetFrameworks)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
     <UseAppHost>false</UseAppHost>
     <RollForward>Major</RollForward>
     <IsTestProject>false</IsTestProject>
-    <RuntimeIdentifier Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">win10-arm64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">win10-arm64</RuntimeIdentifier>
     <!-- Setting both RuntimeIdentifier and PlatformTarget ends up building as AnyCPU and selecting the default x86 architecture, irregardles of RuntimeIdentifier,
     so order here matters. -->
-    <PlatformTarget Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)' AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
+    <PlatformTarget Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <ApplicationManifest>..\vstest.console\app.manifest</ApplicationManifest>
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.CommandLine</RootNamespace>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
@@ -29,7 +29,7 @@
       $(MSBuildWarningsAsMessages);MSB3276;
     </MSBuildWarningsAsMessages>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
     <Reference Include="System.IO" />
     <Reference Include="System.Runtime" />

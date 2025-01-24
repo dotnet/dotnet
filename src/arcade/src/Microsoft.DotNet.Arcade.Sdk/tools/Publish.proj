@@ -13,6 +13,7 @@
       DotNetSymbolExpirationInDays      Symbol expiration time in days (defaults to 10 years).
       SkipPackageChecks                 Skips package safety checks.
       EnableDefaultArtifacts            Includes packages under "/artifacts/packages/**" for publishing. Defaults to true.
+      DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
       DotNetBuildPass                   While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
                                           The build pass number gets added to the asset manifest file name to avoid collisions.
 
@@ -134,9 +135,6 @@
         <OriginalPackage>%(_PackageToPublish.Identity)</OriginalPackage>
         <IsShipping>%(_PackageToPublish.IsShipping)</IsShipping>
       </_SymbolPackageToGenerate>
-
-      <!-- If PostBuildSign is true, then we need to include newly generated packages in ItemsToSignPostBuild. -->
-      <ItemsToSignPostBuild Include="@(_SymbolPackageToGenerate->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
     </ItemGroup>
 
     <!--
@@ -227,7 +225,7 @@
     <ItemGroup>
       <ItemsToPushToBlobFeed>
         <!-- Default artifact visibility is External -->
-        <Visibility Condition="'%(ItemsToPushToBlobFeed.Visibility)' == ''">External</Visibility>
+        <Visibility Condition="'%(ItemsToPushToBlobFeed.Visibility)' == ''">$([MSBuild]::ValueOrDefault('$(DefaultArtifactVisibility)', 'External'))</Visibility>
         <!-- Default to IsShipping=true -->
         <IsShipping Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == ''">true</IsShipping>
       </ItemsToPushToBlobFeed>
@@ -253,9 +251,6 @@
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
-    <Error Condition="'$(AllowEmptySignPostBuildList)' != 'true' AND '@(ItemsToSignPostBuild)' == ''" 
-           Text="List of files to sign post-build is empty. Make sure that ItemsToSignPostBuild is configured correctly." />
-
     <!--
       The user can set `PublishingVersion` via eng\Publishing.props
     -->
@@ -264,11 +259,6 @@
       AzureDevOpsProject="$(SYSTEM_TEAMPROJECT)"
       AzureDevOpsBuildId="$(BUILD_BUILDID)"
       ItemsToPush="@(ItemsToPushToBlobFeed)"
-      ItemsToSign="@(ItemsToSignPostBuild)"
-      StrongNameSignInfo="@(StrongNameSignInfo)"
-      CertificatesSignInfo="@(CertificatesSignInfo)"
-      FileSignInfo="@(FileSignInfo)"
-      FileExtensionSignInfo="@(FileExtensionSignInfo)"
       ManifestBuildData="@(ManifestBuildData)"
       ManifestRepoUri="$(BUILD_REPOSITORY_NAME)"
       ManifestBranch="$(BUILD_SOURCEBRANCH)"
@@ -382,16 +372,6 @@
                     PdbConversionTreatAsWarning=""
                     Condition="$(PublishToSymbolServer)"/>
   </Target>
-
-  <!-- Update sign infos that were using Microsoft400 to use the .NET-specific cert if UseDotNetCertificate is present.
-       This will update any use, even if explicitly specified.
-       NOTE: This is outside the target on purpose, as Update will not correctly evaluate in the target. See
-       https://github.com/dotnet/msbuild/issues/1618. -->
-  <ItemGroup Condition="$(UseDotNetCertificate)">
-    <FileExtensionSignInfo Update="@(FileExtensionSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
-    <StrongNameSignInfo Update="@(StrongNameSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
-  </ItemGroup>
 
   <!-- Import the publish targets when in the inner or outer repo builds. -->
   <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(DotNetBuildRepo)' == 'true'" />

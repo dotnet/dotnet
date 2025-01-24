@@ -22,6 +22,13 @@
                       SkipGetTargetFrameworkProperties="true"
                       Private="false"
                       OutputItemType="_TarToolPath" />
+
+    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Microsoft.DotNet.MacOsPkg.csproj"
+                      ReferenceOutputAssembly="false"
+                      SetTargetFramework="TargetFramework=$(NetToolCurrent)"
+                      SkipGetTargetFrameworkProperties="true"
+                      Private="false"
+                      OutputItemType="_PkgToolPath" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +60,20 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include="@(_TarToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\tar\%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Copy the tooling even on platforms that won't use it, since we might run these
+       tests in Helix, on another platform. -->
+  <Target Name="_CopyPkgTool" AfterTargets="ResolveProjectReferences">
+    <PropertyGroup>
+      <_PkgToolPattern>@(_PkgToolPath->'%(RootDir)%(Directory)')**\*.*</_PkgToolPattern>
+    </PropertyGroup>
+    <ItemGroup>
+      <_PkgToolFiles Include="$(_PkgToolPattern)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="@(_PkgToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\pkg\%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
   </Target>
 </Project>

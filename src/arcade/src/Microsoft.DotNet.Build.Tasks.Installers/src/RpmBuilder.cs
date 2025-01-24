@@ -95,6 +95,23 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             };
         }
 
+        public static string GetDotNetArchitectureFromRpmHeaderArchitecture(string rpmPackageArchitecture)
+        {
+            return rpmPackageArchitecture switch
+            {
+                "noarch" => "any",
+                "i386" => "x86",
+                "i486" => "x86",
+                "i586" => "x86",
+                "i686" => "x86",
+                "x86_64" => "x64",
+                "armv6hl" => "arm",
+                "armv7hl" => "arm",
+                "aarch64" => "arm64",
+                _ => rpmPackageArchitecture
+            };
+        }
+
         private static short GetRpmOS(OSPlatform os)
         {
             // See /usr/lib/rpm/rpmrc for the canonical OS mapping
@@ -204,8 +221,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
             foreach (var script in _scripts)
             {
-                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), script.Key), RpmHeaderEntryType.String, "/bin/sh"));
-                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), $"{script.Key}prog"), RpmHeaderEntryType.String, script.Value));
+                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), script.Key), RpmHeaderEntryType.String, script.Value));
+                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), $"{script.Key}prog"), RpmHeaderEntryType.String, "/bin/sh"));
             }
 
             MemoryStream cpioArchive = new();

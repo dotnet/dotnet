@@ -3,13 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 namespace Microsoft.TestPlatform.Extensions.BlameDataCollector;
+
+#pragma warning disable CA1305
 
 public class ProcDumpArgsBuilder : IProcDumpArgsBuilder
 {
@@ -51,10 +52,10 @@ public class ProcDumpArgsBuilder : IProcDumpArgsBuilder
 
         foreach (var exceptionFilter in procDumpExceptionsList)
         {
-            procDumpArgument.Append(CultureInfo.InvariantCulture, $"-f {exceptionFilter} ");
+            procDumpArgument.Append($"-f {exceptionFilter} ");
         }
 
-        procDumpArgument.Append(CultureInfo.InvariantCulture, $"{processId} {filename}.dmp");
+        procDumpArgument.Append($"{processId} {filename}.dmp");
 
         var argument = procdumpArgumentsFromEnv.IsNullOrWhiteSpace()
             ? procDumpArgument.ToString()
@@ -80,9 +81,11 @@ public class ProcDumpArgsBuilder : IProcDumpArgsBuilder
             procDumpArgument.Append(" -ma");
         }
 
-        procDumpArgument.Append(CultureInfo.InvariantCulture, $" {processId} {filename}.dmp");
+        procDumpArgument.Append($" {processId} {filename}.dmp");
         var argument = procDumpArgument.ToString();
 
         return argument;
     }
 }
+
+#pragma warning restore CA1305

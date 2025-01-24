@@ -4,7 +4,7 @@
     $CommonMetadataElements$
 
     <dependencies>
-      <group targetFramework="netcoreapp3.1">
+      <group targetFramework="net8.0">
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
         <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
       </group>
@@ -20,21 +20,21 @@
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
 
     <!-- net462 -->
-    <file src="netcoreapp3.1\_._" target="lib\net462\" />
+    <file src="net8.0\_._" target="lib\net462\" />
 
-    <!-- netcoreapp3.1 -->
-    <file src="netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.*.dll" target="lib\netcoreapp3.1\" />
-    <file src="netcoreapp3.1\Microsoft.TestPlatform.*.dll" exclude="netcoreapp3.1\**\Microsoft.TestPlatform.TestHost.dll" target="lib\netcoreapp3.1\" />
+    <!-- net8.0 -->
+    <file src="net8.0\Microsoft.VisualStudio.TestPlatform.*.dll" target="lib\net8.0\" />
+    <file src="net8.0\Microsoft.TestPlatform.*.dll" exclude="net8.0\**\Microsoft.TestPlatform.TestHost.dll" target="lib\net8.0\" />
 
-    <file src="netcoreapp3.1\testhost.dll" target="lib\netcoreapp3.1\" />
-    <file src="netcoreapp3.1\testhost.deps.json" target="lib\netcoreapp3.1\" />
+    <file src="net8.0\testhost.dll" target="lib\net8.0\" />
+    <file src="net8.0\testhost.deps.json" target="lib\net8.0\" />
 
-    <file src="netcoreapp3.1\x86\msdia140.dll" target="lib\netcoreapp3.1\x86\" />
-    <file src="netcoreapp3.1\x64\msdia140.dll" target="lib\netcoreapp3.1\x64\" />
+    <file src="net8.0\x86\msdia140.dll" target="lib\net8.0\x86\" />
+    <file src="net8.0\x64\msdia140.dll" target="lib\net8.0\x64\" />
 
     <!--
           We move AnyCPU version of testhost.dll, at the moment we don't have native code that needs particular architecture inside testhost.dll.
-          This prevent possible issue related to override x64(testshost.dll) compilation inside Microsoft.TestPlatform.TestHost.NetCore.prop netcoreapp3.1\x64\testhost.dll to the bin folder
+          This prevent possible issue related to override x64(testshost.dll) compilation inside Microsoft.TestPlatform.TestHost.NetCore.prop net8.0\x64\testhost.dll to the bin folder
           that contains AnyCPU version.
           In case of -arch arm64/x86 with a x64 SDK on arm where we use only dotnet muxer+testhost.dll to do arch switch,
           if we copy x64 testshost.dll we'll fail to load with `arm64/dotnet.exe exec testhost.dll`.
@@ -43,56 +43,56 @@
           This means parse/understand -arch inside msbuild, not trivial, so for now we simply copy the AnyCPU version and we keep
           the package authoring as-is for back compatibiliy.
     -->
-    <file src="netcoreapp3.1\testhost.dll" target="build\netcoreapp3.1\x64\" />
-    <file src="netcoreapp3.1\testhost.exe" target="build\netcoreapp3.1\x64\" />
+    <file src="net8.0\testhost.dll" target="build\net8.0\x64\" />
+    <file src="net8.0\testhost.exe" target="build\net8.0\x64\" />
 
-    <file src="netcoreapp3.1\testhost.x86.dll" target="build\netcoreapp3.1\x86\" />
-    <file src="netcoreapp3.1\testhost.x86.exe" target="build\netcoreapp3.1\x86\" />
+    <file src="net8.0\testhost.x86.dll" target="build\net8.0\x86\" />
+    <file src="net8.0\testhost.x86.exe" target="build\net8.0\x86\" />
 
-    <file src="netcoreapp3.1\Microsoft.TestPlatform.TestHost.props" target="build\netcoreapp3.1\" />
+    <file src="net8.0\Microsoft.TestPlatform.TestHost.props" target="build\net8.0\" />
 
 
-    <!-- Add localized resources netcoreapp3.1 -->
-    <file src="netcoreapp3.1\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\cs" />
-    <file src="netcoreapp3.1\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\de" />
-    <file src="netcoreapp3.1\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\es" />
-    <file src="netcoreapp3.1\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\fr" />
-    <file src="netcoreapp3.1\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\it" />
-    <file src="netcoreapp3.1\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\ja" />
-    <file src="netcoreapp3.1\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\ko" />
-    <file src="netcoreapp3.1\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\pl" />
-    <file src="netcoreapp3.1\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\pt-BR" />
-    <file src="netcoreapp3.1\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\ru" />
-    <file src="netcoreapp3.1\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\tr" />
-    <file src="netcoreapp3.1\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\zh-Hans" />
-    <file src="netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\netcoreapp3.1\zh-Hant" />
+    <!-- Add localized resources net8.0 -->
+    <file src="net8.0\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\cs" />
+    <file src="net8.0\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\de" />
+    <file src="net8.0\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\es" />
+    <file src="net8.0\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\fr" />
+    <file src="net8.0\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\it" />
+    <file src="net8.0\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\ja" />
+    <file src="net8.0\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\ko" />
+    <file src="net8.0\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\pl" />
+    <file src="net8.0\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\pt-BR" />
+    <file src="net8.0\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\ru" />
+    <file src="net8.0\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\tr" />
+    <file src="net8.0\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\zh-Hans" />
+    <file src="net8.0\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="lib\net8.0\zh-Hant" />
 
-    <file src="netcoreapp3.1\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\cs" />
-    <file src="netcoreapp3.1\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\de" />
-    <file src="netcoreapp3.1\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\es" />
-    <file src="netcoreapp3.1\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\fr" />
-    <file src="netcoreapp3.1\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\it" />
-    <file src="netcoreapp3.1\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\ja" />
-    <file src="netcoreapp3.1\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\ko" />
-    <file src="netcoreapp3.1\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\pl" />
-    <file src="netcoreapp3.1\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\pt-BR" />
-    <file src="netcoreapp3.1\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\ru" />
-    <file src="netcoreapp3.1\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\tr" />
-    <file src="netcoreapp3.1\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\zh-Hans" />
-    <file src="netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\netcoreapp3.1\zh-Hant" />
+    <file src="net8.0\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\cs" />
+    <file src="net8.0\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\de" />
+    <file src="net8.0\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\es" />
+    <file src="net8.0\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\fr" />
+    <file src="net8.0\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\it" />
+    <file src="net8.0\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\ja" />
+    <file src="net8.0\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\ko" />
+    <file src="net8.0\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\pl" />
+    <file src="net8.0\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\pt-BR" />
+    <file src="net8.0\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\ru" />
+    <file src="net8.0\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\tr" />
+    <file src="net8.0\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\zh-Hans" />
+    <file src="net8.0\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="lib\net8.0\zh-Hant" />
 
-    <file src="netcoreapp3.1\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\cs" />
-    <file src="netcoreapp3.1\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\de" />
-    <file src="netcoreapp3.1\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\es" />
-    <file src="netcoreapp3.1\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\fr" />
-    <file src="netcoreapp3.1\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\it" />
-    <file src="netcoreapp3.1\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\ja" />
-    <file src="netcoreapp3.1\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\ko" />
-    <file src="netcoreapp3.1\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\pl" />
-    <file src="netcoreapp3.1\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\pt-BR" />
-    <file src="netcoreapp3.1\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\ru" />
-    <file src="netcoreapp3.1\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\tr" />
-    <file src="netcoreapp3.1\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\zh-Hans" />
-    <file src="netcoreapp3.1\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\netcoreapp3.1\zh-Hant" />
+    <file src="net8.0\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\cs" />
+    <file src="net8.0\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\de" />
+    <file src="net8.0\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\es" />
+    <file src="net8.0\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\fr" />
+    <file src="net8.0\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\it" />
+    <file src="net8.0\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\ja" />
+    <file src="net8.0\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\ko" />
+    <file src="net8.0\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\pl" />
+    <file src="net8.0\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\pt-BR" />
+    <file src="net8.0\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\ru" />
+    <file src="net8.0\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\tr" />
+    <file src="net8.0\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\zh-Hans" />
+    <file src="net8.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" target="lib\net8.0\zh-Hant" />
   </files>
 </package>

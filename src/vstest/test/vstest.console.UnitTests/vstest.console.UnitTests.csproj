@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <AssemblyName>vstest.console.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
@@ -24,12 +24,4 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System.Runtime" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
-
 </Project>

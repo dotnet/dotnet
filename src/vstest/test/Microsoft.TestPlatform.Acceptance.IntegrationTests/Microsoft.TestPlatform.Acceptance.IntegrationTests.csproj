@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestAssets\**" />
@@ -37,17 +37,9 @@
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
     <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0-preview2-26406-04" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Reflection" />
-    <Reference Include="System.Text.RegularExpressions" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Performance\" />

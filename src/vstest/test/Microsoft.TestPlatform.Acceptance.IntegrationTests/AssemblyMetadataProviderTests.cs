@@ -55,7 +55,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetArchitectureShouldReturnCorrentArchForx64Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject3", framework, Architecture.X64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -63,7 +63,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetArchitectureShouldReturnCorrentArchForx86Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProjectx86", framework, Architecture.X86, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -71,7 +71,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetArchitectureShouldReturnCorrentArchForAnyCpuAssembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject", framework, Architecture.AnyCPU, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -79,10 +79,10 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
-    public void GetArchitectureShouldReturnCorrentArchForArmAssembly(string framework)
+    [DataRow("net8.0")]
+    public void GetArchitectureShouldReturnCorrentArchForArm64Assembly(string framework)
     {
-        TestDotnetAssemblyArch("SimpleTestProjectARM", framework, Architecture.ARM, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
+        TestDotnetAssemblyArch("SimpleTestProjectARM64", framework, Architecture.ARM64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
     }
 
     [TestMethod]
@@ -108,7 +108,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetFrameWorkForDotNetAssembly(string framework)
     {
         var expectedElapsedTime = 5;
@@ -126,7 +126,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
         }
         else
         {
-            Assert.AreEqual(".NETCoreApp,Version=v3.1", actualFx.FullName);
+            Assert.AreEqual(".NETCoreApp,Version=v8.0", actualFx.FullName);
         }
 
         Console.WriteLine("Framework:{0}, {1}", framework, string.Format(CultureInfo.CurrentCulture, PerfAssertMessageFormat, expectedElapsedTime, stopWatch.ElapsedMilliseconds));

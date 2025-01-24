@@ -97,7 +97,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public override void ConfigureServices(IServiceCollection collection)
         {
-            collection.TryAddSingleton<ISigningInformationModelFactory, SigningInformationModelFactory>();
             collection.TryAddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>();
             collection.TryAddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>();
             collection.TryAddSingleton<IBuildModelFactory, BuildModelFactory>();
@@ -108,7 +107,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
 
         public bool ExecuteTask(IFileSystem fileSystem,
-            ISigningInformationModelFactory signingInformationModelFactory,
             IBlobArtifactModelFactory blobArtifactModelFactory,
             IPackageArtifactModelFactory packageArtifactModelFactory,
             IBuildModelFactory buildModelFactory)
@@ -241,9 +239,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         }
                     }
 
-                    SigningInformationModel signingInformationModel = signingInformationModelFactory.CreateSigningInformationModelFromItems(
-                        ItemsToSign, StrongNameSignInfo, FileSignInfo, FileExtensionSignInfo, CertificatesSignInfo, blobArtifacts, packageArtifacts);
-
                     buildModelFactory.CreateBuildManifest(
                         blobArtifacts,
                         packageArtifacts,
@@ -255,8 +250,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         ManifestBuildData,
                         IsStableBuild,
                         targetPublishingVersion,
-                        IsReleaseOnlyPackageVersion,
-                        signingInformationModel: signingInformationModel);
+                        IsReleaseOnlyPackageVersion);
 
                     PushToLocalStorageOrAzDO(ItemType.AssetManifest, new TaskItem(AssetManifestPath));
                 }

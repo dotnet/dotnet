@@ -4,7 +4,7 @@
     $CommonMetadataElements$
 
     <dependencies>
-      <group targetFramework="netcoreapp3.1">
+      <group targetFramework="net8.0">
         <dependency id="Microsoft.TestPlatform.TestHost" version="$Version$" />
         <dependency id="Microsoft.CodeCoverage" version="$Version$" />
       </group>
@@ -18,14 +18,14 @@
   <files>
     $CommonFileElements$
 
-    <file src="netstandard2.0\netcoreapp\*" target="build\netcoreapp3.1\" />
+    <file src="netstandard2.0\netcoreapp\*" target="build\net8.0\" />
     <file src="netstandard2.0\netfx\*" target="build\net462\" />
 
     <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\" />
-    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\netcoreapp3.1\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\net8.0\" />
     <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\net462\" />
 
-    <file src="netstandard2.0\_._" target="lib/netcoreapp3.1" />
+    <file src="netstandard2.0\_._" target="lib/net8.0" />
     <file src="netstandard2.0\_._" target="lib/net462" />
   </files>
 </package>

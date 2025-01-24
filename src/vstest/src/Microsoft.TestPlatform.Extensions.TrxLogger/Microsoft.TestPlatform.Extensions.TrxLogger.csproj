@@ -3,7 +3,12 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger</AssemblyName>
-    <TargetFrameworks>netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <!--
+      Targetting netstandard2.0 and also net462, because we already had explicit packaging of net462 libraries,
+      and this article recommends to provide net462 along netstandard2.0
+      https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/cross-platform-targeting#multi-targeting
+    -->
+    <TargetFrameworks>$(ExtensionTargetFrameworks);net462</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
@@ -23,16 +28,8 @@
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
-    <Reference Include="System" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
-    <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,20 +37,12 @@
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+  <ItemGroup>
+    <!-- On .NET5 and newer this dependency moved to be shipped inbox. -->
+    <PackageReference Include="System.Security.Principal.Windows" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5')) != true" Version="$(SystemSecurityPrincipalWindowsVersion)" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="NullableHelpers.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>NullableHelpers.tt</DependentUpon>
-    </Compile>
     <Compile Update="Resources\TrxResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -79,13 +68,6 @@
     <!-- Framework specific API -->
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="NullableHelpers.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>NullableHelpers.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

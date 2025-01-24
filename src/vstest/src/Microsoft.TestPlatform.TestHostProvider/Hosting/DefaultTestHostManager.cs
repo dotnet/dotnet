@@ -194,7 +194,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         if (!_fileHelper.Exists(testhostProcessPath))
         {
             // We assume that we could not find testhost.exe in the root folder so we are going to lookup in the
-            // TestHostNetFramework folder (assuming we are currently running under netcoreapp3.1) or in dotnet SDK
+            // TestHostNetFramework folder (assuming we are currently running under .NET) or in dotnet SDK
             // context.
             testHostProcessName = Path.Combine("TestHostNetFramework", originalTestHostProcessName);
             testhostProcessPath = Path.Combine(currentWorkingDirectory, "..", testHostProcessName);

@@ -30,7 +30,7 @@ namespace Microsoft.TestPlatform.TestUtilities;
 public class IntegrationTestBase
 {
     public const string DesktopRunnerFramework = "net462";
-    public const string CoreRunnerFramework = "netcoreapp3.1";
+    public const string CoreRunnerFramework = "net8.0";
 
     private const string TotalTestsMessage = "Total tests: {0}";
     private const string PassedTestsMessage = " Passed: {0}";
@@ -294,11 +294,11 @@ public class IntegrationTestBase
     /// Execute Tests that are not supported with given Runner framework.
     /// </summary>
     /// <param name="runnerFramework">Runner Framework</param>
-    /// <param name="framework">Framework for which Tests are not supported</param>
+    /// <param name="framework">Framework for which Tests are supported</param>
     /// <param name="message">Message to be shown</param>
     public static void ExecuteNotSupportedRunnerFrameworkTests(string runnerFramework, string framework, string message)
     {
-        if (runnerFramework.StartsWith(framework))
+        if (!runnerFramework.StartsWith(framework, StringComparison.OrdinalIgnoreCase))
         {
             Assert.Inconclusive(message);
         }
@@ -605,7 +605,7 @@ public class IntegrationTestBase
             var version = IntegrationTestEnvironment.DependencyVersions["MSTestTestAdapterVersion"];
             if (version.StartsWith("3"))
             {
-                var tfm = _testEnvironment.TargetFramework.StartsWith("net4") ? "net462" : _testEnvironment.TargetFramework;
+                var tfm = _testEnvironment.TargetFramework.StartsWith("net4") ? "net462" : "netcoreapp3.1";
                 adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _msTestAdapterRelativePath, version, tfm);
             }
             else
@@ -990,7 +990,7 @@ public class IntegrationTestBase
     }
 
     protected string GetDotnetRunnerPath() =>
-        _testEnvironment.VSTestConsoleInfo?.Path ?? Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.CLI.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "contentFiles", "any", "netcoreapp3.1", "vstest.console.dll");
+        _testEnvironment.VSTestConsoleInfo?.Path ?? Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.CLI.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "contentFiles", "any", "net9.0", "vstest.console.dll");
 
     protected void StdOutHasNoWarnings()
     {

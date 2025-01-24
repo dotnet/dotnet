@@ -11,10 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Resources;
-using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -47,12 +45,6 @@ namespace Microsoft.DotNet.SignTool
         /// Allow the sign tool task to be called with an empty list of files to be signed.
         /// </summary>
         public bool AllowEmptySignList { get; set; }
-
-        /// <summary>
-        /// By default in non-DryRun cases we verify the vsix and nuget packages contain a signature file
-        /// This option disables that check in cases you want to sign the container at a later step. 
-        /// </summary>
-        public bool SkipZipContainerSignatureMarkerCheck { get; set; }
 
         /// <summary>
         /// For some cases you may need to run the sign tool more than once and if you do you want to
@@ -127,12 +119,7 @@ namespace Microsoft.DotNet.SignTool
         public ITaskItem[] CertificatesSignInfo { get; set; }
 
         /// <summary>
-        /// Path to msbuild.exe. Required if <see cref="DryRun"/> is <c>false</c>, OS is <c>Windows_NT</c>, and project is using .NET Core.
-        /// </summary>
-        public string MSBuildPath { get; set; }
-
-        /// <summary>
-        /// Path to dotnet executable. Required if <see cref="DryRun"/> is <c>false</c> and OS is not <c>Windows_NT</c>.
+        /// Path to dotnet executable. Required if <see cref="DryRun"/> is <c>false</c>.
         /// </summary>
         public string DotNetPath { get; set; }
 
@@ -145,6 +132,11 @@ namespace Microsoft.DotNet.SignTool
         /// Path to Microsoft.DotNet.Tar.dll. Required for signing tar files on .NET Framework.
         /// </summary>
         public string TarToolPath { get; set; }
+
+        /// <summary>
+        /// Path to Microsoft.DotNet.MacOsPkg.dll. Required for signing pkg files on MacOS.
+        /// </summary>
+        public string PkgToolPath { get; set; }
 
         /// <summary>
         /// Number of containers to repack in parallel. Zero will default to the processor count
@@ -201,23 +193,20 @@ namespace Microsoft.DotNet.SignTool
 
             if (!DryRun)
             {
-                bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                if (isWindows && typeof(object).Assembly.GetName().Name != "mscorlib" && !File.Exists(MSBuildPath))
+                if (!File.Exists(DotNetPath))
                 {
-                    // For Windows, desktop msbuild is required if running on .NET Core.
-                    Log.LogError($"MSBuild was not found at this path: '{MSBuildPath}'.");
-                    return;
-                }
-                else if (!isWindows && !File.Exists(DotNetPath))
-                {
-                    // For Mac and Linux, dotnet is required.
                     Log.LogError($"DotNet was not found at this path: '{DotNetPath}'.");
                     return;
                 }
 
-                if(!Path.IsPathRooted(TempDir))
+                if (!Path.IsPathRooted(TempDir))
                 {
                     Log.LogWarning($"TempDir ('{TempDir}' is not rooted, this can cause unexpected behavior in signtool.  Please provide a fully qualified 'TempDir' path.");
+                }
+
+                if (PkgToolPath == null && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Log.LogError($"PkgToolPath ('{PkgToolPath}') does not exist & is required for unpacking, repacking, and notarizing .pkg files and .app bundles on MacOS.");
                 }
             }
             if(WixToolsPath != null && !Directory.Exists(WixToolsPath))
@@ -233,25 +222,28 @@ namespace Microsoft.DotNet.SignTool
             var strongNameInfo = ParseStrongNameSignInfo();
             var fileSignInfo = ParseFileSignInfo();
             var extensionSignInfo = ParseFileExtensionSignInfo();
-            var dualCertificates = ParseCertificateInfo();
+            var dualCertificates = ParseAdditionalCertificateInformation();
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, MSBuildPath, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
+
+            var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();
 
             Telemetry telemetry = new Telemetry();
             try
             {
                 Configuration configuration = new Configuration(
                     TempDir,
-                    ItemsToSign.OrderBy(i => i.GetMetadata(SignToolConstants.CollisionPriorityId)).ToArray(),
+                    itemsToSign,
                     strongNameInfo,
                     fileSignInfo,
                     extensionSignInfo,
                     dualCertificates,
-                    TarToolPath,
-                    SNBinaryPath,
+                    tarToolPath: TarToolPath,
+                    pkgToolPath: PkgToolPath,
+                    snPath: SNBinaryPath,
                     Log,
                     useHashInExtractionPath: UseHashInExtractionPath,
                     telemetry: telemetry);
@@ -277,8 +269,6 @@ namespace Microsoft.DotNet.SignTool
                     maximumParallelFileSizeInBytes: MaximumParallelFileSize * 1024 * 1024,
                     telemetry: telemetry);
 
-                util.SkipZipContainerSignatureMarkerCheck = this.SkipZipContainerSignatureMarkerCheck;
-
                 if (Log.HasLoggedErrors) return;
 
                 util.Go(DoStrongNameCheck);
@@ -298,11 +288,58 @@ namespace Microsoft.DotNet.SignTool
             Log.LogMessage(MessageImportance.High, $"MicroBuild signing configuration will be in (Round*.proj): {TempDir}");
         }
 
-        private ITaskItem[] ParseCertificateInfo()
+        private Dictionary<string, List<AdditionalCertificateInformation>> ParseAdditionalCertificateInformation()
         {
-            return CertificatesSignInfo?
-                .Where(item => item.GetMetadata("DualSigningAllowed").Equals("true", StringComparison.OrdinalIgnoreCase))
-                .ToArray();
+            if (CertificatesSignInfo != null)
+            {
+                // Parse the additional certificate information, which has the following
+                // potential metadata:
+                // - DualSigningAllowed: boolean
+                // - CollisionPriorityId: string
+                // - MacCertificate: Name of actual cert if the cert name represents a sign+notarize operation. If present, requires "Notarize" metadata.
+                // - MacNotarizationOperation: Name of the notarize operation if the cert name represents a sign+notarize operation. If present, requires "Certificate" metadata.
+
+                var map = new Dictionary<string, List<AdditionalCertificateInformation>>(StringComparer.OrdinalIgnoreCase);
+                foreach (var certificateSignInfo in CertificatesSignInfo)
+                {
+                    var certificateName = certificateSignInfo.ItemSpec;
+                    var dualSigningAllowed = certificateSignInfo.GetMetadata("DualSigningAllowed");
+                    bool dualSignAllowedValue = false;
+                    var macSigningOperation = certificateSignInfo.GetMetadata("MacCertificate");
+                    var macNotarizationAppName = certificateSignInfo.GetMetadata("MacNotarizationAppName");
+                    var collisionPriorityId = certificateSignInfo.GetMetadata(SignToolConstants.CollisionPriorityId);
+
+                    if (string.IsNullOrEmpty(macSigningOperation) != string.IsNullOrEmpty(macNotarizationAppName))
+                    {
+                        Log.LogError($"Both MacCertificate and MacNotarizationAppName must be specified");
+                        continue;
+                    }
+                    if (!string.IsNullOrEmpty(dualSigningAllowed) && !bool.TryParse(dualSigningAllowed, out dualSignAllowedValue))
+                    {
+                        Log.LogError($"DualSigningAllowed must be 'true' or 'false");
+                        continue;
+                    }
+
+                    var additionalCertInfo = new AdditionalCertificateInformation
+                    {
+                        DualSigningAllowed = dualSignAllowedValue,
+                        MacSigningOperation = macSigningOperation,
+                        MacNotarizationAppName = macNotarizationAppName,
+                        CollisionPriorityId = collisionPriorityId
+                    };
+
+                    if (!map.TryGetValue(certificateName, out var additionalCertificateInformation))
+                    {
+                        additionalCertificateInformation = new List<AdditionalCertificateInformation>();
+                        map.Add(certificateName, additionalCertificateInformation);
+                    }
+                    additionalCertificateInformation.Add(additionalCertInfo);
+                }
+
+                return map;
+            }
+
+            return null;
         }
 
         private string GetEnclosingDirectoryOfItemsToSign()

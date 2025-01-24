@@ -5,7 +5,7 @@
 
     <dependencies>
       <group targetFramework="net462"></group>
-      <group targetFramework="netcoreapp3.1"></group>
+      <group targetFramework="net8.0"></group>
     </dependencies>
   </metadata>
 
@@ -62,7 +62,7 @@
     <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libInstrumentationEngine.dylib"	target="build\netstandard2.0\macos\x64\libInstrumentationEngine.dylib" />
     <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\Cov_x64.config"	target="build\netstandard2.0\macos\x64\Cov_x64.config" />
 
-    <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\netcoreapp3.1\" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\net8.0\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\Shim\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\net462\" />
 
 
