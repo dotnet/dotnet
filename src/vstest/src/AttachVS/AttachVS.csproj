@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net7;net472</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks)</TargetFrameworks>
     <AssemblyName>AttachVS</AssemblyName>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>

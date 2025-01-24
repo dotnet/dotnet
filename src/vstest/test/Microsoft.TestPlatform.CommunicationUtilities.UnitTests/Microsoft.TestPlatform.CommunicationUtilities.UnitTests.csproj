@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.CommunicationUtilities.UnitTests</AssemblyName>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Runtime" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />

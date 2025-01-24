@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <TargetFrameworks>$(NetSDKTargetFramework);$(TestHostAllTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -39,24 +39,41 @@
     <MSBuildWarningsAsMessages>NU1702</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
-    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
-    <ProjectReference Include="..\..\testhost\testhost.csproj" />
-    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+  <!-- runner and runner dependencies -->
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetSDKTargetFramework)'))
+                        or '$(DotNetBuildSourceOnly)' == 'true'">
     <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <!-- EventLogCollector only works on Windows and .NET Framework. -->
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"
+                      SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"
+                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
   </ItemGroup>
 
+  <!-- datacollectors are taken from both .NET and .NET Framework -->
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetSDKTargetFramework)'))
+              or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))
+              or '$(DotNetBuildSourceOnly)' == 'true'">
+    <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
+    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+    <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
+    This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
+    prevents us from having to lookup the correct .NET runtime. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,8 +82,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="$(MicrosoftDiagnosticsNETCoreClientVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net472'" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" Condition="'$(TargetFramework)' != 'net472'" />
+    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='$(NetFrameworkRunnerTargetFramework)'" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" Condition="'$(TargetFramework)' != 'NetFrameworkRunnerTargetFramework'" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">

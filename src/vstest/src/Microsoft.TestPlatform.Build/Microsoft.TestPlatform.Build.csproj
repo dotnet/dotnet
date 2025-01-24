@@ -3,7 +3,12 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.Build</AssemblyName>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <!--
+      All extensions for MSBuild should target netstandard2.0, unless they multitarget.
+      https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation?view=vs-2022#optional-support-multitargeting
+      We also ship this as nuget, so we don't know who is using it where.
+    -->
+    <TargetFrameworks>$(ExtensionTargetFrameworks)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>

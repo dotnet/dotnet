@@ -577,10 +577,12 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
                         // The name of the file starts with the process name, that's the only filtering we can do.
                         // So there's one possible benign race condition when another test is dumping an host and we take lock on the name but the dump is not finished.
                         // In that case we'll fail for file locking but it's fine. The correct or subsequent "SessionEndedHandler" will move that one.
-                        using MD5 md5LockName = MD5.Create();
-                        // BitConverter converts into something like EC-1B-B6-22-81-00-41-C8-31-1D-B6-61-27-6A-65-8A valid muxer name
+                        using SHA256 hashedLockName = SHA256.Create();
                         // LPCSTR An LPCSTR is a 32-bit pointer to a constant null-terminated string of 8-bit Windows (ANSI) characters.
-                        string muxerName = @$"Global\{BitConverter.ToString(md5LockName.ComputeHash(Encoding.UTF8.GetBytes(dumpFileNameFullPath)))}";
+                        var toGuid = new byte[16];
+                        Array.Copy(hashedLockName.ComputeHash(Encoding.UTF8.GetBytes(dumpFileNameFullPath)), toGuid, 16);
+                        Guid id = new(toGuid);
+                        string muxerName = @$"Global\{id}";
                         using Mutex lockFile = new(true, muxerName, out bool createdNew);
                         EqtTrace.Info($"[MonitorPostmortemDump]Acquired global muxer '{muxerName}' for {dumpFileNameFullPath}");
                         if (createdNew)

@@ -8,8 +8,8 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
-    <TargetFrameworks>net6.0</TargetFrameworks>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
@@ -26,7 +26,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Intent\Intent.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <Reference Include="System.Runtime" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />

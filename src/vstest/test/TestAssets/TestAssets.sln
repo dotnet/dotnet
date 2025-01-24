@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MstestV1UnitTestProject", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProjectx86", "SimpleTestProjectx86\SimpleTestProjectx86.csproj", "{C4369F97-5D81-4D1A-BAE1-2AE3B2408D44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProjectARM", "SimpleTestProjectARM\SimpleTestProjectARM.csproj", "{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProjectARM64", "SimpleTestProjectARM64\SimpleTestProjectARM64.csproj", "{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUITTestProject", "CUITTestProject\CUITTestProject.csproj", "{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}"
 EndProject

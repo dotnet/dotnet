@@ -10,12 +10,12 @@
 
   <PropertyGroup>
     <AssemblyName>testhost.arm64</AssemblyName>
-    <TargetFrameworks>net7.0;$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <TargetFrameworks>$(TestHostAllTargetFrameworks)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
+  <PropertyGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win10-arm64</RuntimeIdentifier>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <TargetName Condition="'$(TargetFramework)' != '$(NetFrameworkMinimum)'">$(AssemblyName.Replace('.arm64', '')).$(TargetFramework).arm64</TargetName>
@@ -38,10 +38,10 @@
 
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
     <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $(TargetFramework.StartsWith('net4')) " />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) " />
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />

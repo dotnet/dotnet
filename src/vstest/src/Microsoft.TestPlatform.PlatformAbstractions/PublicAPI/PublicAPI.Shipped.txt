@@ -119,6 +119,5 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ThreadApartmentStateNot
 static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnInitialization.get -> string?
 static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnInitialization.set -> void
 static Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyExtensions.GetAssemblyLocation(this System.Reflection.Assembly! assembly) -> string!
-virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventHandler.Invoke(object? sender, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventArgs? args) -> System.Reflection.Assembly?
 virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.Dispose(bool disposing) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.RiscV64 = 6 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
