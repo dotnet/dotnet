@@ -705,13 +705,10 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
         });
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, "mvc", importSources: default, tagHelpers: []);
 
-        var csharpDocument = new RazorCSharpDocument(
+        var csharpDocument = TestRazorCSharpDocument.Create(
             codeDocument,
             projectedCSharpSource,
-            RazorCodeGenerationOptions.Default,
-            diagnostics: [],
-            sourceMappings,
-            linePragmas: []);
+            sourceMappings);
         codeDocument.SetCSharpDocument(csharpDocument);
         return codeDocument;
     }

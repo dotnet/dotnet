@@ -141,13 +141,10 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)
     {
         var codeDocument = CreateCodeDocument(razorSource, tagHelpers: []);
-        var csharpDocument = new RazorCSharpDocument(
+        var csharpDocument = TestRazorCSharpDocument.Create(
             codeDocument,
             projectedCSharpSource,
-            RazorCodeGenerationOptions.Default,
-            diagnostics: [],
-            sourceMappings,
-            linePragmas: []);
+            sourceMappings);
         codeDocument.SetCSharpDocument(csharpDocument);
         return codeDocument;
     }

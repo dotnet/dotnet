@@ -72,7 +72,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         var document = codeDocument.GetCSharpDocument();
 
         // Normalize newlines to match those in the baseline.
-        var actualCode = document.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actualCode = document.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
 
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".codegen.cs", testName);
         var baselineDiagnosticsFilePath = GetBaselineFilePath(codeDocument, ".diagnostics.txt", testName);

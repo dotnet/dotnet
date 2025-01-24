@@ -150,7 +150,7 @@ internal class RazorCompletionListProvider(
 
                     directiveCompletionItem.UseCommitCharactersFrom(razorCompletionItem, clientCapabilities);
 
-                    if (razorCompletionItem == DirectiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem)
+                    if (DirectiveAttributeTransitionCompletionItemProvider.IsTransitionCompletionItem(razorCompletionItem))
                     {
                         directiveCompletionItem.Command = s_retriggerCompletionCommand;
                         directiveCompletionItem.Kind = tagHelperCompletionItemKind;

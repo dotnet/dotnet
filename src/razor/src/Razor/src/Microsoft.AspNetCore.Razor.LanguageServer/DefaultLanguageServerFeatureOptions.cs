@@ -40,4 +40,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
     public override bool ForceRuntimeCodeGeneration => false;
 
     public override bool UseNewFormattingEngine => false;
+
+    public override bool SupportsSoftSelectionInCompletion => true;
 }

@@ -54,7 +54,7 @@ internal sealed class RemoteMefComposition
     /// </summary>
     public static async Task<ExportProvider> CreateExportProviderAsync(CancellationToken cancellationToken)
     {
-        var configuration = await s_lazyConfiguration.GetValueAsync(cancellationToken);
+        var configuration = await s_lazyConfiguration.GetValueAsync(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);

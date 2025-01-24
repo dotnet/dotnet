@@ -1,12 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -20,9 +20,11 @@ internal class GeneratedDocumentTextLoader(IDocumentSnapshot document, string fi
     {
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        // Providing an encoding here is important for debuggability.
-        // Without this, edit-and-continue won't work for projects with Razor files.
-        var csharpSourceText = SourceText.From(output.GetCSharpDocument().GeneratedCode, Encoding.UTF8);
+        var csharpSourceText = output.GetCSharpDocument().Text;
+
+        // If the encoding isn't UTF8, edit-continue won't work.
+        Debug.Assert(csharpSourceText.Encoding == Encoding.UTF8);
+
         return TextAndVersion.Create(csharpSourceText, _version, _filePath);
     }
 }

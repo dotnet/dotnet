@@ -41,4 +41,10 @@ internal abstract class LanguageServerFeatureOptions
     public abstract bool ForceRuntimeCodeGeneration { get; }
 
     public abstract bool UseNewFormattingEngine { get; }
+
+    /// <summary>
+    /// Indicates that client supports soft selection in completion list, meaning that typing a commit 
+    /// character with a soft-selected item will not commit that item.
+    /// </summary>
+    public abstract bool SupportsSoftSelectionInCompletion { get; }
 }

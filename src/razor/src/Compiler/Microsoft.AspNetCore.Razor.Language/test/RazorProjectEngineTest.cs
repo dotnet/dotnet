@@ -142,11 +142,12 @@ public class RazorProjectEngineTest
     public void GetImportSourceDocuments_UnreadableItem_Throws()
     {
         // Arrange
-        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
-        projectItem.SetupGet(p => p.Exists).Returns(true);
-        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        using PooledArrayBuilder<RazorProjectItem> items = [projectItem.Object];
+        var projectItem = new TestRazorProjectItem(
+            filePath: "path/to/file.cshtml",
+            physicalPath: "path/to/file.cshtml",
+            relativePhysicalPath: "path/to/file.cshtml",
+            onRead: () => throw new IOException("Couldn't read file."));
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem];
 
         // Act & Assert
         var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(in items));
@@ -157,13 +158,12 @@ public class RazorProjectEngineTest
     public void GetImportSourceDocuments_WithSuppressExceptions_UnreadableItem_DoesNotThrow()
     {
         // Arrange
-        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
-        projectItem.SetupGet(p => p.Exists).Returns(true);
-        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.SetupGet(p => p.FilePath).Returns("path/to/file.cshtml");
-        projectItem.SetupGet(p => p.RelativePhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        using PooledArrayBuilder<RazorProjectItem> items = [projectItem.Object];
+        var projectItem = new TestRazorProjectItem(
+            filePath: "path/to/file.cshtml",
+            physicalPath: "path/to/file.cshtml",
+            relativePhysicalPath: "path/to/file.cshtml",
+            onRead: () => throw new IOException("Couldn't read file."));
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem];
 
         // Act
         var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(in items, suppressExceptions: true);

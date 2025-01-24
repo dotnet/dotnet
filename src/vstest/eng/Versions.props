@@ -21,6 +21,8 @@
     <UsingToolXliff>true</UsingToolXliff>
     <!-- Opt-in to Arcade tools for building VSIX projects. -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
+    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</FlagNetStandard1XDependencies>
   </PropertyGroup>
   <PropertyGroup Label="VSTest dependencies">
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
@@ -32,7 +34,7 @@
 
         Could not load file or assembly 'Microsoft.Build.Utilities.Core...
     -->
-    <!-- 
+    <!--
       Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
       avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
     -->

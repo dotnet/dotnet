@@ -65,7 +65,7 @@ internal static class FormattingUtilities
     ///  The contents of the C# file.
     /// </param>
     /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, string source)
+    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, SourceText source)
     {
         var startingIndent = 0;
         for (var i = 1; i <= numCharacterBefore; i++)

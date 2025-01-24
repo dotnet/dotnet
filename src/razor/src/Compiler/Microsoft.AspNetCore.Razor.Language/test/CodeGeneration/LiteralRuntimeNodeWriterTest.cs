@@ -30,7 +30,7 @@ public class LiteralRuntimeNodeWriterTest
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(
 #nullable restore
@@ -78,7 +78,7 @@ i++
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(
 #nullable restore

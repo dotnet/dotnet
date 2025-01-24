@@ -438,6 +438,66 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
     [InlineData("[||]DoesNotExist")]
     [InlineData("Does[||]NotExist")]
     [InlineData("DoesNotExist[||]")]
+    public async Task Handle_GenerateMethod_Action(string cursorAndMethodName)
+    {
+        var input = $$"""
+            @addTagHelper TestComponent, Microsoft.AspNetCore.Components
+            <TestComponent OnDragStart="{{cursorAndMethodName}}" />
+            """;
+
+        var expected = $$"""
+            @addTagHelper TestComponent, Microsoft.AspNetCore.Components
+            <TestComponent OnDragStart="DoesNotExist" />
+            @code {
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.DragEventArgs args)
+                {
+                    throw new global::System.NotImplementedException();
+                }
+            }
+            """;
+
+        await ValidateCodeActionAsync(input,
+            expected,
+            GenerateEventHandlerTitle,
+            razorCodeActionProviders: [new GenerateMethodCodeActionProvider()],
+            codeActionResolversCreator: CreateRazorCodeActionResolvers,
+            diagnostics: [new Diagnostic() { Code = "CS0103", Message = "The name 'DoesNotExist' does not exist in the current context" }]);
+    }
+
+    [Theory]
+    [InlineData("[||]DoesNotExist")]
+    [InlineData("Does[||]NotExist")]
+    [InlineData("DoesNotExist[||]")]
+    public async Task Handle_GenerateMethod_GenericAction(string cursorAndMethodName)
+    {
+        var input = $$"""
+            @addTagHelper TestGenericComponent, Microsoft.AspNetCore.Components
+            <TestGenericComponent TItem="string" OnDragStart="{{cursorAndMethodName}}" />
+            """;
+
+        var expected = $$"""
+            @addTagHelper TestGenericComponent, Microsoft.AspNetCore.Components
+            <TestGenericComponent TItem="string" OnDragStart="DoesNotExist" />
+            @code {
+                private {{GenerateEventHandlerReturnType}} DoesNotExist(global::Microsoft.AspNetCore.Components.Web.DragEventArgs<string> args)
+                {
+                    throw new global::System.NotImplementedException();
+                }
+            }
+            """;
+
+        await ValidateCodeActionAsync(input,
+            expected,
+            GenerateEventHandlerTitle,
+            razorCodeActionProviders: [new GenerateMethodCodeActionProvider()],
+            codeActionResolversCreator: CreateRazorCodeActionResolvers,
+            diagnostics: [new Diagnostic() { Code = "CS0103", Message = "The name 'DoesNotExist' does not exist in the current context" }]);
+    }
+
+    [Theory]
+    [InlineData("[||]DoesNotExist")]
+    [InlineData("Does[||]NotExist")]
+    [InlineData("DoesNotExist[||]")]
     public async Task Handle_GenerateMethod_NoCodeBlock_EmptyTrailingLine(string cursorAndMethodName)
     {
         var input = $$"""

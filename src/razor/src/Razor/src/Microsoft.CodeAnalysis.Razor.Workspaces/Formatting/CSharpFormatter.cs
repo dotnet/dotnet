@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host;
@@ -289,7 +288,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
         using var changes = new PooledArrayBuilder<TextChange>();
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(context.CSharpSourceText, cancellationToken: cancellationToken);
+        var syntaxTree = context.CodeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
         var root = syntaxTree.GetRoot(cancellationToken);
 
         var previousMarkerOffset = 0;

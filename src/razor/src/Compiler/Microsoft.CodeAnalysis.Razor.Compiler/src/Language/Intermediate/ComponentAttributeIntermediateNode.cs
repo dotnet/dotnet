@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -241,5 +242,62 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         // We don't really want to crash though.
         argument = default;
         return false;
+    }
+
+    internal static bool TryGetActionArgument(ReadOnlyMemory<char> candidate, out ReadOnlyMemory<char> argument)
+    {
+        // Strip 'global::' from the candidate.
+        if (candidate.Span.StartsWith("global::".AsSpan()))
+        {
+            candidate = candidate["global::".Length..];
+        }
+
+        if (!candidate.Span.StartsWith("System.Action".AsSpan()))
+        {
+            argument = default;
+            return false;
+        }
+
+
+        candidate = candidate["System.Action".Length..];
+        if (candidate.Span is ['<', .., '>'])
+        {
+            argument = candidate[1..^1];
+            return true;
+        }
+
+        argument = default;
+        return false;
+    }
+
+    /// <summary>
+    /// Returns a string where the generic type argument of a System.Action&lt;MyType&lt;TItem&gt;&gt; this method
+    /// constructs a new string replacing 'TItem' with <paramref name="genericType"/>
+    /// </summary>
+    /// <param name="candidate">The full candidate string to parse, e.g System.Action&lt;MyType&lt;TItem&gt;&gt;</param>
+    /// <param name="genericType">The type name to replace the generic argument with</param>
+    /// <param name="argument"/>The resulting string with the generic argument replaced with <paramref name="genericType"/></param>
+    /// <returns>True if the argument could be constructed</returns>
+    internal static bool TryGetGenericActionArgument(ReadOnlyMemory<char> candidate, string genericType, [NotNullWhen(true)] out string argument)
+    {
+        if (!TryGetActionArgument(candidate, out var actionArgument))
+        {
+            argument = default;
+            return false;
+        }
+
+        var genericTypeStart = actionArgument.Span.IndexOf('<');
+        var genericTypeEnd = actionArgument.Span.IndexOf('>');
+
+        // Check (start + 1) to ensure there is at least one character
+        // between the start and end
+        if (genericTypeStart <= 0 || genericTypeEnd < (genericTypeStart + 1))
+        {
+            argument = default;
+            return false;
+        }
+
+        argument = actionArgument[0..(genericTypeStart + 1)] + genericType + actionArgument[genericTypeEnd..];
+        return true;
     }
 }

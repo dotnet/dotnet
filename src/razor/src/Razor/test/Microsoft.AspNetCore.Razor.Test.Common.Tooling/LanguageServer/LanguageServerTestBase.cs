@@ -82,6 +82,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
 
             RazorExtensions.Register(b);
             b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
+            b.Features.Add(new DefaultTypeNameFeature());
         });
         var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
         var defaultImportDocument = TestRazorSourceDocument.Create(

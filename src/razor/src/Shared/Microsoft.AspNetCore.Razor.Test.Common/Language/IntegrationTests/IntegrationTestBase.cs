@@ -225,16 +225,16 @@ public abstract class IntegrationTestBase
 
     protected CompiledAssembly CompileToAssembly(CompiledCSharpCode code, bool throwOnFailure = true, bool ignoreRazorDiagnostics = false)
     {
-        var cSharpDocument = code.CodeDocument.GetCSharpDocument();
-        if (!ignoreRazorDiagnostics && cSharpDocument.Diagnostics.Any())
+        var csharpDocument = code.CodeDocument.GetCSharpDocument();
+        if (!ignoreRazorDiagnostics && csharpDocument.Diagnostics.Any())
         {
-            var diagnosticsLog = string.Join(Environment.NewLine, cSharpDocument.Diagnostics.Select(d => d.ToString()).ToArray());
+            var diagnosticsLog = string.Join(Environment.NewLine, csharpDocument.Diagnostics.Select(d => d.ToString()).ToArray());
             throw new InvalidOperationException($"Aborting compilation to assembly because RazorCompiler returned nonempty diagnostics: {diagnosticsLog}");
         }
 
         var syntaxTrees = new[]
         {
-            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(cSharpDocument.GeneratedCode, CSharpParseOptions, path: code.CodeDocument.Source.FilePath ?? string.Empty),
+            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(csharpDocument.Text, CSharpParseOptions, path: code.CodeDocument.Source.FilePath ?? string.Empty),
         };
 
         var compilation = code.BaseCompilation.AddSyntaxTrees(syntaxTrees);
@@ -356,7 +356,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode, _baselineEncoding);
+            File.WriteAllText(baselineFullPath, htmlDocument.Text.ToString(), _baselineEncoding);
             return;
         }
 
@@ -369,11 +369,11 @@ public abstract class IntegrationTestBase
         var baseline = htmlFile.ReadAllText();
 
         // Normalize newlines to match those in the baseline.
-        var actual = htmlDocument.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actual = htmlDocument.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baseline, actual);
     }
 
-    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument cSharpDocument, [CallerMemberName] string testName = "")
+    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument csharpDocument, [CallerMemberName] string testName = "")
     {
         var fileName = GetTestFileName(testName);
         var baselineFileName = Path.ChangeExtension(fileName, ".codegen.cs");
@@ -382,10 +382,10 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, cSharpDocument.GeneratedCode, _baselineEncoding);
+            File.WriteAllText(baselineFullPath, csharpDocument.Text.ToString(), _baselineEncoding);
 
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
-            var lines = cSharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
+            var lines = csharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
             if (lines.Any())
             {
                 File.WriteAllLines(baselineDiagnosticsFullPath, lines, _baselineEncoding);
@@ -407,7 +407,7 @@ public abstract class IntegrationTestBase
         var baseline = codegenFile.ReadAllText();
 
         // Normalize newlines to match those in the baseline.
-        var actual = cSharpDocument.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actual = csharpDocument.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baseline, actual);
 
         var baselineDiagnostics = string.Empty;
@@ -417,7 +417,7 @@ public abstract class IntegrationTestBase
             baselineDiagnostics = diagnosticsFile.ReadAllText();
         }
 
-        var actualDiagnostics = string.Concat(cSharpDocument.Diagnostics.Select(d => NormalizeNewLines(RazorDiagnosticSerializer.Serialize(d)) + "\r\n"));
+        var actualDiagnostics = string.Concat(csharpDocument.Diagnostics.Select(d => NormalizeNewLines(RazorDiagnosticSerializer.Serialize(d)) + "\r\n"));
         Assert.Equal(baselineDiagnostics, actualDiagnostics);
     }
 
@@ -494,9 +494,7 @@ public abstract class IntegrationTestBase
             {
                 if (mapping.OriginalSpan == sourceSpan)
                 {
-                    var actualSpan = csharpDocument.GeneratedCode.Substring(
-                        mapping.GeneratedSpan.AbsoluteIndex,
-                        mapping.GeneratedSpan.Length);
+                    var actualSpan = csharpDocument.Text.ToString(mapping.GeneratedSpan.AsTextSpan());
 
                     if (!string.Equals(expectedSpan, actualSpan, StringComparison.Ordinal))
                     {
@@ -571,7 +569,7 @@ public abstract class IntegrationTestBase
         var problems = new List<string>();
         foreach (var mapping in htmlDocument.SourceMappings)
         {
-            var actualSpan = htmlDocument.GeneratedCode.Substring(mapping.GeneratedSpan.AbsoluteIndex, mapping.GeneratedSpan.Length);
+            var actualSpan = htmlDocument.Text.ToString(mapping.GeneratedSpan.AsTextSpan());
             var expectedSpan = sourceContent.Substring(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 
             if (expectedSpan != actualSpan)

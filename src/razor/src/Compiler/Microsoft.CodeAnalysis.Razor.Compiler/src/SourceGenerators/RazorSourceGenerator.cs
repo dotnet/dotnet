@@ -76,7 +76,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             var componentFiles = sourceItems.Where(static file => file.FilePath.EndsWith(".razor", StringComparison.OrdinalIgnoreCase));
 
-            var generatedDeclarationCode = componentFiles
+            var generatedDeclarationText = componentFiles
                 .Combine(importFiles.Collect())
                 .Combine(razorSourceGeneratorOptions)
                 .WithLambdaComparer((old, @new) => old.Right.Equals(@new.Right) && old.Left.Left.Equals(@new.Left.Left) && old.Left.Right.SequenceEqual(@new.Left.Right))
@@ -89,19 +89,20 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     var codeGen = projectEngine.Process(sourceItem);
 
-                    var result = codeGen.GetCSharpDocument().GeneratedCode;
+                    var result = new SourceGeneratorText(codeGen.GetCSharpDocument().Text);
 
                     RazorSourceGeneratorEventSource.Log.GenerateDeclarationCodeStop(sourceItem.FilePath);
 
                     return result;
                 });
 
-            var generatedDeclarationSyntaxTrees = generatedDeclarationCode
+            var generatedDeclarationSyntaxTrees = generatedDeclarationText
                 .Combine(parseOptions)
                 .Select(static (pair, ct) =>
                 {
-                    var (generatedDeclarationCode, parseOptions) = pair;
-                    return CSharpSyntaxTree.ParseText(generatedDeclarationCode, (CSharpParseOptions)parseOptions, cancellationToken: ct);
+                    var (generatedDeclarationText, parseOptions) = pair;
+
+                    return CSharpSyntaxTree.ParseText(generatedDeclarationText.Text, (CSharpParseOptions)parseOptions, cancellationToken: ct);
                 });
 
             var declCompilation = generatedDeclarationSyntaxTrees
@@ -117,7 +118,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .SuppressIfNeeded(isGeneratorSuppressed)
                 .Select(static (pair, _) =>
                 {
-
                     var ((compilation, razorSourceGeneratorOptions), isGeneratorSuppressed) = pair;
                     var results = new List<TagHelperDescriptor>();
 
@@ -191,7 +191,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 })
                 .Select(static (pair, _) =>
                 {
-
                     var ((compilation, razorSourceGeneratorOptions), hasRazorFiles) = pair;
                     if (!hasRazorFiles)
                     {
@@ -305,7 +304,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         return false;
                     }
 
-                    return string.Equals(a.csharpDocument.GeneratedCode, b.csharpDocument.GeneratedCode, StringComparison.Ordinal);
+                    return a.csharpDocument.Text.ContentEquals(b.csharpDocument.Text);
                 })
                 .WithTrackingName("CSharpDocuments");
 
@@ -331,7 +330,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         context.ReportDiagnostic(csharpDiagnostic);
                     }
 
-                    context.AddSource(hintName, csharpDocument.GeneratedCode);
+                    context.AddSource(hintName, csharpDocument.Text);
                 }
             });
         }

@@ -66,15 +66,8 @@ internal sealed class DocumentSnapshot(ProjectSnapshot project, DocumentState st
     }
 
 #if !FORMAT_FUSE
-    public async Task<RazorCodeDocument> GenerateDesignTimeOutputAsync(CancellationToken cancellationToken)
-    {
-        var importItems = await Project.GetImportItemsAsync(FilePath, cancellationToken).ConfigureAwait(false);
-        var projectEngine = Project.ProjectEngine;
-
-        return await CompilationHelpers
-            .GenerateDesignTimeCodeDocumentAsync(this, projectEngine, importItems, cancellationToken)
-            .ConfigureAwait(false);
-    }
+    public Task<RazorCodeDocument> GenerateDesignTimeOutputAsync(CancellationToken cancellationToken)
+        => CompilationHelpers.GenerateDesignTimeCodeDocumentAsync(this, Project.ProjectEngine, cancellationToken);
 #endif
 
     #region ILegacyDocumentSnapshot support

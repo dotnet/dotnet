@@ -147,7 +147,7 @@ public class RazorProjectEngine
         Action<RazorParserOptionsBuilder>? configureParser = null,
         Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration = null)
     {
-        var source = RazorSourceDocument.ReadFrom(projectItem);
+        var source = projectItem.GetSource();
         var importSources = GetImportSources(projectItem, designTime: false);
 
         return CreateCodeDocumentCore(
@@ -193,7 +193,7 @@ public class RazorProjectEngine
         Action<RazorParserOptionsBuilder>? configureParser = null,
         Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration = null)
     {
-        var source = RazorSourceDocument.ReadFrom(projectItem);
+        var source = projectItem.GetSource();
         var importSources = GetImportSources(projectItem, designTime: true);
 
         return CreateCodeDocumentDesignTimeCore(source, projectItem.FileKind, importSources, tagHelpers: null, configureParser, configureCodeGeneration);
@@ -464,7 +464,7 @@ public class RazorProjectEngine
                 try
                 {
                     // Normal import, has file paths, content etc.
-                    var sourceDocument = RazorSourceDocument.ReadFrom(importItem);
+                    var sourceDocument = importItem.GetSource();
                     imports.Add(sourceDocument);
                 }
                 catch (IOException) when (suppressExceptions)

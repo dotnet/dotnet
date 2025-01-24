@@ -38,7 +38,8 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
         var generated = output.GetCSharpDocument();
 
         var symbol = "SomeProperty";
-        var span = new TextSpan(generated.GeneratedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
+        var generatedCode = generated.Text.ToString();
+        var span = new TextSpan(generatedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
@@ -72,7 +73,8 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 
         var symbol = "SomeProperty";
         // Second occurrence
-        var span = new TextSpan(generated.GeneratedCode.IndexOf(symbol, generated.GeneratedCode.IndexOf(symbol, StringComparison.Ordinal) + symbol.Length, StringComparison.Ordinal), symbol.Length);
+        var generatedCode = generated.Text.ToString();
+        var span = new TextSpan(generatedCode.IndexOf(symbol, generatedCode.IndexOf(symbol, StringComparison.Ordinal) + symbol.Length, StringComparison.Ordinal), symbol.Length);
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
@@ -105,7 +107,8 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
         var generated = output.GetCSharpDocument();
 
         var symbol = "SomeProperty";
-        var span = new TextSpan(generated.GeneratedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
+        var generatedCode = generated.Text.ToString();
+        var span = new TextSpan(generatedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
@@ -138,7 +141,8 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
         var generated = output.GetCSharpDocument();
 
         var symbol = "ExecuteAsync";
-        var span = new TextSpan(generated.GeneratedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
+        var generatedCode = generated.Text.ToString();
+        var span = new TextSpan(generatedCode.IndexOf(symbol, StringComparison.Ordinal), symbol.Length);
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);

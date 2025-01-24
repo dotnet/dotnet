@@ -34,5 +34,4 @@ internal static class ProjectExtensions
 
         return document is not null;
     }
-
 }

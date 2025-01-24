@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.IO;
 using Microsoft.CodeAnalysis.Razor.Language;
 
@@ -12,7 +13,8 @@ public class TestRazorProjectItem(
     string? relativePhysicalPath = null,
     string? basePath = "/",
     string? fileKind = null,
-    string? cssScope = null) : RazorProjectItem
+    string? cssScope = null,
+    Func<Stream>? onRead = null) : RazorProjectItem
 {
     private readonly string _fileKind = fileKind!;
 
@@ -28,6 +30,11 @@ public class TestRazorProjectItem(
 
     public override Stream Read()
     {
+        if (onRead is not null)
+        {
+            return onRead.Invoke();
+        }
+
         // Act like a file and have a UTF8 BOM.
         var fileContent = new InMemoryFileContent(Content);
         return fileContent.CreateStream();

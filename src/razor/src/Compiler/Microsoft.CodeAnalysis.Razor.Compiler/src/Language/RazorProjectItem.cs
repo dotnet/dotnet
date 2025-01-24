@@ -132,7 +132,8 @@ public abstract class RazorProjectItem
         }
     }
 
-    internal RazorSourceDocument RazorSourceDocument { get; set; }
+    internal virtual RazorSourceDocument GetSource()
+        => RazorSourceDocument.ReadFrom(this);
 
     private string DebuggerToString()
     {

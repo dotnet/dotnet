@@ -37,7 +37,7 @@ public class InjectTargetExtensionTest
             #nullable disable
 
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 
     [Fact]
@@ -90,6 +90,6 @@ public class InjectTargetExtensionTest
              = default!;
             
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 }

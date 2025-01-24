@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -126,64 +125,6 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
             return builder.DrainToImmutable();
         }
-    }
-
-    public ValueTask<ImmutableArray<ImportItem>> GetImportItemsAsync(string filePath, CancellationToken cancellationToken)
-    {
-        return _state.Documents.TryGetValue(filePath, out var state)
-            ? new(GetImportItemsAsync(state.HostDocument, cancellationToken))
-            : new([]);
-    }
-
-    public async Task<ImmutableArray<ImportItem>> GetImportItemsAsync(HostDocument hostDocument, CancellationToken cancellationToken)
-    {
-        var projectEngine = ProjectEngine;
-
-        var projectItem = projectEngine.FileSystem.GetItem(hostDocument.FilePath, hostDocument.FileKind);
-
-        using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
-
-        foreach (var feature in projectEngine.GetFeatures<IImportProjectFeature>())
-        {
-            if (feature.GetImports(projectItem) is { } featureImports)
-            {
-                importProjectItems.AddRange(featureImports);
-            }
-        }
-
-        if (importProjectItems.Count == 0)
-        {
-            return [];
-        }
-
-        using var importItems = new PooledArrayBuilder<ImportItem>(capacity: importProjectItems.Count);
-
-        foreach (var importProjectItem in importProjectItems)
-        {
-            if (importProjectItem is NotFoundProjectItem)
-            {
-                continue;
-            }
-
-            if (importProjectItem.PhysicalPath is null)
-            {
-                // This is a default import.
-                using var stream = importProjectItem.Read();
-                var text = SourceText.From(stream);
-                var defaultImport = ImportItem.CreateDefault(text);
-
-                importItems.Add(defaultImport);
-            }
-            else if (_state.Documents.TryGetValue(importProjectItem.PhysicalPath, out var importDocumentState))
-            {
-                var textAndVersion = await importDocumentState.GetTextAndVersionAsync(cancellationToken).ConfigureAwait(false);
-                var importItem = new ImportItem(importDocumentState.HostDocument.FilePath, importDocumentState.HostDocument.FileKind, textAndVersion.Text, textAndVersion.Version);
-
-                importItems.Add(importItem);
-            }
-        }
-
-        return importItems.DrainToImmutable();
     }
 
     #region ILegacyProjectSnapshot support

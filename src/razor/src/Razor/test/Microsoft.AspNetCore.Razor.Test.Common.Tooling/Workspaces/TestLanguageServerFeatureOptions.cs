@@ -9,7 +9,8 @@ internal class TestLanguageServerFeatureOptions(
     bool includeProjectKeyInGeneratedFilePath = false,
     bool forceRuntimeCodeGeneration = false,
     bool updateBuffersForClosedDocuments = false,
-    bool useNewFormattingEngine = false) : LanguageServerFeatureOptions
+    bool useNewFormattingEngine = false,
+    bool supportsSoftSelectionInCompletion = true) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
 
@@ -40,4 +41,6 @@ internal class TestLanguageServerFeatureOptions(
     public override bool ForceRuntimeCodeGeneration => forceRuntimeCodeGeneration;
 
     public override bool UseNewFormattingEngine => useNewFormattingEngine;
+
+    public override bool SupportsSoftSelectionInCompletion => supportsSoftSelectionInCompletion;
 }

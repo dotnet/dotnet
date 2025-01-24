@@ -31,7 +31,7 @@ public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"using System;
 ",
@@ -56,7 +56,7 @@ public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -88,7 +88,7 @@ using System
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -126,7 +126,7 @@ using System
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"Test(
 i++);
@@ -158,7 +158,7 @@ i++);
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"Test(
 #nullable restore
@@ -202,7 +202,7 @@ i++
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"Test(
 iRender Children
@@ -242,7 +242,7 @@ iRender Children
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"Test(
 #nullable restore
@@ -285,7 +285,7 @@ Render Children
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Empty(csharp);
     }
 
@@ -308,7 +308,7 @@ Render Children
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"if (true) { }
 ",
@@ -336,7 +336,7 @@ Render Children
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -372,7 +372,7 @@ if (true) { }
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -399,7 +399,7 @@ if (true) { }
         writer.WriteHtmlLiteral(context, maxStringLiteralLength: 6, "Hello");
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(""Hello"");
 ",
@@ -418,7 +418,7 @@ if (true) { }
         writer.WriteHtmlLiteral(context, maxStringLiteralLength: 6, "Hello World");
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(""Hello "");
 WriteLiteral(""World"");
@@ -438,7 +438,7 @@ WriteLiteral(""World"");
         writer.WriteHtmlLiteral(context, maxStringLiteralLength: 2, " 👦");
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral("" "");
 WriteLiteral(""👦"");
@@ -458,7 +458,7 @@ WriteLiteral(""👦"");
         writer.WriteHtmlLiteral(context, maxStringLiteralLength: 6, "👩‍👩‍👧‍👧👩‍👩‍👧‍👧");
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(""👩‍👩‍"");
 WriteLiteral(""👧‍👧"");
@@ -487,7 +487,7 @@ WriteLiteral(""👧‍👧"");
         writer.WriteHtmlContent(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteLiteral(""SomeContent"");
 ",
@@ -513,7 +513,7 @@ WriteLiteral(""👧‍👧"");
         writer.WriteHtmlContent(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(string.Format(
             CultureInfo.InvariantCulture,
 @"WriteLiteral(@""{0}"");
@@ -540,7 +540,7 @@ WriteLiteral(@""{1}"");
         writer.WriteHtmlAttribute(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"BeginWriteAttribute(""checked"", "" checked=\"""", 6, ""\"""", 34, 2);
 Render Children
@@ -568,7 +568,7 @@ EndWriteAttribute();
         writer.WriteHtmlAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteAttributeValue("""", 16, ""hello-world"", 16, 11, true);
 ",
@@ -593,7 +593,7 @@ EndWriteAttribute();
         writer.WriteCSharpExpressionAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteAttributeValue("" "", 27, 
 #nullable restore
@@ -627,7 +627,7 @@ false
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"WriteAttributeValue("" "", 27, new Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_attribute_value_writer) => {
     PushWriter(__razor_attribute_value_writer);
@@ -660,7 +660,7 @@ if(@true){ }
         writer.BeginWriterScope(context, "MyWriter");
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"TestPushWriter(MyWriter);
 ",
@@ -682,7 +682,7 @@ if(@true){ }
         writer.EndWriterScope(context);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"TestPopWriter();
 ",

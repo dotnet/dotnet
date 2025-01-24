@@ -5798,4 +5798,60 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     
                     """);
     }
+
+    [FormattingTestFact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2347107")]
+    public async Task ImplicitExpressionAtEndOfCodeBlock()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+                @model IndexModel
+
+                <div>
+                </div>
+
+                @functions {void Foo() { }}@Foo()
+                """,
+            expected: """
+                @page "/"
+                @model IndexModel
+                
+                <div>
+                </div>
+                
+                @functions {
+                    void Foo() { }
+                }
+                @Foo()
+                """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact]
+    public async Task LineBreakAtTheEndOfBlocks()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+                @model IndexModel
+
+                <div>
+                </div>
+
+                @code {void Foo() { }}@Foo.ToString(   1  )
+                """,
+            expected: """
+                @page "/"
+                @model IndexModel
+                
+                <div>
+                </div>
+                
+                @code {
+                    void Foo() { }
+                }
+                @Foo.ToString(1)
+                """);
+    }
 }

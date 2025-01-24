@@ -734,13 +734,10 @@ public class RazorEditHelperTest : LanguageServerTestBase
         var changes = GetChanges(csharpSource.Text, newCSharpSource);
 
         var codeDocument = CreateCodeDocument(razorSource.Text, tagHelpers: [], filePath: razorPath);
-        var csharpDocument = new RazorCSharpDocument(
+        var csharpDocument = TestRazorCSharpDocument.Create(
             codeDocument,
             csharpSource.Text,
-            RazorCodeGenerationOptions.Default,
-            diagnostics: [],
-            sourceMappings.OrderByAsArray(s => s.GeneratedSpan.AbsoluteIndex),
-            linePragmas: []);
+            sourceMappings.OrderByAsArray(s => s.GeneratedSpan.AbsoluteIndex));
 
         codeDocument.SetCSharpDocument(csharpDocument);
         var snapshot = TestDocumentSnapshot.Create(razorPath, codeDocument);

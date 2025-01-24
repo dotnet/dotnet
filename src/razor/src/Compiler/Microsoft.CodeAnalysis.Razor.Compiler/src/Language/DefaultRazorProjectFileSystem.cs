@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -14,7 +14,25 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
     {
         ArgHelper.ThrowIfNullOrEmpty(root);
 
-        Root = root.Replace('\\', '/').TrimEnd('/');
+        // If "/" is passed in, we want that to be the value of root. We don't want root to end up
+        // as an empty string.
+        if (root == DefaultBasePath)
+        {
+            Root = DefaultBasePath;
+        }
+        else
+        {
+            root = root.Replace('\\', '/').TrimEnd('/');
+
+            // Was the entire string just repeated '\' and '/' characters? If so, that's an invalid path.
+            // Just throw instead of setting Root to an empty string.
+            if (root.Length == 0)
+            {
+                ThrowHelper.ThrowArgumentException(nameof(root), $"Invalid path provided.");
+            }
+
+            Root = root;
+        }
     }
 
     public string Root { get; }
@@ -23,67 +41,98 @@ internal class DefaultRazorProjectFileSystem : RazorProjectFileSystem
     {
         var absoluteBasePath = NormalizeAndEnsureValidPath(basePath);
 
-        var directory = new DirectoryInfo(absoluteBasePath);
-        if (!directory.Exists)
+        if (!Directory.Exists(absoluteBasePath))
         {
-            return [];
+            yield break;
         }
 
-        return directory
-            .EnumerateFiles("*.cshtml", SearchOption.AllDirectories)
-            .Concat(directory.EnumerateFiles("*.razor", SearchOption.AllDirectories))
-            .Select(file =>
-            {
-                var relativePhysicalPath = file.FullName.Substring(absoluteBasePath.Length + 1); // Include leading separator
-                var filePath = "/" + relativePhysicalPath.Replace(Path.DirectorySeparatorChar, '/');
+        foreach (var filePath in Directory.EnumerateFiles(absoluteBasePath, "*.cshtml", SearchOption.AllDirectories))
+        {
+            yield return CreateItem(filePath, fileKind: null, basePath, absoluteBasePath);
+        }
 
-                return new DefaultRazorProjectItem(basePath, filePath, relativePhysicalPath, fileKind: null, file, cssScope: null);
-            });
+        foreach (var filePath in Directory.EnumerateFiles(absoluteBasePath, "*.razor", SearchOption.AllDirectories))
+        {
+            yield return CreateItem(filePath, fileKind: null, basePath, absoluteBasePath);
+        }
     }
 
     public override RazorProjectItem GetItem(string path, string? fileKind)
     {
-        var absoluteBasePath = NormalizeAndEnsureValidPath("/");
+        var absoluteBasePath = Root;
         var absolutePath = NormalizeAndEnsureValidPath(path);
 
-        var file = new FileInfo(absolutePath);
         if (!absolutePath.StartsWith(absoluteBasePath, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException($"The file '{absolutePath}' is not a descendent of the base path '{absoluteBasePath}'.");
+            return ThrowHelper.ThrowInvalidOperationException<RazorProjectItem>($"The file '{absolutePath}' is not a descendent of the base path '{absoluteBasePath}'.");
         }
 
-        var relativePhysicalPath = file.FullName.Substring(absoluteBasePath.Length + 1); // Include leading separator
+        return CreateItem(absolutePath, fileKind, DefaultBasePath, absoluteBasePath);
+    }
+
+    private static DefaultRazorProjectItem CreateItem(string path, string? fileKind, string basePath, string absoluteBasePath)
+    {
+        var physicalPath = Path.GetFullPath(path);
+        var relativePhysicalPath = physicalPath[(absoluteBasePath.Length + 1)..]; // Don't include leading separator
+
         var filePath = "/" + relativePhysicalPath.Replace(Path.DirectorySeparatorChar, '/');
 
-        return new DefaultRazorProjectItem("/", filePath, relativePhysicalPath, fileKind, new FileInfo(absolutePath), cssScope: null);
+        return new DefaultRazorProjectItem(basePath, filePath, physicalPath, relativePhysicalPath, fileKind, cssScope: null);
     }
 
     protected override string NormalizeAndEnsureValidPath(string path)
     {
-        ArgHelper.ThrowIfNullOrEmpty(path);
-
-        var absolutePath = path.Replace('\\', '/');
-
-        // Check if the given path is an absolute path. It is absolute if,
-        // 1. It starts with Root or
-        // 2. It is a network share path and starts with a '//'. Eg. //servername/some/network/folder
-        if (!absolutePath.StartsWith(Root, StringComparison.OrdinalIgnoreCase) &&
-            !absolutePath.StartsWith("//", StringComparison.OrdinalIgnoreCase))
+        // PERF: If we're asked to normalize "/", there's no need to compare and manipulate strings to
+        // ultimately return the value of Root.
+        if (path == DefaultBasePath)
         {
-            // This is not an absolute path. Strip the leading slash if any and combine it with Root.
-            if (path[0] == '/' || path[0] == '\\')
-            {
-                path = path.Substring(1);
-            }
-
-            // Instead of `C:filename.ext`, we want `C:/filename.ext`.
-            absolutePath = Root.EndsWith(':') && !path.IsNullOrEmpty()
-                ? Root + "/" + path
-                : Path.Combine(Root, path);
+            return Root;
         }
 
-        absolutePath = absolutePath.Replace('\\', '/');
+        ArgHelper.ThrowIfNullOrEmpty(path);
 
-        return absolutePath;
+        var normalizedPath = path.Replace('\\', '/');
+
+        // Check if the given path is an absolute path. It is absolute if...
+        //
+        // 1. It is a network share path and starts with a '//' (e.g. //server/some/network/folder) or...
+        // 2. It starts with Root
+        if (normalizedPath is ['/', '/', ..] ||
+            normalizedPath.StartsWith(Root, StringComparison.OrdinalIgnoreCase))
+        {
+            return normalizedPath;
+        }
+
+        // This is not an absolute path, so we combine it with Root to produce the final path.
+
+        // If the root doesn't end in a '/', and the path doesn't start with a '/', we'll need to add one.
+        var needsSlash = Root[^1] is not '/' && normalizedPath[0] is not '/';
+        var length = Root.Length + normalizedPath.Length + (needsSlash ? 1 : 0);
+
+        return StringExtensions.CreateString(
+            length,
+            state: (Root, normalizedPath, needsSlash),
+            static (span, state) =>
+            {
+                var (root, normalizedPath, needsSlash) = state;
+
+                var rootSpan = root.AsSpan();
+                var pathSpan = normalizedPath.AsSpan();
+
+                // Copy the root first.
+                rootSpan.CopyTo(span);
+                span = span[rootSpan.Length..];
+
+                // Add a slash if we need one.
+                if (needsSlash)
+                {
+                    span[0] = '/';
+                    span = span[1..];
+                }
+
+                // Finally, add the path.
+                Debug.Assert(span.Length == pathSpan.Length, "The span should be the same length as the path.");
+                pathSpan.CopyTo(span);
+            });
     }
 }

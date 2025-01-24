@@ -30,7 +30,7 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"using System;
 ",
@@ -60,7 +60,7 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
         // Assert
         var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -96,7 +96,7 @@ using System;
         // Assert
         var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -130,7 +130,7 @@ using System;
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"__o = i++;
 ",
@@ -160,7 +160,7 @@ using System;
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -200,7 +200,7 @@ __o = i++;
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"__o = iRender Children
 ++;
@@ -237,7 +237,7 @@ __o = i++;
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -275,7 +275,7 @@ __o = i++;
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -309,7 +309,7 @@ __o = i++;
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"if (true) { }
 ",
@@ -339,7 +339,7 @@ __o = i++;
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -376,7 +376,7 @@ if (true) { }
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -408,7 +408,7 @@ if (true) { }
         writer.WriteCSharpExpressionAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -439,7 +439,7 @@ if (true) { }
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -470,7 +470,7 @@ if (true) { }
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -523,7 +523,7 @@ Render Children
 
         writer.WriteCSharpExpression(context, node);
 
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
             $"""
 
@@ -570,7 +570,7 @@ Render Children
 
         writer.WriteCSharpExpression(context, node);
 
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
             $"""
             Write(

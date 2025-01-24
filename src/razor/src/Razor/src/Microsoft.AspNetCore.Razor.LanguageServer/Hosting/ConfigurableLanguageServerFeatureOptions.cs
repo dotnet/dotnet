@@ -39,6 +39,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool DisableRazorLanguageServer => _disableRazorLanguageServer ?? _defaults.DisableRazorLanguageServer;
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration ?? _defaults.ForceRuntimeCodeGeneration;
     public override bool UseNewFormattingEngine => _useNewFormattingEngine ?? _defaults.UseNewFormattingEngine;
+    public override bool SupportsSoftSelectionInCompletion => false;
 
     public ConfigurableLanguageServerFeatureOptions(string[] args)
     {
