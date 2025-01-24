@@ -1827,6 +1827,37 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
 
             ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, expectedFilesToBeSigned.ToArray());
         }
+
+        [Fact]
+        public void VerifyRpmIntegrity()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>
+            {
+                new ItemToSign(GetResourcePath("SignedRpm.rpm")),
+                new ItemToSign(GetResourcePath("IncorrectlySignedRpm.rpm"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>();
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>();
+
+            var expectedFilesToBeSigned = new List<string>
+            {
+                "File 'IncorrectlySignedRpm.rpm' Certificate='LinuxSign'"
+            };
+
+            // If on windows, both packages will be submitted for signing
+            // because the CL verification tool (gpg) is not available on Windows.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                expectedFilesToBeSigned.Add("File 'SignedRpm.rpm' Certificate='LinuxSign'");
+            }
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, expectedFilesToBeSigned.ToArray());
+        }
 #endif
 
         [Fact]

@@ -39,6 +39,21 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             return new RpmPackage(lead, signature, header, archiveStream);
         }
 
+        public static unsafe MemoryStream GetSignableContent(Stream stream)
+        {
+            // We don't care about the lead and signature header
+            RpmLead.Read(stream);
+            RpmHeader<RpmSignatureTag>.Read(stream, RpmSignatureTag.HeaderSignatures);
+            stream.AlignReadTo(8);
+
+            // Remaining stream content is the signable content
+            // This includes all the magic and alignment bytes in both header and archive sections.
+            MemoryStream signableContentStream = new();
+            stream.CopyTo(signableContentStream);
+            signableContentStream.Position = 0;
+            return signableContentStream;
+        }
+
         public void WriteTo(Stream stream)
         {
             Lead.WriteTo(stream);
