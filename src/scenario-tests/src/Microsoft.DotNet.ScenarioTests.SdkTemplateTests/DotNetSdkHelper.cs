@@ -110,18 +110,19 @@ internal class DotNetSdkHelper
     {
         string options = string.Empty;
         string binlogDifferentiator = string.Empty;
+
+        if (!string.IsNullOrEmpty(rid))
+        {
+            options += $" -r {rid}";
+            binlogDifferentiator += $"-{rid}";
+        }
         
         if (selfContained.HasValue)
         {
-            options += $"--self-contained {selfContained.Value.ToString().ToLowerInvariant()}";
+            options += $" --self-contained {selfContained.Value.ToString().ToLowerInvariant()}";
             if (selfContained.Value)
             {
                 binlogDifferentiator += "self-contained";
-                if (!string.IsNullOrEmpty(rid))
-                {
-                    options += $" -r {rid}";
-                    binlogDifferentiator += $"-{rid}";
-                }
                 if (trimmed)
                 {
                     options += " /p:PublishTrimmed=true";
