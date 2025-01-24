@@ -133,8 +133,8 @@ namespace NuGet.Protocol.FuncTest.Helpers
             var registrationPage = new RegistrationPage()
             {
                 Items = new List<RegistrationLeafItem>(),
-                Lower = versions.Select(v => NuGetVersion.Parse(v.Key)).Min().ToNormalizedString(),
-                Upper = versions.Select(v => NuGetVersion.Parse(v.Key)).Max().ToNormalizedString(),
+                Lower = versions.Min(v => NuGetVersion.Parse(v.Key)).ToNormalizedString(),
+                Upper = versions.Max(v => NuGetVersion.Parse(v.Key)).ToNormalizedString(),
             };
 
             foreach (var version in versions.OrderBy(v => NuGetVersion.Parse(v.Key)))

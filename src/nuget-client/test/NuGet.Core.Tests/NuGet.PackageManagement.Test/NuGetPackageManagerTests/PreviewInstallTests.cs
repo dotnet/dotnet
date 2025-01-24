@@ -1657,7 +1657,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
 
                 // Assert
                 Assert.Equal(4, nuGetProjectActions.Count);
-                var newtonsoftJsonAction = nuGetProjectActions.Where(a => a.PackageIdentity.Equals(newtonsoftJsonPackageIdentity)).FirstOrDefault();
+                var newtonsoftJsonAction = nuGetProjectActions.FirstOrDefault(a => a.PackageIdentity.Equals(newtonsoftJsonPackageIdentity));
 
                 Assert.NotNull(newtonsoftJsonAction);
             }
@@ -1702,7 +1702,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
                 Assert.Equal(newtonsoftJsonPackageIdentity, packagesInPackagesConfig[0].PackageIdentity);
                 Assert.Equal(msBuildNuGetProject.ProjectSystem.TargetFramework, packagesInPackagesConfig[0].TargetFramework);
                 var installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-                var newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity)).FirstOrDefault();
+                var newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity));
 
                 Assert.Null(newtonsoftJsonPackageReference.AllowedVersions);
 
@@ -1721,7 +1721,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
                 Assert.Equal(newtonsoftJsonPackageIdentity, packagesInPackagesConfig[0].PackageIdentity);
                 Assert.Equal(msBuildNuGetProject.ProjectSystem.TargetFramework, packagesInPackagesConfig[0].TargetFramework);
                 installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-                newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity)).FirstOrDefault();
+                newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity));
 
                 Assert.NotNull(newtonsoftJsonPackageReference.AllowedVersions);
 
@@ -1789,7 +1789,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             Assert.Equal(2, packagesInPackagesConfig.Count);
             Assert.Contains(packagesInPackagesConfig, pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity) && pr.TargetFramework == msBuildNuGetProject.ProjectSystem.TargetFramework);
             var installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-            var newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity)).FirstOrDefault();
+            var newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity));
 
             Assert.Null(newtonsoftJsonPackageReference.AllowedVersions);
 
@@ -1808,7 +1808,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             Assert.Equal(2, packagesInPackagesConfig.Count);
             Assert.Contains(packagesInPackagesConfig, pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity) && pr.TargetFramework == msBuildNuGetProject.ProjectSystem.TargetFramework);
             installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-            newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity)).FirstOrDefault();
+            newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newtonsoftJsonPackageIdentity));
 
             Assert.NotNull(newtonsoftJsonPackageReference.AllowedVersions);
 
@@ -1874,7 +1874,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             Assert.Equal(2, packagesInPackagesConfig.Count);
             Assert.Contains(packagesInPackagesConfig, pr => pr.PackageIdentity.Equals(newJsonPackageIdentity) && pr.TargetFramework == msBuildNuGetProject.ProjectSystem.TargetFramework);
             var installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-            var newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newJsonPackageIdentity)).FirstOrDefault();
+            var newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newJsonPackageIdentity));
 
             Assert.Null(newtonsoftJsonPackageReference.AllowedVersions);
 
@@ -1893,7 +1893,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             Assert.Equal(2, packagesInPackagesConfig.Count);
             Assert.Contains(packagesInPackagesConfig, pr => pr.PackageIdentity.Equals(newJsonPackageIdentity) && pr.TargetFramework == msBuildNuGetProject.ProjectSystem.TargetFramework);
             installedPackages = await msBuildNuGetProject.GetInstalledPackagesAsync(token);
-            newtonsoftJsonPackageReference = installedPackages.Where(pr => pr.PackageIdentity.Equals(newJsonPackageIdentity)).FirstOrDefault();
+            newtonsoftJsonPackageReference = installedPackages.FirstOrDefault(pr => pr.PackageIdentity.Equals(newJsonPackageIdentity));
 
             Assert.NotNull(newtonsoftJsonPackageReference.AllowedVersions);
 

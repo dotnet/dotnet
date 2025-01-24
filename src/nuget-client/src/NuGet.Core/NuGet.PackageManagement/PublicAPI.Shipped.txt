@@ -713,6 +713,7 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectFallbackFolders = "RestoreAdditionalProjectFallbackFolders" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectFallbackFoldersExcludes = "RestoreAdditionalProjectFallbackFoldersExcludes" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectSources = "RestoreAdditionalProjectSources" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreEnablePackagePruning = "RestoreEnablePackagePruning" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreFallbackFolders = "RestoreFallbackFolders" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreLockedMode = "RestoreLockedMode" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesPath = "RestorePackagesPath" -> string
@@ -755,6 +756,7 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectItems.PackageReference = "PackageReference" -> string
 ~const NuGet.ProjectManagement.ProjectItems.PackageVersion = "PackageVersion" -> string
 ~const NuGet.ProjectManagement.ProjectItems.ProjectReference = "ProjectReference" -> string
+~const NuGet.ProjectManagement.ProjectItems.PrunePackageReference = "PrunePackageReference" -> string
 ~override NuGet.PackageManagement.IDEExecutionContext.OpenFile(string fullPath) -> System.Threading.Tasks.Task
 ~override NuGet.PackageManagement.ProjectContextLogger.Log(NuGet.Common.ILogMessage message) -> void
 ~override NuGet.PackageManagement.ProjectContextLogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task

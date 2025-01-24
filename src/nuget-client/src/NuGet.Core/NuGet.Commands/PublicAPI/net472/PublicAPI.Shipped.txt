@@ -621,6 +621,7 @@ NuGet.Commands.RestoreRunner
 NuGet.Commands.RestoreSpecException
 ~NuGet.Commands.RestoreSpecException.Files.get -> System.Collections.Generic.IEnumerable<string>
 NuGet.Commands.RestoreSummary
+NuGet.Commands.RestoreSummary.AuditRan.get -> bool
 ~NuGet.Commands.RestoreSummary.ConfigFiles.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Commands.RestoreSummary.Errors.get -> System.Collections.Generic.IReadOnlyList<NuGet.Common.IRestoreLogMessage>
 ~NuGet.Commands.RestoreSummary.FeedsUsed.get -> System.Collections.Generic.IReadOnlyList<string>
@@ -881,6 +882,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.AddSourceRunner.Run(NuGet.Commands.AddSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.EnsureValidFallback(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback, string filePath) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.GetFallbackFramework(NuGet.Frameworks.NuGetFramework projectFramework, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback) -> NuGet.Frameworks.NuGetFramework
+~static NuGet.Commands.AssetTargetFallbackUtility.GetFallbackFrameworkInformation(NuGet.Frameworks.NuGetFramework originalFrameworkName, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallbackEnum) -> (NuGet.Frameworks.NuGetFramework frameworkName, System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework> imports, bool assetTargetFallback, bool warn)
 ~static NuGet.Commands.AssetTargetFallbackUtility.GetInvalidFallbackCombinationMessage(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.BuildAssetsUtils.AddNuGetProperties(System.Xml.Linq.XDocument doc, System.Collections.Generic.IEnumerable<string> packageFolders, string repositoryRoot, NuGet.ProjectModel.ProjectStyle projectStyle, string assetsFilePath, bool success) -> void
 ~static NuGet.Commands.BuildAssetsUtils.AddNuGetPropertiesToFirstImport(System.Collections.Generic.IEnumerable<NuGet.Commands.MSBuildOutputFile> files, System.Collections.Generic.IEnumerable<string> packageFolders, string repositoryRoot, NuGet.ProjectModel.ProjectStyle projectStyle, string assetsFilePath, bool success) -> void
@@ -952,6 +954,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.GetCentralPackageManagementSettings(NuGet.Commands.IMSBuildItem projectSpecItem, NuGet.ProjectModel.ProjectStyle projectStyle) -> (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, bool readOnly) -> NuGet.ProjectModel.DependencyGraphSpec
+~static NuGet.Commands.MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(string includeAssets, string excludeAssets, string privateAssets) -> (NuGet.LibraryModel.LibraryIncludeFlags includeType, NuGet.LibraryModel.LibraryIncludeFlags suppressParent)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.HashSet<string> suppressionItems) -> NuGet.ProjectModel.RestoreAuditProperties

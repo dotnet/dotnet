@@ -295,8 +295,7 @@ namespace NuGet.Test.Utility
         public void AddPackageToFramework(string packageFramework, params SimpleTestPackageContext[] packages)
         {
             var framework = Frameworks
-                .Where(f => f.Framework == NuGetFramework.Parse(packageFramework))
-                .First();
+                .First(f => f.Framework == NuGetFramework.Parse(packageFramework));
             framework.PackageReferences.AddRange(packages);
         }
 
@@ -311,8 +310,7 @@ namespace NuGet.Test.Utility
         public void AddPackageDownloadToFramework(string packageFramework, params SimpleTestPackageContext[] packages)
         {
             var framework = Frameworks
-                .Where(f => f.Framework == NuGetFramework.Parse(packageFramework))
-                .First();
+                .First(f => f.Framework == NuGetFramework.Parse(packageFramework));
             framework.PackageDownloads.AddRange(packages);
         }
 

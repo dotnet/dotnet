@@ -153,4 +153,43 @@
   <data name="ProjectMigrateErrorMessage" xml:space="preserve">
     <value>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information.</value>
   </data>
+  <data name="PackageRestoreConsent" xml:space="preserve">
+    <value>Allow NuGet to download missing packages</value>
+  </data>
+  <data name="packageRestoreAutomatic" xml:space="preserve">
+    <value>Automatically check for missing packages during build in Visual Studio</value>
+  </data>
+  <data name="skipBindingRedirects" xml:space="preserve">
+    <value>Skip applying binding redirects</value>
+  </data>
+  <data name="showPackageManagementChooser" xml:space="preserve">
+    <value>Prompt for format selection on first package install</value>
+  </data>
+  <data name="PackagesConfig" xml:space="preserve">
+    <value>Packages.config</value>
+  </data>
+  <data name="PackageReference" xml:space="preserve">
+    <value>PackageReference</value>
+  </data>
+  <data name="defaultPackageManagementFormat" xml:space="preserve">
+    <value>Default package management format</value>
+  </data>
+  <data name="clearLocalResources" xml:space="preserve">
+    <value>Clear NuGet local resources</value>
+  </data>
+  <data name="PackageRestore" xml:space="preserve">
+    <value>Package Restore</value>
+  </data>
+  <data name="BindingRedirects" xml:space="preserve">
+    <value>Binding Redirects</value>
+  </data>
+  <data name="PackageManagement" xml:space="preserve">
+    <value>Package Management</value>
+  </data>
+  <!-- The text inside %...%, if any, will be rendered as a hyperlink which tells Unified Settings to
+    invoke IExternalSettingsProvider.OpenBackingStoreAsync when clicked.-->
+  <data name="SettingsStoredInNuGetConfiguration" xml:space="preserve">
+    <value>These settings are stored in %NuGet.Config% files</value>
+    <comment>Do not translate % % or what is between them</comment>
+  </data>
 </root>

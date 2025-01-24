@@ -35,6 +35,9 @@ namespace NuGet.PackageManagement.VisualStudio
         public const string SearchServiceName = "Microsoft.VisualStudio.NuGet.PackageSearchService";
         public const string SearchServiceVersion = "1.0.0";
 
+        public const string ExternalSettingsProviderName = "Microsoft.VisualStudio.NuGet.ExternalSettingsProviderService";
+        public const string ExternalSettingsProviderVersion = "1.0.0";
+
         public static async ValueTask<IServiceBroker> GetRemoteServiceBrokerAsync()
         {
             var serviceBrokerContainer = await ServiceLocator.GetGlobalServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();

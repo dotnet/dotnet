@@ -1,4 +1,1 @@
 #nullable enable
-NuGet.Commands.RestoreSummary.AuditRan.get -> bool
-~static NuGet.Commands.AssetTargetFallbackUtility.GetFallbackFrameworkInformation(NuGet.Frameworks.NuGetFramework originalFrameworkName, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallbackEnum) -> (NuGet.Frameworks.NuGetFramework frameworkName, System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework> imports, bool assetTargetFallback, bool warn)
-~static NuGet.Commands.MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(string includeAssets, string excludeAssets, string privateAssets) -> (NuGet.LibraryModel.LibraryIncludeFlags includeType, NuGet.LibraryModel.LibraryIncludeFlags suppressParent)

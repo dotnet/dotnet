@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Moq;
@@ -11,8 +12,14 @@ using Xunit;
 
 namespace NuGet.VisualStudio.Common.Test
 {
+    [Collection(MockedVS.Collection)]
     public class ErrorListTableDataSourceTests
     {
+        public ErrorListTableDataSourceTests(GlobalServiceProvider sp)
+        {
+            sp.Reset();
+        }
+
         [Fact]
         public void ErrorListTableDataSource_AddEntriesVerifyEntryExists()
         {

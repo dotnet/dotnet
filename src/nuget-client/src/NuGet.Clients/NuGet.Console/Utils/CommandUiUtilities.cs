@@ -16,7 +16,7 @@ namespace NuGetConsole
         static CommandUiUtilities()
         {
             CommandStateCacheInvalidator = new AsyncLazy<IVsInvalidateCachedCommandState>(
-                () => ServiceLocator.GetGlobalServiceFreeThreadedAsync<SVsInvalidateCachedCommandState, IVsInvalidateCachedCommandState>(),
+                () => ServiceLocator.GetGlobalServiceAsync<SVsInvalidateCachedCommandState, IVsInvalidateCachedCommandState>(),
                 NuGetUIThreadHelper.JoinableTaskFactory);
         }
 

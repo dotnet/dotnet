@@ -332,7 +332,7 @@ namespace NuGet.Commands
 
             if (floatlessRangeHasBounds || floatingRangeHasUpperBound)
             {
-                bestMatch = versions.Where(e => e >= ideal).FirstOrDefault();
+                bestMatch = versions.FirstOrDefault(e => e >= ideal);
             }
 
             if (bestMatch == null)

@@ -1,0 +1,5 @@
+NuGet.CommandLine.XPlat.Commands.DocumentedCommand
+NuGet.CommandLine.XPlat.Commands.DocumentedCommand.DocumentedCommand(string name, string description, string helpUrl) -> void
+NuGet.CommandLine.XPlat.Commands.DocumentedCommand.HelpUrl.get -> string
+NuGet.CommandLine.XPlat.Commands.Why.WhyCommand
+static NuGet.CommandLine.XPlat.Commands.Why.WhyCommand.GetWhyCommand(System.CommandLine.CliCommand rootCommand) -> void

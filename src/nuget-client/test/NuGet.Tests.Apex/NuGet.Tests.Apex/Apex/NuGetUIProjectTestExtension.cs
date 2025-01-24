@@ -69,7 +69,7 @@ namespace NuGet.Tests.Apex
             var packageItemsList = _uiproject.GetPackageItemsOnInstalledTab();
             packageItemsList.Should().NotBeNull("Package items list is empty on installed tab.");
 
-            var package = packageItemsList.Where(x => x.Id == packageId).FirstOrDefault();
+            var package = packageItemsList.FirstOrDefault(x => x.Id == packageId);
             package.Should().NotBeNull($"Package items list doesn't contain this package {packageId} on installed tab.");
 
             package.PackageLevel.Should().Be(packageLevel);

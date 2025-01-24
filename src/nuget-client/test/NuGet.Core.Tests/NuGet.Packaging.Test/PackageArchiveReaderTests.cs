@@ -163,7 +163,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    var emptyGroup = groups.Where(g => g.TargetFramework == NuGetFramework.ParseFolder("net45")).Single();
+                    var emptyGroup = groups.Single(g => g.TargetFramework == NuGetFramework.ParseFolder("net45"));
 
                     Assert.Equal(0, emptyGroup.Items.Count());
                 }

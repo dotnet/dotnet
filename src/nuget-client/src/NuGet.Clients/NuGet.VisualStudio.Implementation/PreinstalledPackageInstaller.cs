@@ -378,7 +378,7 @@ namespace NuGet.VisualStudio
 
                 if (targetGroupFramework != null)
                 {
-                    var refGroup = groups.Where(e => fwComparer.Equals(targetGroupFramework, e.TargetFramework)).FirstOrDefault();
+                    var refGroup = groups.FirstOrDefault(e => fwComparer.Equals(targetGroupFramework, e.TargetFramework));
 
                     foreach (string refItem in refGroup.Items)
                     {

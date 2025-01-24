@@ -370,8 +370,8 @@ namespace NuGet.SolutionRestoreManager
                 unknownProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.Unknown, 0), // appears in DependencyGraphRestoreUtility
                 projectJsonProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.ProjectJson, 0),
                 packageReferenceProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.PackageReference, 0),
-                legacyPackageReferenceProjectsCount: sortedProjects.Where(x => x.ProjectStyle == ProjectStyle.PackageReference && x is LegacyPackageReferenceProject).Count(),
-                cpsPackageReferenceProjectsCount: sortedProjects.Where(x => x.ProjectStyle == ProjectStyle.PackageReference && x is CpsPackageReferenceProject).Count(),
+                legacyPackageReferenceProjectsCount: sortedProjects.Count(x => x.ProjectStyle == ProjectStyle.PackageReference && x is LegacyPackageReferenceProject),
+                cpsPackageReferenceProjectsCount: sortedProjects.Count(x => x.ProjectStyle == ProjectStyle.PackageReference && x is CpsPackageReferenceProject),
                 dotnetCliToolProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.DotnetCliTool, 0), // appears in DependencyGraphRestoreUtility
                 packagesConfigProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.PackagesConfig, 0),
                 DateTimeOffset.Now,
@@ -446,8 +446,7 @@ namespace NuGet.SolutionRestoreManager
                     // Run solution based up to date check.
                     var projectsNeedingRestore = _solutionUpToDateChecker.PerformUpToDateCheck(originalDgSpec, _logger).AsList();
                     var specialReferencesCount = originalDgSpec.Projects
-                        .Where(x => x.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference && x.RestoreMetadata.ProjectStyle != ProjectStyle.PackagesConfig && x.RestoreMetadata.ProjectStyle != ProjectStyle.ProjectJson)
-                        .Count();
+                        .Count(x => x.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference && x.RestoreMetadata.ProjectStyle != ProjectStyle.PackagesConfig && x.RestoreMetadata.ProjectStyle != ProjectStyle.ProjectJson);
                     dgSpec = originalDgSpec;
                     // Only use the optimization results if the restore is not `force`.
                     // Still run the optimization check anyways to prep the cache.
@@ -505,9 +504,9 @@ namespace NuGet.SolutionRestoreManager
                                        l,
                                        t);
 
-                                    _packageCount += restoreSummaries.Select(summary => summary.InstallCount).Sum();
+                                    _packageCount += restoreSummaries.Sum(summary => summary.InstallCount);
                                     isRestoreSucceeded = restoreSummaries.All(summary => summary.Success == true);
-                                    _noOpProjectsCount += restoreSummaries.Where(summary => summary.NoOpRestore == true).Count();
+                                    _noOpProjectsCount += restoreSummaries.Count(summary => summary.NoOpRestore == true);
                                     _solutionUpToDateChecker.SaveRestoreStatus(restoreSummaries);
                                     _solutionHasVulnerabilities |= AnyProjectHasVulnerablePackageWarning(restoreSummaries);
                                 }

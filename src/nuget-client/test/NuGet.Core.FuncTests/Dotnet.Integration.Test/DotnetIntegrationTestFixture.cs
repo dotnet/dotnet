@@ -49,8 +49,7 @@ namespace Dotnet.Integration.Test
             TestDotnetCli = Path.Combine(_cliDirectory, dotnetExecutableName);
 
             var sdkPath = Directory.EnumerateDirectories(Path.Combine(_cliDirectory, "sdk"))
-                            .Where(d => !string.Equals(Path.GetFileName(d), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase))
-                            .Single();
+                .Single(d => !string.Equals(Path.GetFileName(d), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase));
 
             SdkDirectory = new DirectoryInfo(sdkPath);
             MsBuildSdksPath = Path.Combine(sdkPath, "Sdks");
@@ -227,7 +226,7 @@ namespace Dotnet.Integration.Test
         /// <param name="args">The command-line arguments to pass to dotnet.</param>
         /// <param name="environmentVariables">An optional <see cref="IReadOnlyDictionary{TKey, TValue}" /> containing environment variables to use when executing the command.</param>
         internal CommandRunnerResult RunDotnetExpectFailure(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
-            => RunDotnet(workingDirectory, args, expectSuccess: false, environmentVariables);
+            => RunDotnet(workingDirectory, args, expectSuccess: false, environmentVariables, testOutputHelper);
 
         private CommandRunnerResult RunDotnet(string workingDirectory, string args = "", bool expectSuccess = true, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
         {

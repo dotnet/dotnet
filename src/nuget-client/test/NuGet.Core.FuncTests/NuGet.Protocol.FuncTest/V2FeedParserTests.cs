@@ -219,7 +219,7 @@ namespace NuGet.Protocol.FuncTest
 
             // Act
             var packages = await parser.Search("entityframework", searchFilter, 0, 3, NullLogger.Instance, CancellationToken.None);
-            var package = packages.Where(p => p.Id == "EntityFramework" && p.Version.ToString() == "7.0.0-beta4").FirstOrDefault();
+            var package = packages.FirstOrDefault(p => p.Id == "EntityFramework" && p.Version.ToString() == "7.0.0-beta4");
 
             // Assert
             Assert.NotNull(package);
@@ -340,7 +340,7 @@ namespace NuGet.Protocol.FuncTest
 
             // Act
             var packages = await parser.Search("entityframework", searchFilter, 0, 3, NullLogger.Instance, CancellationToken.None);
-            var package = packages.Where(p => p.Id == "EntityFramework" && p.Version.ToString() == "7.0.0-beta4").FirstOrDefault();
+            var package = packages.FirstOrDefault(p => p.Id == "EntityFramework" && p.Version.ToString() == "7.0.0-beta4");
 
             // Assert
             Assert.NotNull(package);

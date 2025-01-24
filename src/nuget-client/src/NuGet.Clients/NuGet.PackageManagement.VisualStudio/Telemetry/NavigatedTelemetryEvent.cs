@@ -22,6 +22,7 @@ namespace NuGet.PackageManagement.Telemetry
         internal const string SourcesCountPropertyName = "SourcesCount";
         internal const string IsGlobbingPropertyName = "IsGlobbing";
         internal const string IsUnifiedSettingsPropertyName = "IsUnifiedSettings";
+        internal const string IsPromptCancelledPropertyName = "IsPromptCancelled";
 
         internal const string AlternativePackageIdPropertyName = "AlternativePackageId";
 
@@ -112,14 +113,17 @@ namespace NuGet.PackageManagement.Telemetry
             return navigatedTelemetryEvent;
         }
 
-        public static NavigatedTelemetryEvent CreateWithClearLocalsCommand(bool isUnifiedSettings)
+        public static NavigatedTelemetryEvent CreateWithClearLocalsCommand(bool isUnifiedSettings, bool? isPromptCancelled = null)
         {
             NavigationType navigationType = NavigationType.Button;
             NavigationOrigin navigationOrigin = NavigationOrigin.Options_LocalsCommand_ClearAll;
 
             NavigatedTelemetryEvent navigatedTelemetryEvent = new(navigationType, navigationOrigin);
             navigatedTelemetryEvent[IsUnifiedSettingsPropertyName] = isUnifiedSettings;
-
+            if (isUnifiedSettings && isPromptCancelled.HasValue)
+            {
+                navigatedTelemetryEvent[IsPromptCancelledPropertyName] = isPromptCancelled;
+            }
             return navigatedTelemetryEvent;
         }
     }

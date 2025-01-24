@@ -77,7 +77,7 @@ namespace NuGet.Frameworks
             }
 
             // Try exact matches first
-            nearest = possibleFrameworks.Where(f => NuGetFrameworkFullComparer.Instance.Equals(framework, f)).FirstOrDefault();
+            nearest = possibleFrameworks.FirstOrDefault(f => NuGetFrameworkFullComparer.Instance.Equals(framework, f));
 
             if (nearest == null)
             {

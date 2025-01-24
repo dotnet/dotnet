@@ -176,7 +176,7 @@ namespace NuGet.Commands
         {
             using (var telemetry = TelemetryActivity.Create(parentId: ParentId, eventName: ProjectRestoreInformation))
             {
-                int httpSourcesCount = _request.DependencyProviders.RemoteProviders.Where(e => e.IsHttp).Count();
+                int httpSourcesCount = _request.DependencyProviders.RemoteProviders.Count(e => e.IsHttp);
                 bool auditEnabled = AuditUtility.ParseEnableValue(
                     _request.Project.RestoreMetadata?.RestoreAuditProperties,
                     _request.Project.FilePath,

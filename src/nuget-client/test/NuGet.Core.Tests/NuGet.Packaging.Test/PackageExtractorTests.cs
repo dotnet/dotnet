@@ -285,7 +285,7 @@ namespace NuGet.Packaging.Test
                 using (var stream = File.Open(packageFile, FileMode.Open))
                 using (var zipFile = new ZipArchive(stream, ZipArchiveMode.Update))
                 {
-                    var nuspecEntry = zipFile.Entries.Where(e => e.FullName.EndsWith(".nuspec")).Single();
+                    var nuspecEntry = zipFile.Entries.Single(e => e.FullName.EndsWith(".nuspec"));
 
                     using (var nuspecStream = nuspecEntry.Open())
                     using (var reader = new StreamReader(nuspecStream))
@@ -432,7 +432,7 @@ namespace NuGet.Packaging.Test
                             CancellationToken.None);
 
                         // Assert
-                        Assert.Equal(1, files.Where(p => p.EndsWith(".nupkg")).Count());
+                        Assert.Equal(1, files.Count(p => p.EndsWith(".nupkg")));
                     }
                 }
             }

@@ -54,7 +54,7 @@ namespace NuGet.VisualStudio
 
         private static string GetNuspecValue(IEnumerable<KeyValuePair<string, string>> metadata, string field)
         {
-            var node = metadata.Where(e => StringComparer.Ordinal.Equals(field, e.Key)).FirstOrDefault();
+            var node = metadata.FirstOrDefault(e => StringComparer.Ordinal.Equals(field, e.Key));
 
             return node.Value ?? string.Empty;
         }

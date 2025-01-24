@@ -300,13 +300,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);
@@ -409,13 +407,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);
@@ -548,13 +544,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);

@@ -212,6 +212,9 @@ NuGet.Common.NuGetLogCode.NU1505 = 1505 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1506 = 1506 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1507 = 1507 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1508 = 1508 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1509 = 1509 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1510 = 1510 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1511 = 1511 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1601 = 1601 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1602 = 1602 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1603 = 1603 -> NuGet.Common.NuGetLogCode
@@ -571,6 +574,7 @@ static NuGet.Common.LoggingExtensions.GetName(this NuGet.Common.NuGetLogCode cod
 static NuGet.Common.LoggingExtensions.TryGetName(this NuGet.Common.NuGetLogCode code, out string? codeString) -> bool
 static NuGet.Common.MSBuildStringUtility.Convert(string? value) -> string?
 static NuGet.Common.MSBuildStringUtility.GetBooleanOrNull(string? value) -> bool?
+static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode>
 static NuGet.Common.MSBuildStringUtility.IsTrue(string? value) -> bool
 static NuGet.Common.MSBuildStringUtility.IsTrueOrEmpty(string? value) -> bool
 static NuGet.Common.MSBuildStringUtility.Split(string! s) -> string![]!

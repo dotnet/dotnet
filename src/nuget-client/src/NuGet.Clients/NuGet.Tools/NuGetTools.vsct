@@ -93,6 +93,15 @@
         </Strings>
       </Button>
 
+      <Button guid="guidClearNuGetLocalResourcesCmdSet" id="cmdidClearNuGetLocalResources" priority="0x0100" type="Button">
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <CommandName>cmdidClearNuGetLocalResources</CommandName>
+          <!--This button text is not visible to the user as the command is invoked from Unified Settings-->
+          <ButtonText>ClearLocals</ButtonText>
+        </Strings>
+      </Button>
+
       <Button guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" priority="0x0400" type="Button">
         <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
@@ -280,6 +289,9 @@
       <IDSymbol name="cmdidUpgradePackagesConfig" value="0x0410" />
       <IDSymbol name="cmdidUpdatePackage" value="0x0500" />
       <IDSymbol name="cmdidUpdatePackages" value="0x0600" />
+    </GuidSymbol>
+    <GuidSymbol name="guidClearNuGetLocalResourcesCmdSet" value="{54A0AC88-A025-4A62-8D48-6C1848E4F545}">
+      <IDSymbol name="cmdidClearNuGetLocalResources" value="0x0100" />
     </GuidSymbol>
     <GuidSymbol name="guidVenusCmdId" value="{C7547851-4E3A-4E5B-9173-FA6E9C8BD82C}" >
       <IDSymbol name="IDG_VENUS_CTX_REFERENCE" value="27" />

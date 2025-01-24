@@ -384,9 +384,9 @@ namespace NuGet.Test
 
                 restoreFailedPackages.Select(i => i.Key.PackageIdentity).Should().BeEquivalentTo(new[] { testPackage1, testPackage2 });
 
-                restoreFailedPackages[restoreFailedPackages.Keys.Where(r => r.PackageIdentity.Equals(testPackage1)).First()].Should().BeEquivalentTo(new[] { "projectB", "projectC" });
+                restoreFailedPackages[restoreFailedPackages.Keys.First(r => r.PackageIdentity.Equals(testPackage1))].Should().BeEquivalentTo(new[] { "projectB", "projectC" });
 
-                restoreFailedPackages[restoreFailedPackages.Keys.Where(r => r.PackageIdentity.Equals(testPackage2)).First()].Should().BeEquivalentTo(new[] { "projectA", "projectC" });
+                restoreFailedPackages[restoreFailedPackages.Keys.First(r => r.PackageIdentity.Equals(testPackage2))].Should().BeEquivalentTo(new[] { "projectA", "projectC" });
             }
         }
 

@@ -1809,7 +1809,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clearing all NuGet storage. .
+        ///   Looks up a localized string similar to Clearing all NuGet storage....
         /// </summary>
         public static string ShowMessage_LocalsCommandWorking {
             get {
@@ -2628,6 +2628,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string VSOptions_Button_Close {
+            get {
+                return ResourceManager.GetString("VSOptions_Button_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Open.
         /// </summary>
         public static string VSOptions_Button_Open {
@@ -2651,6 +2660,15 @@ namespace NuGet.PackageManagement.UI {
         public static string VSOptions_Button_RemoveAll {
             get {
                 return ResourceManager.GetString("VSOptions_Button_RemoveAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open the settings page.
+        /// </summary>
+        public static string VSOptions_ButtonOpenSettingsPage {
+            get {
+                return ResourceManager.GetString("VSOptions_ButtonOpenSettingsPage", resourceCulture);
             }
         }
         
@@ -2696,6 +2714,51 @@ namespace NuGet.PackageManagement.UI {
         public static string VSOptions_Label_Source {
             get {
                 return ResourceManager.GetString("VSOptions_Label_Source", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NuGet Package Manager.
+        /// </summary>
+        public static string VSOptions_Text_ClearLocalResourcesTitle {
+            get {
+                return ResourceManager.GetString("VSOptions_Text_ClearLocalResourcesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Once started, this action cannot be cancelled..
+        /// </summary>
+        public static string VSOptions_Text_ClearLocalsPromptMessage {
+            get {
+                return ResourceManager.GetString("VSOptions_Text_ClearLocalsPromptMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear all local NuGet resources?.
+        /// </summary>
+        public static string VSOptions_Text_ClearLocalsPromptTitle {
+            get {
+                return ResourceManager.GetString("VSOptions_Text_ClearLocalsPromptTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This settings page has moved to Unified Settings..
+        /// </summary>
+        public static string VSOptions_Text_MovedToUnifiedSettings {
+            get {
+                return ResourceManager.GetString("VSOptions_Text_MovedToUnifiedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to save changes before closing this dialog?.
+        /// </summary>
+        public static string VSOptions_Text_PromptShortcutUnifiedSettings {
+            get {
+                return ResourceManager.GetString("VSOptions_Text_PromptShortcutUnifiedSettings", resourceCulture);
             }
         }
         

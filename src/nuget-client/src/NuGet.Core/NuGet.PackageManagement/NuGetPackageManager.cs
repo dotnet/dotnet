@@ -536,7 +536,7 @@ namespace NuGet.PackageManagement
             }
 
             var projectInstalledPackageReferences = await nuGetProject.GetInstalledPackagesAsync(token);
-            var installedPackageReference = projectInstalledPackageReferences.Where(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageId)).FirstOrDefault();
+            var installedPackageReference = projectInstalledPackageReferences.FirstOrDefault(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageId));
             if (installedPackageReference != null
                 && installedPackageReference.PackageIdentity.Version > resolvedPackage.LatestVersion)
             {
@@ -934,8 +934,7 @@ namespace NuGet.PackageManagement
                 foreach (var packageIdentity in packageIdentities)
                 {
                     var installed = projectInstalledPackageReferences
-                        .Where(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageIdentity.Id))
-                        .FirstOrDefault();
+                        .FirstOrDefault(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageIdentity.Id));
                     var autoReferenced = IsPackageReferenceAutoReferenced(installed);
 
                     //  if the package is not currently installed, or the installed one is auto referenced ignore it
@@ -1135,7 +1134,7 @@ namespace NuGet.PackageManagement
                 {
                     // Get installed package version
                     var packageTargetsForResolver = new HashSet<PackageIdentity>(oldListOfInstalledPackages, PackageIdentity.Comparer);
-                    var installedPackageWithSameId = packageTargetsForResolver.Where(p => p.Id.Equals(packageIdentities[0].Id, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var installedPackageWithSameId = packageTargetsForResolver.FirstOrDefault(p => p.Id.Equals(packageIdentities[0].Id, StringComparison.OrdinalIgnoreCase));
                     if (installedPackageWithSameId != null)
                     {
                         if (installedPackageWithSameId.Version > packageIdentities[0].Version)
@@ -1475,7 +1474,7 @@ namespace NuGet.PackageManagement
             foreach (var newPackageToInstall in newPackagesToInstall)
             {
                 // find the package match based on identity
-                var sourceDepInfo = availablePackageDependencyInfoWithSourceSet.Where(p => PackageIdentity.Comparer.Equals(p, newPackageToInstall)).SingleOrDefault();
+                var sourceDepInfo = availablePackageDependencyInfoWithSourceSet.SingleOrDefault(p => PackageIdentity.Comparer.Equals(p, newPackageToInstall));
 
                 if (sourceDepInfo == null)
                 {
@@ -1828,7 +1827,7 @@ namespace NuGet.PackageManagement
                     var downgradeAllowed = false;
                     var packageTargetsForResolver = new HashSet<PackageIdentity>(oldListOfInstalledPackages, PackageIdentity.Comparer);
                     // Note: resolver needs all the installed packages as targets too. And, metadata should be gathered for the installed packages as well
-                    var installedPackageWithSameId = packageTargetsForResolver.Where(p => p.Id.Equals(packageIdentity.Id, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var installedPackageWithSameId = packageTargetsForResolver.FirstOrDefault(p => p.Id.Equals(packageIdentity.Id, StringComparison.OrdinalIgnoreCase));
                     if (installedPackageWithSameId != null)
                     {
                         packageTargetsForResolver.Remove(installedPackageWithSameId);

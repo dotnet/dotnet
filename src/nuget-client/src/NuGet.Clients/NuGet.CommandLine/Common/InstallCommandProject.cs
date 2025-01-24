@@ -101,7 +101,7 @@ namespace NuGet.CommandLine
             CancellationToken token)
         {
             var installedPackagesList = await GetInstalledPackagesAsync(token);
-            var packageReference = installedPackagesList.Where(p => p.PackageIdentity.Equals(packageIdentity)).FirstOrDefault();
+            var packageReference = installedPackagesList.FirstOrDefault(p => p.PackageIdentity.Equals(packageIdentity));
             if (packageReference == null)
             {
                 // Package does not exist

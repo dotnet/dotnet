@@ -207,12 +207,10 @@ namespace NuGet.PackageManagement.UI
         {
             IInstalledAndTransitivePackages installedAndTransitivePackages = await project.GetInstalledAndTransitivePackagesAsync(ServiceBroker, cancellationToken);
             IPackageReferenceContextInfo installedPackage = installedAndTransitivePackages.InstalledPackages
-                .Where(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId))
-                .FirstOrDefault();
+                .FirstOrDefault(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId));
 
             ITransitivePackageReferenceContextInfo transitivePackage = installedAndTransitivePackages.TransitivePackages
-                .Where(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId))
-                .FirstOrDefault();
+                .FirstOrDefault(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId));
             return installedPackage ?? transitivePackage;
         }
 

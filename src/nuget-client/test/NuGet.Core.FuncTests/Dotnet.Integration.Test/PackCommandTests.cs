@@ -1058,7 +1058,7 @@ namespace Dotnet.Integration.Test
                     foreach (var depGroup in dependencyGroups)
                     {
                         var packages = depGroup.Packages.ToList();
-                        var package = packages.Where(t => t.Id.Equals("ClassLibrary2")).First();
+                        var package = packages.First(t => t.Id.Equals("ClassLibrary2"));
                         Assert.Equal(new VersionRange(new NuGetVersion("1.2.3-alpha"), true, new NuGetVersion("1.2.3-alpha"), true), package.VersionRange);
                     }
                 }
@@ -1135,7 +1135,7 @@ namespace Dotnet.Integration.Test
                     foreach (var depGroup in dependencyGroups)
                     {
                         var packages = depGroup.Packages.ToList();
-                        var package = packages.Where(t => t.Id.Equals("ClassLibrary2")).First();
+                        var package = packages.First(t => t.Id.Equals("ClassLibrary2"));
                         Assert.Equal(new VersionRange(new NuGetVersion("1.2.3-alpha")), package.VersionRange);
                     }
                 }
@@ -1220,7 +1220,7 @@ namespace Dotnet.Integration.Test
                     foreach (var depGroup in dependencyGroups)
                     {
                         var packages = depGroup.Packages.ToList();
-                        var package = packages.Where(t => t.Id.Equals("ClassLibrary2")).First();
+                        var package = packages.First(t => t.Id.Equals("ClassLibrary2"));
                         Assert.Equal(new VersionRange(new NuGetVersion("1.2.3-alpha")), package.VersionRange);
                     }
                 }
@@ -3186,7 +3186,7 @@ namespace ClassLibrary
                     foreach (var framework in expectedFrameworks)
                     {
                         var nugetFramework = NuGetFramework.Parse(framework);
-                        var frameworkSpecificGroup = frameworkItems.Where(t => t.TargetFramework.Equals(nugetFramework)).FirstOrDefault();
+                        var frameworkSpecificGroup = frameworkItems.FirstOrDefault(t => t.TargetFramework.Equals(nugetFramework));
                         if (pack)
                         {
                             Assert.True(frameworkSpecificGroup?.Items.Contains(referenceAssembly));
@@ -4004,7 +4004,7 @@ namespace ClassLibrary
                             NuGetFrameworkSorter.Instance)
                         .ToList();
 
-                    Assert.Equal(expectedFrameworks.Where(t => !string.IsNullOrEmpty(t)).Count(),
+                    Assert.Equal(expectedFrameworks.Count(t => !string.IsNullOrEmpty(t)),
                         dependencyGroups.Count);
 
                     if (dependencyGroups.Count > 0)
@@ -4906,7 +4906,7 @@ namespace ClassLibrary
                     foreach (var framework in expectedFrameworks)
                     {
                         var nugetFramework = NuGetFramework.Parse(framework);
-                        var frameworkSpecificGroup = nupkgFrameworkGroups.Where(t => t.TargetFramework.Equals(nugetFramework)).FirstOrDefault();
+                        var frameworkSpecificGroup = nupkgFrameworkGroups.FirstOrDefault(t => t.TargetFramework.Equals(nugetFramework));
 
                         foreach (var frameworkRef in frameworkReftoPack)
                         {
@@ -5278,8 +5278,8 @@ namespace ClassLibrary
                     if (CentralPackageTransitivePinningEnabled == "true")
                     {
                         Assert.Equal(2, packages.Count);
-                        var moqPackage = packages.Where(p => p.Id.Equals("Moq", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                        var castleCorePackage = packages.Where(p => p.Id.Equals("Castle.Core", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                        var moqPackage = packages.FirstOrDefault(p => p.Id.Equals("Moq", StringComparison.OrdinalIgnoreCase));
+                        var castleCorePackage = packages.FirstOrDefault(p => p.Id.Equals("Castle.Core", StringComparison.OrdinalIgnoreCase));
                         Assert.NotNull(moqPackage);
                         Assert.NotNull(castleCorePackage);
                         Assert.Equal("4.10.0", moqPackage.VersionRange.ToShortString());

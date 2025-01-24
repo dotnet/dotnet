@@ -212,8 +212,7 @@ namespace NuGet.SolutionRestoreManager.Test
 
             var actualToolSpec = actualRestoreSpec
                 .Projects
-                .Where(p => !object.ReferenceEquals(p, actualProjectSpec))
-                .Single();
+                .Single(p => !object.ReferenceEquals(p, actualProjectSpec));
             var actualMetadata = actualToolSpec.RestoreMetadata;
             Assert.NotNull(actualMetadata);
             Assert.Equal(projectFullPath, actualMetadata.ProjectPath);
@@ -289,8 +288,7 @@ namespace NuGet.SolutionRestoreManager.Test
 
             var actualToolSpec = actualRestoreSpec
                 .Projects
-                .Where(p => !object.ReferenceEquals(p, actualProjectSpec))
-                .Single();
+                .Single(p => !object.ReferenceEquals(p, actualProjectSpec));
             var actualMetadata = actualToolSpec.RestoreMetadata;
             Assert.NotNull(actualMetadata);
             Assert.Equal(projectFullPath, actualMetadata.ProjectPath);

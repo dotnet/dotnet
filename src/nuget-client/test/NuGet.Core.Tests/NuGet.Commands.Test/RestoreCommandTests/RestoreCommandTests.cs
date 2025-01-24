@@ -2270,7 +2270,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var result = await restoreCommand.ExecuteAsync();
                 var lockFile = result.LockFile;
 
-                var targetLib = lockFile.Targets.First().Libraries.Where(l => l.Name == projectName2).FirstOrDefault();
+                var targetLib = lockFile.Targets.First().Libraries.FirstOrDefault(l => l.Name == projectName2);
 
                 // Assert
                 Assert.True(result.Success);
@@ -2379,7 +2379,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var result = await restoreCommand.ExecuteAsync();
                 var lockFile = result.LockFile;
 
-                var targetLib = lockFile.Targets.First().Libraries.Where(l => l.Name == packageA.Id).FirstOrDefault();
+                var targetLib = lockFile.Targets.First().Libraries.FirstOrDefault(l => l.Name == packageA.Id);
 
                 // Assert
                 Assert.True(result.Success);
@@ -2486,7 +2486,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var result = await restoreCommand.ExecuteAsync();
                 var lockFile = result.LockFile;
 
-                var targetLib = lockFile.Targets.First().Libraries.Where(l => l.Name == packageA.Id).FirstOrDefault();
+                var targetLib = lockFile.Targets.First().Libraries.FirstOrDefault(l => l.Name == packageA.Id);
 
                 // Assert
                 Assert.True(result.Success);

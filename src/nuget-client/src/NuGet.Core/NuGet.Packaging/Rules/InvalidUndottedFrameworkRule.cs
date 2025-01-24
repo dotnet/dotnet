@@ -54,7 +54,7 @@ namespace NuGet.Packaging.Rules
             // the frameworks themselves. That does end up with a bit of
             // duplicate code, but the alternative is to expand the scope of
             // NuspecReader by a lot.
-            var metadataNode = xml.Root.Elements().Where(e => StringComparer.Ordinal.Equals(e.Name.LocalName, Metadata)).FirstOrDefault();
+            var metadataNode = xml.Root.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, Metadata));
             if (metadataNode == null)
             {
                 throw new PackagingException(string.Format(

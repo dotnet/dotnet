@@ -968,7 +968,7 @@ namespace NuGet.CommandLine.Test
                 Assert.True(File.Exists(projectC.AssetsFileOutputPath));
 
                 // Assert transitivity is applied across non PackageReference projects.
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectB.ProjectName);
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectC.ProjectName);
             }
@@ -9819,7 +9819,7 @@ namespace NuGet.CommandLine.Test
                     result.Files.Clear();
                     source.Add(result);
                     return result;
-                };
+                }
 
                 var projectA = SimpleTestProjectContext.CreateNETCore(
                    "projectA",
@@ -10070,7 +10070,7 @@ namespace NuGet.CommandLine.Test
                     result.Files.Clear();
                     source.Add(result);
                     return result;
-                };
+                }
 
                 var projectA = SimpleTestProjectContext.CreateNETCore(
                    "projectA",
@@ -10471,7 +10471,7 @@ namespace NuGet.CommandLine.Test
                 Assert.True(File.Exists(projectC.AssetsFileOutputPath));
 
                 // Assert transitivity is applied across non PackageReference projects.
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectB.ProjectName);
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectC.ProjectName);
                 ridlessTarget.Libraries.Should().Contain(e => e.Name == "X");
@@ -10776,7 +10776,7 @@ namespace NuGet.CommandLine.Test
                 Assert.True(File.Exists(projectC.AssetsFileOutputPath));
 
                 // Assert transitivity is applied across non PackageReference projects.
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectB.ProjectName);
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == projectC.ProjectName);
                 ridlessTarget.Libraries.Should().Contain(e => e.Name == "X");
@@ -10784,7 +10784,7 @@ namespace NuGet.CommandLine.Test
 
                 var lockFile = PackagesLockFileFormat.Read(projectA.NuGetLockFileOutputPath);
 
-                var lockFileTarget = lockFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var lockFileTarget = lockFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 lockFileTarget.Dependencies.Should().HaveCount(4);
                 lockFileTarget.Dependencies.Should().ContainSingle(e => e.Id == projectB.ProjectName);
                 lockFileTarget.Dependencies.Should().ContainSingle(e => e.Id == projectC.ProjectName);

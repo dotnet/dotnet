@@ -945,18 +945,18 @@ namespace NuGet.DependencyResolver.Tests
 
             // Assert
             Assert.Equal(2, rootNode.InnerNodes.Count);
-            var centralVersionInGraphNode = rootNode.InnerNodes.Where(n => n.Item.Key.Name == centralPackageName).FirstOrDefault();
+            var centralVersionInGraphNode = rootNode.InnerNodes.FirstOrDefault(n => n.Item.Key.Name == centralPackageName);
             Assert.NotNull(centralVersionInGraphNode);
             Assert.Equal(centralPackageVersion, centralVersionInGraphNode.Item.Key.Version.ToNormalizedString());
             Assert.True(centralVersionInGraphNode.Item.IsCentralTransitive);
 
-            var BNode = rootNode.InnerNodes.Where(n => n.Item.Key.Name == "B").FirstOrDefault();
+            var BNode = rootNode.InnerNodes.FirstOrDefault(n => n.Item.Key.Name == "B");
             Assert.NotNull(BNode);
             Assert.Equal(1, BNode.InnerNodes.Count);
             Assert.Equal(otherVersion, BNode.Item.Key.Version.ToNormalizedString());
             Assert.False(BNode.Item.IsCentralTransitive);
 
-            var CNode = BNode.InnerNodes.Where(n => n.Item.Key.Name == "C").FirstOrDefault();
+            var CNode = BNode.InnerNodes.FirstOrDefault(n => n.Item.Key.Name == "C");
             Assert.NotNull(CNode);
             Assert.Equal(otherVersion, CNode.Item.Key.Version.ToNormalizedString());
             Assert.Equal(0, CNode.InnerNodes.Count);
@@ -2099,7 +2099,7 @@ namespace NuGet.DependencyResolver.Tests
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "C");
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "D");
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "G");
-            Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "G").Single().InnerNodes == staticEmptyList);
+            Assert.True(nodesWithEmptyInnerNodes.Single(n => n.Item.Key.Name == "G").InnerNodes == staticEmptyList);
 
             Assert.Equal(1, result.Downgrades.Count);
         }
@@ -2159,11 +2159,11 @@ namespace NuGet.DependencyResolver.Tests
             var nodesWithEmptyInnerNodes = allNodes.Where(n => n.InnerNodes.Count == 0).ToList();
             Assert.Equal(3, nodesWithEmptyInnerNodes.Count);
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "B");
-            Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "B").Single().InnerNodes != staticEmptyList);
+            Assert.True(nodesWithEmptyInnerNodes.Single(n => n.Item.Key.Name == "B").InnerNodes != staticEmptyList);
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "C");
-            Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "C").Single().InnerNodes == staticEmptyList);
+            Assert.True(nodesWithEmptyInnerNodes.Single(n => n.Item.Key.Name == "C").InnerNodes == staticEmptyList);
             Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "E");
-            Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "E").Single().InnerNodes == staticEmptyList);
+            Assert.True(nodesWithEmptyInnerNodes.Single(n => n.Item.Key.Name == "E").InnerNodes == staticEmptyList);
         }
 
         private void AssertPath<TItem>(GraphNode<TItem> node, params string[] items)

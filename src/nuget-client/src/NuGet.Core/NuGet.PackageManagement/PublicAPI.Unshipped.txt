@@ -1,3 +1,1 @@
 #nullable enable
-~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreEnablePackagePruning = "RestoreEnablePackagePruning" -> string
-~const NuGet.ProjectManagement.ProjectItems.PrunePackageReference = "PrunePackageReference" -> string

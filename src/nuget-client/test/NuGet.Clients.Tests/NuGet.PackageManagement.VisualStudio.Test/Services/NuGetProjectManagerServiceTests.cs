@@ -617,11 +617,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             installedAndTransitive.TransitivePackages.Should().HaveCount(2);
 
             var transitiveOrigin = new PackageIdentity("packageA", new NuGetVersion("2.15.3"));
-            ITransitivePackageReferenceContextInfo transitivePackageB = installedAndTransitive.TransitivePackages.Where(pkg => pkg.Identity.Id == "packageB").Single();
+            ITransitivePackageReferenceContextInfo transitivePackageB = installedAndTransitive.TransitivePackages.Single(pkg => pkg.Identity.Id == "packageB");
             IPackageReferenceContextInfo transitiveOriginB = transitivePackageB.TransitiveOrigins.Single();
             Assert.Equal(transitiveOrigin, transitiveOriginB.Identity);
 
-            ITransitivePackageReferenceContextInfo transitivePackageC = installedAndTransitive.TransitivePackages.Where(pkg => pkg.Identity.Id == "packageC").Single();
+            ITransitivePackageReferenceContextInfo transitivePackageC = installedAndTransitive.TransitivePackages.Single(pkg => pkg.Identity.Id == "packageC");
             IPackageReferenceContextInfo transitiveOriginC = transitivePackageC.TransitiveOrigins.Single();
             Assert.Equal(transitiveOrigin, transitiveOriginC.Identity);
         }
@@ -643,7 +643,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var prProject = CreateCpsPackageReferenceProject(projectName, projectFullPath, projectSystemCache);
 
             ProjectNames projectNames = GetTestProjectNames(projectFullPath, projectName);
-            // This test PackageSpec makes the project look NuGet-restored 
+            // This test PackageSpec makes the project look NuGet-restored
             PackageSpec packageSpec = GetPackageSpec(projectName, projectFullPath, "[1.0.0, )");
 
             // Packages
@@ -764,7 +764,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var installedAndTransitive = await _projectManager.GetInstalledAndTransitivePackagesAsync(new[] { projectId }, includeTransitiveOrigins: true, CancellationToken.None);
 
             // Verify transitive package B
-            var transitivePackageB = installedAndTransitive.TransitivePackages.Where(pkg => pkg.Identity.Id == "packageB").First();
+            var transitivePackageB = installedAndTransitive.TransitivePackages.First(pkg => pkg.Identity.Id == "packageB");
             Assert.NotNull(transitivePackageB);
             Assert.Equal(1, transitivePackageB.TransitiveOrigins.Count());
             var transitiveOriginB = transitivePackageB.TransitiveOrigins.First();
@@ -772,7 +772,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.Equal(new NuGetVersion("2.0.0"), transitiveOriginB.Identity.Version);
 
             // Verify transitive package C
-            var transitivePackageC = installedAndTransitive.TransitivePackages.Where(pkg => pkg.Identity.Id == "packageC").First();
+            var transitivePackageC = installedAndTransitive.TransitivePackages.First(pkg => pkg.Identity.Id == "packageC");
             Assert.NotNull(transitivePackageC);
             Assert.Equal(1, transitivePackageC.TransitiveOrigins.Count());
             var transitiveOriginC = transitivePackageC.TransitiveOrigins.First();
@@ -780,7 +780,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.Equal(new NuGetVersion("2.0.0"), transitiveOriginC.Identity.Version);
 
             // Verify transitive package D
-            var transitivePackageD = installedAndTransitive.TransitivePackages.Where(pkg => pkg.Identity.Id == "packageD").First();
+            var transitivePackageD = installedAndTransitive.TransitivePackages.First(pkg => pkg.Identity.Id == "packageD");
             Assert.NotNull(transitivePackageD);
             Assert.Equal(2, transitivePackageD.TransitiveOrigins.Count()); // Two top dependencies
             Assert.Collection(transitivePackageD.TransitiveOrigins,

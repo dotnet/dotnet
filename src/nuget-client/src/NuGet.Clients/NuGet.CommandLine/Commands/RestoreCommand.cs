@@ -681,8 +681,8 @@ namespace NuGet.CommandLine
                     Console.LogDebug(ex.ToString());
 
                     // Check for packages.config but no project.json files
-                    if (projectsWithPotentialP2PReferences.Where(HasPackagesConfigFile).Any()
-                        && !projectsWithPotentialP2PReferences.Where(HasProjectJsonFile).Any())
+                    if (projectsWithPotentialP2PReferences.Any(HasPackagesConfigFile)
+                        && !projectsWithPotentialP2PReferences.Any(HasProjectJsonFile))
                     {
                         // warn to let the user know that NETCore will be skipped
                         Console.LogWarning(LocalizedResourceManager.GetString("Warning_ReadingProjectsFailed"));

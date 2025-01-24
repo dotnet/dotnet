@@ -57,8 +57,7 @@ namespace NuGet.Packaging
             return obj?.GetType()
                        .GetRuntimeProperties()
                        .Where(prop => prop.GetMethod != null && prop.GetMethod.IsPublic && !prop.GetMethod.IsStatic)
-                       .Select(prop => GetVersionFromPropertyInfo(obj, prop))
-                       .Max()
+                       .Max(prop => GetVersionFromPropertyInfo(obj, prop))
                       ?? DefaultVersion;
         }
 
