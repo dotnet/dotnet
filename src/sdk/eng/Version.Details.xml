@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="10.0.100-alpha.1.25073.1">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="10.0.100-alpha.1.25075.2">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>35e01a53bc7b89b0be84adf0b547ed79b5542c16</Sha>
+      <Sha>1f6d1a287050bf26dfeb1c5334359aa6e4b9ef45</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="10.0.100-alpha.1.25073.1">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="10.0.100-alpha.1.25075.2">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>35e01a53bc7b89b0be84adf0b547ed79b5542c16</Sha>
+      <Sha>1f6d1a287050bf26dfeb1c5334359aa6e4b9ef45</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="10.0.100-alpha.1.25073.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="10.0.100-alpha.1.25075.2">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>35e01a53bc7b89b0be84adf0b547ed79b5542c16</Sha>
+      <Sha>1f6d1a287050bf26dfeb1c5334359aa6e4b9ef45</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.0-alpha.1.25072.13">
@@ -73,18 +73,18 @@
       <Sha>0de3165cb0d56323b6caaf8e9916d4d9e72da32d</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25072-12">
+    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6bed355f6bb313c1f6e7b887da460f9b49ec8f6b</Sha>
+      <Sha>291a8108761ed347562228f2f8f25477996a5a93</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25072-12">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6bed355f6bb313c1f6e7b887da460f9b49ec8f6b</Sha>
+      <Sha>291a8108761ed347562228f2f8f25477996a5a93</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25072-12">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6bed355f6bb313c1f6e7b887da460f9b49ec8f6b</Sha>
+      <Sha>291a8108761ed347562228f2f8f25477996a5a93</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.300-beta.25072.1">
