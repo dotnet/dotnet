@@ -76,7 +76,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
         _useNewFormattingEngine = new Lazy<bool>(() =>
         {
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var useNewFormattingEngine = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseNewFormattingEngine, defaultValue: false);
+            var useNewFormattingEngine = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseNewFormattingEngine, defaultValue: true);
             return useNewFormattingEngine;
         });
     }

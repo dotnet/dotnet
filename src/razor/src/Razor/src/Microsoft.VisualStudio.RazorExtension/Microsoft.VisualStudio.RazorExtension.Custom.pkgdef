@@ -77,7 +77,7 @@
 
 [$RootKey$\FeatureFlags\Razor\LSP\UseNewFormattingEngine]
 "Description"="Enables the new Razor formatting engine, which provides formatting results that more closely match C# formatting."
-"Value"=dword:00000000
+"Value"=dword:00000001
 "Title"="Use the new Razor formatting engine in the IDE (requires restart)"
 "PreviewPaneChannels"="*"
 
