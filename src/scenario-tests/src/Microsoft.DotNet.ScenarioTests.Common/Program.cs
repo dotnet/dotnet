@@ -77,6 +77,11 @@ namespace ScenarioTests
                 DefaultValueFactory = (_) => RuntimeInformation.RuntimeIdentifier
             };
 
+            CliOption<string> portableRidOption = new("--portable-rid")
+            {
+                Description = "Portable rid for tests requiring one (e.g. self-contained publish).",
+            };
+
             rootCommand.Options.Add(dotnetRootOption);
             rootCommand.Options.Add(testRootOption);
             rootCommand.Options.Add(sdkVersionOption);
@@ -87,6 +92,7 @@ namespace ScenarioTests
             rootCommand.Options.Add(xmlResultsPathOption);
             rootCommand.Options.Add(noCleanTestRoot);
             rootCommand.Options.Add(targetRidOption);
+            rootCommand.Options.Add(portableRidOption);
 
 
             rootCommand.SetAction((ParseResult parseResult) =>
@@ -95,6 +101,7 @@ namespace ScenarioTests
                        parseResult.GetValue(testRootOption)!,
                        parseResult.GetValue(sdkVersionOption),
                        parseResult.GetValue(targetRidOption)!,
+                       parseResult.GetValue(portableRidOption),
                        parseResult.GetValue(listTestsOption),
                        parseResult.GetValue(offlineOnlyOption),
                        parseResult.GetValue(noTraitsOption) ?? (IList<string>)ImmutableList<string>.Empty,
@@ -110,6 +117,7 @@ namespace ScenarioTests
                                  string testRoot,
                                  string? sdkVersion,
                                  string targetRid,
+                                 string? portableRid,
                                  bool listOnly,
                                  bool offlineOnly,
                                  IList<string> noTraits,
@@ -168,6 +176,7 @@ namespace ScenarioTests
             Console.WriteLine($"  Dotnet Root: {dotnetRoot}");
             Console.WriteLine($"  Test root: {testRoot}");
             Console.WriteLine($"  Target RID: {targetRid}");
+            Console.WriteLine($"  Portable RID: {portableRid}");
             Console.WriteLine($"  Sdk Version: {sdkVersion ?? "latest"}");
             Console.WriteLine($"  Platform: {platform}");
 
@@ -186,7 +195,7 @@ namespace ScenarioTests
                 return 0;
             }
 
-            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid);
+            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid, portableRid);
 
             var executor = xunitTestFx.CreateExecutor(asmName);
             executor.RunTests(filteredTestCases, resultsSink, TestFrameworkOptions.ForExecution(assemblyConfig));
@@ -207,7 +216,7 @@ namespace ScenarioTests
             return failed ? 1 : 0;
         }
 
-        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid)
+        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid, string? portableRid)
         {
             // Verify that the input parameters 
             // Create any directories as necessary
@@ -218,6 +227,7 @@ namespace ScenarioTests
             Environment.SetEnvironmentVariable(ScenarioTestFixture.TestRootEnvironmentVariable, testRoot);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.SdkVersionEnvironmentVariable, sdkVersion);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.TargetRidEnvironmentVariable, targetRid);
+            Environment.SetEnvironmentVariable(ScenarioTestFixture.PortableRidEnvironmentVariable, portableRid);
         }
 
 
