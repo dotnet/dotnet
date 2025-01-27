@@ -16,6 +16,7 @@ public class ScenarioTestFixture
     public const string SdkVersionEnvironmentVariable = "SCENARIO_TESTS_SDKVERSION";
     public const string TestRootEnvironmentVariable = "SCENARIO_TESTS_TESTROOT";
     public const string TargetRidEnvironmentVariable = "SCENARIO_TESTS_TARGETRID";
+    public const string PortableRidEnvironmentVariable = "SCENARIO_TESTS_PORTABLERID";
 
     public ScenarioTestFixture()
     {
@@ -23,6 +24,7 @@ public class ScenarioTestFixture
         string? testRoot = Environment.GetEnvironmentVariable(TestRootEnvironmentVariable);
         string? sdkVersion = Environment.GetEnvironmentVariable(SdkVersionEnvironmentVariable);
         string? targetRid = Environment.GetEnvironmentVariable(TargetRidEnvironmentVariable);
+        string? portableRid = Environment.GetEnvironmentVariable(PortableRidEnvironmentVariable);
 
         if (string.IsNullOrEmpty(dotnetRoot) || string.IsNullOrEmpty(testRoot) || string.IsNullOrEmpty(targetRid))
         {
@@ -33,6 +35,7 @@ public class ScenarioTestFixture
         DotNetRoot = dotnetRoot;
         TestRoot = testRoot;
         TargetRid = targetRid;
+        PortableRid = portableRid;
     }
 
     public string? SdkVersion { get; internal set; }
@@ -40,5 +43,5 @@ public class ScenarioTestFixture
     public string TestRoot { get; set; }
     public string TargetRid { get; set; }
     public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
-    public string PortableRid { get => $"linux-{TargetArchitecture}"; }
+    public string? PortableRid { get; set; }
 }
