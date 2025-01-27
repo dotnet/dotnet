@@ -366,7 +366,9 @@ public class CompatibilityRowsBuilder
             false when version.StartsWith("15.") => GetContentFilesPath("netcoreapp2.0"),
             false when NuGetVersion.TryParse(version, out var v)
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) < new NuGetVersion("17.4.0") => GetContentFilesPath("netcoreapp2.1"),
-            false => GetContentFilesPath("netcoreapp3.1"),
+            false when NuGetVersion.TryParse(version, out var v)
+                && new NuGetVersion(v.Major, v.Minor, v.Patch) <= new NuGetVersion("17.12.0") => GetContentFilesPath("netcoreapp3.1"),
+            false => GetContentFilesPath("net9.0"),
         };
 
         return new VSTestConsoleInfo

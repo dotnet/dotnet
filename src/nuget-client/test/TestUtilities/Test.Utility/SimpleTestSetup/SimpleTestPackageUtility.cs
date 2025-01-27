@@ -707,7 +707,7 @@ namespace NuGet.Test.Utility
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        var nuspec = archive.Entries.Where(entry => entry.Name.EndsWith(NuGetConstants.ManifestExtension)).SingleOrDefault();
+                        var nuspec = archive.Entries.SingleOrDefault(entry => entry.Name.EndsWith(NuGetConstants.ManifestExtension));
                         nuspec?.Delete();
                     }
                 }

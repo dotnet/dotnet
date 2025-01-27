@@ -60,7 +60,7 @@ public class DefaultRazorProjectEngineIntegrationTest
         // Arrange
         var projectItem = new TestRazorProjectItem("Index.cshtml");
 
-        var testImport = Mock.Of<RazorProjectItem>(i => i.Read() == new MemoryStream() && i.FilePath == "testvalue" && i.Exists == true);
+        var testImport = new TestRazorProjectItem("testvalue");
         var importFeature = new Mock<IImportProjectFeature>();
         importFeature
             .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))
@@ -85,13 +85,13 @@ public class DefaultRazorProjectEngineIntegrationTest
         // Arrange
         var projectItem = new TestRazorProjectItem("Index.cshtml");
 
-        var testImport1 = Mock.Of<RazorProjectItem>(i => i.Read() == new MemoryStream() && i.FilePath == "testvalue1" && i.Exists == true);
+        var testImport1 = new TestRazorProjectItem("testvalue1");
         var importFeature1 = new Mock<IImportProjectFeature>();
         importFeature1
             .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))
             .Returns(new[] { testImport1 });
 
-        var testImport2 = Mock.Of<RazorProjectItem>(i => i.Read() == new MemoryStream() && i.FilePath == "testvalue2" && i.Exists == true);
+        var testImport2 = new TestRazorProjectItem("testvalue2");
         var importFeature2 = new Mock<IImportProjectFeature>();
         importFeature2
             .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))

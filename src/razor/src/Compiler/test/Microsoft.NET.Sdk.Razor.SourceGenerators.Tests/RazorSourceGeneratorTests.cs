@@ -314,7 +314,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -398,7 +398,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -532,7 +532,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -652,7 +652,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver, expectedDiagnostics)
                         .VerifyOutputsMatch(result);
@@ -752,7 +752,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -920,7 +920,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -1113,7 +1113,7 @@ namespace MyApp.Pages
             Assert.Equal("RZ10012", diagnostic.Id);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             var surveyPromptAssembly = GetSurveyPromptMetadataReference(compilation!);
             compilation = compilation!.AddReferences(surveyPromptAssembly);
@@ -1177,7 +1177,7 @@ using SurveyPromptRootNamspace;
             );
 
             // Verify caching
-            eventListener.Events.Clear();
+            eventListener.Clear();
             result = RunGenerator(compilation, ref driver);
 
             Assert.Empty(result.Diagnostics);
@@ -1618,7 +1618,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -1839,7 +1839,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver, expectedDiagnostics)
                        .VerifyOutputsMatch(result);
@@ -1994,7 +1994,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -2704,7 +2704,7 @@ namespace MyApp.Pages
             driver = SetSuppressionState(true);
 
             // results should be empty, and no events recorded
-            eventListener.Events.Clear();
+            eventListener.Clear();
             result = RunGenerator(compilation!, ref driver)
                 .VerifyPageOutput();
             Assert.Empty(eventListener.Events);
@@ -2824,7 +2824,7 @@ namespace MyApp.Pages
 
             // Flip suppression on, change the compilation, no changes
             driver = SetSuppressionState(true);
-            eventListener.Events.Clear();
+            eventListener.Clear();
             RunGenerator(compilation!, ref driver).VerifyPageOutput();
 
             project = project.AddDocument("viewcomponent.cs", """
@@ -2853,7 +2853,7 @@ namespace MyApp.Pages
 
             // Flip suppression on, change the parse options, no changes
             driver = SetSuppressionState(true);
-            eventListener.Events.Clear();
+            eventListener.Clear();
             project = project.WithParseOptions(((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.CSharp8));
             compilation = await project.GetCompilationAsync();
             driver = driver.WithUpdatedParseOptions(project.ParseOptions!);
@@ -3194,7 +3194,7 @@ namespace MyApp
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -3236,7 +3236,7 @@ namespace MyApp
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                 .VerifyOutputsMatch(result);

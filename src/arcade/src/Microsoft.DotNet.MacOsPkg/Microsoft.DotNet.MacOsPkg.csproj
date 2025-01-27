@@ -12,6 +12,10 @@
     <DevelopmentDependency>false</DevelopmentDependency>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-macos-pkg</ToolCommandName>

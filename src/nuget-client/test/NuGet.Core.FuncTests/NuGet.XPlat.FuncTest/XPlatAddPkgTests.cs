@@ -803,7 +803,7 @@ namespace NuGet.XPlat.FuncTest
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to highest available version.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V2.Version));
@@ -888,7 +888,7 @@ namespace NuGet.XPlat.FuncTest
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to specified version.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V1.Version));

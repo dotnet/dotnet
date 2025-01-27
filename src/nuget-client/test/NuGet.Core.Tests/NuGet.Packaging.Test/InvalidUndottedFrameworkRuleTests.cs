@@ -47,7 +47,7 @@ namespace NuGet.Packaging.Test
             </package>
             ".Trim();
             XDocument xml = XDocument.Parse(xmlString);
-            XElement metadataNode = xml.Root.Elements().Where(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata")).FirstOrDefault();
+            XElement metadataNode = xml.Root.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata"));
             var results = new List<PackagingLogMessage>(InvalidUndottedFrameworkRule.ValidateDependencyGroups(metadataNode));
             if (shouldWarn)
             {
@@ -84,7 +84,7 @@ namespace NuGet.Packaging.Test
             </package>
             ".Trim();
             XDocument xml = XDocument.Parse(xmlString);
-            XElement metadataNode = xml.Root.Elements().Where(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata")).FirstOrDefault();
+            XElement metadataNode = xml.Root.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata"));
             var results = new List<PackagingLogMessage>(InvalidUndottedFrameworkRule.ValidateReferenceGroups(metadataNode));
             if (shouldWarn)
             {
@@ -120,7 +120,7 @@ namespace NuGet.Packaging.Test
             </package>
             ".Trim();
             XDocument xml = XDocument.Parse(xmlString);
-            XElement metadataNode = xml.Root.Elements().Where(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata")).FirstOrDefault();
+            XElement metadataNode = xml.Root.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, "metadata"));
             var results = new List<PackagingLogMessage>(InvalidUndottedFrameworkRule.ValidateFrameworkAssemblies(xml, metadataNode));
             if (shouldWarn)
             {

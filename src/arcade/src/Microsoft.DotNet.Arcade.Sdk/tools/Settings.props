@@ -6,6 +6,7 @@
     <_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>$(CustomBeforeMicrosoftCommonCrossTargetingTargets)</_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>
     <CustomBeforeMicrosoftCommonTargets>$(MSBuildThisFileDirectory)BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
     <CustomBeforeMicrosoftCommonCrossTargetingTargets>$(MSBuildThisFileDirectory)BeforeCommonTargets.CrossTargeting.targets</CustomBeforeMicrosoftCommonCrossTargetingTargets>
+    <BeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets);$(MSBuildThisFileDirectory)BeforeNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
     <!-- MSBuild has "global" variables (ie command-line or MSBuild task properties) override local declarations.  That's generally not the behavior that we want in Arcade.
          We want to be able to have Arcade MSBuild a project / target with the property set as a default, but let the project override that value.  To work around MSBuild,
          we pass in `_blah` and set it to a local property (`blah`) which is not global. -->

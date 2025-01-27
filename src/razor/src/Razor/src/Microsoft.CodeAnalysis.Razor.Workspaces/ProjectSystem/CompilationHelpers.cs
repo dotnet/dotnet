@@ -2,9 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -17,22 +20,9 @@ internal static class CompilationHelpers
         RazorCompilerOptions compilerOptions,
         CancellationToken cancellationToken)
     {
-        var importItems = await ImportHelpers.GetImportItemsAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
-
-        return await GenerateCodeDocumentAsync(
-            document, projectEngine, importItems, compilerOptions, cancellationToken).ConfigureAwait(false);
-    }
-
-    internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(
-        IDocumentSnapshot document,
-        RazorProjectEngine projectEngine,
-        ImmutableArray<ImportItem> imports,
-        RazorCompilerOptions compilerOptions,
-        CancellationToken cancellationToken)
-    {
-        var importSources = ImportHelpers.GetImportSources(imports, projectEngine);
+        var importSources = await GetImportSourcesAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
         var tagHelpers = await document.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-        var source = await ImportHelpers.GetSourceAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
+        var source = await document.GetSourceAsync(projectEngine, cancellationToken).ConfigureAwait(false);
 
         var generator = new CodeDocumentGenerator(projectEngine, compilerOptions);
         return generator.Generate(source, document.FileKind, importSources, tagHelpers, cancellationToken);
@@ -41,28 +31,68 @@ internal static class CompilationHelpers
     internal static async Task<RazorCodeDocument> GenerateDesignTimeCodeDocumentAsync(
         IDocumentSnapshot document,
         RazorProjectEngine projectEngine,
-        ImmutableArray<ImportItem> imports,
         CancellationToken cancellationToken)
     {
-        var importSources = ImportHelpers.GetImportSources(imports, projectEngine);
+        var importSources = await GetImportSourcesAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
         var tagHelpers = await document.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-        var source = await ImportHelpers.GetSourceAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
+        var source = await document.GetSourceAsync(projectEngine, cancellationToken).ConfigureAwait(false);
 
         var generator = new CodeDocumentGenerator(projectEngine, RazorCompilerOptions.None);
         return generator.GenerateDesignTime(source, document.FileKind, importSources, tagHelpers, cancellationToken);
     }
 
-    internal static async Task<RazorCodeDocument> GenerateDesignTimeCodeDocumentAsync(
-        IDocumentSnapshot document,
-        RazorProjectEngine projectEngine,
-        CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<RazorSourceDocument>> GetImportSourcesAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
     {
-        var importItems = await ImportHelpers.GetImportItemsAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
-        var importSources = ImportHelpers.GetImportSources(importItems, projectEngine);
-        var tagHelpers = await document.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-        var source = await ImportHelpers.GetSourceAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
+        var projectItem = projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
 
-        var generator = new CodeDocumentGenerator(projectEngine, RazorCompilerOptions.None);
-        return generator.GenerateDesignTime(source, document.FileKind, importSources, tagHelpers, cancellationToken);
+        using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
+
+        foreach (var feature in projectEngine.GetFeatures<IImportProjectFeature>())
+        {
+            if (feature.GetImports(projectItem) is { } featureImports)
+            {
+                importProjectItems.AddRange(featureImports);
+            }
+        }
+
+        if (importProjectItems.Count == 0)
+        {
+            return [];
+        }
+
+        var project = document.Project;
+
+        using var importSources = new PooledArrayBuilder<RazorSourceDocument>(capacity: importProjectItems.Count);
+
+        foreach (var importProjectItem in importProjectItems)
+        {
+            if (importProjectItem is NotFoundProjectItem)
+            {
+                continue;
+            }
+
+            if (importProjectItem.PhysicalPath is null)
+            {
+                // This is a default import.
+                var importSource = importProjectItem.GetSource()
+                    .AssumeNotNull($"Encountered a default import with a missing {nameof(RazorSourceDocument)}: {importProjectItem.FilePath}.");
+
+                importSources.Add(importSource);
+            }
+            else if (project.TryGetDocument(importProjectItem.PhysicalPath, out var importDocument))
+            {
+                var text = await importDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                var properties = RazorSourceDocumentProperties.Create(importProjectItem.FilePath, importProjectItem.RelativePhysicalPath);
+                var importSource = RazorSourceDocument.Create(text, properties);
+
+                importSources.Add(importSource);
+            }
+            else if (importProjectItem.Exists)
+            {
+                Debug.Fail($"Encountered an import that was not a default import or tracked in the project system: {importProjectItem.PhysicalPath}.");
+            }
+        }
+
+        return importSources.DrainToImmutable();
     }
 }

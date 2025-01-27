@@ -7,11 +7,17 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 public class SdkTemplateTest
 {
     public DotNetSdkActions Commands { get; }
+
     public DotNetLanguage Language { get; }
+
     public bool NoHttps { get => TargetRid.Contains("osx"); }
+
     public string TargetRid { get; set; }
+
     public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
+
     public string ScenarioName { get; }
+
     public DotNetSdkTemplate Template { get; }
 
     public SdkTemplateTest(string scenarioName, DotNetLanguage language, string targetRid, DotNetSdkTemplate template, DotNetSdkActions commands = DotNetSdkActions.None)

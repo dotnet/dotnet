@@ -33,7 +33,7 @@ public class InjectTargetExtensionTest
             public PropertyType PropertyName { get; private set; }
 
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 
     [Fact]
@@ -86,6 +86,6 @@ public class InjectTargetExtensionTest
              = default!;
 
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 }

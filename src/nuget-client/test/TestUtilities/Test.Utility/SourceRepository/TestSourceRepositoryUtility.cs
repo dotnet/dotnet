@@ -111,7 +111,7 @@ namespace Test.Utility
 
         public void SaveActivePackageSource(PackageSource source) => throw new NotImplementedException();
 
-        public PackageSource GetPackageSource(string name) => PackageSources.Where(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+        public PackageSource GetPackageSource(string name) => PackageSources.FirstOrDefault(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
 
         public void RemovePackageSource(string name) => throw new NotImplementedException();
 

@@ -147,6 +147,9 @@ dotnet_naming_rule.private_field_rule.style = private_member_style
 dotnet_diagnostic.IDE0076.severity = warning
 dotnet_diagnostic.IDE0005.severity = warning
 
+# simplify linq expressions
+dotnet_diagnostic.IDE0120.severity = warning
+
 dotnet_diagnostic.VSTHRD200.severity = none
 
 # NuGet Code Analysis Rules

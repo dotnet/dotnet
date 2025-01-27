@@ -28,11 +28,11 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
 
         context.Visitor.VisitDocument(documentNode);
 
-        var generatedCode = context.CodeWriter.GenerateCode();
+        var text = context.CodeWriter.GetText();
 
         return new RazorCSharpDocument(
             codeDocument,
-            generatedCode,
+            text,
             _options,
             context.GetDiagnostics(),
             context.GetSourceMappings(),

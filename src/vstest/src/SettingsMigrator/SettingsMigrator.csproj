@@ -3,16 +3,19 @@
 
   <PropertyGroup>
     <AssemblyName>SettingsMigrator</AssemblyName>
-    <TargetFrameworks>net7.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <!--
+      Shipped with TestPlatform package.
+    -->
+    <TargetFrameworks>$(NetFrameworkRunnerTargetFramework)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <IsTestProject>false</IsTestProject>
-    <Prefer32Bit Condition="$(TargetFramework.StartsWith('net4'))">true</Prefer32Bit>
+    <Prefer32Bit Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
     <Reference Include="System.IO" />
     <Reference Include="System.Runtime" />

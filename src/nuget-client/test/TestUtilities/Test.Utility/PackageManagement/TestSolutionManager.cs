@@ -168,9 +168,7 @@ namespace Test.Utility
 
         public Task<NuGetProject> GetNuGetProjectAsync(string nuGetProjectSafeName)
         {
-            return Task.FromResult(NuGetProjects.
-                Where(p => string.Equals(nuGetProjectSafeName, p.GetMetadata<string>(NuGetProjectMetadataKeys.Name), StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault());
+            return Task.FromResult(NuGetProjects.FirstOrDefault(p => string.Equals(nuGetProjectSafeName, p.GetMetadata<string>(NuGetProjectMetadataKeys.Name), StringComparison.OrdinalIgnoreCase)));
         }
 
         public Task<string> GetNuGetProjectSafeNameAsync(NuGetProject nuGetProject)

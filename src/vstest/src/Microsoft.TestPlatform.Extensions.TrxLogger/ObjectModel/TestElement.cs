@@ -32,6 +32,7 @@ internal abstract class TestElement : ITestElement, IXmlTestStore
     protected TestExecId _executionId;
     protected TestExecId _parentExecutionId;
     protected TestCategoryItemCollection _testCategories;
+    protected PropertyCollection _properties;
     protected WorkItemCollection _workItems;
     protected TestListCategoryId _catId;
 
@@ -46,6 +47,7 @@ internal abstract class TestElement : ITestElement, IXmlTestStore
         _executionId = TestExecId.Empty;
         _parentExecutionId = TestExecId.Empty;
         _testCategories = new TestCategoryItemCollection();
+        _properties = new PropertyCollection();
         _workItems = new WorkItemCollection();
         _isRunnable = true;
         _catId = TestListCategoryId.Uncategorized;
@@ -185,6 +187,21 @@ internal abstract class TestElement : ITestElement, IXmlTestStore
         }
     }
 
+
+    /// <summary>
+    /// Gets or sets the test traits.
+    /// </summary>
+    public PropertyCollection Traits
+    {
+        get { return _properties; }
+
+        set
+        {
+            EqtAssert.ParameterNotNull(value, "value");
+            _properties = value;
+        }
+    }
+
     /// <summary>
     /// Gets the adapter name.
     /// </summary>
@@ -245,6 +262,7 @@ internal abstract class TestElement : ITestElement, IXmlTestStore
         h.SaveSimpleField(element, "@priority", _priority, DefaultPriority);
         h.SaveSimpleField(element, "Owners/Owner/@name", _owner, string.Empty);
         h.SaveObject(_testCategories, element, "TestCategory", parameters);
+        h.SaveObject(_properties, element, "Properties", parameters);
 
         if (_executionId != null)
             h.SaveGuid(element, "Execution/@id", _executionId.Id);

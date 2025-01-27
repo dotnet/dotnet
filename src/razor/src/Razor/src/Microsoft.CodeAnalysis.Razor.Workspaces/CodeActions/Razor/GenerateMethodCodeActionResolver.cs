@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -19,8 +21,8 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
@@ -66,8 +68,10 @@ internal class GenerateMethodCodeActionResolver(
                 cancellationToken).ConfigureAwait(false);
         }
 
+        // TODO: Update IFileSystem.ReadFile(...) to return a SourceText without reading a huge string.
         var content = _fileSystem.ReadFile(codeBehindPath);
-        if (GetCSharpClassDeclarationSyntax(content, razorNamespace, razorClassName) is not { } @class)
+        var text = SourceText.From(content, Encoding.UTF8);
+        if (GetCSharpClassDeclarationSyntax(text, razorNamespace, razorClassName) is not { } @class)
         {
             // The code behind file is malformed, generate the code in the razor file instead.
             return await GenerateMethodInCodeBlockAsync(
@@ -92,7 +96,7 @@ internal class GenerateMethodCodeActionResolver(
             options.InsertSpaces,
             @class.SpanStart,
             classLocationLineSpan.StartLinePosition.Character,
-            content);
+            text);
 
         var edit = VsLspFactory.CreateTextEdit(
             line: classLocationLineSpan.EndLinePosition.Line,
@@ -128,7 +132,7 @@ internal class GenerateMethodCodeActionResolver(
         if (edits.Length == 3
             && razorClassName is not null
             && (razorNamespace is not null || code.TryComputeNamespace(fallbackToRootNamespace: true, out razorNamespace))
-            && GetCSharpClassDeclarationSyntax(code.GetCSharpDocument().GeneratedCode, razorNamespace, razorClassName) is { } @class)
+            && GetCSharpClassDeclarationSyntax(code.GetOrParseCSharpSyntaxTree(cancellationToken), razorNamespace, razorClassName) is { } @class)
         {
             // There is no existing @code block. This means that there is no code block source mapping in the generated C# document
             // to place the code, so we cannot utilize the document mapping service and the formatting service.
@@ -212,10 +216,16 @@ internal class GenerateMethodCodeActionResolver(
             """;
     }
 
-    private static ClassDeclarationSyntax? GetCSharpClassDeclarationSyntax(string csharpContent, string razorNamespace, string razorClassName)
+    private static ClassDeclarationSyntax? GetCSharpClassDeclarationSyntax(SourceText csharpContent, string razorNamespace, string razorClassName)
     {
-        var mock = CSharpSyntaxFactory.ParseCompilationUnit(csharpContent);
-        var @namespace = mock.Members
+        var syntaxTree = CSharpSyntaxTree.ParseText(csharpContent);
+        return GetCSharpClassDeclarationSyntax(syntaxTree, razorNamespace, razorClassName);
+    }
+
+    private static ClassDeclarationSyntax? GetCSharpClassDeclarationSyntax(SyntaxTree csharpSyntaxTree, string razorNamespace, string razorClassName)
+    {
+        var compilationUnit = csharpSyntaxTree.GetCompilationUnitRoot();
+        var @namespace = compilationUnit.Members
             .FirstOrDefault(m => m is BaseNamespaceDeclarationSyntax { } @namespace && @namespace.Name.ToString() == razorNamespace);
         if (@namespace is null)
         {

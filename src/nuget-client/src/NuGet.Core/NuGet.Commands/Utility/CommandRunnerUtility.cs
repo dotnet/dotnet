@@ -101,9 +101,9 @@ namespace NuGet.Commands
         public static async Task<SymbolPackageUpdateResourceV3> GetSymbolPackageUpdateResource(IPackageSourceProvider sourceProvider, string source, CancellationToken cancellationToken)
         {
             // Use a loaded PackageSource if possible since it contains credential info
-            var packageSource = sourceProvider.LoadPackageSources()
-                .Where(e => e.IsEnabled && string.Equals(source, e.Source, StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault();
+            var packageSource = sourceProvider
+                .LoadPackageSources()
+                .FirstOrDefault(e => e.IsEnabled && string.Equals(source, e.Source, StringComparison.OrdinalIgnoreCase));
 
             if (packageSource == null)
             {

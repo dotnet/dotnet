@@ -66,7 +66,7 @@ namespace NuGet.Commands
             if (packageSpec.RestoreMetadata?.ProjectStyle == ProjectStyle.DotnetToolReference)
             {
                 // Autoreferenced packages are allowed. Currently they're using Microsoft.NET.Platforms as an auto-ref package
-                if (packageSpec.GetAllPackageDependencies().Where(e => !e.AutoReferenced).Count() != 1)
+                if (packageSpec.GetAllPackageDependencies().Count(e => !e.AutoReferenced) != 1)
                 {
                     // Create issue
                     var issue = CompatibilityIssue.IncompatibleProjectType(

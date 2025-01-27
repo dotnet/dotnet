@@ -14,6 +14,8 @@ internal static partial class RazorWrapperFactory
 {
     private class CodeDocumentWrapper(RazorCodeDocument obj) : Wrapper<RazorCodeDocument>(obj), IRazorCodeDocument
     {
+        private string? _csharpGeneratedCode;
+
         public ImmutableArray<ClassifiedSpan> GetClassifiedSpans()
         {
             var result = Object.GetSyntaxTree().GetClassifiedSpans();
@@ -71,6 +73,7 @@ internal static partial class RazorWrapperFactory
             => RazorIndentationFacts.GetDesiredIndentation(Object.GetSyntaxTree(), snapshot, line, indentSize, tabSize);
 
         public string GetGeneratedCode()
-            => Object.GetCSharpDocument().GeneratedCode;
+            => _csharpGeneratedCode ??=
+                InterlockedOperations.Initialize(ref _csharpGeneratedCode, Object.GetCSharpDocument().Text.ToString());
     }
 }

@@ -13,6 +13,7 @@ namespace NuGetVSExtension
         private const string guidNuGetDialogCmdSetString = "25fd982b-8cae-4cbd-a440-e03ffccde106";
         private const string guidNuGetToolsGroupString = "C0D88179-5D25-4982-BFE6-EC5FD59AC103";
         private const string guidNuGetDebugConsoleCmdSetString = "DDC61543-6CA7-4A6F-A5B7-984BE723C52F";
+        private const string guidClearNuGetLocalResourcesCmdSetString = "54A0AC88-A025-4A62-8D48-6C1848E4F545";
 
         // any project system that wants to load NuGet when its project opens needs to activate a UI context with this GUID
         public const string guidAutoLoadNuGetString = "65B1D035-27A5-4BBA-BAB9-5F61C1E2BC4A";
@@ -30,6 +31,7 @@ namespace NuGetVSExtension
         public static readonly Guid guidNuGetToolsGroupCmdSet = new Guid(guidNuGetToolsGroupString);
         public static readonly Guid guidNuGetDebugConsoleCmdSet = new Guid(guidNuGetDebugConsoleCmdSetString);
         public static readonly Guid guidNuGetEditorType = Guid.Parse(guidNuGetEditorTypeString);
+        public static readonly Guid guidClearNuGetLocalResourcesCmdSet = Guid.Parse(guidClearNuGetLocalResourcesCmdSetString);
 
         // Visual Studio output tool window (Copied from EnvDTE interop)
         public static Guid guidVsWindowKindOutput = Guid.Parse("34E76E81-EE4A-11D0-AE2E-00A0C90FFFC3");

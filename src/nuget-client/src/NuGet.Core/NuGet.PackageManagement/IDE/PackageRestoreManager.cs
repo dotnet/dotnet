@@ -611,8 +611,7 @@ namespace NuGet.PackageManagement
                     var packageReferenceComparer = PackageReferenceComparer.Instance;
 
                     var packageRestoreData = packageRestoreContext.Packages
-                        .Where(p => packageReferenceComparer.Equals(p.PackageReference, packageReference))
-                        .SingleOrDefault();
+                        .SingleOrDefault(p => packageReferenceComparer.Equals(p.PackageReference, packageReference));
 
                     if (packageRestoreData != null)
                     {

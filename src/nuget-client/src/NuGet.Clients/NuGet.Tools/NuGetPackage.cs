@@ -23,7 +23,9 @@ using NuGet.PackageManagement;
 using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.UI.Options;
 using NuGet.PackageManagement.VisualStudio;
+using NuGet.PackageManagement.VisualStudio.Services;
 using NuGet.ProjectManagement;
+using NuGet.Tools.Commands;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
 using NuGet.VisualStudio.Common.Telemetry;
@@ -51,10 +53,14 @@ namespace NuGetVSExtension
         Style = VsDockStyle.Tabbed,
         Window = "{34E76E81-EE4A-11D0-AE2E-00A0C90FFFC3}", // this is the guid of the Output tool window, which is present in both VS and VWD
         Orientation = ToolWindowOrientation.Right)]
-    [ProvideOptionPage(typeof(GeneralOptionPage), "NuGet Package Manager", "General", 113, 115, true)]
-    [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, Sort = 0)]
-    [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, Sort = 1)]
-    [ProvideOptionPage(typeof(PackageSourceMappingOptionsPage), "NuGet Package Manager", "Package Source Mapping", 113, 116, true, Sort = 2)]
+    [ProvideOptionPage(typeof(GeneralOptionPage), "NuGet Package Manager", "General", 113, 115, true, IsInUnifiedSettings = true)]
+    [ProvideOptionPage(typeof(StubGeneralOptionsPage), "NuGet Package Manager", "GeneralStub", 113, 115, true, IsInUnifiedSettings = false, Sort = 0,
+        // Only show the stub legacy settings General page by using a visibility context indicating when the unified settings feature is enabled.
+        VisibilityCmdUIContexts = "13b56f17-0b98-4a51-a9a0-9767d84796da")]
+    [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, Sort = 1)]
+    [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, Sort = 2)]
+    [ProvideOptionPage(typeof(PackageSourceMappingOptionsPage), "NuGet Package Manager", "Package Source Mapping", 113, 116, true, Sort = 3)]
+    [ProvideSettingsManifest]
     [ProvideSearchProvider(typeof(NuGetSearchProvider), "NuGet Search")]
     // UI Context rule for a project that could be upgraded to PackageReference from packages.config based project.
     // Only exception is this UI context doesn't get enabled for right-click on Reference since there is no extension point on references
@@ -79,6 +85,7 @@ namespace NuGetVSExtension
     [ProvideBrokeredService(BrokeredServicesUtilities.ProjectUpgraderServiceName, BrokeredServicesUtilities.ProjectUpgraderServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.PackageFileServiceName, BrokeredServicesUtilities.PackageFileServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.SearchServiceName, BrokeredServicesUtilities.SearchServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
+    [ProvideService(typeof(ExternalSettingsProviderService), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
     [Guid(GuidList.guidNuGetPkgString)]
     public sealed partial class NuGetPackage : AsyncPackage, IVsPackageExtensionProvider, IVsPersistSolutionOpts
     {
@@ -188,13 +195,20 @@ namespace NuGetVSExtension
                 },
                 ThreadHelper.JoinableTaskFactory);
 
+            AddService(typeof(ExternalSettingsProviderService),
+                (container, ct, serviceType) => Task.FromResult<object>(new ExternalSettingsProviderService()),
+                promote: true);
+
             await NuGetBrokeredServiceFactory.ProfferServicesAsync(this);
 
             VsShellUtilities.ShutdownToken.Register(InstanceCloseTelemetryEmitter.OnShutdown);
 
-            var componentModel = await this.GetFreeThreadedServiceAsync<SComponentModel, IComponentModel>();
+            var componentModel = await this.GetServiceAsync<SComponentModel, IComponentModel>();
             Assumes.Present(componentModel);
             componentModel.DefaultCompositionService.SatisfyImportsOnce(this);
+
+            ClearNuGetLocalResourcesCommand clearNuGetLocalResourcesCommand = new(oleMenuCommandService: _mcs, OutputConsoleLogger);
+            clearNuGetLocalResourcesCommand.Initialize();
         }
 
         /// <summary>
@@ -209,7 +223,7 @@ namespace NuGetVSExtension
                     return;
                 }
 
-                var componentModel = await this.GetFreeThreadedServiceAsync<SComponentModel, IComponentModel>();
+                var componentModel = await this.GetServiceAsync<SComponentModel, IComponentModel>();
                 Assumes.Present(componentModel);
 
                 await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

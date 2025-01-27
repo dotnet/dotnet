@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net462</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -48,7 +48,7 @@
   </Target>
 
   <ItemGroup>
-    <None Update="Microsoft.TestPlatform.TestHost.props" Condition=" '$(TargetFramework)' == '$(NetCoreAppMinimum)' ">
+    <None Update="Microsoft.TestPlatform.TestHost.props" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

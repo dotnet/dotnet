@@ -610,7 +610,7 @@ namespace NuGet.Configuration
                 {
                     // get list of credentials for sources
                     var credentialsSection = Settings.GetSection(ConfigurationConstants.CredentialsSectionName);
-                    credentialsSettingsItem = credentialsSection?.Items.OfType<CredentialsItem>().Where(s => string.Equals(s.ElementName, sourceToUpdate.Key, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    credentialsSettingsItem = credentialsSection?.Items.OfType<CredentialsItem>().FirstOrDefault(s => string.Equals(s.ElementName, sourceToUpdate.Key, StringComparison.OrdinalIgnoreCase));
                 }
 
                 var oldPackageSource = ReadPackageSource(sourceToUpdate, disabledSourceItem == null, Settings, environmentVariableReader);

@@ -53,13 +53,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private TokenCredential GetAzureTokenCredential(string managedIdentityClientId)
         {
             TokenCredential tokenCredential = _tokenCredentialsPerManagedIdentity.GetOrAdd(managedIdentityClientId ?? string.Empty, static (mi) =>
-                new TokenCredentialShortCache(
-                    new DefaultIdentityTokenCredential(
-                        new DefaultIdentityTokenCredentialOptions
-                        {
-                            ManagedIdentityClientId = string.IsNullOrEmpty(mi) ? null : mi
-                        }
-                    )
+                new DefaultIdentityTokenCredential(
+                    new DefaultIdentityTokenCredentialOptions
+                    {
+                        ManagedIdentityClientId = string.IsNullOrEmpty(mi) ? null : mi
+                    }
                 )
             );
             return tokenCredential;

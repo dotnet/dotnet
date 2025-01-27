@@ -130,6 +130,15 @@
     </RemoveDuplicates>
 
     <ItemGroup>
+      <IntermediateFileWithoutVersion Include="$([System.Text.RegularExpressions.Regex]::Replace('%(IntermediatePackageFile.Identity)','\.(\d+\.){2}\d+(-\w+)?(\.(\d+\.){1}\d+)?',''))" />
+      <NotSupportIntermediateFile Include="@(IntermediateFileWithoutVersion)"
+                                  Condition="'%(IntermediateFileWithoutVersion.FileName) @(IntermediateFileWithoutVersion->Count())' != '%(IntermediateFileWithoutVersion.FileName) 1'" />
+    </ItemGroup>
+
+    <Error Condition="'@(NotSupportIntermediateFile)' != ''"
+           Text="There are multiple versions of these packages, please identify which version will go into the intermediate:%0a@(NotSupportIntermediateFile, '%0a')" />
+
+    <ItemGroup>
       <IntermediateNonShippingNupkgFile Include="@(IntermediatePackageFile)" Condition="$([System.Text.RegularExpressions.Regex]::Match(%(Identity),'[\\\\/]NonShipping[\\\\/]').Success)"/>
       <SupplementalIntermediateNupkgCategory Include="%(IntermediatePackageFile.Category)" />
     </ItemGroup>
@@ -216,7 +225,8 @@
     <MakeDir Directories="$(SourceBuiltSymbolsDir)" />
     <Copy
       SourceFiles="@(AbsoluteSymbolPath)"
-      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)" />
+      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)"
+      UseHardlinksIfPossible="true" />
   </Target>
   <!--
     This target can be removed once we enable standard repo assets manifests and SB orchestrator

@@ -31,7 +31,7 @@ internal static class ArrayExtensions
     /// <exception cref="ArrayTypeMismatchException">
     ///  <paramref name="array"/> is covariant, and the array's type is not exactly <typeparamref name="T"/>[].
     /// </exception>
-    public static ReadOnlySpan<T> AsSpan<T>(this T[]? array, Index startIndex)
+    public static Span<T> AsSpan<T>(this T[]? array, Index startIndex)
     {
 #if NET
         return MemoryExtensions.AsSpan(array, startIndex);
@@ -74,7 +74,7 @@ internal static class ArrayExtensions
     /// <exception cref="ArrayTypeMismatchException">
     ///  <paramref name="array"/> is covariant, and the array's type is not exactly <typeparamref name="T"/>[].
     /// </exception>
-    public static ReadOnlySpan<T> AsSpan<T>(this T[]? array, Range range)
+    public static Span<T> AsSpan<T>(this T[]? array, Range range)
     {
 #if NET
         return MemoryExtensions.AsSpan(array, range);
@@ -116,7 +116,7 @@ internal static class ArrayExtensions
     /// <exception cref="ArrayTypeMismatchException">
     ///  <paramref name="array"/> is covariant, and the array's type is not exactly <typeparamref name="T"/>[].
     /// </exception>
-    public static ReadOnlyMemory<T> AsMemory<T>(this T[]? array, Index startIndex)
+    public static Memory<T> AsMemory<T>(this T[]? array, Index startIndex)
     {
 #if NET
         return MemoryExtensions.AsMemory(array, startIndex);
@@ -160,7 +160,7 @@ internal static class ArrayExtensions
     /// <exception cref="ArrayTypeMismatchException">
     ///  <paramref name="array"/> is covariant, and the array's type is not exactly <typeparamref name="T"/>[].
     /// </exception>
-    public static ReadOnlyMemory<T> AsMemory<T>(this T[]? array, Range range)
+    public static Memory<T> AsMemory<T>(this T[]? array, Range range)
     {
 #if NET
         return MemoryExtensions.AsMemory(array, range);

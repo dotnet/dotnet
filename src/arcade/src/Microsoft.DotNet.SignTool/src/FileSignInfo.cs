@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -24,6 +25,9 @@ namespace Microsoft.DotNet.SignTool
         internal static bool IsDeb(string path)
             => Path.GetExtension(path) == ".deb";
 
+        internal static bool IsRpm(string path)
+            => Path.GetExtension(path) == ".rpm";
+
         internal static bool IsPEFile(string path)
             => Path.GetExtension(path) == ".exe" || Path.GetExtension(path) == ".dll";
 
@@ -36,6 +40,14 @@ namespace Microsoft.DotNet.SignTool
         internal static bool IsNupkg(string path)
             => Path.GetExtension(path).Equals(".nupkg", StringComparison.OrdinalIgnoreCase);
 
+        // Note: unpacking, repacking, and notarization can only happen on a Mac.
+        internal static bool IsPkg(string path)
+            => Path.GetExtension(path).Equals(".pkg", StringComparison.OrdinalIgnoreCase);
+
+        // Note: unpacking, repacking, and notarization can only happen on a Mac.
+        internal static bool IsAppBundle(string path)
+            => Path.GetExtension(path).Equals(".app", StringComparison.OrdinalIgnoreCase);
+
         internal static bool IsSymbolsNupkg(string path)
             => path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase);
 
@@ -47,7 +59,7 @@ namespace Microsoft.DotNet.SignTool
                 || (Path.GetExtension(path).Equals(".gz", StringComparison.OrdinalIgnoreCase)
                     && Path.GetExtension(Path.GetFileNameWithoutExtension(path)).Equals(".tar", StringComparison.OrdinalIgnoreCase));
 
-        internal static bool IsWix(string path)
+        internal static bool IsWixInstaller(string path)
             => (Path.GetExtension(path).Equals(".msi", StringComparison.OrdinalIgnoreCase)
                 || Path.GetExtension(path).Equals(".wixlib", StringComparison.OrdinalIgnoreCase));
 
@@ -56,13 +68,9 @@ namespace Microsoft.DotNet.SignTool
             || Path.GetExtension(path).Equals(".psd1", StringComparison.OrdinalIgnoreCase)
             || Path.GetExtension(path).Equals(".psm1", StringComparison.OrdinalIgnoreCase);
 
-        internal static bool IsPackage(string path)
-            => IsVsix(path) || IsNupkg(path);
-
-        internal static bool IsZipContainer(string path)
-            => IsPackage(path) || IsMPack(path) || IsZip(path) || IsTarGZip(path) || IsDeb(path);
-
         internal bool IsDeb() => IsDeb(FileName);
+
+        internal bool IsRpm() => IsRpm(FileName);
 
         internal bool IsPEFile() => IsPEFile(FileName);
 
@@ -74,31 +82,43 @@ namespace Microsoft.DotNet.SignTool
 
         internal bool IsNupkg() => IsNupkg(FileName) && !IsSymbolsNupkg();
 
+        internal bool IsPkg() => IsPkg(FileName);
+
+        internal bool IsAppBundle() => IsAppBundle(FileName);
+
         internal bool IsSymbolsNupkg() => IsSymbolsNupkg(FileName);
 
         internal bool IsZip() => IsZip(FileName);
 
         internal bool IsTarGZip() => IsTarGZip(FileName);
 
-        internal bool IsZipContainer() => IsZipContainer(FileName);
+        internal bool IsWixInstaller() => IsWixInstaller(FileName);
 
-        internal bool IsWix() => IsWix(FileName);
+        internal bool IsMPack() => IsMPack(FileName);
 
         // A wix file is an Container if it has the proper extension AND the content
         // (ie *.wixpack.zip) is available, otherwise it's treated like a normal file
-        internal bool IsWixContainer() =>
+        internal bool IsUnpackableWixContainer() =>
             WixContentFilePath != null
-            && (IsWix(FileName) 
+            && (IsWixInstaller(FileName) 
                 || Path.GetExtension(FileName).Equals(".exe", StringComparison.OrdinalIgnoreCase));
 
         internal bool IsExecutableWixContainer() =>
-            IsWixContainer() &&
+            IsUnpackableWixContainer() &&
             (Path.GetExtension(FileName).Equals(".exe", StringComparison.OrdinalIgnoreCase) ||
              Path.GetExtension(FileName).Equals(".msi", StringComparison.OrdinalIgnoreCase));
 
-        internal bool IsContainer() => IsZipContainer() || IsWixContainer();
-
-        internal bool IsPackage() => IsPackage(FileName);
+        internal bool IsUnpackableContainer() => IsZip() || 
+                                                 (IsUnpackableWixContainer() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) || 
+                                                 IsMPack() || 
+                                                 IsTarGZip() || 
+                                                 IsDeb() ||
+                                                 (IsPkg() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ||
+                                                 (IsAppBundle() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ||
+                                                 IsNupkg() ||
+                                                 IsVsix() ||
+                                                 IsSymbolsNupkg() ||
+                                                 (IsRpm() && RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
 
         internal bool IsPowerShellScript() => IsPowerShellScript(FileName);
 
@@ -126,7 +146,8 @@ namespace Microsoft.DotNet.SignTool
             => $"File '{FileName}'" +
                (TargetFramework != null ? $" TargetFramework='{TargetFramework}'" : "") +
                (SignInfo.ShouldSign ? $" Certificate='{SignInfo.Certificate}'" : "") +
-               (SignInfo.ShouldStrongName ? $" StrongName='{SignInfo.StrongName}'" : "");
+               (SignInfo.ShouldStrongName ? $" StrongName='{SignInfo.StrongName}'" : "") +
+               (SignInfo.ShouldNotarize ? $" NotarizationAppName='{SignInfo.NotarizationAppName}'" : "");
 
         internal FileSignInfo WithSignableParts()
             => new FileSignInfo(File, SignInfo.WithIsAlreadySigned(false), TargetFramework, WixContentFilePath, true);

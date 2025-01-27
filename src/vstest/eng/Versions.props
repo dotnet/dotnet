@@ -13,7 +13,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>17.13.0</VersionPrefix>
+    <VersionPrefix>17.14.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
@@ -21,6 +21,8 @@
     <UsingToolXliff>true</UsingToolXliff>
     <!-- Opt-in to Arcade tools for building VSIX projects. -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
+    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</FlagNetStandard1XDependencies>
   </PropertyGroup>
   <PropertyGroup Label="VSTest dependencies">
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
@@ -29,6 +31,12 @@
         Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.8.3.
         Otherwise it will restore the netstandard2.0 *reference* library into test project bin, and the test project will fail
         with File not found error.
+
+        Could not load file or assembly 'Microsoft.Build.Utilities.Core...
+    -->
+    <!--
+      Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
+      avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
     -->
     <MicrosoftBuildFrameworkPackageVersion>17.8.3</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>
@@ -36,32 +44,34 @@
     <MicrosoftBuildFrameworkReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkReferenceOnly>
     <MicrosoftBuildReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildReferenceOnly>
     <MicrosoftBuildUtilitiesCoreReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildUtilitiesCoreReferenceOnly>
-    <MicrosoftCodeAnalysisVersion>3.11.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
+    <MicrosoftCodeAnalysisVersion>4.11.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
+    <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.605501</MicrosoftDiagnosticsNETCoreClientVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>3.1.0</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.14.0-preview.25056.1</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.10.34924.118</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.606601</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>6.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftFakesVersion>17.12.0</MicrosoftFakesVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.14.0-preview.25067.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.13.35716.53</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
-    <MicrosoftVisualStudioInteropVersion>17.10.525-preview.1</MicrosoftVisualStudioInteropVersion>
-    <MicrosoftVSTelemetryVersion>17.6.46</MicrosoftVSTelemetryVersion>
-    <MicrosoftVSUtilitiesInternalVersion>16.3.42</MicrosoftVSUtilitiesInternalVersion>
+    <MicrosoftVisualStudioInteropVersion>17.12.40418</MicrosoftVisualStudioInteropVersion>
+    <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
+    <MicrosoftVSUtilitiesInternalVersion>16.3.90</MicrosoftVSUtilitiesInternalVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2124</MicrosoftVSSDKBuildToolsVersion>
-    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <NewtonsoftJsonVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">13.0.3</NewtonsoftJsonVersion>
-    <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>
-    <SystemComponentModelCompositionVersion>4.5.0</SystemComponentModelCompositionVersion>
+    <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
+    <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
+    <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
+    <SystemComponentModelCompositionVersion>8.0.0</SystemComponentModelCompositionVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
-    <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
+    <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
     <TestPlatformExternalsVersion>17.10.0-preview-2-34602-162</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>17.10.0-preview-2-34602-162</MicrosoftInternalTestPlatformExtensions>
-    <TestPlatformMSDiaVersion>17.9.34504.149</TestPlatformMSDiaVersion>
+    <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
+    <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
@@ -74,7 +84,6 @@
     <MSTestTestFrameworkVersion>3.4.3</MSTestTestFrameworkVersion>
     <MSTestTestAdapterVersion>3.4.3</MSTestTestAdapterVersion>
     <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
-    <!-- This is the newest version of XUnit that still supports netcoreapp3.1 that we also use to run tests -->
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>

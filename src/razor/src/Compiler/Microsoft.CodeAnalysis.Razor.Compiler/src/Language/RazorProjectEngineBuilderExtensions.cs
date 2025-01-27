@@ -326,6 +326,7 @@ public static class RazorProjectEngineBuilderExtensions
         private sealed class InMemoryProjectItem : RazorProjectItem
         {
             private readonly InMemoryFileContent _fileContent;
+            private RazorSourceDocument _source;
 
             public InMemoryProjectItem(string content)
             {
@@ -343,6 +344,9 @@ public static class RazorProjectEngineBuilderExtensions
             public override bool Exists => true;
 
             public override Stream Read() => _fileContent.CreateStream();
+
+            internal override RazorSourceDocument GetSource()
+                => _source ?? InterlockedOperations.Initialize(ref _source, base.GetSource());
         }
     }
 

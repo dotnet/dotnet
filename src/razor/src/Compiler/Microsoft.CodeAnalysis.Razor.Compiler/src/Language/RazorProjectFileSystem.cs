@@ -13,6 +13,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 /// </summary>
 public abstract partial class RazorProjectFileSystem
 {
+    internal const string DefaultBasePath = "/";
+
     public static readonly RazorProjectFileSystem Empty = new EmptyFileSystem();
 
     /// <summary>
@@ -57,7 +59,7 @@ public abstract partial class RazorProjectFileSystem
     /// </remarks>
     public IEnumerable<RazorProjectItem> FindHierarchicalItems(string path, string fileName)
     {
-        return FindHierarchicalItems(basePath: "/", path, fileName);
+        return FindHierarchicalItems(basePath: DefaultBasePath, path, fileName);
     }
 
     /// <summary>

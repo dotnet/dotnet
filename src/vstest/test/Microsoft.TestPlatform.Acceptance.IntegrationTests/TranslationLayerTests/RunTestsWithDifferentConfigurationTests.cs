@@ -21,7 +21,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests.TranslationLayerTests;
 [TestClass]
 public class RunTestsWithDifferentConfigurationTests : AcceptanceTestBase
 {
-    private const string Netcoreapp = "netcoreapp";
+    private const string NetFramework = "net4";
     private const string Message = "VsTestConsoleWrapper does not support .Net Core Runner";
 
     private IVsTestConsoleWrapper? _vstestConsoleWrapper;
@@ -101,11 +101,11 @@ public class RunTestsWithDifferentConfigurationTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource]
+    [NetFullTargetFrameworkDataSource()]
     public void RunTestsWithTestSettings(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
-        ExecuteNotSupportedRunnerFrameworkTests(runnerInfo.RunnerFramework, Netcoreapp, Message);
+        ExecuteNotSupportedRunnerFrameworkTests(runnerInfo.RunnerFramework, NetFramework, Message);
         Setup();
 
         var testsettingsFile = Path.Combine(TempDirectory.Path, "tempsettings.testsettings");

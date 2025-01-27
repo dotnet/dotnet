@@ -10,10 +10,10 @@
 
   <PropertyGroup>
     <AssemblyName>testhost.x86</AssemblyName>
-    <TargetFrameworks>net7.0;$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <TargetFrameworks>$(TestHostAllTargetFrameworks)</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win7-x86</RuntimeIdentifier>
-    <Prefer32Bit Condition=" $(TargetFramework.StartsWith('net4')) ">true</Prefer32Bit>
+    <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win-x86</RuntimeIdentifier>
+    <Prefer32Bit Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">true</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -25,7 +25,7 @@
     <MSBuildWarningsAsMessages>NETSDK1201</MSBuildWarningsAsMessages>
     <NoWarn>$(NoWarn);NETSDK1201</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
+  <PropertyGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <TargetName Condition="'$(TargetFramework)' != '$(NetFrameworkMinimum)'">$(AssemblyName.Replace('.x86', '')).$(TargetFramework).x86</TargetName>
   </PropertyGroup>
@@ -45,10 +45,10 @@
 
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
     <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildSourceOnly)' != 'true'"/>
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $(TargetFramework.StartsWith('net4')) " />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) " />
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />

@@ -146,11 +146,6 @@ public sealed class RazorSourceDocument
             filePath = projectItem.FilePath;
         }
 
-        if (projectItem.RazorSourceDocument is not null)
-        {
-            return projectItem.RazorSourceDocument;
-        }
-
         using (var stream = projectItem.Read())
         {
             // Autodetect the encoding.

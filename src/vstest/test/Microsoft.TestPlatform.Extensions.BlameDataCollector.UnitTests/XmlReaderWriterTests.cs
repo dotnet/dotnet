@@ -92,26 +92,6 @@ public class XmlReaderWriterTests
     }
 
     /// <summary>
-    /// The read test sequence should read file stream.
-    /// </summary>
-    [TestMethod]
-    public void ReadTestSequenceShouldReadFileStream()
-    {
-        // Setup
-        _mockFileHelper.Setup(m => m.Exists(It.IsAny<string>())).Returns(true);
-        _mockFileHelper.Setup(m => m.GetStream("path.xml", FileMode.Open, FileAccess.ReadWrite)).Returns(_mockStream.Object);
-
-        // Call to Read Test Sequence
-        _xmlReaderWriter.ReadTestSequence("path.xml");
-
-        // Verify Call to fileHelper
-        _mockFileHelper.Verify(x => x.GetStream("path.xml", FileMode.Open, FileAccess.ReadWrite));
-
-        // Verify Call to stream read
-        _mockStream.Verify(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()));
-    }
-
-    /// <summary>
     /// The write test sequence should write file stream.
     /// </summary>
     [TestMethod]

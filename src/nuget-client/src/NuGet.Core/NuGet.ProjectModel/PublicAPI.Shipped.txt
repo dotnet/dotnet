@@ -540,6 +540,8 @@ NuGet.ProjectModel.ProjectRestoreSettings
 NuGet.ProjectModel.ProjectRestoreSettings.HideWarningsAndErrors.get -> bool
 NuGet.ProjectModel.ProjectRestoreSettings.HideWarningsAndErrors.set -> void
 NuGet.ProjectModel.ProjectRestoreSettings.ProjectRestoreSettings() -> void
+~NuGet.ProjectModel.ProjectRestoreSettings.SdkVersion.get -> NuGet.Versioning.NuGetVersion
+~NuGet.ProjectModel.ProjectRestoreSettings.SdkVersion.set -> void
 NuGet.ProjectModel.ProjectStyle
 NuGet.ProjectModel.ProjectStyle.DotnetCliTool = 3 -> NuGet.ProjectModel.ProjectStyle
 NuGet.ProjectModel.ProjectStyle.DotnetToolReference = 6 -> NuGet.ProjectModel.ProjectStyle
@@ -571,12 +573,30 @@ NuGet.ProjectModel.RestoreLockProperties.RestoreLockedMode.get -> bool
 ~NuGet.ProjectModel.RestoreLockProperties.RestorePackagesWithLockFile.get -> string
 NuGet.ProjectModel.TargetFrameworkInformation
 NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.get -> bool
+NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.CentralPackageVersion>
+~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.LibraryDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.DownloadDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.Equals(NuGet.ProjectModel.TargetFrameworkInformation other) -> bool
 ~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.get -> NuGet.Frameworks.NuGetFramework
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.LibraryModel.FrameworkDependency>
+~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework>
+~NuGet.ProjectModel.TargetFrameworkInformation.Imports.init -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.PrunePackageReference>
+~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.get -> string
+~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.init -> void
 ~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.get -> string
+~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.init -> void
 NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation() -> void
+~NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation(NuGet.ProjectModel.TargetFrameworkInformation cloneFrom) -> void
 NuGet.ProjectModel.TargetFrameworkInformation.Warn.get -> bool
+NuGet.ProjectModel.TargetFrameworkInformation.Warn.init -> void
 NuGet.ProjectModel.ToolPathResolver
 ~NuGet.ProjectModel.ToolPathResolver.GetBestToolDirectoryPath(string packageId, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework framework) -> string
 ~NuGet.ProjectModel.ToolPathResolver.GetLockFilePath(string packageId, NuGet.Versioning.NuGetVersion version, NuGet.Frameworks.NuGetFramework framework) -> string
@@ -718,6 +738,8 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash.Default.get -> NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash
 static NuGet.ProjectModel.RestoreAuditProperties.operator !=(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
 static NuGet.ProjectModel.RestoreAuditProperties.operator ==(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
+~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> noWarn) -> NuGet.ProjectModel.WarningProperties
+~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> noWarn, System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn, string warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
 static readonly NuGet.ProjectModel.BuildAction.AndroidAsset -> NuGet.ProjectModel.BuildAction

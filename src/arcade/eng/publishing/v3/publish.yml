@@ -86,9 +86,10 @@ stages:
 
     - task: AzureCLI@2
       displayName: Publish packages, blobs and symbols
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
       inputs:
         azureSubscription: maestro-build-promotion
-        addSpnToEnvironment: true
         scriptType: ps
         scriptLocation: scriptPath
         scriptPath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
@@ -108,7 +109,6 @@ stages:
           /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
           /p:AkaMSClientId=$(akams-app-id)
           /p:AkaMSClientCertificate=$(Agent.TempDirectory)/akamsclientcert.pfx
-          /p:ManagedIdentityClientId=$env:servicePrincipalId
           ${{ parameters.artifactsPublishingAdditionalParameters }} 
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt'

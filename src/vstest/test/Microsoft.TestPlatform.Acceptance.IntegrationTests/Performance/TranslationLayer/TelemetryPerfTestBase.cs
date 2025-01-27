@@ -115,7 +115,7 @@ public class TelemetryPerfTestBase : PerformanceTestBase
     /// <returns></returns>
     public string[] GetPerfAssetFullPath(string name, string framework = "net48")
     {
-        // TODO: how was I doing it before? The build is for net48, were we running net6.0 here?
+        // TODO: how was I doing it before? The build is for net48, were we running net8.0 here?
         var dllPath = GetTestDllForFramework($"{name}.dll", framework);
         return !File.Exists(dllPath)
             ? throw new FileNotFoundException(null, dllPath)

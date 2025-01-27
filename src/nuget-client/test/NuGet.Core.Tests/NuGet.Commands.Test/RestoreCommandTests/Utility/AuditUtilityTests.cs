@@ -201,11 +201,11 @@ public class AuditUtilityTests
         context.Log.LogMessages.Count.Should().Be(2);
 
         context.Log.LogMessages.Where(m => m.Message.Contains("pkga")).Should().NotBeNullOrEmpty();
-        RestoreLogMessage message = (RestoreLogMessage)context.Log.LogMessages.Where(m => m.Message.Contains("pkga")).Single();
+        RestoreLogMessage message = (RestoreLogMessage)context.Log.LogMessages.Single(m => m.Message.Contains("pkga"));
         ValidateRestoreLogMessage(message, "pkga", expectedCode, context);
 
         context.Log.LogMessages.Where(m => m.Message.Contains("pkgb")).Should().NotBeNullOrEmpty();
-        message = (RestoreLogMessage)context.Log.LogMessages.Where(m => m.Message.Contains("pkgb")).Single();
+        message = (RestoreLogMessage)context.Log.LogMessages.Single(m => m.Message.Contains("pkgb"));
         ValidateRestoreLogMessage(message, "pkgb", expectedCode, context);
 
         auditUtility.DownloadDurationSeconds.Should().NotBeNull();

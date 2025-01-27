@@ -2,8 +2,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net6.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <Prefer32Bit Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">false</Prefer32Bit>
+    <!--
+      This is targetting .NET Framework only on purpose. We want the exe, and we want it to run as different architecture.
+      Using .NET Framework for this makes it much easier, than .NET because we don't have to lookup the correct arch of the runtime.
+      Alternative to this would be using .NET AOT, but it makes it harder to just build, since you need to publish to get the exe.
+    -->
+    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
+    <Prefer32Bit>false</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win10-arm64</RuntimeIdentifier>

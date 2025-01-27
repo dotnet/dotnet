@@ -26,17 +26,14 @@ namespace Microsoft.DotNet.SignTool
 
         public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files) => true;
 
-        public override bool VerifySignedPEFile(Stream stream)
+        public override SigningStatus VerifySignedPEFile(Stream stream)
         {
             var buffer = new byte[_stamp.Length];
             return stream.TryReadAll(buffer, 0, buffer.Length) == buffer.Length && 
-                   ByteSequenceComparer.Equals(buffer, _stamp);
+                   ByteSequenceComparer.Equals(buffer, _stamp) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        public override bool VerifyStrongNameSign(string fileFullPath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifyStrongNameSign(string fileFullPath) => SigningStatus.Signed;
 
         public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
             => buildEngine.BuildProjectFile(projectFilePath, null, null, null);
@@ -60,24 +57,16 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        public override bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedDeb(TaskLoggingHelper log, string filePath) => SigningStatus.Signed;
 
-        public override bool VerifySignedPowerShellFile(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedRpm(TaskLoggingHelper log, string filePath) => SigningStatus.Signed;
 
-        public override bool VerifySignedNugetFileMarker(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedPowerShellFile(string filePath) => SigningStatus.Signed;
 
-        public override bool VerifySignedVSIXFileMarker(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedNuGet(string filePath) => SigningStatus.Signed;
+
+        public override SigningStatus VerifySignedVSIX(string filePath) => SigningStatus.Signed;
+
+        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath) => SigningStatus.Signed;
     }
 }

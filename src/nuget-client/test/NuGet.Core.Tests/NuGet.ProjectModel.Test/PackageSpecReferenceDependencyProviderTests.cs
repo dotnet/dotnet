@@ -57,14 +57,14 @@ namespace NuGet.ProjectModel.Test
             if (cpvmEnabled && CentralPackageTransitivePinningEnabled && useLegacyDependencyGraphResolution)
             {
                 Assert.Equal(2, dependencies.Count);
-                var barDep = dependencies.Where(d => d.Name == "bar").First();
+                var barDep = dependencies.First(d => d.Name == "bar");
                 Assert.NotNull(barDep);
                 Assert.True(barDep.VersionCentrallyManaged);
                 Assert.False(barDep.AutoReferenced);
                 Assert.Equal(LibraryDependencyReferenceType.None, barDep.ReferenceType);
                 Assert.Equal("[2.0.0, )", barDep.LibraryRange.VersionRange.ToNormalizedString());
 
-                var fooDep = dependencies.Where(d => d.Name == "foo").First();
+                var fooDep = dependencies.First(d => d.Name == "foo");
                 Assert.NotNull(fooDep);
                 Assert.False(fooDep.AutoReferenced);
                 Assert.True(fooDep.VersionCentrallyManaged);
@@ -74,7 +74,7 @@ namespace NuGet.ProjectModel.Test
             else
             {
                 Assert.Equal(1, dependencies.Count);
-                var fooDep = dependencies.Where(d => d.Name == "foo").First();
+                var fooDep = dependencies.First(d => d.Name == "foo");
                 Assert.NotNull(fooDep);
                 Assert.Equal(fooDep.VersionCentrallyManaged, cpvmEnabled);
                 Assert.Equal(fooDep.LibraryRange.VersionRange != null, cpvmEnabled);

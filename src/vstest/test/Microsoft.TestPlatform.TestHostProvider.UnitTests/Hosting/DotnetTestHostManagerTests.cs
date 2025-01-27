@@ -302,7 +302,7 @@ public class DotnetTestHostManagerTests
         var testhostExePath = "testhost.exe";
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x64</TargetPlatform></RunConfiguration></RunSettings>");
         _mockFileHelper.Setup(ph => ph.Exists(testhostExePath)).Returns(false);
-        _mockFileHelper.Setup(ph => ph.Exists("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\netcoreapp3.1\\x64\\testhost.exe")).Returns(true);
+        _mockFileHelper.Setup(ph => ph.Exists("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe")).Returns(true);
         _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
         var sourcePath = Path.Combine(_temp, "test.dll");
 
@@ -327,7 +327,7 @@ public class DotnetTestHostManagerTests
             ""microsoft.testplatform.testhost/15.0.0-Dev"": {
                 ""dependencies"": {
                     ""Microsoft.TestPlatform.ObjectModel"": ""15.0.0-Dev"",
-                    ""Newtonsoft.Json"": ""13.0.1""
+                    ""Newtonsoft.Json"": ""13.0.3""
                 },
                 ""runtime"": {
                     ""lib/netstandard1.5/Microsoft.TestPlatform.CommunicationUtilities.dll"": { },
@@ -362,7 +362,10 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\netcoreapp3.1\\x64\\testhost.exe");
+
+        // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
+        // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
+        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe");
     }
 
     [TestMethod]
@@ -372,7 +375,7 @@ public class DotnetTestHostManagerTests
         var testhostExePath = "testhost.x86.exe";
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x86</TargetPlatform></RunConfiguration></RunSettings>");
         _mockFileHelper.Setup(ph => ph.Exists(testhostExePath)).Returns(false);
-        _mockFileHelper.Setup(ph => ph.Exists($"C:\\packages{Path.DirectorySeparatorChar}microsoft.testplatform.testhost\\15.0.0-Dev{Path.DirectorySeparatorChar}build\\netcoreapp3.1\\x86\\testhost.x86.exe")).Returns(true);
+        _mockFileHelper.Setup(ph => ph.Exists($"C:\\packages{Path.DirectorySeparatorChar}microsoft.testplatform.testhost\\15.0.0-Dev{Path.DirectorySeparatorChar}build\\net8.0\\x86\\testhost.x86.exe")).Returns(true);
         _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
         var sourcePath = Path.Combine(_temp, "test.dll");
 
@@ -397,7 +400,7 @@ public class DotnetTestHostManagerTests
             ""microsoft.testplatform.testhost/15.0.0-Dev"": {
                 ""dependencies"": {
                     ""Microsoft.TestPlatform.ObjectModel"": ""15.0.0-Dev"",
-                    ""Newtonsoft.Json"": ""13.0.1""
+                    ""Newtonsoft.Json"": ""13.0.3""
                 },
                 ""runtime"": {
                     ""lib/netstandard1.5/Microsoft.TestPlatform.CommunicationUtilities.dll"": { },
@@ -432,7 +435,9 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\netcoreapp3.1\\x86\\testhost.x86.exe");
+        // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
+        // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
+        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x86\\testhost.x86.exe");
     }
 
     [TestMethod]
@@ -632,7 +637,7 @@ public class DotnetTestHostManagerTests
         StringAssert.Contains(startInfo.Arguments, expectedTestHostPath);
     }
 
-    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as netcoreapp3.1. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
+    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as net8.0. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
     // Assembly.GetEntryAssembly().Location is null because of running in app domain.
 #if NET
     [TestMethod]
@@ -660,7 +665,7 @@ public class DotnetTestHostManagerTests
 
 #endif
 
-    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as netcoreapp3.1. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
+    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as net8.0. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
     // Assembly.GetEntryAssembly().Location is null because of running in app domain.
 #if NET
 
@@ -669,14 +674,13 @@ public class DotnetTestHostManagerTests
     // we can't put in a "default" value, and we don't have other way to determine if this provided value is the
     // runtime default or the actual value that user provided, so right now the default will use the latest, instead
     // or the more correct 1.0, it should be okay, as that version is not supported anymore anyway
-    [DataRow("netcoreapp3.1", "3.1", true)]
-    [DataRow("net5.0", "5.0", true)]
+    [DataRow("net8.0", "8.0", true)]
 
-    // net6.0 is currently the latest released version, but it still has it's own runtime config, it is not the same as
-    // "latest" which means the latest you have on system. So if you have only 5.0 SDK then net6.0 will fail because it can't find net6.0,
-    // but latest would use net5.0 because that is the latest one on your system.
-    [DataRow("net6.0", "6.0", true)]
-    [DataRow("net6.0", "latest", false)]
+    // net9.0 is currently the latest released version, but it still has it's own runtime config, it is not the same as
+    // "latest" which means the latest you have on system. So if you have only 5.0 SDK then net8.0 will fail because it can't find net8.0,
+    // but latest would use net9.0 because that is the latest one on your system.
+    [DataRow("net9.0", "9.0", true)]
+    [DataRow("net9.0", "latest", false)]
     public void GetTestHostProcessStartInfoShouldIncludeTestHostPathNextToTestRunnerIfTesthostDllIsNoFoundAndDepsFileNotFoundWithTheCorrectTfm(string tfm, string suffix, bool runtimeConfigExists)
     {
         // Absolute path to the source directory
@@ -740,7 +744,7 @@ public class DotnetTestHostManagerTests
             ""microsoft.testplatform.testhost/15.0.0-Dev"": {
                 ""dependencies"": {
                     ""Microsoft.TestPlatform.ObjectModel"": ""15.0.0-Dev"",
-                    ""Newtonsoft.Json"": ""13.0.1""
+                    ""Newtonsoft.Json"": ""13.0.3""
                 },
                 ""runtime"": {
                     ""lib/netstandard1.5/Microsoft.TestPlatform.CommunicationUtilities.dll"": { },
@@ -805,7 +809,7 @@ public class DotnetTestHostManagerTests
             ""microsoft.testplatform.testhost/15.0.0-Dev"": {
                 ""dependencies"": {
                     ""Microsoft.TestPlatform.ObjectModel"": ""15.0.0-Dev"",
-                    ""Newtonsoft.Json"": ""13.0.1""
+                    ""Newtonsoft.Json"": ""13.0.3""
                 },
                 ""runtime"": {
                     ""lib/netstandard1.5/Microsoft.TestPlatform.CommunicationUtilities.dll"": { },
@@ -873,7 +877,7 @@ public class DotnetTestHostManagerTests
             ""microsoft.testplatform.testhost/15.0.0-Dev"": {
                 ""dependencies"": {
                     ""Microsoft.TestPlatform.ObjectModel"": ""15.0.0-Dev"",
-                    ""Newtonsoft.Json"": ""13.0.1""
+                    ""Newtonsoft.Json"": ""13.0.3""
                 },
                 ""runtime"": {
                     ""lib/netstandard1.5/Microsoft.TestPlatform.CommunicationUtilities.dll"": { },

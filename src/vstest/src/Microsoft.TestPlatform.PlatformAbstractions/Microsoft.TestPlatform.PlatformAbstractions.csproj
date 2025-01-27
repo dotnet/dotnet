@@ -4,22 +4,12 @@
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.PlatformAbstractions</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.PlatformAbstractions</RootNamespace>
-    <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum);netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <NoWarn>$(NoWarn);NU1605</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetCoreAppMinimum)' ">
-    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-    <PackageReference Include="System.Diagnostics.Process" Version="4.1.0" />
-    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
-    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.0.0" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.0.0" />
-    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Configuration" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -32,11 +22,11 @@
     <AdditionalFiles Include="PublicAPI\net\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\net\PublicAPI.Unshipped.txt" />
     <!-- Framework specific API -->
-    <AdditionalFiles Condition=" '$(TargetFramework)' != 'net6.0' and '$(TargetFramework)' != 'net7.0' " Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
-    <AdditionalFiles Condition=" '$(TargetFramework)' != 'net6.0' and '$(TargetFramework)' != 'net7.0' " Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
-    <!-- Framework specific API for Net6.0 and Net7.0 -->
-    <AdditionalFiles Condition=" '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' " Include="PublicAPI/net6.0_and_net7.0/PublicAPI.Shipped.txt" />
-    <AdditionalFiles Condition=" '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' " Include="PublicAPI/net6.0_and_net7.0/PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))&#xD;&#xA;                                or '$(TargetFramework)' == 'netstandard2.0' " Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))&#xD;&#xA;                                or '$(TargetFramework)' == 'netstandard2.0' " Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+    <!-- Framework specific API for net8.0+ -->
+    <AdditionalFiles Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) " Include="PublicAPI\net8.0\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) " Include="PublicAPI\net8.0\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
   <ItemGroup>

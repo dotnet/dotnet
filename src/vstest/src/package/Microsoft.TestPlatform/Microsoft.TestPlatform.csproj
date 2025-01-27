@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <!-- $(NetFrameworkRunnerTargetFramework); should be added here, but it causes duplicates in tfm names and nuget restore fails -->
+    <TargetFrameworks>$(TestHostAllTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -41,29 +42,47 @@
     <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--
+    Runner dependencies are copied to the output package, and target only .NET Framework.
+  -->
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
     <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj" />
-    <ProjectReference Include="..\..\testhost\testhost.csproj" />
-    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+
     <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
     <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    
+    <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
+    This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
+    prevents us from having to lookup the correct .NET runtime. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"  SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"/>
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
-    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
     <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+  <!--
+    Testhost needs to be built for all versions of .NET Framework, and for the lowest supported version of .NET.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+  </ItemGroup>
+  
+  <!-- 
+    We copy files from these packages, we want to update them as much as we can, so we are using the runner TFM
+    which is most likely higher than what is the minimum supported .NET Framework.
+  -->
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)')) ">
     <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
     <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.Instrumentation.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
@@ -86,15 +105,15 @@
     <PackageReference Include="Microsoft.VisualStudio.CUIT" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(MicrosoftVSSDKBuildToolsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness" Version="$(MicrosoftFakesVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.VisualStudio.Telemetry" Version="$(MicrosoftVSTelemetryVersion)" PrivateAssets="All" GeneratePathProperty="true"  />
+    <PackageReference Include="Microsoft.VisualStudio.Telemetry" Version="$(MicrosoftVSTelemetryVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities.Internal" Version="$(MicrosoftVSUtilitiesInternalVersion)" PrivateAssets="All" GeneratePathProperty="true" />
   </ItemGroup>
 
-  <Target Name="CopyFiles" AfterTargets="Build" Condition=" '$(TargetFramework)' == 'net472' ">
+  <Target Name="CopyFiles" AfterTargets="Build" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ItemGroup>
       <MicrosoftCodeCoverageInstrumentationFiles Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\runtimes\win\native\*"></MicrosoftCodeCoverageInstrumentationFiles>
       <MicrosoftCodeCoverageIOFiles Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIOFiles>
-      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net451\*"></MicrosoftExtensionsDependencyModelFiles>
+      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net461\*"></MicrosoftExtensionsDependencyModelFiles>
       <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
       <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>
       <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>

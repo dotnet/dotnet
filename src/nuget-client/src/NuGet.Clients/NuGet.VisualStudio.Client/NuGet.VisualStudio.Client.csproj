@@ -31,8 +31,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="registration.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <Link>NuGet.targets</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="registration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.RestoreEx.targets">

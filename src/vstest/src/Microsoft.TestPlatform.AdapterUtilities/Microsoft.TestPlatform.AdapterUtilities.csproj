@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;$(NetFrameworkMinimum);net6.0;net8.0;$(NetCurrent)</TargetFrameworks>
+    <!--
+      This library is consumed by test frameworks and will run in testhosts, ship as that, and netstandard so everyone can use it.
+
+      Adding newer tfms for .NET here is okay if we need to use features that are specific to them.
+      17.11.0 started supporting net9 and net8 explicitly so we can condition serialization attributes.
+    -->
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks);net9.0</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.AdapterUtilities</RootNamespace>
   </PropertyGroup>
@@ -17,7 +23,7 @@
     </PackageDescription>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 

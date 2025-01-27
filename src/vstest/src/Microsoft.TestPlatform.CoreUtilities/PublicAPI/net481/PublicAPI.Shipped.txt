@@ -1,0 +1,15 @@
+﻿#nullable enable
+Microsoft.VisualStudio.TestPlatform.Utilities.ConsoleOutput
+Microsoft.VisualStudio.TestPlatform.Utilities.ConsoleOutput.Write(string? message, Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel level) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.ConsoleOutput.WriteLine(string? message, Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel level) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.SetupListener(System.Diagnostics.TraceListener? listener) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.SetupRemoteEqtTraceListeners(System.AppDomain? childDomain) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.TraceLevel.get -> System.Diagnostics.TraceLevel
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.TraceLevel.set -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.ConsoleOutput.Instance.get -> Microsoft.VisualStudio.TestPlatform.Utilities.ConsoleOutput!
+static Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions.Error(this Microsoft.VisualStudio.TestPlatform.Utilities.IOutput! output, bool appendPrefix, string! format, params object?[]? args) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions.Information(this Microsoft.VisualStudio.TestPlatform.Utilities.IOutput! output, bool appendPrefix, string! format, params object?[]? args) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions.Information(this Microsoft.VisualStudio.TestPlatform.Utilities.IOutput! output, bool appendPrefix, System.ConsoleColor foregroundColor, string! format, params object?[]? args) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions.Warning(this Microsoft.VisualStudio.TestPlatform.Utilities.IOutput! output, bool appendPrefix, string! format, params object?[]? args) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.OutputExtensions.Write(this Microsoft.VisualStudio.TestPlatform.Utilities.IOutput! output, string! message, Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel level, System.ConsoleColor foregroundColor) -> void

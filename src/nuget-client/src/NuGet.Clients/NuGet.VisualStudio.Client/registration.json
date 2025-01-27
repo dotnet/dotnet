@@ -1,0 +1,98 @@
+{
+  "properties": {
+    "nuGetPackageManager.general.externalSettings": {
+      "type": "external",
+      "title": "@115;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      // callback has two members, packageId and serviceId.  Both are GUIDs.  Either or both may be supplied.  If only packageId is supplied,
+      // the package must implement IExternalSettingsProvider itself.  If only serviceId is supplied, the package must proffer a globally
+      // visible service with that GUID which implements IExternalSettingsProvider.  If both are supplied, the package may proffer a private
+      // service (i.e. with promote:false) instead of a public one.  In managed code, the GUID of a service is derived from the service type,
+      // and is typically specified with an explicit [Guid] attribute on it.
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "6C09BBE2-4537-48B4-87D8-01BF5EB75901"
+      },
+
+      // This should be true if the external settings provider can monitor the backing store for changes and raise SettingValuesChanged when
+      // they occur.  If the backing store cannot be efficiently monitored for changes, the provider should set this to false and implement
+      // ICachingExternalSettingsProvider.
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "packageRestore.allowRestoreDownload": {
+          "type": "boolean",
+          "title": "@PackageRestoreConsent;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#allow-nuget-to-download-missing-packages"
+        },
+        "packageRestore.packageRestoreAutomatic": {
+          "type": "boolean",
+          "title": "@packageRestoreAutomatic;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "enableWhen": "${config:packageRestore.allowRestoreDownload}=='true'",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#automatically-check-for-missing-packages-during-build"
+        },
+        "bindingRedirects.skipBindingRedirects": {
+          "type": "boolean",
+          "title": "@skipBindingRedirects;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/reference/nuget-config-file#bindingredirects-section"
+        },
+        "packageManagement.defaultPackageManagementFormat": {
+          "type": "string",
+          "title": "@defaultPackageManagementFormat;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#choose-the-default-package-management-format",
+
+          // Invariant monikers
+          "enum": [
+            "packages-config",
+            "package-reference"
+          ],
+
+          // Localizable titles
+          "enumItemLabels": [
+            "@PackagesConfig;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+            "@PackageReference;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+          ]
+        },
+        "packageManagement.showPackageManagementChooser": {
+          "type": "boolean",
+          "title": "@showPackageManagementChooser;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#choose-the-default-package-management-format"
+        }
+      },
+      "categories": {
+        "packageRestore": {
+          "title": "@PackageRestore;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        },
+        "bindingRedirects": {
+          "title": "@BindingRedirects;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        },
+        "packageManagement": {
+          "title": "@PackageManagement;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        }
+      }
+    }
+  },
+  "categories": {
+    "nuGetPackageManager": {
+      "title": "@110;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+    },
+    "nuGetPackageManager.general": {
+      "title": "@115;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "0F052CF7-BF62-4743-B190-87FA4D49421E",
+      "commands": [
+        {
+          "vsct": {
+            "text": "@clearLocalResources;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+            "set": "54A0AC88-A025-4A62-8D48-6C1848E4F545", // guidClearNuGetLocalResourcesCmdSetString
+            "id": 256 // cmdidClearNuGetLocalResources
+          }
+        }
+      ]
+    }
+  }
+}

@@ -35,14 +35,25 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
         var owner = syntaxTree.Root.FindToken(context.StartAbsoluteIndex).Parent.AssumeNotNull();
 
-        if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventParameterType))
+        if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventParameterType, out var allowsAsync))
         {
             var textDocument = context.Request.TextDocument;
-            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
-                [
-                    RazorCodeActionFactory.CreateGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName,  eventParameterType),
-                    RazorCodeActionFactory.CreateAsyncGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName, eventParameterType)
-                ]);
+
+            if (allowsAsync)
+            {
+                return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                    [
+                        RazorCodeActionFactory.CreateGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName,  eventParameterType),
+                        RazorCodeActionFactory.CreateAsyncGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName, eventParameterType)
+                    ]);
+            }
+            else
+            {
+                return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                    [
+                        RazorCodeActionFactory.CreateGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName, eventParameterType)
+                    ]);
+            }
         }
 
         return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
@@ -51,10 +62,12 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
     private static bool IsGenerateEventHandlerValid(
         SyntaxNode owner,
         [NotNullWhen(true)] out string? methodName,
-        out string? eventParameterType)
+        out string? eventParameterType,
+        out bool allowAsync)
     {
         methodName = null;
         eventParameterType = null;
+        allowAsync = false;
 
         // The owner should have a SyntaxKind of CSharpExpressionLiteral or MarkupTextLiteral.
         // MarkupTextLiteral if the cursor is directly before the first letter of the method name.
@@ -79,8 +92,8 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 
         return commonParent switch
         {
-            MarkupTagHelperDirectiveAttributeSyntax markupTagHelperDirectiveAttribute => TryGetEventNameAndMethodName(markupTagHelperDirectiveAttribute, binding, out methodName, out eventParameterType),
-            MarkupTagHelperAttributeSyntax markupTagHelperAttribute => TryGetEventNameAndMethodName(markupTagHelperAttribute, binding, out methodName, out eventParameterType),
+            MarkupTagHelperDirectiveAttributeSyntax markupTagHelperDirectiveAttribute => TryGetEventNameAndMethodName(markupTagHelperDirectiveAttribute, binding, out methodName, out eventParameterType, out allowAsync),
+            MarkupTagHelperAttributeSyntax markupTagHelperAttribute => TryGetEventNameAndMethodName(markupTagHelperAttribute, binding, out methodName, out eventParameterType, out allowAsync),
             _ => false
         };
     }
@@ -89,10 +102,12 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         MarkupTagHelperDirectiveAttributeSyntax markupTagHelperDirectiveAttribute,
         TagHelperBinding binding,
         [NotNullWhen(true)] out string? methodName,
-        out string? eventParameterType)
+        out string? eventParameterType,
+        out bool allowAsync)
     {
         methodName = null;
         eventParameterType = null;
+        allowAsync = true;
 
         var attributeName = markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.Name;
 
@@ -163,10 +178,12 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         MarkupTagHelperAttributeSyntax markupTagHelperDirectiveAttribute,
         TagHelperBinding binding,
         [NotNullWhen(true)] out string? methodName,
-        out string? eventParameterType)
+        out string? eventParameterType,
+        out bool allowAsync)
     {
         methodName = null;
         eventParameterType = null;
+        allowAsync = true;
 
         foreach (var tagHelperDescriptor in binding.Descriptors)
         {
@@ -174,15 +191,38 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             {
                 if (attribute.Name == markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.Name)
                 {
-                    if (!attribute.IsEventCallbackProperty())
+                    if (attribute.IsEventCallbackProperty())
+                    {
+                        // TypeName is something like "EventCallback<System.String>", so we need to parse out the parameter type.
+                        if (ComponentAttributeIntermediateNode.TryGetEventCallbackArgument(attribute.TypeName.AsMemory(), out var argument))
+                        {
+                            eventParameterType = argument.ToString();
+                        }
+                    }
+                    else if (attribute.IsDelegateProperty())
+                    {
+                        // Systm.Action<Type<TItem>> doesn't allow for variations in sync/async like EventCallback does 
+                        allowAsync = false;
+
+                        if (attribute.IsGenericTypedProperty())
+                        {
+                            if (tagHelperDescriptor.TryGetGenericTypeNameFromComponent(binding, out var genericType) &&
+                                ComponentAttributeIntermediateNode.TryGetGenericActionArgument(attribute.TypeName.AsMemory(), genericType, out var argument))
+                            {
+                                eventParameterType = argument.ToString();
+                            }
+                        }
+                        else
+                        {
+                            if (ComponentAttributeIntermediateNode.TryGetActionArgument(attribute.TypeName.AsMemory(), out var argument))
+                            {
+                                eventParameterType = argument.ToString();
+                            }
+                        }
+                    }
+                    else
                     {
                         return false;
-                    }
-
-                    // TypeName is something like "EventCallback<System.String>", so we need to parse out the parameter type.
-                    if (ComponentAttributeIntermediateNode.TryGetEventCallbackArgument(attribute.TypeName.AsMemory(), out var argument))
-                    {
-                        eventParameterType = argument.ToString();
                     }
 
                     break;

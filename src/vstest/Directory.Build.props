@@ -26,7 +26,7 @@
     <Version Condition="'$(Version)' == ''">$(TPVersionPrefix)-dev</Version>
     <!-- Override the AssemblyVersion as 15.0.0 since protocol depends on this version for serialization. This is also defined in build script. -->
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">15.0.0</AssemblyVersion>
-    <!-- Auto generating binding redirects breaks testhost when running under netcoreapp3.1 vstest.console as .NET Framework net462.  -->
+    <!-- Auto generating binding redirects breaks testhost when running under net8.0 vstest.console as .NET Framework net462.  -->
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <!-- But not autogenerating binding redirects also breaks build occasionally, so we tell MSBuild to unify assembly versions,
     without outputting binding redirectes. -->
@@ -52,15 +52,72 @@
   <PropertyGroup>
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
-    <!-- When not building from source, hardcode the NetCurrent TFM value as it is hardcoded in a number of places, i.e. nuspec files. -->
-    <NetCurrent Condition="'$(DotNetBuildSourceOnly)' != 'true'">net9.0</NetCurrent>
-    <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
+    <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
+    <NetCoreAppStable>net9.0</NetCoreAppStable>
     <!--
       Arcade is making things hard to work with. This property is unset when its value is equal to NetMinimum.
       https://github.com/dotnet/arcade/blob/66c9c5397d599af40f2a94989241944f5a73442a/src/Microsoft.DotNet.Arcade.Sdk/tools/TargetFrameworkDefaults.props#L16-L18
       Because I don't want to complexify further the logic on VSTest just for that, I will set it to NetMinimum.
-      -->
+    -->
     <NetPrevious Condition=" $(NetPrevious) == '' ">$(NetMinimum)</NetPrevious>
+
+    <!--
+      vstest.console.exe is shipped with VS, we can use the version of .NET Framework that VS requires to run (this might differ from the version is requires to install).
+      https://learn.microsoft.com/en-us/visualstudio/releases/2022/system-requirements#additional-requirements-and-guidance
+    -->
+    <NetFrameworkRunnerTargetFramework>net48</NetFrameworkRunnerTargetFramework>
+    <!--
+      vstest.console.dll or datacollector.dll are shipped with .NET SDK, target the tfms into which we insert.
+    -->
+    <NetSDKTargetFramework>$(NetCoreAppStable)</NetSDKTargetFramework>
+    <!--
+      vstest.console.dll and datacollector.dll are shipped in TestPlatform.Portable package, that should support
+      the oldest currently supported .NET, because we don't know with which runtime it will be used.
+      vstest.console.exe and datacollector.exe are shipped in there as well, choose the lowest version of
+      .NET Frameowork to support as well.
+    -->
+    <NetPortableTargetFrameworks>$(NetCoreAppMinimum)</NetPortableTargetFrameworks>
+    <NetRunnerTargetFrameworks>$(NetSDKTargetFramework);$(NetPortableTargetFrameworks)</NetRunnerTargetFrameworks>
+    <RunnerTargetFrameworks>$(NetFrameworkRunnerTargetFramework);$(NetRunnerTargetFrameworks)</RunnerTargetFrameworks>
+    
+    <!--
+      
+    -->
+    <BundledExtensionTargetFrameworks>$(RunnerTargetFrameworks)</BundledExtensionTargetFrameworks>
+    <!--
+      Extensions that are shipped as standalone packages need to be netstandard2.0, because we don't know on which runtime
+      we will run.
+
+      This is the same for bundled extensions that are shipped together with vstest.console or datacollector. In ideal case
+      they would not need netstandard, but we load the same dll into .NET and .NET Framework datacollector.
+      So the need to target netstandard2.0 as well.
+    -->
+    <ExtensionTargetFrameworks>netstandard2.0</ExtensionTargetFrameworks>
+
+    <!--
+      Testhosts need to run on all currently supported target frameworks and newer.
+      https://learn.microsoft.com/en-us/visualstudio/releases/2022/compatibility#-visual-studio-2022-support-for-net-development
+      https://dotnet.microsoft.com/en-us/platform/support/policy
+      https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
+
+      Currently that is net8 (until November 10, 2026) and .NET Framework 4.6.2 (until Jan 12, 2027).
+    -->
+    <TestHostMinimumTargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum)</TestHostMinimumTargetFrameworks>
+    <!--
+      Testhost needs to support every target framework from the minimum, and it also needs to build
+      all the .NET Framework target frameworks that are newer than the minimum, because we ship each of those
+      executables separately, and use it to load dlls into specific version of .NET Framework based on user
+      settings.
+
+      https://learn.microsoft.com/en-us/dotnet/standard/frameworks#supported-target-frameworks
+    -->
+    <TestHostAllTargetFrameworks>$(TestHostMinimumTargetFrameworks);net47;net471;net472;net48;net481</TestHostAllTargetFrameworks>
+    
+    <!--
+      Library that is loaded by others and by us. We don't know where it will run (e.b. TranslationLayer),
+      we need to support all frameworks from minimum, and also netstandard2.0.
+    -->
+    <LibraryTargetFrameworks>$(NetFrameworkMinimum);netstandard2.0</LibraryTargetFrameworks>
   </PropertyGroup>
 
   <!-- Build & pack config -->

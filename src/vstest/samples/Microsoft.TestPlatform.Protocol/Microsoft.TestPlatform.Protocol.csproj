@@ -10,6 +10,6 @@
     <!-- / CVE-2017-11770 -->
 
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="" />
   </ItemGroup>
 </Project>

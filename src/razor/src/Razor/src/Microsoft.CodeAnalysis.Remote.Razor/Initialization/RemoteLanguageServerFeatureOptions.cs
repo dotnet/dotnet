@@ -44,4 +44,6 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
     public override bool ForceRuntimeCodeGeneration => _options.ForceRuntimeCodeGeneration;
 
     public override bool UseNewFormattingEngine => _options.UseNewFormattingEngine;
+
+    public override bool SupportsSoftSelectionInCompletion => _options.SupportsSoftSelectionInCompletion;
 }

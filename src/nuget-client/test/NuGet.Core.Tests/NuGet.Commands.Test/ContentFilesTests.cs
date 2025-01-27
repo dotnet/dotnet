@@ -1532,8 +1532,8 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, logger.Errors);
                 Assert.Equal(0, logger.Warnings);
                 Assert.Equal(3, contentFiles.Count);
-                Assert.Equal(2, contentFiles.Where(item => item.Properties["buildAction"] == "None"
-                && item.Properties["codeLanguage"] == "cs").Count());
+                Assert.Equal(2, contentFiles.Count(item => item.Properties["buildAction"] == "None"
+                && item.Properties["codeLanguage"] == "cs"));
             }
         }
 

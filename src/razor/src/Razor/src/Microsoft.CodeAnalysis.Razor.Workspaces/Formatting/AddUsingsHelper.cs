@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -31,7 +30,7 @@ internal static class AddUsingsHelper
 
     private readonly record struct RazorUsingDirective(RazorDirectiveSyntax Node, AddImportChunkGenerator Statement);
 
-    public static async Task<TextEdit[]> GetUsingStatementEditsAsync(RazorCodeDocument codeDocument, SourceText originalCSharpText, SourceText changedCSharpText, CancellationToken cancellationToken)
+    public static async Task<TextEdit[]> GetUsingStatementEditsAsync(RazorCodeDocument codeDocument, SourceText changedCSharpText, CancellationToken cancellationToken)
     {
         // Now that we're done with everything, lets see if there are any using statements to fix up
         // We do this by comparing the original generated C# code, and the changed C# code, and look for a difference
@@ -46,7 +45,7 @@ internal static class AddUsingsHelper
         // So because of the above, we look for a difference in C# using directive nodes directly from the C# syntax tree, and apply them manually
         // to the Razor document.
 
-        var originalCSharpSyntaxTree = CSharpSyntaxTree.ParseText(originalCSharpText);
+        var originalCSharpSyntaxTree = codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
         var changedCSharpSyntaxTree = originalCSharpSyntaxTree.WithChangedText(changedCSharpText);
         var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);
         var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);

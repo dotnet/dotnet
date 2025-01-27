@@ -314,9 +314,9 @@ namespace NuGet.PackageManagement
         {
             var specs = await project.GetPackageSpecsAsync(context);
 
-            var projectSpec = specs.Where(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.Standalone
-               && e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool)
-                .FirstOrDefault();
+            var projectSpec = specs
+                .FirstOrDefault(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.Standalone
+                                     && e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool);
 
             return projectSpec;
         }

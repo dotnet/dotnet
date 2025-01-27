@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
@@ -189,7 +191,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
                 codeDocument = projectEngine.ProcessDeclarationOnly(item);
                 Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
 
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetCSharpDocument().Text, path: item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
 
@@ -200,7 +202,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                Code = codeDocument.GetCSharpDocument().Text.ToString(),
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
             };
 
@@ -219,7 +221,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
                 Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
 
                 // Replace the 'declaration' syntax tree
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetCSharpDocument().Text, path: item.FilePath);
                 AdditionalSyntaxTrees.RemoveAll(st => st.FilePath == item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
@@ -230,7 +232,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                Code = codeDocument.GetCSharpDocument().Text.ToString(),
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
             };
         }
@@ -249,7 +251,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                Code = codeDocument.GetCSharpDocument().Text.ToString(),
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
             };
         }
@@ -306,9 +308,14 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         }
     }
 
-    protected static CSharpSyntaxTree Parse(string text, string path = null)
+    protected static CSharpSyntaxTree Parse(SourceText text, string path = null)
     {
         return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
+    }
+
+    protected static CSharpSyntaxTree Parse(string text, string path = null)
+    {
+        return Parse(SourceText.From(text, Encoding.UTF8), path);
     }
 
     protected static string FullTypeName<T>() => typeof(T).FullName.Replace('+', '.');

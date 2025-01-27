@@ -105,7 +105,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public override void ConfigureServices(IServiceCollection collection)
         {
             collection.TryAddSingleton<IBuildModelFactory, BuildModelFactory>();
-            collection.TryAddSingleton<ISigningInformationModelFactory, SigningInformationModelFactory>();
             collection.TryAddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>();
             collection.TryAddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>();
             collection.TryAddSingleton<INupkgInfoFactory, NupkgInfoFactory>();

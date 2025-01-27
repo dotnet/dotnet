@@ -66,7 +66,7 @@ namespace Dotnet.Integration.Test
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V2.Version));
@@ -139,7 +139,7 @@ namespace Dotnet.Integration.Test
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V1.Version));
@@ -211,7 +211,7 @@ namespace Dotnet.Integration.Test
                 packageSpec.RestoreMetadata.Sources.Select(s => s.Name).Should().ContainSingle()
                     .Which.Should().Be(pathContext.PackageSource);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageY);
                 // Should resolve to highest available version.
@@ -654,8 +654,7 @@ namespace Dotnet.Integration.Test
                 }
 
                 LockFileTarget ridlessTarget = projectA.AssetsFile.Targets
-                    .Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier))
-                    .Single();
+                    .Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
 
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == package.Id);
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(package.Version));

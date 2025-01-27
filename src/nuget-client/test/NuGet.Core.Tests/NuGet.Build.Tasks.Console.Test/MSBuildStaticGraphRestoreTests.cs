@@ -42,7 +42,7 @@ namespace NuGet.Build.Tasks.Console.Test
             if (enabled.HasValue)
             {
                 options.Add(nameof(RestoreTaskEx.EnableBinaryLogger), enabled.ToString());
-            };
+            }
 
             if (parameters != null)
             {

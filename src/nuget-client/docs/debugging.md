@@ -22,6 +22,10 @@ Alternatively, if you build the the repository under a `Debug` configuration, wh
 Testing the NuGet Visual Studio functionality is equally as easy as testing NuGet.exe.
 The start-up project is [NuGet.VisualStudio.Client](../src/NuGet.Clients/NuGet.VisualStudio.Client/NuGet.VisualStudio.Client.csproj). Starting this project will build the VSIX, then install that VSIX onto and launch your [experimental instance](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance) of Visual Studio.
 
+> Note: NuGet's integration into Visual Studio depends on Visual Studio components. When testing this integration it is important that the version of NuGet being tested and the Visual Studio instance are compatible. The [release notes](https://learn.microsoft.com/nuget/release-notes/) contain the exact mapping, where the minor version of NuGet matches the minor version of Visual Studio, example 17.12 of Visual Studio matches 6.12 of NuGet.
+Testing NuGet 6.12 on top of 17.8 for example is not guaranteed to work. 
+Only testing 6.12 on top of 17.12 is expected to consistently work.
+
 ### Testing the build of NuGet in Visual Studio
 
 NuGet functions as an extension on top of Visual Studio.

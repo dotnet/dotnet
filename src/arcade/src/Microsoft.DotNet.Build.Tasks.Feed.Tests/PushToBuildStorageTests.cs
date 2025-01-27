@@ -80,14 +80,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         private void CreateMockServiceCollection(IServiceCollection collection)
         {
             Mock<IFileSystem> fileSystemMock = new();
-            Mock<ISigningInformationModelFactory> signingInformationModelFactoryMock = new();
             Mock<IBlobArtifactModelFactory> blobArtifactModelFactoryMock = new();
             Mock<IPackageArtifactModelFactory> packageArtifactModelFactoryMock = new();
             Mock<IBuildModelFactory> buildModelFactoryMock = new();
             Mock<IPackageArchiveReaderFactory> packageArchiveReaderFactoryMock = new();
             Mock<INupkgInfoFactory> nupkgInfoFactoryMock = new();
 
-            collection.TryAddSingleton(signingInformationModelFactoryMock.Object);
             collection.TryAddSingleton(blobArtifactModelFactoryMock.Object);
             collection.TryAddSingleton(packageArtifactModelFactoryMock.Object);
             collection.TryAddSingleton(buildModelFactoryMock.Object);
@@ -104,8 +102,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             bool isReleaseOnlyPackageVersion = false,
             bool isStable = false,
             bool includePackages = false,
-            bool publishFlatContainer = false,
-            bool includeSigningInfo = false)
+            bool publishFlatContainer = false)
         {
             publishingInfraVersion ??= ((int)PublishingInfraVersion.Latest).ToString();
 
@@ -138,7 +135,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             sb.Append($"IsStable=\"{isStable.ToString().ToLower()}\"");
 
-            if(!includePackages && !publishFlatContainer && !includeSigningInfo)
+            if(!includePackages && !publishFlatContainer)
             {
                 sb.Append($" />");
             }
@@ -162,33 +159,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 sb.Append($"<Blob Id=\"{PACKAGE_A}\" Nonshipping=\"true\" />");
                 sb.Append($"<Blob Id=\"{PACKAGE_B}\" Nonshipping=\"false\" />");
                 
-                sb.Append($"</Build>");
-            }
-
-            if (includeSigningInfo)
-            {
-                sb.Append($">");
-
-                sb.Append($"<Package Id=\"test-package-a\" Version=\"{NUPKG_VERSION}\" Nonshipping=\"true\" />");
-                sb.Append($"<Package Id=\"test-package-b\" Version=\"{NUPKG_VERSION}\" Nonshipping=\"false\" />");
-                sb.Append($"<Blob Id=\"{SAMPLE_MANIFEST}\" Nonshipping=\"false\" />");
-
-                sb.Append($"<SigningInformation>");
-                
-                sb.Append($"<FileExtensionSignInfo Include=\".dll\" CertificateName=\"TestSigningCert\" />");
-                sb.Append($"<FileExtensionSignInfo Include=\".nupkg\" CertificateName=\"TestNupkg\" />");
-                sb.Append($"<FileExtensionSignInfo Include=\".zip\" CertificateName=\"None\" />");
-                sb.Append($"<FileSignInfo Include=\"Best.dll\" CertificateName=\"BestCert\" />");
-                sb.Append($"<FileSignInfo Include=\"Worst.dll\" CertificateName=\"WorstCert\" />");
-                sb.Append($"<CertificatesSignInfo Include=\"BestCert\" DualSigningAllowed=\"true\" />");
-                sb.Append($"<CertificatesSignInfo Include=\"WorstCert\" DualSigningAllowed=\"false\" />");
-                sb.Append($"<ItemsToSign Include=\"test-package-a.6.0.492.nupkg\" />");
-                sb.Append($"<ItemsToSign Include=\"test-package-b.6.0.492.nupkg\" />");
-                sb.Append($"<StrongNameSignInfo Include=\"VeryCoolStrongName\" PublicKeyToken=\"123456789ABCDEF0\" CertificateName=\"BestCert\" />");
-                sb.Append($"<StrongNameSignInfo Include=\"VeryTrashStrongName\" PublicKeyToken=\"00FEDCBA98765432\" CertificateName=\"WorstCert\" />");
-                
-                sb.Append($"</SigningInformation>");
-
                 sb.Append($"</Build>");
             }
 
@@ -437,111 +407,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 .AddSingleton<IBuildModelFactory, BuildModelFactory>()
                 .AddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>()
                 .AddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>()
-                .AddSingleton(nupkgInfoFactoryMock.Object);
-            CreateMockServiceCollection(collection);
-            task.ConfigureServices(collection);
-            using var provider = collection.BuildServiceProvider();
-
-            // Act and Assert
-            task.InvokeExecute(provider).Should().BeTrue();
-            actualPath[0].Should().Be(TARGET_MANIFEST_PATH);
-            actualBuildModel[0].Should().Be(expectedManifestContent);
-        }
-
-
-        [Fact]
-        public void SigningInfoInManifest()
-        {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
-            task.FileExtensionSignInfo = new ITaskItem[]
-            {
-                new TaskItem(".dll", new Dictionary<string, string>
-                {
-                    { "CertificateName", "TestSigningCert" }
-                }),
-                new TaskItem(".nupkg", new Dictionary<string, string>
-                {
-                    { "CertificateName", "TestNupkg" }
-                }),
-                new TaskItem(".zip", new Dictionary<string, string>
-                {
-                    { "CertificateName", "None" }
-                }),
-            };
-            task.FileSignInfo = new ITaskItem[]
-            {
-                new TaskItem("Best.dll", new Dictionary<string, string>
-                {
-                    { "CertificateName", "BestCert" }
-                }),
-                new TaskItem("Worst.dll", new Dictionary<string, string>
-                {
-                    { "CertificateName", "WorstCert" }
-                }),
-            };
-            task.CertificatesSignInfo = new ITaskItem[]
-            {
-                new TaskItem("BestCert", new Dictionary<string, string>
-                {
-                    { "DualSigningAllowed", "true" }
-                }),
-                new TaskItem("WorstCert", new Dictionary<string, string>
-                {
-                    { "DualSigningAllowed", "false" }
-                }),
-            };
-            task.StrongNameSignInfo = new ITaskItem[]
-            {
-                new TaskItem("VeryCoolStrongName", new Dictionary<string, string>
-                {
-                    { "PublicKeyToken", "123456789ABCDEF0" },
-                    { "CertificateName", "BestCert" }
-                }),
-                new TaskItem("VeryTrashStrongName", new Dictionary<string, string>
-                {
-                    { "PublicKeyToken", "00FEDCBA98765432" },
-                    { "CertificateName", "WorstCert" }
-                }),
-            };
-            task.ItemsToSign = new ITaskItem[]
-            {
-                new TaskItem(PACKAGE_A),
-                new TaskItem(PACKAGE_B),
-            };
-
-            string expectedManifestContent = BuildExpectedManifestContent(
-                name: "https://dnceng@dev.azure.com/dnceng/internal/test-repo",
-                branch: "/refs/heads/branch",
-                commit: "1234567890abcdef",
-                isStable: true,
-                includeSigningInfo: true);
-
-            // Mocks
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            IList<string> actualPath = new List<string>();
-            IList<string> actualBuildModel = new List<string>();
-            IList<string> files = new List<string> { PACKAGE_A, PACKAGE_B, SAMPLE_MANIFEST };
-            fileSystemMock.Setup(m => m.WriteToFile(Capture.In(actualPath), Capture.In(actualBuildModel))).Verifiable();
-            fileSystemMock.Setup(m => m.FileExists(Capture.In(files))).Returns(true);
-
-            Mock<INupkgInfoFactory> nupkgInfoFactoryMock = new Mock<INupkgInfoFactory>();
-            IList<string> actualNupkgInfoPath = new List<string>();
-            nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
-                id: "test-package-a",
-                version: NUPKG_VERSION
-            )));
-            nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
-                id: "test-package-b",
-                version: NUPKG_VERSION
-            )));
-
-            // Dependency Injection setup
-            var collection = new ServiceCollection()
-                .AddSingleton(fileSystemMock.Object)
-                .AddSingleton<IBuildModelFactory, BuildModelFactory>()
-                .AddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>()
-                .AddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>()
-                .AddSingleton<ISigningInformationModelFactory, SigningInformationModelFactory>()
                 .AddSingleton(nupkgInfoFactoryMock.Object);
             CreateMockServiceCollection(collection);
             task.ConfigureServices(collection);

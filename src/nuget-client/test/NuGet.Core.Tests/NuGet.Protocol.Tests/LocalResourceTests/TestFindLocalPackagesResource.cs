@@ -26,7 +26,7 @@ namespace NuGet.Protocol.Tests
 
         public override LocalPackageInfo GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token)
         {
-            return Packages.Where(p => p.Identity.Equals(identity)).FirstOrDefault();
+            return Packages.FirstOrDefault(p => p.Identity.Equals(identity));
         }
 
         public override LocalPackageInfo GetPackage(Uri path, ILogger logger, CancellationToken token)

@@ -51,7 +51,7 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
         // This will stop a crash from happening in this case (misconfigured project), but will still make
         // it obvious to the user that something is wrong.
 
-        IProjectEngineFactory factory;
+        IProjectEngineFactory? factory;
 
         lock (s_configurationNameToFactoryMap)
         {

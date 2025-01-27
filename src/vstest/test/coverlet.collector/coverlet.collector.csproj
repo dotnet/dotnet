@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <!-- Don't change the version from 9.9.9.9 it is used in tests to recognize this "mock" library. -->
     <AssemblyVersion>9.9.9.9</AssemblyVersion>

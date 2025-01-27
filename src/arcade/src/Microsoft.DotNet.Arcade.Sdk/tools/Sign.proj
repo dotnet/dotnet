@@ -8,6 +8,7 @@
     Optional variables:
       EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
                                         Defaults to true.
+      DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
 
     Optional items:
       Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
@@ -20,6 +21,7 @@
   </PropertyGroup>
 
   <Import Project="BuildStep.props" />
+  <Import Project="TargetFrameworkDefaults.props" />
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
 
@@ -52,31 +54,18 @@
       <_TestSign>false</_TestSign>
       <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
 
-      <_DesktopMSBuildRequired>false</_DesktopMSBuildRequired>
-      <_DesktopMSBuildRequired Condition="'$(_DryRun)' != 'true' and '$(MSBuildRuntimeType)' == 'Core'  and '$(OS)' == 'Windows_NT'">true</_DesktopMSBuildRequired>
-
       <_DotNetCoreRequired>false</_DotNetCoreRequired>
-      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true' and '$(OS)' != 'Windows_NT'">true</_DotNetCoreRequired>
+      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true'">true</_DotNetCoreRequired>
 
       <!-- SN is only available on Windows -->
       <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
+      
+      <!-- .pkgs and .app bundle tooling is only available on MacOS -->
+      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.dll</PkgToolPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
            Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
-
-    <!-- We only need this if we are going to use the executable version. -->
-    <Exec Command='"$(NuGetPackageRoot)vswhere\$(VSWhereVersion)\tools\vswhere.exe" -latest -prerelease -property installationPath -requires Microsoft.Component.MSBuild'
-          ConsoleToMsBuild="true"
-          StandardErrorImportance="high"
-          Condition="$(_DesktopMSBuildRequired)">
-      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallDir" />
-    </Exec>
-
-    <PropertyGroup Condition="$(_DesktopMSBuildRequired)">
-      <_DesktopMSBuildPath>$(_VSInstallDir)\MSBuild\Current\Bin\msbuild.exe</_DesktopMSBuildPath>
-      <_DesktopMSBuildPath Condition="!Exists('$(_DesktopMSBuildPath)')">$(_VSInstallDir)\MSBuild\15.0\Bin\msbuild.exe</_DesktopMSBuildPath>
-    </PropertyGroup>
 
     <PropertyGroup Condition="$(_DotNetCoreRequired)">
       <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
@@ -95,12 +84,12 @@
         FileExtensionSignInfo="@(FileExtensionSignInfo)"
         TempDir="$(ArtifactsTmpDir)"
         LogDir="$(ArtifactsLogDir)"
-        MSBuildPath="$(_DesktopMSBuildPath)"
         DotNetPath="$(_DotNetCorePath)"
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net10.0\any\Microsoft.Dotnet.Tar.dll"
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
+        PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)" />
   </Target>

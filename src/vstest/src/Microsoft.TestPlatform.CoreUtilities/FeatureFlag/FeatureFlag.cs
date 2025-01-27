@@ -72,6 +72,8 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable not sharing .NET Framework testhosts. Which will return behavior to sharing testhosts when they are running .NET Framework dlls, and are not disabling appdomains or running in parallel.
     public const string VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST = nameof(VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
 
+    // Disable outputting Traits into TRX file in the Properties node.
+    public const string VSTEST_DISABLE_TRX_WRITE_PROPERTIES = nameof(VSTEST_DISABLE_TRX_WRITE_PROPERTIES);
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()

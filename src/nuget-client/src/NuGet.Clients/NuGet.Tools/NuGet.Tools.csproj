@@ -13,6 +13,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="GeneralSettings.pkgdef" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="GeneralSettings.pkgdef">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj" />

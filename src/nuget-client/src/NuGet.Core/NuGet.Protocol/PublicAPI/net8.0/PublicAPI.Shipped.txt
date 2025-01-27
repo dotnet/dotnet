@@ -95,6 +95,7 @@ NuGet.Protocol.Core.Types.IPackageSearchMetadata.IsListed.get -> bool
 NuGet.Protocol.Core.Types.IPackageSearchMetadata.PrefixReserved.get -> bool
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ProjectUrl.get -> System.Uri
 NuGet.Protocol.Core.Types.IPackageSearchMetadata.Published.get -> System.DateTimeOffset?
+~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ReadmeFileUrl.get -> string
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ReadmeUrl.get -> System.Uri
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ReportAbuseUrl.get -> System.Uri
 NuGet.Protocol.Core.Types.IPackageSearchMetadata.RequireLicenseAcceptance.get -> bool
@@ -197,6 +198,8 @@ NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetada
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ProjectUrl.set -> void
 NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.Published.get -> System.DateTimeOffset?
 NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.Published.set -> void
+~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReadmeFileUrl.get -> string
+~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReadmeFileUrl.set -> void
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReadmeUrl.get -> System.Uri
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReadmeUrl.set -> void
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.ReportAbuseUrl.get -> System.Uri
@@ -388,9 +391,14 @@ NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Duration.get -> System.Tim
 ~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.ResourceType.get -> string
 ~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Source.get -> string
 ~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Type.get -> string
+NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent
+NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.HttpsSourceHasHttpResource.get -> bool
+~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.ProtocolDiagnosticServiceIndexEntryEvent(string source, bool httpsSourceHasHttpResource) -> void
+~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.Source.get -> string
 NuGet.Protocol.Events.ProtocolDiagnostics
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticHttpEventHandler
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticResourceEventHandler
+NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticServiceIndexEntryEventHandler
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticsNupkgCopiedEventHandler
 NuGet.Protocol.FactoryExtensionsV3
 NuGet.Protocol.FeedType
@@ -646,6 +654,7 @@ NuGet.Protocol.LocalPackageSearchMetadata.IsListed.get -> bool
 NuGet.Protocol.LocalPackageSearchMetadata.PrefixReserved.get -> bool
 ~NuGet.Protocol.LocalPackageSearchMetadata.ProjectUrl.get -> System.Uri
 NuGet.Protocol.LocalPackageSearchMetadata.Published.get -> System.DateTimeOffset?
+~NuGet.Protocol.LocalPackageSearchMetadata.ReadmeFileUrl.get -> string
 ~NuGet.Protocol.LocalPackageSearchMetadata.ReadmeUrl.get -> System.Uri
 ~NuGet.Protocol.LocalPackageSearchMetadata.ReportAbuseUrl.get -> System.Uri
 NuGet.Protocol.LocalPackageSearchMetadata.RequireLicenseAcceptance.get -> bool
@@ -768,6 +777,7 @@ NuGet.Protocol.PackageSearchMetadata.PackageSearchMetadata() -> void
 NuGet.Protocol.PackageSearchMetadata.PrefixReserved.get -> bool
 ~NuGet.Protocol.PackageSearchMetadata.ProjectUrl.get -> System.Uri
 NuGet.Protocol.PackageSearchMetadata.Published.get -> System.DateTimeOffset?
+~NuGet.Protocol.PackageSearchMetadata.ReadmeFileUrl.get -> string
 ~NuGet.Protocol.PackageSearchMetadata.ReadmeUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadata.ReportAbuseUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadata.ReportAbuseUrl.set -> void
@@ -804,6 +814,7 @@ NuGet.Protocol.PackageSearchMetadataV2Feed.LastEdited.get -> System.DateTimeOffs
 NuGet.Protocol.PackageSearchMetadataV2Feed.PrefixReserved.get -> bool
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.ProjectUrl.get -> System.Uri
 NuGet.Protocol.PackageSearchMetadataV2Feed.Published.get -> System.DateTimeOffset?
+~NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeFileUrl.get -> string
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.ReportAbuseUrl.get -> System.Uri
 NuGet.Protocol.PackageSearchMetadataV2Feed.RequireLicenseAcceptance.get -> bool
@@ -1197,6 +1208,7 @@ NuGet.Protocol.Plugins.PluginCreationResult
 NuGet.Protocol.Plugins.PluginDiscoverer
 ~NuGet.Protocol.Plugins.PluginDiscoverer.DiscoverAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
 NuGet.Protocol.Plugins.PluginDiscoverer.Dispose() -> void
+NuGet.Protocol.Plugins.PluginDiscoverer.PluginDiscoverer() -> void
 NuGet.Protocol.Plugins.PluginDiscoveryResult
 ~NuGet.Protocol.Plugins.PluginDiscoveryResult.Message.get -> string
 ~NuGet.Protocol.Plugins.PluginDiscoveryResult.PluginDiscoveryResult(NuGet.Protocol.Plugins.PluginFile pluginFile) -> void
@@ -1212,6 +1224,7 @@ NuGet.Protocol.Plugins.PluginFactory
 NuGet.Protocol.Plugins.PluginFactory.PluginFactory(System.TimeSpan pluginIdleTimeout) -> void
 NuGet.Protocol.Plugins.PluginFile
 ~NuGet.Protocol.Plugins.PluginFile.Path.get -> string
+~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state, bool requiresDotnetHost) -> void
 ~NuGet.Protocol.Plugins.PluginFile.State.get -> System.Lazy<NuGet.Protocol.Plugins.PluginFileState>
 NuGet.Protocol.Plugins.PluginFileState
 NuGet.Protocol.Plugins.PluginFileState.InvalidEmbeddedSignature = 3 -> NuGet.Protocol.Plugins.PluginFileState
@@ -1223,6 +1236,7 @@ NuGet.Protocol.Plugins.PluginManager
 NuGet.Protocol.Plugins.PluginManager.Dispose() -> void
 ~NuGet.Protocol.Plugins.PluginManager.EnvironmentVariableReader.get -> NuGet.Common.IEnvironmentVariableReader
 ~NuGet.Protocol.Plugins.PluginManager.FindAvailablePluginsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginDiscoveryResult>>
+~NuGet.Protocol.Plugins.PluginManager.PluginManager(NuGet.Common.IEnvironmentVariableReader reader, System.Lazy<NuGet.Protocol.Plugins.IPluginDiscoverer> pluginDiscoverer, System.Func<System.TimeSpan, NuGet.Protocol.Plugins.PluginFactory> pluginFactoryCreator, System.Lazy<string> pluginsCacheDirectoryPath) -> void
 ~NuGet.Protocol.Plugins.PluginManager.TryGetSourceAgnosticPluginAsync(NuGet.Protocol.Plugins.PluginDiscoveryResult pluginDiscoveryResult, NuGet.Protocol.Plugins.OperationClaim requestedOperationClaim, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Plugins.PluginCreationResult>>
 NuGet.Protocol.Plugins.PluginMulticlientUtilities
 ~NuGet.Protocol.Plugins.PluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(string key, System.Func<System.Threading.Tasks.Task> taskFunc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
@@ -1595,6 +1609,7 @@ const NuGet.Protocol.JsonExtensions.JsonSerializationMaxDepth = 512 -> int
 ~const NuGet.Protocol.JsonProperties.ProjectUrl = "projectUrl" -> string
 ~const NuGet.Protocol.JsonProperties.Published = "published" -> string
 ~const NuGet.Protocol.JsonProperties.Range = "range" -> string
+~const NuGet.Protocol.JsonProperties.ReadmeFileUrl = "readmeFileUrl" -> string
 ~const NuGet.Protocol.JsonProperties.ReadmeUrl = "readmeUrl" -> string
 ~const NuGet.Protocol.JsonProperties.RequireLicenseAcceptance = "requireLicenseAcceptance" -> string
 ~const NuGet.Protocol.JsonProperties.Severity = "severity" -> string
@@ -1902,6 +1917,7 @@ static NuGet.Protocol.Core.Types.NuGetTestMode.Enabled.get -> bool
 static NuGet.Protocol.Events.ProtocolDiagnostics.HttpEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticHttpEventHandler
 static NuGet.Protocol.Events.ProtocolDiagnostics.NupkgCopiedEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticsNupkgCopiedEventHandler
 static NuGet.Protocol.Events.ProtocolDiagnostics.ResourceEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticResourceEventHandler
+static NuGet.Protocol.Events.ProtocolDiagnostics.ServiceIndexEntryEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticServiceIndexEntryEventHandler
 ~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV2(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
 ~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.ProviderFactory factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
 ~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
@@ -2090,6 +2106,8 @@ virtual NuGet.Protocol.LocalPackageInfo.LastWriteTimeUtc.get -> System.DateTime
 ~virtual NuGet.Protocol.LocalPackageInfo.Nuspec.get -> NuGet.Packaging.NuspecReader
 ~virtual NuGet.Protocol.LocalPackageInfo.Path.get -> string
 virtual NuGet.Protocol.ODataServiceDocumentResourceV2.RequestTime.get -> System.DateTime
+virtual NuGet.Protocol.Plugins.PluginFactory.Dispose() -> void
+~virtual NuGet.Protocol.Plugins.PluginFactory.GetOrCreateAsync(NuGet.Protocol.Plugins.PluginFile pluginFile, System.Collections.Generic.IEnumerable<string> arguments, NuGet.Protocol.Plugins.IRequestHandlers requestHandlers, NuGet.Protocol.Plugins.ConnectionOptions options, System.Threading.CancellationToken sessionCancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Plugins.IPlugin>
 virtual NuGet.Protocol.Plugins.Receiver.Close() -> void
 ~virtual NuGet.Protocol.RawSearchResourceV3.Search(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Newtonsoft.Json.Linq.JObject>>
 ~virtual NuGet.Protocol.RawSearchResourceV3.SearchPage(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Newtonsoft.Json.Linq.JObject>

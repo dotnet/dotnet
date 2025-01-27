@@ -135,6 +135,7 @@ These controls may be used for **infrastructure or product purposes**.
 | -------- | -------- | -------- | -------- |
 | DotNetBuildWithOnlineSources | "true", "false", "" | "false" by default when `SourceOnly` switch is active. | When "true", do not remove non-local input sources. Infrastructure switch only. This switch is only exposed at the orchestrator level.</br>This replaces the existing `DotNetBuildOffline` switch. |
 | DotNetBuildSourceOnly | "true", "false", "" | "" | When "true", build only from source. Online sources may remain unless `DotNetBuildOffline` is set to true. This is both an infrastructure and a product switch.<br/>This is roughly equivalent to `DotNetBuildFromSource` in the current infrastructure, though other controls may be better suited. |
+| DotNetBuildTargetRidOnly | "true", "false", "" | "" | When not set, defaults to "true" if the repository build transitively depends on dotnet/runtime and `DotNetBuildOrchestrator` == "true"; otherwise "false". When "true", builds projects for the current `TargetRid` instead of using the current runtime identifier. |
 
 ### Output Controls
 

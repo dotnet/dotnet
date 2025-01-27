@@ -39,10 +39,8 @@ internal sealed class GeneratedOutputSource
             var projectEngine = project.ProjectEngine;
             var compilerOptions = project.CompilerOptions;
 
-            var importItems = await project.GetImportItemsAsync(document.HostDocument, cancellationToken).ConfigureAwait(false);
-
             _output = await CompilationHelpers
-                .GenerateCodeDocumentAsync(document, projectEngine, importItems, compilerOptions, cancellationToken)
+                .GenerateCodeDocumentAsync(document, projectEngine, compilerOptions, cancellationToken)
                 .ConfigureAwait(false);
 
             return _output;

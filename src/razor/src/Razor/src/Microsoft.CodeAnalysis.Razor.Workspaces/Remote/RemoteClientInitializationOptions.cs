@@ -36,4 +36,7 @@ internal struct RemoteClientInitializationOptions
 
     [JsonPropertyName("useNewFormattingEngine")]
     public required bool UseNewFormattingEngine { get; set; }
+
+    [JsonPropertyName("avoidExplicitCommitCharacters")]
+    public required bool SupportsSoftSelectionInCompletion { get; set; }
 }

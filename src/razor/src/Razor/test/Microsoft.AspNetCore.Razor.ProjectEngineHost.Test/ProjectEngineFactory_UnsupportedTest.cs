@@ -35,6 +35,6 @@ public class ProjectEngineFactory_UnsupportedTest(ITestOutputHelper testOutput) 
         var codeDocument = engine.ProcessDesignTime(sourceDocument, "test", importSources: default, Array.Empty<TagHelperDescriptor>());
 
         // Assert
-        Assert.Equal(UnsupportedCSharpLoweringPhase.UnsupportedDisclaimer, codeDocument.GetCSharpDocument().GeneratedCode);
+        Assert.Equal(UnsupportedCSharpLoweringPhase.UnsupportedDisclaimer, codeDocument.GetCSharpDocument().Text.ToString());
     }
 }

@@ -104,7 +104,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 flatten: true
             );
 
-            var manager = new LatestLinksManager("clientId", new System.Security.Cryptography.X509Certificates.X509Certificate2(), "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
             var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 
@@ -140,7 +140,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 flatten: true
             );
 
-            var manager = new LatestLinksManager("clientId", new System.Security.Cryptography.X509Certificates.X509Certificate2(), "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
             var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 
@@ -170,7 +170,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 flatten: true
             );
 
-            var manager = new LatestLinksManager("clientId", new System.Security.Cryptography.X509Certificates.X509Certificate2(), "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
             var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 
@@ -207,7 +207,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 flatten: false
             );
 
-            var manager = new LatestLinksManager("clientId", new System.Security.Cryptography.X509Certificates.X509Certificate2(), "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
             var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 

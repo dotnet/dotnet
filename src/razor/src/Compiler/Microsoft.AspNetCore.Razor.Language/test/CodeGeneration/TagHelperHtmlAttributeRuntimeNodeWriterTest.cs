@@ -30,7 +30,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
         writer.WriteHtmlAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"AddHtmlAttributeValue("""", 16, ""hello-world"", 16, 11, true);
 ",
@@ -54,7 +54,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
         writer.WriteCSharpExpressionAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"AddHtmlAttributeValue("" "", 27, 
 #nullable restore
@@ -87,7 +87,7 @@ false
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"AddHtmlAttributeValue("" "", 27, new Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_attribute_value_writer) => {
     PushWriter(__razor_attribute_value_writer);

@@ -173,7 +173,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
             {
                 if (packageIds.Any())
                 {
-                    var packageId = packageIds.Where(p => string.Equals(p, Id, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var packageId = packageIds.FirstOrDefault(p => string.Equals(p, Id, StringComparison.OrdinalIgnoreCase));
                     if (!string.IsNullOrEmpty(packageId))
                     {
                         var package = GetPowerShellPackageFromRemoteSource(packageId);

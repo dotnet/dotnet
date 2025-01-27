@@ -23,7 +23,7 @@ public class DotnetHostArchitectureVerifierTests : IntegrationTestBase
     // [DataRow("X86")]
     public void VerifyHostArchitecture(string architecture)
     {
-        _testEnvironment.RunnerFramework = "netcoreapp3.1";
+        _testEnvironment.RunnerFramework = "net8.0";
         string dotnetPath = GetDownloadedDotnetMuxerFromTools(architecture);
         var vstestConsolePath = GetDotnetRunnerPath();
         var dotnetRunnerPath = TempDirectory.CreateDirectory("dotnetrunner");

@@ -839,7 +839,7 @@ namespace NuGet.Commands
 
         private static string GetMatchingFrameworkStrings(PackageSpec spec, NuGetFramework framework)
         {
-            var frameworkString = spec.TargetFrameworks.Where(e => e.FrameworkName.Equals(framework)).FirstOrDefault()?.TargetAlias;
+            var frameworkString = spec.TargetFrameworks.FirstOrDefault(e => e.FrameworkName.Equals(framework))?.TargetAlias;
 
             // If there were no matches, use the generated name
             if (string.IsNullOrEmpty(frameworkString))

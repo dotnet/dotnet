@@ -653,7 +653,7 @@ namespace NuGet.CommandLine.Test
 
                 var prefix = "MSBuild P2P timeout [ms]: ";
 
-                var timeoutLineResult = lines.Where(line => line.Contains(prefix)).SingleOrDefault();
+                var timeoutLineResult = lines.SingleOrDefault(line => line.Contains(prefix));
 
                 Assert.NotNull(timeoutLineResult);
 
@@ -784,12 +784,10 @@ namespace NuGet.CommandLine.Test
                 var lockFile2 = format.Read(test2Lock.FullName);
 
                 var a1 = lockFile1.Libraries
-                    .Where(lib => lib.Name.Equals("packageA", StringComparison.OrdinalIgnoreCase))
-                    .FirstOrDefault();
+                    .FirstOrDefault(lib => lib.Name.Equals("packageA", StringComparison.OrdinalIgnoreCase));
 
                 var a2 = lockFile2.Libraries
-                    .Where(lib => lib.Name.Equals("packageA", StringComparison.OrdinalIgnoreCase))
-                    .FirstOrDefault();
+                    .FirstOrDefault(lib => lib.Name.Equals("packageA", StringComparison.OrdinalIgnoreCase));
 
                 Assert.True(test1Lock.Exists);
                 Assert.True(test2Lock.Exists);

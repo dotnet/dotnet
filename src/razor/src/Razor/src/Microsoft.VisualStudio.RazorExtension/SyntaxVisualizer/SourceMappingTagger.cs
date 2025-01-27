@@ -62,9 +62,10 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
         static IEnumerable<ITagSpan<SourceMappingTag>> GetTagsWorker(RazorCodeDocument codeDocument, ITextSnapshot snapshot)
         {
             var csharpDocument = codeDocument.GetCSharpDocument();
+            var generatedCode = csharpDocument.Text.ToString();
             foreach (var mapping in csharpDocument.SourceMappings)
             {
-                var generatedText = GetGeneratedCodeSnippet(csharpDocument.GeneratedCode, mapping.GeneratedSpan.AbsoluteIndex);
+                var generatedText = GetGeneratedCodeSnippet(generatedCode, mapping.GeneratedSpan.AbsoluteIndex);
 
                 var position = Math.Min(mapping.OriginalSpan.AbsoluteIndex, snapshot.Length);
                 var point = new SnapshotPoint(snapshot, position);

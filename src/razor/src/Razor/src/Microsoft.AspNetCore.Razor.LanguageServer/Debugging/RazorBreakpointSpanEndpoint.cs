@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -74,8 +73,7 @@ internal class RazorBreakpointSpanEndpoint(
         }
 
         // Now ask Roslyn to adjust the breakpoint to a valid location in the code
-        var csharpDocument = codeDocument.GetCSharpDocument();
-        var syntaxTree = CSharpSyntaxTree.ParseText(csharpDocument.GeneratedCode, cancellationToken: cancellationToken);
+        var syntaxTree = codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
         if (!RazorBreakpointSpans.TryGetBreakpointSpan(syntaxTree, projectedIndex, cancellationToken, out var csharpBreakpointSpan))
         {
             return null;

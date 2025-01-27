@@ -228,7 +228,7 @@ namespace NuGet.CommandLine.XPlat
             }
             // Ignore the graphs with RID
             else if (compatibleFrameworks.Count ==
-                restorePreviewResult.Result.CompatibilityCheckResults.Where(r => string.IsNullOrEmpty(r.Graph.RuntimeIdentifier)).Count())
+                     restorePreviewResult.Result.CompatibilityCheckResults.Count(r => string.IsNullOrEmpty(r.Graph.RuntimeIdentifier)))
             {
                 // Package is compatible with all the project TFMs
                 // Add an unconditional package reference to the project
@@ -272,7 +272,7 @@ namespace NuGet.CommandLine.XPlat
 
         private static string GetAliasForFramework(PackageSpec spec, NuGetFramework framework)
         {
-            return spec.TargetFrameworks.Where(e => e.FrameworkName.Equals(framework)).FirstOrDefault()?.TargetAlias;
+            return spec.TargetFrameworks.FirstOrDefault(e => e.FrameworkName.Equals(framework))?.TargetAlias;
         }
 
         public static async Task<NuGetVersion> GetLatestVersionAsync(PackageSpec originalPackageSpec, string packageId, ILogger logger, bool prerelease)

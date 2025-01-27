@@ -73,12 +73,12 @@ namespace NuGet.Resolver
                 var nextId = idsToSort.OrderBy(id => parents[id].Count)
                     .ThenBy(id => childrenOfLastId.Contains(id) ? 0 : 1)
                     .ThenBy(id => GetTreeFlattenPriority(id, context))
-                    .ThenByDescending(id => parents.Values.Where(parentIds => parentIds.Contains(id)).Count())
+                    .ThenByDescending(id => parents.Values.Count(parentIds => parentIds.Contains(id)))
                     .ThenBy(id => id, StringComparer.OrdinalIgnoreCase)
                     .First();
 
                 // Find the group for the best id
-                var nextGroup = grouped.Where(group => StringComparer.OrdinalIgnoreCase.Equals(group.First().Id, nextId)).Single();
+                var nextGroup = grouped.Single(group => StringComparer.OrdinalIgnoreCase.Equals(group.First().Id, nextId));
                 sorted.Add(nextGroup);
 
                 childrenOfLastId.Clear();

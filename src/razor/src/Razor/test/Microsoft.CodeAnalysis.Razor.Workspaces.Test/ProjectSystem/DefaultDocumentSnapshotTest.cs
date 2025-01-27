@@ -35,17 +35,17 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
 
         var textLoader = TestMocks.CreateTextLoader(_sourceText);
 
-        var documentState = DocumentState.Create(s_legacyHostDocument, textLoader);
-        _legacyDocument = new DocumentSnapshot(project, documentState);
+        _legacyDocument = new ProjectSnapshot(projectState.AddDocument(s_legacyHostDocument, textLoader))
+            .GetRequiredDocument(s_legacyHostDocument.FilePath);
 
-        documentState = DocumentState.Create(s_componentHostDocument, textLoader);
-        _componentDocument = new DocumentSnapshot(project, documentState);
+        _componentDocument = new ProjectSnapshot(projectState.AddDocument(s_componentHostDocument, textLoader))
+            .GetRequiredDocument(s_componentHostDocument.FilePath);
 
-        documentState = DocumentState.Create(s_componentCshtmlHostDocument, textLoader);
-        _componentCshtmlDocument = new DocumentSnapshot(project, documentState);
+        _componentCshtmlDocument = new ProjectSnapshot(projectState.AddDocument(s_componentCshtmlHostDocument, textLoader))
+            .GetRequiredDocument(s_componentCshtmlHostDocument.FilePath);
 
-        documentState = DocumentState.Create(s_nestedComponentHostDocument, textLoader);
-        _nestedComponentDocument = new DocumentSnapshot(project, documentState);
+        _nestedComponentDocument = new ProjectSnapshot(projectState.AddDocument(s_nestedComponentHostDocument, textLoader))
+            .GetRequiredDocument(s_nestedComponentHostDocument.FilePath);
     }
 
     [Fact(Skip = "Weak cache removed")]

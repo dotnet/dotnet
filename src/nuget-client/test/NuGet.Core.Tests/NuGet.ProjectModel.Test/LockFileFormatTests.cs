@@ -541,7 +541,7 @@ namespace NuGet.ProjectModel.Test
         ""buildMultiTargeting"": {
           ""buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.props"": {},
           ""buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.targets"": {}
-        }        
+        }
       },
        ""runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0"": {
         ""type"": ""package"",
@@ -1479,7 +1479,7 @@ namespace NuGet.ProjectModel.Test
   ""centralTransitiveDependencyGroups"": {
     "".NETPlatform,Version=v5.0"": {
       ""Newtonsoft.Json"": {
-        ""version"": ""1.0.0""           
+        ""version"": ""1.0.0""
       }
     }
   },
@@ -2005,14 +2005,14 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.Equal(5, lockFileObj.LogMessages.Count());
-            Assert.Equal(3, lockFileObj.LogMessages.Where(m => m.Level == LogLevel.Error).Count());
-            Assert.Equal(2, lockFileObj.LogMessages.Where(m => m.Level == LogLevel.Warning).Count());
-            Assert.Equal(2, lockFileObj.LogMessages.Where(m => m.Message == "test log message").Count());
-            Assert.Equal(2, lockFileObj.LogMessages.Where(m => m.Message == "test warning message").Count());
-            Assert.Equal(1, lockFileObj.LogMessages.Where(m => m.Message == "test error message with type NU1001").Count());
-            Assert.Equal(2, lockFileObj.LogMessages.Where(m => m.Code == NuGetLogCode.NU1000).Count());
-            Assert.Equal(2, lockFileObj.LogMessages.Where(m => m.Code == NuGetLogCode.NU1500).Count());
-            Assert.Equal(1, lockFileObj.LogMessages.Where(m => m.Code == NuGetLogCode.NU1001).Count());
+            Assert.Equal(3, lockFileObj.LogMessages.Count(m => m.Level == LogLevel.Error));
+            Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Level == LogLevel.Warning));
+            Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Message == "test log message"));
+            Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Message == "test warning message"));
+            Assert.Equal(1, lockFileObj.LogMessages.Count(m => m.Message == "test error message with type NU1001"));
+            Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Code == NuGetLogCode.NU1000));
+            Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Code == NuGetLogCode.NU1500));
+            Assert.Equal(1, lockFileObj.LogMessages.Count(m => m.Code == NuGetLogCode.NU1001));
         }
 
         [Theory]
@@ -2404,7 +2404,7 @@ namespace NuGet.ProjectModel.Test
                 ""type"": ""package"",
                 ""files"": [
                     ""System.Runtime.nuspec""
-                    ]             
+                    ]
                 }
             },
             ""projectFileDependencyGroups"": {
@@ -2418,7 +2418,7 @@ namespace NuGet.ProjectModel.Test
                 ""Newtonsoft.Json"": {
                             ""include"": ""Compile, Native, BuildTransitive"",
                             ""suppressParent"": ""All"",
-                            ""version"": ""[12.0.3, )""           
+                            ""version"": ""[12.0.3, )""
                         }
                     }
                 }

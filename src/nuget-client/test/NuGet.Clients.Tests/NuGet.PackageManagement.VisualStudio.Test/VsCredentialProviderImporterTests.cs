@@ -81,16 +81,5 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             providers.Should().BeEmpty();
             _errorMessages.Should().BeEmpty();
         }
-
-        [Fact]
-        public async Task WhenVstsIntializerThrows_ThenExceptionBubblesOut()
-        {
-            // Arrange
-            var importer = new VsCredentialProviderImporter(_errorDelegate);
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ServiceUnavailableException>(() => importer.GetProvidersAsync());
-            _errorMessages.Should().BeEmpty();
-        }
     }
 }

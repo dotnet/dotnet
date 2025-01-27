@@ -1144,7 +1144,7 @@ namespace NuGet.PackageManagement.UI
             PackageItemViewModel selectedItem = _packageList.SelectedItem;
             IReadOnlyCollection<PackageSourceContextInfo> packageSources = SelectedSource.PackageSources;
             int selectedIndex = _packageList.SelectedIndex;
-            int recommendedCount = _packageList.PackageItems.Where(item => item.Recommended == true).Count();
+            int recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
 
             if (selectedItem == null)
             {
@@ -1174,7 +1174,7 @@ namespace NuGet.PackageManagement.UI
         {
             var operationId = _packageList.OperationId;
             var selectedIndex = _packageList.SelectedIndex;
-            var recommendedCount = _packageList.PackageItems.Where(item => item.Recommended == true).Count();
+            var recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
             var hasDeprecationAlternative = selectedPackage.DeprecationMetadata?.AlternatePackage != null;
 
             if (_topPanel.Filter == ItemFilter.All

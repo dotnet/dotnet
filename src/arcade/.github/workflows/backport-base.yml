@@ -2,12 +2,12 @@ on:
   workflow_call:
     inputs:
       pr_title_template:
-        description: 'The template used for the PR title. Special placeholder tokens that will be replaced with a value: %target_branch%, %source_pr_title%, %source_pr_number%, %cc_users%.'
+        description: 'The template used for the PR title. Special placeholder tokens that will be replaced with a value: %target_branch%, %source_pr_title%, %source_pr_number%, %source_pr_author%, %cc_users%.'
         required: false
         type: string
         default: '[%target_branch%] %source_pr_title%'
       pr_description_template:
-        description: 'The template used for the PR description. Special placeholder tokens that will be replaced with a value: %target_branch%, %source_pr_title%, %source_pr_number%, %cc_users%.'
+        description: 'The template used for the PR description. Special placeholder tokens that will be replaced with a value: %target_branch%, %source_pr_title%, %source_pr_number%, %source_pr_author%, %cc_users%.'
         required: false
         type: string
         default: |
@@ -64,7 +64,7 @@ jobs:
       with:
         script: |
           const target_branch = '${{ steps.target-branch-extractor.outputs.result }}';
-          const backport_start_body = `Started backporting to ${target_branch}: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const backport_start_body = `Started backporting to _${target_branch}_: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
           await github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
@@ -102,7 +102,7 @@ jobs:
               throw new Error(`Error: @${comment_user} is not a repo collaborator, backporting is not allowed. If you're a collaborator please make sure your ${repo_owner} team membership visibility is set to Public on https://github.com/orgs/${repo_owner}/people?query=${comment_user}`);
             }
 
-            try { await exec.exec(`git ls-remote --exit-code --heads origin ${target_branch}`) } catch { throw new Error(`Error: The specified backport target branch ${target_branch} wasn't found in the repo.`); }
+            try { await exec.exec(`git ls-remote --exit-code --heads origin ${target_branch}`) } catch { throw new Error(`Error: The specified backport target branch "${target_branch}" wasn't found in the repo.`); }
             console.log(`Backport target branch: ${target_branch}`);
 
             console.log("Applying backport patch");
@@ -145,7 +145,7 @@ jobs:
             }
 
             if (git_am_failed) {
-              const git_am_failed_body = `@${context.payload.comment.user.login} backporting to ${target_branch} failed, the patch most likely resulted in conflicts:\n\n\`\`\`shell\n${git_am_output}\n\`\`\`\n\nPlease backport manually!`;
+              const git_am_failed_body = `@${context.payload.comment.user.login} backporting to "${target_branch}" failed, the patch most likely resulted in conflicts:\n\n\`\`\`shell\n${git_am_output}\n\`\`\`\n\nPlease backport manually!`;
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
@@ -178,12 +178,14 @@ jobs:
               .replace(/%target_branch%/g, target_branch)
               .replace(/%source_pr_title%/g, context.payload.issue.title)
               .replace(/%source_pr_number%/g, context.payload.issue.number)
+              .replace(/%source_pr_author%/g, context.payload.issue.user.login)
               .replace(/%cc_users%/g, cc_users);
 
             const backport_pr_description = BACKPORT_PR_DESCRIPTION_TEMPLATE
               .replace(/%target_branch%/g, target_branch)
               .replace(/%source_pr_title%/g, context.payload.issue.title)
               .replace(/%source_pr_number%/g, context.payload.issue.number)
+              .replace(/%source_pr_author%/g, context.payload.issue.user.login)
               .replace(/%cc_users%/g, cc_users);
 
             // open the GitHub PR
@@ -202,7 +204,7 @@ jobs:
             core.setFailed(error);
 
             // post failure to GitHub comment
-            const unknown_error_body = `@${comment_user} an error occurred while backporting to ${target_branch}, please check the run log for details!\n\n${error.message}`;
+            const unknown_error_body = `@${comment_user} an error occurred while backporting to "${target_branch}", please check the run log for details!\n\n${error.message}`;
             await github.rest.issues.createComment({
               owner: repo_owner,
               repo: repo_name,

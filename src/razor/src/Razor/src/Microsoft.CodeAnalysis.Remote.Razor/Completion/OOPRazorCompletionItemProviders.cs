@@ -3,6 +3,7 @@
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Completion;
 
@@ -16,7 +17,9 @@ internal sealed class OOPDirectiveAttributeCompletionItemProvider : DirectiveAtt
 internal sealed class OOPDirectiveAttributeParameterCompletionItemProvider : DirectiveAttributeParameterCompletionItemProvider;
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
-internal sealed class OOPDirectiveAttributeTransitionCompletionItemProvider : DirectiveAttributeTransitionCompletionItemProvider;
+[method: ImportingConstructor]
+internal sealed class OOPDirectiveAttributeTransitionCompletionItemProvider(LanguageServerFeatureOptions languageServerFeatureOptions)
+    : DirectiveAttributeTransitionCompletionItemProvider(languageServerFeatureOptions);
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
 internal sealed class OOPMarkupTransitionCompletionItemProvider : MarkupTransitionCompletionItemProvider;

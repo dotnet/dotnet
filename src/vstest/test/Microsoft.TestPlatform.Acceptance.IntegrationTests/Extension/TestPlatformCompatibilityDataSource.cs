@@ -11,7 +11,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 /// used only to test the most common scenarios, or special configurations that are candidates for their own
 /// specialized source.
 ///
-/// By default net462 and netcoreapp3.1 are used for both runner and host. (4 combinations)
+/// By default net462 and net8.0 are used for both runner and host. (4 combinations)
 /// Then run with every version of runner is added.
 /// Then run with every version of test.sdk is added.
 /// Then run with every combination of testhost and adapter is added.

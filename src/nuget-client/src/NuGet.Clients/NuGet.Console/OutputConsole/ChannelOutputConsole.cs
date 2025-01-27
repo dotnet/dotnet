@@ -10,9 +10,9 @@ using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.RpcContracts.OutputChannel;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Microsoft.VisualStudio.Threading;
-using NuGet.VisualStudio;
 using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
@@ -50,7 +50,7 @@ namespace NuGetConsole
 
             _serviceBrokerClient = new AsyncLazy<ServiceBrokerClient>(async () =>
             {
-                IBrokeredServiceContainer container = await asyncServiceProvider.GetFreeThreadedServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
+                IBrokeredServiceContainer container = await asyncServiceProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
                 Assumes.Present(container);
                 IServiceBroker serviceBroker = container.GetFullAccessServiceBroker();
                 return new ServiceBrokerClient(serviceBroker, _joinableTaskFactory);

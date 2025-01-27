@@ -9,18 +9,11 @@
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector.UnitTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
     <AssemblyName>datacollector.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\datacollector\datacollector.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <Reference Include="System.Runtime" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-
 </Project>

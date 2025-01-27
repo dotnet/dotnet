@@ -41,7 +41,7 @@ public class LegacySectionTargetExtensionTest
 );
 ";
 
-        var output = context.CodeWriter.GenerateCode();
+        var output = context.CodeWriter.GetText().ToString();
         Assert.Equal(expected, output, ignoreLineEndingDifferences: true);
     }
 }

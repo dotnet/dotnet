@@ -34,7 +34,7 @@ namespace NuGet.Protocol.Tests
             {
                 var results = await resource.ResolvePackages("deepequal", NuGetFramework.Parse("net45"), sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
 
-                var target = results.Where(p => p.Version == NuGetVersion.Parse("1.4.0")).Single();
+                var target = results.Single(p => p.Version == NuGetVersion.Parse("1.4.0"));
 
                 // Assert
                 Assert.Equal(19, results.Count());

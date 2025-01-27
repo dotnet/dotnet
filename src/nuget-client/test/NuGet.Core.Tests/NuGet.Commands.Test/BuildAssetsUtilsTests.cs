@@ -847,7 +847,7 @@ namespace NuGet.Commands.Test
 
                 var expectedPropertyName = $"Pkg{identity.Id.Replace(".", "_")}";
 
-                var actualPropertyElement = outputFiles.FirstOrDefault().Content.Root.Descendants().Where(i => i.Name.LocalName.Equals(expectedPropertyName)).FirstOrDefault();
+                var actualPropertyElement = outputFiles.FirstOrDefault().Content.Root.Descendants().FirstOrDefault(i => i.Name.LocalName.Equals(expectedPropertyName));
 
                 if (hasTools)
                 {
@@ -930,8 +930,8 @@ namespace NuGet.Commands.Test
             using (var randomProjectDirectory = TestDirectory.Create())
             {
                 var filePath = Path.Combine(randomProjectDirectory, "propsXML.xml");
-                var internalSubset = @"<!ENTITY greeting ""Hello"">	
-   <!ENTITY name ""NuGet Client "">	
+                var internalSubset = @"<!ENTITY greeting ""Hello"">
+   <!ENTITY name ""NuGet Client "">
    <!ENTITY sayhello ""&greeting; &name;"">";
                 var newValue = "&sayhello;";
 

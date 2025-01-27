@@ -53,6 +53,8 @@ internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureB
     {
         public static readonly ComponentImportProjectItem Instance = new();
 
+        private static RazorSourceDocument? s_source;
+
         private ComponentImportProjectItem()
         {
         }
@@ -72,5 +74,8 @@ internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureB
         public override string FileKind => FileKinds.ComponentImport;
 
         public override Stream Read() => s_fileContent.CreateStream();
+
+        internal override RazorSourceDocument GetSource()
+            => s_source ?? InterlockedOperations.Initialize(ref s_source, base.GetSource());
     }
 }

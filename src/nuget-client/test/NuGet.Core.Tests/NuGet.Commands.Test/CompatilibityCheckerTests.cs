@@ -518,7 +518,7 @@ namespace NuGet.Commands.Test
                 var result = await command.ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
 
-                var failure = result.CompatibilityCheckResults.Where(r => !r.Success).Single().Issues.Single();
+                var failure = result.CompatibilityCheckResults.Single(r => !r.Success).Issues.Single();
 
                 // Assert
                 Assert.False(result.Success, logger.ShowErrors());
@@ -590,7 +590,7 @@ namespace NuGet.Commands.Test
                 var result = await command.ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
 
-                var failures = result.CompatibilityCheckResults.Where(r => !r.Success).Count();
+                var failures = result.CompatibilityCheckResults.Count(r => !r.Success);
 
                 // Assert
                 Assert.True(result.Success, logger.ShowErrors());

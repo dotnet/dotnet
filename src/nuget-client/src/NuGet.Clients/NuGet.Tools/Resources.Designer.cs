@@ -61,11 +61,38 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binding Redirects.
+        /// </summary>
+        internal static string BindingRedirects {
+            get {
+                return ResourceManager.GetString("BindingRedirects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not create tool window..
         /// </summary>
         internal static string CanNotCreateWindow {
             get {
                 return ResourceManager.GetString("CanNotCreateWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear NuGet local resources.
+        /// </summary>
+        internal static string clearLocalResources {
+            get {
+                return ResourceManager.GetString("clearLocalResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default package management format.
+        /// </summary>
+        internal static string defaultPackageManagementFormat {
+            get {
+                return ResourceManager.GetString("defaultPackageManagementFormat", resourceCulture);
             }
         }
         
@@ -142,6 +169,60 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package Management.
+        /// </summary>
+        internal static string PackageManagement {
+            get {
+                return ResourceManager.GetString("PackageManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PackageReference.
+        /// </summary>
+        internal static string PackageReference {
+            get {
+                return ResourceManager.GetString("PackageReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package Restore.
+        /// </summary>
+        internal static string PackageRestore {
+            get {
+                return ResourceManager.GetString("PackageRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically check for missing packages during build in Visual Studio.
+        /// </summary>
+        internal static string packageRestoreAutomatic {
+            get {
+                return ResourceManager.GetString("packageRestoreAutomatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow NuGet to download missing packages.
+        /// </summary>
+        internal static string PackageRestoreConsent {
+            get {
+                return ResourceManager.GetString("PackageRestoreConsent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packages.config.
+        /// </summary>
+        internal static string PackagesConfig {
+            get {
+                return ResourceManager.GetString("PackagesConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} nuget configuration is invalid..
         /// </summary>
         internal static string ProjectHasAnInvalidNuGetConfiguration {
@@ -156,6 +237,33 @@ namespace NuGetVSExtension {
         internal static string ProjectMigrateErrorMessage {
             get {
                 return ResourceManager.GetString("ProjectMigrateErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to These settings are stored in %NuGet.Config% files.
+        /// </summary>
+        internal static string SettingsStoredInNuGetConfiguration {
+            get {
+                return ResourceManager.GetString("SettingsStoredInNuGetConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prompt for format selection on first package install.
+        /// </summary>
+        internal static string showPackageManagementChooser {
+            get {
+                return ResourceManager.GetString("showPackageManagementChooser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip applying binding redirects.
+        /// </summary>
+        internal static string skipBindingRedirects {
+            get {
+                return ResourceManager.GetString("skipBindingRedirects", resourceCulture);
             }
         }
         

@@ -53,8 +53,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                     var dependencyGroupFramework = dependencyGroup.TargetFramework.Framework;
                     var dependentPackages = dependencyGroup.Packages.ToList();
                     var centralTransitiveDependentPackage = dependentPackages
-                        .Where(p => p.Id.Equals("Newtonsoft.Json", StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
+                        .FirstOrDefault(p => p.Id.Equals("Newtonsoft.Json", StringComparison.OrdinalIgnoreCase));
                     Assert.Equal(1, dependencyGroups.Count);
                     Assert.Equal(".NETStandard", dependencyGroupFramework);
                     Assert.NotNull(centralTransitiveDependentPackage);

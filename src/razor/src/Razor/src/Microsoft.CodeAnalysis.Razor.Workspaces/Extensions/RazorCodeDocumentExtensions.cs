@@ -20,37 +20,13 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal static class RazorCodeDocumentExtensions
 {
-    private static readonly object s_csharpSourceTextKey = new();
-    private static readonly object s_htmlSourceTextKey = new();
     private static readonly object s_csharpSyntaxTreeKey = new();
 
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
-    {
-        if (!document.Items.TryGetValue(s_csharpSourceTextKey, out SourceText? sourceText))
-        {
-            var csharpDocument = document.GetCSharpDocument();
-            sourceText = SourceText.From(csharpDocument.GeneratedCode);
-            document.Items[s_csharpSourceTextKey] = sourceText;
-
-            return sourceText;
-        }
-
-        return sourceText.AssumeNotNull();
-    }
+        => document.GetCSharpDocument().Text;
 
     public static SourceText GetHtmlSourceText(this RazorCodeDocument document)
-    {
-        if (!document.Items.TryGetValue(s_htmlSourceTextKey, out SourceText? sourceText))
-        {
-            var htmlDocument = document.GetHtmlDocument();
-            sourceText = SourceText.From(htmlDocument.GeneratedCode);
-            document.Items[s_htmlSourceTextKey] = sourceText;
-
-            return sourceText;
-        }
-
-        return sourceText.AssumeNotNull();
-    }
+        => document.GetHtmlDocument().Text;
 
     /// <summary>
     ///  Retrieves a cached Roslyn <see cref="SyntaxTree"/> from the generated C# document.

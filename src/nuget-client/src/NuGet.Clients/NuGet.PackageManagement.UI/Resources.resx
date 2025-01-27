@@ -574,7 +574,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <comment>{0} for date and time string</comment>
   </data>
   <data name="ShowMessage_LocalsCommandWorking" xml:space="preserve">
-    <value>Clearing all NuGet storage. </value>
+    <value>Clearing all NuGet storage...</value>
   </data>
   <data name="ShowWarning_InvalidSource" xml:space="preserve">
     <value>The source specified is invalid. Please provide a valid source.</value>
@@ -1094,5 +1094,26 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Text_NoReadme" xml:space="preserve">
     <value>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</value>
     <comment>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</comment>
+  </data>
+  <data name="VSOptions_Text_MovedToUnifiedSettings" xml:space="preserve">
+    <value>This settings page has moved to Unified Settings.</value>
+  </data>
+  <data name="VSOptions_ButtonOpenSettingsPage" xml:space="preserve">
+    <value>Open the settings page</value>
+  </data>
+  <data name="VSOptions_Text_PromptShortcutUnifiedSettings" xml:space="preserve">
+    <value>Do you want to save changes before closing this dialog?</value>
+  </data>
+  <data name="VSOptions_Text_ClearLocalResourcesTitle" xml:space="preserve">
+    <value>NuGet Package Manager</value>
+  </data>
+  <data name="VSOptions_Button_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="VSOptions_Text_ClearLocalsPromptMessage" xml:space="preserve">
+    <value>Once started, this action cannot be cancelled.</value>
+  </data>
+  <data name="VSOptions_Text_ClearLocalsPromptTitle" xml:space="preserve">
+    <value>Clear all local NuGet resources?</value>
   </data>
 </root>

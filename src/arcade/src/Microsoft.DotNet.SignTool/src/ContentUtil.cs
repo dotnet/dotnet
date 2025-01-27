@@ -108,25 +108,6 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        public static bool IsAuthenticodeSigned(Stream assemblyStream)
-        {
-            using (var peReader = new PEReader(assemblyStream))
-            {
-                var headers = peReader.PEHeaders;
-                var entry = headers.PEHeader.CertificateTableDirectory;
-
-                return entry.Size > 0;
-            }
-        }
-
-        public static bool IsAuthenticodeSigned(string filePath)
-        {
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                return IsAuthenticodeSigned(stream);
-            }
-        }
-
         public static string GetPublicKeyToken(string fullPath)
         {
             try

@@ -70,6 +70,8 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
 @addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor
 ");
 
+        private static RazorSourceDocument? s_source;
+
         private DefaultDirectivesProjectItem()
         {
         }
@@ -88,5 +90,8 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
         public override bool Exists => true;
 
         public override Stream Read() => s_fileContent.CreateStream();
+
+        internal override RazorSourceDocument GetSource()
+            => s_source ?? InterlockedOperations.Initialize(ref s_source, base.GetSource());
     }
 }

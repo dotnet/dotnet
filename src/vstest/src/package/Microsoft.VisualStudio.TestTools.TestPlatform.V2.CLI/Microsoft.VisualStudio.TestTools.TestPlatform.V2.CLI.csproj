@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <IsVsixProject>true</IsVsixProject>
-    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetFrameworkRunnerTargetFramework)</TargetFrameworks>
     <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <!-- Properties for items we include in VSIX -->
     <ExtensionInstallationRelativeToVS>[installDir]\Common7\IDE\Extensions\TestPlatform</ExtensionInstallationRelativeToVS>
     <TestPlatformCliBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform.CLI\$(Configuration)\$(NetFrameworkMinimum)\</TestPlatformCliBinFolder>
-    <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\net472\</TestPlatformBinFolder>
+    <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\</TestPlatformBinFolder>
     <MsDiaFolder>$(TestPlatformBinFolder)Microsoft.Internal.Dia\</MsDiaFolder>
     <CUITFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.CUIT\</CUITFolder>
     <CodeCoverageIOFolder>$(TestPlatformBinFolder)Microsoft.CodeCoverage.IO\</CodeCoverageIOFolder>
@@ -99,6 +99,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net471\win*\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net472\win*\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net48\win*\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net481\win*\testhost.net481.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.exe" />
 
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.x86.exe;$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.net4*.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
@@ -106,6 +107,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net471\win*\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net472\win*\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net48\win*\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net481\win*\testhost.net481.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.x86.exe" />
 
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.arm64.exe;$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.net4*.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
@@ -113,6 +115,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net471\win*\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net472\win*\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net48\win*\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net481\win*\testhost.net481.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.arm64.exe" />
     </ItemGroup>
 
     <!-- Cpp Extensions -->
@@ -270,6 +273,10 @@
       <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hant\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
         <VSIXSubPath>Extensions\zh-Hant</VSIXSubPath>
       </VsixSourceItem>
+
+      <VsixSourceItem Include="$(TestPlatformBinFolder)DumpMiniTool*">
+        <VSIXSubPath>Extensions\dump</VSIXSubPath>
+      </VsixSourceItem>
     </ItemGroup>
 
     <!-- Microsoft.VisualStudio.QualityTools.DataCollectors -->
@@ -318,7 +325,7 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj">
       <Ngen>false</Ngen>
     </ProjectReference>

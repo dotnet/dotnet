@@ -101,7 +101,8 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
                         mappedPosition,
                         character,
                         options,
-                        cancellationToken);
+                        cancellationToken)
+                    .ConfigureAwait(false);
             default:
                 Logger.LogError($"Unsupported language {languageKind} in {nameof(RemoteAutoInsertService)}");
                 return Response.NoFurtherHandling;
@@ -146,7 +147,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
             character,
             options.FormattingOptions.ToRoslynFormattingOptions(),
             cancellationToken
-        );
+        ).ConfigureAwait(false);
 
         if (autoInsertResponseItem is null)
         {

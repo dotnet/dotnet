@@ -229,7 +229,7 @@ namespace NuGet.CommandLine.XPlat
                 return false;
             }
 
-            ProjectItem packageReference = project.Items.Where(item => item.ItemType == PACKAGE_REFERENCE_TYPE_TAG && item.EvaluatedInclude.Equals(packageReferenceArgs.PackageId)).LastOrDefault();
+            ProjectItem packageReference = project.Items.LastOrDefault(item => item.ItemType == PACKAGE_REFERENCE_TYPE_TAG && item.EvaluatedInclude.Equals(packageReferenceArgs.PackageId));
             ProjectItem packageVersionInProps = packageVersions.LastOrDefault();
             var versionOverride = dependenciesWithVersionOverride?.FirstOrDefault(d => d.Name.Equals(packageReferenceArgs.PackageId));
 
@@ -793,7 +793,7 @@ namespace NuGet.CommandLine.XPlat
                         {
                             try
                             { // In case proj and assets file are not in sync and some refs were deleted
-                                installedPackage = projectPackages.Where(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal)).First();
+                                installedPackage = projectPackages.First(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal));
                             }
                             catch (Exception)
                             {

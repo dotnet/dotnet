@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Help;
+using System.CommandLine.Parsing;
 using System.IO;
 using Microsoft.Extensions.CommandLineUtils;
 
@@ -49,7 +50,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 Arity = ArgumentArity.ZeroOrMore,
                 CustomParser = ar =>
                 {
-                    if (ar.Tokens.Count > 1)
+                    if (HasPathArgument(ar))
                     {
                         var value = ar.Tokens[0];
                         ar.OnlyTake(1);
@@ -59,6 +60,18 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                     ar.OnlyTake(0);
                     var currentDirectory = Directory.GetCurrentDirectory();
                     return currentDirectory;
+
+                    bool HasPathArgument(ArgumentResult ar)
+                    {
+                        // If there's only one argument, it could be the path, or the package.
+                        if (ar.Tokens.Count == 1)
+                        {
+                            var value = ar.Tokens[0].Value;
+                            return File.Exists(value) || Directory.Exists(value);
+                        }
+
+                        return ar.Tokens.Count > 1;
+                    }
                 }
             };
 

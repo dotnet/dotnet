@@ -5,6 +5,8 @@
 
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -14,16 +16,15 @@ public static class SourceMappingsSerializer
     internal static string Serialize(IRazorGeneratedDocument csharpDocument, RazorSourceDocument sourceDocument)
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
-        var sourceContent = sourceDocument.Text.ToString();
 
         foreach (var sourceMapping in csharpDocument.SourceMappings)
         {
             builder.Append("Source Location: ");
-            var sourceCode = GetCodeForSpan(sourceMapping.OriginalSpan, sourceContent);
+            var sourceCode = GetCodeForSpan(sourceMapping.OriginalSpan, sourceDocument.Text);
             AppendMappingLocation(builder, sourceMapping.OriginalSpan, sourceCode);
 
             builder.Append("Generated Location: ");
-            var generatedCode = GetCodeForSpan(sourceMapping.GeneratedSpan, csharpDocument.GeneratedCode);
+            var generatedCode = GetCodeForSpan(sourceMapping.GeneratedSpan, csharpDocument.Text);
             AppendMappingLocation(builder, sourceMapping.GeneratedSpan, generatedCode);
 
             Assert.Equal(sourceCode, generatedCode, ignoreCase: true);
@@ -42,8 +43,8 @@ public static class SourceMappingsSerializer
             .AppendLine("|");
     }
 
-    private static string GetCodeForSpan(SourceSpan location, string content)
+    private static string GetCodeForSpan(SourceSpan location, SourceText content)
     {
-        return content[location.AbsoluteIndex..(location.AbsoluteIndex + location.Length)];
+        return content.ToString(location.AsTextSpan());
     }
 }

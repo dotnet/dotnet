@@ -532,7 +532,7 @@ namespace NuGet.Protocol.Tests
             }
 
             string expectedMessagePrefix = "  " + tooManyRequestsStatusCode.ToString() + " " + TestUrl;
-            logger.Messages.Where(m => m.StartsWith(expectedMessagePrefix, StringComparison.Ordinal)).Count().Should().Be(retry429 ? 2 : 1);
+            logger.Messages.Count(m => m.StartsWith(expectedMessagePrefix, StringComparison.Ordinal)).Should().Be(retry429 ? 2 : 1);
         }
 
         private static TimeSpan GetRetryMinTime(int tries, TimeSpan retryDelay)

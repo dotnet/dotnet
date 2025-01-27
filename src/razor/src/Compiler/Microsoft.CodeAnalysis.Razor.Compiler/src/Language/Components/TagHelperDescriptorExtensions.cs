@@ -5,6 +5,8 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -45,6 +47,58 @@ internal static class TagHelperDescriptorExtensions
             tagHelper.Metadata.TryGetValue(ComponentMetadata.Component.GenericTypedKey, out var value) &&
             string.Equals(bool.TrueString, value);
     }
+
+    /// <summary>
+    /// Given a taghelper binding it finds the BoundAttribute that is a type parameter and then the
+    /// actual binding value for that type.
+    ///
+    /// <code>
+    /// &lt;MyTagHelper
+    ///   TItem="string"
+    ///   OnChange="OnMyTagHelperChange" /&gt;
+    /// </code>
+    ///
+    /// The above code will return "string" for the typeName.
+    /// </summary>
+    /// <remarks>
+    /// As of now this method only supports cases where there is a single bound attribute that is a type parameter. If there are multiple this returns false.
+    /// </remarks>
+#nullable enable
+    public static bool TryGetGenericTypeNameFromComponent(this TagHelperDescriptor tagHelper, TagHelperBinding binding, [NotNullWhen(true)] out string? typeName)
+    {
+        typeName = null;
+
+        if (!tagHelper.IsComponentTagHelper)
+        {
+            return false;
+        }
+
+        foreach (var boundAttribute in tagHelper.BoundAttributes)
+        {
+            // This is a bit of a headache so let me explain:
+            // The bound attribute needs to be marked "True" for the "TypeParameter" key in order to be considered a type parameter.
+            // The property name for that is the actual property we need to read, such as "TItem".
+            // However, since you can't get the value from the TagHelperDescriptor directly (it's the type, not what the user has provided data to map)
+            // it has to be looked up in the bindingAttributes to find the value for that type. This assumes that the type is valid because the user
+            // provided it, and if it's not the calling context probably doesn't care.
+            if (boundAttribute.IsTypeParameterProperty() &&
+                boundAttribute.GetPropertyName() is string propertyName &&
+                binding.Attributes.FirstOrDefault(propertyName, static (kvp, propertyName) => kvp.Key == propertyName) is { Value: var bindingTypeName })
+            {
+                if (typeName is not null)
+                {
+                    // Multiple generic types were found and currently not supported.
+                    typeName = null;
+                    return false;
+                }
+
+                typeName = bindingTypeName;
+            }
+        }
+
+        return typeName is not null;
+    }
+#nullable disable
 
     public static bool IsInputElementBindTagHelper(this TagHelperDescriptor tagHelper)
     {

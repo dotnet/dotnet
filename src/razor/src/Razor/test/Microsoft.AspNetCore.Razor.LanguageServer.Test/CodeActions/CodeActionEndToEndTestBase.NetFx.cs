@@ -322,6 +322,52 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
                 new KeyValuePair<string, string>(ComponentMetadata.Common.DirectiveAttribute, bool.TrueString));
 
             yield return builder.Build();
+
+            // Sets up a component to make the following available
+            // <TestGenericComponent
+            //   TItem="string"
+            //   OnDragStart="OnDragStart" />
+            //
+            //
+            // @code
+            // {
+            //     void OnDragStart(<Microsoft.AspNetCore.Components.Web.DragEventArgs<string> args) {}
+            // }
+            builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestGenericComponent", "Microsoft.AspNetCore.Components");
+            builder.BoundAttributeDescriptor(configure => configure
+                .Name("OnDragStart")
+                .TypeName("System.Action<Microsoft.AspNetCore.Components.Web.DragEventArgs<TItem>>")
+                .Metadata(new(ComponentMetadata.Component.DelegateSignatureKey, bool.TrueString), new(ComponentMetadata.Component.GenericTypedKey, bool.TrueString)));
+            builder.BoundAttributeDescriptor(configure => configure
+                .Name("TItem")
+                .Metadata(new(ComponentMetadata.Component.TypeParameterKey, bool.TrueString), new(TagHelperMetadata.Common.PropertyName, "TItem")));
+            builder.TagMatchingRule(rule => rule.RequireTagName("TestGenericComponent"));
+            builder.Metadata(
+                new(TagHelperMetadata.Common.TypeName, "Microsoft.AspNetCore.Components.TestGenericComponent"),
+                new(TagHelperMetadata.Common.TypeNamespace, "Microsoft.AspNetCore.Components"),
+                new(TagHelperMetadata.Common.TypeNameIdentifier, "TestGenericComponent"));
+            yield return builder.Build();
+
+
+            // Sets up a component to make the following available
+            // <TestComponent OnDragStart="OnDragStart" />
+            //
+            //
+            // @code
+            // {
+            //     void OnDragStart(<Microsoft.AspNetCore.Components.Web.DragEventArgs args) {}
+            // }
+            builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestComponent", "Microsoft.AspNetCore.Components");
+            builder.BoundAttributeDescriptor(configure => configure
+                .Name("OnDragStart")
+                .TypeName("System.Action<Microsoft.AspNetCore.Components.Web.DragEventArgs>")
+                .Metadata(new(ComponentMetadata.Component.DelegateSignatureKey, bool.TrueString)));
+            builder.TagMatchingRule(rule => rule.RequireTagName("TestComponent"));
+            builder.Metadata(
+                new(TagHelperMetadata.Common.TypeName, "Microsoft.AspNetCore.Components.TestComponent"),
+                new(TagHelperMetadata.Common.TypeNamespace, "Microsoft.AspNetCore.Components"),
+                new(TagHelperMetadata.Common.TypeNameIdentifier, "TestComponent"));
+            yield return builder.Build();
         }
     }
 

@@ -13,7 +13,7 @@ internal class DotnetWorkloadTest
     public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
     public string ScenarioName { get; }
 
-    public DotnetWorkloadTest(string scenarioName, string targetRid,  DotNetSdkActions commands = DotNetSdkActions.None)
+    public DotnetWorkloadTest(string scenarioName, string targetRid, DotNetSdkActions commands = DotNetSdkActions.None)
     {
         ScenarioName = scenarioName;
         Commands = commands;

@@ -2554,8 +2554,7 @@ namespace NuGet.CommandLine.Test
                 StringComparison.Ordinal;
 
             return words
-                .Where(word => string.Equals(word, substr, comparisonType))
-                .Count();
+                .Count(word => string.Equals(word, substr, comparisonType));
         }
     }
 }

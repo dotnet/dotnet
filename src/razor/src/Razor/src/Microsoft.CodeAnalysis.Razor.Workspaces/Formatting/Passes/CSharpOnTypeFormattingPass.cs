@@ -101,7 +101,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // because they are non mappable, but might be the only thing changed (eg from the Add Using code action)
             //
             // If there aren't any edits that are likely to contain using statement changes, this call will no-op.
-            filteredChanges = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, changes, originalTextWithChanges, filteredChanges, cancellationToken).ConfigureAwait(false);
+            filteredChanges = await AddUsingStatementEditsIfNecessaryAsync(context, changes, originalTextWithChanges, filteredChanges, cancellationToken).ConfigureAwait(false);
 
             return filteredChanges;
         }
@@ -186,7 +186,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
         var finalChanges = cleanedText.GetTextChangesArray(originalText);
 
-        finalChanges = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, changes, originalTextWithChanges, finalChanges, cancellationToken).ConfigureAwait(false);
+        finalChanges = await AddUsingStatementEditsIfNecessaryAsync(context, changes, originalTextWithChanges, finalChanges, cancellationToken).ConfigureAwait(false);
 
         return finalChanges;
     }
@@ -203,15 +203,15 @@ internal sealed class CSharpOnTypeFormattingPass(
         return changes.ToImmutableArray();
     }
 
-    private static async Task<ImmutableArray<TextChange>> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, RazorCodeDocument codeDocument, SourceText csharpText, ImmutableArray<TextChange> changes, SourceText originalTextWithChanges, ImmutableArray<TextChange> finalChanges, CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<TextChange>> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, ImmutableArray<TextChange> changes, SourceText originalTextWithChanges, ImmutableArray<TextChange> finalChanges, CancellationToken cancellationToken)
     {
         if (context.AutomaticallyAddUsings)
         {
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
             if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
             {
-                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(codeDocument, csharpText, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
-                var usingStatementChanges = usingStatementEdits.Select(codeDocument.Source.Text.GetTextChange);
+                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(context.CodeDocument, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
+                var usingStatementChanges = usingStatementEdits.Select(context.CodeDocument.Source.Text.GetTextChange);
                 finalChanges = [.. usingStatementChanges, .. finalChanges];
             }
         }

@@ -330,11 +330,10 @@ namespace NuGet.XPlat.FuncTest
         {
             var itemGroups = root.Descendants("ItemGroup");
             return itemGroups
-                    .Where(i => i.Descendants(GetReferenceType(packageType)).Any() &&
-                                i.FirstAttribute != null &&
-                                i.FirstAttribute.Name.LocalName.Equals("Condition", StringComparison.OrdinalIgnoreCase) &&
-                                i.FirstAttribute.Value.Trim().Equals(GetTargetFrameworkCondition(framework), StringComparison.OrdinalIgnoreCase))
-                     .First();
+                .First(i => i.Descendants(GetReferenceType(packageType)).Any() &&
+                            i.FirstAttribute != null &&
+                            i.FirstAttribute.Name.LocalName.Equals("Condition", StringComparison.OrdinalIgnoreCase) &&
+                            i.FirstAttribute.Value.Trim().Equals(GetTargetFrameworkCondition(framework), StringComparison.OrdinalIgnoreCase));
         }
 
         public static XElement GetItemGroupForAllFrameworks(XElement root, PackageType packageType = null)
@@ -345,10 +344,10 @@ namespace NuGet.XPlat.FuncTest
             {
                 var x = i.Descendants(referenceType);
             }
+
             return itemGroups
-                    .Where(i => i.Descendants(referenceType).Any() &&
-                                i.FirstAttribute == null)
-                     .First();
+                .First(i => i.Descendants(referenceType).Any() &&
+                            i.FirstAttribute == null);
         }
 
         public static bool ValidateTwoReferences(XElement root, SimpleTestPackageContext packageX, SimpleTestPackageContext packageY)

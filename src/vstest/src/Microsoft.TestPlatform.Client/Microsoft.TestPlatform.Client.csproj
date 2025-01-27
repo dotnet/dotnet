@@ -3,7 +3,10 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.Client</AssemblyName>
-    <TargetFrameworks>net7.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <!--
+      This project is client that is used only by runners, and shipped only in runner packages.
+    -->
+    <TargetFrameworks>$(NetFrameworkRunnerTargetFramework);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
@@ -17,7 +20,7 @@
       <FromP2P>true</FromP2P>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.Serialization" />
@@ -46,5 +49,7 @@
     <!-- Framework specific API -->
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Include="PublicAPI\netstandard2.0\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\netstandard2.0\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

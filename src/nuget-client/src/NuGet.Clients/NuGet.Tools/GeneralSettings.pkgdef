@@ -1,0 +1,5 @@
+[$RootKey$\ToolsOptionsPages\NuGet Package Manager\GeneralStub]
+// The GeneralStub page is temporarily needed until all NuGet settings pages are onboarded to Unified Settings.
+// This options disables the placeholder link within Unified Settings that points back to the GeneralStub page,
+// as the GeneralStub page is only needed in the legacy settings dialog.
+"ShouldShowUnifiedSettingsPlaceholder"=dword:00000000

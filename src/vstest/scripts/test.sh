@@ -57,7 +57,7 @@ done
 #
 # Variables
 #
-PROJECT_NAME_PATTERNS=**$PROJECT_NAME_PATTERNS*bin*$CONFIGURATION*net6.0*$PROJECT_NAME_PATTERNS*Tests*dll
+PROJECT_NAME_PATTERNS=**$PROJECT_NAME_PATTERNS*bin*$CONFIGURATION*net9.0*$PROJECT_NAME_PATTERNS*Tests*dll
 TP_ROOT_DIR=$(cd "$(dirname "$0")"; pwd -P)
 TP_TOOLS_DIR="$TP_ROOT_DIR/tools"
 TP_PACKAGES_DIR="$TP_ROOT_DIR/packages"
@@ -76,7 +76,7 @@ DOTNET_CLI_VERSION="latest"
 # Build configuration
 #
 TPB_Solution="TestPlatform.sln"
-TPB_TargetFrameworkCore="netcoreapp3.1"
+TPB_TargetFrameworkCore="net8.0"
 TPB_Configuration=$CONFIGURATION
 TPB_TargetRuntime=$TARGET_RUNTIME
 TPB_Verbose=$VERBOSE

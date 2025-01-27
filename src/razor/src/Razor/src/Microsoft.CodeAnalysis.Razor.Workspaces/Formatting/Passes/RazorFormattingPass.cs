@@ -430,7 +430,8 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             didFormat = true;
         }
 
-        if (closeBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var closeBraceRange) &&
+        if (closeBraceNode.Span.Length > 0 &&
+            closeBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var closeBraceRange) &&
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
             if (directiveNode is not null &&
@@ -458,6 +459,15 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                     : codeRange.End;
                 changes.Add(new TextChange(source.Text.GetTextSpan(codeRange.End, start), context.NewLineString + additionalIndentation));
                 didFormat = true;
+            }
+
+            // If there is code after the close brace, then we want to add a newline after it and push the code to the next
+            // line. In other words, we expect only whitespace characters after the close brace, on this line.
+            var closeBraceLine = source.Text.Lines[closeBraceRange.End.Line];
+            if (closeBraceLine.GetFirstNonWhitespaceOffset(closeBraceRange.End.Character).HasValue)
+            {
+                // Insert a newline after the close brace
+                changes.Add(new TextChange(source.Text.GetTextSpan(closeBraceRange.End, closeBraceRange.End), context.NewLineString));
             }
         }
 

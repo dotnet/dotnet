@@ -52,6 +52,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
         }
         else
         {
+            // TODO: Update IFileSystem.ReadFile(...) to return a SourceText without reading a huge string.
             var st = SourceText.From(_fileSystem.ReadFile(importsFile));
             var lastLine = st.Lines[^1];
             insertLocation = new LinePosition(lastLine.LineNumber, 0);

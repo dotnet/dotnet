@@ -56,8 +56,6 @@
 
     <!-- Extensions -->
     <file src="$SourceBuildTfmCurrent$\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
-    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
-    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.Extensions.EventLogCollector.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
     <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.TesthostRuntimeProvider.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />

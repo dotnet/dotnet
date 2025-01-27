@@ -970,7 +970,6 @@ static readonly Microsoft.VisualStudio.TestPlatform.ObjectModel.UapConstants.Uap
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.Properties.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty!>!
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedGetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? defaultValue) -> object?
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedSetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? value) -> void
-virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateValueCallback.Invoke(object? value) -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.RiscV64 = 8 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CaptureStandardOutput.get -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.ForwardStandardOutput.get -> bool

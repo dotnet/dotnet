@@ -135,8 +135,7 @@ namespace NuGet.PackageManagement.UI
 
             PackageSourceMappingSourceItem packageSourceMappingItemForSource =
                 newAndExistingPackageSourceMappingItems
-                .Where(mappingItem => mappingItem.Key == sourceName)
-                .FirstOrDefault();
+                    .FirstOrDefault(mappingItem => mappingItem.Key == sourceName);
 
             IEnumerable<PackagePatternItem> newPackagePatternItems = newPackageIdsToSourceMap.Select(packageId => new PackagePatternItem(packageId));
 

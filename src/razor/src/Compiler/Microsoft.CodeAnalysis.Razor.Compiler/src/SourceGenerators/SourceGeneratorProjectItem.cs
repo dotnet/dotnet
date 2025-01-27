@@ -12,6 +12,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
     internal class SourceGeneratorProjectItem : RazorProjectItem, IEquatable<SourceGeneratorProjectItem>
     {
         private readonly string _fileKind;
+        private readonly RazorSourceDocument? _source;
 
         public SourceGeneratorProjectItem(string basePath, string filePath, string relativePhysicalPath, string fileKind, AdditionalText additionalText, string? cssScope)
         {
@@ -21,10 +22,11 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             _fileKind = fileKind;
             AdditionalText = additionalText;
             CssScope = cssScope;
+
             var text = AdditionalText.GetText();
             if (text is not null)
             {
-                RazorSourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(AdditionalText.Path, relativePhysicalPath));
+                _source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(AdditionalText.Path, relativePhysicalPath));
             }
         }
 
@@ -47,6 +49,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         public override Stream Read()
             => throw new NotSupportedException("This API should not be invoked. We should instead be relying on " +
                 "the RazorSourceDocument associated with this item instead.");
+
+        internal override RazorSourceDocument? GetSource() => _source;
 
         public bool Equals(SourceGeneratorProjectItem? other)
         {
