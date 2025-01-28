@@ -5,6 +5,7 @@
   <PropertyGroup>
     <TestRoot Condition="'$(TestRoot)' == ''">$(ArtifactsObjDir)generatedtests/</TestRoot>
     <TestSdkVersion Condition="'$(TestSdkVersion)' == ''">$(NETCoreSdkVersion)</TestSdkVersion>
+    <TestBinlogDir Condition="'$(TestBinlogDir)' == ''">$(ArtifactsTestResultsDir)</TestBinlogDir>
   </PropertyGroup>
 
   <Target Name="CleanTestRoot">
@@ -45,10 +46,10 @@
   <Target Name="Test"
           DependsOnTargets="CleanTestRoot;CreateDirectoryBuildFiles">
     <PropertyGroup>
-      <!-- Dotnet root typically ends in a \. Trim this to avoid issues with Exec -->
       <TestArgs>--dotnet-root "$(DotNetRoot.TrimEnd('\'))"</TestArgs>
       <TestArgs>$(TestArgs) --sdk-version $(TestSdkVersion)</TestArgs>
-      <TestArgs>$(TestArgs) --test-root "$(TestRoot)"</TestArgs>
+      <TestArgs>$(TestArgs) --test-root "$(TestRoot.TrimEnd('\'))"</TestArgs>
+      <TestArgs>$(TestArgs) --binlog-dir "$(TestBinlogDir.TrimEnd('\'))"</TestArgs>
       <TestArgs>$(TestArgs) $(AdditionalTestArgs)</TestArgs>
 
       <_MSBuildSdksDir>$(DotNetRoot)sdk/$(TestSdkVersion)/Sdks</_MSBuildSdksDir>
