@@ -24,10 +24,14 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <Import Project="Microsoft.NET.Sdk.FrameworkReferenceResolution.targets" />
 
-  <UsingTask TaskName="GenerateDepsFile" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="GenerateRuntimeConfigurationFiles" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="GetAssemblyVersion" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="GenerateSatelliteAssemblies" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="GenerateDepsFile" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' != 'true'" />
+  <UsingTask TaskName="GenerateDepsFile" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' == 'true'" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="GenerateRuntimeConfigurationFiles" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' != 'true'" />
+  <UsingTask TaskName="GenerateRuntimeConfigurationFiles" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' == 'true'" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="GetAssemblyVersion" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' != 'true'" />
+  <UsingTask TaskName="GetAssemblyVersion" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' == 'true'" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="GenerateSatelliteAssemblies" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' != 'true'" />
+  <UsingTask TaskName="GenerateSatelliteAssemblies" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Condition="'$(DotNetIsolateDepsResolution)' == 'true'" TaskFactory="TaskHostFactory" />
 
   <PropertyGroup>
     <DisableStandardFrameworkResolution Condition="'$(DisableStandardFrameworkResolution)' == ''">$(_IsNETCoreOrNETStandard)</DisableStandardFrameworkResolution>
