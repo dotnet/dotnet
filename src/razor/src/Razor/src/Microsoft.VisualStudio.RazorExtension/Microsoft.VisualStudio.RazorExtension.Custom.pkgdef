@@ -71,7 +71,7 @@
 
 [$RootKey$\FeatureFlags\Razor\LSP\ForceRuntimeCodeGeneration]
 "Description"="Enable combined design time/runtime code generation for Razor files"
-"Value"=dword:00000000
+"Value"=dword:00000001
 "Title"="Force use of runtime code generation for Razor (requires restart)"
 "PreviewPaneChannels"="*"
 
