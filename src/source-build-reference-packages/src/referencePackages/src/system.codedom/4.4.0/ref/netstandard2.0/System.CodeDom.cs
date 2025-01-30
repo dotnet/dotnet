@@ -810,7 +810,7 @@ namespace System.CodeDom
 
         bool Collections.IList.IsReadOnly { get { throw null; } }
 
-        object System.Collections.IList.this[int index] { get { throw null; } set { } }
+        object Collections.IList.this[int index] { get { throw null; } set { } }
 
         public void Add(CodeNamespaceImport value) { }
 

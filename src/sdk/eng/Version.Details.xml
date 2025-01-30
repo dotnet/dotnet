@@ -449,7 +449,7 @@
          Adding an explicit dependency to make sure the latest version is used instead of the SBRP
          one under source build. -->
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.DiaSymReader" Version="2.2.0-beta.24622.1">
+    <Dependency Name="Microsoft.DiaSymReader" Version="2.2.0-beta.25076.1">
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>ff1852196a042a124267a6e599d12da20d7ff65a</Sha>
     </Dependency>
@@ -466,9 +466,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.607802">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.607804">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>4aa80ff38bdba51d419e0d7068adee1d97e6e1a0</Sha>
+      <Sha>59287e717fd1ef2a82bef9bf1885c85bed6eb89b</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.25063.2">
@@ -512,7 +512,7 @@
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.2.0-beta.24622.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.2.0-beta.25076.1">
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>ff1852196a042a124267a6e599d12da20d7ff65a</Sha>
       <SourceBuild RepoName="symreader" ManagedOnly="true" />

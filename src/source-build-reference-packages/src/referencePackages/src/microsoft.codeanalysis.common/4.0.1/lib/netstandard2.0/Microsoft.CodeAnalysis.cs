@@ -2887,7 +2887,7 @@ namespace Microsoft.CodeAnalysis
 
         public readonly TNode? FirstOrDefault() { throw null; }
 
-        public readonly SeparatedSyntaxList<TNode>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public override readonly int GetHashCode() { throw null; }
 
@@ -3578,7 +3578,7 @@ namespace Microsoft.CodeAnalysis
 
         public readonly TNode? FirstOrDefault() { throw null; }
 
-        public readonly SyntaxList<TNode>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public override readonly int GetHashCode() { throw null; }
 
@@ -7746,26 +7746,5 @@ namespace Microsoft.CodeAnalysis.Text
         public readonly bool OverlapsWith(TextSpan span) { throw null; }
 
         public override readonly string ToString() { throw null; }
-    }
-}
-
-namespace Microsoft.CodeAnalysis.Interop
-{
-    internal interface IClrStrongName
-    {
-    }
-}
-
-namespace Microsoft.Cci
-{
-    internal class ExtendedPEBuilder
-    {
-    }
-}
-
-namespace Microsoft.CodeAnalysis.PooledObjects
-{
-    internal struct ArrayBuilder<T> 
-    {
     }
 }

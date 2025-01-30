@@ -89,7 +89,7 @@ namespace System.Runtime.CompilerServices
         private readonly int _dummyPrimitive;
         public readonly ConfiguredCancelableAsyncEnumerable<T> ConfigureAwait(bool continueOnCapturedContext) { throw null; }
 
-        public readonly ConfiguredCancelableAsyncEnumerable<T>.Enumerator GetAsyncEnumerator() { throw null; }
+        public readonly Enumerator GetAsyncEnumerator() { throw null; }
 
         public readonly ConfiguredCancelableAsyncEnumerable<T> WithCancellation(Threading.CancellationToken cancellationToken) { throw null; }
 
