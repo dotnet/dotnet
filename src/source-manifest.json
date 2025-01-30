@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25078.4",
+      "packageVersion": "10.0.0-beta.25079.2",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "12025e32d586054433a3275ab31841c225b22368"
+      "commitSha": "3bb46f96cc988a80a414f45394f8a9ce54b47d3b"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -106,11 +106,11 @@
       "commitSha": "3746107f6c9e0a2f1cae7e37a78a9d9de249857a"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.25077.13",
+      "packageVersion": "10.0.0-preview.2.25078.10",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d4c7d865558316da4c135f519eb3dfc25b8a4367"
+      "commitSha": "a9d67ec265ed4078265d70d155d06316acadf6fe"
     },
     {
       "packageVersion": "10.0.0-preview.25080.1",
@@ -124,31 +124,31 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6d969b6dd33d7ca6d9423164ef5b2cd18b444df9"
+      "commitSha": "0a336b340d7bb71f3bf99dc35f0e9064127ca087"
     },
     {
-      "packageVersion": "10.0.607101",
+      "packageVersion": "10.0.607701",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "0c377e9585d2aeae504ff1d6529ccb1abef36172"
+      "commitSha": "6e1d6e5c779e0698ca6aaf1017592b30b31b53cb"
     },
     {
-      "packageVersion": "10.0.607802",
+      "packageVersion": "10.0.607804",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "4aa80ff38bdba51d419e0d7068adee1d97e6e1a0"
+      "commitSha": "59287e717fd1ef2a82bef9bf1885c85bed6eb89b"
     },
     {
-      "packageVersion": "9.0.0-beta.25072.1",
+      "packageVersion": "9.0.0-beta.25077.3",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "647fe57f3baa75c29aa6799fe327e131c7dffdba"
+      "commitSha": "d4afc6888bd3b6c388b009ac552a65a6bb8b487a"
     },
     {
-      "packageVersion": "2.2.0-beta.24622.1",
+      "packageVersion": "2.2.0-beta.25076.1",
       "barId": null,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",

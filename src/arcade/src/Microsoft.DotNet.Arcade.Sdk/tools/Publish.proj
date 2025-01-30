@@ -182,8 +182,9 @@
 
     <ItemGroup>
       <!-- Set RelativeBlobPath if RelativeBlobPathParent is provided. -->
-      <Artifact Include="@(GenerateChecksumItems -> '%(DestinationPath)')">
-        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent)%(Filename)%(Extension)</RelativeBlobPath>
+      <GenerateChecksumItemsWithDestinationPath Include="@(GenerateChecksumItems -> '%(DestinationPath)')" />
+      <Artifact Include="@(GenerateChecksumItemsWithDestinationPath)">
+        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent.TrimEnd('/'))/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
   </Target>

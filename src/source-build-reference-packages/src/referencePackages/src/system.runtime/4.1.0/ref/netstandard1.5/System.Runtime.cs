@@ -4679,7 +4679,7 @@ namespace System.Runtime.CompilerServices
 
         public TValue GetOrCreateValue(TKey key) { throw null; }
 
-        public TValue GetValue(TKey key, ConditionalWeakTable<TKey, TValue>.CreateValueCallback createValueCallback) { throw null; }
+        public TValue GetValue(TKey key, CreateValueCallback createValueCallback) { throw null; }
 
         public Boolean Remove(TKey key) { throw null; }
 

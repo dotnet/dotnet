@@ -329,7 +329,7 @@ namespace System.Security.Cryptography.X509Certificates
 
         bool Collections.IList.IsReadOnly { get { throw null; } }
 
-        object System.Collections.IList.this[int index] { get { throw null; } set { } }
+        object Collections.IList.this[int index] { get { throw null; } set { } }
 
         public int Add(X509Certificate value) { throw null; }
 

@@ -153,7 +153,7 @@ namespace System.Runtime.CompilerServices
 
     public partial struct ConfiguredTaskAwaitable<TResult>
     {
-        public ConfiguredTaskAwaitable<TResult>.ConfiguredTaskAwaiter GetAwaiter() { throw null; }
+        public ConfiguredTaskAwaiter GetAwaiter() { throw null; }
 
         public partial struct ConfiguredTaskAwaiter : ICriticalNotifyCompletion, INotifyCompletion
         {
