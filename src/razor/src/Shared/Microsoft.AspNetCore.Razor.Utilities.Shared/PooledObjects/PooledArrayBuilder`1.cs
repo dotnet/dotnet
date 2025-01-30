@@ -1472,6 +1472,14 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
         return result;
     }
 
+    public readonly ImmutableArray<T> ToImmutableReversed()
+    {
+        var result = ToImmutable();
+        result.Unsafe().Reverse();
+
+        return result;
+    }
+
     public ImmutableArray<T> DrainToImmutableOrdered()
     {
         var result = DrainToImmutable();
@@ -1564,6 +1572,14 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     {
         var result = DrainToImmutable();
         result.Unsafe().OrderByDescending(keySelector, comparison);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableReversed()
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().Reverse();
 
         return result;
     }

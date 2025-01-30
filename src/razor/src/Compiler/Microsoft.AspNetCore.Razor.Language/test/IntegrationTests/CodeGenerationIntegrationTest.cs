@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -425,14 +426,14 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
     private static ImmutableArray<RazorSourceDocument> GetImports(RazorProjectEngine projectEngine, RazorProjectItem projectItem)
     {
-        var importFeatures = projectEngine.GetFeatures<IImportProjectFeature>();
-        var importItems = importFeatures.SelectMany(f => f.GetImports(projectItem));
-        var importSourceDocuments = importItems
-            .Where(i => i.Exists)
-            .Select(RazorSourceDocument.ReadFrom)
-            .ToImmutableArray();
+        using var result = new PooledArrayBuilder<RazorSourceDocument>();
 
-        return importSourceDocuments;
+        foreach (var import in projectEngine.GetImports(projectItem, static i => i.Exists))
+        {
+            result.Add(RazorSourceDocument.ReadFrom(import));
+        }
+
+        return result.ToImmutable();
     }
 
     private void AddTagHelperStubs(IEnumerable<TagHelperDescriptor> descriptors)
