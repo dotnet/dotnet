@@ -59,6 +59,14 @@
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
+  
+  <ItemDefinitionGroup>
+    <Artifact>
+      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
+      <SkipPublish Condition="$([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
+    </Artifact>
+  </ItemDefinitionGroup>
+
   <PropertyGroup>
     <!-- Default publishing target is 3. -->
     <PublishingVersion>3</PublishingVersion>
@@ -174,8 +182,9 @@
 
     <ItemGroup>
       <!-- Set RelativeBlobPath if RelativeBlobPathParent is provided. -->
-      <Artifact Include="@(GenerateChecksumItems -> '%(DestinationPath)')">
-        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent)%(Filename)%(Extension)</RelativeBlobPath>
+      <GenerateChecksumItemsWithDestinationPath Include="@(GenerateChecksumItems -> '%(DestinationPath)')" />
+      <Artifact Include="@(GenerateChecksumItemsWithDestinationPath)">
+        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent.TrimEnd('/'))/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
   </Target>

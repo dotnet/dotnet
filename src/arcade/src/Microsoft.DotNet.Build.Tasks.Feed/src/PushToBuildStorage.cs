@@ -341,22 +341,42 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             return allowedVisibilities.Select(item => (ArtifactVisibility)Enum.Parse(typeof(ArtifactVisibility), item.ItemSpec)).ToArray();
         }
 
+        // Parts of the below method are copied from msbuild's Copy task.
         private void CopyFileAsHardLinkIfPossible(string sourceFileName, string destFileName, bool overwrite)
         {
             if (UseHardlinksIfPossible)
             {
-                Log.LogMessage(MessageImportance.Normal, "Creating hard link to copy \"{0}\" to \"{1}\".", sourceFileName, destFileName);
+                Log.LogMessage(MessageImportance.Normal, $"Creating hard link to copy \"{sourceFileName}\" to \"{destFileName}\".");
 
                 string errorMessage = string.Empty;
-                if (NativeMethods.MakeHardLink(destFileName, sourceFileName, ref errorMessage))
+                if (!NativeMethods.MakeHardLink(destFileName, sourceFileName, ref errorMessage))
                 {
-                    return;
+                    Log.LogMessage(MessageImportance.Normal, $"Could not use a link to copy \"{sourceFileName}\" to \"{destFileName}\". Copying the file instead. {errorMessage}");
+                    File.Copy(sourceFileName, destFileName, overwrite);
                 }
-
-                Log.LogMessage(MessageImportance.Normal, "Could not use a link to copy \"{0}\" to \"{1}\". Copying the file instead. {2}", sourceFileName, destFileName, errorMessage);
+            }
+            else
+            {
+                File.Copy(sourceFileName, destFileName, overwrite);
             }
 
-            File.Copy(sourceFileName, destFileName, overwrite);
+            // If the destinationFile file exists, then make sure it's read-write.
+            // The File.Copy command copies attributes, but our copy needs to
+            // leave the file writeable.
+            if (new FileInfo(sourceFileName).IsReadOnly)
+            {
+                // Ensure the read-only attribute on the specified file is off, so
+                // the file is writeable.
+                FileInfo destFile = new(destFileName);
+                if (destFile.Exists)
+                {
+                    if (destFile.IsReadOnly)
+                    {
+                        Log.LogMessage(MessageImportance.Low, $"Removing read-only attribute from \"{destFile.Name}\".");
+                        File.SetAttributes(destFile.Name, FileAttributes.Normal);
+                    }
+                }
+            }
         }
     }
 }
