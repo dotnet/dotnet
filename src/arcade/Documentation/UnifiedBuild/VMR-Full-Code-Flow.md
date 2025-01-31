@@ -482,9 +482,11 @@ Since repositories will only accept dependency updates from the VMR, we will nee
 The rules for managing `eng/common`:
 
 - `dotnet/arcade` stays the home for this folder as the contents are tied to the Arcade version often.
-- `eng/common` is mapped from Arcade into VMR's root (and also mirrored to `src/arcade/eng/common`).
-- Changes of `eng/common` in the VMR are only allowed when also changing Arcade's ❓❓❓.
+- When code is flowing from arcade to the VMR, we treat it as any other code flow subscription, and just update `src/arcade`.
+- Changes of `eng/common` in the VMR`s root will be overwritten like in any other repo.
+- Any subscription from the VMR (code-enabled or normal) will contain `Microsoft.DotNet.Arcade.Sdk`. So any arcadified repo will receive the Arcade update from there. The `src/arcade` folder will be used as the source of truth for version file updates (`eng/common`, `global.json`, ...).
 - Repositories can opt-out from getting Arcade updates from the VMR by ignoring the `Microsoft.DotNet.Arcade.Sdk` package in their code flow subscription.
+- Like in any other repo, VMR's root `eng/common` will only get updated during regular (non-source-enabled) VMR -> VMR subscriptions.
 
 A diagram of how the code flow including the `eng/common` folder looks like:
 
@@ -498,11 +500,7 @@ sequenceDiagram
 
     arcade->>arcade: eng/common is changed
     arcade->>VMR: Forward flow to VMR
-    activate VMR
-    Note over VMR: eng/common is copied to:<br>src/arcade/eng/common<br>and eng/common
-    deactivate VMR
-
-    VMR->>runtime: Backflow<br>includes eng/common
+    VMR->>runtime: Backflow<br>includes src/arcade/eng/common
 ```
 
 A diagram of a similar code flow but the `eng/common` change would happen in the VMR:
@@ -515,12 +513,13 @@ sequenceDiagram
     participant runtime as dotnet/runtime
     participant VMR as VMR
 
-    VMR->>VMR: eng/common and<br>src/arcade/eng/common are changed
+    VMR->>VMR: src/arcade/eng/common is changed
 
     par Code flow
-    VMR->>arcade: Backflow to arcade<br>includes eng/common
+    VMR->>VMR: Normal dependency flow updates VMR's eng/common
+    VMR->>arcade: Backflow to arcade
     and
-    VMR->>runtime: Backflow<br>includes eng/common
+    VMR->>runtime: Backflow<br>includes src/arcade/eng/common
     end
 ```
 

@@ -101,8 +101,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             string commit = null,
             bool isReleaseOnlyPackageVersion = false,
             bool isStable = false,
-            bool includePackages = false,
-            bool publishFlatContainer = false)
+            bool includePackages = false)
         {
             publishingInfraVersion ??= ((int)PublishingInfraVersion.Latest).ToString();
 
@@ -135,7 +134,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             sb.Append($"IsStable=\"{isStable.ToString().ToLower()}\"");
 
-            if(!includePackages && !publishFlatContainer)
+            if(!includePackages)
             {
                 sb.Append($" />");
             }
@@ -148,17 +147,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 sb.Append($"<Package Id=\"{Path.GetFileNameWithoutExtension(PACKAGE_B)}\" Version=\"{NUPKG_VERSION}\" Nonshipping=\"false\" />");
                 sb.Append($"<Blob Id=\"{SAMPLE_MANIFEST}\" Nonshipping=\"false\" />");
 
-                sb.Append($"</Build>");
-            }
-
-            if(publishFlatContainer)
-            {
-                sb.Append($">");
-
-                sb.Append($"<Blob Id=\"{SAMPLE_MANIFEST}\" Nonshipping=\"false\" />");
-                sb.Append($"<Blob Id=\"{PACKAGE_A}\" Nonshipping=\"true\" />");
-                sb.Append($"<Blob Id=\"{PACKAGE_B}\" Nonshipping=\"false\" />");
-                
                 sb.Append($"</Build>");
             }
 
@@ -235,55 +223,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 includePackages: true);
 
             PushToBuildStorage task = ConstructPushToBuildStorageTask();
-
-            // Mocks
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            IList<string> actualPath = new List<string>();
-            IList<string> actualBuildModel = new List<string>();
-            IList<string> files = new List<string> { PACKAGE_A, PACKAGE_B, SAMPLE_MANIFEST };
-            fileSystemMock.Setup(m => m.WriteToFile(Capture.In(actualPath), Capture.In(actualBuildModel))).Verifiable();
-            fileSystemMock.Setup(m => m.FileExists(Capture.In(files))).Returns(true);
-
-            Mock<INupkgInfoFactory> nupkgInfoFactoryMock = new Mock<INupkgInfoFactory>();
-            IList<string> actualNupkgInfoPath = new List<string>();
-            nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
-                id: Path.GetFileNameWithoutExtension(PACKAGE_A),
-                version: NUPKG_VERSION
-            )));
-            nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
-                id: Path.GetFileNameWithoutExtension(PACKAGE_B),
-                version: NUPKG_VERSION
-            )));
-
-            // Dependency Injection setup
-            var collection = new ServiceCollection()
-                .AddSingleton(fileSystemMock.Object)
-                .AddSingleton<IBuildModelFactory, BuildModelFactory>()
-                .AddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>()
-                .AddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>()
-                .AddSingleton(nupkgInfoFactoryMock.Object);
-            CreateMockServiceCollection(collection);
-            task.ConfigureServices(collection);
-            using var provider = collection.BuildServiceProvider();
-
-            // Act and Assert
-            task.InvokeExecute(provider).Should().BeTrue();
-            actualPath[0].Should().Be(TARGET_MANIFEST_PATH);
-            actualBuildModel[0].Should().Be(expectedManifestContent);
-        }
-
-        [Fact]
-        public void PublishFlatContainerManifest()
-        {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
-            task.PublishFlatContainer = true;
-
-            string expectedManifestContent = BuildExpectedManifestContent(
-                name: "https://dnceng@dev.azure.com/dnceng/internal/test-repo",
-                branch: "/refs/heads/branch",
-                commit: "1234567890abcdef",
-                isStable: true,
-                publishFlatContainer: true);
 
             // Mocks
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();

@@ -22,8 +22,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AssetsTemporaryDirectory { get; set; }
 
-        public bool PublishFlatContainer { get; set; }
-
         public string ManifestRepoName { get; set; }
 
         public string ManifestRepoUri { get; set; }
@@ -148,81 +146,62 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     var itemsToPushNoExcludes = ItemsToPush.
                         Where(i => !string.Equals(i.GetMetadata("ExcludeFromManifest"), "true", StringComparison.OrdinalIgnoreCase));
 
-                    if (PublishFlatContainer)
+                    ITaskItem[] symbolItems = itemsToPushNoExcludes
+                        .Where(i => i.ItemSpec.EndsWith("symbols.nupkg"))
+                        .Select(i =>
+                        {
+                            string fileName = Path.GetFileName(i.ItemSpec);
+                            i.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
+                            return i;
+                        })
+                        .ToArray();
+
+                    var blobItems = itemsToPushNoExcludes
+                        .Where(i =>
+                        {
+                            var isFlatString = i.GetMetadata("PublishFlatContainer");
+                            if (!string.IsNullOrEmpty(isFlatString) &&
+                                bool.TryParse(isFlatString, out var isFlat))
+                            {
+                                return isFlat;
+                            }
+
+                            return false;
+                        })
+                        .Union(symbolItems)
+                        .ToArray();
+
+                    ITaskItem[] packageItems = itemsToPushNoExcludes
+                        .Except(blobItems)
+                        .ToArray();
+
+                    foreach (var packagePath in packageItems)
                     {
-                        // Act as if %(PublishFlatContainer) were true for all items.
-                        blobArtifacts = itemsToPushNoExcludes
-                            .Select(i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin));
-                        foreach (var blobItem in itemsToPushNoExcludes)
+                        if (!fileSystem.FileExists(packagePath.ItemSpec))
                         {
-                            if (!fileSystem.FileExists(blobItem.ItemSpec))
-                            {
-                                Log.LogError($"Could not find file {blobItem.ItemSpec}.");
-                                continue;
-                            }
-
-                            PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
+                            Log.LogError($"Could not find file {packagePath.ItemSpec}.");
+                            continue;
                         }
+
+                        PushToLocalStorageOrAzDO(ItemType.PackageArtifact, packagePath);
                     }
-                    else
+
+                    foreach (var blobItem in blobItems)
                     {
-                        ITaskItem[] symbolItems = itemsToPushNoExcludes
-                            .Where(i => i.ItemSpec.EndsWith("symbols.nupkg"))
-                            .Select(i =>
-                            {
-                                string fileName = Path.GetFileName(i.ItemSpec);
-                                i.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
-                                return i;
-                            })
-                            .ToArray();
-
-                        var blobItems = itemsToPushNoExcludes
-                            .Where(i =>
-                            {
-                                var isFlatString = i.GetMetadata("PublishFlatContainer");
-                                if (!string.IsNullOrEmpty(isFlatString) &&
-                                    bool.TryParse(isFlatString, out var isFlat))
-                                {
-                                    return isFlat;
-                                }
-
-                                return false;
-                            })
-                            .Union(symbolItems)
-                            .ToArray();
-
-                        ITaskItem[] packageItems = itemsToPushNoExcludes
-                            .Except(blobItems)
-                            .ToArray();
-
-                        foreach (var packagePath in packageItems)
+                        if (!fileSystem.FileExists(blobItem.ItemSpec))
                         {
-                            if (!fileSystem.FileExists(packagePath.ItemSpec))
-                            {
-                                Log.LogError($"Could not find file {packagePath.ItemSpec}.");
-                                continue;
-                            }
-
-                            PushToLocalStorageOrAzDO(ItemType.PackageArtifact, packagePath);
+                            Log.LogError($"Could not find file {blobItem.ItemSpec}.");
+                            continue;
                         }
 
-                        foreach (var blobItem in blobItems)
-                        {
-                            if (!fileSystem.FileExists(blobItem.ItemSpec))
-                            {
-                                Log.LogError($"Could not find file {blobItem.ItemSpec}.");
-                                continue;
-                            }
-
-                            PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
-                        }
-
-                        packageArtifacts = packageItems.Select(
-                            i => packageArtifactModelFactory.CreatePackageArtifactModel(i, ManifestRepoOrigin));
-                        blobArtifacts = blobItems.Select(
-                                i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin))
-                            .Where(blob => blob != null);
+                        PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
                     }
+
+                    packageArtifacts = packageItems.Select(
+                        i => packageArtifactModelFactory.CreatePackageArtifactModel(i, ManifestRepoOrigin));
+                    blobArtifacts = blobItems.Select(
+                            i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin))
+                        .Where(blob => blob != null);
 
                     ArtifactVisibility[] visibilitiesToPublish = GetVisibilitiesToPublish(ArtifactVisibilitiesToPublish);
 
