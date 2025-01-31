@@ -7,6 +7,8 @@
 
 // See https://github.com/dotnet/sdk/issues/33693 for why this is necessary.
 
+#if !NET8_0
+
 namespace System.Collections.Immutable
 {
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableList), "Create")]
@@ -59,3 +61,5 @@ namespace System.Runtime.CompilerServices
         public string MethodName { get; } = methodName;
     }
 }
+
+#endif

@@ -22,9 +22,4 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
-    <Compile Include="$(CommonSrc)RequiredModifierAttributes.cs" />
-  </ItemGroup>
-
 </Project>

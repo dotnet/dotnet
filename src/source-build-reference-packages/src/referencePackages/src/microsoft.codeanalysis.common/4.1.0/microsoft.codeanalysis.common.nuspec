@@ -19,6 +19,8 @@
     <repository type="git" url="https://github.com/dotnet/roslyn" commit="260d16a8ee0ab42d94d8dfdfe85a1279c85dcffd" />
     <dependencies>
       <group targetFramework=".NETStandard2.0">
+        <!-- Analyzers are excluded from SBRPs
+        <dependency id="Microsoft.CodeAnalysis.Analyzers" version="3.3.3" /> -->
         <dependency id="System.Collections.Immutable" version="5.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Memory" version="4.5.4" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.Metadata" version="5.0.0" exclude="Build,Analyzers" />

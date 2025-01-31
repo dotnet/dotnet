@@ -6,10 +6,6 @@
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />

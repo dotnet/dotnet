@@ -6,11 +6,6 @@
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
-    <Compile Include="$(CommonSrc)RequiredModifierAttributes.cs" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="NuGet.Common" Version="6.11.0" />
     <PackageReference Include="NuGet.Versioning" Version="6.11.0" />

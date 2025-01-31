@@ -7,6 +7,8 @@
 
 // See https://github.com/dotnet/source-build/issues/4000 for why this is necessary.
 
+#if NETCOREAPP1_1 || NETSTANDARD1_5
+
 namespace System.Runtime.InteropServices
 {
     public partial class ComAwareEventInfo : Reflection.EventInfo
@@ -18,3 +20,5 @@ namespace System.Runtime.InteropServices
         public override Reflection.MethodInfo GetRemoveMethod(bool nonPublic) { throw null; }
     }
 }
+
+#endif

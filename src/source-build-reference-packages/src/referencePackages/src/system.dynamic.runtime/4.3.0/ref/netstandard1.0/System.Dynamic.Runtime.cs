@@ -235,8 +235,6 @@ namespace System.Dynamic
 
         Collections.Generic.ICollection<object> Collections.Generic.IDictionary<string, object>.Values { get { throw null; } }
 
-        event System.ComponentModel.PropertyChangedEventHandler System.ComponentModel.INotifyPropertyChanged.PropertyChanged { add { } remove { } }
-
         void Collections.Generic.ICollection<Collections.Generic.KeyValuePair<string, object>>.Add(Collections.Generic.KeyValuePair<string, object> item) { }
 
         void Collections.Generic.ICollection<Collections.Generic.KeyValuePair<string, object>>.Clear() { }
