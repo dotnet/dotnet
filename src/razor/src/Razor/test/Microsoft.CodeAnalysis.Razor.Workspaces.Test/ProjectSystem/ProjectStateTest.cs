@@ -20,7 +20,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 public class ProjectStateTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private static readonly IProjectEngineFactoryProvider s_projectEngineFactoryProvider =
-        TestProjectEngineFactoryProvider.Instance.WithTestImportFeature();
+        TestProjectEngineFactoryProvider.Instance.AddConfigure(
+            static b => b.SetImportFeature(new TestImportProjectFeature(HierarchicalImports.Legacy)));
 
     private static readonly HostProject s_hostProject =
         SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };

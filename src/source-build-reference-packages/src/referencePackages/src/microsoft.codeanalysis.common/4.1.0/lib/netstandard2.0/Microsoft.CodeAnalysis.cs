@@ -2935,7 +2935,7 @@ namespace Microsoft.CodeAnalysis
 
         public readonly TNode? FirstOrDefault() { throw null; }
 
-        public readonly SeparatedSyntaxList<TNode>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public override readonly int GetHashCode() { throw null; }
 
@@ -3627,7 +3627,7 @@ namespace Microsoft.CodeAnalysis
 
         public readonly TNode? FirstOrDefault() { throw null; }
 
-        public readonly SyntaxList<TNode>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public override readonly int GetHashCode() { throw null; }
 

@@ -59,6 +59,14 @@
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
+  
+  <ItemDefinitionGroup>
+    <Artifact>
+      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
+      <SkipPublish Condition="$([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
+    </Artifact>
+  </ItemDefinitionGroup>
+
   <PropertyGroup>
     <!-- Default publishing target is 3. -->
     <PublishingVersion>3</PublishingVersion>
@@ -82,6 +90,7 @@
     <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
   </PropertyGroup>
 
+  <!-- Keep these asset manifest properties here as other repos already depend on them in Publishing.props. -->
   <PropertyGroup>
     <!-- Prefer TargetOS when set over OS -->
     <AssetManifestOS Condition="'$(AssetManifestOS)' == ''">$([MSBuild]::ValueOrDefault('$(TargetOS)', '$(OS)'))</AssetManifestOS>
@@ -89,9 +98,6 @@
     <AssetManifestArch Condition="'$(AssetManifestArch)' == ''">$([MSBuild]::ValueOrDefault('$(TargetArchitecture)', '$(PlatformName)'))</AssetManifestArch>
     <!-- Add the build pass number when DotNetBuildPass is set to a value other than 1. -->
     <AssetManifestPass Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">-Pass$(DotNetBuildPass)</AssetManifestPass>
-
-    <AssetManifestFileName>$(AssetManifestOS)-$(AssetManifestArch)$(AssetManifestPass).xml</AssetManifestFileName>
-    <AssetManifestFilePath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
@@ -174,8 +180,9 @@
 
     <ItemGroup>
       <!-- Set RelativeBlobPath if RelativeBlobPathParent is provided. -->
-      <Artifact Include="@(GenerateChecksumItems -> '%(DestinationPath)')">
-        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent)%(Filename)%(Extension)</RelativeBlobPath>
+      <GenerateChecksumItemsWithDestinationPath Include="@(GenerateChecksumItems -> '%(DestinationPath)')" />
+      <Artifact Include="@(GenerateChecksumItemsWithDestinationPath)">
+        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent.TrimEnd('/'))/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
   </Target>
@@ -200,6 +207,12 @@
       
       <!-- Directory where pdbs pointed in `FilesToPublishToSymbolServer` are copied before publishing to AzDO artifacts. -->
       <PDBsToPublishTempLocation>$(ArtifactsTmpDir)PDBsToPublish/</PDBsToPublishTempLocation>
+
+      <!-- Use the SYSTEM_PHASENAME variable when available as that is guaranteed to be a unique identifier.
+           For local scenarios and when the variable isn't available, use "<os>-<arch>-<buildpass>"" as the manifest name. -->
+      <AssetManifestFileName Condition="'$(AssetManifestFileName)' == '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME).xml</AssetManifestFileName>
+      <AssetManifestFileName Condition="'$(AssetManifestFileName)' == ''">$(AssetManifestOS)-$(AssetManifestArch)$(AssetManifestPass).xml</AssetManifestFileName>
+      <AssetManifestFilePath Condition="'$(AssetManifestFilePath)' == ''">$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
     </PropertyGroup>
     
     <!--

@@ -228,10 +228,10 @@ public class DefaultRazorProjectFileSystemTest
             items,
             item =>
             {
-                Assert.Equal("/Views/Home/_ViewImports.cshtml", item.FilePath);
+                Assert.Equal("/_ViewImports.cshtml", item.FilePath);
                 Assert.Equal("/", item.BasePath);
-                Assert.Equal(Path.Combine(TestFolder, "Views", "Home", "_ViewImports.cshtml"), item.PhysicalPath);
-                Assert.Equal(Path.Combine("Views", "Home", "_ViewImports.cshtml"), item.RelativePhysicalPath);
+                Assert.Equal(Path.Combine(TestFolder, "_ViewImports.cshtml"), item.PhysicalPath);
+                Assert.Equal("_ViewImports.cshtml", item.RelativePhysicalPath);
             },
             item =>
             {
@@ -242,10 +242,10 @@ public class DefaultRazorProjectFileSystemTest
             },
             item =>
             {
-                Assert.Equal("/_ViewImports.cshtml", item.FilePath);
+                Assert.Equal("/Views/Home/_ViewImports.cshtml", item.FilePath);
                 Assert.Equal("/", item.BasePath);
-                Assert.Equal(Path.Combine(TestFolder, "_ViewImports.cshtml"), item.PhysicalPath);
-                Assert.Equal("_ViewImports.cshtml", item.RelativePhysicalPath);
+                Assert.Equal(Path.Combine(TestFolder, "Views", "Home", "_ViewImports.cshtml"), item.PhysicalPath);
+                Assert.Equal(Path.Combine("Views", "Home", "_ViewImports.cshtml"), item.RelativePhysicalPath);
             });
     }
 

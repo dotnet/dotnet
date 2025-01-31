@@ -41,7 +41,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
     {
-        builder.SetImportFeature(new TestImportProjectFeature());
+        builder.SetImportFeature(new TestImportProjectFeature(HierarchicalImports.Legacy));
     }
 
     [UIFact]

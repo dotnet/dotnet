@@ -98,19 +98,9 @@ a new targeting pack is needed, please [open a new issue](#filing-issues) to dis
 
 ## Vulnerable Packages
 
-CVEs may exist for reference packages included in this repo. If they are mitigated by a newer version, the
-newer version should be added, the vulnerable version should be removed (only if there are no product repo 
-references to it), and references to the vulnerable package within other reference packages should be upgraded.
-A comment should be added to indicate when packages were manually upgraded in both the csproj and nuspec files.
-
-``` xml
-    <!-- Manual upgrade from 4.3.0 to address CVE-2017-0247 -->
-    <PackageReference Include="System.Net.Security" Version="4.3.1" />
-```
-
-All packages that contain a manually upgraded reference must be added to the eng/build.props as a
-DependencyPackageProjects in order to prevent the n-1 version from getting loaded which would still
-reference the vulnerable version.
+CVEs may exist for reference packages included in this repo. Because the packages do not contain any
+implementation, they do not pose a security risk. CG is configured in this repo to ignore the reference
+packages. If product repos migrate off these vulnerable packages, they can be [removed](#cleanup).
 
 ## Filing Issues
 

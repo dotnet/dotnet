@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -320,10 +321,9 @@ public abstract class IntegrationTestBase
             b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions));
 
             // Decorate each import feature so we can normalize line endings.
-            foreach (var feature in b.Features.OfType<IImportProjectFeature>().ToArray())
+            foreach (var importFeature in b.Features.OfType<IImportProjectFeature>().ToArray())
             {
-                b.Features.Remove(feature);
-                b.Features.Add(new NormalizedDefaultImportFeature(feature, LineEnding));
+                b.Features.Replace(importFeature, new NormalizedDefaultImportFeature(importFeature, LineEnding));
             }
         });
     }
@@ -793,39 +793,32 @@ public abstract class IntegrationTestBase
     }
 
     // 'Default' imports won't have normalized line-endings, which is unfriendly for testing.
-    private class NormalizedDefaultImportFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
+    private sealed class NormalizedDefaultImportFeature(IImportProjectFeature innerFeature, string lineEnding) : RazorProjectEngineFeatureBase, IImportProjectFeature
     {
-        private readonly IImportProjectFeature _inner;
-        private readonly string _lineEnding;
-
-        public NormalizedDefaultImportFeature(IImportProjectFeature inner, string lineEnding)
-        {
-            _inner = inner;
-            _lineEnding = lineEnding;
-        }
+        private readonly IImportProjectFeature _innerFeature = innerFeature;
+        private readonly string _lineEnding = lineEnding;
 
         protected override void OnInitialized()
         {
-            if (_inner != null)
-            {
-                _inner.Initialize(ProjectEngine);
-            }
+            _innerFeature.Initialize(ProjectEngine);
         }
 
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
+        public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
         {
-            if (_inner == null)
+            using var innerImports = new PooledArrayBuilder<RazorProjectItem>();
+            _innerFeature.CollectImports(projectItem, ref innerImports.AsRef());
+
+            if (innerImports.Count == 0)
             {
-                return Array.Empty<RazorProjectItem>();
+                return;
             }
 
-            var normalizedImports = new List<RazorProjectItem>();
-            var imports = _inner.GetImports(projectItem);
-            foreach (var import in imports)
+            foreach (var import in innerImports)
             {
                 if (import.Exists)
                 {
-                    var text = string.Empty;
+                    string text;
+
                     using (var stream = import.Read())
                     using (var reader = new StreamReader(stream))
                     {
@@ -834,18 +827,16 @@ public abstract class IntegrationTestBase
 
                     // It's important that we normalize the newlines in the default imports. The default imports will
                     // be created with Environment.NewLine, but we need to normalize to `\r\n` so that the indices
-                    // are the same on xplat.
+                    // are the same on other platforms.
                     var normalizedText = NormalizeNewLines(text, _lineEnding);
                     var normalizedImport = new TestRazorProjectItem(import.FilePath, import.PhysicalPath, import.RelativePhysicalPath, import.BasePath)
                     {
                         Content = normalizedText
                     };
 
-                    normalizedImports.Add(normalizedImport);
+                    imports.Add(normalizedImport);
                 }
             }
-
-            return normalizedImports;
         }
     }
 }

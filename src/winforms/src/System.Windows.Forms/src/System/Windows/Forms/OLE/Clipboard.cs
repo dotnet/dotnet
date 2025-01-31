@@ -4,7 +4,7 @@
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Formats.Nrbf;
-using System.Private.Windows.Core.Ole;
+using System.Private.Windows.Ole;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -52,13 +52,13 @@ public static class Clipboard
         ArgumentOutOfRangeException.ThrowIfNegative(retryTimes);
         ArgumentOutOfRangeException.ThrowIfNegative(retryDelay);
 
-        // Always wrap the data if not already a DataObject. Mark whether the data is an IDataObject so we unwrap it properly on retrieval.
-        DataObject dataObject = data as DataObject ?? new DataObject(data) { IsOriginalNotIDataObject = data is not IDataObject };
+        // Wrap if we're not already a DataObject
+        DataObject dataObject = data as DataObject ?? new WrappingDataObject(data);
         using var iDataObject = ComHelpers.GetComScope<Com.IDataObject>(dataObject);
 
         HRESULT hr;
         int retry = retryTimes;
-        while ((hr = PInvoke.OleSetClipboard(iDataObject)).Failed)
+        while ((hr = PInvokeCore.OleSetClipboard(iDataObject)).Failed)
         {
             if (--retry < 0)
             {
@@ -71,7 +71,7 @@ public static class Clipboard
         if (copy)
         {
             retry = retryTimes;
-            while ((hr = PInvoke.OleFlushClipboard()).Failed)
+            while ((hr = PInvokeCore.OleFlushClipboard()).Failed)
             {
                 if (--retry < 0)
                 {
@@ -98,7 +98,7 @@ public static class Clipboard
         int retryTimes = 10;
         using ComScope<Com.IDataObject> proxyDataObject = new(null);
         HRESULT hr;
-        while ((hr = PInvoke.OleGetClipboard(proxyDataObject)).Failed)
+        while ((hr = PInvokeCore.OleGetClipboard(proxyDataObject)).Failed)
         {
             if (--retryTimes < 0)
             {
@@ -120,10 +120,10 @@ public static class Clipboard
 
         if (hr.Succeeded
             && ComHelpers.TryUnwrapComWrapperCCW(realDataObject.AsUnknown, out DataObject? dataObject)
-            && !dataObject.IsOriginalNotIDataObject)
+            && dataObject.TryUnwrapUserDataObject(out IDataObject? userObject))
         {
             // An IDataObject was given to us to place on the clipboard. We want to unwrap and return it instead of a proxy.
-            return dataObject.TryUnwrapInnerIDataObject();
+            return userObject;
         }
 
         // Original data given wasn't an IDataObject, give the proxy value back.
@@ -142,7 +142,7 @@ public static class Clipboard
 
         HRESULT hr;
         int retry = 10;
-        while ((hr = PInvoke.OleSetClipboard(null)).Failed)
+        while ((hr = PInvokeCore.OleSetClipboard(null)).Failed)
         {
             if (--retry < 0)
             {
@@ -194,7 +194,13 @@ public static class Clipboard
     public static bool ContainsText(TextDataFormat format)
     {
         SourceGenerated.EnumValidator.Validate(format, nameof(format));
-        return ContainsData(ConvertToDataFormats(format));
+
+        // Historically we didn't pass true for autoConvert, but it effectively was always
+        // true because getting the DataObject would always give us an IDataObject RCW which
+        // would call back through the format enumerator which defaults to true.
+        //
+        // We now unwrap original objects when we can, so we need to emulate the old behavior.
+        return ContainsData(ConvertToDataFormats(format), autoConvert: true);
     }
 
     /// <summary>

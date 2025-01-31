@@ -418,7 +418,7 @@ internal sealed class ProjectState
         var projectItem = projectEngine.FileSystem.GetItem(targetPath, hostDocument.FileKind);
 
         using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
-        CollectImportProjectItems(projectItem, projectEngine, ref importProjectItems.AsRef());
+        projectEngine.CollectImports(projectItem, ref importProjectItems.AsRef());
 
         if (importProjectItems.Count == 0)
         {
@@ -445,17 +445,6 @@ internal sealed class ProjectState
             var itemTargetPath = filePath.Replace('/', '\\').TrimStart('\\');
 
             targetPaths.Add(itemTargetPath);
-        }
-    }
-
-    private static void CollectImportProjectItems(
-        RazorProjectItem projectItem,
-        RazorProjectEngine projectEngine,
-        ref PooledArrayBuilder<RazorProjectItem> importProjectItems)
-    {
-        foreach (var importProjectFeature in projectEngine.GetFeatures<IImportProjectFeature>())
-        {
-            importProjectItems.AddRange(importProjectFeature.GetImports(projectItem));
         }
     }
 

@@ -5,10 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Language;
 using RazorExtensionsV1_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.RazorExtensions;
 using RazorExtensionsV2_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.RazorExtensions;
@@ -147,28 +149,6 @@ public static class RazorProjectEngineBuilderExtensions
 
         builder.Features.Add(new SetSupportLocalizedComponentNamesFeature());
         return builder;
-    }
-
-    public static void SetImportFeature(this RazorProjectEngineBuilder builder, IImportProjectFeature feature)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (feature == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        // Remove any existing import features in favor of the new one we're given.
-        var existingFeatures = builder.Features.OfType<IImportProjectFeature>().ToArray();
-        foreach (var existingFeature in existingFeatures)
-        {
-            builder.Features.Remove(existingFeature);
-        }
-
-        builder.Features.Add(feature);
     }
 
     /// <summary>
@@ -314,39 +294,14 @@ public static class RazorProjectEngineBuilderExtensions
         return configurationFeature;
     }
 
-    private sealed class AdditionalImportsProjectFeature(params string[] imports) : RazorProjectEngineFeatureBase, IImportProjectFeature
+    private sealed class AdditionalImportsProjectFeature(string[] imports) : RazorProjectEngineFeatureBase, IImportProjectFeature
     {
-        private readonly IReadOnlyList<RazorProjectItem> _imports = [.. imports.Select(import => new InMemoryProjectItem(import))];
+        private readonly ImmutableArray<RazorProjectItem> _imports = imports.SelectAsArray(
+            static import => (RazorProjectItem)new DefaultImportProjectItem("Additional default imports", import));
 
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
+        public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
         {
-            return _imports;
-        }
-
-        private sealed class InMemoryProjectItem : RazorProjectItem
-        {
-            private readonly InMemoryFileContent _fileContent;
-            private RazorSourceDocument _source;
-
-            public InMemoryProjectItem(string content)
-            {
-                ArgHelper.ThrowIfNullOrEmpty(content);
-
-                _fileContent = new(content);
-            }
-
-            public override string BasePath => null;
-
-            public override string FilePath => null;
-
-            public override string PhysicalPath => null;
-
-            public override bool Exists => true;
-
-            public override Stream Read() => _fileContent.CreateStream();
-
-            internal override RazorSourceDocument GetSource()
-                => _source ?? InterlockedOperations.Initialize(ref _source, base.GetSource());
+            imports.AddRange(_imports);
         }
     }
 

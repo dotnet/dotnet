@@ -19,8 +19,7 @@ Microsoft.Extensions.DependencyModel.DependencyContext</description>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Text.Encodings.Web" version="6.0.0" exclude="Build,Analyzers" />
-        <!-- Manual upgrade from 6.0.0 to address CVE-2024-43485 -->
-        <dependency id="System.Text.Json" version="6.0.10" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
         <dependency id="System.Memory" version="4.5.4" exclude="Build,Analyzers" />
       </group>

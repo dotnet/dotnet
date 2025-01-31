@@ -94,24 +94,13 @@ internal sealed class ImportDocumentManager(IFileChangeTrackerFactory fileChange
         }
     }
 
-    private static IEnumerable<RazorProjectItem> GetPhysicalImportItems(string filePath, ILegacyProjectSnapshot projectSnapshot)
+    private static ImmutableArray<RazorProjectItem> GetPhysicalImportItems(string filePath, ILegacyProjectSnapshot projectSnapshot)
     {
         var projectEngine = projectSnapshot.GetProjectEngine();
         var documentSnapshot = projectSnapshot.GetDocument(filePath);
         var projectItem = projectEngine.FileSystem.GetItem(filePath, documentSnapshot?.FileKind);
 
-        foreach (var importFeature in projectEngine.GetFeatures<IImportProjectFeature>())
-        {
-            foreach (var importItem in importFeature.GetImports(projectItem))
-            {
-                if (importItem.PhysicalPath is null)
-                {
-                    continue;
-                }
-
-                yield return importItem;
-            }
-        }
+        return projectEngine.GetImports(projectItem, static i => i.PhysicalPath is not null);
     }
 
     private void FileChangeTracker_Changed(object sender, FileChangeEventArgs args)

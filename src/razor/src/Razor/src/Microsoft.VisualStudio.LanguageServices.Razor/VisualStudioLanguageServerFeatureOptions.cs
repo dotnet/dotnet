@@ -69,7 +69,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
         _forceRuntimeCodeGeneration = new Lazy<bool>(() =>
         {
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var forceRuntimeCodeGeneration = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.ForceRuntimeCodeGeneration, defaultValue: false);
+            var forceRuntimeCodeGeneration = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.ForceRuntimeCodeGeneration, defaultValue: true);
             return forceRuntimeCodeGeneration;
         });
 

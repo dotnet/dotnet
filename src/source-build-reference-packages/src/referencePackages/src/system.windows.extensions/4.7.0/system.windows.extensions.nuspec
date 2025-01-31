@@ -23,7 +23,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <dependencies>
       <group targetFramework=".NETCoreApp3.0">
-        <dependency id="System.Drawing.Common" version="4.7.2" exclude="Compile" />
+        <dependency id="System.Drawing.Common" version="4.7.0" exclude="Compile" />
       </group>
     </dependencies>
   </metadata>

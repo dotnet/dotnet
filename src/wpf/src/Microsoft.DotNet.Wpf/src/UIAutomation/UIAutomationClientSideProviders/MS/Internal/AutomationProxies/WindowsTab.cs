@@ -108,10 +108,7 @@ namespace MS.Internal.AutomationProxies
                     el = new WindowsTab(hwnd, null, -1);
                     break;
             }
-            if (el != null)
-            {
-                el.DispatchEvents (eventId, idProp, idObject, idChild);
-            }
+            el?.DispatchEvents (eventId, idProp, idObject, idChild);
         }
 
         #endregion
@@ -497,7 +494,7 @@ namespace MS.Internal.AutomationProxies
             }
             else if (horizontalPercent < 0 || horizontalPercent > 100)
             {
-                throw new ArgumentOutOfRangeException("horizontalPercent", SR.ScrollBarOutOfRange);
+                throw new ArgumentOutOfRangeException(nameof(horizontalPercent), SR.ScrollBarOutOfRange);
             }
 
             // Get up/down control's hwnd

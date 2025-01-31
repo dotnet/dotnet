@@ -233,7 +233,7 @@ namespace System.Dynamic
 
         bool Collections.Generic.ICollection<Collections.Generic.KeyValuePair<string, object>>.IsReadOnly { get { throw null; } }
 
-        object System.Collections.Generic.IDictionary<System.String,System.Object>.this[string key] { get { throw null; } set { } }
+        object Collections.Generic.IDictionary<string, object>.this[string key] { get { throw null; } set { } }
 
         Collections.Generic.ICollection<string> Collections.Generic.IDictionary<string, object>.Keys { get { throw null; } }
 
