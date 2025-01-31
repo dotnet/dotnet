@@ -94,11 +94,11 @@ namespace System.Collections.ObjectModel
 
         public TValue this[TKey key] { get { throw null; } }
 
-        public ReadOnlyDictionary<TKey, TValue>.KeyCollection Keys { get { throw null; } }
+        public KeyCollection Keys { get { throw null; } }
 
         bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
 
-        TValue System.Collections.Generic.IDictionary<TKey,TValue>.this[TKey key] { get { throw null; } set { } }
+        TValue Generic.IDictionary<TKey, TValue>.this[TKey key] { get { throw null; } set { } }
 
         Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
 
@@ -116,13 +116,13 @@ namespace System.Collections.ObjectModel
 
         bool IDictionary.IsReadOnly { get { throw null; } }
 
-        object System.Collections.IDictionary.this[object key] { get { throw null; } set { } }
+        object IDictionary.this[object key] { get { throw null; } set { } }
 
         ICollection IDictionary.Keys { get { throw null; } }
 
         ICollection IDictionary.Values { get { throw null; } }
 
-        public ReadOnlyDictionary<TKey, TValue>.ValueCollection Values { get { throw null; } }
+        public ValueCollection Values { get { throw null; } }
 
         public bool ContainsKey(TKey key) { throw null; }
 

@@ -30,8 +30,6 @@ namespace System.Text.Encodings.Web
 {
     public abstract partial class HtmlEncoder : TextEncoder
     {
-        protected HtmlEncoder() { }
-
         public static HtmlEncoder Default { get { throw null; } }
 
         public static HtmlEncoder Create(TextEncoderSettings settings) { throw null; }
@@ -41,8 +39,6 @@ namespace System.Text.Encodings.Web
 
     public abstract partial class JavaScriptEncoder : TextEncoder
     {
-        protected JavaScriptEncoder() { }
-
         public static JavaScriptEncoder Default { get { throw null; } }
 
         public static JavaScriptEncoder UnsafeRelaxedJsonEscaping { get { throw null; } }
@@ -54,8 +50,6 @@ namespace System.Text.Encodings.Web
 
     public abstract partial class TextEncoder
     {
-        protected TextEncoder() { }
-
         public abstract int MaxOutputCharactersPerInputCharacter { get; }
 
         public virtual void Encode(IO.TextWriter output, char[] value, int startIndex, int characterCount) { }
@@ -112,8 +106,6 @@ namespace System.Text.Encodings.Web
 
     public abstract partial class UrlEncoder : TextEncoder
     {
-        protected UrlEncoder() { }
-
         public static UrlEncoder Default { get { throw null; } }
 
         public static UrlEncoder Create(TextEncoderSettings settings) { throw null; }

@@ -22,6 +22,23 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Drawing.Common.4.7.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.5.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.7.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.8.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Cng.4.3.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Csp.4.3.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.OpenSsl.4.3.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pkcs.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pkcs.6.0.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pkcs.7.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Xml.4.7.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Xml.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.8.0.4.csproj" />
+
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">

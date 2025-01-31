@@ -17,27 +17,22 @@ System.Security.Cryptography.Pkcs.EnvelopedCms</description>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="5535e31a712343a63f5d7d796cd874e563e5ac14" />
     <dependencies>
       <group targetFramework="net6.0">
-        <!-- Manual upgrade from 8.0.0 to address CVE-2024-38095 -->
-        <dependency id="System.Formats.Asn1" version="8.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net7.0">
-        <!-- Manual upgrade from 8.0.0 to address CVE-2024-38095 -->
-        <dependency id="System.Formats.Asn1" version="8.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net8.0">
-        <!-- Manual upgrade from 8.0.0 to address CVE-2024-38095 -->
-        <dependency id="System.Formats.Asn1" version="8.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.0">
-        <!-- Manual upgrade from 8.0.0 to address CVE-2024-38095 -->
-        <dependency id="System.Formats.Asn1" version="8.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
         <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.1">
-        <!-- Manual upgrade from 8.0.0 to address CVE-2024-38095 -->
-        <dependency id="System.Formats.Asn1" version="8.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
