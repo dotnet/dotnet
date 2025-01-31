@@ -140,10 +140,7 @@ namespace MS.Internal.AutomationProxies
                 default :
                 {
                     ProxySimple el = new WindowsListView( hwnd, null, -1 );
-                    if (el != null)
-                    {
-                        el.DispatchEvents( eventId, idProp, idObject, idChild );
-                    }
+                    el?.DispatchEvents( eventId, idProp, idObject, idChild );
                     break;
                 }
             }
@@ -742,12 +739,12 @@ namespace MS.Internal.AutomationProxies
 
             if (row < 0 || row >= maxRow)
             {
-                throw new ArgumentOutOfRangeException("row", row, SR.GridRowOutOfRange);
+                throw new ArgumentOutOfRangeException(nameof(row), row, SR.GridRowOutOfRange);
             }
 
             if (column < 0 || column >= maxColumn)
             {
-                throw new ArgumentOutOfRangeException("column", column, SR.GridColumnOutOfRange);
+                throw new ArgumentOutOfRangeException(nameof(column), column, SR.GridColumnOutOfRange);
             }
 
             // GetCell
@@ -2004,10 +2001,7 @@ namespace MS.Internal.AutomationProxies
                 el = wlv;
             }
 
-            if (el != null)
-            {
-                el.DispatchEvents(eventId, idProp, idObject, idChild);
-            }
+            el?.DispatchEvents(eventId, idProp, idObject, idChild);
 
             return;
         }
