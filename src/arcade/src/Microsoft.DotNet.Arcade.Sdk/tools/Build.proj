@@ -279,7 +279,7 @@
     <MSBuild Projects="AfterSolutionBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Build"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != ''" />
+             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')" />
 
     <!--
       Sign artifacts.
@@ -292,7 +292,7 @@
     <MSBuild Projects="AfterSigning.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != ''"/>
+             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')"/>
 
     <!--
       Perform post-source-build tasks. Validate source-build requirements, such as the prebuilt
