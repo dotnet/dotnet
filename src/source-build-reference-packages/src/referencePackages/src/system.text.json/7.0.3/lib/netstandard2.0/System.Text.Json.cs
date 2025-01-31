@@ -566,7 +566,7 @@ namespace System.Text.Json
         public bool SkipValidation { get { throw null; } set { } }
     }
 
-    public partial struct Utf8JsonReader
+    public ref partial struct Utf8JsonReader
     {
         private object _dummy;
         private int _dummyPrimitive;
@@ -1586,15 +1586,15 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonCollectionInfoValues<TCollection>
     {
-        public JsonTypeInfo ElementInfo { get { throw null; } set { } }
+        public JsonTypeInfo ElementInfo { get { throw null; } init { } }
 
-        public JsonTypeInfo? KeyInfo { get { throw null; } set { } }
+        public JsonTypeInfo? KeyInfo { get { throw null; } init { } }
 
-        public JsonNumberHandling NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling NumberHandling { get { throw null; } init { } }
 
-        public Func<TCollection>? ObjectCreator { get { throw null; } set { } }
+        public Func<TCollection>? ObjectCreator { get { throw null; } init { } }
 
-        public Action<Utf8JsonWriter, TCollection>? SerializeHandler { get { throw null; } set { } }
+        public Action<Utf8JsonWriter, TCollection>? SerializeHandler { get { throw null; } init { } }
     }
 
     public readonly partial struct JsonDerivedType
@@ -1756,30 +1756,30 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonObjectInfoValues<T>
     {
-        public Func<JsonParameterInfoValues[]>? ConstructorParameterMetadataInitializer { get { throw null; } set { } }
+        public Func<JsonParameterInfoValues[]>? ConstructorParameterMetadataInitializer { get { throw null; } init { } }
 
-        public JsonNumberHandling NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling NumberHandling { get { throw null; } init { } }
 
-        public Func<T>? ObjectCreator { get { throw null; } set { } }
+        public Func<T>? ObjectCreator { get { throw null; } init { } }
 
-        public Func<object[], T>? ObjectWithParameterizedConstructorCreator { get { throw null; } set { } }
+        public Func<object[], T>? ObjectWithParameterizedConstructorCreator { get { throw null; } init { } }
 
-        public Func<JsonSerializerContext, JsonPropertyInfo[]>? PropertyMetadataInitializer { get { throw null; } set { } }
+        public Func<JsonSerializerContext, JsonPropertyInfo[]>? PropertyMetadataInitializer { get { throw null; } init { } }
 
-        public Action<Utf8JsonWriter, T>? SerializeHandler { get { throw null; } set { } }
+        public Action<Utf8JsonWriter, T>? SerializeHandler { get { throw null; } init { } }
     }
 
     public sealed partial class JsonParameterInfoValues
     {
-        public object? DefaultValue { get { throw null; } set { } }
+        public object? DefaultValue { get { throw null; } init { } }
 
-        public bool HasDefaultValue { get { throw null; } set { } }
+        public bool HasDefaultValue { get { throw null; } init { } }
 
-        public string Name { get { throw null; } set { } }
+        public string Name { get { throw null; } init { } }
 
-        public Type ParameterType { get { throw null; } set { } }
+        public Type ParameterType { get { throw null; } init { } }
 
-        public int Position { get { throw null; } set { } }
+        public int Position { get { throw null; } init { } }
     }
 
     public partial class JsonPolymorphismOptions
@@ -1824,33 +1824,33 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonPropertyInfoValues<T>
     {
-        public JsonConverter<T>? Converter { get { throw null; } set { } }
+        public JsonConverter<T>? Converter { get { throw null; } init { } }
 
-        public Type DeclaringType { get { throw null; } set { } }
+        public Type DeclaringType { get { throw null; } init { } }
 
-        public Func<object, T?>? Getter { get { throw null; } set { } }
+        public Func<object, T?>? Getter { get { throw null; } init { } }
 
-        public bool HasJsonInclude { get { throw null; } set { } }
+        public bool HasJsonInclude { get { throw null; } init { } }
 
-        public JsonIgnoreCondition? IgnoreCondition { get { throw null; } set { } }
+        public JsonIgnoreCondition? IgnoreCondition { get { throw null; } init { } }
 
-        public bool IsExtensionData { get { throw null; } set { } }
+        public bool IsExtensionData { get { throw null; } init { } }
 
-        public bool IsProperty { get { throw null; } set { } }
+        public bool IsProperty { get { throw null; } init { } }
 
-        public bool IsPublic { get { throw null; } set { } }
+        public bool IsPublic { get { throw null; } init { } }
 
-        public bool IsVirtual { get { throw null; } set { } }
+        public bool IsVirtual { get { throw null; } init { } }
 
-        public string? JsonPropertyName { get { throw null; } set { } }
+        public string? JsonPropertyName { get { throw null; } init { } }
 
-        public JsonNumberHandling? NumberHandling { get { throw null; } set { } }
+        public JsonNumberHandling? NumberHandling { get { throw null; } init { } }
 
-        public string PropertyName { get { throw null; } set { } }
+        public string PropertyName { get { throw null; } init { } }
 
-        public JsonTypeInfo PropertyTypeInfo { get { throw null; } set { } }
+        public JsonTypeInfo PropertyTypeInfo { get { throw null; } init { } }
 
-        public Action<object, T?>? Setter { get { throw null; } set { } }
+        public Action<object, T?>? Setter { get { throw null; } init { } }
     }
 
     public abstract partial class JsonTypeInfo

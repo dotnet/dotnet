@@ -88,9 +88,9 @@ public class RazorProjectFileSystemTest
         // Assert
         Assert.Collection(
             result,
-            item => Assert.Equal($"/Views/Home/{fileName}", item.FilePath),
+            item => Assert.Equal($"/{fileName}", item.FilePath),
             item => Assert.Equal($"/Views/{fileName}", item.FilePath),
-            item => Assert.Equal($"/{fileName}", item.FilePath));
+            item => Assert.Equal($"/Views/Home/{fileName}", item.FilePath));
     }
 
     [Fact]
@@ -128,10 +128,10 @@ public class RazorProjectFileSystemTest
         // Assert
         Assert.Collection(
             result,
-            item => Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath),
-            item => Assert.Equal("/Areas/MyArea/File.cshtml", item.FilePath),
+            item => Assert.Equal("/File.cshtml", item.FilePath),
             item => Assert.Equal("/Areas/File.cshtml", item.FilePath),
-            item => Assert.Equal("/File.cshtml", item.FilePath));
+            item => Assert.Equal("/Areas/MyArea/File.cshtml", item.FilePath),
+            item => Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath));
     }
 
     [Fact]
@@ -166,17 +166,7 @@ public class RazorProjectFileSystemTest
             result,
             item =>
             {
-                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
-                Assert.False(item.Exists);
-            },
-            item =>
-            {
-                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
-                Assert.False(item.Exists);
-            },
-            item =>
-            {
-                Assert.Equal("/Areas/MyArea/File.cshtml", item.FilePath);
+                Assert.Equal("/File.cshtml", item.FilePath);
                 Assert.True(item.Exists);
             },
             item =>
@@ -186,8 +176,18 @@ public class RazorProjectFileSystemTest
             },
             item =>
             {
-                Assert.Equal("/File.cshtml", item.FilePath);
+                Assert.Equal("/Areas/MyArea/File.cshtml", item.FilePath);
                 Assert.True(item.Exists);
+            },
+            item =>
+            {
+                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
+                Assert.False(item.Exists);
+            },
+            item =>
+            {
+                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
+                Assert.False(item.Exists);
             });
     }
 
@@ -210,12 +210,7 @@ public class RazorProjectFileSystemTest
             result,
             item =>
             {
-                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
-                Assert.False(item.Exists);
-            },
-            item =>
-            {
-                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
+                Assert.Equal("/Areas/File.cshtml", item.FilePath);
                 Assert.False(item.Exists);
             },
             item =>
@@ -225,7 +220,12 @@ public class RazorProjectFileSystemTest
             },
             item =>
             {
-                Assert.Equal("/Areas/File.cshtml", item.FilePath);
+                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
+                Assert.False(item.Exists);
+            },
+            item =>
+            {
+                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
                 Assert.False(item.Exists);
             });
     }
@@ -249,12 +249,12 @@ public class RazorProjectFileSystemTest
             result,
             item =>
             {
-                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
+                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
                 Assert.False(item.Exists);
             },
             item =>
             {
-                Assert.Equal("/Areas/MyArea/Views/File.cshtml", item.FilePath);
+                Assert.Equal("/Areas/MyArea/Views/Home/File.cshtml", item.FilePath);
                 Assert.False(item.Exists);
             });
     }

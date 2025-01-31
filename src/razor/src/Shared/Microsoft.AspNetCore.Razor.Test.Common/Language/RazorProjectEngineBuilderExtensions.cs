@@ -66,4 +66,20 @@ public static class RazorProjectEngineBuilderExtensions
 
         return builder;
     }
+
+    internal static void SetImportFeature(this RazorProjectEngineBuilder builder, IImportProjectFeature feature)
+    {
+        ArgHelper.ThrowIfNull(builder);
+        ArgHelper.ThrowIfNull(feature);
+
+        // Remove any existing import features in favor of the new one we're given.
+
+        var existingFeatures = builder.Features.OfType<IImportProjectFeature>().ToArray();
+        foreach (var existingFeature in existingFeatures)
+        {
+            builder.Features.Remove(existingFeature);
+        }
+
+        builder.Features.Add(feature);
+    }
 }

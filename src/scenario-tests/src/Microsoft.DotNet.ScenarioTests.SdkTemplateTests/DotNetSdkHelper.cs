@@ -13,17 +13,22 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
 internal class DotNetSdkHelper
 {
-    public string DotNetRoot { get; set; }
-    public string? SdkVersion { get; set; }
-    public string DotNetExecutablePath { get =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(DotNetRoot, "dotnet.exe") : Path.Combine(DotNetRoot, "dotnet"); }
-    private ITestOutputHelper OutputHelper { get; }
+    private readonly string? _binlogDir;
+    private readonly ITestOutputHelper _outputHelper;
 
-    public DotNetSdkHelper(ITestOutputHelper outputHelper, string dotnetRoot, string? sdkVersion)
+    public string DotNetRoot { get; }
+
+    public string? SdkVersion { get; }
+
+    public string DotNetExecutablePath  =>
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(DotNetRoot, "dotnet.exe") : Path.Combine(DotNetRoot, "dotnet");
+
+    public DotNetSdkHelper(ITestOutputHelper outputHelper, string dotnetRoot, string? sdkVersion, string? binlogDir)
     {
-        OutputHelper = outputHelper;
+        _outputHelper = outputHelper;
         DotNetRoot = dotnetRoot;
         SdkVersion = sdkVersion;
+        _binlogDir = binlogDir;
     }
 
     private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
@@ -41,7 +46,7 @@ internal class DotNetSdkHelper
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetExecutablePath,
             args,
-            OutputHelper,
+            _outputHelper,
             configure: (process) => configureProcess(process, workingDirectory),
             millisecondTimeout: millisecondTimeout);
 
@@ -255,15 +260,19 @@ internal class DotNetSdkHelper
     public void ExecuteTest(string projectDirectory) =>
         ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory);
 
-    private static string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
+    private string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
     {
+        string binlogDir = _binlogDir is null ?
+            projectDirectory :
+            Path.Combine(_binlogDir, Path.GetFileName(projectDirectory)!);
+
         string fileName = $"{command}";
         if (!string.IsNullOrEmpty(differentiator))
         {
             fileName += $"-{differentiator}";
         }
 
-        return $"/bl:{Path.Combine(projectDirectory, $"{fileName}.binlog")}";
+        return $"/bl:{Path.Combine(binlogDir, $"{fileName}.binlog")}";
     }
 
     public void ExecuteAddClassReference(string projectDirectory)
@@ -309,12 +318,12 @@ internal class DotNetSdkHelper
                         }
                         else if(output != originalSource)
                         {
-                            OutputHelper.WriteLine("output is " + output);
-                            OutputHelper.WriteLine("originalSource is " + originalSource);
+                            _outputHelper.WriteLine("output is " + output);
+                            _outputHelper.WriteLine("originalSource is " + originalSource);
                             throw new Exception($"{workloadIds} shouldn't be installed but was found.");
                         }
                     }
-                    OutputHelper.WriteLine($"{workloadIds} is installed");
+                    _outputHelper.WriteLine($"{workloadIds} is installed");
                 }
                 else
                 {
@@ -322,7 +331,7 @@ internal class DotNetSdkHelper
                     {
                         throw new Exception($"{workloadIds} should be installed but wasn't found.");
                     }
-                    OutputHelper.WriteLine($"{workloadIds} is not installed");
+                    _outputHelper.WriteLine($"{workloadIds} is not installed");
                 }
             });
         }
@@ -381,8 +390,8 @@ internal class DotNetSdkHelper
             }
             catch (XPathException e)
             {
-                OutputHelper.WriteLine("Unable to find node");
-                OutputHelper.WriteLine(e.Message);
+                _outputHelper.WriteLine("Unable to find node");
+                _outputHelper.WriteLine(e.Message);
                 throw;
             }
         }
@@ -401,7 +410,7 @@ internal class DotNetSdkHelper
         {
             string targetPath = Path.Combine(projectDirectory, file.Name);
             file.CopyTo(targetPath);
-            OutputHelper.WriteLine($"Copying {file.Name} to {targetPath}");
+            _outputHelper.WriteLine($"Copying {file.Name} to {targetPath}");
         }
         if (recursive)
         {

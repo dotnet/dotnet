@@ -196,20 +196,25 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
 
     private void HandleException(Exception exception)
     {
-        EqtTrace.Error("ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: {0}", exception);
+        // If requested abort and the code below was just sending data, we will get communication exception because we try to write the channel that is already closed.
+        // In such case don't report the exception because user cannot do anything about it.
+        if (!(_proxyOperationManager != null && _proxyOperationManager.CancellationTokenSource.IsCancellationRequested && exception is CommunicationException))
+        {
+            EqtTrace.Error("ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: {0}", exception);
 
-        // Log to vs ide test output
-        var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exception.ToString() };
-        var rawMessage = _dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload);
-        HandleRawMessage(rawMessage);
+            // Log to vs ide test output
+            var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exception.ToString() };
+            var rawMessage = _dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload);
+            HandleRawMessage(rawMessage);
 
-        // Log to vstest.console
+            // Log to vstest.console
+            HandleLogMessage(TestMessageLevel.Error, exception.ToString());
+        }
+
         // Send a discovery complete to caller. Similar logic is also used in ParallelProxyDiscoveryManager.DiscoverTestsOnConcurrentManager
         // Aborted is `true`: in case of parallel discovery (or non shared host), an aborted message ensures another discovery manager
         // created to replace the current one. This will help if the current discovery manager is aborted due to irreparable error
         // and the test host is lost as well.
-        HandleLogMessage(TestMessageLevel.Error, exception.ToString());
-
         var discoveryCompletePayload = new DiscoveryCompletePayload
         {
             IsAborted = true,

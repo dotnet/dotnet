@@ -131,15 +131,15 @@ namespace NuGet.LibraryModel
 
         public Library(LibraryRange libraryRange, LibraryIdentity identity, System.Collections.Generic.IEnumerable<LibraryDependency> dependencies) { }
 
-        public System.Collections.Generic.IEnumerable<LibraryDependency> Dependencies { get { throw null; } set { } }
+        public required System.Collections.Generic.IEnumerable<LibraryDependency> Dependencies { get { throw null; } set { } }
 
-        public LibraryIdentity Identity { get { throw null; } set { } }
+        public required LibraryIdentity Identity { get { throw null; } set { } }
 
         public object this[string key] { get { throw null; } set { } }
 
         public System.Collections.Generic.IDictionary<string, object> Items { get { throw null; } set { } }
 
-        public LibraryRange LibraryRange { get { throw null; } set { } }
+        public required LibraryRange LibraryRange { get { throw null; } set { } }
 
         public string? Path { get { throw null; } set { } }
 
@@ -164,7 +164,7 @@ namespace NuGet.LibraryModel
 
         public LibraryIncludeFlags IncludeType { get { throw null; } set { } }
 
-        public LibraryRange LibraryRange { get { throw null; } set { } }
+        public required LibraryRange LibraryRange { get { throw null; } set { } }
 
         public string Name { get { throw null; } }
 
@@ -253,11 +253,11 @@ namespace NuGet.LibraryModel
 
         public LibraryIdentity(string name, Versioning.NuGetVersion version, LibraryType type) { }
 
-        public string Name { get { throw null; } set { } }
+        public required string Name { get { throw null; } set { } }
 
-        public LibraryType Type { get { throw null; } set { } }
+        public required LibraryType Type { get { throw null; } set { } }
 
-        public Versioning.NuGetVersion Version { get { throw null; } set { } }
+        public required Versioning.NuGetVersion Version { get { throw null; } set { } }
 
         public int CompareTo(LibraryIdentity? other) { throw null; }
 
@@ -313,7 +313,7 @@ namespace NuGet.LibraryModel
 
         public LibraryRange(string name) { }
 
-        public string Name { get { throw null; } set { } }
+        public required string Name { get { throw null; } set { } }
 
         public LibraryDependencyTarget TypeConstraint { get { throw null; } set { } }
 

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +51,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     {
         AdditionalSyntaxTrees = new List<SyntaxTree>();
         AdditionalRazorItems = new List<RazorProjectItem>();
-        ImportItems = new List<RazorProjectItem>();
+        ImportItems = ImmutableArray.CreateBuilder<RazorProjectItem>();
 
         BaseCompilation = DefaultBaseCompilation;
         Configuration = RazorConfiguration.Default;
@@ -64,7 +65,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     internal List<RazorProjectItem> AdditionalRazorItems { get; }
 
-    internal List<RazorProjectItem> ImportItems { get; }
+    internal ImmutableArray<RazorProjectItem>.Builder ImportItems { get; }
 
     internal List<SyntaxTree> AdditionalSyntaxTrees { get; }
 
@@ -112,7 +113,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             // Turn off checksums, we're testing code generation.
             b.Features.Add(new SuppressChecksum());
 
-            b.Features.Add(new TestImportProjectFeature(ImportItems));
+            b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
 
             if (LineEnding != null)
             {
@@ -414,21 +415,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         public void Configure(RazorCodeGenerationOptionsBuilder options)
         {
             options.NewLine = newLine;
-        }
-    }
-
-    private class TestImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
-    {
-        private readonly List<RazorProjectItem> _imports;
-
-        public TestImportProjectFeature(List<RazorProjectItem> imports)
-        {
-            _imports = imports;
-        }
-
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
-        {
-            return _imports;
         }
     }
 }

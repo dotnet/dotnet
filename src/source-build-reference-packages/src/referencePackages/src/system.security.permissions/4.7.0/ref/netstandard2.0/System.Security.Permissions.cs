@@ -27,6 +27,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Permissions.CodeAccessSecurityAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Permissions.SecurityAction))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Permissions.SecurityAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Permissions.SecurityPermissionAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Permissions.SecurityPermissionFlag))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.SecurityElement))]
 namespace System
@@ -1190,6 +1191,20 @@ namespace System.Security.Permissions
         AllAccess = 3
     }
 
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class EnvironmentPermissionAttribute : CodeAccessSecurityAttribute
+    {
+        public EnvironmentPermissionAttribute(SecurityAction action) : base(default) { }
+
+        public string All { get { throw null; } set { } }
+
+        public string Read { get { throw null; } set { } }
+
+        public string Write { get { throw null; } set { } }
+
+        public override IPermission CreatePermission() { throw null; }
+    }
+
     public sealed partial class FileDialogPermission : CodeAccessPermission, IUnrestrictedPermission
     {
         public FileDialogPermission(FileDialogPermissionAccess access) { }
@@ -1290,6 +1305,35 @@ namespace System.Security.Permissions
         AllAccess = 15
     }
 
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class FileIOPermissionAttribute : CodeAccessSecurityAttribute
+    {
+        public FileIOPermissionAttribute(SecurityAction action) : base(default) { }
+
+        [Obsolete]
+        public string All { get { throw null; } set { } }
+
+        public FileIOPermissionAccess AllFiles { get { throw null; } set { } }
+
+        public FileIOPermissionAccess AllLocalFiles { get { throw null; } set { } }
+
+        public string Append { get { throw null; } set { } }
+
+        public string ChangeAccessControl { get { throw null; } set { } }
+
+        public string PathDiscovery { get { throw null; } set { } }
+
+        public string Read { get { throw null; } set { } }
+
+        public string ViewAccessControl { get { throw null; } set { } }
+
+        public string ViewAndModify { get { throw null; } set { } }
+
+        public string Write { get { throw null; } set { } }
+
+        public override IPermission CreatePermission() { throw null; }
+    }
+
     public sealed partial class GacIdentityPermission : CodeAccessPermission
     {
         public GacIdentityPermission() { }
@@ -1313,6 +1357,36 @@ namespace System.Security.Permissions
     public sealed partial class GacIdentityPermissionAttribute : CodeAccessSecurityAttribute
     {
         public GacIdentityPermissionAttribute(SecurityAction action) : base(default) { }
+
+        public override IPermission CreatePermission() { throw null; }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Delegate, AllowMultiple = true, Inherited = false)]
+    public sealed partial class HostProtectionAttribute : CodeAccessSecurityAttribute
+    {
+        public HostProtectionAttribute() : base(default) { }
+
+        public HostProtectionAttribute(SecurityAction action) : base(default) { }
+
+        public bool ExternalProcessMgmt { get { throw null; } set { } }
+
+        public bool ExternalThreading { get { throw null; } set { } }
+
+        public bool MayLeakOnAbort { get { throw null; } set { } }
+
+        public HostProtectionResource Resources { get { throw null; } set { } }
+
+        public bool SecurityInfrastructure { get { throw null; } set { } }
+
+        public bool SelfAffectingProcessMgmt { get { throw null; } set { } }
+
+        public bool SelfAffectingThreading { get { throw null; } set { } }
+
+        public bool SharedState { get { throw null; } set { } }
+
+        public bool Synchronization { get { throw null; } set { } }
+
+        public bool UI { get { throw null; } set { } }
 
         public override IPermission CreatePermission() { throw null; }
     }
@@ -1362,6 +1436,14 @@ namespace System.Security.Permissions
         public override SecurityElement ToXml() { throw null; }
 
         public override IPermission Union(IPermission target) { throw null; }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class IsolatedStorageFilePermissionAttribute : IsolatedStoragePermissionAttribute
+    {
+        public IsolatedStorageFilePermissionAttribute(SecurityAction action) : base(default) { }
+
+        public override IPermission CreatePermission() { throw null; }
     }
 
     public abstract partial class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission
@@ -1591,6 +1673,26 @@ namespace System.Security.Permissions
         AllVideo = 3
     }
 
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class PermissionSetAttribute : CodeAccessSecurityAttribute
+    {
+        public PermissionSetAttribute(SecurityAction action) : base(default) { }
+
+        public string File { get { throw null; } set { } }
+
+        public string Hex { get { throw null; } set { } }
+
+        public string Name { get { throw null; } set { } }
+
+        public bool UnicodeEncoded { get { throw null; } set { } }
+
+        public string XML { get { throw null; } set { } }
+
+        public override IPermission CreatePermission() { throw null; }
+
+        public PermissionSet CreatePermissionSet() { throw null; }
+    }
+
     public enum PermissionState
     {
         None = 0,
@@ -1698,6 +1800,26 @@ namespace System.Security.Permissions
         public override SecurityElement ToXml() { throw null; }
 
         public override IPermission Union(IPermission other) { throw null; }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class ReflectionPermissionAttribute : CodeAccessSecurityAttribute
+    {
+        public ReflectionPermissionAttribute(SecurityAction action) : base(default) { }
+
+        public ReflectionPermissionFlag Flags { get { throw null; } set { } }
+
+        public bool MemberAccess { get { throw null; } set { } }
+
+        [Obsolete]
+        public bool ReflectionEmit { get { throw null; } set { } }
+
+        public bool RestrictedMemberAccess { get { throw null; } set { } }
+
+        [Obsolete]
+        public bool TypeInformation { get { throw null; } set { } }
+
+        public override IPermission CreatePermission() { throw null; }
     }
 
     [Flags]
@@ -1959,6 +2081,20 @@ namespace System.Security.Permissions
         public override SecurityElement ToXml() { throw null; }
 
         public override IPermission Union(IPermission target) { throw null; }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed partial class StrongNameIdentityPermissionAttribute : CodeAccessSecurityAttribute
+    {
+        public StrongNameIdentityPermissionAttribute(SecurityAction action) : base(default) { }
+
+        public string Name { get { throw null; } set { } }
+
+        public string PublicKey { get { throw null; } set { } }
+
+        public string Version { get { throw null; } set { } }
+
+        public override IPermission CreatePermission() { throw null; }
     }
 
     public sealed partial class StrongNamePublicKeyBlob

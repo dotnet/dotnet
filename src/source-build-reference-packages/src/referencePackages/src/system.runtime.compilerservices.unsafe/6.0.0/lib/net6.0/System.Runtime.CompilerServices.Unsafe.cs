@@ -4,6 +4,7 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
+[assembly: System.Reflection.AssemblyMetadata("source", "source-build-reference-packages")]
 [assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
 [assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
 [assembly: System.CLSCompliant(false)]
@@ -18,8 +19,8 @@
 [assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
 [assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
 [assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.Default | System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: System.Reflection.AssemblyVersionAttribute("6.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyVersionAttribute("6.0.0.0")]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Runtime.CompilerServices
 {

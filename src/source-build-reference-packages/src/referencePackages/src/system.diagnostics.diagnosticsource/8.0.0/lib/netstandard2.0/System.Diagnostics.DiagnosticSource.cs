@@ -160,9 +160,9 @@ namespace System.Diagnostics
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
-        public Activity? Current { get { throw null; } set { } }
+        public Activity? Current { get { throw null; } init { } }
 
-        public Activity? Previous { get { throw null; } set { } }
+        public Activity? Previous { get { throw null; } init { } }
     }
 
     public readonly partial struct ActivityContext : IEquatable<ActivityContext>
@@ -219,7 +219,7 @@ namespace System.Diagnostics
 
         public ActivityTraceId TraceId { get { throw null; } }
 
-        public string? TraceState { get { throw null; } set { } }
+        public string? TraceState { get { throw null; } init { } }
     }
 
     public readonly partial struct ActivityEvent

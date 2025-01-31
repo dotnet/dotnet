@@ -23,9 +23,8 @@
         <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.Metadata" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Resources.Extensions" version="6.0.0" exclude="Build,Analyzers" />
-        <!-- Manual upgrade from 6.0.1 to address CVE-2023-29331 -->
-        <dependency id="System.Security.Cryptography.Pkcs" version="6.0.4" exclude="Build,Analyzers" />
-        <dependency id="System.Security.Cryptography.Xml" version="6.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Cryptography.Pkcs" version="6.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Cryptography.Xml" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Permissions" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Threading.Tasks.Dataflow" version="6.0.0" exclude="Build,Analyzers" />
       </group>
@@ -38,9 +37,8 @@
         <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.Metadata" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Resources.Extensions" version="6.0.0" exclude="Build,Analyzers" />
-        <!-- Manual upgrade from 6.0.1 to address CVE-2023-29331 -->
-        <dependency id="System.Security.Cryptography.Pkcs" version="6.0.4" exclude="Build,Analyzers" />
-        <dependency id="System.Security.Cryptography.Xml" version="6.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Cryptography.Pkcs" version="6.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Cryptography.Xml" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Permissions" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Threading.Tasks.Dataflow" version="6.0.0" exclude="Build,Analyzers" />
       </group>

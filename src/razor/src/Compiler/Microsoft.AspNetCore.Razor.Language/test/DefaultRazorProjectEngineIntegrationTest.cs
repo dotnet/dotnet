@@ -61,14 +61,11 @@ public class DefaultRazorProjectEngineIntegrationTest
         var projectItem = new TestRazorProjectItem("Index.cshtml");
 
         var testImport = new TestRazorProjectItem("testvalue");
-        var importFeature = new Mock<IImportProjectFeature>();
-        importFeature
-            .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))
-            .Returns(new[] { testImport });
+        var importFeature = new TestImportProjectFeature(testImport);
 
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
         {
-            builder.SetImportFeature(importFeature.Object);
+            builder.SetImportFeature(importFeature);
         });
 
         // Act
@@ -86,21 +83,15 @@ public class DefaultRazorProjectEngineIntegrationTest
         var projectItem = new TestRazorProjectItem("Index.cshtml");
 
         var testImport1 = new TestRazorProjectItem("testvalue1");
-        var importFeature1 = new Mock<IImportProjectFeature>();
-        importFeature1
-            .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))
-            .Returns(new[] { testImport1 });
+        var importFeature1 = new TestImportProjectFeature(testImport1);
 
         var testImport2 = new TestRazorProjectItem("testvalue2");
-        var importFeature2 = new Mock<IImportProjectFeature>();
-        importFeature2
-            .Setup(feature => feature.GetImports(It.IsAny<RazorProjectItem>()))
-            .Returns(new[] { testImport2 });
+        var importFeature2 = new TestImportProjectFeature(testImport2);
 
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
         {
-            builder.Features.Add(importFeature1.Object);
-            builder.Features.Add(importFeature2.Object);
+            builder.Features.Add(importFeature1);
+            builder.Features.Add(importFeature2);
         });
 
         // Act

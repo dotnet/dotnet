@@ -113,8 +113,6 @@ namespace System.Security.Cryptography.Xml
 
     public sealed partial class EncryptedData : EncryptedType
     {
-        public EncryptedData() { }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
 
         public override void LoadXml(System.Xml.XmlElement value) { }
@@ -122,8 +120,6 @@ namespace System.Security.Cryptography.Xml
 
     public sealed partial class EncryptedKey : EncryptedType
     {
-        public EncryptedKey() { }
-
         public string CarriedKeyName { get { throw null; } set { } }
 
         public string Recipient { get { throw null; } set { } }
@@ -164,8 +160,6 @@ namespace System.Security.Cryptography.Xml
 
     public abstract partial class EncryptedType
     {
-        protected EncryptedType() { }
-
         public virtual CipherData CipherData { get { throw null; } set { } }
 
         public virtual string Encoding { get { throw null; } set { } }
@@ -298,8 +292,6 @@ namespace System.Security.Cryptography.Xml
 
     public sealed partial class EncryptionPropertyCollection : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
-        public EncryptionPropertyCollection() { }
-
         public int Count { get { throw null; } }
 
         public bool IsFixedSize { get { throw null; } }
@@ -313,7 +305,7 @@ namespace System.Security.Cryptography.Xml
 
         public object SyncRoot { get { throw null; } }
 
-        object Collections.IList.this [int index] { get { throw null; } set { } }
+        object Collections.IList.this[int index] { get { throw null; } set { } }
 
         public int Add(EncryptionProperty value) { throw null; }
 
@@ -355,8 +347,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class KeyInfo : Collections.IEnumerable
     {
-        public KeyInfo() { }
-
         public int Count { get { throw null; } }
 
         public string Id { get { throw null; } set { } }
@@ -374,8 +364,6 @@ namespace System.Security.Cryptography.Xml
 
     public abstract partial class KeyInfoClause
     {
-        protected KeyInfoClause() { }
-
         public abstract System.Xml.XmlElement GetXml();
         public abstract void LoadXml(System.Xml.XmlElement element);
     }
@@ -509,8 +497,6 @@ namespace System.Security.Cryptography.Xml
 
     public sealed partial class ReferenceList : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
-        public ReferenceList() { }
-
         public int Count { get { throw null; } }
 
         public bool IsSynchronized { get { throw null; } }
@@ -524,7 +510,7 @@ namespace System.Security.Cryptography.Xml
 
         bool Collections.IList.IsReadOnly { get { throw null; } }
 
-        object Collections.IList.this [int index] { get { throw null; } set { } }
+        object Collections.IList.this[int index] { get { throw null; } set { } }
 
         public int Add(object value) { throw null; }
 
@@ -562,8 +548,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class Signature
     {
-        public Signature() { }
-
         public string Id { get { throw null; } set { } }
 
         public KeyInfo KeyInfo { get { throw null; } set { } }
@@ -583,8 +567,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class SignedInfo : Collections.ICollection, Collections.IEnumerable
     {
-        public SignedInfo() { }
-
         public string CanonicalizationMethod { get { throw null; } set { } }
 
         public Transform CanonicalizationMethodObject { get { throw null; } }
@@ -703,8 +685,6 @@ namespace System.Security.Cryptography.Xml
 
     public abstract partial class Transform
     {
-        protected Transform() { }
-
         public string Algorithm { get { throw null; } set { } }
 
         public System.Xml.XmlElement Context { get { throw null; } set { } }
@@ -729,8 +709,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class TransformChain
     {
-        public TransformChain() { }
-
         public int Count { get { throw null; } }
 
         public Transform this[int index] { get { throw null; } }
@@ -742,8 +720,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class XmlDecryptionTransform : Transform
     {
-        public XmlDecryptionTransform() { }
-
         public EncryptedXml EncryptedXml { get { throw null; } set { } }
 
         public override Type[] InputTypes { get { throw null; } }
@@ -767,8 +743,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class XmlDsigBase64Transform : Transform
     {
-        public XmlDsigBase64Transform() { }
-
         public override Type[] InputTypes { get { throw null; } }
 
         public override Type[] OutputTypes { get { throw null; } }
@@ -809,7 +783,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class XmlDsigC14NWithCommentsTransform : XmlDsigC14NTransform
     {
-        public XmlDsigC14NWithCommentsTransform() { }
     }
 
     public partial class XmlDsigEnvelopedSignatureTransform : Transform
@@ -871,8 +844,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class XmlDsigXPathTransform : Transform
     {
-        public XmlDsigXPathTransform() { }
-
         public override Type[] InputTypes { get { throw null; } }
 
         public override Type[] OutputTypes { get { throw null; } }
@@ -911,8 +882,6 @@ namespace System.Security.Cryptography.Xml
 
     public partial class XmlLicenseTransform : Transform
     {
-        public XmlLicenseTransform() { }
-
         public IRelDecryptor Decryptor { get { throw null; } set { } }
 
         public override Type[] InputTypes { get { throw null; } }

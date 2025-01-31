@@ -45,11 +45,9 @@
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
     <PackageReference Include="System.Security.Cryptography.Xml" />
     <PackageReference Include="System.Security.Permissions" />
-    <PackageReference Include="System.ServiceModel.Duplex" />
     <PackageReference Include="System.ServiceModel.Http" />
     <PackageReference Include="System.ServiceModel.NetTcp" />
     <PackageReference Include="System.ServiceModel.Primitives" />
-    <PackageReference Include="System.ServiceModel.Security" />
     <PackageReference Include="System.ServiceModel.Syndication" />
     <PackageReference Include="System.ServiceProcess.ServiceController" />
     <PackageReference Include="System.Speech" />

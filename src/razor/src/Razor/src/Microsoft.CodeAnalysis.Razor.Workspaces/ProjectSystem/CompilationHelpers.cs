@@ -46,14 +46,7 @@ internal static class CompilationHelpers
         var projectItem = projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
 
         using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
-
-        foreach (var feature in projectEngine.GetFeatures<IImportProjectFeature>())
-        {
-            if (feature.GetImports(projectItem) is { } featureImports)
-            {
-                importProjectItems.AddRange(featureImports);
-            }
-        }
+        projectEngine.CollectImports(projectItem, ref importProjectItems.AsRef());
 
         if (importProjectItems.Count == 0)
         {
@@ -71,9 +64,8 @@ internal static class CompilationHelpers
                 continue;
             }
 
-            if (importProjectItem.PhysicalPath is null)
+            if (importProjectItem is DefaultImportProjectItem)
             {
-                // This is a default import.
                 var importSource = importProjectItem.GetSource()
                     .AssumeNotNull($"Encountered a default import with a missing {nameof(RazorSourceDocument)}: {importProjectItem.FilePath}.");
 

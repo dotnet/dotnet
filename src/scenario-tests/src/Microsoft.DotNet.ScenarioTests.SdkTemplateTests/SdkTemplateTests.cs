@@ -6,9 +6,8 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
 public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 {
-    ScenarioTestFixture _scenarioTestInput;
-    ITestOutputHelper _testOutputHelper;
-    DotNetSdkHelper _sdkHelper;
+    private readonly ScenarioTestFixture _scenarioTestInput;
+    private readonly DotNetSdkHelper _sdkHelper;
 
     public SdkTemplateTests(ScenarioTestFixture testInput, ITestOutputHelper outputHelper)
     {
@@ -18,8 +17,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         }
 
         _scenarioTestInput = testInput;
-        _testOutputHelper = outputHelper;
-        _sdkHelper = new DotNetSdkHelper(outputHelper, _scenarioTestInput.DotNetRoot, _scenarioTestInput.SdkVersion);
+        _sdkHelper = new DotNetSdkHelper(outputHelper, _scenarioTestInput.DotNetRoot, _scenarioTestInput.SdkVersion, _scenarioTestInput.BinlogDir);
     }
     
     [Theory]

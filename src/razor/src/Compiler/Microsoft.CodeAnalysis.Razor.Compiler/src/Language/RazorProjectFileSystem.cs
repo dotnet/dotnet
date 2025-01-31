@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -50,14 +51,14 @@ public abstract partial class RazorProjectFileSystem
     /// <param name="fileName">The file name to seek.</param>
     /// <returns>A sequence of applicable <see cref="RazorProjectItem"/> instances.</returns>
     /// <remarks>
-    /// This method returns paths starting from the directory of <paramref name="path"/> and
-    /// traverses to the project root.
+    /// This method returns paths starting from the project root and traverses to the directory of
+    /// <paramref name="path"/>.
     /// e.g.
-    /// /Views/Home/View.cshtml -> [ /Views/Home/FileName.cshtml, /Views/FileName.cshtml, /FileName.cshtml ]
+    /// /Views/Home/View.cshtml -> [ /FileName.cshtml, /Views/FileName.cshtml, /Views/Home/FileName.cshtml ]
     ///
     /// Project items returned by this method have inferred FileKinds from their corresponding file paths.
     /// </remarks>
-    public IEnumerable<RazorProjectItem> FindHierarchicalItems(string path, string fileName)
+    internal ImmutableArray<RazorProjectItem> FindHierarchicalItems(string path, string fileName)
     {
         return FindHierarchicalItems(basePath: DefaultBasePath, path, fileName);
     }
@@ -70,14 +71,14 @@ public abstract partial class RazorProjectFileSystem
     /// <param name="fileName">The file name to seek.</param>
     /// <returns>A sequence of applicable <see cref="RazorProjectItem"/> instances.</returns>
     /// <remarks>
-    /// This method returns paths starting from the directory of <paramref name="path"/> and
-    /// traverses to the <paramref name="basePath"/>.
+    /// This method returns paths starting from <paramref name="basePath"/> and traverses to the directory of
+    /// <paramref name="path"/>.
     /// e.g.
-    /// (/Views, /Views/Home/View.cshtml) -> [ /Views/Home/FileName.cshtml, /Views/FileName.cshtml ]
+    /// (/Views, /Views/Home/View.cshtml) -> [ /Views/FileName.cshtml, /Views/Home/FileName.cshtml ]
     ///
     /// Project items returned by this method have inferred FileKinds from their corresponding file paths.
     /// </remarks>
-    public virtual IEnumerable<RazorProjectItem> FindHierarchicalItems(string basePath, string path, string fileName)
+    internal ImmutableArray<RazorProjectItem> FindHierarchicalItems(string basePath, string path, string fileName)
     {
         ArgHelper.ThrowIfNullOrEmpty(fileName);
 
@@ -88,45 +89,59 @@ public abstract partial class RazorProjectFileSystem
 
         if (path.Length == 1)
         {
-            yield break;
+            return [];
         }
 
         if (!path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
         {
-            yield break;
+            return [];
         }
 
-        StringBuilder builder;
         var fileNameIndex = path.LastIndexOf('/');
-        var length = path.Length;
 
         if (fileNameIndex == -1)
         {
             throw new InvalidOperationException($"Cannot find file name in path '{path}'");
         }
 
-        if (string.Compare(path, fileNameIndex + 1, fileName, 0, fileName.Length, StringComparison.Ordinal) == 0)
+        var length = fileNameIndex + 1;
+        var pathMemory = path.AsMemory();
+
+        if (pathMemory.Span[(fileNameIndex + 1)..].Equals(fileName.AsSpan(), StringComparison.Ordinal))
         {
-            // If the specified path is for the file hierarchy being constructed, then the first file that applies
-            // to it is in a parent directory.
-            builder = new StringBuilder(path, 0, fileNameIndex, fileNameIndex + fileName.Length);
-            length = fileNameIndex;
-        }
-        else
-        {
-            builder = new StringBuilder(path);
+            pathMemory = pathMemory[..fileNameIndex];
         }
 
-        var maxDepth = 255;
-        var index = length;
-        while (maxDepth-- > 0 && index > basePath.Length && (index = path.LastIndexOf('/', index - 1)) != -1)
-        {
-            builder.Length = index + 1;
-            builder.Append(fileName);
+        using var result = new PooledArrayBuilder<RazorProjectItem>();
 
-            var itemPath = builder.ToString();
-            yield return GetItem(itemPath, fileKind: null);
+        var index = pathMemory.Length;
+
+        while (index > basePath.Length && (index = pathMemory.Span.LastIndexOf('/')) >= 0)
+        {
+            pathMemory = pathMemory[..(index + 1)];
+
+            var itemPath = StringExtensions.CreateString(
+                length: pathMemory.Length + fileName.Length,
+                state: (pathMemory, fileName),
+                static (span, state) =>
+                {
+                    var (memory, fileName) = state;
+
+                    memory.Span.CopyTo(span);
+                    span = span[memory.Length..];
+
+                    fileName.AsSpan().CopyTo(span);
+                    Debug.Assert(span[fileName.Length..].IsEmpty);
+                });
+
+            var item = GetItem(itemPath, fileKind: null);
+            result.Add(item);
+
+            // Slice to exclude the trailing '/' for the next pass.
+            pathMemory = pathMemory[..^1];
         }
+
+        return result.ToImmutableReversed();
     }
 
     /// <summary>

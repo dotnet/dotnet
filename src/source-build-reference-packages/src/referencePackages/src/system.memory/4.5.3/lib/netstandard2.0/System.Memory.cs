@@ -327,7 +327,7 @@ namespace System
         [Obsolete("Equals() on ReadOnlySpan will always throw an exception. Use == instead.")]
         public override readonly bool Equals(object obj) { throw null; }
 
-        public readonly ReadOnlySpan<T>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         [Obsolete("GetHashCode() on ReadOnlySpan will always throw an exception.")]
         public override readonly int GetHashCode() { throw null; }
@@ -408,7 +408,7 @@ namespace System
 
         public readonly void Fill(T value) { }
 
-        public readonly Span<T>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         [Obsolete("GetHashCode() on Span will always throw an exception.")]
         public override readonly int GetHashCode() { throw null; }
@@ -562,7 +562,7 @@ namespace System.Buffers
 
         public SequencePosition Start { get { throw null; } }
 
-        public readonly ReadOnlySequence<T>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public readonly SequencePosition GetPosition(long offset, SequencePosition origin) { throw null; }
 

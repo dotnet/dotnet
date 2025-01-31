@@ -60,7 +60,7 @@ namespace System.Runtime.CompilerServices
     {
         private Threading.Tasks.ValueTask<TResult> _value;
         private int _dummyPrimitive;
-        public ConfiguredValueTaskAwaitable<TResult>.ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
+        public ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
 
         public partial struct ConfiguredValueTaskAwaiter : ICriticalNotifyCompletion, INotifyCompletion
         {

@@ -5,7 +5,6 @@
     <AssemblyName>System.Collections.Immutable</AssemblyName>
   </PropertyGroup>
 
-  <!-- Generated source for NET 6.0 was edited due to https://github.com/dotnet/sdk/issues/31484 -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>

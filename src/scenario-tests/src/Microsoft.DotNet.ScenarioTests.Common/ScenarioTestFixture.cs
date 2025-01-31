@@ -17,6 +17,21 @@ public class ScenarioTestFixture
     public const string TestRootEnvironmentVariable = "SCENARIO_TESTS_TESTROOT";
     public const string TargetRidEnvironmentVariable = "SCENARIO_TESTS_TARGETRID";
     public const string PortableRidEnvironmentVariable = "SCENARIO_TESTS_PORTABLERID";
+    public const string BinlogDirEnvironmentVariable = "SCENARIO_TESTS_BINLOG_DIR";
+
+    public string? SdkVersion { get; }
+
+    public string DotNetRoot { get; }
+
+    public string TestRoot { get; }
+
+    public string TargetRid { get; }
+
+    public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
+
+    public string? PortableRid { get; }
+
+    public string? BinlogDir { get; }
 
     public ScenarioTestFixture()
     {
@@ -25,10 +40,11 @@ public class ScenarioTestFixture
         string? sdkVersion = Environment.GetEnvironmentVariable(SdkVersionEnvironmentVariable);
         string? targetRid = Environment.GetEnvironmentVariable(TargetRidEnvironmentVariable);
         string? portableRid = Environment.GetEnvironmentVariable(PortableRidEnvironmentVariable);
+        string? binlogDir = Environment.GetEnvironmentVariable(BinlogDirEnvironmentVariable);
 
         if (string.IsNullOrEmpty(dotnetRoot) || string.IsNullOrEmpty(testRoot) || string.IsNullOrEmpty(targetRid))
         {
-            throw new ArgumentException("Please specify SDK root,Test Root, and Target Rid");
+            throw new ArgumentException("Please specify SDK root,Test Root and Target Rid");
         }
 
         SdkVersion = sdkVersion;
@@ -36,12 +52,6 @@ public class ScenarioTestFixture
         TestRoot = testRoot;
         TargetRid = targetRid;
         PortableRid = portableRid;
+        BinlogDir = binlogDir;
     }
-
-    public string? SdkVersion { get; internal set; }
-    public string DotNetRoot { get; set; }
-    public string TestRoot { get; set; }
-    public string TargetRid { get; set; }
-    public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
-    public string? PortableRid { get; set; }
 }

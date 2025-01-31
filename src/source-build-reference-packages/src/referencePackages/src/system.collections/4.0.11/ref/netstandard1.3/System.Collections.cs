@@ -107,7 +107,7 @@ namespace System.Collections.Generic
 
         public TValue this[TKey key] { get { throw null; } set { } }
 
-        public Dictionary<TKey, TValue>.KeyCollection Keys { get { throw null; } }
+        public KeyCollection Keys { get { throw null; } }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
 
@@ -133,7 +133,7 @@ namespace System.Collections.Generic
 
         ICollection IDictionary.Values { get { throw null; } }
 
-        public Dictionary<TKey, TValue>.ValueCollection Values { get { throw null; } }
+        public ValueCollection Values { get { throw null; } }
 
         public void Add(TKey key, TValue value) { }
 
@@ -143,7 +143,7 @@ namespace System.Collections.Generic
 
         public bool ContainsValue(TValue value) { throw null; }
 
-        public Dictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public bool Remove(TKey key) { throw null; }
 
@@ -204,7 +204,7 @@ namespace System.Collections.Generic
 
             public void CopyTo(TKey[] array, int index) { }
 
-            public Dictionary<TKey, TValue>.KeyCollection.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             void ICollection<TKey>.Add(TKey item) { }
 
@@ -248,7 +248,7 @@ namespace System.Collections.Generic
 
             public void CopyTo(TValue[] array, int index) { }
 
-            public Dictionary<TKey, TValue>.ValueCollection.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             void ICollection<TValue>.Add(TValue item) { }
 
@@ -320,7 +320,7 @@ namespace System.Collections.Generic
 
         public void ExceptWith(IEnumerable<T> other) { }
 
-        public HashSet<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public void IntersectWith(IEnumerable<T> other) { }
 
@@ -423,7 +423,7 @@ namespace System.Collections.Generic
 
         public LinkedListNode<T> FindLast(T value) { throw null; }
 
-        public LinkedList<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public bool Remove(T value) { throw null; }
 
@@ -525,7 +525,7 @@ namespace System.Collections.Generic
 
         public void ForEach(Action<T> action) { }
 
-        public List<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public List<T> GetRange(int index, int count) { throw null; }
 
@@ -625,7 +625,7 @@ namespace System.Collections.Generic
 
         public void Enqueue(T item) { }
 
-        public Queue<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public T Peek() { throw null; }
 
@@ -669,7 +669,7 @@ namespace System.Collections.Generic
 
         public TValue this[TKey key] { get { throw null; } set { } }
 
-        public SortedDictionary<TKey, TValue>.KeyCollection Keys { get { throw null; } }
+        public KeyCollection Keys { get { throw null; } }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
 
@@ -695,7 +695,7 @@ namespace System.Collections.Generic
 
         ICollection IDictionary.Values { get { throw null; } }
 
-        public SortedDictionary<TKey, TValue>.ValueCollection Values { get { throw null; } }
+        public ValueCollection Values { get { throw null; } }
 
         public void Add(TKey key, TValue value) { }
 
@@ -707,7 +707,7 @@ namespace System.Collections.Generic
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index) { }
 
-        public SortedDictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public bool Remove(TKey key) { throw null; }
 
@@ -766,7 +766,7 @@ namespace System.Collections.Generic
 
             public void CopyTo(TKey[] array, int index) { }
 
-            public SortedDictionary<TKey, TValue>.KeyCollection.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             void ICollection<TKey>.Add(TKey item) { }
 
@@ -810,7 +810,7 @@ namespace System.Collections.Generic
 
             public void CopyTo(TValue[] array, int index) { }
 
-            public SortedDictionary<TKey, TValue>.ValueCollection.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             void ICollection<TValue>.Add(TValue item) { }
 
@@ -974,7 +974,7 @@ namespace System.Collections.Generic
 
         public void ExceptWith(IEnumerable<T> other) { }
 
-        public SortedSet<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public virtual SortedSet<T> GetViewBetween(T lowerValue, T upperValue) { throw null; }
 
@@ -1044,7 +1044,7 @@ namespace System.Collections.Generic
 
         public void CopyTo(T[] array, int arrayIndex) { }
 
-        public Stack<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public T Peek() { throw null; }
 
