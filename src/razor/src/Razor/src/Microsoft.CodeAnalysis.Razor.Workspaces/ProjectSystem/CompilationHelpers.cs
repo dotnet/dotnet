@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -46,14 +45,7 @@ internal static class CompilationHelpers
         var projectItem = projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
 
         using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
-
-        foreach (var feature in projectEngine.GetFeatures<IImportProjectFeature>())
-        {
-            if (feature.GetImports(projectItem) is { } featureImports)
-            {
-                importProjectItems.AddRange(featureImports);
-            }
-        }
+        projectEngine.CollectImports(projectItem, ref importProjectItems.AsRef());
 
         if (importProjectItems.Count == 0)
         {
@@ -71,9 +63,8 @@ internal static class CompilationHelpers
                 continue;
             }
 
-            if (importProjectItem.PhysicalPath is null)
+            if (importProjectItem is DefaultImportProjectItem)
             {
-                // This is a default import.
                 var importSource = importProjectItem.GetSource()
                     .AssumeNotNull($"Encountered a default import with a missing {nameof(RazorSourceDocument)}: {importProjectItem.FilePath}.");
 
@@ -86,10 +77,6 @@ internal static class CompilationHelpers
                 var importSource = RazorSourceDocument.Create(text, properties);
 
                 importSources.Add(importSource);
-            }
-            else if (importProjectItem.Exists)
-            {
-                Debug.Fail($"Encountered an import that was not a default import or tracked in the project system: {importProjectItem.PhysicalPath}.");
             }
         }
 

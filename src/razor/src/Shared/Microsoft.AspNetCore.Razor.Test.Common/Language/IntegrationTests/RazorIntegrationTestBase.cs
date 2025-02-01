@@ -46,7 +46,7 @@ public class RazorIntegrationTestBase
     {
         AdditionalSyntaxTrees = new List<SyntaxTree>();
         AdditionalRazorItems = new List<RazorProjectItem>();
-        ImportItems = new List<RazorProjectItem>();
+        ImportItems = ImmutableArray.CreateBuilder<RazorProjectItem>();
 
         BaseCompilation = DefaultBaseCompilation;
         Configuration = RazorConfiguration.Default;
@@ -60,7 +60,7 @@ public class RazorIntegrationTestBase
 
     internal List<RazorProjectItem> AdditionalRazorItems { get; }
 
-    internal List<RazorProjectItem> ImportItems { get; }
+    internal ImmutableArray<RazorProjectItem>.Builder ImportItems { get; }
 
     internal List<SyntaxTree> AdditionalSyntaxTrees { get; }
 
@@ -115,7 +115,7 @@ public class RazorIntegrationTestBase
                 b.Features.Add(new SupportLocalizedComponentNames());
             }
 
-            b.Features.Add(new TestImportProjectFeature(ImportItems));
+            b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
 
             if (LineEnding != null)
             {
@@ -522,21 +522,6 @@ public class RazorIntegrationTestBase
         public void Configure(RazorCodeGenerationOptionsBuilder options)
         {
             options.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
-        }
-    }
-
-    private class TestImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
-    {
-        private readonly List<RazorProjectItem> _imports;
-
-        public TestImportProjectFeature(List<RazorProjectItem> imports)
-        {
-            _imports = imports;
-        }
-
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
-        {
-            return _imports;
         }
     }
 }

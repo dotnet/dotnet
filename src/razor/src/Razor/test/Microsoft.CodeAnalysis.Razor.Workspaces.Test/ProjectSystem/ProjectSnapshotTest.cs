@@ -27,7 +27,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
     {
-        builder.SetImportFeature(new TestImportProjectFeature());
+        builder.SetImportFeature(new TestImportProjectFeature(HierarchicalImports.Legacy));
     }
 
     [Fact]

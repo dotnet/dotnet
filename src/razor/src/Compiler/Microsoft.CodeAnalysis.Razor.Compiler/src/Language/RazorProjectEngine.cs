@@ -437,13 +437,53 @@ public class RazorProjectEngine
         builder.Features.Add(new ComponentMarkupEncodingPass(razorLanguageVersion));
     }
 
+    internal void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> importItems)
+    {
+        foreach (var importProjectFeature in GetFeatures<IImportProjectFeature>())
+        {
+            importProjectFeature.CollectImports(projectItem, ref importItems);
+        }
+    }
+
+    internal ImmutableArray<RazorProjectItem> GetImports(RazorProjectItem projectItem)
+    {
+        using var imports = new PooledArrayBuilder<RazorProjectItem>();
+        CollectImports(projectItem, ref imports.AsRef());
+
+        return imports.ToImmutable();
+    }
+
+    internal ImmutableArray<RazorProjectItem> GetImports(RazorProjectItem projectItem, Func<RazorProjectItem, bool> predicate)
+    {
+        using var imports = new PooledArrayBuilder<RazorProjectItem>();
+        CollectImports(projectItem, ref imports.AsRef());
+
+        if (imports.Count == 0)
+        {
+            return [];
+        }
+
+        using var result = new PooledArrayBuilder<RazorProjectItem>(capacity: imports.Count);
+
+        foreach (var import in imports)
+        {
+            if (predicate(import))
+            {
+                result.Add(import);
+            }
+        }
+
+        return result.DrainToImmutable();
+    }
+
     private ImmutableArray<RazorSourceDocument> GetImportSources(RazorProjectItem projectItem, bool designTime)
     {
         using var importItems = new PooledArrayBuilder<RazorProjectItem>();
+        CollectImports(projectItem, ref importItems.AsRef());
 
-        foreach (var importProjectFeature in GetFeatures<IImportProjectFeature>())
+        if (importItems.Count == 0)
         {
-            importItems.AddRange(importProjectFeature.GetImports(projectItem));
+            return [];
         }
 
         // Suppress exceptions for design-time requests.

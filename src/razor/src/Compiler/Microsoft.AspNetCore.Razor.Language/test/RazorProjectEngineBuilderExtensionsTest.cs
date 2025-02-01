@@ -16,11 +16,11 @@ public class RazorProjectEngineBuilderExtensionsTest
     {
         // Arrange
         var builder = new RazorProjectEngineBuilder(RazorConfiguration.Default, Mock.Of<RazorProjectFileSystem>());
-        var testFeature1 = Mock.Of<IImportProjectFeature>();
-        var testFeature2 = Mock.Of<IImportProjectFeature>();
+        var testFeature1 = new TestImportProjectFeature();
+        var testFeature2 = new TestImportProjectFeature();
         builder.Features.Add(testFeature1);
         builder.Features.Add(testFeature2);
-        var newFeature = Mock.Of<IImportProjectFeature>();
+        var newFeature = new TestImportProjectFeature();
 
         // Act
         builder.SetImportFeature(newFeature);

@@ -152,6 +152,15 @@ internal static partial class ImmutableArrayExtensions
             var sortHelper = new SortHelper<TKey>(comparison, descending: true);
             array.UnsafeOrderByCore(keySelector, in sortHelper);
         }
+
+        /// <summary>
+        ///  Reverses the elements of this <see cref="ImmutableArray{T}"/>.
+        /// </summary>
+        public void Reverse()
+        {
+            var innerArray = ImmutableCollectionsMarshal.AsArray(array)!;
+            Array.Reverse(innerArray);
+        }
     }
 
     private static ImmutableArray<T> UnsafeOrderCore<T>(this ImmutableArray<T> array, ref readonly SortHelper<T> sortHelper)
