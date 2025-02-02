@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -78,10 +77,6 @@ internal static class CompilationHelpers
                 var importSource = RazorSourceDocument.Create(text, properties);
 
                 importSources.Add(importSource);
-            }
-            else if (importProjectItem.Exists)
-            {
-                Debug.Fail($"Encountered an import that was not a default import or tracked in the project system: {importProjectItem.PhysicalPath}.");
             }
         }
 
