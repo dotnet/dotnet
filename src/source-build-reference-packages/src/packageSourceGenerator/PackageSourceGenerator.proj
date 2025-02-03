@@ -92,8 +92,13 @@
     <Message Text="%0D%0A$(MSBuildProjectName) -> Generating package source for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage))..."
              Importance="high" />
 
-    <!-- Remove the target directory to support regenerate scenario in case existing files are removed. -->
-    <RemoveDir Directories="$(PackageTargetDirectory)" />
+    <!-- Remove the target directory to support regenerate scenario in case existing files are removed.
+         Preserve the prescribed customization files. -->
+    <ItemGroup>
+      <FilesToRemove Include="$(PackageTargetDirectory)**\*.*"
+                     Exclude="$(PackageTargetDirectory)\$(CustomizationsPropsFile);$(PackageTargetDirectory)**\$(CustomizationsSourceFile)" />
+    </ItemGroup>
+    <Delete Files="@(FilesToRemove)" />
   </Target>
 
   <!-- Retrieve compile items, placeholder files, package dependencies and framework references with their target framework. -->

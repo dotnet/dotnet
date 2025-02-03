@@ -4,7 +4,6 @@
     <id>System.Text.Encodings.Web</id>
     <version>8.0.0</version>
     <authors>Microsoft</authors>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <projectUrl>https://dot.net/</projectUrl>
