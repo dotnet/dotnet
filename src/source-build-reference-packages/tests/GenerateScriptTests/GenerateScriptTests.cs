@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
@@ -20,20 +21,20 @@ public class GenerateScriptTests
 
     public static IEnumerable<object[]> Data => new List<object[]>
     {
-        new object[] { "System.Xml.ReaderWriter", "4.0.11", PackageType.Reference },
+        new object[] { "System.Xml.ReaderWriter", "4.3.0", PackageType.Reference },
         new object[] { "Microsoft.Extensions.Logging.Abstractions", "7.0.1", PackageType.Reference },
         new object[] { "Microsoft.CodeAnalysis.CSharp", "3.11.0", PackageType.Reference },
-        new object[] { "System.Security.Cryptography.Pkcs", "7.0.2", PackageType.Reference },
+        new object[] { "System.Security.Cryptography.Encoding", "4.3.0", PackageType.Reference },
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text },
     };
     
     public string SandboxDirectory { get; set; }
     public string RepoRoot { get; set; }
-    public ITestOutputHelper output { get; set; }
+    public ITestOutputHelper Output { get; set; }
 
     public GenerateScriptTests(ITestOutputHelper output)
     {
-        this.output = output;
+        Output = output;
         RepoRoot = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.IndexOf("artifacts"));
         SandboxDirectory = Path.Combine(Environment.CurrentDirectory, $"GenerateTests-{DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()}");
         Directory.CreateDirectory(SandboxDirectory);
@@ -45,21 +46,38 @@ public class GenerateScriptTests
     {
         string command = Path.Combine(RepoRoot, RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "generate.cmd" : "generate.sh");
         string arguments = $"-p {package},{version} -x -d {SandboxDirectory}";
-        string packageSrcDirectory = string.Empty;
-        string sandboxPackageGeneratedDirecotry = Path.Combine(SandboxDirectory, package.ToLower(), version);
+        string pkgSrcDirectory;
+        string pkgSandboxDirectory = Path.Combine(SandboxDirectory, package.ToLower(), version);
 
         switch (type)
         {
             case PackageType.Reference:
-                packageSrcDirectory = Path.Combine(RepoRoot, "src", "referencePackages", "src", package.ToLower(), version);
+                pkgSrcDirectory = Path.Combine(RepoRoot, "src", "referencePackages", "src", package.ToLower(), version);
                 break;
             case PackageType.Text:
                 arguments += " -t text";
-                packageSrcDirectory = Path.Combine(RepoRoot, "src", "textOnlyPackages", "src", package.ToLower(), version);
+                pkgSrcDirectory = Path.Combine(RepoRoot, "src", "textOnlyPackages", "src", package.ToLower(), version);
                 break;
+            default:
+                throw new ArgumentException($"Unknown package type '{type}'");
         }
 
-        ExecuteHelper.ExecuteProcess(command, arguments, output);
-        Assert.Empty(ExecuteHelper.ExecuteProcess("git", $"diff --no-index {packageSrcDirectory} {sandboxPackageGeneratedDirecotry}", output, true).StdOut);
+        Assert.True(Directory.Exists(pkgSrcDirectory), $"Source directory '{pkgSrcDirectory}' does not exist.");
+
+        ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, Output);
+
+        (Process Process, string StdOut, string StdErr) result = 
+            ExecuteHelper.ExecuteProcess("git", $"diff --no-index {pkgSrcDirectory} {pkgSandboxDirectory}", Output, true);
+
+        string diff = result.StdOut;
+        if (diff != string.Empty)
+        {
+            Assert.Fail($"Regenerated package '{package}, {version}' does not match the checked-in content.  {Environment.NewLine}"
+                    + $"{diff}{Environment.NewLine}");
+        }
+        else if (result.Process.ExitCode != 0)
+        {
+            Assert.Fail($"Unexpected git diff failure on '{package}, {version}'.  {Environment.NewLine}{result.StdErr}{Environment.NewLine}");
+        }
     }
 }
