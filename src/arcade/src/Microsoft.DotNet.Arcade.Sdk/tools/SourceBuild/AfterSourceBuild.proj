@@ -7,6 +7,7 @@
 
   <PropertyGroup>
     <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
+    <ReportPrebuiltUsage Condition="'$(ReportPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">true</ReportPrebuiltUsage>
   </PropertyGroup>
 
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
@@ -62,6 +63,7 @@
   </Target>
 
   <Target Name="ReportPrebuiltUsage"
+          Condition="'$(ReportPrebuiltUsage)' == 'true'"
           DependsOnTargets="WritePrebuiltUsageData">
     <PropertyGroup>
       <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
@@ -85,7 +87,7 @@
       OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
       ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
-      Condition="'$(DotNetBuildOrchestrator)' != 'true' and '$(DotNetBuildSourceOnly)' == 'true'" />
+      Condition="'$(DotNetBuildOrchestrator)' != 'true'" />
   </Target>
 
   <!--

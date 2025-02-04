@@ -22,6 +22,7 @@
         - ChecksumPath                    The destination path to generate a checksum file for the artifact. Set the `RelativeBlobPathParent`
                                           property if the RelativeBlobPath for the generate checksum should be automatically set.
         - PublishFlatContainer            By default artifacts are published to blob artifacts. Set to false to publish to package artifacts.
+        - Kind                            [Package, Blob]. If set, overrides PublishFlatContainer usage. If not, then PublishFlatContainer=false == Package, true == Blob.
         - RelativeBlobPath                The relative blob path when publishing to blob artifacts.
         - IsShipping                      Set to false to mark the artifact as non-shipping. Defaults to true.
   -->
@@ -101,8 +102,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
-    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" PublishFlatContainer="false" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" PublishFlatContainer="false" />
+    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" Kind="Package" />
+    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" Kind="Package" />
   </ItemGroup>
 
   <!-- Allow for repo specific Publish properties such as add additional files to be published -->
@@ -116,7 +117,10 @@
   <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
     <ItemGroup>
       <!-- Exclude all existing *.symbols.nupkg in source-only build - we create a unified symbols archive instead. -->
-      <_ExistingSymbolPackage Include="@(Artifact)" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))" />
+      <_ExistingSymbolPackage Include="@(Artifact)" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))">
+        <!-- Update the kind of the symbol packages to blob -->
+        <Kind>Blob</Kind>
+      </_ExistingSymbolPackage>
       <_PackageToPublish Include="@(Artifact)" Exclude="@(_ExistingSymbolPackage)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' == '.nupkg'" />
     </ItemGroup>
 
@@ -140,6 +144,7 @@
                                 Condition="'%(_PackageToPublish.SymbolPackageToGenerate)' != ''">
         <OriginalPackage>%(_PackageToPublish.Identity)</OriginalPackage>
         <IsShipping>%(_PackageToPublish.IsShipping)</IsShipping>
+        <Kind>Blob</Kind>
       </_SymbolPackageToGenerate>
     </ItemGroup>
 
@@ -183,6 +188,7 @@
       <GenerateChecksumItemsWithDestinationPath Include="@(GenerateChecksumItems -> '%(DestinationPath)')" />
       <Artifact Include="@(GenerateChecksumItemsWithDestinationPath)">
         <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent.TrimEnd('/'))/%(Filename)%(Extension)</RelativeBlobPath>
+        <Kind>Blob</Kind>
       </Artifact>
     </ItemGroup>
   </Target>
@@ -235,12 +241,18 @@
       <ItemsToPushToBlobFeed Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' != '.nupkg'" />
     </ItemGroup>
 
+    <!-- Update/add attributes of ItemsToPushToBlobFeed if they were not provided. -->
     <ItemGroup>
       <ItemsToPushToBlobFeed>
         <!-- Default artifact visibility is External -->
         <Visibility Condition="'%(ItemsToPushToBlobFeed.Visibility)' == ''">$([MSBuild]::ValueOrDefault('$(DefaultArtifactVisibility)', 'External'))</Visibility>
         <!-- Default to IsShipping=true -->
         <IsShipping Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == ''">true</IsShipping>
+        <!-- An item is a Blob if Kind wasn't already set, and PublishFlatContainer is true.
+             An item is a Package if Kind wasn't already set, and PublishFlatContainer is false or not set.
+             An item is a Package if Kind wasn't already set, and PublishFlatContainer is not set. -->
+        <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' == 'true'">Blob</Kind>
+        <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' != 'true'">Package</Kind>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 

@@ -10,6 +10,11 @@
   <ItemDefinitionGroup>
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
+      <!-- Possible values: Blob, Package -->
+      <!-- Currently unset, indicating that a repo hasn't started using this property. If it's set, then it
+           wins over PublishFlatContaner. If it is not set, then PublishFlatContainer wins.
+           After existing usage of PublishFlatContainer is no longer around, set to "Blob" -->
+      <Kind></Kind>
       <IsShipping>true</IsShipping>
     </Artifact>
   </ItemDefinitionGroup>
