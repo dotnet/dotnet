@@ -267,7 +267,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private static int LineDelta(SourceText text, IEnumerable<TextChange> changes, out int firstLine, out int lastLine)
     {
-        firstLine = 0;
+        firstLine = int.MaxValue;
         lastLine = 0;
 
         // Let's compute the number of newlines added/removed by the incoming changes.

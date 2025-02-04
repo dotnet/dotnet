@@ -168,31 +168,31 @@
           },
           "map": [
             {
-              "result": "trace",
+              "result": "none",
               "match": 0
             },
             {
-              "result": "debug",
+              "result": "trace",
               "match": 1
             },
             {
-              "result": "information",
+              "result": "debug",
               "match": 2
             },
             {
-              "result": "warning",
+              "result": "information",
               "match": 3
             },
             {
-              "result": "error",
+              "result": "warning",
               "match": 4
             },
             {
-              "result": "critical",
+              "result": "error",
               "match": 5
             },
             {
-              "result": "none",
+              "result": "critical",
               "match": 6
             }
           ]
