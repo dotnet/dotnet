@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Only CLS-compliant members can be abstract -->
+    <NoWarn>$(NoWarn);CS3011</NoWarn>
+  </PropertyGroup>
+</Project>

@@ -24,7 +24,8 @@
         <dependency id="System.Resources.Extensions" version="7.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Pkcs" version="7.0.2" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Xml" version="7.0.1" exclude="Build,Analyzers" />
-        <!-- <dependency id="Microsoft.VisualStudio.Setup.Configuration.Interop" version="3.2.2146" exclude="Build,Analyzers" /> -->
+        <!-- Microsoft.VisualStudio.Setup.Configuration.Interop was accidentally exposed by the product.
+        <dependency id="Microsoft.VisualStudio.Setup.Configuration.Interop" version="3.2.2146" exclude="Build,Analyzers" /> -->
         <dependency id="System.Configuration.ConfigurationManager" version="7.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.0">

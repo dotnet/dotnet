@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <!-- Needs additional APIs that don't exist in the contract. -->
-    <Compile Include="$(MSBuildThisFileDirectory)System.Runtime.InteropServices.Manual.cs" />
-
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.0" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
@@ -43,9 +40,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <!-- Needs additional APIs that don't exist in the contract. -->
-    <Compile Include="$(MSBuildThisFileDirectory)System.Runtime.InteropServices.Manual.cs" />
-
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.0" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />

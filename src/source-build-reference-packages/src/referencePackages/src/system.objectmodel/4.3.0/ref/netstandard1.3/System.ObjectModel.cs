@@ -64,8 +64,6 @@ namespace System.Collections.ObjectModel
 
         protected virtual event ComponentModel.PropertyChangedEventHandler PropertyChanged { add { } remove { } }
 
-        event System.ComponentModel.PropertyChangedEventHandler System.ComponentModel.INotifyPropertyChanged.PropertyChanged { add { } remove { } }
-
         protected IDisposable BlockReentrancy() { throw null; }
 
         protected void CheckReentrancy() { }
@@ -227,9 +225,6 @@ namespace System.Collections.ObjectModel
         protected virtual event Specialized.NotifyCollectionChangedEventHandler CollectionChanged { add { } remove { } }
 
         protected virtual event ComponentModel.PropertyChangedEventHandler PropertyChanged { add { } remove { } }
-
-        event System.Collections.Specialized.NotifyCollectionChangedEventHandler System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged { add { } remove { } }
-        event System.ComponentModel.PropertyChangedEventHandler System.ComponentModel.INotifyPropertyChanged.PropertyChanged { add { } remove { } }
 
         protected virtual void OnCollectionChanged(Specialized.NotifyCollectionChangedEventArgs args) { }
 

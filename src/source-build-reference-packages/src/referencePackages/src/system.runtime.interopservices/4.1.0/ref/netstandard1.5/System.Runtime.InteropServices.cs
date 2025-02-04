@@ -142,10 +142,6 @@ namespace System.Runtime.InteropServices
         public override void AddEventHandler(object target, Delegate handler) { }
 
         public override void RemoveEventHandler(object target, Delegate handler) { }
-
-        public override System.Reflection.MethodInfo GetAddMethod(bool nonPublic) { throw null; }
-        public override System.Reflection.MethodInfo GetRaiseMethod(bool nonPublic) { throw null; }
-        public override System.Reflection.MethodInfo GetRemoveMethod(bool nonPublic) { throw null; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
