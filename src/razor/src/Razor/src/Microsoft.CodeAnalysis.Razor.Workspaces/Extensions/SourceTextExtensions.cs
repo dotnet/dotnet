@@ -47,7 +47,7 @@ internal static class SourceTextExtensions
         => text.GetLinePositionSpan(TextSpan.FromBounds(start, end));
 
     public static int GetPosition(this SourceText text, LinePosition position)
-        => text.Lines.GetPosition(position);
+        => text.GetRequiredAbsoluteIndex(position);
 
     public static int GetPosition(this SourceText text, int line, int character)
         => text.GetPosition(new LinePosition(line, character));

@@ -138,6 +138,36 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         Assert.Equal(1, response.Position.Character);
     }
 
+    [Fact]
+    public async Task Handle_AfterLastLineCharacterZero()
+    {
+        // Arrange
+        var documentPath = new Uri("C:/path/to/document.cshtml");
+        var codeDocument = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@",
+            projectedCSharpSource: "/* CSharp */",
+            sourceMappings: [new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 12))]);
+        codeDocument.SetUnsupported();
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var languageEndpoint = new RazorLanguageQueryEndpoint(_documentMappingService, LoggerFactory);
+        var request = new RazorLanguageQueryParams()
+        {
+            Uri = documentPath,
+            Position = VsLspFactory.CreatePosition(1, 0),
+        };
+
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(RazorLanguageKind.Html, response.Kind);
+        Assert.Equal(1, response.Position.Line);
+        Assert.Equal(0, response.Position.Character);
+    }
+
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)
     {
         var codeDocument = CreateCodeDocument(razorSource, tagHelpers: []);

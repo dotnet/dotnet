@@ -19,6 +19,16 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_generateMethodTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
     private readonly static Guid s_generateAsyncMethodTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
     private readonly static Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
+    private readonly static Guid s_wrapAttributesTelemetryId = new("1df50ba6-4ed1-40d8-8fe2-1c4c1b08e8b5");
+
+    public static RazorVSInternalCodeAction CreateWrapAttributes(RazorCodeActionResolutionParams resolutionParams)
+        => new RazorVSInternalCodeAction
+        {
+            Title = SR.Wrap_attributes,
+            Data = JsonSerializer.SerializeToElement(resolutionParams),
+            TelemetryId = s_wrapAttributesTelemetryId,
+            Name = LanguageServerConstants.CodeActions.WrapAttributes,
+        };
 
     public static RazorVSInternalCodeAction CreatePromoteUsingDirective(string importsFileName, RazorCodeActionResolutionParams resolutionParams)
         => new RazorVSInternalCodeAction
