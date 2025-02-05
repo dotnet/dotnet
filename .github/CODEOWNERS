@@ -398,8 +398,8 @@
 /src/sdk/src/WasmSdk @lewing @akoeplinger @pavelsavara @maraf
 
 # Area-Format
-/src/sdk/src/Cli/dotnet/commands/dotnet-format @sharwell @arkalyanms
-/src/sdk/test/dotnet-format.Tests @sharwell @arkalyanms
+/src/sdk/src/Cli/dotnet/commands/dotnet-format @sharwell @arunchndr
+/src/sdk/test/dotnet-format.Tests @sharwell @arunchndr
 
 # Area-NuGet
 /src/sdk/src/Cli/dotnet/commands/dotnet-add/dotnet-add-package @dotnet/nuget-team
@@ -444,12 +444,12 @@
 /src/sdk/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.ClickOnce.targets @sujitnayak
 
 # Area-Watch
-/src/sdk/test/TestAssets/TestProjects/Watch*/ @tmat @arkalyanms @dotnet/roslyn-ide
-/src/sdk/test/dotnet-watch.Tests/ @tmat @arkalyanms @dotnet/roslyn-ide
+/src/sdk/test/TestAssets/TestProjects/Watch*/ @tmat @arunchndr @dotnet/roslyn-ide
+/src/sdk/test/dotnet-watch.Tests/ @tmat @arunchndr @dotnet/roslyn-ide
 /src/sdk/test/Microsoft.AspNetCore.Watch.BrowserRefresh.Tests/ @dotnet/aspnet-blazor-eng
-/src/sdk/src/BuiltInTools/* @tmat @arkalyanms @dotnet/roslyn-ide
+/src/sdk/src/BuiltInTools/* @tmat @arunchndr @dotnet/roslyn-ide
 /src/sdk/src/BuiltInTools/BrowserRefresh @dotnet/aspnet-blazor-eng
-/src/sdk/src/BuiltInTools/AspireService @BillHiebert @dotnet/aspnet-blazor-eng
+/src/sdk/src/BuiltInTools/AspireService @dotnet/aspnet-blazor-eng
 
 # Compatibility tools owned by runtime team
 /src/sdk/src/Compatibility/ @dotnet/area-infrastructure-libraries
