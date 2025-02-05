@@ -134,6 +134,11 @@
         <target state="translated">Comportement de mappage inconnu</target>
         <note />
       </trans-unit>
+      <trans-unit id="Wrap_attributes">
+        <source>Wrap attributes</source>
+        <target state="new">Wrap attributes</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

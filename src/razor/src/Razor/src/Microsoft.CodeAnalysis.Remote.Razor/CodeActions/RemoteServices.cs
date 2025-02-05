@@ -52,6 +52,9 @@ internal sealed class OOPGenerateMethodCodeActionProvider : GenerateMethodCodeAc
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPPromoteUsingDirectiveCodeActionProvider : PromoteUsingCodeActionProvider;
 
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPWrapAttributesCodeActionProvider : WrapAttributesCodeActionProvider;
+
 [Export(typeof(ICSharpCodeActionProvider)), Shared]
 internal sealed class OOPTypeAccessibilityCodeActionProvider : TypeAccessibilityCodeActionProvider;
 
@@ -95,6 +98,9 @@ internal sealed class OOPGenerateMethodCodeActionResolver(
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]
 internal sealed class OOPPromoteUsingDirectiveCodeActionResolver(IFileSystem fileSystem) : PromoteUsingCodeActionResolver(fileSystem);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+internal sealed class OOPWrapAttributesCodeActionResolver : WrapAttributesCodeActionResolver;
 
 [Export(typeof(ICSharpCodeActionResolver)), Shared]
 [method: ImportingConstructor]

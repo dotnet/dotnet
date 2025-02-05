@@ -1159,6 +1159,98 @@ public class CohostCodeActionsEndpointTest(FuseTestContext context, ITestOutputH
                     """)]);
     }
 
+    [FuseFact]
+    public async Task WrapAttributes()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    <div [||]bar="Baz" Zip="Zap" checked @onclick="foo" Pop="Pap">
+                        <div></div>
+                    </div>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <div bar="Baz"
+                         Zip="Zap"
+                         checked
+                         @onclick="foo"
+                         Pop="Pap">
+                        <div></div>
+                    </div>
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
+
+    [FuseFact]
+    public async Task WrapAttributes_Component()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    <EditForm [||]bar="Baz" Zip="Zap" checked @onclick="foo" Pop="Pap" />
+                </div>
+                """,
+            expected: """
+                <div>
+                    <EditForm bar="Baz"
+                              Zip="Zap"
+                              checked
+                              @onclick="foo"
+                              Pop="Pap" />
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
+
+    [FuseFact]
+    public async Task WrapAttributes_Whitespace()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    <Foo Bar="Baz"        Zip="Za[||]p"               Pop="Pap" />
+                </div>
+                """,
+            expected: """
+                <div>
+                    <Foo Bar="Baz"
+                         Zip="Zap"
+                         Pop="Pap" />
+                </div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
+
+    [FuseFact]
+    public async Task WrapAttributes_MultiLine()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    <Foo Bar="Baz" Zip="Za[||]p"
+                         Pop="Pap" />
+                </div>
+                """,
+            expected: null,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
+
+    [FuseFact]
+    public async Task WrapAttributes_OneAttribute()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div>
+                    <Foo Zip="Za[||]p" />
+                </div>
+                """,
+            expected: null,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
+
     private async Task VerifyCodeActionAsync(TestCode input, string? expected, string codeActionName, int childActionIndex = 0, string? fileKind = null, (string filePath, string contents)[]? additionalFiles = null, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
@@ -1181,7 +1273,7 @@ public class CohostCodeActionsEndpointTest(FuseTestContext context, ITestOutputH
 
         var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
 
-        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex);
+        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex, expectOffer: expected is not null);
 
         if (codeAction is null)
         {
@@ -1196,7 +1288,7 @@ public class CohostCodeActionsEndpointTest(FuseTestContext context, ITestOutputH
         await VerifyCodeActionResultAsync(document, workspaceEdit, expected, additionalExpectedFiles);
     }
 
-    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex)
+    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)
     {
         var requestInvoker = new TestLSPRequestInvoker();
         var endpoint = new CohostCodeActionsEndpoint(RemoteServiceInvoker, ClientCapabilitiesService, TestHtmlDocumentSynchronizer.Instance, requestInvoker, NoOpTelemetryReporter.Instance);
@@ -1244,6 +1336,13 @@ public class CohostCodeActionsEndpointTest(FuseTestContext context, ITestOutputH
         Assert.NotEmpty(result);
 
         var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeActionName || ((RazorVSInternalCodeAction)e.Value!).Title == codeActionName).Value;
+
+        if (!expectOffer)
+        {
+            Assert.Null(codeActionToRun);
+            return null;
+        }
+
         AssertEx.NotNull(codeActionToRun, $"""
             Could not find code action with name or title '{codeActionName}'.
 
