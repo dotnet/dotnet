@@ -196,4 +196,7 @@
   <data name="Promote_using_directive_to" xml:space="preserve">
     <value>Promote using directive to {0}</value>
   </data>
+  <data name="Wrap_attributes" xml:space="preserve">
+    <value>Wrap attributes</value>
+  </data>
 </root>

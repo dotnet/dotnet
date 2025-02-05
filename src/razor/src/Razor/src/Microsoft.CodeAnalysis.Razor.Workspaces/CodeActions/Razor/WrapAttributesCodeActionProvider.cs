@@ -1,0 +1,124 @@
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT license. See License.txt in the project root for license information.
+
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Text;
+
+namespace Microsoft.CodeAnalysis.Razor.CodeActions;
+
+internal class WrapAttributesCodeActionProvider : IRazorCodeActionProvider
+{
+    public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    {
+        if (context.HasSelection)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+        }
+
+        var syntaxTree = context.CodeDocument.GetSyntaxTree();
+        if (syntaxTree?.Root is null)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+        }
+
+        var owner = syntaxTree.Root.FindNode(TextSpan.FromBounds(context.StartAbsoluteIndex, context.EndAbsoluteIndex));
+        if (owner is null)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+        }
+
+        var attributes = FindAttributes(owner);
+        if (attributes.Count == 0)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+        }
+
+        var first = true;
+        var firstAttributeLine = 0;
+        var indentSize = 0;
+        var sourceText = context.SourceText;
+
+        using var newLinePositions = new PooledArrayBuilder<int>(attributes.Count);
+        foreach (var attribute in attributes)
+        {
+            var linePositionSpan = attribute.GetLinePositionSpan(context.CodeDocument.Source);
+
+            if (first)
+            {
+                firstAttributeLine = linePositionSpan.Start.Line;
+                sourceText.TryGetFirstNonWhitespaceOffset(attribute.Span, out var indentSizeOffset);
+                indentSize = linePositionSpan.Start.Character + indentSizeOffset;
+                first = false;
+            }
+            else
+            {
+                if (linePositionSpan.Start.Line != firstAttributeLine)
+                {
+                    return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+                }
+
+                if (!sourceText.TryGetFirstNonWhitespaceOffset(attribute.Span, out var startOffset))
+                {
+                    continue;
+                }
+
+                newLinePositions.Add(attribute.SpanStart + startOffset);
+            }
+        }
+
+        if (newLinePositions.Count == 0)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
+        }
+
+        var data = new WrapAttributesCodeActionParams
+        {
+            IndentSize = indentSize,
+            NewLinePositions = newLinePositions.ToArray()
+        };
+
+        var resolutionParams = new RazorCodeActionResolutionParams()
+        {
+            TextDocument = context.Request.TextDocument,
+            Action = LanguageServerConstants.CodeActions.WrapAttributes,
+            Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = context.DelegatedDocumentUri,
+            Data = data
+        };
+
+        var action = RazorCodeActionFactory.CreateWrapAttributes(resolutionParams);
+
+        return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>([action]);
+    }
+
+    private AspNetCore.Razor.Language.Syntax.SyntaxList<RazorSyntaxNode> FindAttributes(AspNetCore.Razor.Language.Syntax.SyntaxNode owner)
+    {
+        foreach (var node in owner.AncestorsAndSelf())
+        {
+            if (node is MarkupStartTagSyntax startTag)
+            {
+                return startTag.Attributes;
+            }
+            else if (node is MarkupTagHelperStartTagSyntax tagHelperElement)
+            {
+                return tagHelperElement.Attributes;
+            }
+            else if (node is MarkupElementSyntax or MarkupTagHelperElementSyntax)
+            {
+                // If we get as high as the element, we're done looking
+                break;
+            }
+        }
+
+        return [];
+    }
+}
