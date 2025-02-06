@@ -20,39 +20,39 @@ namespace ScenarioTests
 
         public static async Task<int> Main(string[] args)
         {
-            var rootCommand = new RootCommand("Scenario test runner");
+            var rootCommand = new CliRootCommand("Scenario test runner");
 
-            Option<bool> listTestsOption = new("--list")
+            CliOption<bool> listTestsOption = new("--list")
             {
                 Description = "List tests that would be run, without running them."
             };
-            Option<List<string>> noTraitsOption = new("--no-traits")
+            CliOption<List<string>> noTraitsOption = new("--no-traits")
             {
                 Description = "Do not run tests with the following traits. Format X=Y"
             };
-            Option<List<string>> traitsOption = new("--traits")
+            CliOption<List<string>> traitsOption = new("--traits")
             {
                 Description = "Only run tests with the following traits. Format X=Y"
             };
-            Option<bool> offlineOnlyOption = new("--offline-only")
+            CliOption<bool> offlineOnlyOption = new("--offline-only")
             {
                 Description = "Only run tests that can be run in offline mode. Implies --notraits 'resources=online'"
             };
-            Option<string> xmlResultsPathOption = new("--xml")
+            CliOption<string> xmlResultsPathOption = new("--xml")
             {
                 Description = "XML result file."
             };
-            Option<string> testRootOption = new("--test-root")
+            CliOption<string> testRootOption = new("--test-root")
             {
                 DefaultValueFactory = (_) => Directory.CreateTempSubdirectory().FullName,
                 Description = "Directory used for temporary files when running tests"
             };
-            Option<bool> noCleanTestRoot = new("--no-cleanup")
+            CliOption<bool> noCleanTestRoot = new("--no-cleanup")
             {
                 Description = "Do not cleanup the test root after execution."
             };
 
-            Option<string> dotnetRootOption = new("--dotnet-root")
+            CliOption<string> dotnetRootOption = new("--dotnet-root")
             {
                 Description = "dotnet root to run tests against.",
                 Required = true
@@ -66,23 +66,23 @@ namespace ScenarioTests
                 }
             });
 
-            Option<string> sdkVersionOption = new("--sdk-version")
+            CliOption<string> sdkVersionOption = new("--sdk-version")
             {
                 Description = "Version of SDK to use to run tests against. Optional. Otherwise uses the default SDK at the dotnet root."
             };
 
-            Option<string> targetRidOption = new("--target-rid")
+            CliOption<string> targetRidOption = new("--target-rid")
             {
                 Description = "Target rid for tests requiring one (e.g. self-contained publish). If omitted, uses the target rid of the executing application",
                 DefaultValueFactory = (_) => RuntimeInformation.RuntimeIdentifier
             };
 
-            Option<string> portableRidOption = new("--portable-rid")
+            CliOption<string> portableRidOption = new("--portable-rid")
             {
                 Description = "Portable rid for tests requiring one (e.g. self-contained publish)."
             };
 
-            Option<string> binlogDirOption = new("--binlog-dir")
+            CliOption<string> binlogDirOption = new("--binlog-dir")
             {
                 Description = "Directory to store binlogs in. If omitted, binlogs are stored in the generated projecgt directory."
             };
