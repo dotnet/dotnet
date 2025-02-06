@@ -20,6 +20,7 @@
     <PackAsTool>true</PackAsTool>
     <!-- Allow test apps to be invoked with a newer SDK. -->
     <RollForward>Major</RollForward>
+    <IsShipping>false</IsShipping>
   </PropertyGroup>
 
   <ItemGroup>
