@@ -4,8 +4,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building from source or inside the VMR as it doesn't build correctly on non-Windows. -->
-    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">true</IsPackable>
+    <!-- Don't pack on non-Windows as it doesn't build correctly. -->
+    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.TestHost.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.TestHost</PackageId>
