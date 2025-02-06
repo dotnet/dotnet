@@ -33,6 +33,7 @@
     <SourceControlInformationFeatureSupported>false</SourceControlInformationFeatureSupported>
     <Configuration>Release</Configuration>
     <EnableSourceLink>false</EnableSourceLink>
+    <NuGetAudit>false</NuGetAudit>
 
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>

@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System;
 
@@ -28,6 +29,13 @@ internal static class TypeExtensions
         while (attributedType.HasElementType)
         {
             attributedType = attributedType.GetElementType()!;
+        }
+
+        if (attributedType == typeof(TimeSpan))
+        {
+            // TimeSpan doesn't have the forwarded attribute, but it is from mscorlib.
+            name = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+            return true;
         }
 
         object[] attributes = attributedType.GetCustomAttributes(typeof(TypeForwardedFromAttribute), inherit: false);
@@ -243,7 +251,7 @@ internal static class TypeExtensions
             assemblyName = type.Assembly.FullName;
         }
 
-        return TypeName.Parse($"{GetTypeFullName(type)}, {assemblyName}");
+        return ToTypeName($"{GetTypeFullName(type)}, {assemblyName}");
 
         static string GetTypeFullName(Type type)
         {
@@ -278,4 +286,12 @@ internal static class TypeExtensions
         type.IsGenericType && !type.IsGenericTypeDefinition && type.GetGenericTypeDefinition() == typeof(Nullable<>)
             ? type.GetGenericArguments()[0]
             : type;
+
+    public static TypeName ToTypeName(ref ValueStringBuilder builder)
+    {
+        using (builder)
+        {
+            return TypeName.Parse(builder.AsSpan());
+        }
+    }
 }

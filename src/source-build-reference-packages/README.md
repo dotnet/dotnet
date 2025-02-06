@@ -103,6 +103,16 @@ a new targeting pack is needed, please [open a new issue](#filing-issues) to dis
 ./generate.sh --type text --package microsoft.build.traversal,3.1.6
 ```
 
+## Regenerating all Packages
+
+As bugs are fixed or enhancements are made to the generate tooling, it may be desirable or necessary to
+regenerate the existing packages. The following commands can be used to generate all of the reference packages.
+
+``` bash
+find src/referencePackages/src -mindepth 2 -maxdepth 2 -type d | awk -F'/' '{print $(NF-1)","$NF}' > packages.csv
+./generate.sh -x -c packages.csv
+```
+
 ## Vulnerable Packages
 
 CVEs may exist for reference packages included in this repo. Because the packages do not contain any
