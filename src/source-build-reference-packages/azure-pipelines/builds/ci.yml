@@ -25,6 +25,14 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      componentgovernance:
+        # All of the SBRPs must be ignored because it is possible some of them are for vulnerable versions.
+        # Because they are reference only packages they are not vulnerable themselves.
+        ignoreDirectories: |
+          artifacts/sb,
+          src/referencePackages
+      policheck:
+        enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
