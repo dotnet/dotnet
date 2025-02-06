@@ -5,6 +5,12 @@
   <PropertyGroup>
     <TestRoot Condition="'$(TestRoot)' == ''">$(ArtifactsObjDir)generatedtests/</TestRoot>
     <TestSdkVersion Condition="'$(TestSdkVersion)' == ''">$(NETCoreSdkVersion)</TestSdkVersion>
+    <!-- Allow executing the test host with a specific shared framework version (i.e. 10.0.0-ci).
+         This is necessary as i.e. in the VMR, the live built shared framework has a `-dev` or `-ci`
+         suffix which could be determined as "lower" than the toolset SDK's shared framework that the repo
+         builds with. As an example `10.0.0-ci` and `10.0.0-dev` are considered lower than `10.0.0-preview.1`
+         by the host (in accordance with semver2). -->
+    <TestFxVersionOverride Condition="'$(UseFxVersionOverride)' == 'true' and '$(TestFxVersionOverride)' == ''">$(BundledNETCoreAppPackageVersion)</TestFxVersionOverride>
     <TestBinlogDir Condition="'$(TestBinlogDir)' == ''">$(ArtifactsTestResultsDir)</TestBinlogDir>
   </PropertyGroup>
 
@@ -53,13 +59,15 @@
       <TestArgs>$(TestArgs) $(AdditionalTestArgs)</TestArgs>
 
       <_MSBuildSdksDir>$(DotNetRoot)sdk/$(TestSdkVersion)/Sdks</_MSBuildSdksDir>
+
+      <TestFxVersionOverrideCLI Condition="'$(TestFxVersionOverride)' != ''">--fx-version $(TestFxVersionOverride) </TestFxVersionOverrideCLI>
     </PropertyGroup>
 
     <ItemGroup>
       <_TestEnvVars Include="MSBuildSDKsPath=$(_MSBuildSdksDir)" />
     </ItemGroup>
 
-    <Exec Command='"$(DotNetTool)" "$(TargetPath)" $(TestArgs)'
+    <Exec Command='"$(DotNetTool)" exec $(TestFxVersionOverrideCLI)"$(TargetPath)" $(TestArgs)'
           EnvironmentVariables="@(_TestEnvVars)" />
   </Target>
 
