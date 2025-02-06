@@ -101,18 +101,18 @@
       <Sha>191ba073d94b647f70bce142d16ec96bfd436387</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25081-02">
+    <Dependency Name="Microsoft.Build" Version="17.14.0-preview-25103-04">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>7e539c169a657040eeb768e8115c44f1780e59df</Sha>
+      <Sha>66061962dffd4250199894b385d0ad441a9b32d6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25081-02">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.14.0-preview-25103-04">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>7e539c169a657040eeb768e8115c44f1780e59df</Sha>
+      <Sha>66061962dffd4250199894b385d0ad441a9b32d6</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25081-02">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.14.0-preview-25103-04">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>7e539c169a657040eeb768e8115c44f1780e59df</Sha>
+      <Sha>66061962dffd4250199894b385d0ad441a9b32d6</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.300-beta.25079.4">
@@ -500,15 +500,15 @@
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.607901">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.610402">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>962bb86f95ebece01c2b1de97ed7d4261e00b058</Sha>
+      <Sha>2915d1c17a406e42d6cfd68235c863313e9d7467</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.608004">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.610402">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>f18184030957ae8b02c6cb971ff2a58a06d2e7b1</Sha>
+      <Sha>81b495268ffb3f5cffbe63724ad085f831bcc1b1</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.25077.1">
