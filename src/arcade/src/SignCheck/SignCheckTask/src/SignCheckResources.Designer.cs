@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SignCheck {
+namespace SignCheckTask {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SignCheck {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SignCheck.SignCheckResources", typeof(SignCheckResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SignCheckTask.src.SignCheckResources", typeof(SignCheckResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

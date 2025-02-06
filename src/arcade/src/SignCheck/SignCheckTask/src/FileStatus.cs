@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SignCheck
+namespace SignCheckTask
 {
     [Flags]
     public enum FileStatus

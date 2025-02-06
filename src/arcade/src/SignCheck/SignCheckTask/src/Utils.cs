@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace SignCheck
+namespace SignCheckTask
 {
     public static class Utils
     {

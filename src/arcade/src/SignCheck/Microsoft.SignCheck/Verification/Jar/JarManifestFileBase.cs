@@ -130,7 +130,7 @@ namespace Microsoft.SignCheck.Verification.Jar
         /// <returns>A base64 encoded string of the manifest hash.</returns>
         public string GetManifestDigest(string algorithmName)
         {
-            using (HashAlgorithm hashAlgorithm = HashAlgorithm.Create(algorithmName))
+            using (HashAlgorithm hashAlgorithm = Utils.CreateHashAlgorithm(algorithmName))
             {
                 byte[] hashValue = hashAlgorithm.ComputeHash(new UTF8Encoding().GetBytes(ManifestText.ToCharArray()));
                 return Convert.ToBase64String(hashValue);

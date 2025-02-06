@@ -48,7 +48,7 @@ namespace Microsoft.SignCheck.Verification.Jar
         {
             using (Stream stream = archiveEntry.Open())
             {
-                HashAlgorithm ha = HashAlgorithm.Create(entry.HashAlgorithmName);
+                HashAlgorithm ha = Utils.CreateHashAlgorithm(entry.HashAlgorithmName);
                 byte[] computedHash = ha.ComputeHash(stream);
                 string hashDigest = Convert.ToBase64String(computedHash);
 
@@ -65,7 +65,7 @@ namespace Microsoft.SignCheck.Verification.Jar
 
         private string GetHashDigest(string input, string algorithmName)
         {
-            using (HashAlgorithm hashAlgorithm = HashAlgorithm.Create(algorithmName))
+            using (HashAlgorithm hashAlgorithm = Utils.CreateHashAlgorithm(algorithmName))
             {
                 byte[] hashValue = hashAlgorithm.ComputeHash(new UTF8Encoding().GetBytes(input.ToCharArray()));
                 return Convert.ToBase64String(hashValue);

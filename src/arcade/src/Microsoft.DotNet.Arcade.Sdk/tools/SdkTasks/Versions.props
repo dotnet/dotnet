@@ -7,7 +7,7 @@
     <MicrosoftDotNetMaestroTasksVersion>$(MicrosoftDotNetMaestroTasksVersion)</MicrosoftDotNetMaestroTasksVersion>
     <MicrosoftDotNetBuildTasksVisualStudioVersion>$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksVisualStudioVersion>
     <MicrosoftDotNetBuildTasksFeedVersion Condition="'$(MicrosoftDotNetBuildTasksFeedVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignCheckVersion Condition="'$(MicrosoftDotNetSignCheckVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignCheckVersion>
+    <MicrosoftDotNetSignCheckTaskVersion Condition="'$(MicrosoftDotNetSignCheckTaskVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignCheckTaskVersion>
     <MicrosoftSymbolUploaderBuildTaskVersion>$(MicrosoftSymbolUploaderBuildTaskVersion)</MicrosoftSymbolUploaderBuildTaskVersion>
   </PropertyGroup>
 

@@ -3,22 +3,23 @@
   <Import Project="ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>
-    <Platforms>x86</Platforms>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>
     <!-- This assembly is bundled in the Microsoft.DotNet.SignCheck package and is not mean to be used as a class library package. -->
     <IsPackable>false</IsPackable>
     <IsTool>true</IsTool>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LZMA-SDK" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Condition="$(TargetFramework) != $(NetToolCurrent)"/>
     <PackageReference Include="NuGet.Frameworks" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="System.IO.Packaging" />
     <PackageReference Include="Microsoft.Signed.Wix" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +34,27 @@
   <ItemGroup>
     <Content Include="$(WixInstallPath)\winterop.dll"
              CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+    <!-- Interop -->
+    <Compile Remove="Interop\**" />
+    <EmbeddedResource Remove="Interop\**" />
+
+    <!-- Unsupported file types -->
+    <Compile Remove="Verification\AuthentiCode.cs" />
+    <Compile Remove="Verification\AuthentiCodeVerifier.cs" />
+    <Compile Remove="Verification\CabVerifier.cs" />
+    <Compile Remove="Verification\ExeVerifier.cs" />
+    <Compile Remove="Verification\JarVerifier.cs" />
+    <Compile Remove="Verification\MsiVerifier.cs" />
+    <Compile Remove="Verification\MspVerifier.cs" />
+    <Compile Remove="Verification\MsuVerifier.cs" />
+    <Compile Remove="Verification\PortableExecutableVerifier.cs" />
+    <Compile Remove="Verification\StrongName.cs" />
+    <Compile Remove="Verification\VsixVerifier.cs" />
+    <Compile Remove="Verification\Jar\JarFile.cs" />
+    <Compile Remove="Verification\Jar\JarSignatureFile.cs" />
   </ItemGroup>
 
   <ItemGroup>
