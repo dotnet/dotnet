@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25065.2",
+      "packageVersion": "9.0.0-beta.25077.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "c4bbc67763bf0c5a868862df874079380e647d61"
+      "commitSha": "bac7e1caea791275b7c3ccb4cb75fd6a04a26618"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -79,10 +79,10 @@
       "commitSha": "36abdce12db3b9c9360e8c7711d489204a4eac71"
     },
     {
-      "packageVersion": "4.12.0-3.24631.1",
+      "packageVersion": "4.12.0-3.25076.6",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "da7c6c4257b2f661024b9a506773372a09023eee"
+      "commitSha": "449a6208fa043f61558b00d0d1c4738c6bedf2ee"
     },
     {
       "packageVersion": "3.11.0-beta1.24629.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "75e90fb0be408eefc346cc010355b5a3dcf727d6"
+      "commitSha": "d55826790e70a4974c9782bcdf73e0d612d88ef1"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25056.2",
