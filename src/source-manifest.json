@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25106.1",
+      "packageVersion": "10.0.0-beta.25106.4",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7b55911d7fd2ff7837d4212e7b49541e2f0f8909"
+      "commitSha": "91630b31ce859c28f637b62b566ea8829b982f2c"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -71,11 +71,11 @@
       "commitSha": "387f04cb6675c984036a64c9bb768ac6f00e06f9"
     },
     {
-      "packageVersion": "17.14.0-preview-25105-03",
+      "packageVersion": "17.14.0-preview-25107-02",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "90c5d64f0280e31077a0f395bd328d4a06fb1f36"
+      "commitSha": "a5c2978237bb1969bb88d7b9afe9b4bcc151b652"
     },
     {
       "packageVersion": "6.14.0-preview.1.11",
@@ -106,11 +106,11 @@
       "commitSha": "8fe7aeb135c64e095f43292c427453858d937184"
     },
     {
-      "packageVersion": "10.0.0-preview.2.25105.8",
+      "packageVersion": "10.0.0-preview.2.25106.8",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "db172de1f3445c622e6151152c071296c0cf4bf6"
+      "commitSha": "111ceb8a0fba166bc3a410314518576801cd48f9"
     },
     {
       "packageVersion": "10.0.0-preview.25106.3",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "7ce9e2438a2909b998105f6c078f0588a7efd1af"
+      "commitSha": "6827393f56bcb9b2dad81d09e48189237757f926"
     },
     {
       "packageVersion": "10.0.610402",
@@ -155,11 +155,11 @@
       "commitSha": "ff1852196a042a124267a6e599d12da20d7ff65a"
     },
     {
-      "packageVersion": "10.0.100-preview.2.25106.6",
+      "packageVersion": "10.0.100-preview.2.25107.1",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "4c7d79151e9b04be4e4a10d94f2b0a8b3091ed5e"
+      "commitSha": "90e5f05981cacc562eebb6837cde3c399a3e120a"
     },
     {
       "packageVersion": "17.14.0-preview-25106-01",
