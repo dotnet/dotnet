@@ -138,10 +138,13 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
             finally
             {
-                ReadmeMarkdown = readme;
-                IsVisible = !string.IsNullOrWhiteSpace(readme);
-                ErrorWithReadme = false;
-                IsBusy = false;
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    ReadmeMarkdown = readme;
+                    IsVisible = !string.IsNullOrWhiteSpace(readme);
+                    ErrorWithReadme = false;
+                    IsBusy = false;
+                }
             }
         }
     }

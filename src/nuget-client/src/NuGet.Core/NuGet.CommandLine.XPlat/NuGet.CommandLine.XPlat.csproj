@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.VisualStudio.SolutionPersistence" />
   </ItemGroup>
 
   <!-- Microsoft.Build.Locator is needed when debugging, but should not be used in the assemblies we insert. -->

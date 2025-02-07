@@ -103,7 +103,7 @@ namespace NuGet.Commands.FuncTest
             result.RestoreGraphs.Should().HaveCount(1);
             result.RestoreGraphs.First().Install.Should().HaveCount(2);
 
-            string.Join(" ", result.RestoreGraphs.First().Install.Select(i => $"{i.Library.Name}/{i.Library.Version}")).Should().Be("a/1.0.0 b/2.0.0");
+            string.Join(" ", result.RestoreGraphs.First().Install.Select(i => $"{i.Library.Name}/{i.Library.Version}").OrderBy(i => i)).Should().Be("a/1.0.0 b/2.0.0");
         }
 
         // Project 1 -> X 1.0 -> B 2.0 -> E 1.0
@@ -505,7 +505,6 @@ namespace NuGet.Commands.FuncTest
         // Project 1 -> f 1.0.0 -> a 1.0.0 -> b 1.0.0
         //                                 -> c 1.0.0 -> b 2.0.0
         // Centrally managed versions f & a, f 1.0.0 and a 1.0.0
-
         [Fact]
         public async Task RestoreCommand_WithPackageDrivenDowngradeAndTransitivePinning_RespectsDowngrade_AndRaisesWarning()
         {

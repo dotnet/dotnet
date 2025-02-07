@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.CommandLine.XPlat;
@@ -931,18 +930,8 @@ namespace NuGet.XPlat.FuncTest
                 using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
                 {
                     store.Open(OpenFlags.ReadWrite);
-
-                    using (var password = new SecureString())
-                    {
-                        foreach (var symbol in CertificatePassword)
-                        {
-                            password.AppendChar(symbol);
-                        }
-
-                        Certificate = new X509Certificate2(CreateCertificate(), password, X509KeyStorageFlags.Exportable);
-
-                        store.Add(Certificate);
-                    }
+                    Certificate = X509CertificateLoader.LoadPkcs12(CreateCertificate(), CertificatePassword, X509KeyStorageFlags.Exportable);
+                    store.Add(Certificate);
                 }
             }
 

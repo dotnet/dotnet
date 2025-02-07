@@ -3,6 +3,7 @@
 
 using System;
 using System.CommandLine;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.CommandLine.XPlat.Commands;
 using NuGet.CommandLine.XPlat.Commands.Why;
@@ -38,7 +39,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().Be(@"path\to\my.proj");
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().BeNullOrEmpty();
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act
@@ -59,7 +60,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().NotBeNull();
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().BeNullOrEmpty();
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act
@@ -117,7 +118,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().Be("my.proj");
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().Equal(["net8.0"]);
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act
@@ -140,7 +141,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().Be("my.proj");
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().Equal(["net8.0"]);
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act
@@ -161,7 +162,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().Be("my.proj");
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().Equal(["net8.0", "net481"]);
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act
@@ -182,7 +183,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
                 whyCommandArgs.Path.Should().Be("my.proj");
                 whyCommandArgs.Package.Should().Be("packageid");
                 whyCommandArgs.Frameworks.Should().Equal(["net8.0", "net481"]);
-                return 0;
+                return Task.FromResult(0);
             });
 
             // Act

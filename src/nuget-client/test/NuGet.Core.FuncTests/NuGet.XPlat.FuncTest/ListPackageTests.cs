@@ -261,17 +261,17 @@ namespace NuGet.XPlat.FuncTest
                         return outCredentials != null;
                     });
             }
+        }
 
-            static async Task RestoreProjectsAsync(SimpleTestPathContext pathContext, SimpleTestProjectContext projectA, SimpleTestProjectContext projectB, ITestOutputHelper testOutputHelper)
-            {
-                var settings = Settings.LoadDefaultSettings(Path.GetDirectoryName(pathContext.SolutionRoot), Path.GetFileName(pathContext.NuGetConfig), null);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+        static async Task RestoreProjectsAsync(SimpleTestPathContext pathContext, SimpleTestProjectContext projectA, SimpleTestProjectContext projectB, ITestOutputHelper testOutputHelper)
+        {
+            var settings = Settings.LoadDefaultSettings(Path.GetDirectoryName(pathContext.SolutionRoot), Path.GetFileName(pathContext.NuGetConfig), null);
+            var packageSourceProvider = new PackageSourceProvider(settings);
 
-                var sources = packageSourceProvider.LoadPackageSources();
+            var sources = packageSourceProvider.LoadPackageSources();
 
-                await RestoreProjectAsync(settings, pathContext, projectA, sources, testOutputHelper);
-                await RestoreProjectAsync(settings, pathContext, projectB, sources, testOutputHelper);
-            }
+            await RestoreProjectAsync(settings, pathContext, projectA, sources, testOutputHelper);
+            await RestoreProjectAsync(settings, pathContext, projectB, sources, testOutputHelper);
 
             static async Task RestoreProjectAsync(ISettings settings,
                 SimpleTestPathContext pathContext,
@@ -288,6 +288,63 @@ namespace NuGet.XPlat.FuncTest
                 await restoreResult.CommitAsync(logger, CancellationToken.None);
                 Assert.True(restoreResult.Success, userMessage: logger.ShowMessages());
             }
+        }
+
+        [InlineData(true)]
+        [InlineData(false)]
+        [Theory]
+        public async Task CanListPackagesForProjectsInSolutions(bool useSlnx)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
+            var packageB100 = new SimpleTestPackageContext("B", "1.0.0");
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                    pathContext.PackageSource,
+                    packageA100,
+                    packageB100);
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("ProjectA", pathContext.SolutionRoot, "net6.0");
+            var projectB = SimpleTestProjectContext.CreateNETCore("ProjectB", pathContext.SolutionRoot, "net6.0");
+
+            projectA.AddPackageToAllFrameworks(packageA100);
+            projectB.AddPackageToAllFrameworks(packageB100);
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx);
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, isPrivateFeed: true);
+            mockServer.Start();
+            pathContext.Settings.AddSource(sourceName: "private-source", sourceUri: mockServer.ServiceIndexUri, allowInsecureConnectionsValue: bool.TrueString);
+
+            // List package command requires restore to be run before it can list packages.
+            await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
+
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            using TextWriter consoleOut = new StringWriter(output);
+            using TextWriter consoleError = new StringWriter(error);
+            var logger = new TestLogger(_testOutputHelper);
+            ListPackageCommandRunner listPackageCommandRunner = new();
+            var packageRefArgs = new ListPackageArgs(
+                                        path: solution.SolutionPath,
+                                        packageSources: [new(mockServer.ServiceIndexUri)],
+                                        frameworks: ["net6.0"],
+                                        reportType: ReportType.Vulnerable,
+                                        renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
+                                        includeTransitive: false,
+                                        prerelease: false,
+                                        highestPatch: false,
+                                        highestMinor: false,
+                                        logger: logger,
+                                        cancellationToken: CancellationToken.None);
+
+            int result = await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
+            Assert.True(result == 0, userMessage: logger.ShowMessages());
         }
 
         private void VerifyCommand(Action<string, Mock<IListPackageCommandRunner>, CommandLineApplication, Func<LogLevel>> verify)

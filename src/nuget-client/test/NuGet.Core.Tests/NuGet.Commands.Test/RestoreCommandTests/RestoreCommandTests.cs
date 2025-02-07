@@ -3364,7 +3364,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var logger = new TestLogger();
 
-            // aCT
+            // Act
             var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
             var restoreCommand = new RestoreCommand(request);
             RestoreResult result = await restoreCommand.ExecuteAsync();
@@ -3372,6 +3372,46 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Assert
             result.LockFile.PackageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that the <see cref="RestoreCommand.CreateFrameworkRuntimePairs(PackageSpec, ISet{string})" /> method returns pairs with frameworks with no runtimes first, then pairs with frameworks and runtimes after.
+        /// </summary>
+        [Fact]
+        public void CreateFrameworkRuntimePairs_ReturnsPairsInExpectedOrder()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472");
+            packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation { FrameworkName = FrameworkConstants.CommonFrameworks.Net80 });
+
+            HashSet<string> runtimeIds = new() { "win-x86", "win-x64" };
+
+            var logger = new TestLogger();
+
+            // Act
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            var pairs = RestoreCommand.CreateFrameworkRuntimePairs(request.Project, runtimeIds).ToList();
+
+            // Assert
+            pairs[0].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net472);
+            pairs[0].RuntimeIdentifier.Should().BeEmpty();
+
+            pairs[1].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net80);
+            pairs[1].RuntimeIdentifier.Should().BeEmpty();
+
+            pairs[2].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net472);
+            pairs[2].RuntimeIdentifier.Should().Be("win-x86");
+
+            pairs[3].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net472);
+            pairs[3].RuntimeIdentifier.Should().Be("win-x64");
+
+            pairs[4].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net80);
+            pairs[4].RuntimeIdentifier.Should().Be("win-x86");
+
+            pairs[5].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net80);
+            pairs[5].RuntimeIdentifier.Should().Be("win-x64");
         }
 
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(ImmutableArray<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies, NuGetFramework framework = null)

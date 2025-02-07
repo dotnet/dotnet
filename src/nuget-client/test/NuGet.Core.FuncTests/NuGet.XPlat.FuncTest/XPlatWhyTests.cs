@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.Commands.Why;
@@ -53,10 +54,11 @@ namespace NuGet.XPlat.FuncTest
                     project.ProjectPath,
                     packageY.Id,
                     [projectFramework],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.ShowMessages();
@@ -95,10 +97,11 @@ namespace NuGet.XPlat.FuncTest
                     project.ProjectPath,
                     packageZ.Id,
                     [projectFramework],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.ShowMessages();
@@ -108,7 +111,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void WhyCommand_ProjectDidNotRunRestore_Fails()
+        public async Task WhyCommand_ProjectDidNotRunRestore_Fails()
         {
             // Arrange
             var logger = new TestCommandOutputLogger(_testOutputHelper);
@@ -128,10 +131,11 @@ namespace NuGet.XPlat.FuncTest
                     project.ProjectPath,
                     packageY.Id,
                     [projectFramework],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.ShowMessages();
@@ -141,7 +145,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void WhyCommand_EmptyProjectArgument_Fails()
+        public async Task WhyCommand_EmptyProjectArgument_Fails()
         {
             // Arrange
             var logger = new TestCommandOutputLogger(_testOutputHelper);
@@ -150,10 +154,11 @@ namespace NuGet.XPlat.FuncTest
                     "",
                     "PackageX",
                     [],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.ShowErrors();
@@ -163,7 +168,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void WhyCommand_EmptyPackageArgument_Fails()
+        public async Task WhyCommand_EmptyPackageArgument_Fails()
         {
             // Arrange
             var logger = new TestCommandOutputLogger(_testOutputHelper);
@@ -176,10 +181,11 @@ namespace NuGet.XPlat.FuncTest
                     project.ProjectPath,
                     "",
                     [],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.ShowErrors();
@@ -189,7 +195,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void WhyCommand_InvalidProject_Fails()
+        public async Task WhyCommand_InvalidProject_Fails()
         {
             // Arrange
             var logger = new TestCommandOutputLogger(_testOutputHelper);
@@ -200,10 +206,11 @@ namespace NuGet.XPlat.FuncTest
                     fakeProjectPath,
                     "PackageX",
                     [],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.ShowErrors();
@@ -243,10 +250,11 @@ namespace NuGet.XPlat.FuncTest
                     project.ProjectPath,
                     packageY.Id,
                     [inputFrameworksOption, projectFramework],
-                    logger);
+                    logger,
+                    CancellationToken.None);
 
             // Act
-            var result = WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.ShowMessages();

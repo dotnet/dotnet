@@ -1,1 +1,2 @@
 #nullable enable
+NuGet.DependencyResolver.RemoteWalkContext.GetUnresolvedRemoteMatchesAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.HashSet<NuGet.DependencyResolver.RemoteMatch!>!>!

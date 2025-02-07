@@ -4,9 +4,8 @@
 #nullable enable
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -19,26 +18,61 @@ using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.Repositories;
 using NuGet.RuntimeModel;
-using NuGet.Shared;
 using NuGet.Versioning;
-using LibraryDependencyIndex = NuGet.Commands.DependencyGraphResolver.LibraryDependencyInterningTable.LibraryDependencyIndex;
-using LibraryRangeIndex = NuGet.Commands.DependencyGraphResolver.LibraryRangeInterningTable.LibraryRangeIndex;
 
 namespace NuGet.Commands
 {
     /// <summary>
     /// Represents a class that can resolve a dependency graph.
     /// </summary>
-    internal sealed class DependencyGraphResolver
+    internal sealed partial class DependencyGraphResolver
     {
+        /// <summary>
+        /// Defines the default size for the queue used to process dependency graph items.
+        /// </summary>
         private const int DependencyGraphItemQueueSize = 4096;
+
+        /// <summary>
+        /// Defines the default size for the evictions queue used to process evictions.
+        /// </summary>
         private const int EvictionsDictionarySize = 1024;
-        private const int FindLibraryEntryResultCacheSize = 2048;
-        private const int ResolvedDependencyGraphItemQueueSize = 2048;
+
+        /// <summary>
+        /// Defines the default size for the dictionary that stores the resolved dependency graph items.
+        /// </summary>
+        private const int ResolvedDependencyGraphItemDictionarySize = 2048;
+
+        /// <summary>
+        /// A <see cref="DependencyGraphItemIndexer" /> used to index dependency graph items.
+        /// </summary>
+        private readonly DependencyGraphItemIndexer _indexingTable = new();
+
+        /// <summary>
+        /// A <see cref="RestoreCollectorLogger" /> used for logging.
+        /// </summary>
         private readonly RestoreCollectorLogger _logger;
+
+        /// <summary>
+        /// The <see cref="RestoreRequest" /> of the current restore that provides information about the project's configuration.
+        /// </summary>
         private readonly RestoreRequest _request;
+
+        /// <summary>
+        /// Represents the path for any dependency that is directly referenced by the root project.
+        /// </summary>
+        private readonly LibraryRangeIndex[] _rootedDependencyPath = new[] { LibraryRangeIndex.Project };
+
+        /// <summary>
+        /// A <see cref="TelemetryActivity" /> instance used for telemetry.
+        /// </summary>
         private readonly TelemetryActivity _telemetryActivity;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DependencyGraphResolver" /> class.
+        /// </summary>
+        /// <param name="logger">A <see cref="RestoreCollectorLogger" /> to use for logging.</param>
+        /// <param name="restoreRequest">The <see cref="RestoreRequest" /> for the restore.</param>
+        /// <param name="telemetryActivity">A <see cref="TelemetryActivity" /> instance to use for logging telemetry.</param>
         public DependencyGraphResolver(RestoreCollectorLogger logger, RestoreRequest restoreRequest, TelemetryActivity telemetryActivity)
         {
             _logger = logger;
@@ -46,1292 +80,674 @@ namespace NuGet.Commands
             _telemetryActivity = telemetryActivity;
         }
 
-#pragma warning disable CA1505 // 'ResolveAsync' has a maintainability index of '0'. Rewrite or refactor the code to increase its maintainability index (MI) above '9'.  This will be refactored in a future change.
-        public async Task<ValueTuple<bool, List<RestoreTargetGraph>, RuntimeGraph>> ResolveAsync(NuGetv3LocalRepository userPackageFolder, IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders, RemoteWalkContext context, ProjectRestoreCommand projectRestoreCommand, List<NuGetv3LocalRepository> localRepositories, CancellationToken token)
-#pragma warning restore CA1505
+        /// <summary>
+        /// Resolves the dependency graph for the project for all of its configured target frameworks and runtime identifiers.
+        /// </summary>
+        /// <param name="userPackageFolder">A <see cref="NuGetv3LocalRepository" /> representing the global packages folder configured for restore.</param>
+        /// <param name="fallbackPackageFolders">A <see cref="IReadOnlyList{T}" /> of <see cref="NuGetv3LocalRepository" /> objects that represent the package fallback folders configured for restore.</param>
+        /// <param name="context">The <see cref="RemoteWalkContext" /> to use for this restore.</param>
+        /// <param name="projectRestoreCommand">A <see cref="ProjectRestoreCommand" /> instance to use for installing packages.</param>
+        /// <param name="localRepositories">A <see cref="List{T}" /> of <see cref="NuGetv3LocalRepository" /> objects that represent the local package repositories configured for restore.</param>
+        /// <param name="token">A <see cref="CancellationToken" /> to use for cancellation.</param>
+        /// <returns>A <see cref="ValueTuple{T1, T2, T3}" /> with:<br />
+        ///   <list type="bullet">
+        ///     <item>A <see langword="bool" /> representing the overall success of the dependency graph resolution.</item>
+        ///     <item>A <see cref="List{T}" /> of <see cref="RestoreTargetGraph" /> objects representing the resolved dependency graphs for each pair of target framework and runtime identifier.</item>
+        ///     <item>A <see cref="RuntimeGraph" /> representing the runtime graph of the resolved dependency graph.</item>
+        ///   </list>
+        /// </returns>
+        public async Task<ValueTuple<bool, List<RestoreTargetGraph>, RuntimeGraph>> ResolveAsync(
+            NuGetv3LocalRepository userPackageFolder,
+            IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
+            RemoteWalkContext context,
+            ProjectRestoreCommand projectRestoreCommand,
+            List<NuGetv3LocalRepository> localRepositories,
+            CancellationToken token)
         {
-            bool _success = true;
-            bool isCentralPackageTransitivePinningEnabled = _request.Project.RestoreMetadata != null && _request.Project.RestoreMetadata.CentralPackageVersionsEnabled & _request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled;
-
-            var uniquePackages = new HashSet<LibraryIdentity>();
-
-            var projectRange = new LibraryRange()
-            {
-                Name = _request.Project.Name,
-                VersionRange = new VersionRange(_request.Project.Version),
-                TypeConstraint = LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject
-            };
-
-            // Resolve dependency graphs
-            var allGraphs = new List<RestoreTargetGraph>();
-            var runtimeGraphs = new List<RestoreTargetGraph>();
-            var graphByTFM = new Dictionary<NuGetFramework, RestoreTargetGraph>();
-            var runtimeIds = RequestRuntimeUtility.GetRestoreRuntimes(_request);
-            List<FrameworkRuntimePair> projectFrameworkRuntimePairs = RestoreCommand.CreateFrameworkRuntimePairs(_request.Project, runtimeIds);
-            RuntimeGraph allRuntimes = RuntimeGraph.Empty;
-
-            LibraryRangeInterningTable libraryRangeInterningTable = new LibraryRangeInterningTable();
-            LibraryDependencyInterningTable libraryDependencyInterningTable = new LibraryDependencyInterningTable();
-
             _telemetryActivity.StartIntervalMeasure();
 
+            // Keeps track of the overall success of the dependency graph resolution
+            bool success = true;
+
+            // Calculate whether or not transitive pinning is enabled
+            bool isCentralPackageTransitivePinningEnabled = _request.Project.RestoreMetadata != null && _request.Project.RestoreMetadata.CentralPackageVersionsEnabled & _request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled;
+
+            // Keeps track of all of the packages that were installed
+            HashSet<LibraryIdentity> installedPackages = new();
+
+            // Stores the list of all graphs
+            List<RestoreTargetGraph> allGraphs = new();
+
+            // Stores the list of graphs without a runtime identifier by their target framework
+            Dictionary<NuGetFramework, RestoreTargetGraph> graphsByTargetFramework = new();
+
+            // Stores the list graphs that are runtime identifier specific
+            List<RestoreTargetGraph> runtimeGraphs = new();
+
+            // Keeps track of all runtime graphs that exist in the dependency graph
+            RuntimeGraph allRuntimes = RuntimeGraph.Empty;
+
+            // Keeps track of whether or not we've installed all of the RID-less packages since they contain a runtime.json and are needed before the RID-specific graphs can be resolved
             bool hasInstallBeenCalledAlready = false;
+
+            // Stores the list of download results which contribute to the overall success of the graph resolution
             DownloadDependencyResolutionResult[]? downloadDependencyResolutionResults = default;
 
-            Dictionary<NuGetFramework, RuntimeGraph> resolvedRuntimeGraphs = new();
-
-            foreach (FrameworkRuntimePair pair in projectFrameworkRuntimePairs.NoAllocEnumerate())
-            {
-                if (!string.IsNullOrWhiteSpace(pair.RuntimeIdentifier) && !hasInstallBeenCalledAlready)
-                {
-                    downloadDependencyResolutionResults = await ProjectRestoreCommand.DownloadDependenciesAsync(_request.Project, context, _telemetryActivity, telemetryPrefix: string.Empty, token);
-
-                    _success &= await projectRestoreCommand.InstallPackagesAsync(uniquePackages, allGraphs, downloadDependencyResolutionResults, userPackageFolder, token);
-
-                    hasInstallBeenCalledAlready = true;
-                }
-
-                TargetFrameworkInformation? projectTargetFramework = _request.Project.GetTargetFramework(pair.Framework);
-
-                var unresolvedPackages = new HashSet<LibraryRange>();
-
-                var resolvedDependencies = new HashSet<ResolvedDependencyKey>();
-
-                RuntimeGraph? runtimeGraph = default;
-                if (!string.IsNullOrEmpty(pair.RuntimeIdentifier) && !resolvedRuntimeGraphs.TryGetValue(pair.Framework, out runtimeGraph) && graphByTFM.TryGetValue(pair.Framework, out var tfmNonRidGraph))
-                {
-                    // We start with the non-RID TFM graph.
-                    // This is guaranteed to be computed before any graph with a RID, so we can assume this will return a value.
-
-                    // PCL Projects with Supports have a runtime graph but no matching framework.
-                    var runtimeGraphPath = projectTargetFramework.RuntimeIdentifierGraphPath;
-
-                    RuntimeGraph? projectProviderRuntimeGraph = default;
-                    if (runtimeGraphPath != null)
-                    {
-                        projectProviderRuntimeGraph = ProjectRestoreCommand.GetRuntimeGraph(runtimeGraphPath, _logger);
-                    }
-
-                    runtimeGraph = ProjectRestoreCommand.GetRuntimeGraph(tfmNonRidGraph, localRepositories, projectRuntimeGraph: projectProviderRuntimeGraph, _logger);
-                    allRuntimes = RuntimeGraph.Merge(allRuntimes, runtimeGraph);
-                }
-
-                //Now build up our new flattened graph
-                var initialProject = new LibraryDependency(new LibraryRange()
+            // A LibraryDependency representing the root of the graph which is the project itself
+            LibraryDependency mainProjectDependency = new(
+                new LibraryRange()
                 {
                     Name = _request.Project.Name,
                     VersionRange = new VersionRange(_request.Project.Version),
                     TypeConstraint = LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject
                 });
 
-                //If we find newer nodes of things while we walk, we'll evict them.
-                //A subset of evictions cause a re-import.  For instance if a newer chosen node has fewer refs,
-                //then we might have a dangling over-elevated ref on the old one, it'll be hard evicted.
-                //The second item here is the path to root.  When we add a hard-evictee, we'll also remove anything
-                //added to the eviction list that contains the evictee on their path to root.
-                Queue<DependencyGraphItem> refImport =
-                  new Queue<DependencyGraphItem>(DependencyGraphItemQueueSize);
+            // Create the list of framework/runtime pairs to resolve graphs for.  This method returns the pairs in order with the target framework pairs without runtime identifiers come first
+            List<FrameworkRuntimePair> projectFrameworkRuntimePairs = RestoreCommand.CreateFrameworkRuntimePairs(_request.Project, runtimeIds: RequestRuntimeUtility.GetRestoreRuntimes(_request));
 
-                TaskResultCache<LibraryRangeIndex, FindLibraryEntryResult> findLibraryEntryCache = new(FindLibraryEntryResultCacheSize);
-
-                Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> chosenResolvedItems = new(ResolvedDependencyGraphItemQueueSize);
-
-                Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)> evictions = new Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)>(EvictionsDictionarySize);
-
-                Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions = null;
-
-                if (isCentralPackageTransitivePinningEnabled && projectTargetFramework != null && projectTargetFramework.CentralPackageVersions != null)
+            // Loop through the target framework and runtime identifier pairs to resolve each graph.
+            // The pairs are sorted with all of the RID-less framework pairs first
+            foreach (FrameworkRuntimePair frameworkRuntimePair in projectFrameworkRuntimePairs.NoAllocEnumerate())
+            {
+                // Since the FrameworkRuntimePair objects are sorted, the packages found so far need to be installed before resolving any runtime identifier specific graphs because
+                // the runtime.json is in the package which is used to determine what runtime packages to add
+                if (!string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) && !hasInstallBeenCalledAlready)
                 {
-                    pinnedPackageVersions = new Dictionary<LibraryDependencyIndex, VersionRange>(capacity: projectTargetFramework.CentralPackageVersions.Count);
+                    downloadDependencyResolutionResults = await ProjectRestoreCommand.DownloadDependenciesAsync(_request.Project, context, _telemetryActivity, telemetryPrefix: string.Empty, token);
 
-                    foreach (var item in projectTargetFramework.CentralPackageVersions)
-                    {
-                        LibraryDependencyIndex depIndex = libraryDependencyInterningTable.Intern(item.Value);
+                    success &= await projectRestoreCommand.InstallPackagesAsync(installedPackages, allGraphs, downloadDependencyResolutionResults, userPackageFolder, token);
 
-                        pinnedPackageVersions[depIndex] = item.Value.VersionRange;
-                    }
+                    // This ensures that the packages for the RID-less graph are only installed once
+                    hasInstallBeenCalledAlready = true;
                 }
 
-                Dictionary<LibraryDependencyIndex, VersionRange>? prunedPackageVersions = GetAndIndexPackagesToPrune(libraryDependencyInterningTable, projectTargetFramework);
+                // Get the corresponding TargetFrameworkInformation from the restore request
+                TargetFrameworkInformation projectTargetFramework = _request.Project.GetTargetFramework(frameworkRuntimePair.Framework)!;
 
-                DependencyGraphItem rootProjectRefItem = new()
+                // Keeps track of the unresolved packages
+                HashSet<LibraryRange> unresolvedPackages = new();
+
+                // Keeps track of the resolved packages
+                HashSet<ResolvedDependencyKey> resolvedPackages = new();
+
+                if (TryGetRuntimeGraph(localRepositories, graphsByTargetFramework, frameworkRuntimePair, projectTargetFramework, out RuntimeGraph? runtimeGraph))
                 {
-                    LibraryDependency = initialProject,
-                    LibraryDependencyIndex = libraryDependencyInterningTable.Intern(initialProject),
-                    LibraryRangeIndex = libraryRangeInterningTable.Intern(initialProject.LibraryRange),
+                    // Merge all of the runtime graphs together
+                    allRuntimes = RuntimeGraph.Merge(allRuntimes, runtimeGraph);
+                }
+
+                // Stores a dictionary of central package versions by their LibraryDependencyIndex for faster lookup when using CPM
+                Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions = IndexPinnedPackageVersions(isCentralPackageTransitivePinningEnabled, projectTargetFramework);
+
+                // Create a DependencyGraphItem representing the root project to add to the queue for processing
+                DependencyGraphItem rootProjectDependencyGraphItem = new()
+                {
+                    LibraryDependency = mainProjectDependency,
+                    LibraryDependencyIndex = LibraryDependencyIndex.Project,
+                    LibraryRangeIndex = LibraryRangeIndex.Project,
                     Suppressions = new HashSet<LibraryDependencyIndex>(),
-                    IsDirectPackageReferenceFromRootProject = false,
+                    FindLibraryTask = ResolverUtility.FindLibraryCachedAsync(
+                        mainProjectDependency.LibraryRange,
+                        frameworkRuntimePair.Framework,
+                        runtimeIdentifier: string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) ? null : frameworkRuntimePair.RuntimeIdentifier,
+                        context,
+                        token),
+                    Parent = LibraryRangeIndex.None
                 };
 
-                LibraryRangeIndex[] rootedDependencyPath = new[] { rootProjectRefItem.LibraryRangeIndex };
-
-                _ = findLibraryEntryCache.GetOrAddAsync(
-                    rootProjectRefItem.LibraryRangeIndex,
-                    async static (state) =>
-                    {
-                        GraphItem<RemoteResolveResult> refItem = await ResolverUtility.FindLibraryEntryAsync(
-                            state.rootProjectRefItem.LibraryDependency!.LibraryRange,
-                            state.Framework,
-                            runtimeIdentifier: null,
-                            state.context,
-                            state.token);
-
-                        return new FindLibraryEntryResult(
-                            state.rootProjectRefItem.LibraryDependency!,
-                                refItem,
-                                state.rootProjectRefItem.LibraryDependencyIndex,
-                                state.rootProjectRefItem.LibraryRangeIndex,
-                                state.libraryDependencyInterningTable,
-                                state.libraryRangeInterningTable);
-                    },
-                    (rootProjectRefItem, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
+                // Resolve the entire dependency graph
+                Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItems = await ResolveDependencyGraphItemsAsync(
+                    isCentralPackageTransitivePinningEnabled,
+                    frameworkRuntimePair,
+                    projectTargetFramework,
+                    runtimeGraph,
+                    pinnedPackageVersions,
+                    rootProjectDependencyGraphItem,
+                    context,
                     token);
 
-                HashSet<LibraryDependencyIndex>? directPackageReferences = default;
+                // Now that the graph has been resolved, we need to create walk all of the defined dependencies again to detect any cycles and downgrades.  The RestoreTargetGraph stores all of the
+                // information about the graph including the nodes with their parent/child relationships, cycles, downgrades, and conflicts.
+                (bool wasRestoreTargetGraphCreationSuccessful, RestoreTargetGraph restoreTargetGraph) = await CreateRestoreTargetGraphAsync(frameworkRuntimePair, runtimeGraph, isCentralPackageTransitivePinningEnabled, unresolvedPackages, resolvedPackages, resolvedDependencyGraphItems, context);
 
-            ProcessDeepEviction:
+                success &= wasRestoreTargetGraphCreationSuccessful;
 
-                refImport.Clear();
-                chosenResolvedItems.Clear();
-
-                refImport.Enqueue(rootProjectRefItem);
-
-                while (refImport.Count > 0)
-                {
-                    DependencyGraphItem importRefItem = refImport.Dequeue();
-                    LibraryDependency currentRef = importRefItem.LibraryDependency!;
-                    LibraryDependencyIndex currentRefDependencyIndex = importRefItem.LibraryDependencyIndex;
-                    LibraryRangeIndex currentRefRangeIndex = importRefItem.LibraryRangeIndex;
-                    LibraryRangeIndex[] pathToCurrentRef = importRefItem.Path;
-                    HashSet<LibraryDependencyIndex>? currentSuppressions = importRefItem.Suppressions;
-                    bool directPackageReferenceFromRootProject = importRefItem.IsDirectPackageReferenceFromRootProject;
-
-                    if (!findLibraryEntryCache.TryGetValue(currentRefRangeIndex, out Task<FindLibraryEntryResult>? refItemTask))
-                    {
-                        Debug.Fail("This should not happen");
-                        continue;
-                    }
-
-                    FindLibraryEntryResult refItemResult = await refItemTask;
-
-                    if (importRefItem.LibraryRangeIndex == rootProjectRefItem.LibraryRangeIndex)
-                    {
-                        directPackageReferences = new HashSet<LibraryDependencyIndex>();
-
-                        for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
-                        {
-                            LibraryDependency dep = refItemResult.Item.Data.Dependencies[i];
-
-                            if (dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
-                            {
-                                directPackageReferences.Add(refItemResult.GetDependencyIndexForDependency(i));
-                            }
-                        }
-                    }
-
-                    LibraryDependencyTarget typeConstraint = currentRef.LibraryRange.TypeConstraint;
-                    if (evictions.TryGetValue(currentRefRangeIndex, out var eviction))
-                    {
-                        (LibraryRangeIndex[] evictedPath, LibraryDependencyIndex evictedDepIndex, LibraryDependencyTarget evictedTypeConstraint) = eviction;
-
-                        // If we evicted this same version previously, but the type constraint of currentRef is more stringent (package), then do not skip the current item - this is the one we want.
-                        // This is tricky. I don't really know what this means. Normally we'd key off of versions instead.
-                        if (!((evictedTypeConstraint == LibraryDependencyTarget.PackageProjectExternal || evictedTypeConstraint == LibraryDependencyTarget.ExternalProject) &&
-                            currentRef.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package))
-                        {
-                            continue;
-                        }
-                    }
-
-                    HashSet<LibraryDependency>? runtimeDependencies = null;
-
-                    if (runtimeGraph != null && !string.IsNullOrWhiteSpace(pair.RuntimeIdentifier))
-                    {
-                        runtimeDependencies = new HashSet<LibraryDependency>();
-
-                        LibraryRange libraryRange = currentRef.LibraryRange;
-
-                        if (RemoteDependencyWalker.EvaluateRuntimeDependencies(ref libraryRange, pair.RuntimeIdentifier, runtimeGraph, ref runtimeDependencies))
-                        {
-                            importRefItem.LibraryRangeIndex = currentRefRangeIndex = libraryRangeInterningTable.Intern(libraryRange);
-
-                            currentRef = new LibraryDependency(currentRef) { LibraryRange = libraryRange };
-
-                            importRefItem.LibraryDependency = currentRef;
-
-                            refItemResult = await findLibraryEntryCache.GetOrAddAsync(
-                                currentRefRangeIndex,
-                                async static state =>
-                                {
-                                    return await FindLibraryEntryResult.CreateAsync(
-                                        state.libraryDependency,
-                                        state.dependencyIndex,
-                                        state.rangeIndex,
-                                        state.Framework,
-                                        state.context,
-                                        state.libraryDependencyInterningTable,
-                                        state.libraryRangeInterningTable,
-                                        state.token);
-                                },
-                                (libraryDependency: currentRef, dependencyIndex: currentRefDependencyIndex, rangeIndex: currentRefRangeIndex, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
-                                token);
-                        }
-                    }
-
-                    //else if we've seen this ref (but maybe not version) before check to see if we need to upgrade
-                    if (chosenResolvedItems.TryGetValue(currentRefDependencyIndex, out ResolvedDependencyGraphItem? chosenResolvedItem))
-                    {
-                        LibraryDependency chosenRef = chosenResolvedItem.LibraryDependency;
-                        LibraryRangeIndex chosenRefRangeIndex = chosenResolvedItem.LibraryRangeIndex;
-                        LibraryRangeIndex[] pathChosenRef = chosenResolvedItem.Path;
-                        bool packageReferenceFromRootProject = chosenResolvedItem.IsDirectPackageReferenceFromRootProject;
-                        List<HashSet<LibraryDependencyIndex>> chosenSuppressions = chosenResolvedItem.Suppressions;
-
-                        if (packageReferenceFromRootProject) // direct dependencies always win.
-                        {
-                            continue;
-                        }
-
-                        // A project reference should always win over a package reference.  In this case, a project has already been added to the graph
-                        // with the same name as a transitive package reference.  FindLibraryEntryAsync() will return the project and not the package.
-                        if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject
-                            && currentRef.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)
-                            && refItemResult.Item.Key.Type == LibraryType.Project)
-                        {
-                            continue;
-                        }
-
-                        // We should evict on type constraint if the type constraint of the current ref is more stringent than the chosen ref.
-                        // This happens when a previous type constraint is broader (e.g. PackageProjectExternal) than the current type constraint (e.g. Package).
-                        bool evictOnTypeConstraint = false;
-                        if ((chosenRefRangeIndex == currentRefRangeIndex) && EvictOnTypeConstraint(currentRef.LibraryRange.TypeConstraint, chosenRef.LibraryRange.TypeConstraint))
-                        {
-                            if (findLibraryEntryCache.TryGetValue(chosenRefRangeIndex, out Task<FindLibraryEntryResult>? resolvedItemTask))
-                            {
-                                FindLibraryEntryResult resolvedItem = await resolvedItemTask;
-
-                                // We need to evict the chosen item because this one has a more stringent type constraint.
-                                evictOnTypeConstraint = resolvedItem.Item.Key.Type == LibraryType.Project;
-                            }
-                        }
-
-                        // We should also evict if a package was chosen and a project is being considered since projects always in over packages
-                        if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.PackageProjectExternal
-                            && currentRef.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject)
-                        {
-                            evictOnTypeConstraint = true;
-                        }
-
-                        // TODO: Handle null version ranges
-                        VersionRange nvr = currentRef.LibraryRange.VersionRange ?? VersionRange.All;
-                        VersionRange ovr = chosenRef.LibraryRange.VersionRange ?? VersionRange.All;
-
-                        if (evictOnTypeConstraint || !RemoteDependencyWalker.IsGreaterThanOrEqualTo(ovr, nvr))
-                        {
-                            if (chosenRef.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package) && currentRef.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
-                            {
-                                if (chosenResolvedItem.Parents != null)
-                                {
-                                    bool atLeastOneCommonAncestor = false;
-
-                                    foreach (LibraryRangeIndex parentRangeIndex in chosenResolvedItem.Parents.NoAllocEnumerate())
-                                    {
-                                        if (importRefItem.Path.Length > 2 && importRefItem.Path[importRefItem.Path.Length - 2] == parentRangeIndex)
-                                        {
-                                            atLeastOneCommonAncestor = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (atLeastOneCommonAncestor)
-                                    {
-                                        continue;
-                                    }
-                                }
-
-                                if (HasCommonAncestor(chosenResolvedItem.Path, importRefItem.Path))
-                                {
-                                    continue;
-                                }
-
-                                if (chosenResolvedItem.ParentPathsThatHaveBeenEclipsed != null)
-                                {
-                                    bool hasAlreadyBeenEclipsed = false;
-
-                                    foreach (LibraryRangeIndex parentRangeIndex in chosenResolvedItem.ParentPathsThatHaveBeenEclipsed)
-                                    {
-                                        if (importRefItem.Path.Contains(parentRangeIndex))
-                                        {
-                                            hasAlreadyBeenEclipsed = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (hasAlreadyBeenEclipsed)
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-
-                            //If we think the newer thing we are looking at is better, remove the old one and let it fall thru.
-
-                            chosenResolvedItems.Remove(currentRefDependencyIndex);
-                            //Record an eviction for the node we are replacing.  The eviction path is for the current node.
-                            LibraryRangeIndex evictedLR = chosenRefRangeIndex;
-
-                            // If we're evicting on typeconstraint, then there is already an item in allResolvedItems that matches the old typeconstraint.
-                            // We must remove it, otherwise we won't call FindLibraryCachedAsync again to load the correct item and save it into allResolvedItems.
-                            if (evictOnTypeConstraint)
-                            {
-                                refItemResult = await findLibraryEntryCache.GetOrAddAsync(
-                                    currentRefRangeIndex,
-                                    refresh: true,
-                                    async static state =>
-                                    {
-                                        return await FindLibraryEntryResult.CreateAsync(
-                                            state.libraryDependency,
-                                            state.dependencyIndex,
-                                            state.rangeIndex,
-                                            state.Framework,
-                                            state.context,
-                                            state.libraryDependencyInterningTable,
-                                            state.libraryRangeInterningTable,
-                                            state.token);
-                                    },
-                                    (libraryDependency: currentRef, dependencyIndex: currentRefDependencyIndex, rangeIndex: currentRefRangeIndex, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
-                                    token);
-                            }
-
-                            int deepEvictions = 0;
-                            //unwind anything chosen by the node we're evicting..
-                            HashSet<LibraryRangeIndex>? evicteesToRemove = default;
-                            foreach (var evictee in evictions)
-                            {
-                                (LibraryRangeIndex[] evicteePath, LibraryDependencyIndex evicteeDepIndex, LibraryDependencyTarget evicteeTypeConstraint) = evictee.Value;
-
-                                if (evicteePath.Contains(evictedLR))
-                                {
-                                    // if evictee.Key (depIndex) == currentDepIndex && evictee.TypeConstraint == ExternalProject --> Don't remove it.  It must remain evicted.
-                                    // If the evictee to remove is the same dependency, but the project version of said dependency, then do not remove it - it must remain evicted in favor of the package.
-                                    if (!(evicteeDepIndex == currentRefDependencyIndex &&
-                                        (evicteeTypeConstraint == LibraryDependencyTarget.ExternalProject || evicteeTypeConstraint == LibraryDependencyTarget.PackageProjectExternal)))
-                                    {
-                                        if (evicteesToRemove == null)
-                                            evicteesToRemove = new HashSet<LibraryRangeIndex>();
-                                        evicteesToRemove.Add(evictee.Key);
-                                    }
-                                }
-                            }
-                            if (evicteesToRemove != null)
-                            {
-                                foreach (var evicteeToRemove in evicteesToRemove)
-                                {
-                                    evictions.Remove(evicteeToRemove);
-                                    deepEvictions++;
-                                }
-                            }
-                            foreach (var chosenItem in chosenResolvedItems)
-                            {
-                                if (chosenItem.Value.Path.Contains(evictedLR))
-                                {
-                                    deepEvictions++;
-                                    break;
-                                }
-                            }
-                            evictions[evictedLR] = (LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex), currentRefDependencyIndex, chosenRef.LibraryRange.TypeConstraint);
-
-                            if (deepEvictions > 0)
-                            {
-                                goto ProcessDeepEviction;
-                            }
-
-                            bool isCentrallyPinnedTransitivePackage = importRefItem.IsCentrallyPinnedTransitivePackage;
-
-                            //Since this is a "new" choice, its gets a new import context list
-                            chosenResolvedItems.Add(
-                                currentRefDependencyIndex,
-                                new ResolvedDependencyGraphItem
-                                {
-                                    LibraryDependency = currentRef,
-                                    LibraryRangeIndex = currentRefRangeIndex,
-                                    Parents = isCentrallyPinnedTransitivePackage && !directPackageReferenceFromRootProject ? new HashSet<LibraryRangeIndex>() { importRefItem.Parent } : null,
-                                    Path = pathToCurrentRef,
-                                    IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
-                                    IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
-                                    Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                                    {
-                                        currentSuppressions!
-                                    }
-                                });
-
-                            //if we are going to live with this queue and chosen state, we need to also kick
-                            // any queue members who were descendants of the thing we just evicted.
-                            var newRefImport =
-                                new Queue<DependencyGraphItem>(DependencyGraphItemQueueSize);
-                            while (refImport.Count > 0)
-                            {
-                                DependencyGraphItem item = refImport.Dequeue();
-                                if (!item.Path.Contains(evictedLR))
-                                    newRefImport.Enqueue(item);
-                            }
-                            refImport = newRefImport;
-                        }
-                        //if its lower we'll never do anything other than skip it.
-                        else if (!VersionRangePreciseEquals(ovr, nvr))
-                        {
-                            bool hasCommonAncestor = HasCommonAncestor(chosenResolvedItem.Path, pathToCurrentRef);
-
-                            if (!hasCommonAncestor)
-                            {
-                                if (chosenResolvedItem.ParentPathsThatHaveBeenEclipsed == null)
-                                {
-                                    chosenResolvedItem.ParentPathsThatHaveBeenEclipsed = new HashSet<LibraryRangeIndex>();
-                                }
-
-                                chosenResolvedItem.ParentPathsThatHaveBeenEclipsed.Add(pathToCurrentRef[pathToCurrentRef.Length - 1]);
-                            }
-
-                            continue;
-                        }
-                        else
-                        //we are looking at same.  consider if its an upgrade.
-                        {
-                            if (chosenResolvedItem.Parents == null)
-                            {
-                                chosenResolvedItem.Parents = new HashSet<LibraryRangeIndex>();
-                            }
-
-                            if (!chosenResolvedItem.IsDirectPackageReferenceFromRootProject)
-                            {
-                                chosenResolvedItem.Parents?.Add(importRefItem.Parent);
-                            }
-
-                            //If the one we already have chosen is pure, then we can skip this one.  Processing it wont bring any new info
-                            if (chosenSuppressions.Count == 1 && chosenSuppressions[0].Count == 0 && HasCommonAncestor(chosenResolvedItem.Path, pathToCurrentRef))
-                            {
-                                continue;
-                            }
-                            //if the one we are now looking at is pure, then we should replace the one we have chosen because if we're here it isnt pure.
-                            else if (currentSuppressions!.Count == 0)
-                            {
-                                chosenResolvedItems.Remove(currentRefDependencyIndex);
-
-                                bool isCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage;
-
-                                //slightly evil, but works.. we should just shift to the current thing as ref?
-                                chosenResolvedItems.Add(
-                                    currentRefDependencyIndex,
-                                    new ResolvedDependencyGraphItem
-                                    {
-                                        LibraryDependency = currentRef,
-                                        LibraryRangeIndex = currentRefRangeIndex,
-                                        Parents = chosenResolvedItem.Parents,
-                                        Path = pathToCurrentRef,
-                                        IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
-                                        IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
-                                        Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                                        {
-                                            currentSuppressions,
-                                        }
-                                    });
-                            }
-                            else
-                            //check to see if we are equal to one of the dispositions or if we are less restrictive than one
-                            {
-                                bool isEqualOrSuperSetDisposition = false;
-                                foreach (var chosenImportDisposition in chosenSuppressions)
-                                {
-                                    if (currentSuppressions.IsSupersetOf(chosenImportDisposition))
-                                    {
-                                        isEqualOrSuperSetDisposition = true;
-                                    }
-                                }
-
-                                if (isEqualOrSuperSetDisposition)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    bool isCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage;
-
-                                    //case of differently restrictive dispositions or less restrictive... we should technically be able to remove
-                                    //a disposition if its less restrictive than another.  But we'll just add it to the list.
-                                    chosenResolvedItems.Remove(currentRefDependencyIndex);
-                                    List<HashSet<LibraryDependencyIndex>> newImportDisposition = new()
-                                    {
-                                            currentSuppressions
-                                    };
-
-                                    newImportDisposition.AddRange(chosenSuppressions);
-                                    //slightly evil, but works.. we should just shift to the current thing as ref?
-                                    chosenResolvedItems.Add(
-                                        currentRefDependencyIndex,
-                                        new ResolvedDependencyGraphItem
-                                        {
-                                            LibraryDependency = currentRef,
-                                            LibraryRangeIndex = currentRefRangeIndex,
-                                            Parents = chosenResolvedItem.Parents,
-                                            Path = pathToCurrentRef,
-                                            IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
-                                            IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
-                                            Suppressions = newImportDisposition
-                                        });
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        bool isCentrallyPinnedTransitivePackage = importRefItem.IsCentrallyPinnedTransitivePackage;
-
-                        //This is now the thing we think is the highest version of this ref
-                        chosenResolvedItems.Add(
-                            currentRefDependencyIndex,
-                            new ResolvedDependencyGraphItem
-                            {
-                                LibraryDependency = currentRef,
-                                LibraryRangeIndex = currentRefRangeIndex,
-                                Parents = isCentrallyPinnedTransitivePackage && !directPackageReferenceFromRootProject ? new HashSet<LibraryRangeIndex>() { importRefItem.Parent } : null,
-                                Path = pathToCurrentRef,
-                                IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
-                                IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
-                                Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                                {
-                                    currentSuppressions!
-                                }
-                            });
-                    }
-
-                    HashSet<LibraryDependencyIndex>? suppressions = default;
-                    //Scan for suppressions
-                    for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
-                    {
-                        var dep = refItemResult.Item.Data.Dependencies[i];
-                        // Packages with missing versions should not be added to the graph
-                        if (dep.LibraryRange.VersionRange == null)
-                        {
-                            continue;
-                        }
-
-                        LibraryDependencyIndex depIndex = refItemResult.GetDependencyIndexForDependency(i);
-                        if ((dep.SuppressParent == LibraryIncludeFlags.All) && (importRefItem.LibraryDependencyIndex != rootProjectRefItem.LibraryDependencyIndex))
-                        {
-                            if (suppressions == null)
-                            {
-                                suppressions = new HashSet<LibraryDependencyIndex>();
-                            }
-                            suppressions.Add(depIndex);
-                        }
-                    }
-
-                    // If the suppressions have been mutated, then add the rest of the suppressions.
-                    // Otherwise just use teh incoming set of suppressions.
-                    if (suppressions != null)
-                    {
-                        suppressions.AddRange(currentSuppressions);
-                    }
-                    else
-                    {
-                        suppressions = currentSuppressions;
-                    }
-
-                    HashSet<int>? prunedPackageIndices = null;
-                    for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
-                    {
-                        LibraryDependency dep = refItemResult.Item.Data.Dependencies[i];
-                        bool isPackage = dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
-                        bool isDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && isPackage;
-
-                        LibraryDependencyIndex depIndex = refItemResult.GetDependencyIndexForDependency(i);
-
-                        if (ShouldPrunePackage(prunedPackageVersions, refItemResult, dep, depIndex, isPackage, isDirectPackageReferenceFromRootProject))
-                        {
-                            prunedPackageIndices ??= [];
-                            prunedPackageIndices.Add(i);
-                            continue;
-                        }
-
-                        // Skip this node if the VersionRange is null or if its not transitively pinned and PrivateAssets=All
-                        if (dep.LibraryRange.VersionRange == null || (!importRefItem.IsCentrallyPinnedTransitivePackage && suppressions!.Contains(depIndex)))
-                        {
-                            continue;
-                        }
-
-                        VersionRange? pinnedVersionRange = null;
-
-                        if (!isDirectPackageReferenceFromRootProject && directPackageReferences?.Contains(depIndex) == true)
-                        {
-                            continue;
-                        }
-
-                        bool isCentrallyPinnedTransitiveDependency = isCentralPackageTransitivePinningEnabled
-                            && isPackage
-                            && pinnedPackageVersions?.TryGetValue(depIndex, out pinnedVersionRange) == true;
-
-                        LibraryRangeIndex rangeIndex = LibraryRangeIndex.Invalid;
-
-                        LibraryDependency actualLibraryDependency = dep;
-
-                        if (isCentrallyPinnedTransitiveDependency && !isDirectPackageReferenceFromRootProject)
-                        {
-                            actualLibraryDependency = new LibraryDependency(dep)
-                            {
-                                LibraryRange = new LibraryRange(actualLibraryDependency.LibraryRange) { VersionRange = pinnedVersionRange },
-                            };
-
-                            isCentrallyPinnedTransitiveDependency = true;
-
-                            rangeIndex = libraryRangeInterningTable.Intern(actualLibraryDependency.LibraryRange);
-                        }
-                        else
-                        {
-                            rangeIndex = refItemResult.GetRangeIndexForDependency(i);
-                        }
-
-                        DependencyGraphItem dependencyGraphItem = new()
-                        {
-                            LibraryDependency = actualLibraryDependency,
-                            LibraryDependencyIndex = depIndex,
-                            LibraryRangeIndex = rangeIndex,
-                            Path = isCentrallyPinnedTransitiveDependency || isDirectPackageReferenceFromRootProject ? rootedDependencyPath : LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex),
-                            Parent = currentRefRangeIndex,
-                            Suppressions = suppressions,
-                            IsDirectPackageReferenceFromRootProject = isDirectPackageReferenceFromRootProject,
-                            IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitiveDependency
-                        };
-
-                        refImport.Enqueue(dependencyGraphItem);
-
-                        _ = findLibraryEntryCache.GetOrAddAsync(
-                            rangeIndex,
-                            async static state =>
-                            {
-                                return await FindLibraryEntryResult.CreateAsync(
-                                    state.libraryDependency,
-                                    state.dependencyIndex,
-                                    state.rangeIndex,
-                                    state.Framework,
-                                    state.context,
-                                    state.libraryDependencyInterningTable,
-                                    state.libraryRangeInterningTable,
-                                    state.token);
-                            },
-                            (libraryDependency: actualLibraryDependency, dependencyIndex: depIndex, rangeIndex, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
-                            token);
-                    }
-
-                    // Add runtime dependencies of the current node if a runtime identifier has been specified.
-                    if (!string.IsNullOrEmpty(pair.RuntimeIdentifier) && runtimeDependencies != null && runtimeDependencies.Count > 0)
-                    {
-                        // Check for runtime dependencies.
-                        FindLibraryEntryResult? findLibraryCachedAsyncResult = default;
-
-                        // Runtime dependencies start after non-runtime dependencies.
-                        // Keep track of the first index for any runtime dependencies so that it can be used to enqueue later.
-                        int runtimeDependencyIndex = refItemResult.Item.Data.Dependencies.Count;
-
-                        // If there are runtime dependencies that need to be added, remove the currentRef from allResolvedItems,
-                        // and add the newly created version that contains the previously detected dependencies and newly detected runtime dependencies.
-                        bool rootHasInnerNodes = (refItemResult.Item.Data.Dependencies.Count + (runtimeDependencies == null ? 0 : runtimeDependencies.Count)) > 0;
-                        GraphNode<RemoteResolveResult> rootNode = new GraphNode<RemoteResolveResult>(currentRef.LibraryRange, rootHasInnerNodes, false)
-                        {
-                            Item = refItemResult.Item,
-                        };
-                        RemoteDependencyWalker.MergeRuntimeDependencies(runtimeDependencies, rootNode);
-
-                        findLibraryCachedAsyncResult = await findLibraryEntryCache.GetOrAddAsync(
-                            currentRefRangeIndex,
-                            refresh: true,
-                            static state =>
-                            {
-                                return Task.FromResult(new FindLibraryEntryResult(
-                                    state.currentRef,
-                                    state.rootNode.Item,
-                                    state.currentRefDependencyIndex,
-                                    state.currentRefRangeIndex,
-                                    state.libraryDependencyInterningTable,
-                                    state.libraryRangeInterningTable));
-                            },
-                            (currentRef, rootNode, currentRefDependencyIndex, currentRefRangeIndex, libraryDependencyInterningTable, libraryRangeInterningTable),
-                            token);
-
-                        // Enqueue each of the runtime dependencies, but only if they weren't already present in refItemResult before merging the runtime dependencies above.
-                        if ((rootNode.Item.Data.Dependencies.Count - runtimeDependencyIndex) == runtimeDependencies!.Count)
-                        {
-                            foreach (var dep in runtimeDependencies)
-                            {
-                                var libraryDependencyIndex = findLibraryCachedAsyncResult.GetDependencyIndexForDependency(runtimeDependencyIndex);
-                                if (ShouldPrunePackage(prunedPackageVersions, refItemResult, dep, libraryDependencyIndex, isPackage: true, isDirectPackageReferenceFromRootProject: false))
-                                {
-                                    prunedPackageIndices ??= [];
-                                    prunedPackageIndices.Add(runtimeDependencyIndex);
-                                    runtimeDependencyIndex++;
-                                    continue;
-                                }
-
-                                DependencyGraphItem runtimeDependencyGraphItem = new()
-                                {
-                                    LibraryDependency = dep,
-                                    LibraryDependencyIndex = libraryDependencyIndex,
-                                    LibraryRangeIndex = findLibraryCachedAsyncResult.GetRangeIndexForDependency(runtimeDependencyIndex),
-                                    Path = LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex),
-                                    Parent = currentRefRangeIndex,
-                                    Suppressions = suppressions,
-                                    IsDirectPackageReferenceFromRootProject = false,
-                                };
-
-                                refImport.Enqueue(runtimeDependencyGraphItem);
-
-                                _ = findLibraryEntryCache.GetOrAddAsync(
-                                    runtimeDependencyGraphItem.LibraryRangeIndex,
-                                    async static state =>
-                                    {
-                                        return await FindLibraryEntryResult.CreateAsync(
-                                            state.libraryDependency,
-                                            state.dependencyIndex,
-                                            state.rangeIndex,
-                                            state.Framework,
-                                            state.context,
-                                            state.libraryDependencyInterningTable,
-                                            state.libraryRangeInterningTable,
-                                            state.token);
-                                    },
-                                    (libraryDependency: dep, dependencyIndex: runtimeDependencyGraphItem.LibraryDependencyIndex, rangeIndex: runtimeDependencyGraphItem.LibraryRangeIndex, pair.Framework, context, libraryDependencyInterningTable, libraryRangeInterningTable, token),
-                                    token);
-
-                                runtimeDependencyIndex++;
-                            }
-                        }
-                    }
-
-                    // If the latest item was chosen, keep track of the pruned dependency indices.
-                    if (chosenResolvedItems.TryGetValue(currentRefDependencyIndex, out ResolvedDependencyGraphItem? resolvedGraphItem))
-                    {
-                        resolvedGraphItem.PrunedDependencies = prunedPackageIndices;
-                    }
-                }
-
-                //Now that we've completed import, figure out the short real flattened list
-                var flattenedGraphItems = new HashSet<GraphItem<RemoteResolveResult>>();
-                HashSet<LibraryDependencyIndex> visitedItems = new HashSet<LibraryDependencyIndex>();
-                Queue<(LibraryDependencyIndex, LibraryRangeIndex, GraphNode<RemoteResolveResult>)> itemsToFlatten = new();
-                var graphNodes = new List<GraphNode<RemoteResolveResult>>();
-
-                LibraryDependencyIndex initialProjectIndex = rootProjectRefItem.LibraryDependencyIndex;
-                var cri = chosenResolvedItems[initialProjectIndex];
-                LibraryDependency startRef = cri.LibraryDependency;
-
-                var rootGraphNode = new GraphNode<RemoteResolveResult>(startRef.LibraryRange);
-                LibraryRangeIndex startRefLibraryRangeIndex = cri.LibraryRangeIndex;
-
-                FindLibraryEntryResult startRefNode = await findLibraryEntryCache.GetValueAsync(startRefLibraryRangeIndex);
-
-                rootGraphNode.Item = startRefNode.Item;
-                graphNodes.Add(rootGraphNode);
-
-                var analyzeResult = new AnalyzeResult<RemoteResolveResult>();
-                var nodesById = new Dictionary<LibraryRangeIndex, GraphNode<RemoteResolveResult>>();
-
-                var downgrades = new Dictionary<LibraryRangeIndex, (LibraryRangeIndex FromParent, LibraryDependency FromLibraryDependency, LibraryRangeIndex ToParent, LibraryDependency ToLibraryDependency, bool IsCentralTransitive)>();
-
-                var versionConflicts = new Dictionary<LibraryRangeIndex, GraphNode<RemoteResolveResult>>();
-
-                itemsToFlatten.Enqueue((initialProjectIndex, cri.LibraryRangeIndex, rootGraphNode));
-
-                nodesById.Add(cri.LibraryRangeIndex, rootGraphNode);
-
-                while (itemsToFlatten.Count > 0)
-                {
-                    (LibraryDependencyIndex currentDependencyIndex, LibraryRangeIndex currentLibraryRangeIndex, GraphNode<RemoteResolveResult> currentGraphNode) = itemsToFlatten.Dequeue();
-                    if (!chosenResolvedItems.TryGetValue(currentDependencyIndex, out var foundItem))
-                    {
-                        continue;
-                    }
-                    LibraryDependency chosenRef = foundItem.LibraryDependency;
-                    LibraryRangeIndex chosenRefRangeIndex = foundItem.LibraryRangeIndex;
-                    LibraryRangeIndex[] pathToChosenRef = foundItem.Path;
-                    bool directPackageReferenceFromRootProject = foundItem.IsDirectPackageReferenceFromRootProject;
-                    List<HashSet<LibraryDependencyIndex>> chosenSuppressions = foundItem.Suppressions;
-                    if (findLibraryEntryCache.TryGetValue(chosenRefRangeIndex, out Task<FindLibraryEntryResult>? nodeTask))
-                    {
-                        FindLibraryEntryResult node = await nodeTask;
-
-                        for (int i = 0; i < node.Item.Data.Dependencies.Count; i++)
-                        {
-                            var dep = node.Item.Data.Dependencies[i];
-
-                            if (dep.LibraryRange.VersionRange == null)
-                            {
-                                continue;
-                            }
-
-                            if (foundItem.PrunedDependencies?.Contains(i) == true)
-                            {
-                                continue;
-                            }
-
-                            if (StringComparer.OrdinalIgnoreCase.Equals(dep.Name, node.Item.Key.Name) || StringComparer.OrdinalIgnoreCase.Equals(dep.Name, rootGraphNode.Key.Name))
-                            {
-                                // Cycle
-                                var nodeWithCycle = new GraphNode<RemoteResolveResult>(dep.LibraryRange)
-                                {
-                                    OuterNode = currentGraphNode,
-                                    Disposition = Disposition.Cycle
-                                };
-
-                                analyzeResult.Cycles.Add(nodeWithCycle);
-
-                                continue;
-                            }
-
-                            LibraryDependencyIndex depIndex = node.GetDependencyIndexForDependency(i);
-
-                            if (!chosenResolvedItems.TryGetValue(depIndex, out var chosenItem))
-                            {
-                                continue;
-                            }
-
-                            var chosenItemRangeIndex = chosenItem.LibraryRangeIndex;
-                            LibraryDependency actualDep = chosenItem.LibraryDependency;
-
-                            if (!visitedItems.Add(depIndex))
-                            {
-                                LibraryRangeIndex currentRangeIndex = node.GetRangeIndexForDependency(i);
-
-                                if (pathToChosenRef.Contains(currentRangeIndex))
-                                {
-                                    // Cycle
-                                    var nodeWithCycle = new GraphNode<RemoteResolveResult>(dep.LibraryRange);
-                                    nodeWithCycle.OuterNode = currentGraphNode;
-                                    nodeWithCycle.Disposition = Disposition.Cycle;
-                                    analyzeResult.Cycles.Add(nodeWithCycle);
-
-                                    continue;
-                                }
-
-                                if (!RemoteDependencyWalker.IsGreaterThanOrEqualTo(actualDep.LibraryRange.VersionRange, dep.LibraryRange.VersionRange))
-                                {
-                                    if (node.DependencyIndex != rootProjectRefItem.LibraryDependencyIndex && dep.SuppressParent == LibraryIncludeFlags.All)
-                                    {
-                                        continue;
-                                    }
-
-                                    if (chosenSuppressions.Count > 0 && chosenSuppressions[0].Contains(depIndex))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (findLibraryEntryCache.TryGetValue(chosenItemRangeIndex, out Task<FindLibraryEntryResult>? chosenResolvedItemTask))
-                                    {
-                                        FindLibraryEntryResult chosenResolvedItem = await chosenResolvedItemTask;
-
-                                        var resolvedVersion = chosenResolvedItem.Item.Data.Match?.Library?.Version;
-                                        if (resolvedVersion != null && dep.LibraryRange.VersionRange.Satisfies(resolvedVersion))
-                                        {
-                                            continue;
-                                        }
-                                    }
-
-                                    // Downgrade
-                                    if (!downgrades.ContainsKey(chosenItemRangeIndex))
-                                    {
-                                        if (chosenItem.ParentPathsThatHaveBeenEclipsed != null)
-                                        {
-                                            bool hasBeenEclipsedByParent = false;
-
-                                            foreach (var parent in chosenItem.ParentPathsThatHaveBeenEclipsed)
-                                            {
-                                                if (foundItem.Path.Contains(parent))
-                                                {
-                                                    hasBeenEclipsedByParent = true;
-                                                    break;
-                                                }
-                                            }
-
-                                            if (hasBeenEclipsedByParent)
-                                            {
-                                                continue;
-                                            }
-                                        }
-
-                                        bool foundParentDowngrade = false;
-
-                                        if (chosenItem.Parents != null)
-                                        {
-                                            foreach (var parent in chosenItem.Parents)
-                                            {
-                                                if (foundItem.Path.Contains(parent) && !foundItem.IsDirectPackageReferenceFromRootProject)
-                                                {
-                                                    downgrades.Add(chosenItemRangeIndex, (foundItem.LibraryRangeIndex, dep, parent, chosenItem.LibraryDependency, isCentralPackageTransitivePinningEnabled ? chosenItem.IsCentrallyPinnedTransitivePackage : false));
-
-                                                    foundParentDowngrade = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (!foundParentDowngrade && (!isCentralPackageTransitivePinningEnabled || !chosenItem.IsDirectPackageReferenceFromRootProject))
-                                        {
-                                            downgrades.Add(chosenItemRangeIndex, (foundItem.LibraryRangeIndex, dep, chosenItem.Path[chosenItem.Path.Length - 1], chosenItem.LibraryDependency, isCentralPackageTransitivePinningEnabled ? chosenItem.IsCentrallyPinnedTransitivePackage : false));
-                                        }
-                                    }
-
-                                    continue;
-                                }
-
-                                if (versionConflicts.ContainsKey(chosenItemRangeIndex) && !nodesById.ContainsKey(currentRangeIndex) && findLibraryEntryCache.TryGetValue(chosenItemRangeIndex, out Task<FindLibraryEntryResult>? itemTask))
-                                {
-                                    FindLibraryEntryResult conflictingNode = await itemTask;
-
-                                    // Version conflict
-                                    var selectedConflictingNode = new GraphNode<RemoteResolveResult>(actualDep.LibraryRange)
-                                    {
-                                        Item = conflictingNode.Item,
-                                        Disposition = Disposition.Acceptable,
-                                        OuterNode = currentGraphNode,
-                                    };
-                                    currentGraphNode.InnerNodes.Add(selectedConflictingNode);
-
-                                    nodesById.Add(currentRangeIndex, selectedConflictingNode);
-
-                                    continue;
-                                }
-
-                                continue;
-                            }
-
-                            FindLibraryEntryResult findLibraryEntryResult = await findLibraryEntryCache.GetValueAsync(chosenItemRangeIndex);
-
-                            var newGraphNode = new GraphNode<RemoteResolveResult>(actualDep.LibraryRange);
-                            newGraphNode.Item = findLibraryEntryResult.Item;
-
-                            if (chosenItem.IsCentrallyPinnedTransitivePackage && !chosenItem.IsDirectPackageReferenceFromRootProject)
-                            {
-                                newGraphNode.Disposition = Disposition.Accepted;
-                                newGraphNode.Item.IsCentralTransitive = true;
-                                newGraphNode.OuterNode = rootGraphNode;
-                                rootGraphNode.InnerNodes.Add(newGraphNode);
-                            }
-                            else
-                            {
-                                newGraphNode.OuterNode = currentGraphNode;
-                                currentGraphNode.InnerNodes.Add(newGraphNode);
-                            }
-
-                            if (dep.SuppressParent != LibraryIncludeFlags.All && isCentralPackageTransitivePinningEnabled && !chosenItem.IsDirectPackageReferenceFromRootProject && !downgrades.ContainsKey(chosenItemRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(chosenItem.LibraryDependency.LibraryRange.VersionRange, dep.LibraryRange.VersionRange))
-                            {
-                                downgrades.Add(chosenItem.LibraryRangeIndex, (currentLibraryRangeIndex, dep, rootProjectRefItem.LibraryRangeIndex, chosenItem.LibraryDependency, true));
-                            }
-
-                            if (newGraphNode.Item.Key.Type != LibraryType.Project && newGraphNode.Item.Key.Type != LibraryType.ExternalProject && newGraphNode.Item.Key.Type != LibraryType.Unresolved && !versionConflicts.ContainsKey(chosenItemRangeIndex) && dep.SuppressParent != LibraryIncludeFlags.All && dep.LibraryRange.VersionRange != null && !dep.LibraryRange.VersionRange!.Satisfies(newGraphNode.Item.Key.Version) && !downgrades.ContainsKey(chosenItemRangeIndex))
-                            {
-                                currentGraphNode.InnerNodes.Remove(newGraphNode);
-
-                                // Conflict
-                                var conflictingNode = new GraphNode<RemoteResolveResult>(dep.LibraryRange)
-                                {
-                                    Disposition = Disposition.Acceptable
-                                };
-
-                                conflictingNode.Item = new GraphItem<RemoteResolveResult>(new LibraryIdentity(dep.Name, dep.LibraryRange.VersionRange.MinVersion!, LibraryType.Package));
-                                currentGraphNode.InnerNodes.Add(conflictingNode);
-                                conflictingNode.OuterNode = currentGraphNode;
-
-                                versionConflicts.Add(chosenItemRangeIndex, conflictingNode);
-
-                                continue;
-                            }
-
-                            nodesById.Add(chosenItemRangeIndex, newGraphNode);
-                            itemsToFlatten.Enqueue((depIndex, chosenItemRangeIndex, newGraphNode));
-
-                            if (newGraphNode.Item.Key.Type == LibraryType.Unresolved)
-                            {
-                                unresolvedPackages.Add(actualDep.LibraryRange);
-
-                                _success = false;
-
-                                continue;
-                            }
-
-                            resolvedDependencies.Add(new ResolvedDependencyKey(
-                                parent: newGraphNode.OuterNode.Item.Key,
-                                range: newGraphNode.Key.VersionRange,
-                                child: newGraphNode.Item.Key));
-                        }
-
-                        if (foundItem.PrunedDependencies?.Count > 0)
-                        {
-                            int dependencyCount = node.Item.Data.Dependencies.Count - foundItem.PrunedDependencies.Count;
-
-                            List<LibraryDependency> dependencies = dependencyCount > 0 ? new(dependencyCount) : [];
-
-                            for (int i = 0; dependencyCount > 0 && i < node.Item.Data.Dependencies.Count; i++)
-                            {
-                                if (!foundItem.PrunedDependencies.Contains(i))
-                                {
-                                    dependencies.Add(node.Item.Data.Dependencies[i]);
-                                }
-                            }
-
-                            RemoteResolveResult remoteResolveResult = new RemoteResolveResult()
-                            {
-                                Match = node.Item.Data.Match,
-                                Dependencies = dependencies,
-                            };
-
-                            node.Item.Data = remoteResolveResult;
-                        }
-
-                        flattenedGraphItems.Add(node.Item);
-                    }
-                }
-
-                if (versionConflicts.Count > 0)
-                {
-                    foreach (var versionConflict in versionConflicts)
-                    {
-                        if (nodesById.TryGetValue(versionConflict.Key, out var selected))
-                        {
-                            analyzeResult.VersionConflicts.Add(new VersionConflictResult<RemoteResolveResult>
-                            {
-                                Conflicting = versionConflict.Value,
-                                Selected = selected
-                            });
-                        }
-                    }
-                }
-
-                if (downgrades.Count > 0)
-                {
-                    foreach (var downgrade in downgrades)
-                    {
-                        if (!nodesById.TryGetValue(downgrade.Value.FromParent, out GraphNode<RemoteResolveResult>? fromNode) || !nodesById.TryGetValue(downgrade.Value.ToParent, out GraphNode<RemoteResolveResult>? toNode))
-                        {
-                            continue;
-                        }
-
-                        if (!findLibraryEntryCache.TryGetValue(downgrade.Key, out Task<FindLibraryEntryResult>? findLibraryEntryResultTask))
-                        {
-                            continue;
-                        }
-
-                        FindLibraryEntryResult findLibraryEntryResult = await findLibraryEntryResultTask;
-
-                        analyzeResult.Downgrades.Add(new DowngradeResult<RemoteResolveResult>
-                        {
-                            DowngradedFrom = new GraphNode<RemoteResolveResult>(downgrade.Value.FromLibraryDependency.LibraryRange)
-                            {
-                                Item = new GraphItem<RemoteResolveResult>(new LibraryIdentity(downgrade.Value.FromLibraryDependency.Name, downgrade.Value.FromLibraryDependency.LibraryRange.VersionRange?.MinVersion!, LibraryType.Package)),
-                                OuterNode = fromNode
-                            },
-                            DowngradedTo = new GraphNode<RemoteResolveResult>(downgrade.Value.ToLibraryDependency.LibraryRange)
-                            {
-                                Item = new GraphItem<RemoteResolveResult>(findLibraryEntryResult.Item.Key)
-                                {
-                                    IsCentralTransitive = downgrade.Value.IsCentralTransitive
-                                },
-                                OuterNode = downgrade.Value.IsCentralTransitive ? rootGraphNode : toNode,
-                            }
-                        });
-                    }
-                }
-
-                if (isCentralPackageTransitivePinningEnabled)
-                {
-                    foreach (KeyValuePair<LibraryDependencyIndex, ResolvedDependencyGraphItem> item in chosenResolvedItems)
-                    {
-                        ResolvedDependencyGraphItem chosenResolvedItem = item.Value;
-
-                        if (!chosenResolvedItem.IsCentrallyPinnedTransitivePackage || chosenResolvedItem.IsDirectPackageReferenceFromRootProject || chosenResolvedItem.Parents == null || chosenResolvedItem.Parents.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        if (nodesById.TryGetValue(chosenResolvedItem.LibraryRangeIndex, out GraphNode<RemoteResolveResult>? currentNode))
-                        {
-                            foreach (LibraryRangeIndex parent in chosenResolvedItem.Parents)
-                            {
-                                if (nodesById.TryGetValue(parent, out GraphNode<RemoteResolveResult>? parentNode))
-                                {
-                                    currentNode.ParentNodes.Add(parentNode);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                HashSet<RemoteMatch> packagesToInstall = new();
-
-                foreach (var cacheKey in findLibraryEntryCache.Keys)
-                {
-                    if (findLibraryEntryCache.TryGetValue(cacheKey, out var task))
-                    {
-                        var result = await task;
-
-                        if (result.Item.Key.Type != LibraryType.Unresolved && context.RemoteLibraryProviders.Contains(result.Item.Data.Match.Provider))
-                        {
-                            packagesToInstall.Add(result.Item.Data.Match);
-                        }
-                    }
-                }
-
-                var restoreTargetGraph = new RestoreTargetGraph(
-                    Array.Empty<ResolverConflict>(),
-                    pair.Framework,
-                    string.IsNullOrWhiteSpace(pair.RuntimeIdentifier) ? null : pair.RuntimeIdentifier,
-                    runtimeGraph,
-                    graphNodes,
-                    install: packagesToInstall,
-                    flattened: flattenedGraphItems,
-                    unresolved: unresolvedPackages,
-                    analyzeResult,
-                    resolvedDependencies: resolvedDependencies);
-
+                // Track all of the RestoreTargetGraph objects
                 allGraphs.Add(restoreTargetGraph);
 
-                if (!string.IsNullOrWhiteSpace(pair.RuntimeIdentifier))
+                if (!string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier))
                 {
+                    // Track all of the runtime specific graphs
                     runtimeGraphs.Add(restoreTargetGraph);
                 }
-
-                if (string.IsNullOrEmpty(pair.RuntimeIdentifier))
+                else
                 {
-                    graphByTFM.Add(pair.Framework, restoreTargetGraph);
+                    // Track all of the RID-less graphs by their target framework
+                    graphsByTargetFramework.Add(frameworkRuntimePair.Framework, restoreTargetGraph);
                 }
             }
 
             _telemetryActivity.EndIntervalMeasure(ProjectRestoreCommand.WalkFrameworkDependencyDuration);
 
+            // Install packages if they weren't already.  If the graph has not runtimes, installing of packages won't be called until this point
             if (!hasInstallBeenCalledAlready)
             {
                 downloadDependencyResolutionResults = await ProjectRestoreCommand.DownloadDependenciesAsync(_request.Project, context, _telemetryActivity, telemetryPrefix: string.Empty, token);
 
-                _success &= await projectRestoreCommand.InstallPackagesAsync(uniquePackages, allGraphs, downloadDependencyResolutionResults, userPackageFolder, token);
+                success &= await projectRestoreCommand.InstallPackagesAsync(installedPackages, allGraphs, downloadDependencyResolutionResults, userPackageFolder, token);
 
                 hasInstallBeenCalledAlready = true;
             }
 
+            // Install runtime specific packages if applicable
             if (runtimeGraphs.Count > 0)
             {
-                _success &= await projectRestoreCommand.InstallPackagesAsync(uniquePackages, runtimeGraphs, Array.Empty<DownloadDependencyResolutionResult>(), userPackageFolder, token);
+                success &= await projectRestoreCommand.InstallPackagesAsync(installedPackages, runtimeGraphs, Array.Empty<DownloadDependencyResolutionResult>(), userPackageFolder, token);
             }
 
-            foreach (var profile in _request.Project.RuntimeGraph.Supports)
+            foreach (KeyValuePair<string, CompatibilityProfile> profile in _request.Project.RuntimeGraph.Supports)
             {
-                var runtimes = allRuntimes;
-
                 CompatibilityProfile? compatProfile;
                 if (profile.Value.RestoreContexts.Any())
                 {
                     // Just use the contexts from the project definition
                     compatProfile = profile.Value;
                 }
-                else if (!runtimes.Supports.TryGetValue(profile.Value.Name, out compatProfile))
+                else if (!allRuntimes.Supports.TryGetValue(profile.Value.Name, out compatProfile))
                 {
                     // No definition of this profile found, so just continue to the next one
-                    var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_UnknownCompatibilityProfile, profile.Key);
+                    await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1502, string.Format(CultureInfo.CurrentCulture, Strings.Log_UnknownCompatibilityProfile, profile.Key)));
 
-                    await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1502, message));
                     continue;
                 }
 
-                foreach (var frameworkRuntimePair in compatProfile.RestoreContexts)
+                foreach (FrameworkRuntimePair? frameworkRuntimePair in compatProfile.RestoreContexts)
                 {
                     _logger.LogDebug($" {profile.Value.Name} -> +{frameworkRuntimePair}");
                     _request.CompatibilityProfiles.Add(frameworkRuntimePair);
                 }
             }
 
-            // Update the logger with the restore target graphs
-            // This allows lazy initialization for the Transitive Warning Properties
+            // Log the final results like downgrades, conflicts, and cycles
             _logger.ApplyRestoreOutput(allGraphs);
 
+            // Log information for unexpected dependencies
             await UnexpectedDependencyMessages.LogAsync(allGraphs, _request.Project, _logger);
 
-            _success &= await projectRestoreCommand.ResolutionSucceeded(allGraphs, downloadDependencyResolutionResults, context, token);
+            // Determine if the graph resolution was successful (no conflicts or unresolved packages)
+            success &= await projectRestoreCommand.ResolutionSucceeded(allGraphs, downloadDependencyResolutionResults, context, token);
 
-            return (_success, allGraphs, allRuntimes);
+            return (success, allGraphs, allRuntimes);
         }
 
-        private static Dictionary<LibraryDependencyIndex, VersionRange>? GetAndIndexPackagesToPrune(LibraryDependencyInterningTable libraryDependencyInterningTable, TargetFrameworkInformation? projectTargetFramework)
+        /// <summary>
+        /// Creates a <see cref="RestoreTargetGraph" /> from the resolved dependency graph items and analyzes the graph for cycles, downgrades, and conflicts.
+        /// </summary>
+        /// <param name="frameworkRuntimePair">The <see cref="FrameworkRuntimePair" /> of the dependency graph.</param>
+        /// <param name="runtimeGraph">The <see cref="RuntimeGraph" /> of the dependency graph.</param>
+        /// <param name="isCentralPackageTransitivePinningEnabled">A <see cref="bool" /> indicating whether or not central transitive pinning is enabled.</param>
+        /// <param name="unresolvedPackages">A <see cref="HashSet{T}" /> containing <see cref="LibraryRange" /> objects representing packages that could not be resolved.</param>
+        /// <param name="resolvedPackages">A <see cref="HashSet{T}" /> containing <see cref="ResolvedDependencyKey" /> objects representing packages that were successfully resolved.</param>
+        /// <param name="context">The <see cref="RemoteWalkContext" /> for the restore.</param>
+        /// <returns>A <see cref="ValueTuple{T1, T2}" /> with:<br />
+        ///   <list type="bullet">
+        ///     <item>A <see langword="bool" /> indicating if the dependency graph contains no issues.</item>
+        ///     <item>A <see cref="RestoreTargetGraph" /> representing the fully resolved and analyzed dependency graph.</item>
+        ///   </list>
+        /// </returns>
+        private static async Task<(bool Success, RestoreTargetGraph RestoreTargetGraph)> CreateRestoreTargetGraphAsync(
+            FrameworkRuntimePair frameworkRuntimePair,
+            RuntimeGraph? runtimeGraph,
+            bool isCentralPackageTransitivePinningEnabled,
+            HashSet<LibraryRange> unresolvedPackages,
+            HashSet<ResolvedDependencyKey> resolvedPackages,
+            Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItems,
+            RemoteWalkContext context)
         {
-            Dictionary<LibraryDependencyIndex, VersionRange>? prunedPackageVersions = null;
+            bool success = true;
 
-            if (projectTargetFramework?.PackagesToPrune.Count > 0)
+            // Stores results of analyzing the graph including conflicts, cycles, and downgrades
+            AnalyzeResult<RemoteResolveResult> analyzeResult = new();
+
+            // Stores the list of items in as a flat list
+            HashSet<GraphItem<RemoteResolveResult>> flattenedGraphItems = new();
+
+            // Stores the list of graph nodes which point to their outer and inner nodes which represent the graph as a tree
+            List<GraphNode<RemoteResolveResult>> graphNodes = new();
+
+            // Stores the list of nodes by their LibraryRangeIndex for faster lookup
+            Dictionary<LibraryRangeIndex, GraphNode<RemoteResolveResult>> nodesById = new();
+
+            // Keeps track of visited items to detect when we come across a dependency that was already visited.  Any time a dependency is seen again, we need to determine if there was a downgrade or conflict.
+            HashSet<LibraryDependencyIndex> visitedItems = new();
+
+            // Stores the items to process, starting with the project itself and its children
+            Queue<(LibraryDependencyIndex, LibraryRangeIndex, GraphNode<RemoteResolveResult>)> itemsToFlatten = new();
+
+            Dictionary<LibraryRangeIndex, GraphNode<RemoteResolveResult>> versionConflicts = new();
+
+            // Stores the list of downgrades
+            Dictionary<LibraryRangeIndex, (LibraryRangeIndex FromParentLibraryRangeIndex, LibraryDependency FromLibraryDependency, LibraryRangeIndex ToParentLibraryRangeIndex, LibraryDependencyIndex ToLibraryDependencyIndex, bool IsCentralTransitive)> downgrades = new();
+
+            // Get the resolved item for the project
+            ResolvedDependencyGraphItem projectResolvedDependencyGraphItem = resolvedDependencyGraphItems[LibraryDependencyIndex.Project];
+
+            // Create a node representing the root for the project
+            GraphNode<RemoteResolveResult> rootGraphNode = new GraphNode<RemoteResolveResult>(projectResolvedDependencyGraphItem.LibraryDependency.LibraryRange)
             {
-                prunedPackageVersions = new Dictionary<LibraryDependencyIndex, VersionRange>(capacity: projectTargetFramework.PackagesToPrune.Count);
+                Item = projectResolvedDependencyGraphItem.Item
+            };
 
-                foreach (var item in projectTargetFramework.PackagesToPrune)
+            graphNodes.Add(rootGraphNode);
+
+            // Enqueue the project to be processed
+            itemsToFlatten.Enqueue((LibraryDependencyIndex.Project, projectResolvedDependencyGraphItem.LibraryRangeIndex, rootGraphNode));
+
+            nodesById.Add(projectResolvedDependencyGraphItem.LibraryRangeIndex, rootGraphNode);
+
+            while (itemsToFlatten.Count > 0)
+            {
+                (LibraryDependencyIndex currentLibraryDependencyIndex, LibraryRangeIndex currentLibraryRangeIndex, GraphNode<RemoteResolveResult> currentGraphNode) = itemsToFlatten.Dequeue();
+
+                // If there was no dependency in the resolved graph with the same name, it can be skipped and left out of the final graph
+                if (!resolvedDependencyGraphItems.TryGetValue(currentLibraryDependencyIndex, out ResolvedDependencyGraphItem? resolvedDependencyGraphItem))
                 {
-                    LibraryDependencyIndex depIndex = libraryDependencyInterningTable.Intern(item.Value);
-                    prunedPackageVersions[depIndex] = item.Value.VersionRange;
+                    continue;
                 }
-            }
 
-            return prunedPackageVersions;
-        }
+                flattenedGraphItems.Add(resolvedDependencyGraphItem.Item);
 
-        private bool ShouldPrunePackage(
-            IReadOnlyDictionary<LibraryDependencyIndex, VersionRange>? packagesToPrune,
-            FindLibraryEntryResult refItemResult,
-            LibraryDependency dep,
-            LibraryDependencyIndex libraryDependencyIndex,
-            bool isPackage,
-            bool isDirectPackageReferenceFromRootProject)
-        {
-            if (packagesToPrune?.TryGetValue(libraryDependencyIndex, out VersionRange? prunableVersion) == true)
-            {
-                if (dep.LibraryRange!.VersionRange!.Satisfies(prunableVersion!.MaxVersion!))
+                for (int i = 0; i < resolvedDependencyGraphItem.Item.Data.Dependencies.Count; i++)
                 {
-                    if (!isPackage)
+                    LibraryDependency childLibraryDependency = resolvedDependencyGraphItem.Item.Data.Dependencies[i];
+
+                    if (childLibraryDependency.LibraryRange.VersionRange == null)
                     {
-                        if (SdkAnalysisLevelMinimums.IsEnabled(
-                            _request.Project!.RestoreMetadata!.SdkAnalysisLevel,
-                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                            SdkAnalysisLevelMinimums.PruningWarnings))
-                        {
-                            _logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1511, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningProjectReference, dep.Name)));
-                        }
+                        continue;
                     }
-                    else if (isDirectPackageReferenceFromRootProject)
+
+                    if (StringComparer.OrdinalIgnoreCase.Equals(childLibraryDependency.Name, resolvedDependencyGraphItem.Item.Key.Name) || StringComparer.OrdinalIgnoreCase.Equals(childLibraryDependency.Name, rootGraphNode.Key.Name))
                     {
-                        if (SdkAnalysisLevelMinimums.IsEnabled(
-                            _request.Project!.RestoreMetadata!.SdkAnalysisLevel,
-                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                            SdkAnalysisLevelMinimums.PruningWarnings))
+                        // A cycle exists since the current child dependency has the same name as its parent or as the root node
+                        GraphNode<RemoteResolveResult> nodeWithCycle = new(childLibraryDependency.LibraryRange)
                         {
-                            _logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1510, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningDirectPackageReference, dep.Name)));
+                            OuterNode = currentGraphNode,
+                            Disposition = Disposition.Cycle
+                        };
+
+                        analyzeResult.Cycles.Add(nodeWithCycle);
+
+                        continue;
+                    }
+
+                    LibraryDependencyIndex childLibraryDependencyIndex = resolvedDependencyGraphItem.GetDependencyIndexForDependencyAt(i);
+
+                    if (!resolvedDependencyGraphItems.TryGetValue(childLibraryDependencyIndex, out ResolvedDependencyGraphItem? childResolvedDependencyGraphItem))
+                    {
+                        // If there was no dependency in the resolved graph with the same name as this child dependency, it can be skipped and left out of the final graph
+                        continue;
+                    }
+
+                    LibraryRangeIndex childResolvedLibraryRangeIndex = childResolvedDependencyGraphItem.LibraryRangeIndex;
+                    LibraryDependency childResolvedLibraryDependency = childResolvedDependencyGraphItem.LibraryDependency;
+
+                    // Determine if this dependency has already been visited
+                    if (!visitedItems.Add(childLibraryDependencyIndex))
+                    {
+                        LibraryRangeIndex currentRangeIndex = resolvedDependencyGraphItem.GetRangeIndexForDependencyAt(i);
+
+                        if (resolvedDependencyGraphItem.Path.Contains(currentRangeIndex))
+                        {
+                            // If the dependency exists in the its own path, then a cycle exists
+                            analyzeResult.Cycles.Add(
+                                new GraphNode<RemoteResolveResult>(childLibraryDependency.LibraryRange)
+                                {
+                                    OuterNode = currentGraphNode,
+                                    Disposition = Disposition.Cycle
+                                });
+
+                            continue;
                         }
+
+                        // Verify downgrades only if the resolved dependency has a lower version than what was defined
+                        if (!RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedLibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                        {
+                            // It is not a downgrade if: the dependency is transitive and is suppressed its parent or any of those parents' parent because the suppressions is an aggregate of everything suppressed above.
+                            // For example, A -> B (PrivateAssets=All) -> C
+                            // When processing C, it is not suppressed but its parent is, which is tracked in ResolvedDependencyGraphItem.Suppressions
+                            if ((childLibraryDependencyIndex != LibraryDependencyIndex.Project && childLibraryDependency.SuppressParent == LibraryIncludeFlags.All)
+                                || resolvedDependencyGraphItem.Suppressions.Count > 0 && resolvedDependencyGraphItem.Suppressions[0].Contains(childLibraryDependencyIndex))
+                            {
+                                continue;
+                            }
+
+                            // Get the resolved version in case a floating version like 1.* was specified
+                            NuGetVersion? resolvedVersion = childResolvedDependencyGraphItem.Item.Data.Match?.Library?.Version;
+
+                            if (resolvedVersion != null && childLibraryDependency.LibraryRange.VersionRange.Satisfies(resolvedVersion))
+                            {
+                                // Ignore the lower version if the resolved version satisfies the range of the dependency. This can happen when a floating version like 1.* was specified
+                                // and the resolved version is 1.2.3, which satisfies the range of 1.*
+                                continue;
+                            }
+
+                            // This lower version could be a downgrade if it hasn't already been seen
+                            if (!downgrades.ContainsKey(childResolvedLibraryRangeIndex))
+                            {
+                                // Determine if any parents have actually eclipsed this version
+                                if (childResolvedDependencyGraphItem.ParentPathsThatHaveBeenEclipsed != null)
+                                {
+                                    bool hasBeenEclipsedByParent = false;
+
+                                    foreach (LibraryRangeIndex parent in childResolvedDependencyGraphItem.ParentPathsThatHaveBeenEclipsed)
+                                    {
+                                        if (resolvedDependencyGraphItem.Path.Contains(parent))
+                                        {
+                                            hasBeenEclipsedByParent = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (hasBeenEclipsedByParent)
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                // Look through all of the parent nodes to see if any are a downgrade
+                                bool foundParentDowngrade = false;
+
+                                if (childResolvedDependencyGraphItem.Parents != null)
+                                {
+                                    foreach (LibraryRangeIndex parentLibraryRangeIndex in childResolvedDependencyGraphItem.Parents)
+                                    {
+                                        if (resolvedDependencyGraphItem.Path.Contains(parentLibraryRangeIndex) && !resolvedDependencyGraphItem.IsRootPackageReference)
+                                        {
+                                            downgrades.Add(
+                                                childResolvedLibraryRangeIndex,
+                                                (
+                                                    FromParentLibraryRangeIndex: resolvedDependencyGraphItem.LibraryRangeIndex,
+                                                    FromLibraryDependency: childLibraryDependency,
+                                                    ToParentLibraryRangeIndex: parentLibraryRangeIndex,
+                                                    ToLibraryDependencyIndex: childLibraryDependencyIndex,
+                                                    IsCentralTransitive: isCentralPackageTransitivePinningEnabled ? childResolvedDependencyGraphItem.IsCentrallyPinnedTransitivePackage : false
+                                                ));
+
+                                            foundParentDowngrade = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                // It is a downgrade if central transitive pinning is not being used or if the child is not a direct package reference
+                                if (!foundParentDowngrade && (!isCentralPackageTransitivePinningEnabled || !childResolvedDependencyGraphItem.IsRootPackageReference))
+                                {
+                                    downgrades.Add(
+                                        childResolvedLibraryRangeIndex,
+                                        (
+                                            FromParentLibraryRangeIndex: resolvedDependencyGraphItem.LibraryRangeIndex,
+                                            FromLibraryDependency: childLibraryDependency,
+                                            ToParentLibraryRangeIndex: childResolvedDependencyGraphItem.Path[childResolvedDependencyGraphItem.Path.Length - 1],
+                                            ToLibraryDependencyIndex: childLibraryDependencyIndex,
+                                            IsCentralTransitive: isCentralPackageTransitivePinningEnabled ? childResolvedDependencyGraphItem.IsCentrallyPinnedTransitivePackage : false
+                                        ));
+                                }
+                            }
+
+                            // Ignore this child dependency since it was a downgrade
+                            continue;
+                        }
+
+                        // If it wasn't a downgrade, then it was a version conflict like A -> B [1.0.0] but B 1.0.0 was not in the resolved graph
+                        if (versionConflicts.ContainsKey(childResolvedLibraryRangeIndex) && !nodesById.ContainsKey(currentRangeIndex))
+                        {
+                            GraphNode<RemoteResolveResult> nodeWithConflict = new(childResolvedLibraryDependency.LibraryRange)
+                            {
+                                Item = childResolvedDependencyGraphItem.Item,
+                                Disposition = Disposition.Acceptable,
+                                OuterNode = currentGraphNode,
+                            };
+
+                            currentGraphNode.InnerNodes.Add(nodeWithConflict);
+
+                            nodesById.Add(currentRangeIndex, nodeWithConflict);
+
+                            continue;
+                        }
+
+                        // Ignore this child dependency since it was not a cycle, downgrade, or version conflict but was already visited
+                        continue;
+                    }
+
+                    // Create a GraphNode for the item
+                    GraphNode<RemoteResolveResult> newGraphNode = new(childResolvedLibraryDependency.LibraryRange)
+                    {
+                        Item = childResolvedDependencyGraphItem.Item
+                    };
+
+                    if (childResolvedDependencyGraphItem.IsCentrallyPinnedTransitivePackage && !childResolvedDependencyGraphItem.IsRootPackageReference)
+                    {
+                        // If this child is transitively pinned, the GraphNode needs to have certain properties set
+                        newGraphNode.Disposition = Disposition.Accepted;
+                        newGraphNode.Item.IsCentralTransitive = true;
+
+                        // Treat the transitively pinned dependency as a child of the root node
+                        newGraphNode.OuterNode = rootGraphNode;
+                        rootGraphNode.InnerNodes.Add(newGraphNode);
                     }
                     else
                     {
-                        _logger.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.RestoreDebugPruningPackageReference, $"{dep.Name} {dep.LibraryRange.VersionRange.OriginalString}", refItemResult.Item.Key, prunableVersion.MaxVersion));
-                        return true;
+                        // Set properties for the node to represent a parent/child relationship
+                        newGraphNode.OuterNode = currentGraphNode;
+                        currentGraphNode.InnerNodes.Add(newGraphNode);
+                    }
+
+                    if (!childResolvedDependencyGraphItem.IsRootPackageReference && isCentralPackageTransitivePinningEnabled && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All && !downgrades.ContainsKey(childResolvedLibraryRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                    {
+                        // This is a downgrade if:
+                        // 1. This is not a direct dependency
+                        // 2. This is a central transitive pinned dependency
+                        // 3. This is a transitive dependency which is not PrivateAssets=All
+                        // 4. This has not already been detected
+                        // 5. The version is lower
+                        downgrades.Add(
+                            childResolvedDependencyGraphItem.LibraryRangeIndex,
+                            (
+                                FromParentLibraryRangeIndex: currentLibraryRangeIndex,
+                                FromLibraryDependency: childLibraryDependency,
+                                ToParentLibraryRangeIndex: LibraryRangeIndex.Project,
+                                ToLibraryDependencyIndex: childLibraryDependencyIndex,
+                                IsCentralTransitive: true
+                            ));
+                    }
+
+                    // This is a version conflict if:
+                    // 1. The node is not a project and isn't unresolved
+                    // 2. The conflict has not already been detected
+                    // 3. The dependency is transitive and doesn't have PrivateAssets=All
+                    // 4. The dependency has a version specified
+                    // 5. The version range is not satisfied by the resolved version
+                    // 6. A corresponding downgrade was not detected
+                    if (newGraphNode.Item.Key.Type != LibraryType.Project
+                        && newGraphNode.Item.Key.Type != LibraryType.ExternalProject
+                        && newGraphNode.Item.Key.Type != LibraryType.Unresolved
+                        && !versionConflicts.ContainsKey(childResolvedLibraryRangeIndex)
+                        && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All
+                        && childLibraryDependency.LibraryRange.VersionRange != null
+                        && !childLibraryDependency.LibraryRange.VersionRange!.Satisfies(newGraphNode.Item.Key.Version)
+                        && !downgrades.ContainsKey(childResolvedLibraryRangeIndex))
+                    {
+                        // Remove the existing node so it can be replaced with a node representing the conflict
+                        currentGraphNode.InnerNodes.Remove(newGraphNode);
+
+                        GraphNode<RemoteResolveResult> conflictingNode = new(childLibraryDependency.LibraryRange)
+                        {
+                            Disposition = Disposition.Acceptable,
+                            Item = new GraphItem<RemoteResolveResult>(
+                                new LibraryIdentity(
+                                    childLibraryDependency.Name,
+                                    childLibraryDependency.LibraryRange.VersionRange.MinVersion!,
+                                    LibraryType.Package)),
+                            OuterNode = currentGraphNode,
+                        };
+
+                        // Add the conflict node to the parent
+                        currentGraphNode.InnerNodes.Add(conflictingNode);
+
+                        // Track the version conflict for later
+                        versionConflicts.Add(childResolvedLibraryRangeIndex, conflictingNode);
+
+                        // Process the next child
+                        continue;
+                    }
+
+                    // Add the node to the lookup for later
+                    nodesById.Add(childResolvedLibraryRangeIndex, newGraphNode);
+
+                    // Enqueue the child for processing
+                    itemsToFlatten.Enqueue((childLibraryDependencyIndex, childResolvedLibraryRangeIndex, newGraphNode));
+
+                    if (newGraphNode.Item.Key.Type == LibraryType.Unresolved)
+                    {
+                        // Keep track of unresolved packages and fail the restore
+                        unresolvedPackages.Add(childResolvedLibraryDependency.LibraryRange);
+
+                        success = false;
+                    }
+                    else
+                    {
+                        // Keep track of the resolved packages
+                        resolvedPackages.Add(new ResolvedDependencyKey(
+                            parent: newGraphNode.OuterNode.Item.Key,
+                            range: newGraphNode.Key.VersionRange,
+                            child: newGraphNode.Item.Key));
+                    }
+                }
+            } // End of walking all declared dependencies for cycles, downgrades, and conflicts
+
+            // Add applicable version conflicts to the analyze results
+            if (versionConflicts.Count > 0)
+            {
+                foreach (KeyValuePair<LibraryRangeIndex, GraphNode<RemoteResolveResult>> versionConflict in versionConflicts)
+                {
+                    if (nodesById.TryGetValue(versionConflict.Key, out GraphNode<RemoteResolveResult>? selected))
+                    {
+                        analyzeResult.VersionConflicts.Add(
+                            new VersionConflictResult<RemoteResolveResult>
+                            {
+                                Conflicting = versionConflict.Value,
+                                Selected = selected,
+                            });
                     }
                 }
             }
-            return false;
+
+            // Add applicable downgrades to the analyze results
+            if (downgrades.Count > 0)
+            {
+                foreach ((LibraryRangeIndex FromParentLibraryRangeIndex, LibraryDependency FromLibraryDependency, LibraryRangeIndex ToParentLibraryRangeIndex, LibraryDependencyIndex ToLibraryDependencyIndex, bool IsCentralTransitive) downgrade in downgrades.Values)
+                {
+                    // Ignore the downgrade if a node was not created for its from or to, or if it never ended up in the resolved graph.  Sometimes a downgrade is detected but later during graph
+                    // resolution it is resolved so this verifies if the downgrade ended up in the final graph
+                    if (!nodesById.TryGetValue(downgrade.FromParentLibraryRangeIndex, out GraphNode<RemoteResolveResult>? fromParentNode)
+                        || !nodesById.TryGetValue(downgrade.ToParentLibraryRangeIndex, out GraphNode<RemoteResolveResult>? toParentNode)
+                        || !resolvedDependencyGraphItems.TryGetValue(downgrade.ToLibraryDependencyIndex, out ResolvedDependencyGraphItem? toResolvedDependencyGraphItem))
+                    {
+                        continue;
+                    }
+
+                    // Add the downgrade
+                    analyzeResult.Downgrades.Add(new DowngradeResult<RemoteResolveResult>
+                    {
+                        DowngradedFrom = new GraphNode<RemoteResolveResult>(downgrade.FromLibraryDependency.LibraryRange)
+                        {
+                            Item = new GraphItem<RemoteResolveResult>(
+                                new LibraryIdentity(
+                                    downgrade.FromLibraryDependency.Name,
+                                    downgrade.FromLibraryDependency.LibraryRange.VersionRange?.MinVersion!,
+                                    LibraryType.Package)),
+                            OuterNode = fromParentNode
+                        },
+                        DowngradedTo = new GraphNode<RemoteResolveResult>(toResolvedDependencyGraphItem.LibraryDependency.LibraryRange)
+                        {
+                            Item = new GraphItem<RemoteResolveResult>(toResolvedDependencyGraphItem.Item.Key)
+                            {
+                                IsCentralTransitive = downgrade.IsCentralTransitive
+                            },
+                            OuterNode = downgrade.IsCentralTransitive ? rootGraphNode : toParentNode,
+                        }
+                    });
+                }
+            }
+
+            // If central transitive pinning is enabled, we need to add all of its parent nodes.  This has to happen at the end after all of the nodes in graph have been created
+            if (isCentralPackageTransitivePinningEnabled)
+            {
+                foreach (KeyValuePair<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItemEntry in resolvedDependencyGraphItems)
+                {
+                    ResolvedDependencyGraphItem resolvedDependencyGraphItem = resolvedDependencyGraphItemEntry.Value;
+
+                    // Skip this item if:
+                    // 1. It is not pinned
+                    // 2. It is a direct package reference
+                    // 3. It has not parents
+                    // 4. A node was not created for it
+                    if (!resolvedDependencyGraphItem.IsCentrallyPinnedTransitivePackage
+                        || resolvedDependencyGraphItem.IsRootPackageReference
+                        || resolvedDependencyGraphItem.Parents == null
+                        || resolvedDependencyGraphItem.Parents.Count == 0
+                        || !nodesById.TryGetValue(resolvedDependencyGraphItem.LibraryRangeIndex, out GraphNode<RemoteResolveResult>? currentNode))
+                    {
+                        continue;
+                    }
+
+                    // Get the corresponding node in the graph for each parent and add it the list of parent nodes
+                    foreach (LibraryRangeIndex parentLibraryRangeIndex in resolvedDependencyGraphItem.Parents.NoAllocEnumerate())
+                    {
+                        if (!nodesById.TryGetValue(parentLibraryRangeIndex, out GraphNode<RemoteResolveResult>? parentNode))
+                        {
+                            // Skip nodes that weren't created
+                            continue;
+                        }
+                        currentNode.ParentNodes.Add(parentNode);
+                    }
+                }
+            }
+
+            // Get the list of packages to install
+            HashSet<RemoteMatch> packagesToInstall = await context.GetUnresolvedRemoteMatchesAsync();
+
+            // Create a RestoreTargetGraph with all of the information
+            RestoreTargetGraph restoreTargetGraph = new(
+                Array.Empty<ResolverConflict>(),
+                frameworkRuntimePair.Framework,
+                string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) ? null : frameworkRuntimePair.RuntimeIdentifier,
+                runtimeGraph,
+                graphNodes,
+                install: packagesToInstall,
+                flattened: flattenedGraphItems,
+                unresolved: unresolvedPackages,
+                analyzeResult,
+                resolvedDependencies: resolvedPackages);
+
+            return (success, restoreTargetGraph);
         }
 
-        private static bool EvictOnTypeConstraint(LibraryDependencyTarget current, LibraryDependencyTarget previous)
+        private static bool EvaluateRuntimeDependencies(ref LibraryDependency libraryDependency, RuntimeGraph? runtimeGraph, string? runtimeIdentifier, ref HashSet<LibraryDependency>? runtimeDependencies)
         {
-            if (current == previous)
+            LibraryRange libraryRange = libraryDependency.LibraryRange;
+
+            if (runtimeGraph == null || string.IsNullOrEmpty(runtimeIdentifier) || !RemoteDependencyWalker.EvaluateRuntimeDependencies(ref libraryRange, runtimeIdentifier, runtimeGraph, ref runtimeDependencies))
             {
                 return false;
             }
 
-            if (previous == LibraryDependencyTarget.PackageProjectExternal)
+            libraryDependency = new LibraryDependency(libraryDependency)
             {
-                LibraryDependencyTarget ppeFlags = current & LibraryDependencyTarget.PackageProjectExternal;
-                LibraryDependencyTarget nonPpeFlags = current & ~LibraryDependencyTarget.PackageProjectExternal;
-                return (ppeFlags != LibraryDependencyTarget.None && nonPpeFlags == LibraryDependencyTarget.None);
-            }
+                LibraryRange = libraryRange
+            };
 
-            // TODO: Should there be other cases here?
-            return false;
+            return true;
         }
 
         private static bool HasCommonAncestor(LibraryRangeIndex[] left, LibraryRangeIndex[] right)
@@ -1347,40 +763,94 @@ namespace NuGet.Commands
             return true;
         }
 
+        /// <summary>
+        /// Determine if the chosen item should be evicted based on the <see cref="LibraryRange.TypeConstraint" />.
+        /// </summary>
+        /// <remarks>
+        /// We should evict on type constraint if the type constraint of the current item has the same version but has a more restrictive type constraint than the chosen item.
+        /// This happens when the chosen item's type constraint is broader (e.g. PackageProjectExternal) than the current item's type constraint (e.g. Package).
+        /// </remarks>
+        /// <returns></returns>
+        private static bool ShouldEvictOnTypeConstraint(DependencyGraphItem currentDependencyGraphItem, ResolvedDependencyGraphItem resolvedDependencyGraphItem)
+        {
+            LibraryDependency currentLibraryDependency = currentDependencyGraphItem.LibraryDependency;
+            LibraryDependency chosenLibraryDependency = resolvedDependencyGraphItem.LibraryDependency;
+
+            // We should evict the chosen item if it is a package but the current item is a project since projects should be chosen over packages
+            if (chosenLibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.PackageProjectExternal
+                && currentLibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject)
+            {
+                return true;
+            }
+
+            LibraryRangeIndex currentLibraryRangeIndex = currentDependencyGraphItem.LibraryRangeIndex;
+            LibraryRangeIndex chosenLibraryRangeIndex = resolvedDependencyGraphItem.LibraryRangeIndex;
+
+            // Do not evict if:
+            // 1. The current item and chosen item are not the same version
+            // 2. The current item and chosen item have the same type constraint
+            // 3. The chosen item has a strict type constraint instead of the more generic "PackageProjectExternal"
+            if (currentLibraryRangeIndex != chosenLibraryRangeIndex
+                || currentLibraryDependency.LibraryRange.TypeConstraint == chosenLibraryDependency.LibraryRange.TypeConstraint
+                || chosenLibraryDependency.LibraryRange.TypeConstraint != LibraryDependencyTarget.PackageProjectExternal)
+            {
+                return false;
+            }
+
+            LibraryDependencyTarget packageProjectExternalFlags = currentLibraryDependency.LibraryRange.TypeConstraint & LibraryDependencyTarget.PackageProjectExternal;
+            LibraryDependencyTarget nonPackageProjectExternalFlats = currentLibraryDependency.LibraryRange.TypeConstraint & ~LibraryDependencyTarget.PackageProjectExternal;
+
+            // Evict if the type constraint of the current item is more precise than "PackageProjectExternal" and the current item is a project
+            if (packageProjectExternalFlags != LibraryDependencyTarget.None && nonPackageProjectExternalFlats == LibraryDependencyTarget.None)
+            {
+                return resolvedDependencyGraphItem.Item.Key.Type == LibraryType.Project;
+            }
+
+            return false;
+        }
+
         private static bool VersionRangePreciseEquals(VersionRange a, VersionRange b)
         {
             if (ReferenceEquals(a, b))
             {
                 return true;
             }
+
             if ((a.MinVersion != null) != (b.MinVersion != null))
             {
                 return false;
             }
+
             if (a.MinVersion != b.MinVersion)
             {
                 return false;
             }
+
             if ((a.MaxVersion != null) != (b.MaxVersion != null))
             {
                 return false;
             }
+
             if (a.MaxVersion != b.MaxVersion)
             {
                 return false;
             }
+
             if (a.IsMinInclusive != b.IsMinInclusive)
             {
                 return false;
             }
+
             if (a.IsMaxInclusive != b.IsMaxInclusive)
             {
                 return false;
             }
+
             if ((a.Float != null) != (b.Float != null))
             {
                 return false;
             }
+
             if (a.Float != b.Float)
             {
                 return false;
@@ -1389,307 +859,536 @@ namespace NuGet.Commands
             return true;
         }
 
-        [DebuggerDisplay("{LibraryDependency}, RangeIndex={LibraryRangeIndex}")]
-        private class ResolvedDependencyGraphItem
+        /// <summary>
+        /// Indexes all central package versions if central transitive pinning is enabled.
+        /// </summary>
+        /// <param name="isCentralPackageTransitivePinningEnabled">Indicates whether or not central transitive pinning is enabled.</param>
+        /// <param name="projectTargetFramework">The <see cref="TargetFrameworkInformation" /> of the project.</param>
+        /// <returns>A <see cref="Dictionary{TKey, TValue}" /> of indexed version ranges by their <see cref="LibraryDependencyIndex" /> if central transitive pinning is enabled, otherwise <see langword="null" />.</returns>
+        private Dictionary<LibraryDependencyIndex, VersionRange>? IndexPinnedPackageVersions(bool isCentralPackageTransitivePinningEnabled, TargetFrameworkInformation? projectTargetFramework)
         {
-            public bool IsCentrallyPinnedTransitivePackage { get; set; }
-
-            public bool IsDirectPackageReferenceFromRootProject { get; set; }
-
-            public required LibraryDependency LibraryDependency { get; set; }
-
-            public LibraryRangeIndex LibraryRangeIndex { get; set; }
-
-            public HashSet<LibraryRangeIndex>? Parents { get; set; }
-
-            public HashSet<LibraryRangeIndex>? ParentPathsThatHaveBeenEclipsed { get; set; }
-
-            public required LibraryRangeIndex[] Path { get; set; }
-
-            public required List<HashSet<LibraryDependencyIndex>> Suppressions { get; set; }
-
-            public HashSet<int>? PrunedDependencies { get; set; }
-        }
-
-        internal sealed class LibraryDependencyInterningTable
-        {
-            private readonly object _lockObject = new();
-            private readonly ConcurrentDictionary<string, LibraryDependencyIndex> _table = new ConcurrentDictionary<string, LibraryDependencyIndex>(StringComparer.OrdinalIgnoreCase);
-            private int _nextIndex = 0;
-
-            public enum LibraryDependencyIndex : int
+            if (!isCentralPackageTransitivePinningEnabled || projectTargetFramework == null || projectTargetFramework.CentralPackageVersions == null)
             {
-                Invalid = -1,
+                return null;
             }
 
-            public LibraryDependencyIndex Intern(LibraryDependency libraryDependency)
+            Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions = new(capacity: projectTargetFramework.CentralPackageVersions.Count);
+
+            foreach (KeyValuePair<string, CentralPackageVersion> item in projectTargetFramework.CentralPackageVersions.NoAllocEnumerate())
             {
-                lock (_lockObject)
+                LibraryDependencyIndex libraryDependencyIndex = _indexingTable.Index(item.Value);
+
+                pinnedPackageVersions[libraryDependencyIndex] = item.Value.VersionRange;
+            }
+
+            return pinnedPackageVersions;
+        }
+
+        private async Task<Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem>> ResolveDependencyGraphItemsAsync(
+            bool isCentralPackageTransitivePinningEnabled,
+            FrameworkRuntimePair pair,
+            TargetFrameworkInformation? projectTargetFramework,
+            RuntimeGraph? runtimeGraph,
+            Dictionary<LibraryDependencyIndex,
+            VersionRange>? pinnedPackageVersions,
+            DependencyGraphItem rootProjectDependencyGraphItem,
+            RemoteWalkContext context,
+            CancellationToken token)
+        {
+            // Stores the resolved dependency graph items
+            Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItems = new(ResolvedDependencyGraphItemDictionarySize);
+
+            // Stores a list of direct package references by their LibraryDependencyIndex so that we can quickly determine if a transitive package can be ignored
+            HashSet<LibraryDependencyIndex>? directPackageReferences = default;
+
+            // Stores the queue of DependencyGraphItem objects to process
+            Queue<DependencyGraphItem> dependencyGraphItemQueue = new(DependencyGraphItemQueueSize);
+
+            // Stores any evictions to process
+            Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)> evictions = new Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)>(EvictionsDictionarySize);
+
+        // Used to start over when a dependency has multiple descendants of an item to be evicted.
+        //
+        // Project
+        // ├── A 1.0.0
+        // │   └── B 1.0.0
+        // │       └── C 1.0.0
+        // │           └── D 1.0.0
+        // └── X 2.0.0
+        //     └── Y 2.0.0
+        //         └── G 2.0.0
+        //             └── B 2.0.0
+        // The items are processed in the following order:
+        // Chose A 1.0.0 and X 1.0.0
+        // Chose B 1.0.0 and Y 2.0.0
+        // Chose C 1.0.0 and G 2.0.0
+        // Chose D 1.0.0 and B 2.0.0, but B 2.0.0 should evict C 1.0.0 and D 1.0.0
+        //
+        // In this case, the entire walk is started over and B 1.0.0 is left out of the graph, leading to C 1.0.0 and D 1.0.0 also being left out.
+        //
+        StartOver:
+
+            dependencyGraphItemQueue.Clear();
+            resolvedDependencyGraphItems.Clear();
+
+            dependencyGraphItemQueue.Enqueue(rootProjectDependencyGraphItem);
+
+            while (dependencyGraphItemQueue.Count > 0)
+            {
+                DependencyGraphItem currentDependencyGraphItem = dependencyGraphItemQueue.Dequeue();
+
+                // Determine if what is being processed is the root project itself which has different rules vs a transitive dependency
+                bool isRootProject = currentDependencyGraphItem.LibraryDependencyIndex == LibraryDependencyIndex.Project;
+
+                GraphItem<RemoteResolveResult> currentGraphItem = await currentDependencyGraphItem.GetGraphItemAsync(_request.Project.RestoreMetadata, projectTargetFramework?.PackagesToPrune, isRootProject, _logger);
+
+                LibraryDependencyTarget typeConstraint = currentDependencyGraphItem.LibraryDependency.LibraryRange.TypeConstraint;
+                if (evictions.TryGetValue(currentDependencyGraphItem.LibraryRangeIndex, out (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget) eviction))
                 {
-                    string key = libraryDependency.Name;
-                    if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
+                    (LibraryRangeIndex[] evictedPath, LibraryDependencyIndex evictedDepIndex, LibraryDependencyTarget evictedTypeConstraint) = eviction;
+
+                    // If we evicted this same version previously, but the type constraint of currentRef is more stringent (package), then do not skip the current item - this is the one we want.
+                    // This is tricky. I don't really know what this means. Normally we'd key off of versions instead.
+                    if (!((evictedTypeConstraint == LibraryDependencyTarget.PackageProjectExternal || evictedTypeConstraint == LibraryDependencyTarget.ExternalProject) &&
+                        currentDependencyGraphItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package))
                     {
-                        index = (LibraryDependencyIndex)_nextIndex++;
-                        _table.TryAdd(key, index);
+                        continue;
+                    }
+                }
+
+                // Determine if a dependency with the same name has not already been chosen
+                if (!resolvedDependencyGraphItems.TryGetValue(currentDependencyGraphItem.LibraryDependencyIndex, out ResolvedDependencyGraphItem? chosenResolvedItem))
+                {
+                    // Create a resolved dependency graph item and add it to the list of chosen items
+                    chosenResolvedItem = new ResolvedDependencyGraphItem(currentGraphItem, currentDependencyGraphItem, _indexingTable)
+                    {
+                        Parents = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage && !currentDependencyGraphItem.IsRootPackageReference ? new HashSet<LibraryRangeIndex>() { currentDependencyGraphItem.Parent } : null,
+                        IsCentrallyPinnedTransitivePackage = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage,
+                        IsRootPackageReference = currentDependencyGraphItem.IsRootPackageReference,
+                        Suppressions = new List<HashSet<LibraryDependencyIndex>>
+                        {
+                            currentDependencyGraphItem.Suppressions!
+                        }
+                    };
+
+                    resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
+                }
+                else // A dependency with the same name has already been chosen so we need to decide what to do with it
+                {
+                    if (chosenResolvedItem.IsRootPackageReference)
+                    {
+                        // If the chosen dependency graph item is a direct dependency, it should always be chosen regardless of version so do not process this dependency
+                        continue;
                     }
 
-                    return index;
-                }
-            }
-
-            public LibraryDependencyIndex Intern(CentralPackageVersion centralPackageVersion)
-            {
-                string key = centralPackageVersion.Name;
-                if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
-                {
-                    index = (LibraryDependencyIndex)_nextIndex++;
-                    _table.TryAdd(key, index);
-                }
-
-                return index;
-            }
-
-            public LibraryDependencyIndex Intern(PrunePackageReference prunePackageReference)
-            {
-                lock (_lockObject)
-                {
-                    string key = prunePackageReference.Name;
-                    if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
+                    if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint == LibraryDependencyTarget.ExternalProject
+                        && currentDependencyGraphItem.LibraryDependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)
+                        && currentGraphItem.Key.Type == LibraryType.Project)
                     {
-                        index = (LibraryDependencyIndex)_nextIndex++;
-                        _table.TryAdd(key, index);
+                        // If the chosen dependency graph item is a project reference, it should always be chosen over a package reference. In this case, a project has already been chosen
+                        // for the graph with the same name as a transitive package reference, so this item does not need to be processed.
+                        continue;
                     }
 
-                    return index;
-                }
-            }
-        }
+                    // Determine if the chosen item should be evicted based on type constraint.
+                    bool evictOnTypeConstraint = ShouldEvictOnTypeConstraint(currentDependencyGraphItem, chosenResolvedItem);
 
-        internal sealed class LibraryRangeInterningTable
-        {
-            private readonly object _lockObject = new();
-            private readonly ConcurrentDictionary<LibraryRange, LibraryRangeIndex> _table = new(LibraryRangeComparer.Instance);
-            private int _nextIndex = 0;
+                    VersionRange currentVersionRange = currentDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange ?? VersionRange.All;
+                    VersionRange chosenVersionRange = chosenResolvedItem.LibraryDependency.LibraryRange.VersionRange ?? VersionRange.All;
 
-            public enum LibraryRangeIndex : int
-            {
-                Invalid = -1,
-            }
-
-            public LibraryRangeIndex Intern(LibraryRange libraryRange)
-            {
-                lock (_lockObject)
-                {
-                    if (!_table.TryGetValue(libraryRange, out LibraryRangeIndex index))
+                    // The chosen item should be evicted or the current item has a greater version, determine if the current item should be chosen instead
+                    if (evictOnTypeConstraint || !RemoteDependencyWalker.IsGreaterThanOrEqualTo(chosenVersionRange, currentVersionRange))
                     {
-                        index = (LibraryRangeIndex)_nextIndex++;
-                        _table.TryAdd(libraryRange, index);
+                        if (chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package) && currentDependencyGraphItem.LibraryDependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
+                        {
+                            if (chosenResolvedItem.Parents != null)
+                            {
+                                bool atLeastOneCommonAncestor = false;
+
+                                foreach (LibraryRangeIndex parentRangeIndex in chosenResolvedItem.Parents.NoAllocEnumerate())
+                                {
+                                    if (currentDependencyGraphItem.Path.Length > 2 && currentDependencyGraphItem.Path[currentDependencyGraphItem.Path.Length - 2] == parentRangeIndex)
+                                    {
+                                        atLeastOneCommonAncestor = true;
+                                        break;
+                                    }
+                                }
+
+                                if (atLeastOneCommonAncestor)
+                                {
+                                    // At least one of the parents of the chosen item is a common ancestor of the current item, so the current item should be skipped
+                                    continue;
+                                }
+                            }
+
+                            if (HasCommonAncestor(chosenResolvedItem.Path, currentDependencyGraphItem.Path))
+                            {
+                                // The current item has a common ancestor of the chosen item and should not be chosen since children in the same leaf of the graph do not eclipse each other
+                                continue;
+                            }
+
+                            if (chosenResolvedItem.ParentPathsThatHaveBeenEclipsed != null)
+                            {
+                                // Determine if the current item is under a parent that has already been eclipsed
+                                bool hasAlreadyBeenEclipsed = false;
+
+                                foreach (LibraryRangeIndex parentRangeIndex in chosenResolvedItem.ParentPathsThatHaveBeenEclipsed)
+                                {
+                                    if (currentDependencyGraphItem.Path.Contains(parentRangeIndex))
+                                    {
+                                        hasAlreadyBeenEclipsed = true;
+                                        break;
+                                    }
+                                }
+
+                                if (hasAlreadyBeenEclipsed)
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Remove the chosen item
+                        resolvedDependencyGraphItems.Remove(currentDependencyGraphItem.LibraryDependencyIndex);
+
+                        // Record an eviction for the item we are replacing.  The eviction path is for the current item.
+                        LibraryRangeIndex evictedLibraryRangeIndex = chosenResolvedItem.LibraryRangeIndex;
+
+                        bool shouldStartOver = false;
+
+                        // To "evict" a chosen item, we need to also remove all of its transitive children from the chosen list.
+                        HashSet<LibraryRangeIndex>? evicteesToRemove = default;
+
+                        foreach (KeyValuePair<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)> evictee in evictions)
+                        {
+                            (LibraryRangeIndex[] evicteePath, LibraryDependencyIndex evicteeDepIndex, LibraryDependencyTarget evicteeTypeConstraint) = evictee.Value;
+
+                            // See if the evictee is a descendant of the evicted item
+                            if (evicteePath.Contains(evictedLibraryRangeIndex))
+                            {
+                                // if evictee.Key (depIndex) == currentDepIndex && evictee.TypeConstraint == ExternalProject --> Don't remove it.  It must remain evicted.
+                                // If the evictee to remove is the same dependency, but the project version of said dependency, then do not remove it - it must remain evicted in favor of the package.
+                                if (!(evicteeDepIndex == currentDependencyGraphItem.LibraryDependencyIndex &&
+                                    (evicteeTypeConstraint == LibraryDependencyTarget.ExternalProject || evicteeTypeConstraint == LibraryDependencyTarget.PackageProjectExternal)))
+                                {
+                                    evicteesToRemove ??= new HashSet<LibraryRangeIndex>();
+
+                                    evicteesToRemove.Add(evictee.Key);
+                                }
+                            }
+                        }
+
+                        if (evicteesToRemove != null)
+                        {
+                            foreach (LibraryRangeIndex evicteeToRemove in evicteesToRemove)
+                            {
+                                evictions.Remove(evicteeToRemove);
+
+                                // Indicate that we can't simply evict this item and instead we need to start over knowing that this item should be skipped
+                                shouldStartOver = true;
+                            }
+                        }
+
+                        foreach (KeyValuePair<LibraryDependencyIndex, ResolvedDependencyGraphItem> chosenItem in resolvedDependencyGraphItems)
+                        {
+                            if (chosenItem.Value.Path.Contains(evictedLibraryRangeIndex))
+                            {
+                                // Indicate that we can't simply evict this item and instead we need to start over knowing that this item should be skipped
+                                shouldStartOver = true;
+                                break;
+                            }
+                        }
+
+                        // Add the eviction to be used later
+                        evictions[evictedLibraryRangeIndex] = (DependencyGraphItemIndexer.CreatePathToRef(currentDependencyGraphItem.Path, currentDependencyGraphItem.LibraryRangeIndex), currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem.LibraryDependency.LibraryRange.TypeConstraint);
+
+                        if (shouldStartOver)
+                        {
+                            goto StartOver;
+                        }
+
+                        // Add the item to the list of chosen items
+                        chosenResolvedItem = new ResolvedDependencyGraphItem(currentGraphItem, currentDependencyGraphItem, _indexingTable)
+                        {
+                            Parents = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage && !currentDependencyGraphItem.IsRootPackageReference ? new HashSet<LibraryRangeIndex>() { currentDependencyGraphItem.Parent } : null,
+                            IsCentrallyPinnedTransitivePackage = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage,
+                            IsRootPackageReference = currentDependencyGraphItem.IsRootPackageReference,
+                            Suppressions = new List<HashSet<LibraryDependencyIndex>>
+                            {
+                                currentDependencyGraphItem.Suppressions!
+                            },
+                        };
+
+                        resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
+
+                        // Recreate the queue but leave out any items that are children of the chosen item that was just removed which essentially evicts unprocessed children from the queue
+                        Queue<DependencyGraphItem> newDependencyGraphItemQueue = new(DependencyGraphItemQueueSize);
+
+                        while (dependencyGraphItemQueue.Count > 0)
+                        {
+                            DependencyGraphItem item = dependencyGraphItemQueue.Dequeue();
+
+                            if (!item.Path.Contains(evictedLibraryRangeIndex))
+                            {
+                                newDependencyGraphItemQueue.Enqueue(item);
+                            }
+                        }
+
+                        dependencyGraphItemQueue = newDependencyGraphItemQueue;
                     }
+                    else if (!VersionRangePreciseEquals(chosenVersionRange, currentVersionRange)) // The current item has a lower version
+                    {
+                        bool hasCommonAncestor = HasCommonAncestor(chosenResolvedItem.Path, currentDependencyGraphItem.Path);
 
-                    return index;
+                        if (!hasCommonAncestor)
+                        {
+                            chosenResolvedItem.ParentPathsThatHaveBeenEclipsed ??= new HashSet<LibraryRangeIndex>();
+
+                            // Keeps track of parents that have been eclipsed
+                            chosenResolvedItem.ParentPathsThatHaveBeenEclipsed.Add(currentDependencyGraphItem.Path[currentDependencyGraphItem.Path.Length - 1]);
+                        }
+
+                        // Do not process this item
+                        continue;
+                    }
+                    else // The current item and chosen item have the same version
+                    {
+                        chosenResolvedItem.Parents ??= new HashSet<LibraryRangeIndex>();
+
+                        if (!chosenResolvedItem.IsRootPackageReference)
+                        {
+                            // Keep track of the parents of this item
+                            chosenResolvedItem.Parents?.Add(currentDependencyGraphItem.Parent);
+                        }
+
+                        if (chosenResolvedItem.Suppressions.Count == 1 && chosenResolvedItem.Suppressions[0].Count == 0 && HasCommonAncestor(chosenResolvedItem.Path, currentDependencyGraphItem.Path))
+                        {
+                            // Skip this item if it has no suppressions and has a common ancestor
+                            continue;
+                        }
+                        else if (currentDependencyGraphItem.Suppressions!.Count == 0) // The current item has no suppressions
+                        {
+                            // Replace the chosen item with the current one since they are basically the same and process its children
+                            resolvedDependencyGraphItems.Remove(currentDependencyGraphItem.LibraryDependencyIndex);
+
+                            chosenResolvedItem = new ResolvedDependencyGraphItem(currentGraphItem, currentDependencyGraphItem, _indexingTable)
+                            {
+                                Parents = chosenResolvedItem.Parents,
+                                IsCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage,
+                                IsRootPackageReference = chosenResolvedItem.IsRootPackageReference,
+                                Suppressions = new List<HashSet<LibraryDependencyIndex>>
+                                {
+                                    currentDependencyGraphItem.Suppressions,
+                                },
+                            };
+
+                            resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
+                        }
+                        else // The chosen item and current item have a different set of suppressions
+                        {
+                            bool isEqualOrSuperSetDisposition = false;
+                            foreach (HashSet<LibraryDependencyIndex> chosenDependencyGraphItemSuppression in chosenResolvedItem.Suppressions)
+                            {
+                                if (currentDependencyGraphItem.Suppressions.IsSupersetOf(chosenDependencyGraphItemSuppression))
+                                {
+                                    isEqualOrSuperSetDisposition = true;
+                                }
+                            }
+
+                            if (isEqualOrSuperSetDisposition)
+                            {
+                                // Do not process the current item if its suppressions are identical
+                                continue;
+                            }
+                            else
+                            {
+                                // Replace the chosen item with the current item with the the combined list of suppressions and process its children
+                                resolvedDependencyGraphItems.Remove(currentDependencyGraphItem.LibraryDependencyIndex);
+
+                                chosenResolvedItem = new ResolvedDependencyGraphItem(currentGraphItem, currentDependencyGraphItem, _indexingTable)
+                                {
+                                    Parents = chosenResolvedItem.Parents,
+                                    IsCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage,
+                                    IsRootPackageReference = chosenResolvedItem.IsRootPackageReference,
+                                    Suppressions =
+                                    [
+                                        currentDependencyGraphItem.Suppressions,
+                                        .. chosenResolvedItem.Suppressions
+                                    ],
+                                };
+
+                                resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
+                            }
+                        }
+                    }
                 }
-            }
 
-            internal static LibraryRangeIndex[] CreatePathToRef(LibraryRangeIndex[] existingPath, LibraryRangeIndex currentRef)
-            {
-                LibraryRangeIndex[] newPath = new LibraryRangeIndex[existingPath.Length + 1];
-                Array.Copy(existingPath, newPath, existingPath.Length);
-                newPath[newPath.Length - 1] = currentRef;
-
-                return newPath;
-            }
-        }
-
-        [DebuggerDisplay("{LibraryDependency}, DependencyIndex={LibraryDependencyIndex}, RangeIndex={LibraryRangeIndex}")]
-        private class DependencyGraphItem
-        {
-            public bool IsCentrallyPinnedTransitivePackage { get; set; }
-
-            public bool IsDirectPackageReferenceFromRootProject { get; set; }
-
-            public LibraryDependency? LibraryDependency { get; set; }
-
-            public LibraryDependencyIndex LibraryDependencyIndex { get; set; } = LibraryDependencyIndex.Invalid;
-
-            public LibraryRangeIndex LibraryRangeIndex { get; set; } = LibraryRangeIndex.Invalid;
-
-            public LibraryRangeIndex[] Path { get; set; } = Array.Empty<LibraryRangeIndex>();
-
-            public LibraryRangeIndex Parent { get; set; }
-
-            public HashSet<LibraryDependencyIndex>? Suppressions { get; set; }
-        }
-
-        private class FindLibraryEntryResult
-        {
-            private LibraryDependencyIndex[] _dependencyIndices;
-            private LibraryRangeIndex[] _rangeIndices;
-
-            public FindLibraryEntryResult(
-                LibraryDependency libraryDependency,
-                GraphItem<RemoteResolveResult> resolvedItem,
-                LibraryDependencyIndex itemDependencyIndex,
-                LibraryRangeIndex itemRangeIndex,
-                LibraryDependencyInterningTable libraryDependencyInterningTable,
-                LibraryRangeInterningTable libraryRangeInterningTable)
-            {
-                Item = resolvedItem;
-                DependencyIndex = itemDependencyIndex;
-                RangeIndex = itemRangeIndex;
-                int dependencyCount = resolvedItem.Data.Dependencies.Count;
-
-                if (dependencyCount == 0)
+                // Determine the list of root dependencies if the current item is the project, this is used for a faster lookup later to determine if a transitive dependency
+                // should be ignored when there is a direct dependency.
+                if (isRootProject)
                 {
-                    _dependencyIndices = Array.Empty<LibraryDependencyIndex>();
-                    _rangeIndices = Array.Empty<LibraryRangeIndex>();
+
+#if NETSTANDARD
+                    directPackageReferences = new HashSet<LibraryDependencyIndex>();
+#else
+                    directPackageReferences = new HashSet<LibraryDependencyIndex>(capacity: chosenResolvedItem.Item.Data.Dependencies.Count);
+#endif
+
+                    for (int i = 0; i < chosenResolvedItem.Item.Data.Dependencies.Count; i++)
+                    {
+                        LibraryDependency rootLibraryDependency = chosenResolvedItem.Item.Data.Dependencies[i];
+
+                        if (rootLibraryDependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
+                        {
+                            directPackageReferences!.Add(chosenResolvedItem.GetDependencyIndexForDependencyAt(i));
+                        }
+                    }
+                }
+
+                HashSet<LibraryDependencyIndex>? suppressions = default;
+
+                // Only gather suppressed dependencies if the current item is not the root project
+                if (!isRootProject)
+                {
+                    // If this is not the root project, loop through the dependencies and keep track of which ones have PrivateAssets=All which we consider a "suppression"
+                    for (int i = 0; i < chosenResolvedItem.Item.Data.Dependencies.Count; i++)
+                    {
+                        LibraryDependency dependency = chosenResolvedItem.Item.Data.Dependencies[i];
+
+                        // Skip any packages with a missing versions
+                        if (dependency.LibraryRange.VersionRange == null)
+                        {
+                            continue;
+                        }
+
+                        LibraryDependencyIndex chosenResolvedItemChildLibraryDependencyIndex = chosenResolvedItem.GetDependencyIndexForDependencyAt(i);
+
+                        // Suppress this dependency if PrivateAssets is set to "All"
+                        if (dependency.SuppressParent == LibraryIncludeFlags.All)
+                        {
+                            suppressions ??= new HashSet<LibraryDependencyIndex>();
+
+                            suppressions.Add(chosenResolvedItemChildLibraryDependencyIndex);
+                        }
+                    }
+                }
+
+                // The list of suppressions should be an aggregate of all parent item's suppressions so add the parent suppressions to the list, otherwise just use the current item's suppressions
+                if (suppressions != null)
+                {
+                    suppressions.AddRange(currentDependencyGraphItem.Suppressions);
                 }
                 else
                 {
-                    _dependencyIndices = new LibraryDependencyIndex[dependencyCount];
-                    _rangeIndices = new LibraryRangeIndex[dependencyCount];
+                    suppressions = currentDependencyGraphItem.Suppressions;
+                }
 
-                    for (int i = 0; i < dependencyCount; i++)
+                // Loop through the dependencies now that we know which ones to suppress
+                for (int i = 0; i < chosenResolvedItem.Item.Data.Dependencies.Count; i++)
+                {
+                    LibraryDependency childDependency = chosenResolvedItem.Item.Data.Dependencies[i];
+                    LibraryDependencyIndex childLibraryDependencyIndex = chosenResolvedItem.GetDependencyIndexForDependencyAt(i);
+
+                    HashSet<LibraryDependency>? runtimeDependencies = default;
+
+                    // Evaluate the runtime dependencies if any
+                    if (EvaluateRuntimeDependencies(ref childDependency, runtimeGraph, pair.RuntimeIdentifier, ref runtimeDependencies))
                     {
-                        LibraryDependency dependency = resolvedItem.Data.Dependencies[i];
-                        _dependencyIndices[i] = libraryDependencyInterningTable.Intern(dependency);
-                        _rangeIndices[i] = libraryRangeInterningTable.Intern(dependency.LibraryRange);
+                        // EvaluateRuntimeDependencies() returns true if the version of the dependency was changed, which also changes the LibraryRangeIndex so that must be updated in the chosen item's array of library range indices.
+                        chosenResolvedItem.SetRangeIndexForDependencyAt(i, _indexingTable.Index(childDependency.LibraryRange));
                     }
+
+                    bool isPackage = childDependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
+                    bool isRootPackageReference = (currentDependencyGraphItem.LibraryDependencyIndex == LibraryDependencyIndex.Project) && isPackage;
+
+                    // Skip this dependency if:
+                    // 1. the VersionRange is null
+                    // 2. It is not transitively pinned and PrivateAssets=All
+                    // 3. This child is not a direct package reference and there is already a direct package reference to it
+                    if (childDependency.LibraryRange.VersionRange == null
+                        || (!currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage && suppressions!.Contains(childLibraryDependencyIndex))
+                        || (!isRootPackageReference && directPackageReferences?.Contains(childLibraryDependencyIndex) == true))
+                    {
+                        continue;
+                    }
+
+                    VersionRange? pinnedVersionRange = null;
+
+                    // Determine if the package is transitively pinned
+                    bool isCentrallyPinnedTransitiveDependency = isCentralPackageTransitivePinningEnabled
+                        && isPackage
+                        && pinnedPackageVersions?.TryGetValue(childLibraryDependencyIndex, out pinnedVersionRange) == true;
+
+                    LibraryRangeIndex childLibraryRangeIndex = chosenResolvedItem.GetRangeIndexForDependencyAt(i);
+
+                    if (isCentrallyPinnedTransitiveDependency && !isRootPackageReference)
+                    {
+                        // If central transitive pinning is enabled the LibraryDependency must be recreated as not to mutate the in-memory copy
+                        childDependency = new LibraryDependency(childDependency)
+                        {
+                            LibraryRange = new LibraryRange(childDependency.LibraryRange) { VersionRange = pinnedVersionRange },
+                        };
+
+                        // Since the version range could have changed, we must also update the LibraryRangeIndex
+                        childLibraryRangeIndex = _indexingTable.Index(childDependency.LibraryRange);
+                    }
+
+                    // Create a DependencyGraphItem and add it to the queue for processing
+                    DependencyGraphItem dependencyGraphItem = new()
+                    {
+                        LibraryDependency = childDependency,
+                        LibraryDependencyIndex = childLibraryDependencyIndex,
+                        LibraryRangeIndex = childLibraryRangeIndex,
+                        Path = isCentrallyPinnedTransitiveDependency || isRootPackageReference ? _rootedDependencyPath : DependencyGraphItemIndexer.CreatePathToRef(currentDependencyGraphItem.Path, currentDependencyGraphItem.LibraryRangeIndex),
+                        Parent = currentDependencyGraphItem.LibraryRangeIndex,
+                        Suppressions = suppressions,
+                        IsRootPackageReference = isRootPackageReference,
+                        IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitiveDependency,
+                        RuntimeDependencies = runtimeDependencies,
+                        FindLibraryTask = ResolverUtility.FindLibraryCachedAsync(
+                            childDependency.LibraryRange,
+                            pair.Framework,
+                            runtimeIdentifier: string.IsNullOrWhiteSpace(pair.RuntimeIdentifier) ? null : pair.RuntimeIdentifier,
+                            context,
+                            token)
+                    };
+
+                    dependencyGraphItemQueue.Enqueue(dependencyGraphItem);
                 }
             }
 
-            public LibraryDependencyIndex DependencyIndex { get; }
-
-            public GraphItem<RemoteResolveResult> Item { get; }
-
-            public LibraryRangeIndex RangeIndex { get; }
-
-            public LibraryDependencyIndex GetDependencyIndexForDependency(int dependencyIndex)
-            {
-                return _dependencyIndices[dependencyIndex];
-            }
-
-            public LibraryRangeIndex GetRangeIndexForDependency(int dependencyIndex)
-            {
-                return _rangeIndices[dependencyIndex];
-            }
-
-            public async static Task<FindLibraryEntryResult> CreateAsync(LibraryDependency libraryDependency, LibraryDependencyIndex dependencyIndex, LibraryRangeIndex rangeIndex, NuGetFramework framework, RemoteWalkContext context, LibraryDependencyInterningTable libraryDependencyInterningTable, LibraryRangeInterningTable libraryRangeInterningTable, CancellationToken cancellationToken)
-            {
-                GraphItem<RemoteResolveResult> refItem = await ResolverUtility.FindLibraryEntryAsync(
-                    libraryDependency.LibraryRange,
-                    framework,
-                    runtimeIdentifier: null,
-                    context,
-                    cancellationToken);
-
-                return new FindLibraryEntryResult(
-                    libraryDependency,
-                    refItem,
-                    dependencyIndex,
-                    rangeIndex,
-                    libraryDependencyInterningTable,
-                    libraryRangeInterningTable);
-            }
+            return resolvedDependencyGraphItems;
         }
 
         /// <summary>
-        /// Represents an <see cref="IEqualityComparer{T}" /> of <see cref="LibraryRange" /> that considers them to be equal based on the same functionality of <see cref="LibraryRange.ToString" />.
+        /// Attempts to get a runtime graph for the specified target framework.
         /// </summary>
-        internal sealed class LibraryRangeComparer : IEqualityComparer<LibraryRange>
+        /// <param name="localRepositories">A <see cref="List{T}" /> containing <see cref="NuGetv3LocalRepository" /> objects to find local packages in.</param>
+        /// <param name="graphsByTargetFramework">A <see cref="Dictionary{TKey, TValue}" /> containing the dependency graphs by target framework.</param>
+        /// <param name="frameworkRuntimePair">The <see cref="FrameworkRuntimePair" /> representing the current target framework and runtime identifier for which to get a runtime graph.</param>
+        /// <param name="projectTargetFramework">The <see cref="TargetFrameworkInformation" /> containing target framework information for the project.</param>
+        /// <param name="runtimeGraph">Receives the <see cref="RuntimeGraph" /> for the <see cref="FrameworkRuntimePair" /> if one was found, otherwise <see langword="null" />.</param>
+        /// <returns><see langword="true" /> if a runtime was found, otherwise <see langword="false" />.</returns>
+        private bool TryGetRuntimeGraph(List<NuGetv3LocalRepository> localRepositories, Dictionary<NuGetFramework, RestoreTargetGraph> graphsByTargetFramework, FrameworkRuntimePair frameworkRuntimePair, TargetFrameworkInformation? projectTargetFramework, [NotNullWhen(true)] out RuntimeGraph? runtimeGraph)
         {
-            /// <summary>
-            /// Gets an instance of <see cref="LibraryRangeComparer" />.
-            /// </summary>
-            public static LibraryRangeComparer Instance { get; } = new LibraryRangeComparer();
+            runtimeGraph = null;
 
-            private LibraryRangeComparer()
+            if (string.IsNullOrEmpty(frameworkRuntimePair.RuntimeIdentifier) || !graphsByTargetFramework.TryGetValue(frameworkRuntimePair.Framework, out RestoreTargetGraph? restoreTargetGraphForTargetFramework))
             {
+                // If this pair has no runtime or there is no corresponding RID-less dependency graph for the target framework, there is no runtime graph
+                return false;
             }
 
-            public bool Equals(LibraryRange? x, LibraryRange? y)
-            {
-                if (x == null || y == null || x.VersionRange == null || y.VersionRange == null)
-                {
-                    return false;
-                }
+            // Get the path to the runtime graph for the project and target framework
+            string? runtimeGraphPath = projectTargetFramework?.RuntimeIdentifierGraphPath;
 
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
+            // Load the runtime graph for the project if one is specified
+            RuntimeGraph? projectProviderRuntimeGraph = string.IsNullOrWhiteSpace(runtimeGraphPath) ? default : ProjectRestoreCommand.GetRuntimeGraph(runtimeGraphPath, _logger);
 
+            // Gets a merged runtime graph for the project and target framework
+            runtimeGraph = ProjectRestoreCommand.GetRuntimeGraph(restoreTargetGraphForTargetFramework, localRepositories, projectRuntimeGraph: projectProviderRuntimeGraph, _logger);
 
-                // All of this logic is copied from LibraryRange.ToString()
-                LibraryDependencyTarget typeConstraint1 = LibraryDependencyTarget.None;
-                LibraryDependencyTarget typeConstraint2 = LibraryDependencyTarget.None;
-
-                switch (x.TypeConstraint)
-                {
-                    case LibraryDependencyTarget.Reference:
-                        typeConstraint1 = LibraryDependencyTarget.Reference;
-                        break;
-
-                    case LibraryDependencyTarget.ExternalProject:
-                        typeConstraint1 = LibraryDependencyTarget.ExternalProject;
-                        break;
-
-                    case LibraryDependencyTarget.Project:
-                    case LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject:
-                        typeConstraint1 = LibraryDependencyTarget.Project;
-                        break;
-                }
-
-                switch (y.TypeConstraint)
-                {
-                    case LibraryDependencyTarget.Reference:
-                        typeConstraint2 = LibraryDependencyTarget.Reference;
-                        break;
-
-                    case LibraryDependencyTarget.ExternalProject:
-                        typeConstraint2 = LibraryDependencyTarget.ExternalProject;
-                        break;
-
-                    case LibraryDependencyTarget.Project:
-                    case LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject:
-                        typeConstraint2 = LibraryDependencyTarget.Project;
-                        break;
-                }
-
-                return typeConstraint1 == typeConstraint2
-                    && x.Name.Equals(y.Name, StringComparison.OrdinalIgnoreCase)
-                    && x.VersionRange.Equals(y.VersionRange);
-            }
-
-            public int GetHashCode(LibraryRange obj)
-            {
-                LibraryDependencyTarget typeConstraint = LibraryDependencyTarget.None;
-
-                switch (obj.TypeConstraint)
-                {
-                    case LibraryDependencyTarget.Reference:
-                        typeConstraint = LibraryDependencyTarget.Reference;
-                        break;
-
-                    case LibraryDependencyTarget.ExternalProject:
-                        typeConstraint = LibraryDependencyTarget.ExternalProject;
-                        break;
-
-                    case LibraryDependencyTarget.Project:
-                    case LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject:
-                        typeConstraint = LibraryDependencyTarget.Project;
-                        break;
-                }
-
-                VersionRange versionRange = obj.VersionRange ?? VersionRange.None;
-
-                var combiner = new HashCodeCombiner();
-
-                combiner.AddObject((int)typeConstraint);
-                combiner.AddStringIgnoreCase(obj.Name);
-                combiner.AddObject(versionRange);
-
-                return combiner.CombinedHash;
-            }
+            return true;
         }
     }
 }

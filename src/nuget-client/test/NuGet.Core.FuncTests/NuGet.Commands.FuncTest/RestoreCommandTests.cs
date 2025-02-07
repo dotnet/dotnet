@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Commands.Test;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging;
@@ -3560,11 +3561,19 @@ namespace NuGet.Commands.FuncTest
             var restoreGraph = result.RestoreGraphs.ElementAt(0);
             Assert.Equal(0, restoreGraph.Unresolved.Count);
             //packageA should be installed from source2
-            string packageASource = restoreGraph.Install.ElementAt(0).Provider.Source.Name;
-            Assert.Equal(packageSource2, packageASource);
-            //packageB should be installed from source
-            string packageBSource = restoreGraph.Install.ElementAt(1).Provider.Source.Name;
-            Assert.Equal(pathContext.PackageSource, packageBSource);
+            restoreGraph.Install.Count.Should().Be(2);
+
+            foreach (RemoteMatch match in restoreGraph.Install)
+            {
+                if (match.Library.Name == packageA)
+                {
+                    match.Provider.Source.Name.Should().Be(packageSource2);
+                }
+                else if (match.Library.Name == packageB)
+                {
+                    match.Provider.Source.Name.Should().Be(pathContext.PackageSource);
+                }
+            }
         }
 
         [Fact]
