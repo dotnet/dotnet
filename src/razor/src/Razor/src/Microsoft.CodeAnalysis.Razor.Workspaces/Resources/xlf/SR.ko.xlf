@@ -136,7 +136,7 @@
       </trans-unit>
       <trans-unit id="Wrap_attributes">
         <source>Wrap attributes</source>
-        <target state="new">Wrap attributes</target>
+        <target state="translated">특성을 래핑합니다.</target>
         <note />
       </trans-unit>
     </body>

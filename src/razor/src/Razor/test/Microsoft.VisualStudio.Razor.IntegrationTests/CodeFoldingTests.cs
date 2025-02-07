@@ -272,6 +272,7 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             {
                 <h2>s</h2>
             }
+
             """,
             """
             @code {
