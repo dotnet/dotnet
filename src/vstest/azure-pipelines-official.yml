@@ -200,7 +200,7 @@ extends:
               inputs:
                 PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
                 ArtifactName: VSSetupArtifacts
-          
+
           - ${{ each pool in parameters.otherOsPools }}:
             - job: ${{ pool.os }}
               dependsOn: Windows
@@ -250,7 +250,7 @@ extends:
                   condition: failed()
 
           - job: Publish
-            dependsOn: 
+            dependsOn:
               - ${{ each pool in parameters.otherOsPools }}:
                 - ${{ pool.os }}
             pool:
