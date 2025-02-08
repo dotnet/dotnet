@@ -81,7 +81,9 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 
         if (!_lazyLegacyEditorEnabled.IsValueFactoryCompleted)
         {
+#pragma warning disable VSTHRD108 // Assert thread affinity unconditionally
             _jtf.AssertUIThread();
+#pragma warning restore VSTHRD108 // Assert thread affinity unconditionally
         }
 
         var useLegacyEditorEnabled = _lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);

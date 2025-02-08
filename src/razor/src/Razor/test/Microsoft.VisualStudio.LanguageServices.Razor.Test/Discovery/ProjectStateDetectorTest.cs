@@ -4,6 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
@@ -15,132 +18,105 @@ using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
-public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTestBase
+public class ProjectStateDetectorTest(ITestOutputHelper testOutput) : VisualStudioWorkspaceTestBase(testOutput)
 {
-    private readonly HostProject _hostProjectOne;
-    private readonly HostProject _hostProjectTwo;
-    private readonly HostProject _hostProjectThree;
-    private readonly Solution _emptySolution;
-    private readonly Solution _solutionWithOneProject;
-    private readonly Solution _solutionWithTwoProjects;
-    private readonly Solution _solutionWithDependentProject;
-    private readonly Project _projectNumberOne;
-    private readonly Project _projectNumberTwo;
-    private readonly Project _projectNumberThree;
+    private static readonly HostProject s_hostProject1 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "One", "One.csproj"));
+    private static readonly HostProject s_hostProject2 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "Two", "Two.csproj"));
+    private static readonly HostProject s_hostProject3 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "Three", "Three.csproj"));
 
-    private readonly DocumentId _cshtmlDocumentId;
-    private readonly DocumentId _razorDocumentId;
-    private readonly DocumentId _backgroundVirtualCSharpDocumentId;
-    private readonly DocumentId _partialComponentClassDocumentId;
+#nullable disable
+    private Solution _emptySolution;
+    private Solution _solutionWithOneProject;
+    private Solution _solutionWithTwoProjects;
+    private Solution _solutionWithDependentProject;
+    private Project _projectNumberOne;
+    private Project _projectNumberTwo;
+    private Project _projectNumberThree;
 
-    public WorkspaceProjectStateChangeDetectorTest(ITestOutputHelper testOutput)
-        : base(testOutput)
+    private DocumentId _cshtmlDocumentId;
+    private DocumentId _razorDocumentId;
+    private DocumentId _backgroundVirtualCSharpDocumentId;
+    private DocumentId _partialComponentClassDocumentId;
+    private DocumentId _razorDocumentIdForProjectThree;
+#nullable enable
+
+    protected override Task InitializeAsync()
     {
         _emptySolution = Workspace.CurrentSolution;
 
-        var projectId1 = ProjectId.CreateNewId("One");
-        var projectId2 = ProjectId.CreateNewId("Two");
-        var projectId3 = ProjectId.CreateNewId("Three");
+        var projectInfo1 = s_hostProject1.ToProjectInfo();
+        var projectInfo2 = s_hostProject2.ToProjectInfo();
+        var projectInfo3 = s_hostProject3.ToProjectInfo();
 
-        _cshtmlDocumentId = DocumentId.CreateNewId(projectId1);
-        var cshtmlDocumentInfo = DocumentInfo.Create(_cshtmlDocumentId, "Test", filePath: "file.cshtml.g.cs");
-        _razorDocumentId = DocumentId.CreateNewId(projectId1);
-        var razorDocumentInfo = DocumentInfo.Create(_razorDocumentId, "Test", filePath: "file.razor.g.cs");
-        _backgroundVirtualCSharpDocumentId = DocumentId.CreateNewId(projectId1);
-        var backgroundDocumentInfo = DocumentInfo.Create(_backgroundVirtualCSharpDocumentId, "Test", filePath: "file.razor__bg__virtual.cs");
-        _partialComponentClassDocumentId = DocumentId.CreateNewId(projectId1);
-        var partialComponentClassDocumentInfo = DocumentInfo.Create(_partialComponentClassDocumentId, "Test", filePath: "file.razor.cs");
+        var cshtmlDocumentInfo = projectInfo1.CreateDocumentInfo("file.cshtml.g.cs");
+        _cshtmlDocumentId = cshtmlDocumentInfo.Id;
 
-        _solutionWithTwoProjects = Workspace.CurrentSolution
-            .AddProject(ProjectInfo.Create(
-                projectId1,
-                VersionStamp.Default,
-                "One",
-                "One",
-                LanguageNames.CSharp,
-                filePath: "One.csproj",
-                documents: [cshtmlDocumentInfo, razorDocumentInfo, partialComponentClassDocumentInfo, backgroundDocumentInfo]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj1\\One.dll")))
-            .AddProject(ProjectInfo.Create(
-                projectId2,
-                VersionStamp.Default,
-                "Two",
-                "Two",
-                LanguageNames.CSharp,
-                filePath: "Two.csproj").WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj2\\Two.dll")));
+        var razorDocumentInfo = projectInfo1.CreateDocumentInfo("file.razor.g.cs");
+        _razorDocumentId = razorDocumentInfo.Id;
+
+        var backgroundDocumentInfo = projectInfo1.CreateDocumentInfo("file.razor__bg__virtual.cs");
+        _backgroundVirtualCSharpDocumentId = backgroundDocumentInfo.Id;
+
+        var partialComponentClassDocumentInfo = projectInfo1.CreateDocumentInfo("file.razor.cs");
+        _partialComponentClassDocumentId = partialComponentClassDocumentInfo.Id;
+
+        var razorDocumentInfoForProjectThree = projectInfo3.CreateDocumentInfo("file.razor.g.cs");
+        _razorDocumentIdForProjectThree = razorDocumentInfoForProjectThree.Id;
+
+        _solutionWithTwoProjects = _emptySolution
+            .AddProject(projectInfo1
+                .WithDocuments([cshtmlDocumentInfo, razorDocumentInfo, partialComponentClassDocumentInfo, backgroundDocumentInfo]))
+            .AddProject(projectInfo2);
 
         _solutionWithOneProject = _emptySolution
-            .AddProject(ProjectInfo.Create(
-                projectId3,
-                VersionStamp.Default,
-                "Three",
-                "Three",
-                LanguageNames.CSharp,
-                filePath: "Three.csproj").WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj3\\Three.dll")));
+            .AddProject(projectInfo3);
 
-        var project2Reference = new ProjectReference(projectId2);
-        var project3Reference = new ProjectReference(projectId3);
-        _solutionWithDependentProject = Workspace.CurrentSolution
-            .AddProject(ProjectInfo.Create(
-                projectId1,
-                VersionStamp.Default,
-                "One",
-                "One",
-                LanguageNames.CSharp,
-                filePath: "One.csproj",
-                documents: [cshtmlDocumentInfo, razorDocumentInfo, partialComponentClassDocumentInfo, backgroundDocumentInfo],
-                projectReferences: [project2Reference]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj1\\One.dll")))
-            .AddProject(ProjectInfo.Create(
-                projectId2,
-                VersionStamp.Default,
-                "Two",
-                "Two",
-                LanguageNames.CSharp,
-                filePath: "Two.csproj",
-                projectReferences: [project3Reference]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj2\\Two.dll")))
-            .AddProject(ProjectInfo.Create(
-                projectId3,
-                VersionStamp.Default,
-                "Three",
-                "Three",
-                LanguageNames.CSharp,
-                filePath: "Three.csproj",
-                documents: [razorDocumentInfo]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj3\\Three.dll")));
+        _solutionWithDependentProject = _emptySolution
+            .AddProject(projectInfo1
+                .WithDocuments([cshtmlDocumentInfo, razorDocumentInfo, partialComponentClassDocumentInfo, backgroundDocumentInfo])
+                .WithProjectReferences(projectInfo2.Id))
+            .AddProject(projectInfo2
+                .WithProjectReferences(projectInfo3.Id))
+            .AddProject(projectInfo3
+                .WithDocuments([razorDocumentInfoForProjectThree]));
 
-        _projectNumberOne = _solutionWithTwoProjects.GetRequiredProject(projectId1);
-        _projectNumberTwo = _solutionWithTwoProjects.GetRequiredProject(projectId2);
-        _projectNumberThree = _solutionWithOneProject.GetRequiredProject(projectId3);
+        _projectNumberOne = _solutionWithTwoProjects.GetRequiredProject(projectInfo1.Id);
+        _projectNumberTwo = _solutionWithTwoProjects.GetRequiredProject(projectInfo2.Id);
+        _projectNumberThree = _solutionWithOneProject.GetRequiredProject(projectInfo3.Id);
 
-        _hostProjectOne = new HostProject("One.csproj", "obj1", FallbackRazorConfiguration.MVC_1_1, "One");
-        _hostProjectTwo = new HostProject("Two.csproj", "obj2", FallbackRazorConfiguration.MVC_1_1, "Two");
-        _hostProjectThree = new HostProject("Three.csproj", "obj3", FallbackRazorConfiguration.MVC_1_1, "Three");
+        return Task.CompletedTask;
+    }
+
+    private ProjectStateChangeDetector CreateDetector(IProjectStateUpdater generator, ProjectSnapshotManager projectManager)
+    {
+        var detector = new ProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, TimeSpan.FromMilliseconds(10));
+        AddDisposable(detector);
+
+        return detector;
     }
 
     [UIFact]
     public async Task SolutionClosing_StopsActiveWork()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
-        var workspaceChangedTask = detectorAccessor.ListenForWorkspaceChangesAsync(
-            WorkspaceChangeKind.ProjectAdded,
-            WorkspaceChangeKind.ProjectAdded);
-
-        Workspace.TryApplyChanges(_solutionWithTwoProjects);
+        await UpdateWorkspaceAsync(_solutionWithTwoProjects);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
-        await workspaceChangedTask;
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
-
-        generator.Clear();
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         // Act
         await projectManager.UpdateAsync(updater =>
@@ -148,12 +124,12 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             updater.SolutionClosed();
 
             // Trigger a project removed event while solution is closing to clear state.
-            updater.RemoveProject(_hostProjectOne.Key);
+            updater.RemoveProject(s_hostProject1.Key);
         });
 
         // Assert
 
-        Assert.Empty(generator.Updates);
+        Assert.Empty(updater.Updates);
     }
 
     [UITheory]
@@ -163,38 +139,41 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     public async Task WorkspaceChanged_DocumentEvents_EnqueuesUpdatesForDependentProjects(WorkspaceChangeKind kind)
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
-            updater.AddProject(_hostProjectTwo);
-            updater.AddProject(_hostProjectThree);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
+            updater.AddProject(s_hostProject3);
         });
+
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         // Initialize with a project. This will get removed.
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.SolutionAdded, oldSolution: _emptySolution, newSolution: _solutionWithOneProject);
-        detectorAccessor.WorkspaceChanged(e);
-
-        e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithOneProject, newSolution: _solutionWithDependentProject);
+        accessor.WorkspaceChanged(e);
 
         var solution = _solutionWithDependentProject.WithProjectAssemblyName(_projectNumberThree.Id, "Changed");
 
-        e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithDependentProject, newSolution: solution, projectId: _projectNumberThree.Id, documentId: _razorDocumentId);
+        e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithDependentProject, newSolution: solution, projectId: _projectNumberThree.Id, documentId: _razorDocumentIdForProjectThree);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        Assert.Equal(3, generator.Updates.Count);
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberOne.ToProjectKey());
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberTwo.ToProjectKey());
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberThree.ToProjectKey());
+        Assert.Equal(3, updater.Updates.Count);
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberOne));
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberTwo));
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberThree));
     }
 
     [UITheory]
@@ -204,21 +183,26 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     public async Task WorkspaceChanged_ProjectEvents_EnqueuesUpdatesForDependentProjects(WorkspaceChangeKind kind)
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
-            updater.AddProject(_hostProjectTwo);
-            updater.AddProject(_hostProjectThree);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
+            updater.AddProject(s_hostProject3);
         });
+
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         // Initialize with a project. This will get removed.
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.SolutionAdded, oldSolution: _emptySolution, newSolution: _solutionWithOneProject);
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
         e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithOneProject, newSolution: _solutionWithDependentProject);
 
@@ -227,15 +211,15 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithDependentProject, newSolution: solution, projectId: _projectNumberThree.Id);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        Assert.Equal(3, generator.Updates.Count);
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberOne.ToProjectKey());
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberTwo.ToProjectKey());
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberThree.ToProjectKey());
+        Assert.Equal(3, updater.Updates.Count);
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberOne));
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberTwo));
+        Assert.Contains(updater.Updates, u => u.Key.Matches(_projectNumberThree));
     }
 
     [UITheory]
@@ -247,29 +231,34 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     public async Task WorkspaceChanged_SolutionEvents_EnqueuesUpdatesForProjectsInSolution(WorkspaceChangeKind kind)
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
-            updater.AddProject(_hostProjectTwo);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
         });
+
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         var e = new WorkspaceChangeEventArgs(kind, oldSolution: _emptySolution, newSolution: _solutionWithTwoProjects);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
         Assert.Collection(
-            generator.Updates,
-            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject?.Id),
-            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject?.Id));
+            updater.Updates,
+            update => Assert.Equal(_projectNumberOne.Id, update.Id),
+            update => Assert.Equal(_projectNumberTwo.Id, update.Id));
     }
 
     [UITheory]
@@ -281,38 +270,38 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     public async Task WorkspaceChanged_SolutionEvents_EnqueuesStateClear_EnqueuesSolutionProjectUpdates(WorkspaceChangeKind kind)
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
-            updater.AddProject(_hostProjectTwo);
-            updater.AddProject(_hostProjectThree);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
+            updater.AddProject(s_hostProject3);
         });
 
         // Initialize with a project. This will get removed.
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.SolutionAdded, oldSolution: _emptySolution, newSolution: _solutionWithOneProject);
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithOneProject, newSolution: _solutionWithTwoProjects);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
         Assert.Collection(
-            generator.Updates,
-            p => Assert.Equal(_projectNumberThree.Id, p.WorkspaceProject?.Id),
-            p => Assert.Null(p.WorkspaceProject),
-            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject?.Id),
-            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject?.Id));
+            updater.Updates,
+            update => Assert.Equal(_projectNumberThree.Id, update.Id),
+            update => Assert.Null(update.Id),
+            update => Assert.Equal(_projectNumberOne.Id, update.Id),
+            update => Assert.Equal(_projectNumberTwo.Id, update.Id));
     }
 
     [UITheory]
@@ -321,152 +310,164 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     public async Task WorkspaceChanged_ProjectChangeEvents_UpdatesProjectState_AfterDelay(WorkspaceChangeKind kind)
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
         // Stop any existing work and clear out any updates that we might have received.
-        detectorAccessor.CancelExistingWork();
-        generator.Clear();
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         // Create a listener for the workspace change we're about to send.
-        var listenerTask = detectorAccessor.ListenForWorkspaceChangesAsync(kind);
+        var listenerTask = accessor.ListenForWorkspaceChangesAsync(kind);
 
         var solution = _solutionWithTwoProjects.WithProjectAssemblyName(_projectNumberOne.Id, "Changed");
         var e = new WorkspaceChangeEventArgs(kind, oldSolution: _solutionWithTwoProjects, newSolution: solution, projectId: _projectNumberOne.Id);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
         await listenerTask;
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        var update = Assert.Single(generator.Updates);
-        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
-        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(_projectNumberOne.Id, update.Id);
+        Assert.Equal(s_hostProject1.Key, update.Key);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_DocumentChanged_BackgroundVirtualCS_UpdatesProjectState_AfterDelay()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
-        Workspace.TryApplyChanges(_solutionWithTwoProjects);
+        await UpdateWorkspaceAsync(_solutionWithTwoProjects);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
-        generator.Clear();
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         var solution = _solutionWithTwoProjects.WithDocumentText(_backgroundVirtualCSharpDocumentId, SourceText.From("public class Foo{}"));
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.DocumentChanged, oldSolution: _solutionWithTwoProjects, newSolution: solution, projectId: _projectNumberOne.Id, _backgroundVirtualCSharpDocumentId);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        var update = Assert.Single(generator.Updates);
-        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
-        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(_projectNumberOne.Id, update.Id);
+        Assert.Equal(s_hostProject1.Key, update.Key);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_DocumentChanged_CSHTML_UpdatesProjectState_AfterDelay()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
-        Workspace.TryApplyChanges(_solutionWithTwoProjects);
+        await UpdateWorkspaceAsync(_solutionWithTwoProjects);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
-        generator.Clear();
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         var solution = _solutionWithTwoProjects.WithDocumentText(_cshtmlDocumentId, SourceText.From("Hello World"));
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.DocumentChanged, oldSolution: _solutionWithTwoProjects, newSolution: solution, projectId: _projectNumberOne.Id, _cshtmlDocumentId);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        var update = Assert.Single(generator.Updates);
-        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
-        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(_projectNumberOne.Id, update.Id);
+        Assert.Equal(s_hostProject1.Key, update.Key);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_DocumentChanged_Razor_UpdatesProjectState_AfterDelay()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
-        Workspace.TryApplyChanges(_solutionWithTwoProjects);
+        await UpdateWorkspaceAsync(_solutionWithTwoProjects);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
-        generator.Clear();
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         var solution = _solutionWithTwoProjects.WithDocumentText(_razorDocumentId, SourceText.From("Hello World"));
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.DocumentChanged, oldSolution: _solutionWithTwoProjects, newSolution: solution, projectId: _projectNumberOne.Id, _razorDocumentId);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        var update = Assert.Single(generator.Updates);
-        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
-        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(_projectNumberOne.Id, update.Id);
+        Assert.Equal(s_hostProject1.Key, update.Key);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_DocumentChanged_PartialComponent_UpdatesProjectState_AfterDelay()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
-        Workspace.TryApplyChanges(_solutionWithTwoProjects);
+        await UpdateWorkspaceAsync(_solutionWithTwoProjects);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
+            updater.AddProject(s_hostProject1);
         });
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
-        generator.Clear();
+        // Stop any existing work and clear out any updates that we might have received.
+        accessor.CancelExistingWork();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
+        updater.Clear();
 
         var sourceText = SourceText.From($$"""
             public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
@@ -488,75 +489,75 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.DocumentChanged, oldSolution: solution, newSolution: solution, projectId: _projectNumberOne.Id, _partialComponentClassDocumentId);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
+        accessor.WorkspaceChanged(e);
 
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
-        var update = Assert.Single(generator.Updates);
-        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
-        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(_projectNumberOne.Id, update.Id);
+        Assert.Equal(s_hostProject1.Key, update.Key);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_ProjectRemovedEvent_QueuesProjectStateRemoval()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectOne);
-            updater.AddProject(_hostProjectTwo);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
         });
 
         var solution = _solutionWithTwoProjects.RemoveProject(_projectNumberOne.Id);
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.ProjectRemoved, oldSolution: _solutionWithTwoProjects, newSolution: solution, projectId: _projectNumberOne.Id);
 
         // Act
-        detectorAccessor.WorkspaceChanged(e);
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        accessor.WorkspaceChanged(e);
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
         Assert.Single(
-            generator.Updates,
-            p => p.WorkspaceProject is null);
+            updater.Updates,
+            update => update.Id is null);
     }
 
     [UIFact]
     public async Task WorkspaceChanged_ProjectAddedEvent_AddsProject()
     {
         // Arrange
-        var generator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = CreateDetector(generator, projectManager);
-        var detectorAccessor = detector.GetTestAccessor();
+        using var detector = CreateDetector(updater, projectManager);
+        var accessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.AddProject(_hostProjectThree);
+            updater.AddProject(s_hostProject3);
         });
 
         var solution = _solutionWithOneProject;
         var e = new WorkspaceChangeEventArgs(WorkspaceChangeKind.ProjectAdded, oldSolution: _emptySolution, newSolution: solution, projectId: _projectNumberThree.Id);
 
         // Act
-        var listenerTask = detectorAccessor.ListenForWorkspaceChangesAsync(WorkspaceChangeKind.ProjectAdded);
-        detectorAccessor.WorkspaceChanged(e);
+        var listenerTask = accessor.ListenForWorkspaceChangesAsync(WorkspaceChangeKind.ProjectAdded);
+        accessor.WorkspaceChanged(e);
         await listenerTask;
-        await detectorAccessor.WaitUntilCurrentBatchCompletesAsync();
+        await accessor.WaitUntilCurrentBatchCompletesAsync();
 
         // Assert
         Assert.Single(
-            generator.Updates,
-            p => p.WorkspaceProject?.Id == _projectNumberThree.Id);
+            updater.Updates,
+            update => update.Id == _projectNumberThree.Id);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_NoIComponent_ReturnsFalse()
+    public async Task ContainsPartialComponentClass_NoIComponent_ReturnsFalse()
     {
         // Arrange
         var sourceText = SourceText.From("""
@@ -573,14 +574,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSemanticModelAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_InitializedDocument_ReturnsTrue()
+    public async Task ContainsPartialComponentClass_InitializedDocument_ReturnsTrue()
     {
         // Arrange
         var sourceText = SourceText.From($$"""
@@ -601,14 +602,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSemanticModelAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void IsPartialComponentClass_Uninitialized_ReturnsFalse()
+    public void ContainsPartialComponentClass_Uninitialized_ReturnsFalse()
     {
         // Arrange
         var sourceText = SourceText.From($$"""
@@ -625,14 +626,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         var document = solution.GetRequiredDocument(_partialComponentClassDocumentId);
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_UninitializedSemanticModel_ReturnsFalse()
+    public async Task ContainsPartialComponentClass_UninitializedSemanticModel_ReturnsFalse()
     {
         // Arrange
         var sourceText = SourceText.From($$"""
@@ -651,14 +652,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSyntaxRootAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_NonClass_ReturnsFalse()
+    public async Task ContainsPartialComponentClass_NonClass_ReturnsFalse()
     {
         // Arrange
         var sourceText = SourceText.From(string.Empty);
@@ -673,14 +674,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSemanticModelAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_MultipleClassesOneComponentPartial_ReturnsTrue()
+    public async Task ContainsPartialComponentClass_MultipleClassesOneComponentPartial_ReturnsTrue()
     {
         // Arrange
         var sourceText = SourceText.From($$"""
@@ -705,14 +706,14 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSemanticModelAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public async Task IsPartialComponentClass_NonComponents_ReturnsFalse()
+    public async Task ContainsPartialComponentClass_NonComponents_ReturnsFalse()
     {
         // Arrange
         var sourceText = SourceText.From("""
@@ -736,12 +737,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         await document.GetSemanticModelAsync();
 
         // Act
-        var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
+        var result = ProjectStateChangeDetector.ContainsPartialComponentClass(document);
 
         // Assert
         Assert.False(result);
     }
-
-    private WorkspaceProjectStateChangeDetector CreateDetector(IProjectWorkspaceStateGenerator generator, ProjectSnapshotManager projectManager)
-        => new(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, TimeSpan.FromMilliseconds(10));
 }

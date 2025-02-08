@@ -11,16 +11,15 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.Razor;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
-public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTestBase
+public class ProjectBuildDetectorTest : VisualStudioTestBase
 {
     private static readonly HostProject s_someProject = TestProjectData.SomeProject with
     {
@@ -35,7 +34,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
     private readonly Project _someWorkspaceProject;
     private readonly IWorkspaceProvider _workspaceProvider;
 
-    public VsSolutionUpdatesProjectSnapshotChangeTriggerTest(ITestOutputHelper testOutput)
+    public ProjectBuildDetectorTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
         Project? someWorkspaceProject = null;
@@ -72,7 +71,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         uint cookie = 42;
         var buildManagerMock = new StrictMock<IVsSolutionBuildManager>();
         buildManagerMock
-            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<VsSolutionUpdatesProjectSnapshotChangeTrigger>(), out cookie))
+            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<ProjectBuildDetector>(), out cookie))
             .Returns(VSConstants.S_OK)
             .Verifiable();
         buildManagerMock
@@ -86,10 +85,10 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         // Note: We're careful to use a using statement with a block to allow
         // the call to UnadviseUpdateSolutionEvents() to be verified after disposal.
-        using (var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using (var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            StrictMock.Of<IProjectWorkspaceStateGenerator>(),
+            StrictMock.Of<IProjectStateUpdater>(),
             _workspaceProvider,
             JoinableTaskContext))
         {
@@ -107,7 +106,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         uint cookie = 42;
         var buildManagerMock = new StrictMock<IVsSolutionBuildManager>();
         buildManagerMock
-            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<VsSolutionUpdatesProjectSnapshotChangeTrigger>(), out cookie))
+            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<ProjectBuildDetector>(), out cookie))
             .Returns(VSConstants.S_OK)
             // When IVsSolutionBuildManager.AdviseUpdateSolutionEvents is called, we should have switched to the main thread.
             .Callback(() => Assert.True(JoinableTaskContext.IsOnMainThread));
@@ -125,10 +124,10 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var projectManager = CreateProjectSnapshotManager();
 
-        using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            StrictMock.Of<IProjectWorkspaceStateGenerator>(),
+            StrictMock.Of<IProjectStateUpdater>(),
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -158,7 +157,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
 
         var vsHierarchyMock = new StrictMock<IVsHierarchy>();
         var vsProjectMock = vsHierarchyMock.As<IVsProject>();
@@ -166,10 +165,10 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             .Setup(x => x.GetMkDocument((uint)VSConstants.VSITEMID.Root, out expectedProjectPath))
             .Returns(VSConstants.S_OK);
 
-        using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            updater,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -187,10 +186,9 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             updater.RemoveProject(s_someProject.Key);
         });
 
-        var update = Assert.Single(workspaceStateGenerator.Updates);
-        Assert.NotNull(update.WorkspaceProject);
-        Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
-        Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(update.Id, _someWorkspaceProject.Id);
+        Assert.Equal(expectedProjectSnapshot.Key, update.Key);
         Assert.True(update.IsCancelled);
     }
 
@@ -211,12 +209,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
 
-        using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            updater,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -232,10 +230,9 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(vsHierarchyMock.Object, DisposalToken);
 
         // Assert
-        var update = Assert.Single(workspaceStateGenerator.Updates);
-        Assert.NotNull(update.WorkspaceProject);
-        Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
-        Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
+        var update = Assert.Single(updater.Updates);
+        Assert.Equal(update.Id, _someWorkspaceProject.Id);
+        Assert.Equal(expectedProjectSnapshot.Key, update.Key);
     }
 
     [UIFact]
@@ -245,7 +242,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         uint cookie = 42;
         var buildManagerMock = new StrictMock<IVsSolutionBuildManager>();
         buildManagerMock
-            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<VsSolutionUpdatesProjectSnapshotChangeTrigger>(), out cookie))
+            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<ProjectBuildDetector>(), out cookie))
             .Returns(VSConstants.S_OK);
         buildManagerMock
             .Setup(b => b.UnadviseUpdateSolutionEvents(cookie))
@@ -262,12 +259,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
                 new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path"));
         });
 
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
 
-        using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            updater,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -277,7 +274,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.Updates);
+        Assert.Empty(updater.Updates);
     }
 
     [UIFact]
@@ -287,7 +284,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         uint cookie = 42;
         var buildManagerMock = new StrictMock<IVsSolutionBuildManager>();
         buildManagerMock
-            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<VsSolutionUpdatesProjectSnapshotChangeTrigger>(), out cookie))
+            .Setup(b => b.AdviseUpdateSolutionEvents(It.IsAny<ProjectBuildDetector>(), out cookie))
             .Returns(VSConstants.S_OK);
         buildManagerMock
             .Setup(b => b.UnadviseUpdateSolutionEvents(cookie))
@@ -298,12 +295,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var projectManager = CreateProjectSnapshotManager();
 
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var updater = new TestProjectStateUpdater();
 
-        using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        using var trigger = new ProjectBuildDetector(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            updater,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -313,6 +310,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.Updates);
+        Assert.Empty(updater.Updates);
     }
 }

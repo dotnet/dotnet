@@ -18,23 +18,25 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
-namespace Microsoft.VisualStudio.Razor;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
-[Export(typeof(IProjectWorkspaceStateGenerator))]
+[Export(typeof(IProjectStateUpdater))]
 [method: ImportingConstructor]
-internal sealed partial class ProjectWorkspaceStateGenerator(
+internal sealed partial class ProjectStateUpdater(
     ProjectSnapshotManager projectManager,
     ITagHelperResolver tagHelperResolver,
+    IWorkspaceProvider workspaceProvider,
     ILoggerFactory loggerFactory,
     ITelemetryReporter telemetryReporter)
-    : IProjectWorkspaceStateGenerator, IDisposable
+    : IProjectStateUpdater, IDisposable
 {
     // SemaphoreSlim is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
 #pragma warning disable RS0030 // Do not use banned APIs
 
     private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectWorkspaceStateGenerator>();
+    private readonly CodeAnalysis.Workspace _workspace = workspaceProvider.GetWorkspace();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectStateUpdater>();
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     private readonly SemaphoreSlim _semaphore = new(initialCount: 1);
@@ -68,7 +70,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
         _blockBackgroundWorkStart?.Set();
     }
 
-    public void EnqueueUpdate(Project? workspaceProject, ProjectSnapshot projectSnapshot)
+    public void EnqueueUpdate(ProjectKey key, ProjectId? id)
     {
         if (_disposed)
         {
@@ -77,22 +79,20 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
         lock (_updates)
         {
-            var projectKey = projectSnapshot.Key;
-
-            if (_updates.TryGetValue(projectKey, out var updateItem))
+            if (_updates.TryGetValue(key, out var updateItem))
             {
                 if (updateItem.IsRunning)
                 {
-                    _logger.LogTrace($"Cancelling previously enqueued update for '{projectKey}'.");
+                    _logger.LogTrace($"Cancelling previously enqueued update for '{key}'.");
                 }
 
                 updateItem.CancelWorkAndCleanUp();
             }
 
-            _logger.LogTrace($"Enqueuing update for '{projectKey}'");
+            _logger.LogTrace($"Enqueuing update for '{key}'");
 
-            _updates[projectKey] = UpdateItem.CreateAndStartWork(
-                token => UpdateWorkspaceStateAsync(workspaceProject, projectSnapshot, token));
+            _updates[key] = UpdateItem.CreateAndStartWork(
+                token => UpdateWorkspaceStateAsync(key, id, token));
         }
     }
 
@@ -116,9 +116,15 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
         }
     }
 
-    private async Task UpdateWorkspaceStateAsync(Project? workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    private async Task UpdateWorkspaceStateAsync(ProjectKey key, ProjectId? id, CancellationToken cancellationToken)
     {
-        var projectKey = projectSnapshot.Key;
+        if (!_projectManager.TryGetProject(key, out var projectSnapshot))
+        {
+            return;
+        }
+
+        // Note: If Solution.GetProject(...) is passed a null ProjectId, it always returns null.
+        var workspaceProject = _workspace.CurrentSolution.GetProject(id);
 
         // Only allow a single TagHelper resolver request to process at a time in order to reduce
         // Visual Studio memory pressure. Typically a TagHelper resolution result can be upwards of 10mb+.
@@ -126,7 +132,7 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
         // single one executing at a time so that we don't have N number of requests in flight with these
         // 10mb payloads waiting to be processed.
 
-        var enteredSemaphore = await TryEnterSemaphoreAsync(projectKey, cancellationToken);
+        var enteredSemaphore = await TryEnterSemaphoreAsync(key, cancellationToken);
         if (!enteredSemaphore)
         {
             return;
@@ -145,16 +151,16 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
             if (workspaceState is null)
             {
-                _logger.LogTrace($"Didn't receive {nameof(ProjectWorkspaceState)} for '{projectKey}'");
+                _logger.LogTrace($"Didn't receive {nameof(ProjectWorkspaceState)} for '{key}'");
                 return;
             }
             else if (cancellationToken.IsCancellationRequested)
             {
-                _logger.LogTrace($"Got a cancellation request during discovery for '{projectKey}'");
+                _logger.LogTrace($"Got a cancellation request during discovery for '{key}'");
                 return;
             }
 
-            _logger.LogTrace($"Received {nameof(ProjectWorkspaceState)} with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
+            _logger.LogTrace($"Received {nameof(ProjectWorkspaceState)} with {workspaceState.TagHelpers.Length} tag helper(s) for '{key}'");
 
             await _projectManager
                 .UpdateAsync(
@@ -175,27 +181,27 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                         updater.UpdateProjectConfiguration(hostProject);
                         updater.UpdateProjectWorkspaceState(projectKey, workspaceState);
                     },
-                    state: (projectKey, workspaceState, configuration, _logger, cancellationToken),
+                    state: (key, workspaceState, configuration, _logger, cancellationToken),
                     cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
-            _logger.LogTrace($"Got an OperationCancelledException, for '{projectKey}'");
+            _logger.LogTrace($"Got an OperationCancelledException, for '{key}'");
             // Abort work if we get a task canceled exception
             return;
         }
         catch (Exception ex)
         {
-            _logger.LogTrace($"Got an exception, for '{projectKey}'");
+            _logger.LogTrace($"Got an exception, for '{key}'");
             _logger.LogError(ex);
         }
         finally
         {
-            ReleaseSemaphore(projectKey);
+            ReleaseSemaphore(key);
         }
 
-        _logger.LogTrace($"All finished for '{projectKey}'");
+        _logger.LogTrace($"All finished for '{key}'");
 
         OnBackgroundWorkCompleted();
     }

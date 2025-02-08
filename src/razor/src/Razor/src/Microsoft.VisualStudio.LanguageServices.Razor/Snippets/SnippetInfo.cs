@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.Snippets;
 
 internal record SnippetInfo
 {
-    Lazy<XmlSnippetParser.ParsedXmlSnippet?> _parsedXmlSnippet;
+    private readonly Lazy<XmlSnippetParser.ParsedXmlSnippet?> _parsedXmlSnippet;
 
     public SnippetInfo(
         string shortcut,

@@ -22,7 +22,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
 
-namespace Microsoft.VisualStudio.Razor.Remote;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
 public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 {

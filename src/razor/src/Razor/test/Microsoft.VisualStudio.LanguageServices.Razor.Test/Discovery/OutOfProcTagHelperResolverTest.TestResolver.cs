@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
-namespace Microsoft.VisualStudio.Razor.Remote;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
 public partial class OutOfProcTagHelperResolverTest
 {

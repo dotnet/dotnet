@@ -5,9 +5,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.VisualStudio.Razor;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
-internal sealed partial class ProjectWorkspaceStateGenerator
+internal sealed partial class ProjectStateUpdater
 {
     private sealed class UpdateItem
     {

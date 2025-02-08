@@ -3,20 +3,20 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.VisualStudio.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
-internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenerator
+internal class TestProjectStateUpdater : IProjectStateUpdater
 {
     private readonly List<TestUpdate> _updates = [];
 
     public IReadOnlyList<TestUpdate> Updates => _updates;
 
-    public void EnqueueUpdate(Project? workspaceProject, ProjectSnapshot projectSnapshot)
+    public void EnqueueUpdate(ProjectKey key, ProjectId? id)
     {
-        var update = new TestUpdate(workspaceProject, projectSnapshot);
+        var update = new TestUpdate(key, id);
         _updates.Add(update);
     }
 
@@ -33,7 +33,7 @@ internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenera
         _updates.Clear();
     }
 
-    public record TestUpdate(Project? WorkspaceProject, ProjectSnapshot ProjectSnapshot)
+    public record TestUpdate(ProjectKey Key, ProjectId? Id)
     {
         public bool IsCancelled { get; set; }
 
@@ -41,18 +41,18 @@ internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenera
         {
             using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
-            builder.Append($"{{{nameof(WorkspaceProject)} = ");
+            builder.Append($"{{{nameof(Id)} = ");
 
-            if (WorkspaceProject is null)
+            if (Id is null)
             {
                 builder.Append("<null>");
             }
             else
             {
-                builder.Append(WorkspaceProject.Name);
+                builder.Append(Id);
             }
 
-            builder.Append($", {nameof(ProjectSnapshot)} = {ProjectSnapshot.DisplayName}}}");
+            builder.Append($", {nameof(Key)} = {Key}}}");
 
             return builder.ToString();
         }

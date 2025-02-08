@@ -354,12 +354,9 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     {
         var workspace = _workspaceProvider.GetWorkspace();
 
-        foreach (var project in workspace.CurrentSolution.Projects)
+        if (workspace.CurrentSolution.TryGetProject(key, out var project))
         {
-            if (key.Matches(project))
-            {
-                return project.Id;
-            }
+            return project.Id;
         }
 
         return null;
