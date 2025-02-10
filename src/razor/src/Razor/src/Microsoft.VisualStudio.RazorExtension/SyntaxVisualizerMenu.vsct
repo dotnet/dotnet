@@ -98,6 +98,13 @@
         </Strings>
       </Button>
 
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowFormattingDocument" priority="0x202" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Formatting Document</ButtonText>
+        </Strings>
+      </Button>
+      
       <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowAllTagHelpers" priority="0x203" type="Button">
         <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
         <Strings>
@@ -140,6 +147,7 @@
       <IDSymbol name="cmdIdShowAllTagHelpers" value="0x0113" />
       <IDSymbol name="cmdIdShowInScopeTagHelpers" value="0x0114" />
       <IDSymbol name="cmdIdShowReferencedTagHelpers" value="0x0115" />
+      <IDSymbol name="cmdidShowFormattingDocument" value="0x0116" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
