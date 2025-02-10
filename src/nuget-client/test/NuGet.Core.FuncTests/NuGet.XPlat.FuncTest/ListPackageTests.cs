@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
 using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.ListPackage;
@@ -18,6 +20,8 @@ using NuGet.Commands;
 using NuGet.Commands.Test;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.Frameworks;
+using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Test.Utility;
 using Test.Utility;
@@ -228,6 +232,7 @@ namespace NuGet.XPlat.FuncTest
                                         prerelease: false,
                                         highestPatch: false,
                                         highestMinor: false,
+                                        auditSources: null,
                                         logger: logger,
                                         cancellationToken: CancellationToken.None);
 
@@ -340,12 +345,116 @@ namespace NuGet.XPlat.FuncTest
                                         prerelease: false,
                                         highestPatch: false,
                                         highestMinor: false,
+                                        auditSources: null,
                                         logger: logger,
                                         cancellationToken: CancellationToken.None);
 
             int result = await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
             Assert.True(result == 0, userMessage: logger.ShowMessages());
         }
+
+        [Fact]
+        public async Task GetReportDataAsync_WhenReportTypeIsVulnerable_ShouldUseAuditSources()
+        {
+            // Arrange
+            using var mockServer = SetupMockServer();
+            var auditSource = new PackageSource(mockServer.Uri + "v3/index.json") { AllowInsecureConnections = true };
+
+            var mockRenderer = new Mock<IReportRenderer>();
+            var mockLogger = new Mock<ILogger>();
+
+            using var pathContext = new SimpleTestPathContext();
+            var project = SetupTestProject(pathContext);
+            SetupAssetsAndProps(project);
+
+            var listPackageArgs = new ListPackageArgs(
+                path: project.ProjectPath,
+                packageSources: new List<PackageSource> { new PackageSource(pathContext.PackageSource) },
+                frameworks: new List<string>(),
+                ReportType.Vulnerable,
+                mockRenderer.Object,
+                includeTransitive: true,
+                prerelease: false,
+                highestPatch: false,
+                highestMinor: false,
+                new List<PackageSource> { auditSource },
+                mockLogger.Object,
+                CancellationToken.None
+            );
+
+            var listPackageCommandRunner = new ListPackageCommandRunner();
+
+
+            // Act
+            var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
+
+            // Assert
+            Assert.Equal(1, result.Item2.Projects.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().Vulnerabilities.Count);
+            Assert.Equal(2, result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().Severity);
+            Assert.Equal("https://test/", result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().AdvisoryUrl.ToString());
+        }
+
+        [Fact]
+        public async Task GetReportDataAsync_WhenReportTypeIsVulnerableAuditSourcesWithNoVulnerabilityInfoResource_ShouldWarn()
+        {
+            // Arrange
+            const string indexJson = """
+    {
+        "version": "3.0.0",
+        "resources": [{}]
+    }
+    """;
+
+            using var mockServer = new MockServer();
+            mockServer.Get.Add("/v3/index.json", _ => indexJson);
+            mockServer.Start();
+
+            var auditSource = new PackageSource($"{mockServer.Uri}v3/index.json") { AllowInsecureConnections = true };
+
+            using var pathContext = new SimpleTestPathContext();
+            var project = SetupTestProject(pathContext);
+            SetupAssetsAndProps(project);
+
+            var mockRenderer = new Mock<IReportRenderer>();
+            var mockLogger = new Mock<ILogger>();
+
+            var listPackageArgs = new ListPackageArgs(
+                project.ProjectPath,
+                new List<PackageSource> { new PackageSource(pathContext.PackageSource) },
+                new List<string>(),
+                ReportType.Vulnerable,
+                mockRenderer.Object,
+                includeTransitive: true,
+                prerelease: false,
+                highestPatch: false,
+                highestMinor: false,
+                new List<PackageSource> { auditSource },
+                mockLogger.Object,
+                CancellationToken.None
+            );
+
+            var listPackageCommandRunner = new ListPackageCommandRunner();
+
+            // Act
+            var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
+            var projectResult = result.Item2.Projects.First();
+            var warning = projectResult.ProjectProblems.First();
+
+            // Assert
+            Assert.Single(result.Item2.Projects);
+            Assert.Single(projectResult.ProjectProblems);
+            Assert.Equal(ProblemType.Warning, warning.ProblemType);
+            Assert.Equal(
+                string.Format(CultureInfo.CurrentCulture, CommandLine.XPlat.Strings.Warning_AuditSourceWithoutData, auditSource.Name),
+                warning.Text
+            );
+            Assert.Empty(projectResult.TargetFrameworkPackages.First().TopLevelPackages);
+            Assert.Empty(projectResult.TargetFrameworkPackages.First().TransitivePackages);
+        }
+
 
         private void VerifyCommand(Action<string, Mock<IListPackageCommandRunner>, CommandLineApplication, Func<LogLevel>> verify)
         {
@@ -386,7 +495,90 @@ namespace NuGet.XPlat.FuncTest
         {
             Type listPackageArgsType = typeof(ListPackageArgs);
             FieldInfo[] fields = listPackageArgsType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            Assert.True(12 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
+            Assert.True(13 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
         }
+
+        private static SimpleTestProjectContext SetupTestProject(SimpleTestPathContext pathContext)
+        {
+            var package = new SimpleTestPackageContext { Id = "task", Version = "1.0.0" };
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var project = SimpleTestProjectContext.CreateNETCore("ProjectA", pathContext.SolutionRoot, NuGetFramework.Parse("net8.0"));
+            project.Type = ProjectStyle.PackageReference;
+            project.SingleTargetFramework = true;
+            project.AddPackageToAllFrameworks(package);
+
+            solution.Projects.Add(project);
+            solution.Create(pathContext.SolutionRoot);
+
+            return project;
+        }
+
+        private void SetupAssetsAndProps(SimpleTestProjectContext project)
+        {
+            string objFolder = Path.Combine(Path.GetDirectoryName(project.ProjectPath), "obj");
+            Directory.CreateDirectory(objFolder);
+
+            string assetsPath = Path.Combine(objFolder, "project.assets.json");
+            string propsPath = Path.Combine(objFolder, "ProjectA.csproj.nuget.g.props");
+
+            string assetsContent = ResourceTestUtility.GetResource(
+                "NuGet.XPlat.FuncTest.compiler.resources.Test.OnePackage.project.assets.json",
+                GetType()
+            );
+            string propsContent = ResourceTestUtility.GetResource(
+                "NuGet.XPlat.FuncTest.compiler.resources.Test.ProjectA.csproj.nuget.g.props",
+                GetType()
+            );
+
+            File.WriteAllText(assetsPath, assetsContent);
+            File.WriteAllText(propsPath, propsContent);
+        }
+
+        private static MockServer SetupMockServer()
+        {
+            var mockServer = new MockServer();
+
+            string indexJson = $@"
+    {{
+        ""version"": ""3.0.0"",
+        ""resources"": [
+            {{
+                ""@id"": ""{mockServer.Uri}v3/vulnerabilities/index.json"",
+                ""@type"": ""VulnerabilityInfo/6.7.0"",
+                ""comment"": ""This is a test feed for vulnerabilities""
+            }}
+        ]
+    }}";
+
+            string vulnerabilitiesJson = $@"
+    [
+        {{
+            ""@name"": ""base"",
+            ""@id"": ""{mockServer.Uri}v3-vulnerabilities/2024.12.21.05.12.11/vulnerability.base.json"",
+            ""@updated"": ""2024-12-21T05:12:11.2008556Z"",
+            ""comment"": ""The base data for vulnerability update periodically""
+        }}
+    ]";
+
+            string baseVulnerabilityJson = $@"
+    {{
+        ""task"": [
+            {{
+                ""url"": ""https://test/"",
+                ""severity"": 2,
+                ""versions"": ""(, 10.0.3)""
+            }}
+        ]
+    }}";
+
+            mockServer.Get.Add("/v3/index.json", _ => indexJson);
+            mockServer.Get.Add("/v3/vulnerabilities/index.json", _ => vulnerabilitiesJson);
+            mockServer.Get.Add("/v3-vulnerabilities/2024.12.21.05.12.11/vulnerability.base.json", _ => baseVulnerabilityJson);
+            mockServer.Start();
+
+            return mockServer;
+        }
+
     }
 }

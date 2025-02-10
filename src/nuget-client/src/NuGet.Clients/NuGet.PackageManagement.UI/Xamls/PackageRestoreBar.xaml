@@ -3,36 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Loaded="UserControl_Loaded"
              xmlns:resx="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              Visibility="{Binding InnerVisibility, Mode=OneWay}">
-    <UserControl.Resources>
-      <Storyboard x:Key="ShowSmoothly">
-        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="InnerVisibility" Storyboard.Target="{Binding}">
-          <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Visible}"/>
-        </ObjectAnimationUsingKeyFrames>
-        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RestoreBar">
-          <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
-          <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="1"/>
-        </DoubleAnimationUsingKeyFrames>
-      </Storyboard>
-      <Storyboard x:Key="HideSmoothly">
-        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RestoreBar">
-          <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
-        </DoubleAnimationUsingKeyFrames>
-        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="InnerVisibility" Storyboard.Target="{Binding}">
-          <DiscreteObjectKeyFrame KeyTime="0:0:0.6" Value="{x:Static Visibility.Collapsed}"/>
-        </ObjectAnimationUsingKeyFrames>
-      </Storyboard>
-    </UserControl.Resources>
-    <Border x:Name="RestoreBar" VerticalAlignment="Center" Visibility="{Binding InnerVisibility, Mode=OneWay}" Opacity="0" BorderThickness="0,0,0,1">
-        <Grid Margin="0,4,0,6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            
-            <TextBlock x:Name="StatusMessage" Grid.Column="0" Text="{x:Static resx:Resources.AskForRestoreMessage}" TextWrapping="Wrap" TextOptions.TextFormattingMode="Display" VerticalAlignment="Center" Margin="5,0,5,0" />
-            <Button x:Name="RestoreButton" VerticalAlignment="Center" Grid.Column="1" Content="{x:Static resx:Resources.RestoreButtonLabel}" Click="OnRestoreLinkClick" Margin="5,0,3,0" Padding="8,2,8,2" />
+  <UserControl.Resources>
+    <Storyboard x:Key="ShowSmoothly">
+      <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="InnerVisibility" Storyboard.Target="{Binding}">
+        <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Visible}"/>
+      </ObjectAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RestoreBar">
+        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+        <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="1"/>
+      </DoubleAnimationUsingKeyFrames>
+    </Storyboard>
+    <Storyboard x:Key="HideSmoothly">
+      <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RestoreBar">
+        <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+      </DoubleAnimationUsingKeyFrames>
+      <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="InnerVisibility" Storyboard.Target="{Binding}">
+        <DiscreteObjectKeyFrame KeyTime="0:0:0.6" Value="{x:Static Visibility.Collapsed}"/>
+      </ObjectAnimationUsingKeyFrames>
+    </Storyboard>
+  </UserControl.Resources>
+  <Border x:Name="RestoreBar" VerticalAlignment="Center" Visibility="{Binding InnerVisibility, Mode=OneWay}" Opacity="0" BorderThickness="0,0,0,1">
+    <Grid Margin="0,4,0,6">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <TextBlock x:Name="StatusMessage" Grid.Column="0" Text="{x:Static resx:Resources.AskForRestoreMessage}" TextWrapping="Wrap" TextOptions.TextFormattingMode="Display" VerticalAlignment="Center" Margin="5,0,5,0">
+        <TextBlock.ContextMenu>
+          <ContextMenu Style="{DynamicResource {x:Static vsui:VsResourceKeys.ContextMenuStyleKey}}">
+            <MenuItem Header="{x:Static resx:Resources.CopyMenuCommandLabel}" Command="{Binding CopyCommand}" />
+          </ContextMenu>
+        </TextBlock.ContextMenu>
+      </TextBlock>
+      <Button x:Name="RestoreButton" VerticalAlignment="Center" Grid.Column="1" Content="{x:Static resx:Resources.RestoreButtonLabel}" Click="OnRestoreLinkClick" Margin="5,0,3,0" Padding="8,2,8,2" />
       <ProgressBar x:Name="ProgressBar" Grid.Column="1" IsIndeterminate="{Binding RelativeSource={RelativeSource Self}, Path=IsVisible}" Height="{Binding ActualHeight, ElementName=RestoreButton, Mode=OneWay}" Width="170" Margin="5,0,3,0" />
-        </Grid>
-    </Border>
+    </Grid>
+  </Border>
 </UserControl>

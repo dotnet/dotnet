@@ -234,6 +234,15 @@ namespace NuGetVSExtension {
         /// <summary>
         ///   Looks up a localized string similar to Project is not eligible for migration. Either the project is not packages.config based or doesn&apos;t support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information..
         /// </summary>
+        internal static string ProjectJsonMigrateErrorMessage {
+            get {
+                return ResourceManager.GetString("ProjectJsonMigrateErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project is not eligible for migration as it&apos;s not project.json based..
+        /// </summary>
         internal static string ProjectMigrateErrorMessage {
             get {
                 return ResourceManager.GetString("ProjectMigrateErrorMessage", resourceCulture);

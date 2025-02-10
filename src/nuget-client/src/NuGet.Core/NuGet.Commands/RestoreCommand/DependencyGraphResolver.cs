@@ -45,7 +45,7 @@ namespace NuGet.Commands
         /// <summary>
         /// A <see cref="DependencyGraphItemIndexer" /> used to index dependency graph items.
         /// </summary>
-        private readonly DependencyGraphItemIndexer _indexingTable = new();
+        private readonly DependencyGraphItemIndexer _indexingTable;
 
         /// <summary>
         /// A <see cref="RestoreCollectorLogger" /> used for logging.
@@ -68,6 +68,11 @@ namespace NuGet.Commands
         private readonly TelemetryActivity _telemetryActivity;
 
         /// <summary>
+        /// Represents the root project as a <see cref="LibraryDependency" />.
+        /// </summary>
+        private readonly LibraryDependency _rootProjectLibraryDependency;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DependencyGraphResolver" /> class.
         /// </summary>
         /// <param name="logger">A <see cref="RestoreCollectorLogger" /> to use for logging.</param>
@@ -78,6 +83,16 @@ namespace NuGet.Commands
             _logger = logger;
             _request = restoreRequest;
             _telemetryActivity = telemetryActivity;
+
+            _rootProjectLibraryDependency = new LibraryDependency(
+                new LibraryRange()
+                {
+                    Name = _request.Project.Name,
+                    VersionRange = new VersionRange(_request.Project.Version),
+                    TypeConstraint = LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject
+                });
+
+            _indexingTable = new DependencyGraphItemIndexer(_rootProjectLibraryDependency);
         }
 
         /// <summary>
@@ -133,15 +148,6 @@ namespace NuGet.Commands
             // Stores the list of download results which contribute to the overall success of the graph resolution
             DownloadDependencyResolutionResult[]? downloadDependencyResolutionResults = default;
 
-            // A LibraryDependency representing the root of the graph which is the project itself
-            LibraryDependency mainProjectDependency = new(
-                new LibraryRange()
-                {
-                    Name = _request.Project.Name,
-                    VersionRange = new VersionRange(_request.Project.Version),
-                    TypeConstraint = LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject
-                });
-
             // Create the list of framework/runtime pairs to resolve graphs for.  This method returns the pairs in order with the target framework pairs without runtime identifiers come first
             List<FrameworkRuntimePair> projectFrameworkRuntimePairs = RestoreCommand.CreateFrameworkRuntimePairs(_request.Project, runtimeIds: RequestRuntimeUtility.GetRestoreRuntimes(_request));
 
@@ -182,12 +188,12 @@ namespace NuGet.Commands
                 // Create a DependencyGraphItem representing the root project to add to the queue for processing
                 DependencyGraphItem rootProjectDependencyGraphItem = new()
                 {
-                    LibraryDependency = mainProjectDependency,
+                    LibraryDependency = _rootProjectLibraryDependency,
                     LibraryDependencyIndex = LibraryDependencyIndex.Project,
                     LibraryRangeIndex = LibraryRangeIndex.Project,
                     Suppressions = new HashSet<LibraryDependencyIndex>(),
                     FindLibraryTask = ResolverUtility.FindLibraryCachedAsync(
-                        mainProjectDependency.LibraryRange,
+                        _rootProjectLibraryDependency.LibraryRange,
                         frameworkRuntimePair.Framework,
                         runtimeIdentifier: string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) ? null : frameworkRuntimePair.RuntimeIdentifier,
                         context,
@@ -1288,6 +1294,12 @@ namespace NuGet.Commands
                 {
                     LibraryDependency childDependency = chosenResolvedItem.Item.Data.Dependencies[i];
                     LibraryDependencyIndex childLibraryDependencyIndex = chosenResolvedItem.GetDependencyIndexForDependencyAt(i);
+
+                    if (childLibraryDependencyIndex == LibraryDependencyIndex.Project)
+                    {
+                        // Skip any dependency with the same name as the project
+                        continue;
+                    }
 
                     HashSet<LibraryDependency>? runtimeDependencies = default;
 

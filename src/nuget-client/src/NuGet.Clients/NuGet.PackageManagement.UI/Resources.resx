@@ -1116,4 +1116,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="VSOptions_Text_ClearLocalsPromptTitle" xml:space="preserve">
     <value>Clear all local NuGet resources?</value>
   </data>
+  <data name="CopyMenuCommandLabel" xml:space="preserve">
+    <value>_Copy</value>
+  </data>
 </root>

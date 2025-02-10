@@ -17,11 +17,6 @@ namespace NuGet.Commands
         public enum LibraryDependencyIndex : int
         {
             /// <summary>
-            /// An invalid value used only for default initialization.
-            /// </summary>
-            Invalid = -1,
-
-            /// <summary>
             /// The index of the root project.
             /// </summary>
             Project = 0,
@@ -32,11 +27,6 @@ namespace NuGet.Commands
         /// </summary>
         public enum LibraryRangeIndex : int
         {
-            /// <summary>
-            /// An invalid value used only for default initialization.
-            /// </summary>
-            Invalid = -2,
-
             /// <summary>
             /// The index used as a parent of the root project.
             /// </summary>
@@ -85,6 +75,16 @@ namespace NuGet.Commands
             /// Stores the next index to use if a unique <see cref="LibraryRange" /> is indexed.
             /// </summary>
             private LibraryRangeIndex _nextLibraryRangeIndex = LibraryRangeIndex.Project + 1;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DependencyGraphItemIndexer" /> class.
+            /// </summary>
+            /// <param name="libraryDependency">A <see cref="LibraryDependency" /> representing the root project.</param>
+            public DependencyGraphItemIndexer(LibraryDependency libraryDependency)
+            {
+                _libraryDependencyTable.TryAdd(libraryDependency.Name, LibraryDependencyIndex.Project);
+                _libraryRangeTable.TryAdd(libraryDependency.LibraryRange, LibraryRangeIndex.Project);
+            }
 
             /// <summary>
             /// Indexes a <see cref="LibraryDependency" /> and returns a <see cref="LibraryDependencyIndex" /> associated with the its name.

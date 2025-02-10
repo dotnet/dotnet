@@ -5266,6 +5266,37 @@ namespace NuGet.Commands.FuncTest
             installedPackages.Should().HaveCount(1);
         }
 
+        [Theory]
+        [InlineData(false, null, false)]
+        [InlineData(false, "10.0.100", false)]
+        [InlineData(true, "10.0.100", true)]
+        [InlineData(true, "9.0.100", false)]
+        public async Task Restore_WithLockFilesAndSdkAnalysisLevel_UsesCorrectResolver(bool useSDK, string SDKAnalysisLevel, bool useNewResolver)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("a", "1.0.0"));
+
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.UsingMicrosoftNETSdk = useSDK;
+            project1Spec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties("true", null, false);
+            if (!string.IsNullOrWhiteSpace(SDKAnalysisLevel))
+            {
+                project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion(SDKAnalysisLevel);
+            }
+
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, new TestLogger(), project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue();
+            command._enableNewDependencyResolver.Should().Be(useNewResolver);
+        }
+
         private static void CreateFakeProjectFile(PackageSpec project2spec)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(project2spec.RestoreMetadata.ProjectUniqueName));

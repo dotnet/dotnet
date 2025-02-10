@@ -46,12 +46,12 @@ namespace NuGet.Commands
             /// <summary>
             /// Gets or initializes the <see cref="LibraryDependencyIndex" /> associated with this dependency graph item.
             /// </summary>
-            public LibraryDependencyIndex LibraryDependencyIndex { get; init; } = LibraryDependencyIndex.Invalid;
+            public LibraryDependencyIndex LibraryDependencyIndex { get; init; }
 
             /// <summary>
             /// Gets or initializes the <see cref="LibraryRangeIndex" /> associated with this dependency graph item.
             /// </summary>
-            public LibraryRangeIndex LibraryRangeIndex { get; init; } = LibraryRangeIndex.Invalid;
+            public LibraryRangeIndex LibraryRangeIndex { get; init; }
 
             /// <summary>
             /// Gets or initializes the <see cref="LibraryRangeIndex" /> of this dependency graph item's parent.

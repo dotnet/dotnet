@@ -212,9 +212,7 @@ namespace NuGet.Protocol.Plugins
                 {
                     if (result.PluginFile.State.Value == PluginFileState.Valid)
                     {
-                        IPlugin plugin;
-
-                        plugin = await _pluginFactory.GetOrCreateAsync(
+                        IPlugin plugin = await _pluginFactory.GetOrCreateAsync(
                                 pluginFile: result.PluginFile,
                                 arguments: PluginConstants.PluginArguments,
                                 requestHandlers: new RequestHandlers(),

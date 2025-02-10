@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using NuGet.Configuration;
 
 namespace NuGet.CommandLine.XPlat.ListPackage
 {
@@ -13,6 +14,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
         internal ListPackageArgs ListPackageArgs { get; }
         internal List<ListPackageProjectModel> Projects { get; } = new();
         internal MSBuildAPIUtility MSBuildAPIUtility { get; }
+        internal HashSet<PackageSource> AuditSourcesUsed { get; set; } = new HashSet<PackageSource>();
 
         private ListPackageReportModel()
         { }

@@ -16,6 +16,9 @@ namespace NuGet.Tests.Apex.Daily
     [TestClass]
     public class NuGetConsoleTestCase : SharedVisualStudioHostTestClass
     {
+        private const string AndroidFeedName = "AndroidFeed";
+        private const string AndroidFeedUrl = "https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-android-a8cd27e4/nuget/v3/index.json";
+
         [DataTestMethod]
         [DataRow(ProjectTemplate.NetCoreConsoleApp)]
         [DataRow(ProjectTemplate.ConsoleApplication)]
@@ -111,6 +114,7 @@ namespace NuGet.Tests.Apex.Daily
                 var v100 = "1.0.0";
                 await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
                 simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
+                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
 
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
@@ -148,6 +152,7 @@ namespace NuGet.Tests.Apex.Daily
                 await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
                 await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v200);
                 simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
+                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
 
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
@@ -187,6 +192,7 @@ namespace NuGet.Tests.Apex.Daily
 
                 await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, PackageName, v100);
                 simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
+                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
 
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
