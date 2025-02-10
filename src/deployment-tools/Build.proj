@@ -4,7 +4,6 @@
     <!-- Disable target framework filtering for top level projects -->
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
-    <!-- Disable native projects - see https://github.com/dotnet/deployment-tools/issues/398 -->
     <DisableNativeProjects>false</DisableNativeProjects>
   </PropertyGroup>
 
