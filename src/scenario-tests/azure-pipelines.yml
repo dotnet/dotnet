@@ -50,7 +50,6 @@ extends:
           enablePublishTestResults: true
           enablePublishUsingPipelines: true
           enableTelemetry: true
-          enableSourceBuild: true
           publishAssetsImmediately: true
           helixRepo: dotnet/scenario-tests
           jobs:
