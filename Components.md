@@ -18,7 +18,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@9aeb12b](https://github.com/aspnet/MessagePack-CSharp/tree/9aeb12b9bdb024512ffe2e4bddfa2785dca6e39e)*
 - `src/cecil`  
-*[dotnet/cecil@72791f7](https://github.com/dotnet/cecil/tree/72791f7604750fb8af9249b94318547c5f1d6683)*
+*[dotnet/cecil@7ea2381](https://github.com/dotnet/cecil/tree/7ea2381200e5ca70cf67efc887d9cd693d82b77f)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@803d859](https://github.com/dotnet/command-line-api/tree/803d8598f98fb4efd94604b32627ee9407f246db)*
 - `src/deployment-tools`  
