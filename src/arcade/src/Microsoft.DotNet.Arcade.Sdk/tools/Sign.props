@@ -94,6 +94,9 @@
     <AllowEmptySignList Condition="'$(PostBuildSign)' != 'true'">false</AllowEmptySignList>
     <AllowEmptySignList Condition="'$(PostBuildSign)' == 'true'">true</AllowEmptySignList>
 
+    <!-- Timeout in milliseconds for DotNet MicroBuild build command. '-1' is infinite. -->
+    <SignToolDotNetTimeout Condition="'$(SignToolDotNetTimeout)' == ''">-1</SignToolDotNetTimeout>
+
     <NETCORE_ENGINEERING_TELEMETRY>Signing</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 

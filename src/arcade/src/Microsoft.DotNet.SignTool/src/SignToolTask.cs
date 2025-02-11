@@ -154,6 +154,12 @@ namespace Microsoft.DotNet.SignTool
         [Required]
         public string LogDir { get; set; }
 
+        /// <summary>
+        /// Timeout in milliseconds for the dotnet process.
+        /// Default is -1 which means no timeout.
+        /// </summary>
+        public int DotNetTimeout { get; set; } = -1;
+
         // This property can be removed if https://github.com/dotnet/arcade/issues/6747 is implemented
         internal BatchSignInput ParsedSigningInput { get; private set; }
 
@@ -226,7 +232,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();

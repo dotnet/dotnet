@@ -20,6 +20,7 @@ namespace Microsoft.DotNet.SignTool
         private readonly string _dotnetPath;
         private readonly string _logDir;
         private readonly string _snPath;
+        private readonly int _dotnetTimeout;
 
         /// <summary>
         /// The number of bytes from the start of the <see cref="CorHeader"/> to its <see cref="CorFlags"/>.
@@ -38,6 +39,7 @@ namespace Microsoft.DotNet.SignTool
             _dotnetPath = args.DotNetPath;
             _snPath = args.SNBinaryPath;
             _logDir = args.LogDir;
+            _dotnetTimeout = args.DotNetTimeout;
         }
 
         public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
@@ -55,13 +57,17 @@ namespace Microsoft.DotNet.SignTool
                 Arguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""",
                 UseShellExecute = false,
                 WorkingDirectory = TempDir,
+                RedirectStandardError = true,
             });
 
-            process.WaitForExit();
+            string error = process.StandardError.ReadToEnd();  
+
+            process.WaitForExit(_dotnetTimeout);
 
             if (process.ExitCode != 0)
             {
-                _log.LogError($"Failed to execute MSBuild on the project file {projectFilePath}");
+                _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
+                    $" with exit code '{process.ExitCode}' and error '{error}'");
                 return false;
             }
 

@@ -91,7 +91,8 @@
         TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
         PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"
-        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)" />
+        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
+        DotNetTimeout="$(SignToolDotNetTimeout)" />
   </Target>
 
 </Project>
