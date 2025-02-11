@@ -8,6 +8,6 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 /// </summary>
 internal interface IDelegatedParams
 {
-    public TextDocumentIdentifierAndVersion Identifier { get; }
-    public RazorLanguageKind ProjectedKind { get; }
+    TextDocumentIdentifierAndVersion Identifier { get; }
+    RazorLanguageKind ProjectedKind { get; }
 }
