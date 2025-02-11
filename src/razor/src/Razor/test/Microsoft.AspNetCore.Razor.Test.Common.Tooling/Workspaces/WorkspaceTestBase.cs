@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -111,6 +113,44 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         _workspaceProvider = new TestWorkspaceProvider(_workspace);
         _languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
         _initialized = true;
+    }
+
+    /// <summary>
+    ///  Calls <see cref="Workspace.TryApplyChanges(Solution)"/> and waits for <see cref="Workspace.WorkspaceChanged"/>
+    ///  to stop firing events.
+    /// </summary>
+    protected Task<bool> UpdateWorkspaceAsync(Solution solution)
+    {
+        return Task.Run(
+            async () =>
+            {
+                var currentCount = 0;
+
+                Workspace.WorkspaceChanged += OnWorkspaceChanged;
+
+                if (!Workspace.TryApplyChanges(solution))
+                {
+                    return false;
+                }
+
+                int lastCount;
+
+                do
+                {
+                    lastCount = currentCount;
+                    await Task.Delay(50);
+                }
+                while (lastCount != currentCount);
+
+                Workspace.WorkspaceChanged -= OnWorkspaceChanged;
+                return true;
+
+                void OnWorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
+                {
+                    currentCount++;
+                }
+            },
+            DisposalToken);
     }
 
     private sealed class TestWorkspaceProvider(Workspace workspace) : IWorkspaceProvider

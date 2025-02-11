@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
-namespace Microsoft.VisualStudio.Razor.Remote;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
 /// <summary>
 ///  Retrieves <see cref="TagHelperDescriptor">tag helpers</see> for a given <see cref="Project"/>

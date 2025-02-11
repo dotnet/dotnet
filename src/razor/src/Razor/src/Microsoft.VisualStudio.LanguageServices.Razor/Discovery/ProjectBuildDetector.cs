@@ -3,9 +3,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Razor.Extensions;
@@ -14,14 +14,14 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 
-namespace Microsoft.VisualStudio.Razor;
+namespace Microsoft.VisualStudio.Razor.Discovery;
 
 [Export(typeof(IRazorStartupService))]
-internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupService, IVsUpdateSolutionEvents2, IDisposable
+internal sealed partial class ProjectBuildDetector : IRazorStartupService, IVsUpdateSolutionEvents2, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ProjectSnapshotManager _projectManager;
-    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
+    private readonly IProjectStateUpdater _projectStateUpdater;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly JoinableTaskFactory _jtf;
     private readonly CancellationTokenSource _disposeTokenSource;
@@ -33,16 +33,16 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     private Task? _projectBuiltTask;
 
     [ImportingConstructor]
-    public VsSolutionUpdatesProjectSnapshotChangeTrigger(
+    public ProjectBuildDetector(
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
         ProjectSnapshotManager projectManager,
-        IProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IProjectStateUpdater projectStateUpdater,
         IWorkspaceProvider workspaceProvider,
         JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
         _projectManager = projectManager;
-        _workspaceStateGenerator = workspaceStateGenerator;
+        _projectStateUpdater = projectStateUpdater;
         _workspaceProvider = workspaceProvider;
         _jtf = joinableTaskContext.Factory;
 
@@ -110,7 +110,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
         if (args.IsSolutionClosing)
         {
             // If the solution is closing, cancel all existing updates.
-            _workspaceStateGenerator.CancelUpdates();
+            _projectStateUpdater.CancelUpdates();
         }
     }
 
@@ -123,30 +123,22 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
         }
 
         var projectKeys = _projectManager.GetProjectKeysWithFilePath(projectFilePath);
+        if (projectKeys.IsEmpty)
+        {
+            return;
+        }
+
+        var workspace = _workspaceProvider.GetWorkspace();
+        var solution = workspace.CurrentSolution;
+
         foreach (var projectKey in projectKeys)
         {
-            if (_projectManager.TryGetProject(projectKey, out var project))
+            if (solution.TryGetProject(projectKey, out var workspaceProject))
             {
-                var workspace = _workspaceProvider.GetWorkspace();
-                var workspaceProject = workspace.CurrentSolution.Projects.FirstOrDefault(wp => wp.ToProjectKey() == project.Key);
-                if (workspaceProject is not null)
-                {
-                    // Trigger a tag helper update by forcing the project manager to see the workspace Project
-                    // from the current solution.
-                    _workspaceStateGenerator.EnqueueUpdate(workspaceProject, project);
-                }
+                // Trigger a tag helper update by forcing the project manager to see the workspace Project
+                // from the current solution.
+                _projectStateUpdater.EnqueueUpdate(projectKey, workspaceProject.Id);
             }
         }
-    }
-
-    internal TestAccessor GetTestAccessor() => new(this);
-
-    internal sealed class TestAccessor(VsSolutionUpdatesProjectSnapshotChangeTrigger instance)
-    {
-        public JoinableTask InitializeTask => instance._initializeTask;
-        public Task? OnProjectBuiltTask => instance._projectBuiltTask;
-
-        public Task OnProjectBuiltAsync(IVsHierarchy projectHierarchy, CancellationToken cancellationToken)
-            => instance.OnProjectBuiltAsync(projectHierarchy, cancellationToken);
     }
 }

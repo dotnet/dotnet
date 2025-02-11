@@ -31,6 +31,7 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
     private const int CmdIdShowAllTagHelpers = 0x0113;
     private const int CmdIdShowInScopeTagHelpers = 0x0114;
     private const int CmdIdShowReferencedTagHelpers = 0x0115;
+    private const int CmdidShowFormattingDocument = 0x0116;
 
     private MenuCommand? _showSourceMappingsCommand;
     private SyntaxVisualizerControl _visualizerControl => (SyntaxVisualizerControl)Content;
@@ -82,6 +83,7 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
         };
 
         mcs.AddCommand(_showSourceMappingsCommand);
+        mcs.AddCommand(new MenuCommand(ShowFormattingDocument, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdidShowFormattingDocument)));
         mcs.AddCommand(new MenuCommand(ShowGeneratedCode, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowGeneratedCode)));
         mcs.AddCommand(new MenuCommand(ShowGeneratedHtml, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowGeneratedHtml)));
         mcs.AddCommand(new MenuCommand(ShowAllTagHelpers, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowAllTagHelpers)));
@@ -98,6 +100,11 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
             // Always update the checked state after executing the handler
             _showSourceMappingsCommand.Checked = SourceMappingTagger.Enabled;
         }
+    }
+
+    private void ShowFormattingDocument(object sender, EventArgs e)
+    {
+        _visualizerControl.ShowFormattingDocument();
     }
 
     private void ShowGeneratedCode(object sender, EventArgs e)

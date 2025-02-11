@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
+using Microsoft.CodeAnalysis.Razor.Formatting.New;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
 using Microsoft.VisualStudio.Razor;
@@ -105,6 +106,30 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         {
             _runningDocumentTable?.UnadviseRunningDocTableEvents(_runningDocumentTableCookie);
             _runningDocumentTableCookie = 0;
+        }
+    }
+
+    public void ShowFormattingDocument()
+    {
+        if (_activeWpfTextView is null)
+        {
+            return;
+        }
+
+        EnsureInitialized();
+
+        if (_fileUriProvider.TryGet(_activeWpfTextView.TextBuffer, out var hostDocumentUri))
+        {
+            var codeDocument = GetCodeDocument();
+            if (codeDocument is null)
+            {
+                return;
+            }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            var formattingDocument = CSharpFormattingPass.GetFormattingDocumentContentsForSyntaxVisualizer(codeDocument);
+#pragma warning restore CS0618 // Type or member is obsolete
+            OpenGeneratedCode(hostDocumentUri.AbsoluteUri + ".formatting.cs", formattingDocument);
         }
     }
 

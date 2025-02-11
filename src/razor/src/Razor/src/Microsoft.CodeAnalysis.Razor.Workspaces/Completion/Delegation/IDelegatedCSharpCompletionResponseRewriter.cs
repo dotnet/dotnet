@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 
 internal interface IDelegatedCSharpCompletionResponseRewriter
 {
-    public Task<VSInternalCompletionList> RewriteAsync(
+    Task<VSInternalCompletionList> RewriteAsync(
         VSInternalCompletionList completionList,
         int hostDocumentIndex,
         DocumentContext hostDocumentContext,

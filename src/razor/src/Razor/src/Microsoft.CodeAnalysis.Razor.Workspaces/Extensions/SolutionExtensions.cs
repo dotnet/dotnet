@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.CodeAnalysis;
@@ -29,17 +28,5 @@ internal static class SolutionExtensions
 
         razorDocument = document;
         return true;
-    }
-
-    public static Project GetRequiredProject(this Solution solution, ProjectId projectId)
-    {
-        return solution.GetProject(projectId)
-            ?? ThrowHelper.ThrowInvalidOperationException<Project>($"The projectId {projectId} did not exist in {solution}.");
-    }
-
-    public static Document GetRequiredDocument(this Solution solution, DocumentId documentId)
-    {
-        return solution.GetDocument(documentId)
-            ?? ThrowHelper.ThrowInvalidOperationException<Document>($"The document {documentId} did not exist in {solution.FilePath ?? "solution"}.");
     }
 }
