@@ -60,12 +60,13 @@ namespace NuGet.Commands.Test
 
                 testContext.Args.CertificatePath = certificateFilePath;
 
-                await testContext.Runner.ExecuteCommandAsync(testContext.Args);
+                int result = await testContext.Runner.ExecuteCommandAsync(testContext.Args);
 
                 var expectedMessage = $"Certificate file '{certificateFilePath}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference";
-
-                Assert.Equal(1, testContext.Logger.LogMessages.Count(
-                    message => message.Level == LogLevel.Error && message.Code == NuGetLogCode.NU3001 && message.Message.Equals(expectedMessage)));
+                Assert.Equal(1, result);
+                Assert.True(1 == testContext.Logger.LogMessages.Count(
+                    message => message.Level == LogLevel.Error && message.Code == NuGetLogCode.NU3001 && message.Message.Equals(expectedMessage)),
+                    string.Join(Environment.NewLine, testContext.Logger.LogMessages));
             }
         }
 

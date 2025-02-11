@@ -11,7 +11,7 @@
     <NETFXTargetFrameworkVersion>v4.7.2</NETFXTargetFrameworkVersion>
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework>net9.0</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net10.0</NETCoreTargetFramework>
     <NETCoreLegacyTargetFramework>netcoreapp3.1</NETCoreLegacyTargetFramework>
     <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework)</NETCoreLegacyTargetFramework>

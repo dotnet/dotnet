@@ -61,8 +61,11 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
                 while (certsSequenceReader.HasData)
                 {
                     ReadOnlyMemory<byte> data = certsSequenceReader.ReadEncodedValue();
+#if NET9_0_OR_GREATER
+                    X509Certificate2 certificate = X509CertificateLoader.LoadCertificate(data.Span.ToArray());
+#else
                     X509Certificate2 certificate = new(data.Span.ToArray());
-
+#endif
                     certs.Add(certificate);
                 }
             }

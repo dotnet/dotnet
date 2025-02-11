@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
@@ -57,8 +58,8 @@ namespace NuGet.CommandLine.Xplat.Tests
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 </Project>";
@@ -97,7 +98,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange project file
             string projectContent =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 <TargetFramework>net6.0</TargetFramework>
 </PropertyGroup>
 </Project>";
@@ -151,7 +152,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange project file
             string projectContent =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 <TargetFramework>net6.0</TargetFramework>
 </PropertyGroup>
 <ItemGroup>
@@ -219,8 +220,8 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 </Project>";
@@ -287,8 +288,8 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -356,8 +357,8 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -459,7 +460,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
+        public async Task GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -470,7 +471,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             projectA.Save();
 
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
+            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(projectA.ProjectPath);
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -478,7 +479,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
+        public async Task GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -489,7 +490,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             projectA.Save();
 
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
+            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(Path.GetDirectoryName(projectA.ProjectPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -497,7 +498,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
+        public async Task GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -512,7 +513,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
+            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(Path.GetDirectoryName(solution.SolutionPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -521,7 +522,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
+        public async Task GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -536,7 +537,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
+            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(pathContext.SolutionRoot);
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -550,7 +551,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData("X.sln", "A.csproj")]
         [InlineData()]
         [InlineData("random.txt")]
-        public void GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
+        public async Task GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -563,7 +564,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             }
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
+            await Assert.ThrowsAsync<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(pathContext.SolutionRoot));
         }
 
         [Fact]

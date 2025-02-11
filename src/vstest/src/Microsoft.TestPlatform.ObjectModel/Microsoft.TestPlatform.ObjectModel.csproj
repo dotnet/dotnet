@@ -35,9 +35,8 @@
   <ItemGroup>
     <!-- net48 includes tuple, we need to reference it in previous versions but only on .net framework. -->
     <PackageReference Include="System.ValueTuple" Version="4.5.0" 
-        Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net48')) != true
-                    and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net4'))" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
+        Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net48')) != 'true' and '$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
   </ItemGroup>
 
   <ItemGroup>

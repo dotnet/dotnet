@@ -135,7 +135,7 @@ namespace NuGet.Commands
         private const string AuditSuppressedAdvisoriesTotalPackageDownloadWarningsSuppressedCount = "Audit.Vulnerability.PackageDownloads.TotalWarningsSuppressed.Count";
         private const string AuditSuppressedAdvisoriesDistinctPackageDownloadAdvisoriesSuppressedCount = "Audit.Vulnerability.PackageDownload.DistinctAdvisoriesSuppressed.Count";
 
-        private readonly bool _enableNewDependencyResolver;
+        internal readonly bool _enableNewDependencyResolver;
         private readonly bool _isLockFileEnabled;
 
         public RestoreCommand(RestoreRequest request)
@@ -164,7 +164,13 @@ namespace NuGet.Commands
 
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
             _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
-            _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && !_isLockFileEnabled && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+        }
+
+        // Use the new lock file if lock files are not enabled, or if lock files are enabled and .NET 10 SDK is used. Note that the legacy fallback is *false* in this case.
+        private static bool ShouldUseNewResolverWithLockFile(bool isLockFileEnabled, PackageSpec project)
+        {
+            return !isLockFileEnabled || (project.RestoreMetadata.UsingMicrosoftNETSdk && SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.NewResolverWithLockFiles));
         }
 
         public Task<RestoreResult> ExecuteAsync()

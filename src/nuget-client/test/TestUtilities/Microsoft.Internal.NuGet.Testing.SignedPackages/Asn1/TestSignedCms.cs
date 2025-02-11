@@ -104,8 +104,11 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
                 while (certificatesReader.HasData)
                 {
                     ReadOnlyMemory<byte> value = certificatesReader.ReadEncodedValue();
+#if NET9_0_OR_GREATER
+                    X509Certificate2 certificate = X509CertificateLoader.LoadCertificate(value.Span.ToArray());
+#else
                     X509Certificate2 certificate = new(value.Span.ToArray());
-
+#endif
                     certificates ??= new X509Certificate2Collection();
 
                     certificates.Add(certificate);

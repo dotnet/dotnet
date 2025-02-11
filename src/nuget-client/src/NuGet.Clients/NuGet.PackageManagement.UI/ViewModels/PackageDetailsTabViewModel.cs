@@ -13,6 +13,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
     {
         private bool _disposed = false;
         private bool _readmeTabEnabled;
+        private CancellationTokenSource _readmeRenderingCancellationTokenSource = new CancellationTokenSource();
 
         public ReadmePreviewViewModel ReadmePreviewViewModel { get; private set; }
 
@@ -72,6 +73,8 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 return;
             }
             _disposed = true;
+            _readmeRenderingCancellationTokenSource.Cancel();
+            _readmeRenderingCancellationTokenSource.Dispose();
             DetailControlModel.PropertyChanged -= DetailControlModel_PropertyChanged;
             foreach (var tab in Tabs)
             {
@@ -108,7 +111,11 @@ namespace NuGet.PackageManagement.UI.ViewModels
             {
                 if (_readmeTabEnabled && e.PropertyName == nameof(DetailControlModel.PackageMetadata))
                 {
-                    await ReadmePreviewViewModel.SetPackageMetadataAsync(DetailControlModel.PackageMetadata, CancellationToken.None);
+                    var newCts = new CancellationTokenSource();
+                    var oldCts = Interlocked.Exchange(ref _readmeRenderingCancellationTokenSource, newCts);
+                    oldCts?.Cancel();
+                    oldCts?.Dispose();
+                    await ReadmePreviewViewModel.SetPackageMetadataAsync(DetailControlModel.PackageMetadata, _readmeRenderingCancellationTokenSource.Token);
                 }
             }).PostOnFailure(nameof(PackageDetailsTabViewModel), nameof(DetailControlModel_PropertyChanged));
         }

@@ -17,4 +17,8 @@
     <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets"
           CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="compiler\resources\*" />
+  </ItemGroup>
 </Project>

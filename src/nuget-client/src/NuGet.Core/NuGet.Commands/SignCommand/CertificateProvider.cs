@@ -32,9 +32,7 @@ namespace NuGet.Commands
 
         private const int MACOS_INVALID_CERT = -25257;
 
-#if NET9_0_OR_GREATER
         private const int CRYPT_E_BAD_DECODE = unchecked((int)0x80092002);
-#endif
 
 #if IS_SIGNING_SUPPORTED && IS_CORECLR
         //Generic exception ASN1 corrupted data
@@ -86,9 +84,7 @@ namespace NuGet.Commands
                                     options.CertificatePath)));
 
                         case CRYPT_E_NO_MATCH_HRESULT:
-#if NET9_0_OR_GREATER
                         case CRYPT_E_BAD_DECODE:
-#endif
 #if IS_SIGNING_SUPPORTED && IS_CORECLR
                         case OPENSSL_ASN1_CORRUPTED_DATA_ERROR:
 #else

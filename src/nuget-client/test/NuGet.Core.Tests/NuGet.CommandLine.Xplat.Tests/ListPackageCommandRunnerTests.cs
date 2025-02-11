@@ -149,6 +149,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     ReportType.Outdated,
                     new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false,
+                    auditSources: null,
                     logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
@@ -196,6 +197,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     ReportType.Outdated,
                     new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: true, highestMinor: true,
+                    auditSources: null,
                     logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
@@ -274,7 +276,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     frameworks: new List<string>(),
                     ReportType.Deprecated,
                     new ListPackageConsoleRenderer(consoleOut, consoleError),
-                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
+                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
                 // Act
@@ -353,7 +355,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     frameworks: new List<string>(),
                     ReportType.Vulnerable,
                     new ListPackageConsoleRenderer(consoleOut, consoleError),
-                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
+                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
                 // Act

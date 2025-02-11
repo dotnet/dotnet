@@ -8,18 +8,6 @@ namespace NuGet.Protocol.Plugins.Tests
 {
     public class PluginDiscoveryResultTests
     {
-        public bool IsDesktop
-        {
-            get
-            {
-#if IS_DESKTOP
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
-
         [Fact]
         public void Constructor_ThrowsForNullPluginFile()
         {
@@ -32,7 +20,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_InitializesProperties()
         {
-            var pluginFile = new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.InvalidEmbeddedSignature), requiresDotnetHost: !IsDesktop);
+            var pluginFile = new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.InvalidEmbeddedSignature));
 
             var result = new PluginDiscoveryResult(pluginFile);
 

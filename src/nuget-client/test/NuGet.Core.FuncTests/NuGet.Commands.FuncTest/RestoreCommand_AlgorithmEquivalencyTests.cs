@@ -52,6 +52,56 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("X");
         }
 
+        // LightGbm (project) -> Microsoft.ML.LightGbm -> LightGBM 2.0.0 (package)
+        // This should result in an error with the cycle
+        [Fact]
+        public async Task RestoreCommand_WithCycleContainingProject_FailsAndLogsMessage()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("Microsoft.ML.LightGbm", "4.0.1")
+                {
+                    Dependencies =
+                    [
+                        new SimpleTestPackageContext("LightGBM", "3.3.5"),
+                    ]
+                });
+
+            PackageSpec projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "LightGbm",
+                pathContext.SolutionRoot,
+                @"
+                {
+                    ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                                ""Microsoft.ML.LightGbm"": ""4.0.1""
+                        }
+                    }
+                    }
+                }");
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, projectSpec);
+
+            // Additional assert
+            result.Success.Should().BeFalse();
+
+            result.LogMessages.Should().HaveCount(1);
+
+            IAssetsLogMessage logMessage = result.LogMessages.Single();
+            logMessage.Code.Should().Be(NuGetLogCode.NU1108);
+            logMessage.Message.Should().Contain("LightGbm -> Microsoft.ML.LightGbm 4.0.1 -> LightGBM (>= 3.3.5)");
+
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("Microsoft.ML.LightGbm");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("4.0.1"));
+        }
+
         // Project 1 -> a 1.0.0 -> b 1.0.0
         //           -> b 2.0.0
         // Does not install b 1.0.0 since it is eclipsed by a direct package reference
@@ -103,7 +153,7 @@ namespace NuGet.Commands.FuncTest
             result.RestoreGraphs.Should().HaveCount(1);
             result.RestoreGraphs.First().Install.Should().HaveCount(2);
 
-            string.Join(" ", result.RestoreGraphs.First().Install.Select(i => $"{i.Library.Name}/{i.Library.Version}")).Should().Be("a/1.0.0 b/2.0.0");
+            string.Join(" ", result.RestoreGraphs.First().Install.Select(i => $"{i.Library.Name}/{i.Library.Version}").OrderBy(i => i)).Should().Be("a/1.0.0 b/2.0.0");
         }
 
         // Project 1 -> X 1.0 -> B 2.0 -> E 1.0
@@ -505,7 +555,6 @@ namespace NuGet.Commands.FuncTest
         // Project 1 -> f 1.0.0 -> a 1.0.0 -> b 1.0.0
         //                                 -> c 1.0.0 -> b 2.0.0
         // Centrally managed versions f & a, f 1.0.0 and a 1.0.0
-
         [Fact]
         public async Task RestoreCommand_WithPackageDrivenDowngradeAndTransitivePinning_RespectsDowngrade_AndRaisesWarning()
         {
