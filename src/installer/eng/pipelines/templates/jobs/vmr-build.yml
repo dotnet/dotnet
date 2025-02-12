@@ -284,7 +284,7 @@ jobs:
     displayName: Copy artifacts to Artifact Staging Directory
     condition: succeededOrFailed()
 
-  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - ${{ if or(eq(variables['System.TeamProject'], 'public'), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - publish: '$(Build.StagingDirectory)/BuildLogs'
       artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
       displayName: Publish BuildLogs
