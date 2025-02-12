@@ -97,16 +97,16 @@
       "commitSha": "80aa709f5d919c6814726788dc6dabe23e79e672"
     },
     {
-      "packageVersion": "9.0.0-preview.25102.1",
+      "packageVersion": "9.0.0-preview.25112.2",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "008b3a357044b102ec30e15ac381c2e880f573af"
+      "commitSha": "f219fd635f701e3142be92cb0bb4039cadb39d4d"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "22d8996c79b03c580d6032bf61604b062760499f"
+      "commitSha": "60ae37129c0db182c2673e9c4d0ea1f063959f3b"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25056.2",
