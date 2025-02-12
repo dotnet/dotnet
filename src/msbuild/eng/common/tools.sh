@@ -234,7 +234,7 @@ function InstallDotNet {
   local public_location=("${installParameters[@]}")
   variations+=(public_location)
 
-  local dotnetbuilds=("${installParameters[@]}" --azure-feed "https://dotnetbuilds.azureedge.net/public")
+  local dotnetbuilds=("${installParameters[@]}" --azure-feed "https://ci.dot.net/public")
   variations+=(dotnetbuilds)
 
   if [[ -n "${6:-}" ]]; then
@@ -341,7 +341,12 @@ function InitializeBuildTool {
   # return values
   _InitializeBuildTool="$_InitializeDotNetCli/dotnet"
   _InitializeBuildToolCommand="msbuild"
-  _InitializeBuildToolFramework="net8.0"
+  # use override if it exists - commonly set by source-build
+  if [[ "${_OverrideArcadeInitializeBuildToolFramework:-x}" == "x" ]]; then
+    _InitializeBuildToolFramework="net8.0"
+  else
+    _InitializeBuildToolFramework="${_OverrideArcadeInitializeBuildToolFramework}"
+  fi
 }
 
 # Set RestoreNoCache as a workaround for https://github.com/NuGet/Home/issues/3116
