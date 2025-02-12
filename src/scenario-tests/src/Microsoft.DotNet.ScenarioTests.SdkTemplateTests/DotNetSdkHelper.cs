@@ -76,6 +76,10 @@ internal class DotNetSdkHelper
         process.StartInfo.EnvironmentVariables["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRoot;
         process.StartInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "Major";
+        // Don't use the repo infrastructure
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildProps"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildTargets"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryPackagesProps"] = "false";
 
         if (!string.IsNullOrEmpty(nugetPackagesDirectory))
         {
