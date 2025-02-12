@@ -186,6 +186,13 @@ namespace ScenarioTests
             Console.WriteLine($"  Portable RID: {portableRid}");
             Console.WriteLine($"  Sdk Version: {sdkVersion ?? "latest"}");
             Console.WriteLine($"  Platform: {platform}");
+
+            string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
+            if (!string.IsNullOrWhiteSpace(restoreConfigFile))
+            {
+                Console.WriteLine($"  RestoreConfigFile: {restoreConfigFile}");
+            }
+
             if (binlogDir is not null)
             {
                 Console.WriteLine($"  Binlog Directory: {binlogDir}");
