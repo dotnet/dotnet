@@ -154,7 +154,7 @@
       "packageVersion": "9.0.3",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "97524695e33f328f45ae21009e7287d1c378ed66"
+      "commitSha": "1c33258cdd6220239735d6a7a18ef6adc082038c"
     },
     {
       "packageVersion": "9.0.3-servicing.25111.6",
