@@ -125,6 +125,71 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Equal(readmeContents, target.ReadmeMarkdown);
         }
 
+
+        [Theory]
+        [InlineData("packageId", "2.0.0", "C://path/to/readme.md", "")]
+        [InlineData("packageId2", "1.0.0", "C://path/to/readme.md", "")]
+        [InlineData("packageId", "1.0.0", "C://path/to/readme.md", "C://path/to/package")]
+        [InlineData("packageId", "1.0.0", "", "")]
+        public async Task SetPackageMetadataAsync_NewReadmeRequiredToRender_PackageMetadataUpdated(string newId, string newVersion, string newReadme, string newPackagePath)
+        {
+            //Arrange
+            var readmeContents = "readme contents";
+            var mockFileService = new Mock<INuGetPackageFileService>();
+            mockFileService.Setup(x => x.GetReadmeAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+            {
+                return new MemoryStream(Encoding.UTF8.GetBytes(readmeContents));
+            });
+            var target = new ReadmePreviewViewModel(mockFileService.Object, ItemFilter.Installed, true);
+            var package = new DetailedPackageMetadata();
+            package.Id = "packageId";
+            package.Version = new Versioning.NuGetVersion("1.0.0");
+            package.PackagePath = "";
+            package.ReadmeFileUrl = "C://path/to/readme.md";
+
+            var newPackage = new DetailedPackageMetadata();
+            newPackage.Id = newId;
+            newPackage.Version = new Versioning.NuGetVersion(newVersion);
+            newPackage.PackagePath = newPackagePath;
+            newPackage.ReadmeFileUrl = newReadme;
+            await target.SetPackageMetadataAsync(package, CancellationToken.None);
+
+            //Act
+            await target.SetPackageMetadataAsync(newPackage, CancellationToken.None);
+
+            //Assert
+            Assert.Equal(target.PackageMetadata, newPackage);
+        }
+
+        [Fact]
+        public async Task SetPackageMetadataAsync_PackageUpdates_NoNewReadmeRequiredToRender_PackageMetadataNotUpdated()
+        {
+            //Arrange
+            var readmeContents = "readme contents";
+            using Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(readmeContents));
+            var mockFileService = new Mock<INuGetPackageFileService>();
+            mockFileService.Setup(x => x.GetReadmeAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>())).ReturnsAsync(stream);
+            var target = new ReadmePreviewViewModel(mockFileService.Object, ItemFilter.Installed, true);
+            var package = new DetailedPackageMetadata();
+            package.Id = "packageId";
+            package.Version = new Versioning.NuGetVersion("1.0.0");
+            package.PackagePath = "";
+            package.ReadmeFileUrl = "C://path/to/readme.md";
+
+            var newPackage = new DetailedPackageMetadata();
+            newPackage.Id = "packageId";
+            newPackage.Version = new Versioning.NuGetVersion("1.0.0");
+            newPackage.PackagePath = "";
+            newPackage.ReadmeFileUrl = "C://path/to/readme.md";
+            await target.SetPackageMetadataAsync(package, CancellationToken.None);
+
+            //Act
+            await target.SetPackageMetadataAsync(newPackage, CancellationToken.None);
+
+            //Assert
+            Assert.NotEqual(target.PackageMetadata, newPackage);
+        }
+
         [Fact]
         public async Task SetPackageMetadataAsync_WithLocalReadmeUrl_RenderLocalReadmeFalse_NoLocalReadmeReturned()
         {
