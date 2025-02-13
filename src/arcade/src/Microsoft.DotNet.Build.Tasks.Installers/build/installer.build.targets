@@ -231,11 +231,11 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <_ConflictsProperty Condition="'@(LinuxPackageConflicts)' != ''">Conflicts: @(LinuxPackageConflicts->'%(Identity)',', ')</_ConflictsProperty>
+      <_ConflictsProperty Condition="'@(LinuxPackageConflicts)' != ''">@(LinuxPackageConflicts->'%(Identity)',', ')</_ConflictsProperty>
     </PropertyGroup>
 
     <ItemGroup>
-      <_ConflictsControlProperty Include="$(_ConflictsProperty)" />
+      <_ConflictsControlProperty Include="Conflicts" Value="$(_ConflictsProperty)" />
     </ItemGroup>
 
     <CreateControlFile

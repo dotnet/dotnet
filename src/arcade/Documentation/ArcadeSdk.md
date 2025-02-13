@@ -701,7 +701,7 @@ The following task restores tools that are only available from internal feeds.
       command: restore
       feedsToUse: config
       restoreSolution: 'eng\common\internal\Tools.csproj'
-      nugetConfigPath: 'NuGet.config'
+      nugetConfigPath: 'eng\common\internal\NuGet.config'
       restoreDirectory: '$(Build.SourcesDirectory)\.packages'
 ```
 

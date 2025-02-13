@@ -1,0 +1,157 @@
+trigger: none
+
+parameters:
+- name: artifactName
+  type: string
+  default: CentOSStream9_Online_MsftSdk_x64_BuildLogs_Attempt1
+  displayName: (Optional) Source Build Artrifact Name to retrieve sbrpPackageUsage.json from
+
+- name: skipPackages
+  type: string
+  default: ' '
+  displayName: (Optional) List of packages (<name>[/<version>]) to skip from deletion (space separated)
+
+pool:
+  name: NetCore1ESPool-Svc-Internal
+  demands: ImageOverride -equals 1es-ubuntu-2204
+
+resources:
+  pipelines:
+  - pipeline: dotnet-source-build
+    source: dotnet-source-build-lite
+
+stages:
+- stage: Cleanup
+  displayName: Cleanup
+
+  variables:
+  - name: CommitMessage
+    value: "Remove unreferenced packages"
+  - name: DeletedPackagesLogFilePath
+    value: $(Pipeline.Workspace)/deleted_packages.txt
+  - name: GitHubRemoteName
+    value: GH
+  - name: PrBody
+    value: |
+      Removed the following packages which were detected as unreferenced:
+      
+  - name: PrTitle
+    value: "[$(Build.SourceBranchName)] Remove unreferenced packages"
+  - name: RepoRoot
+    value: $(Build.SourcesDirectory)
+  - name: TargetRepo
+    value: dotnet/source-build-reference-packages
+
+  # https://dev.azure.com/dnceng/internal/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=177&path=DotNet-Source-Build-Bot-Secrets-MVP
+  # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
+  - group: DotNet-Source-Build-Bot-Secrets-MVP
+
+  jobs:
+  - job: DownloadArtifact
+    displayName: Download Artifact from Dependency Pipeline
+
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: internal
+        definition: $(resources.pipeline.dotnet-source-build.pipelineName)
+        pipelineId: $(resources.pipeline.dotnet-source-build.runID)
+        artifactName: ${{ parameters.artifactName }}
+        itemPattern: '**/sbrpPackageUsage.json'
+        targetPath: $(Pipeline.Workspace)
+        allowPartiallySucceededBuilds: true
+        allowFailedBuilds: true
+
+    - script: |
+        if [ -f "$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json" ]; then
+          echo "sbrpPackageUsage.json file found."
+          cat "$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json"
+        else
+          echo "sbrpPackageUsage.json file not found."
+        fi
+      displayName: Check and display sbrpPackageUsage.json
+
+    - script: |
+        time="$(date +%s)"
+        monthYear=$(date +"%b%Y" | sed 's/.*/\L&/')
+
+        git_user="dotnet-sb-bot"
+
+        git config --global user.name $git_user
+        git config --global user.email "$git_user@microsoft.com"
+
+        git remote add $(GitHubRemoteName) "https://$git_user:${GH_TOKEN}@github.com/$(TargetRepo)"
+        git fetch $(GitHubRemoteName)
+
+        cleanup_branch="${monthYear}-reference-package-cleanup-${time}"
+        git checkout -b "${cleanup_branch}"
+
+        echo "##vso[task.setvariable variable=CleanupBranch;isOutput=true]$cleanup_branch"
+      name: InitializeRepo
+      workingDirectory: $(RepoRoot)
+      displayName: Initialize Repo
+      env:
+        GH_TOKEN: $(BotAccount-dotnet-sb-bot-pat)
+
+    - script: |
+        json_file="$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json"
+        unreferenced_paths=$(jq -r '.UnreferencedSbrps[]' "$json_file")
+        skip_packages_array=(${{ lower(parameters.skipPackages) }})
+
+        for path in $unreferenced_paths; do
+          package_path="$(RepoRoot)${path#/__w/1/s/src/source-build-reference-packages}"
+
+          skip=false
+          for skip_package in "${skip_packages_array[@]}"; do
+            if [[ "$package_path" == *"$skip_package"* ]]; then
+              echo "Skipping $package_path as it matches skip package $skip_package"
+              skip=true
+              break
+            fi
+          done
+
+          if [ "$skip" = true ]; then
+            continue
+          fi
+
+          # textOnlyPackage usage detection has false positives and should be skipped
+          if [[ "$package_path" == *"textOnlyPackage"* ]]; then
+            echo "Skipping $package_path as it contains 'textOnlyPackage'"
+            continue
+          fi
+
+          echo "Deleting $package_path"
+          rm -rf "$package_path"
+          echo "${package_path#$(RepoRoot)/src/referencePackages/src/}" >> $(DeletedPackagesLogFilePath)
+        done
+      displayName: Delete Unreferenced Packages
+
+    - script: |
+        gh auth setup-git
+
+        git add .
+        git commit -m "$(CommitMessage)"
+        git push -u $(GitHubRemoteName) $(InitializeRepo.CleanupBranch)
+
+        if [ -f "$(DeletedPackagesLogFilePath)" ]; then
+          pr_body="$(PrBody)$(cat $(DeletedPackagesLogFilePath))"
+        fi
+
+        echo "head: $(InitializeRepo.CleanupBranch)"
+        echo "repo: $(TargetRepo)"
+        echo "base: $(Build.SourceBranchName)"
+        echo "title: $(PrTitle)"
+        echo "body: $pr_body"
+
+        gh pr create \
+          --head "$(InitializeRepo.CleanupBranch)" \
+          --repo "$(TargetRepo)" \
+          --base "$(Build.SourceBranchName)" \
+          --title "$(PrTitle)" \
+          --body "$pr_body"
+      displayName: Open PR
+      workingDirectory: $(RepoRoot)
+      env:
+        GH_TOKEN: $(BotAccount-dotnet-sb-bot-pat)

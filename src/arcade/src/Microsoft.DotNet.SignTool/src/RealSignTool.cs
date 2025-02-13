@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Text;
 using System.Collections.Generic;
 
 namespace Microsoft.DotNet.SignTool
@@ -42,7 +43,7 @@ namespace Microsoft.DotNet.SignTool
             _dotnetTimeout = args.DotNetTimeout;
         }
 
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath)
         {
             if (_dotnetPath == null)
             {
@@ -51,27 +52,57 @@ namespace Microsoft.DotNet.SignTool
 
             Directory.CreateDirectory(_logDir);
 
-            var process = Process.Start(new ProcessStartInfo()
+            using (var process = new Process())
             {
-                FileName = _dotnetPath,
-                Arguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""",
-                UseShellExecute = false,
-                WorkingDirectory = TempDir,
-                RedirectStandardError = true,
-            });
+                process.StartInfo = new ProcessStartInfo()
+                {
+                    FileName = _dotnetPath,
+                    Arguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""",
+                    UseShellExecute = false,
+                    WorkingDirectory = TempDir,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                };
 
-            string error = process.StandardError.ReadToEnd();  
+                var output = new StringBuilder();
+                var error = new StringBuilder();
 
-            process.WaitForExit(_dotnetTimeout);
+                process.OutputDataReceived += (sender, e) => output.AppendLine(e.Data);
+                process.ErrorDataReceived += (sender, e) => error.AppendLine(e.Data);
 
-            if (process.ExitCode != 0)
-            {
-                _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
-                    $" with exit code '{process.ExitCode}' and error '{error}'");
-                return false;
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                bool success = true;
+                if (!process.WaitForExit(_dotnetTimeout))
+                {
+                    process.Kill();
+                    _log.LogError($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
+                    success = false;
+                }
+
+                if (process.ExitCode != 0)
+                {
+                    _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
+                    $" with exit code '{process.ExitCode}'.");
+                    success = false;
+                }
+
+                string outputStr = output.ToString();
+                if (!string.IsNullOrWhiteSpace(outputStr))
+                {
+                    File.WriteAllText(logPath, outputStr);
+                }
+                
+                string errorStr = error.ToString();
+                if (!string.IsNullOrWhiteSpace(errorStr))
+                {
+                    File.WriteAllText(errorLogPath, errorStr);
+                }
+
+                return success;
             }
-
-            return true;
         }
 
         public override void RemoveStrongNameSign(string assemblyPath)
