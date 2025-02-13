@@ -325,7 +325,9 @@ internal static class SerializationRecordExtensions
                 || !classInfo.HasMember("_size")
                 || classInfo.GetRawValue("_size") is not int size
                 || !classInfo.TypeName.IsConstructedGenericType
-                || classInfo.TypeName.GetGenericTypeDefinition().Name != nameof(List<>)
+#pragma warning disable IDE0082 // 'typeof' can be converted to 'nameof' - but not for generics, waiting for a fix - https://github.com/dotnet/roslyn/pull/76920
+                || classInfo.TypeName.GetGenericTypeDefinition().Name != typeof(List<>).Name
+#pragma warning restore IDE0082
                 || classInfo.TypeName.GetGenericArguments().Length != 1
                 || classInfo.GetRawValue("_items") is not ArrayRecord arrayRecord
                 || !IsPrimitiveArrayRecord(arrayRecord))
@@ -602,8 +604,7 @@ internal static class SerializationRecordExtensions
             throw new SerializationException(SR.ClipboardOrDragDrop_JsonDeserializationFailed);
         }
 
-        Type serializedType = resolver.BindToType(serializedTypeName);
-        if (!serializedType.IsAssignableTo(typeof(T)))
+        if (!resolver.BindToType(serializedTypeName).IsAssignableTo(typeof(T)))
         {
             // Not the type the caller asked for.
             return (isJsonData: true, isValidType: false);

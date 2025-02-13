@@ -26,10 +26,11 @@ internal sealed partial class WinFormsNrbfSerializer : INrbfSerializer
             return true;
         }
 
-        s_knownTypes ??= new(2, TypeNameComparer.Default)
+        s_knownTypes ??= new(3, TypeNameComparer.FullNameAndAssemblyNameMatch)
         {
-            { Types.ToTypeName($"{typeof(ImageListStreamer).FullName}, {Assemblies.SystemWindowsForms}"), typeof(ImageListStreamer) },
-            { Types.ToTypeName($"{Types.BitmapType}, {Assemblies.SystemDrawing}"), typeof(Bitmap) },
+            { Types.ToTypeName($"{typeof(ImageListStreamer).FullName}, System.Windows.Forms"), typeof(ImageListStreamer) },
+            { Types.ToTypeName($"{Types.BitmapType}, System.Drawing"), typeof(Bitmap) },
+            { Types.ToTypeName($"{Types.BitmapType}, System.Drawing.Common"), typeof(Bitmap) }
         };
 
         return s_knownTypes.TryGetValue(typeName, out type);
@@ -44,7 +45,7 @@ internal sealed partial class WinFormsNrbfSerializer : INrbfSerializer
         CoreNrbfSerializer.TryWriteObject(stream, value)
         || WinFormsBinaryFormatWriter.TryWriteObject(stream, value);
 
-    public static bool IsSupportedType<T>() => CoreNrbfSerializer.IsSupportedType<T>()
-        || typeof(T) == typeof(Bitmap)
-        || typeof(T) == typeof(ImageListStreamer);
+    public static bool IsFullySupportedType(Type type) => CoreNrbfSerializer.IsFullySupportedType(type)
+        // If users want to include ImageListStreamer in their custom types, they should explicitly resolve it.
+        || type == typeof(Bitmap);
 }
