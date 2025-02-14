@@ -32,6 +32,10 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     protected virtual string TargetFrameworkElement => $"""<TargetFramework>{TargetFramework}</TargetFramework>""";
 
+    protected virtual string ProjectZipFile => "Microsoft.VisualStudio.Razor.IntegrationTests.TestFiles.BlazorProject.zip";
+
+    private protected virtual ILogger Logger => _testLogger.AssumeNotNull();
+
     protected string ProjectFilePath => _projectFilePath.AssumeNotNull();
 
     public override async Task InitializeAsync()
@@ -96,19 +100,20 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
         var solutionPath = CreateTemporaryPath();
 
-        var resourceName = "Microsoft.VisualStudio.Razor.IntegrationTests.TestFiles.BlazorProject.zip";
-        using var zipStream = typeof(AbstractRazorEditorTest).Assembly.GetManifestResourceStream(resourceName);
+        using var zipStream = typeof(AbstractRazorEditorTest).Assembly.GetManifestResourceStream(ProjectZipFile);
         using var zip = new ZipArchive(zipStream);
         zip.ExtractToDirectory(solutionPath);
 
         var slnFile = Directory.EnumerateFiles(solutionPath, "*.sln").Single();
-        var projectFile = Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).Single();
 
-        PrepareProjectForFirstOpen(projectFile);
+        foreach (var projectFile in Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories))
+        {
+            PrepareProjectForFirstOpen(projectFile);
+        }
 
         await TestServices.SolutionExplorer.OpenSolutionAsync(slnFile, cancellationToken);
 
-        return projectFile;
+        return Directory.EnumerateFiles(solutionPath, $"{RazorProjectConstants.BlazorProjectName}.csproj", SearchOption.AllDirectories).Single();
     }
 
     protected virtual void PrepareProjectForFirstOpen(string projectFileName)

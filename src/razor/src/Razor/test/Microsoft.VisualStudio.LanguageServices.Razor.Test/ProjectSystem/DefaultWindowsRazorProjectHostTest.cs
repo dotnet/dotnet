@@ -627,7 +627,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
 
         // Act & Assert
-        await host.LoadAsync();
+        await host.GetTestAccessor().InitializeAsync();
         Assert.Empty(_projectManager.GetProjects());
 
         await host.DisposeAsync();
@@ -642,7 +642,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
 
         // Act & Assert
-        await Task.Run(async () => await host.LoadAsync());
+        await Task.Run(async () => await host.GetTestAccessor().InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         await Task.Run(async () => await host.DisposeAsync());
@@ -660,11 +660,13 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
 
+        var testAccessor = host.GetTestAccessor();
+
         // Act & Assert
-        await Task.Run(async () => await host.LoadAsync());
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
         Assert.Empty(_projectManager.GetProjects());
     }
 
@@ -692,24 +694,25 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert
         var project = Assert.Single(_projectManager.GetProjects());
@@ -758,12 +761,41 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
 
         var state = TestProjectRuleSnapshot.CreateProperties(
-             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
-             new Dictionary<string, string>()
-             {
-                 [WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName] = intermediateOutputPath,
-                 [WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName] = baseIntermediateOutputPath,
-             });
+            WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
+            new Dictionary<string, string>()
+            {
+                [WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName] = intermediateOutputPath,
+                [WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName] = baseIntermediateOutputPath,
+            });
+
+        var dict = ImmutableDictionary<string, IProjectRuleSnapshot>.Empty;
+        dict = dict.Add(WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName, state);
+
+        var result = host.GetTestAccessor().GetIntermediateOutputPathFromProjectChange(dict,
+            out var combinedIntermediateOutputPath);
+
+        Assert.True(result);
+        Assert.Equal(expectedCombinedIOP, combinedIntermediateOutputPath);
+    }
+
+    [UITheory]
+    // This is what we see for Razor class libraries
+    [InlineData("obj/", @"C:\my repo root\solution folder\projectFolder\", @"obj\Debug\net8.0", @"C:\my repo root\solution folder\projectFolder\obj\Debug\net8.0")]
+    [InlineData("../obj/", @"C:\my repo root\solution folder\projectFolder\", @"obj\Debug\net8.0", @"C:\my repo root\solution folder\projectFolder\obj\Debug\net8.0")]
+    [InlineData("../obj", @"C:\my repo root\solution folder\projectFolder\", @"obj\Debug\net8.0", @"C:\my repo root\solution folder\projectFolder\obj\Debug\net8.0")]
+    public void IntermediateOutputPathCalculationHandlesRelativePaths_BaseIntermediateOutputPath(string baseIntermediateOutputPath, string msbuildProjectDirectoryPropertyName, string intermediateOutputPath, string expectedCombinedIOP)
+    {
+        var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+
+        var state = TestProjectRuleSnapshot.CreateProperties(
+            WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
+            new Dictionary<string, string>()
+            {
+                [WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName] = intermediateOutputPath,
+                [WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName] = baseIntermediateOutputPath,
+                [WindowsRazorProjectHostBase.MSBuildProjectDirectoryPropertyName] = msbuildProjectDirectoryPropertyName,
+            });
 
         var dict = ImmutableDictionary<string, IProjectRuleSnapshot>.Empty;
         dict = dict.Add(WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName, state);
@@ -790,21 +822,23 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert
         Assert.Empty(_projectManager.GetProjects());
@@ -840,19 +874,20 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
@@ -861,7 +896,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
             updater.SolutionClosed();
         });
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         Assert.False(_projectManager.IsSolutionClosing);
@@ -894,23 +929,24 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var project = Assert.Single(_projectManager.GetProjects());
@@ -953,25 +989,25 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         _configurationItems.Item("MVC-2.0", new Dictionary<string, string>() { { "Extensions", "MVC-2.0;Another-Thing" }, });
         _extensionItems.Item("MVC-2.0");
         _razorComponentWithTargetPathItems.Item(TestProjectData.AnotherProjectNestedComponentFile3.FilePath, new Dictionary<string, string>()
-         {
-             { Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.AnotherProjectNestedComponentFile3.TargetPath },
-         });
+        {
+            { Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.AnotherProjectNestedComponentFile3.TargetPath },
+        });
         _razorGenerateWithTargetPathItems.Item(TestProjectData.AnotherProjectNestedFile3.FilePath, new Dictionary<string, string>()
-         {
-             { Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.AnotherProjectNestedFile3.TargetPath },
-         });
+        {
+            { Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.AnotherProjectNestedFile3.TargetPath },
+        });
 
         changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(changes[0].After),
-             _configurationItems.ToChange(changes[1].After),
-             _extensionItems.ToChange(changes[2].After),
-             _razorComponentWithTargetPathItems.ToChange(changes[3].After),
-             _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
-             _configurationGeneral.ToChange(changes[5].After),
+            _razorGeneralProperties.ToChange(changes[0].After),
+            _configurationItems.ToChange(changes[1].After),
+            _extensionItems.ToChange(changes[2].After),
+            _razorComponentWithTargetPathItems.ToChange(changes[3].After),
+            _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
+            _configurationGeneral.ToChange(changes[5].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.GetTestAccessor().OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
         project = Assert.Single(_projectManager.GetProjects());
@@ -1050,23 +1086,24 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -1085,14 +1122,14 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(changes[0].After),
-             _configurationItems.ToChange(changes[1].After),
-             _extensionItems.ToChange(changes[2].After),
-             _razorComponentWithTargetPathItems.ToChange(changes[3].After),
-             _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
+            _razorGeneralProperties.ToChange(changes[0].After),
+            _configurationItems.ToChange(changes[1].After),
+            _extensionItems.ToChange(changes[2].After),
+            _razorComponentWithTargetPathItems.ToChange(changes[3].After),
+            _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
         Assert.Empty(_projectManager.GetProjects());
@@ -1125,23 +1162,24 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -1167,14 +1205,14 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(changes[0].After),
-             _configurationItems.ToChange(changes[1].After),
-             _extensionItems.ToChange(changes[2].After),
-             _razorComponentWithTargetPathItems.ToChange(changes[3].After),
-             _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
+            _razorGeneralProperties.ToChange(changes[0].After),
+            _configurationItems.ToChange(changes[1].After),
+            _extensionItems.ToChange(changes[2].After),
+            _razorComponentWithTargetPathItems.ToChange(changes[3].After),
+            _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 3
         Assert.Empty(_projectManager.GetProjects());
@@ -1204,24 +1242,25 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var project = Assert.Single(_projectManager.GetProjects());
@@ -1229,25 +1268,25 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         Assert.Same("MVC-2.1", project.Configuration.ConfigurationName);
 
         Assert.Collection(
-           project.DocumentFilePaths.OrderBy(d => d),
-           d =>
-           {
-               var document = project.GetRequiredDocument(d);
-               Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
-               Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-               Assert.Equal(FileKinds.Legacy, document.FileKind);
-           },
-           d =>
-           {
-               var document = project.GetRequiredDocument(d);
-               Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
-               Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-               Assert.Equal(FileKinds.Component, document.FileKind);
-           });
+            project.DocumentFilePaths.OrderBy(d => d),
+            d =>
+            {
+                var document = project.GetRequiredDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Legacy, document.FileKind);
+            },
+            d =>
+            {
+                var document = project.GetRequiredDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Component, document.FileKind);
+            });
 
         // Act - 2
         services.UnconfiguredProject.FullPath = TestProjectData.AnotherProject.FilePath;
-        await Task.Run(async () => await host.OnProjectRenamingAsync(TestProjectData.SomeProject.FilePath, TestProjectData.AnotherProject.FilePath));
+        await Task.Run(async () => await testAccessor.OnProjectRenamingAsync(TestProjectData.SomeProject.FilePath, TestProjectData.AnotherProject.FilePath));
 
         // Assert - 1
         project = Assert.Single(_projectManager.GetProjects());
@@ -1255,21 +1294,21 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         Assert.Same("MVC-2.1", project.Configuration.ConfigurationName);
 
         Assert.Collection(
-           project.DocumentFilePaths.OrderBy(d => d),
-           d =>
-           {
-               var document = project.GetRequiredDocument(d);
-               Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
-               Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-               Assert.Equal(FileKinds.Legacy, document.FileKind);
-           },
-           d =>
-           {
-               var document = project.GetRequiredDocument(d);
-               Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
-               Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-               Assert.Equal(FileKinds.Component, document.FileKind);
-           });
+            project.DocumentFilePaths.OrderBy(d => d),
+            d =>
+            {
+                var document = project.GetRequiredDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Legacy, document.FileKind);
+            },
+            d =>
+            {
+                var document = project.GetRequiredDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Component, document.FileKind);
+            });
 
         await Task.Run(async () => await host.DisposeAsync());
         Assert.Empty(_projectManager.GetProjects());
@@ -1302,23 +1341,24 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(),
-             _configurationItems.ToChange(),
-             _extensionItems.ToChange(),
-             _razorComponentWithTargetPathItems.ToChange(),
-             _razorGenerateWithTargetPathItems.ToChange(),
-             _configurationGeneral.ToChange(),
+            _razorGeneralProperties.ToChange(),
+            _configurationItems.ToChange(),
+            _extensionItems.ToChange(),
+            _razorComponentWithTargetPathItems.ToChange(),
+            _razorGenerateWithTargetPathItems.ToChange(),
+            _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
-        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
-        await Task.Run(async () => await host.LoadAsync());
+        var testAccessor = host.GetTestAccessor();
+
+        await Task.Run(async () => await testAccessor.InitializeAsync());
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var project = Assert.Single(_projectManager.GetProjects());
@@ -1359,15 +1399,15 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         changes = new TestProjectChangeDescription[]
         {
-             _razorGeneralProperties.ToChange(changes[0].After),
-             _configurationItems.ToChange(changes[1].After),
-             _extensionItems.ToChange(changes[2].After),
-             _razorComponentWithTargetPathItems.ToChange(changes[3].After),
-             _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
-             _configurationGeneral.ToChange(changes[5].After),
+            _razorGeneralProperties.ToChange(changes[0].After),
+            _configurationItems.ToChange(changes[1].After),
+            _extensionItems.ToChange(changes[2].After),
+            _razorComponentWithTargetPathItems.ToChange(changes[3].After),
+            _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
+            _configurationGeneral.ToChange(changes[5].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
+        await Task.Run(async () => await testAccessor.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
         // Changing intermediate output path is effectively removing the old project and adding a new one.

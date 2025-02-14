@@ -20,8 +20,10 @@ internal partial class EditorInProcess
     /// </summary>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <param name="count">The number of the given classification to expect.</param>
+    /// <param name="exact">Whether to wait for exactly <paramref name="count"/> classifications.</param>
     /// <returns>A <see cref="Task"/> which completes when classification is "ready".</returns>
-    public Task WaitForComponentClassificationAsync(CancellationToken cancellationToken, int count = 1) => WaitForSemanticClassificationAsync("RazorComponentElement", cancellationToken, count);
+    public Task WaitForComponentClassificationAsync(CancellationToken cancellationToken, int count = 1, bool exact = false)
+        => WaitForSemanticClassificationAsync("RazorComponentElement", cancellationToken, count, exact);
 
     /// <summary>
     /// Waits for any semantic classifications to be available on the active TextView, and for at least one of the
@@ -30,8 +32,9 @@ internal partial class EditorInProcess
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <param name="expectedClassification">The classification to wait for, if any.</param>
     /// <param name="count">The number of the given classification to expect.</param>
+    /// <param name="exact">Whether to wait for exactly <paramref name="count"/> classifications.</param>
     /// <returns>A <see cref="Task"/> which completes when classification is "ready".</returns>
-    public async Task WaitForSemanticClassificationAsync(string expectedClassification, CancellationToken cancellationToken, int count = 1)
+    public async Task WaitForSemanticClassificationAsync(string expectedClassification, CancellationToken cancellationToken, int count = 1, bool exact = false)
     {
         var textView = await TestServices.Editor.GetActiveTextViewAsync(cancellationToken);
         var classifier = await GetClassifierAsync(textView, cancellationToken);
@@ -42,7 +45,7 @@ internal partial class EditorInProcess
         classifier.ClassificationChanged += Classifier_ClassificationChanged;
 
         // Check that we're not ALREADY changed
-        if (HasClassification(classifier, textView, expectedClassification, count))
+        if (HasClassification(classifier, textView, expectedClassification, count, exact))
         {
             semaphore.Release();
             classifier.ClassificationChanged -= Classifier_ClassificationChanged;
@@ -60,13 +63,13 @@ internal partial class EditorInProcess
 
         void Classifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e)
         {
-            if (HasClassification(classifier, textView, expectedClassification, count))
+            if (HasClassification(classifier, textView, expectedClassification, count, exact))
             {
                 semaphore.Release();
             }
         }
 
-        static bool HasClassification(IClassifier classifier, ITextView textView, string expectedClassification, int count)
+        static bool HasClassification(IClassifier classifier, ITextView textView, string expectedClassification, int count, bool exact)
         {
             var classifications = GetClassifications(classifier, textView);
 
@@ -80,7 +83,8 @@ internal partial class EditorInProcess
                 }
             }
 
-            return found >= count;
+            return found == count ||
+                (!exact && found > count);
         }
 
         static bool ClassificationMatches(string expectedClassification, IClassificationType classificationType)
