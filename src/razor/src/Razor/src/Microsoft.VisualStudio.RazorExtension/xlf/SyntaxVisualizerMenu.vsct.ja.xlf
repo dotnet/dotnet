@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="cmdidShowFormattingDocument|ButtonText">
         <source>Show Formatting Document</source>
-        <target state="new">Show Formatting Document</target>
+        <target state="translated">書式設定ドキュメントの表示</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidShowGeneratedCode|ButtonText">
