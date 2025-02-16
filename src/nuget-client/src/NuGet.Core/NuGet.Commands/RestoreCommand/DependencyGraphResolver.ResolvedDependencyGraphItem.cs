@@ -35,16 +35,28 @@ namespace NuGet.Commands
             /// <param name="item">The <see cref="GraphItem{TItem}" /> with a <see cref="RemoteResolveResult" /> of the resolved library.</param>
             /// <param name="dependencyGraphItem">The <see cref="DependencyGraphItem" /> that is being resolved.</param>
             /// <param name="indexingTable">The <see cref="DependencyGraphItemIndexer" /> to use when indexing dependencies.</param>
+            /// <param name="parents">An optional <see cref="HashSet{T}" /> containing parent <see cref="LibraryRangeIndex" /> values.</param>
             public ResolvedDependencyGraphItem(
                 GraphItem<RemoteResolveResult> item,
                 DependencyGraphItem dependencyGraphItem,
-                DependencyGraphItemIndexer indexingTable)
+                DependencyGraphItemIndexer indexingTable,
+                HashSet<LibraryRangeIndex>? parents = null)
             {
                 Item = item;
 
                 LibraryDependency = dependencyGraphItem.LibraryDependency;
                 LibraryRangeIndex = dependencyGraphItem.LibraryRangeIndex;
                 Path = dependencyGraphItem.Path;
+
+                if (parents != null)
+                {
+                    Parents = parents;
+                }
+                else if (dependencyGraphItem.IsCentrallyPinnedTransitivePackage && !dependencyGraphItem.IsRootPackageReference)
+                {
+                    // Keep track of parents if the item is transitively pinned
+                    Parents = new HashSet<LibraryRangeIndex> { dependencyGraphItem.Parent };
+                }
 
                 int dependencyCount = item.Data.Dependencies.Count;
 
@@ -102,7 +114,7 @@ namespace NuGet.Commands
             /// <summary>
             /// Gets or sets a <see cref="HashSet{T}" /> of all of the parent <see cref="LibraryRangeIndex" /> of this dependency graph item.
             /// </summary>
-            public HashSet<LibraryRangeIndex>? Parents { get; set; }
+            public HashSet<LibraryRangeIndex>? Parents { get; }
 
             /// <summary>
             /// Gets an array containing the <see cref="LibraryRangeIndex" /> values of all parent dependency graph items and their parent up to the root.

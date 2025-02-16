@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.2.25113.1",
+      "packageVersion": "10.0.0-preview.2.25114.1",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "2edcf3ba74ed10fb3d462861131f2ff31a7c9275"
+      "commitSha": "9c410aaf1ef3db65374bf237589ae8bc6910d37c"
     },
     {
       "packageVersion": "0.11.5-alpha.25078.1",
@@ -78,11 +78,11 @@
       "commitSha": "0b44ec8b09d2b53ef021618fb57526ded656a4fc"
     },
     {
-      "packageVersion": "6.14.0-preview.1.29",
+      "packageVersion": "6.14.0-preview.1.30",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "6a2ad25617bd0390414c5adef2fc770f39be5fe4"
+      "commitSha": "e716e78fa66a29f3e417462256cc340479e25ce2"
     },
     {
       "packageVersion": "9.0.0-preview.25113.4",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "21e99008f0f7da4ccc4c27063d3dc278fa06b928"
+      "commitSha": "c6dc0871b09f055cd5ad9136be50f46d7ccbe734"
     },
     {
       "packageVersion": "10.0.611001",
