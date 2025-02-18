@@ -46,7 +46,7 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract SigningStatus VerifyStrongNameSign(string fileFullPath);
 
-        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath);
+        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath);
 
         public bool Sign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
@@ -149,7 +149,8 @@ namespace Microsoft.DotNet.SignTool
             // First the signing pass
             var signProjectPath = Path.Combine(dir, $"Round{round}-Sign.proj");
             File.WriteAllText(signProjectPath, GenerateBuildFileContent(filesToSign, zippedPaths, false));
-            status = RunMSBuild(buildEngine, signProjectPath, Path.Combine(_args.LogDir, $"SigningRound{round}.binlog"));
+            string signingLogName = $"SigningRound{round}";
+            status = RunMSBuild(buildEngine, signProjectPath, Path.Combine(_args.LogDir, $"{signingLogName}.binlog"), Path.Combine(_args.LogDir, $"{signingLogName}.log"), Path.Combine(_args.LogDir, $"{signingLogName}.error.log"));
 
             if (!status)
             {
@@ -165,7 +166,8 @@ namespace Microsoft.DotNet.SignTool
             {
                 var notarizeProjectPath = Path.Combine(dir, $"Round{round}-Notarize.proj");
                 File.WriteAllText(notarizeProjectPath, GenerateBuildFileContent(filesToNotarize, null, true));
-                status = RunMSBuild(buildEngine, notarizeProjectPath, Path.Combine(_args.LogDir, $"NotarizationRound{round}.binlog"));
+                string notarizeLogName = $"NotarizationRound{round}";
+                status = RunMSBuild(buildEngine, notarizeProjectPath, Path.Combine(_args.LogDir, $"{notarizeLogName}.binlog"), Path.Combine(_args.LogDir, $"{notarizeLogName}.log"), Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"));
             }
 
             return status;

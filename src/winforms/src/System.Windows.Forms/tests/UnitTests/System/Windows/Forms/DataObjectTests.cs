@@ -391,7 +391,7 @@ public partial class DataObjectTests
 
         protected override bool TryGetDataCore<T>(
             string format,
-            Func<TypeName, Type>? resolver,
+            Func<TypeName, Type?>? resolver,
             bool autoConvert,
             [NotNullWhen(true), MaybeNullWhen(false)] out T data)
         {
@@ -773,11 +773,11 @@ public partial class DataObjectTests
 
         using Bitmap bitmap1 = new(10, 10);
         dataObject.SetData("format2", bitmap1);
-        dataObject.GetFormats().OrderBy(s => s).Should().Equal(["format1", "format2", "UnicodeText"]);
+        dataObject.GetFormats().Should().BeEquivalentTo(["format1", "format2", "UnicodeText"]);
 
         using Bitmap bitmap2 = new(10, 10);
         dataObject.SetData(bitmap2);
-        dataObject.GetFormats().OrderBy(s => s).Should().Equal(["Bitmap", "format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "WindowsForms10PersistentObject"]);
+        dataObject.GetFormats().Should().BeEquivalentTo(["Bitmap", "format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "PersistentObject"]);
     }
 
     public static TheoryData<string[]> GetFormats_Mocked_TheoryData() => new()
@@ -847,13 +847,13 @@ public partial class DataObjectTests
 
         using Bitmap bitmap1 = new(10, 10);
         dataObject.SetData("format2", bitmap1);
-        dataObject.GetFormats(autoConvert: true).OrderBy(s => s).Should().Equal(["format1", "format2", "UnicodeText"]);
-        dataObject.GetFormats(autoConvert: false).OrderBy(s => s).Should().Equal(["format1", "format2", "UnicodeText"]);
+        dataObject.GetFormats(autoConvert: true).Should().BeEquivalentTo(["format1", "format2", "UnicodeText"]);
+        dataObject.GetFormats(autoConvert: false).Should().BeEquivalentTo(["format1", "format2", "UnicodeText"]);
 
         using Bitmap bitmap2 = new(10, 10);
         dataObject.SetData(bitmap2);
-        dataObject.GetFormats(autoConvert: true).OrderBy(s => s).Should().Equal(["Bitmap", "format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "WindowsForms10PersistentObject"]);
-        dataObject.GetFormats(autoConvert: false).OrderBy(s => s).Should().Equal(["format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "WindowsForms10PersistentObject"]);
+        dataObject.GetFormats(autoConvert: true).Should().BeEquivalentTo(["Bitmap", "format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "PersistentObject"]);
+        dataObject.GetFormats(autoConvert: false).Should().BeEquivalentTo(["format1", "format2", "System.Drawing.Bitmap", "UnicodeText", "PersistentObject"]);
     }
 
     public static TheoryData<bool, string[]> GetFormats_BoolIDataObject_TheoryData() => new()
@@ -2892,8 +2892,10 @@ public partial class DataObjectTests
         native.SetImage(bitmap);
         string customFormat = "customFormat";
         native.SetData(customFormat, "custom");
+
         // Simulate receiving DataObject from native.
-        DataObject data = new(ComHelpers.GetComPointer<Com.IDataObject>(native));
+        using var comDataObject = ComHelpers.GetComScope<Com.IDataObject>(native);
+        DataObject data = new(comDataObject.Value);
 
         data.GetDataPresent(typeof(Bitmap)).Should().BeTrue();
         data.GetDataPresent(customFormat).Should().BeTrue();
@@ -2906,20 +2908,24 @@ public partial class DataObjectTests
     {
         using Font value = new("Arial", 10);
         using BinaryFormatterScope scope = new(enable: true);
+        using BinaryFormatterInClipboardDragDropScope formatterScope = new(enable: true);
+
         // We are blocking managed font from being serialized as a Locale format.
         DataObject native = new(DataFormats.Locale, value);
 
         // Simulate receiving DataObject from native.
         // Clipboard.SetDataObject(native, copy: true);
-        var comDataObject = ComHelpers.GetComPointer<Com.IDataObject>(native);
+        using var comDataObject = ComHelpers.GetComScope<Com.IDataObject>(native);
         Com.FORMATETC formatetc = new()
         {
             tymed = (uint)TYMED.TYMED_HGLOBAL,
             cfFormat = (ushort)CLIPBOARD_FORMAT.CF_LOCALE
         };
-        comDataObject->GetData(formatetc, out Com.STGMEDIUM medium);
 
-        // Validate that HGLOBAL had been freed when handling an error.
+        HRESULT result = comDataObject.Value->GetData(formatetc, out Com.STGMEDIUM medium);
+        result.Succeeded.Should().BeFalse();
+
+        // Validate that HGLOBAL has been freed.
         medium.hGlobal.IsNull.Should().BeTrue();
     }
 
@@ -2929,10 +2935,10 @@ public partial class DataObjectTests
         string format = "format";
         DataObject dataObject = new();
         Action action = () => dataObject.SetDataAsJson(format, new DataObject());
-        action.Should().Throw<InvalidOperationException>();
+        action.Should().Throw<ArgumentException>();
 
         Action dataObjectSet2 = () => dataObject.SetDataAsJson(format, new DerivedDataObject());
-        dataObjectSet2.Should().NotThrow();
+        dataObjectSet2.Should().Throw<ArgumentException>();
     }
 
     [WinFormsFact]
@@ -3089,24 +3095,26 @@ public partial class DataObjectTests
     [CommonMemberData(typeof(DataObjectTestHelpers), nameof(DataObjectTestHelpers.StringFormat))]
     [CommonMemberData(typeof(DataObjectTestHelpers), nameof(DataObjectTestHelpers.BitmapFormat))]
     [CommonMemberData(typeof(DataObjectTestHelpers), nameof(DataObjectTestHelpers.UndefinedRestrictedFormat))]
-    public void DataObject_SetDataAsJson_RestrictedFormats_NotJsonSerialized(string format)
+    public void DataObject_SetDataAsJson_PredefinedFormats_NotJsonSerialized(string format)
     {
         DataObject dataObject = new();
-        dataObject.SetDataAsJson(format, 1);
-        object storedData = dataObject.TestAccessor().Dynamic._innerData.GetData(format);
-        storedData.Should().NotBeAssignableTo<IJsonData>();
-        dataObject.GetData(format).Should().Be(1);
+        Action action = () => dataObject.SetDataAsJson(format, 1);
+
+        // We prevent serializing as predefined formats with JSON. (As it can't be read)
+        action.Should().Throw<ArgumentException>();
     }
 
     [WinFormsTheory]
     [CommonMemberData(typeof(DataObjectTestHelpers), nameof(DataObjectTestHelpers.UnboundedFormat))]
-    public void DataObject_SetDataAsJson_NonRestrictedFormat_NotJsonSerialized(string format)
+    public void DataObject_SetDataAsJson_CustomFormat_IsJsonSerialized(string format)
     {
         DataObject data = new();
         data.SetDataAsJson(format, 1);
         object storedData = data.TestAccessor().Dynamic._innerData.GetData(format);
-        storedData.Should().NotBeAssignableTo<IJsonData>();
+        storedData.Should().BeAssignableTo<IJsonData>();
         data.GetData(format).Should().Be(1);
+        data.TryGetData(format, out int deserialized).Should().BeTrue();
+        deserialized.Should().Be(1);
     }
 
     [WinFormsTheory]
@@ -3120,7 +3128,7 @@ public partial class DataObjectTests
         storedData.Should().BeOfType<JsonData<SimpleTestData>>();
 
         // We don't expose JsonData<T> in public legacy API
-        data.GetData(format).Should().BeNull();
+        data.GetData(format).Should().Be(testData);
     }
 
     [WinFormsFact]

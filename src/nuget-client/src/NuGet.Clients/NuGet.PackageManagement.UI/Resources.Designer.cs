@@ -664,6 +664,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Copy.
+        /// </summary>
+        public static string CopyMenuCommandLabel {
+            get {
+                return ResourceManager.GetString("CopyMenuCommandLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highest.
         /// </summary>
         public static string DependencyBehavior_Highest {

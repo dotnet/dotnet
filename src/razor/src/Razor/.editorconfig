@@ -1,5 +1,8 @@
 ﻿[*.cs]
 
+# Enforce the use of accessibility modifiers for all types
+dotnet_diagnostic.IDE0040.severity = warning
+
 # Fix Formatting
 dotnet_diagnostic.IDE0055.severity = warning
 

@@ -21,7 +21,7 @@ For instance, let's say runtime has an internal fix in `internal/release/9.0`. R
    ./eng/common/SetupNuGetSources.sh <path to NuGet.config>
    ```
 
-3. Generate a base64 encoded SAS token used for downloading runtimes. This step uses the Azure CLI and your personal identity to generate a SAS token for dotnetbuilds.blob.core.windows.net/internal. It relies on being approved for the above CoreIdentity entitlement.
+3. Generate a base64 encoded SAS token used for downloading runtimes. This step uses the Azure CLI and your personal identity to generate a SAS token for ci.dot.net/internal. It relies on being approved for the above CoreIdentity entitlement.
 
     **All platforms (w/Powershell core and azure cli installed )**
    ```
@@ -35,7 +35,7 @@ For instance, let's say runtime has an internal fix in `internal/release/9.0`. R
 4. Build with required parameters. The SAS token and internal storage location is typically passed with `/p:DotNetRuntimeSourceFeed=<>` and `/p:DotNetRuntimeSourceFeedKey=<base64 SAS>`. Some repositories MAY have additional parameters.
 
     ```
-    build.cmd /p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal and `/p:DotNetRuntimeSourceFeedKey=$mySasBase64
+    build.cmd /p:DotNetRuntimeSourceFeed=https://ci.dot.net/internal and `/p:DotNetRuntimeSourceFeedKey=$mySasBase64
     ```
 
 ## This doesn't work for my repo. What can I do?

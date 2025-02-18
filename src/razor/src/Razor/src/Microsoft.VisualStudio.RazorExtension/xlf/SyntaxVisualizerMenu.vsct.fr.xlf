@@ -27,6 +27,11 @@
         <target state="translated">RazorSyntaxVisualizer</target>
         <note />
       </trans-unit>
+      <trans-unit id="cmdidShowFormattingDocument|ButtonText">
+        <source>Show Formatting Document</source>
+        <target state="translated">Afficher le document de mise en forme</target>
+        <note />
+      </trans-unit>
       <trans-unit id="cmdidShowGeneratedCode|ButtonText">
         <source>Show Generated C#</source>
         <target state="translated">Afficher les C générés #</target>

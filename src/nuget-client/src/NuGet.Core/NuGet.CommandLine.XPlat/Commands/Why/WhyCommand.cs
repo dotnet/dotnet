@@ -7,6 +7,7 @@ using System.CommandLine;
 using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
@@ -36,7 +37,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             Register(rootCommand, CommandOutputLogger.Create, WhyCommandRunner.ExecuteCommand);
         }
 
-        internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, int> action)
+        internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, Task<int>> action)
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
@@ -97,7 +98,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             whyCommand.Options.Add(frameworks);
             whyCommand.Options.Add(help);
 
-            whyCommand.SetAction((parseResult) =>
+            whyCommand.SetAction(async (parseResult, cancellationToken) =>
             {
                 ILoggerWithColor logger = getLogger();
 
@@ -107,9 +108,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                         parseResult.GetValue(path),
                         parseResult.GetValue(package),
                         parseResult.GetValue(frameworks),
-                        logger);
+                        logger,
+                        cancellationToken);
 
-                    int exitCode = action(whyCommandArgs);
+                    int exitCode = await action(whyCommandArgs);
                     return exitCode;
                 }
                 catch (ArgumentException ex)

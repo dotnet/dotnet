@@ -1582,6 +1582,37 @@ unsigned CallArgs::GetIndex(CallArg* arg)
 }
 
 //---------------------------------------------------------------
+// GetIndex: Get the user arg index for the specified argument (IL index).
+//
+// Parameters:
+//   arg - The argument to obtain the index of.
+//
+// Returns:
+//   The user index.
+//
+unsigned CallArgs::GetUserIndex(CallArg* arg)
+{
+    unsigned i = 0;
+    for (CallArg& a : Args())
+    {
+        if (!a.IsUserArg())
+        {
+            continue;
+        }
+
+        if (&a == arg)
+        {
+            return i;
+        }
+
+        i++;
+    }
+
+    assert(!"Could not find argument in arg list");
+    return (unsigned)-1;
+}
+
+//---------------------------------------------------------------
 // Reverse: Reverse the specified subrange of arguments.
 //
 // Parameters:
@@ -18270,7 +18301,7 @@ bool GenTreeIndir::IsAddressNotOnHeap(Compiler* comp)
         return true;
     }
 
-    if (HasBase() && Base()->gtSkipReloadOrCopy()->OperIs(GT_LCL_ADDR))
+    if (HasBase() && !comp->fgAddrCouldBeHeap(Base()->gtSkipReloadOrCopy()))
     {
         return true;
     }
@@ -19856,14 +19887,38 @@ void GenTreeArrAddr::ParseArrayAddress(Compiler* comp, GenTree** pArr, ValueNum*
     ValueNum  vn = comp->GetValueNumStore()->VNLiberalNormalValue(tree->gtVNPair);
     VNFuncApp vnf;
 
+    bool treeIsArrayRef = false;
+
     if (tree->TypeIs(TYP_REF) || comp->GetValueNumStore()->IsVNNewArr(vn, &vnf))
     {
         // This must be the array pointer.
         assert(*pArr == nullptr);
         *pArr = tree;
         assert(inputMul == 1); // Can't multiply the array pointer by anything.
+        treeIsArrayRef = true;
     }
-    else
+    else if (tree->OperIs(GT_LCL_VAR) && tree->TypeIs(TYP_BYREF, TYP_I_IMPL))
+    {
+        // This is sort of like gtGetClassHandle, but that requires TYP_REF
+        //
+        CORINFO_CLASS_HANDLE hnd = comp->lvaGetDesc(tree->AsLclVar())->lvClassHnd;
+
+        if (hnd != NO_CLASS_HANDLE)
+        {
+            DWORD attribs  = comp->info.compCompHnd->getClassAttribs(hnd);
+            treeIsArrayRef = (attribs & CORINFO_FLG_ARRAY) != 0;
+
+            if (treeIsArrayRef)
+            {
+                // This must be the array pointer.
+                assert(*pArr == nullptr);
+                *pArr = tree;
+                assert(inputMul == 1); // Can't multiply the array pointer by anything.
+            }
+        }
+    }
+
+    if (!treeIsArrayRef)
     {
         switch (tree->OperGet())
         {
@@ -27760,7 +27815,8 @@ bool GenTreeHWIntrinsic::OperIsCreateScalarUnsafe() const
 //
 bool GenTreeHWIntrinsic::OperIsBitwiseHWIntrinsic(genTreeOps oper)
 {
-    return (oper == GT_AND) || (oper == GT_AND_NOT) || (oper == GT_NOT) || (oper == GT_OR) || (oper == GT_XOR);
+    return (oper == GT_AND) || (oper == GT_AND_NOT) || (oper == GT_NOT) || (oper == GT_OR) || (oper == GT_OR_NOT) ||
+           (oper == GT_XOR) || (oper == GT_XOR_NOT);
 }
 
 //------------------------------------------------------------------------
@@ -31046,7 +31102,9 @@ bool GenTree::IsVectorPerElementMask(var_types simdBaseType, unsigned simdSize) 
             case GT_AND:
             case GT_AND_NOT:
             case GT_OR:
+            case GT_OR_NOT:
             case GT_XOR:
+            case GT_XOR_NOT:
             {
                 // We are a binary bitwise operation where both inputs are per-element masks
                 return intrinsic->Op(1)->IsVectorPerElementMask(simdBaseType, simdSize) &&
@@ -32676,3 +32734,42 @@ void GenTree::SetMorphed(Compiler* compiler, bool doChildren /* = false */)
     }
 }
 #endif
+
+//------------------------------------------------------------------------
+// gtLatestStmt: determine which of two statements happens later
+//
+// Arguments:
+//    stmt1 - first statement to consider
+//    stmt2 - second statement to consider
+//
+// Returns:
+//    either stmt1 or stmt2, whichever happens later in the block
+//
+Statement* Compiler::gtLatestStatement(Statement* stmt1, Statement* stmt2)
+{
+    if (stmt1 == stmt2)
+    {
+        return stmt1;
+    }
+
+    Statement* cursor1 = stmt1->GetNextStmt();
+    Statement* cursor2 = stmt2->GetNextStmt();
+
+    while (true)
+    {
+        if ((cursor1 == stmt2) || (cursor2 == nullptr))
+        {
+            return stmt2;
+        }
+
+        if ((cursor2 == stmt1) || (cursor1 == nullptr))
+        {
+            return stmt1;
+        }
+
+        cursor1 = cursor1->GetNextStmt();
+        cursor2 = cursor2->GetNextStmt();
+    }
+
+    assert(!"could not determine latest stmt");
+}

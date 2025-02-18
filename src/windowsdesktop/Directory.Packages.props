@@ -58,11 +58,9 @@
     <PackageVersion Include="System.Threading.AccessControl" Version="$(SystemThreadingAccessControlVersion)" />
 
     <!-- WCF dependencies -->
-    <PackageVersion Include="System.ServiceModel.Duplex" Version="$(SystemServiceModelVersion)" />
     <PackageVersion Include="System.ServiceModel.Http" Version="$(SystemServiceModelVersion)" />
     <PackageVersion Include="System.ServiceModel.NetTcp" Version="$(SystemServiceModelVersion)" />
     <PackageVersion Include="System.ServiceModel.Primitives" Version="$(SystemServiceModelVersion)" />
-    <PackageVersion Include="System.ServiceModel.Security" Version="$(SystemServiceModelVersion)" />
     <PackageVersion Include="System.Web.Services.Description" Version="$(SystemServiceModelVersion)" />
 
     <!-- WinForms dependencies -->

@@ -4,8 +4,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building from source or inside the VMR as it doesn't build correctly on non-Windows. -->
-    <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
+    <!-- Don't pack on non-Windows as it doesn't build correctly. -->
+    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.TestHost.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.TestHost</PackageId>
@@ -49,6 +49,9 @@
 
   <ItemGroup>
     <None Update="Microsoft.TestPlatform.TestHost.props" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.TestPlatform.TestHost.targets" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

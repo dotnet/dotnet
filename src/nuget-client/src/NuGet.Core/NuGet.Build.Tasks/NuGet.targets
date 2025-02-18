@@ -77,6 +77,14 @@ Copyright (c) .NET Foundation. All rights reserved.
   </PropertyGroup>
 
   <PropertyGroup>
+    <RestoreEnablePackagePruning Condition="'$(RestoreEnablePackagePruning)' == ''
+                    AND '$(UsingMicrosoftNETSdk)' == 'true'
+                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+                    AND '$(SdkAnalysisLevel)' != ''
+                    AND $([MSBuild]::VersionGreaterThanOrEquals('$(SdkAnalysisLevel)', '10.0.100'))
+                    AND ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'
+                        OR ('$(TargetFrameworkIdentifier)' == '.NETStandard' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '2.0'))))"
+                    >true</RestoreEnablePackagePruning>
     <RestoreEnablePackagePruning Condition="$(RestoreEnablePackagePruning) == '' ">false</RestoreEnablePackagePruning>
   </PropertyGroup>
 

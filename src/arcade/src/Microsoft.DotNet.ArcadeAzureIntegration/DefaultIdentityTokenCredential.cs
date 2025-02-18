@@ -50,6 +50,10 @@ public class DefaultIdentityTokenCredential : TokenCredential
         {
             if (azurePipelinesCredential != null)
             {
+                if (!options.DisableShortCache)
+                {
+                    return new TokenCredentialShortCache(azurePipelinesCredential);
+                }
                 return azurePipelinesCredential;
             }
         }
@@ -157,7 +161,15 @@ public class DefaultIdentityTokenCredential : TokenCredential
             !string.IsNullOrEmpty(serviceConnectionId) &&
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SYSTEM_OIDCREQUESTURI")))
         {
-            return new AzurePipelinesCredential(tenantId, clientId, serviceConnectionId, systemAccessToken);
+            var credentialOptions = new AzurePipelinesCredentialOptions
+            {
+                TokenCachePersistenceOptions = new TokenCachePersistenceOptions
+                {
+                    Name = $"TokenCache-AzurePipelinesCredential-{serviceConnectionId}",
+                    UnsafeAllowUnencryptedStorage = false
+                }
+            };
+            return new AzurePipelinesCredential(tenantId, clientId, serviceConnectionId, systemAccessToken, credentialOptions);
         }
         return null;
     }

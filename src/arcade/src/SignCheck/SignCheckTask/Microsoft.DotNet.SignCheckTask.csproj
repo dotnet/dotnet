@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <SignAssembly>false</SignAssembly>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <Description>Build artifact signing validation tool</Description>
+    <PackageTags>Arcade Signing Validation Tool</PackageTags>
+    <RootNamespace>SignCheckTask</RootNamespace>
+    <DevelopmentDependency>false</DevelopmentDependency>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <!-- Copy assemblies into lib folder so they can be used as a development dependency -->
+    <BuildTaskTargetFolder>lib</BuildTaskTargetFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="CommandLineParser" />
+    <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" Publish="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System.Net.Http" />
+    <Compile Include="..\..\Common\Internal\AssemblyResolution.cs" Link="src\AssemblyResolution.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="src\SignCheckResources.Designer.cs"
+             DesignTime="True"
+             AutoGen="True"
+             DependentUpon="src\SignCheckResources.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="src\SignCheckResources.resx"
+                      Generator="ResXFileCodeGenerator"
+                      LastGenOutput="src\SignCheckResources.Designer.cs" />
+  </ItemGroup>
+
+</Project>

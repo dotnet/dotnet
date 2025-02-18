@@ -31,7 +31,8 @@
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
     <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceOnlyBuild>
 
-    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromDotNetBuild>
+    <!-- Avoid excluding packable projects. They often need to flow downstream to dependent repos. -->
+    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true' and '$(IsPackable)' != 'true'">true</ExcludeFromDotNetBuild>
   </PropertyGroup>
 
   <!--

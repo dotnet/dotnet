@@ -14,9 +14,13 @@ namespace NuGet.Test.Utility
     /// </summary>
     public class SimpleTestSolutionContext
     {
-        public SimpleTestSolutionContext(string solutionRoot, params SimpleTestProjectContext[] projects)
+        public SimpleTestSolutionContext(string solutionRoot, params SimpleTestProjectContext[] projects) : this(solutionRoot, false, projects)
         {
-            SolutionPath = Path.Combine(solutionRoot, "solution.sln");
+        }
+
+        public SimpleTestSolutionContext(string solutionRoot, bool useSlnx, params SimpleTestProjectContext[] projects)
+        {
+            SolutionPath = Path.Combine(solutionRoot, useSlnx ? "solution.slnx" : "solution.sln");
 
             Projects.AddRange(projects);
         }
@@ -50,42 +54,71 @@ namespace NuGet.Test.Utility
 
         public StringBuilder GetContent()
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine("Microsoft Visual Studio Solution File, Format Version 12.00");
-            sb.AppendLine("# Visual Studio 2012");
-
-            foreach (var project in Projects)
+            if (Path.GetExtension(SolutionPath) == ".sln")
             {
-                sb.AppendLine("Project(\"{" + "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC" + "}"
-                    + $"\") = \"{project.ProjectName}\", " + "\"" + project.ProjectPath + "\", \"{" + project.ProjectGuid.ToString().ToUpperInvariant() + "}\"");
-                sb.AppendLine("EndProject");
+                return GetContentForSln();
+            }
+            else if (Path.GetExtension(SolutionPath) == ".slnx")
+            {
+                return GetContentForSlnx();
+            }
+            else
+            {
+                throw new InvalidOperationException("Unknown solution file type");
             }
 
-            sb.AppendLine("Global");
-            sb.AppendLine("  GlobalSection(SolutionConfigurationPlatforms) = preSolution");
-            sb.AppendLine("    Debug|Any CPU = Debug|Any CPU");
-            sb.AppendLine("    Release|Any CPU = Release|Any CPU");
-            sb.AppendLine("  EndGlobalSection");
-            sb.AppendLine("  GlobalSection(ProjectConfigurationPlatforms) = postSolution");
-            foreach (var project in Projects)
+            StringBuilder GetContentForSln()
             {
-                // this should probably be uppercase?
-                sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
-                sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
-                sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Release|Any CPU.ActiveCfg = Release|Any CPU");
-                sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Release|Any CPU.Build.0 = Release|Any CPU");
-            }
-            sb.AppendLine("  EndGlobalSection");
-            sb.AppendLine("  GlobalSection(SolutionProperties) = preSolution");
-            sb.AppendLine("    HideSolutionNode = FALSE");
-            sb.AppendLine("  EndGlobalSection");
-            sb.AppendLine("  GlobalSection(ExtensibilityGlobals) = postSolution");
-            sb.AppendLine("    SolutionGuid = {" + SolutionGuid.ToString() + "}");
-            sb.AppendLine("  EndGlobalSection");
-            sb.AppendLine("EndGlobal");
+                StringBuilder sb = new StringBuilder();
 
-            return sb;
+                sb.AppendLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                sb.AppendLine("# Visual Studio 2012");
+
+                foreach (var project in Projects)
+                {
+                    sb.AppendLine("Project(\"{" + "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC" + "}"
+                        + $"\") = \"{project.ProjectName}\", " + "\"" + project.ProjectPath + "\", \"{" + project.ProjectGuid.ToString().ToUpperInvariant() + "}\"");
+                    sb.AppendLine("EndProject");
+                }
+
+                sb.AppendLine("Global");
+                sb.AppendLine("  GlobalSection(SolutionConfigurationPlatforms) = preSolution");
+                sb.AppendLine("    Debug|Any CPU = Debug|Any CPU");
+                sb.AppendLine("    Release|Any CPU = Release|Any CPU");
+                sb.AppendLine("  EndGlobalSection");
+                sb.AppendLine("  GlobalSection(ProjectConfigurationPlatforms) = postSolution");
+                foreach (var project in Projects)
+                {
+                    // this should probably be uppercase?
+                    sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
+                    sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
+                    sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Release|Any CPU.ActiveCfg = Release|Any CPU");
+                    sb.AppendLine("    {" + project.ProjectGuid.ToString().ToUpperInvariant() + "}.Release|Any CPU.Build.0 = Release|Any CPU");
+                }
+                sb.AppendLine("  EndGlobalSection");
+                sb.AppendLine("  GlobalSection(SolutionProperties) = preSolution");
+                sb.AppendLine("    HideSolutionNode = FALSE");
+                sb.AppendLine("  EndGlobalSection");
+                sb.AppendLine("  GlobalSection(ExtensibilityGlobals) = postSolution");
+                sb.AppendLine("    SolutionGuid = {" + SolutionGuid.ToString() + "}");
+                sb.AppendLine("  EndGlobalSection");
+                sb.AppendLine("EndGlobal");
+
+                return sb;
+            }
+
+            StringBuilder GetContentForSlnx()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("<Solution>");
+                foreach (var project in Projects)
+                {
+                    sb.AppendLine($"<Project Path=\"{project.ProjectPath}\" />");
+                }
+                sb.AppendLine("</Solution>");
+
+                return sb;
+            }
         }
 
         /// <summary>

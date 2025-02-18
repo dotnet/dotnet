@@ -24,6 +24,10 @@ namespace NuGet.VisualStudio.Telemetry
                     await task.ConfigureAwait(false);
 #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
                 }
+                catch (OperationCanceledException)
+                {
+                    //We ignore this exception as it is expected to be thrown when the task is cancelled.
+                }
                 catch (Exception e)
                 {
                     await TelemetryUtility.PostFaultAsync(e, callerClassName, callerMemberName);
@@ -46,6 +50,10 @@ namespace NuGet.VisualStudio.Telemetry
 #pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                 await task.ConfigureAwait(false);
 #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
+            }
+            catch (OperationCanceledException)
+            {
+                //We ignore this exception as it is expected to be thrown when the task is cancelled.
             }
             catch (Exception e)
             {

@@ -68,6 +68,9 @@ namespace NuGet.PackageManagement.UI.ViewModels
             set => SetAndRaisePropertyChanged(ref _rawReadme, value);
         }
 
+        //For testing purposes
+        internal DetailedPackageMetadata PackageMetadata => _packageMetadata;
+
         public async Task ItemFilterChangedAsync(ItemFilter filter)
         {
             var oldRenderLocalReadme = _canRenderLocalReadme;
@@ -87,6 +90,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 !string.Equals(packageMetadata.Id, _packageMetadata?.Id)
                 || packageMetadata.Version != _packageMetadata?.Version
                 || !string.Equals(packageMetadata.ReadmeFileUrl, _packageMetadata?.ReadmeFileUrl)
+                || !string.Equals(packageMetadata.PackagePath, _packageMetadata?.PackagePath)
                 ))
             {
                 _packageMetadata = packageMetadata;
@@ -138,10 +142,13 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
             finally
             {
-                ReadmeMarkdown = readme;
-                IsVisible = !string.IsNullOrWhiteSpace(readme);
-                ErrorWithReadme = false;
-                IsBusy = false;
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    ReadmeMarkdown = readme;
+                    IsVisible = !string.IsNullOrWhiteSpace(readme);
+                    ErrorWithReadme = false;
+                    IsBusy = false;
+                }
             }
         }
     }

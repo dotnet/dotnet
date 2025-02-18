@@ -50,6 +50,7 @@
     <file src="net8.0\testhost.x86.exe" target="build\net8.0\x86\" />
 
     <file src="net8.0\Microsoft.TestPlatform.TestHost.props" target="build\net8.0\" />
+    <file src="net8.0\Microsoft.TestPlatform.TestHost.targets" target="build\net8.0\" />
 
 
     <!-- Add localized resources net8.0 -->

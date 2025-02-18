@@ -200,6 +200,6 @@ namespace Microsoft.SignCheck.Verification
 
             return timestamps;
         }
-        
+
     }
 }

@@ -4858,6 +4858,21 @@ ORDER BY [t].[Id], [s].[Nickname], [s].[SquadId]
 """);
     }
 
+    public override async Task Correlated_collections_on_RightJoin_with_predicate(bool async)
+    {
+        await base.Correlated_collections_on_RightJoin_with_predicate(async);
+
+        AssertSql(
+            """
+SELECT [g].[Nickname], [g].[SquadId], [t].[Id], [w].[Name], [w].[Id]
+FROM [Gears] AS [g]
+RIGHT JOIN [Tags] AS [t] ON [g].[Nickname] = [t].[GearNickName]
+LEFT JOIN [Weapons] AS [w] ON [g].[FullName] = [w].[OwnerFullName]
+WHERE [g].[HasSoulPatch] = CAST(0 AS bit)
+ORDER BY [g].[Nickname], [g].[SquadId], [t].[Id]
+""");
+    }
+
     public override async Task Correlated_collections_on_left_join_with_null_value(bool async)
     {
         await base.Correlated_collections_on_left_join_with_null_value(async);
@@ -5140,7 +5155,7 @@ INNER JOIN (
     LEFT JOIN [LocustHordes] AS [l0] ON [f].[Id] = [l0].[Id]
     WHERE [l0].[Id] IS NOT NULL AND [f].[Name] = N'Swarm'
 ) AS [s] ON [l].[Name] = [s].[CommanderName]
-WHERE [s].[Eradicated] = CAST(0 AS bit) OR [s].[Eradicated] IS NULL
+WHERE [s].[Eradicated] <> CAST(1 AS bit) OR [s].[Eradicated] IS NULL
 """);
     }
 
@@ -5160,7 +5175,7 @@ LEFT JOIN (
     LEFT JOIN [LocustHordes] AS [l0] ON [f].[Id] = [l0].[Id]
     WHERE [l0].[Id] IS NOT NULL AND [f].[Name] = N'Swarm'
 ) AS [s] ON [l].[Name] = [s].[CommanderName]
-WHERE [s].[Eradicated] = CAST(0 AS bit) OR [s].[Eradicated] IS NULL
+WHERE [s].[Eradicated] <> CAST(1 AS bit) OR [s].[Eradicated] IS NULL
 """);
     }
 
@@ -7931,7 +7946,7 @@ INNER JOIN (
 ) AS [s] ON [l].[Name] = [s].[CommanderName]
 WHERE CASE
     WHEN [s].[Name] = N'Locust' THEN CAST(1 AS bit)
-END = CAST(0 AS bit) OR CASE
+END <> CAST(1 AS bit) OR CASE
     WHEN [s].[Name] = N'Locust' THEN CAST(1 AS bit)
 END IS NULL
 """);
@@ -8340,23 +8355,26 @@ ORDER BY [g].[Nickname]
 """);
     }
 
-    public override async Task Enum_array_contains(bool async)
-    {
-        await base.Enum_array_contains(async);
-
-        AssertSql(
-            """
-@types_without_nulls='[1]' (Size = 4000)
-
-SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
-FROM [Weapons] AS [w]
-LEFT JOIN [Weapons] AS [w0] ON [w].[SynergyWithId] = [w0].[Id]
-WHERE [w0].[Id] IS NOT NULL AND ([w0].[AmmunitionType] IN (
-    SELECT [t].[value]
-    FROM OPENJSON(@types_without_nulls) AS [t]
-) OR [w0].[AmmunitionType] IS NULL)
-""");
-    }
+// TODO: The base implementations no longer compile since https://github.com/dotnet/runtime/pull/110197 (Contains overload added with
+// optional parameter, not supported in expression trees). #35547 is tracking on the EF side.
+//
+//     public override async Task Enum_array_contains(bool async)
+//     {
+//         await base.Enum_array_contains(async);
+//
+//         AssertSql(
+//             """
+// @types_without_nulls='[1]' (Size = 4000)
+//
+// SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
+// FROM [Weapons] AS [w]
+// LEFT JOIN [Weapons] AS [w0] ON [w].[SynergyWithId] = [w0].[Id]
+// WHERE [w0].[Id] IS NOT NULL AND ([w0].[AmmunitionType] IN (
+//     SELECT [t].[value]
+//     FROM OPENJSON(@types_without_nulls) AS [t]
+// ) OR [w0].[AmmunitionType] IS NULL)
+// """);
+//     }
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]

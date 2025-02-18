@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -22,6 +23,15 @@ internal partial class EditorInProcess
 
         var broker = await GetComponentModelServiceAsync<ILightBulbBroker>(cancellationToken);
         broker.DismissSession(view);
+    }
+
+    public async Task InvokeCodeActionAsync(string codeActionTitle, CancellationToken cancellationToken)
+    {
+        var codeActions = await ShowLightBulbAsync(cancellationToken);
+
+        var codeAction = codeActions.First(a => a.Actions.Single().DisplayText == codeActionTitle).Actions.Single();
+
+        await InvokeCodeActionAsync(codeAction, cancellationToken);
     }
 
     public async Task<IEnumerable<SuggestedActionSet>> InvokeCodeActionListAsync(CancellationToken cancellationToken)

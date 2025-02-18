@@ -134,6 +134,11 @@
         <target state="translated">Неизвестное поведение сопоставления</target>
         <note />
       </trans-unit>
+      <trans-unit id="Wrap_attributes">
+        <source>Wrap attributes</source>
+        <target state="translated">Перенос атрибутов</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

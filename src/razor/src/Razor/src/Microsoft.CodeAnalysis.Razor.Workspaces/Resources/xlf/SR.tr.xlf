@@ -134,6 +134,11 @@
         <target state="translated">Bilinmeyen eşleme davranışı</target>
         <note />
       </trans-unit>
+      <trans-unit id="Wrap_attributes">
+        <source>Wrap attributes</source>
+        <target state="translated">Öznitelikleri kaydır</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

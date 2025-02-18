@@ -49,6 +49,8 @@ internal static class LanguageServerConstants
 
         public const string CodeActionFromVSCode = "CodeActionFromVSCode";
 
+        public const string WrapAttributes = "WrapAttributes";
+
         /// <summary>
         /// Remaps without formatting the resolved code action edit
         /// </summary>

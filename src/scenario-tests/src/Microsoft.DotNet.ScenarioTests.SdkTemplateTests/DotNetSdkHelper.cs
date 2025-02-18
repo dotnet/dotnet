@@ -65,9 +65,9 @@ internal class DotNetSdkHelper
         process.StartInfo.WorkingDirectory = workingDirectory;
 
         // The `dotnet test` execution context sets a number of dotnet related ENVs that cause issues when executing
-        // dotnet commands.  Clear these to avoid side effects.
-
-        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key.StartsWith("DOTNET_")).ToList())
+        // dotnet commands. Same for MSBuild which adds env vars when invoking the runner via the Exec task.
+        // Clear these to avoid side effects.
+        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || key.StartsWith("MSBUILD", StringComparison.OrdinalIgnoreCase)).ToArray())
         {
             process.StartInfo.Environment.Remove(key);
         }
@@ -76,6 +76,10 @@ internal class DotNetSdkHelper
         process.StartInfo.EnvironmentVariables["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRoot;
         process.StartInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "Major";
+        // Don't use the repo infrastructure
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildProps"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildTargets"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryPackagesProps"] = "false";
 
         if (!string.IsNullOrEmpty(nugetPackagesDirectory))
         {

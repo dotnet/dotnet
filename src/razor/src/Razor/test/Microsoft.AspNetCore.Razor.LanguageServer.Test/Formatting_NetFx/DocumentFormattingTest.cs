@@ -5854,4 +5854,56 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 @Foo.ToString(1)
                 """);
     }
+
+    [FormattingTestFact]
+    public async Task EscapedAtSignsInCSS()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+                @model IndexModel
+
+                <style>
+                    @@media only screen and (max-width: 600px) {
+                        body {
+                            background-color: lightblue;
+                        }
+                    }
+                </style>
+
+                <style>
+                    @@font-face {
+                        src: url();
+                    }
+                </style>
+
+                @if (RendererInfo.IsInteractive)
+                {
+                <button />
+                }
+                """,
+            expected: """
+                @page "/"
+                @model IndexModel
+                
+                <style>
+                    @@media only screen and (max-width: 600px) {
+                        body {
+                            background-color: lightblue;
+                        }
+                    }
+                </style>
+
+                <style>
+                    @@font-face {
+                        src: url();
+                    }
+                </style>
+
+                @if (RendererInfo.IsInteractive)
+                {
+                    <button />
+                }
+                """);
+    }
 }

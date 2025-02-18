@@ -46,6 +46,7 @@
     <UsagePattern IdentityGlob="Microsoft.NETCore.Platforms/*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.Targets/*" />
     <UsagePattern IdentityGlob="Microsoft.VisualStudio.Setup.Configuration.Interop/*" />
+    <UsagePattern IdentityGlob="Microsoft.VisualStudio.SolutionPersistence/*" />
     <UsagePattern IdentityGlob="Microsoft.Web.Xdt/*" />
     <UsagePattern IdentityGlob="Microsoft.Win32.Registry/*" />
     <UsagePattern IdentityGlob="Microsoft.Win32.SystemEvents/*" />

@@ -31,6 +31,8 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 {
     protected CancellationToken ControlledHangMitigatingCancellationToken => HangMitigatingCancellationToken;
 
+    protected virtual bool AllowDebugFails => false;
+
     public override async Task InitializeAsync()
     {
         // Not sure why the module initializer doesn't seem to work for integration tests
@@ -41,11 +43,14 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 
     public override void Dispose()
     {
-        var fails = ThrowingTraceListener.Fails;
-        Assert.False(fails.Length > 0, $"""
-            Expected 0 Debug.Fail calls. Actual:
-            {string.Join(Environment.NewLine, fails)}
-            """);
+        if (!AllowDebugFails)
+        {
+            var fails = ThrowingTraceListener.Fails;
+            Assert.False(fails.Length > 0, $"""
+                Expected 0 Debug.Fail calls. Actual:
+                {string.Join(Environment.NewLine, fails)}
+                """);
+        }
 
         base.Dispose();
     }

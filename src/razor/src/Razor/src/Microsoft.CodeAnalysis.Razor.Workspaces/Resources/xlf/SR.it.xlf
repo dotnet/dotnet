@@ -134,6 +134,11 @@
         <target state="translated">Comportamento di mapping sconosciuto</target>
         <note />
       </trans-unit>
+      <trans-unit id="Wrap_attributes">
+        <source>Wrap attributes</source>
+        <target state="translated">Wrapping degli attributi</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

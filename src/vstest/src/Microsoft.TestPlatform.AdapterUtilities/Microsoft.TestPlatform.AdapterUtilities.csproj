@@ -27,12 +27,6 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-    <!-- CVE-2019-0657 mitigation -->
-    <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" />
-    <!-- / CVE-2019-0657 mitigation -->
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Resources\Resources.Designer.cs">
       <DesignTime>True</DesignTime>

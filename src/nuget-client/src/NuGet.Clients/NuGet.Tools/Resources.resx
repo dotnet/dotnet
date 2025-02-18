@@ -151,6 +151,9 @@
     <value>The project '{0}' is unsupported</value>
   </data>
   <data name="ProjectMigrateErrorMessage" xml:space="preserve">
+    <value>Project is not eligible for migration as it's not project.json based.</value>
+  </data>
+  <data name="ProjectJsonMigrateErrorMessage" xml:space="preserve">
     <value>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information.</value>
   </data>
   <data name="PackageRestoreConsent" xml:space="preserve">
@@ -186,8 +189,6 @@
   <data name="PackageManagement" xml:space="preserve">
     <value>Package Management</value>
   </data>
-  <!-- The text inside %...%, if any, will be rendered as a hyperlink which tells Unified Settings to
-    invoke IExternalSettingsProvider.OpenBackingStoreAsync when clicked.-->
   <data name="SettingsStoredInNuGetConfiguration" xml:space="preserve">
     <value>These settings are stored in %NuGet.Config% files</value>
     <comment>Do not translate % % or what is between them</comment>

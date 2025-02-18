@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Commands.Test;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging;
@@ -3560,11 +3561,19 @@ namespace NuGet.Commands.FuncTest
             var restoreGraph = result.RestoreGraphs.ElementAt(0);
             Assert.Equal(0, restoreGraph.Unresolved.Count);
             //packageA should be installed from source2
-            string packageASource = restoreGraph.Install.ElementAt(0).Provider.Source.Name;
-            Assert.Equal(packageSource2, packageASource);
-            //packageB should be installed from source
-            string packageBSource = restoreGraph.Install.ElementAt(1).Provider.Source.Name;
-            Assert.Equal(pathContext.PackageSource, packageBSource);
+            restoreGraph.Install.Count.Should().Be(2);
+
+            foreach (RemoteMatch match in restoreGraph.Install)
+            {
+                if (match.Library.Name == packageA)
+                {
+                    match.Provider.Source.Name.Should().Be(packageSource2);
+                }
+                else if (match.Library.Name == packageB)
+                {
+                    match.Provider.Source.Name.Should().Be(pathContext.PackageSource);
+                }
+            }
         }
 
         [Fact]
@@ -5255,6 +5264,37 @@ namespace NuGet.Commands.FuncTest
 
             ISet<LibraryIdentity> installedPackages = result.GetAllInstalled();
             installedPackages.Should().HaveCount(1);
+        }
+
+        [Theory]
+        [InlineData(false, null, false)]
+        [InlineData(false, "10.0.100", false)]
+        [InlineData(true, "10.0.100", true)]
+        [InlineData(true, "9.0.100", false)]
+        public async Task Restore_WithLockFilesAndSdkAnalysisLevel_UsesCorrectResolver(bool useSDK, string SDKAnalysisLevel, bool useNewResolver)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("a", "1.0.0"));
+
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.UsingMicrosoftNETSdk = useSDK;
+            project1Spec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties("true", null, false);
+            if (!string.IsNullOrWhiteSpace(SDKAnalysisLevel))
+            {
+                project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion(SDKAnalysisLevel);
+            }
+
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, new TestLogger(), project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue();
+            command._enableNewDependencyResolver.Should().Be(useNewResolver);
         }
 
         private static void CreateFakeProjectFile(PackageSpec project2spec)

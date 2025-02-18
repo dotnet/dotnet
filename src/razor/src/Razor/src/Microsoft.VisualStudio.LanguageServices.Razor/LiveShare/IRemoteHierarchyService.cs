@@ -11,5 +11,5 @@ namespace Microsoft.VisualStudio.Razor.LiveShare;
 // This type must be a public interface in order to to be implemented as an RPC proxy by live share.
 public interface IRemoteHierarchyService : ICollaborationService
 {
-    public Task<bool> HasCapabilityAsync(Uri pathOfFileInProject, string capability, CancellationToken cancellationToken);
+    Task<bool> HasCapabilityAsync(Uri pathOfFileInProject, string capability, CancellationToken cancellationToken);
 }

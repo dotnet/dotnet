@@ -15,7 +15,9 @@ namespace Microsoft.SignCheck.Verification
 
         public const int S_OK = 0;
 
+#pragma warning disable SYSLIB0019
         internal static ICLRStrongName ClrStrongName = (ICLRStrongName)RuntimeEnvironment.GetRuntimeInterfaceAsObject(new Guid(CLSID_CLRStrongName), new Guid(IID_ICLRStrongName));
+#pragma warning restore SYSLIB0019
 
         /// <summary>
         /// Retrieve the StrongName token from an assembly.

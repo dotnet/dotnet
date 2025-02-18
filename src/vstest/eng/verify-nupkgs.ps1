@@ -26,7 +26,7 @@ function Verify-Nuget-Packages {
         "Microsoft.TestPlatform.ObjectModel"          = 92;
         "Microsoft.TestPlatform.AdapterUtilities"     = 61;
         "Microsoft.TestPlatform.Portable"             = 608;
-        "Microsoft.TestPlatform.TestHost"             = 62;
+        "Microsoft.TestPlatform.TestHost"             = 63;
         "Microsoft.TestPlatform.TranslationLayer"     = 122;
         "Microsoft.TestPlatform.Internal.Uwp"         = 38;
     }
@@ -189,8 +189,8 @@ function Verify-NugetPackageExe {
     }
 
     $errs = @()
-    $exes = $UnzipNugetPackages | Get-ChildItem -Filter *.exe -Recurse -Force 
-    if (0 -eq @($exes).Length) { 
+    $exes = $UnzipNugetPackages | Get-ChildItem -Filter *.exe -Recurse -Force
+    if (0 -eq @($exes).Length) {
         throw "No exe files were found."
     }
 
@@ -215,7 +215,7 @@ function Verify-NugetPackageExe {
         $fullName = $_.FullName
         $name = $_.Name
 
-        if ("x86" -eq $platform) { 
+        if ("x86" -eq $platform) {
             $corFlagsOutput = & $corFlags $fullName
             # this is an native x86 exe or a .net x86 that requires of prefers 32bit
             $platform = if ($corFlagsOutput -like "*does not have a valid managed header*" -or $corFlagsOutput -like "*32BITREQ  : 1*" -or $corFlagsOutput -like "*32BITPREF : 1*") {
@@ -268,7 +268,7 @@ function Verify-NugetPackageExe {
         "Success: $name is $platform - $fullName"
     }
 
-    if ($errs) { 
+    if ($errs) {
         throw "Fail!:`n$($errs -join "`n")"
     }
 }
@@ -282,7 +282,7 @@ function Verify-NugetPackageVersion {
     )
 
     # look for vstest.console.dll because unified build for .NET does not produce vstest.console.exe
-    $exes = $UnzipNugetPackages | Get-ChildItem -Filter vstest.console.dll -Recurse -Force 
+    $exes = $UnzipNugetPackages | Get-ChildItem -Filter vstest.console.dll -Recurse -Force
     if (0 -eq @($exes).Length) {
         throw "No vstest.console.dll files were found."
     }
@@ -294,7 +294,7 @@ function Verify-NugetPackageVersion {
         else {
             "$_ version $($_.VersionInfo.ProductVersion) is ok."
         }
-    } 
+    }
 
 }
 

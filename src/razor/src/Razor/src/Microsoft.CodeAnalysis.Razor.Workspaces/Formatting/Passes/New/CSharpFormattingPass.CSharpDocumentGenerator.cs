@@ -323,7 +323,18 @@ internal partial class CSharpFormattingPass
                 return EmitCurrentLineAsCSharp();
             }
 
+            public override LineInfo VisitMarkupEphemeralTextLiteral(MarkupEphemeralTextLiteralSyntax node)
+            {
+                // A MarkupEphemeralTextLiteral is an escaped @ sign, eg in CSS "@@font-face". We just treat it like markup text
+                return VisitMarkupLiteral();
+            }
+
             public override LineInfo VisitMarkupTextLiteral(MarkupTextLiteralSyntax node)
+            {
+                return VisitMarkupLiteral();
+            }
+
+            private LineInfo VisitMarkupLiteral()
             {
                 // For markup text literal, we always want to honour the Html formatter, so we supply the Html indent.
                 // Normally that would only happen if we were inside a markup element

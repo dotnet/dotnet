@@ -3,7 +3,6 @@
     "dotnet": "10.0.100-alpha.1.25077.2",
     "runtimes": {
       "dotnet": [
-        "2.1.7",
         "$(VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion)"
       ]
     },
@@ -12,8 +11,9 @@
     }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25080.7",
-    "Microsoft.DotNet.Helix.Sdk": "10.0.0-beta.25080.7"
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25113.2",
+    "Microsoft.DotNet.Helix.Sdk": "10.0.0-beta.25113.2",
+    "Microsoft.Build.NoTargets": "3.7.56"
   },
   "sdk": {
     "version": "10.0.100-alpha.1.25077.2"

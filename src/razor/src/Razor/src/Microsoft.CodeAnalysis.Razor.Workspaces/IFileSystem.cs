@@ -8,9 +8,9 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal interface IFileSystem
 {
-    public IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption);
+    IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption);
 
-    public IEnumerable<string> GetDirectories(string workspaceDirectory);
+    IEnumerable<string> GetDirectories(string workspaceDirectory);
 
     bool FileExists(string filePath);
 
