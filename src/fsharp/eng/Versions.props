@@ -73,8 +73,8 @@
   </PropertyGroup>
   <!-- Packages that come from https://github.com/dotnet/maintenance-packages need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1-rtm.final</SystemRuntimeCompilerServicesUnsafeVersion>
-    <SystemValueTupleVersion>4.6.0-rtm.final</SystemValueTupleVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemValueTupleVersion>4.6.0</SystemValueTupleVersion>
   </PropertyGroup>
   <!-- Packages that come from https://github.com/dotnet/maintenance-packages need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">

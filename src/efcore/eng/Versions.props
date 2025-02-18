@@ -34,7 +34,7 @@
   </PropertyGroup>
     <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
   <PropertyGroup Label="Dependencies from dotnet/maintenance-packages (build-source-only)" Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1-rtm.final</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
   <PropertyGroup Label="Dependencies from dotnet/maintenance-packages (not build-source-only)" Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <SystemRuntimeCompilerServicesUnsafeVersion>6.0.0</SystemRuntimeCompilerServicesUnsafeVersion>
