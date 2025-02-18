@@ -33,6 +33,14 @@
       Now we aren't sure why this exposes a "flaky" issue; however, to workaround the break we pin the following packages to workaround the issue.
     -->
     <PackageReference Include="Microsoft.VisualStudio.RpcContracts" />
+
+    <!--
+      Razor and Roslyn both use CLaSP as the basis for their language servers, but CLaSP is a source package
+      which means when we reference Roslyn's server to get the LSP protocol types (which we have a restricted
+      IVT to) we get ambiguous type errors for everything in CLaSP. To fix this we reference Roslyn with an
+      alias, and then have a global using for the LSP protocol types only.
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <ItemGroup>

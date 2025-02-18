@@ -61,6 +61,8 @@
     <PackageReference Include="xunit.extensibility.execution" />
     <PackageReference Include="Xunit.Combinatorial" />
     <PackageReference Include="Xunit.StaFact" />
+
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">

@@ -55,6 +55,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.CommonLanguageServerProtocol.Framework" Version="$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Css.Parser" Version="1.0.0-20230414.1" />
     <PackageVersion Include="Microsoft.DiaSymReader" Version="2.0.0" />
