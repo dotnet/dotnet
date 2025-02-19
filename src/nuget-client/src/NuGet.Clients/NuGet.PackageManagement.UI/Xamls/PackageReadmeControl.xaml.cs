@@ -70,6 +70,7 @@ namespace NuGet.PackageManagement.UI
                 var previewBuilder = new PreviewBuilder();
 #pragma warning restore CS0618 // Type or member is obsolete
                 previewBuilder.EditorOptions = options.GlobalOptions;
+                previewBuilder.IsVsToolWindow = true;
                 _markdownPreview = previewBuilder.Build();
                 descriptionMarkdownPreview.Content = _markdownPreview?.VisualElement;
             }
