@@ -41,14 +41,14 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var documentMappingService = lspServices.GetRequiredService<IDocumentMappingService>();
         var clientConnection = lspServices.GetRequiredService<IClientConnection>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
+        var completionTriggerAndCommitCharacters = lspServices.GetRequiredService<CompletionTriggerAndCommitCharacters>();
         var loggerFactory = lspServices.GetRequiredService<ILoggerFactory>();
 
-        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache);
+        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache, completionTriggerAndCommitCharacters);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
-
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, completionTriggerAndCommitCharacters, telemetryReporter: null, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -141,8 +141,12 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider
     {
-        public TestDelegatedCompletionListProvider(IDocumentMappingService documentMappingService, IClientConnection clientConnection, CompletionListCache completionListCache)
-            : base(documentMappingService, clientConnection, completionListCache)
+        public TestDelegatedCompletionListProvider(
+            IDocumentMappingService documentMappingService,
+            IClientConnection clientConnection,
+            CompletionListCache completionListCache,
+            CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
+            : base(documentMappingService, clientConnection, completionListCache, completionTriggerAndCommitCharacters)
         {
         }
 

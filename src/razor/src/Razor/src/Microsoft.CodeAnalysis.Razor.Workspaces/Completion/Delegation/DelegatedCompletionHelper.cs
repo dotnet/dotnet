@@ -30,18 +30,22 @@ internal static class DelegatedCompletionHelper
         [new SnippetResponseRewriter(), new TextEditResponseRewriter(), new DesignTimeHelperResponseRewriter()];
 
     // Currently we only have one HTML response re-writer. Should we ever need more, we can create a common base and a collection
-    private static readonly HtmlCommitCharacterResponseRewriter s_delegatedHtmlCompletionResponseRewriter = new HtmlCommitCharacterResponseRewriter();
+    private static readonly HtmlCommitCharacterResponseRewriter s_delegatedHtmlCompletionResponseRewriter = new();
 
     /// <summary>
     /// Modifies completion context if needed so that it's acceptable to the delegated language.
     /// </summary>
     /// <param name="context">Original completion context passed to the completion handler</param>
     /// <param name="languageKind">Language of the completion position</param>
+    /// <param name="completionTriggerAndCommitCharacters">Per-client set of trigger and commit characters</param>
     /// <returns>Possibly modified completion context</returns>
     /// <remarks>For example, if we invoke C# completion in Razor via @ character, we will not
     /// want C# to see @ as the trigger character and instead will transform completion context
     /// into "invoked" and "explicit" rather than "typing", without a trigger character</remarks>
-    public static VSInternalCompletionContext RewriteContext(VSInternalCompletionContext context, RazorLanguageKind languageKind)
+    public static VSInternalCompletionContext? RewriteContext(
+        VSInternalCompletionContext context,
+        RazorLanguageKind languageKind,
+        CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
     {
         Debug.Assert(languageKind != RazorLanguageKind.Razor,
             $"{nameof(RewriteContext)} should be called for delegated completion only");
@@ -60,11 +64,12 @@ internal static class DelegatedCompletionHelper
             return context;
         }
 
-        if (languageKind == RazorLanguageKind.Html
-            && CompletionTriggerAndCommitCharacters.HtmlTriggerCharacters.Contains(triggerCharacter))
+        if (languageKind == RazorLanguageKind.Html)
         {
-            // HTML trigger character for HTML content
-            return context;
+            // For HTML we don't want to delegate to HTML language server is completion is due to a trigger characters that is not
+            // HTML trigger character. Doing so causes bad side effects in VSCode HTML client as we will end up with non-matching
+            // completion entries
+            return completionTriggerAndCommitCharacters.HtmlTriggerCharacters.Contains(triggerCharacter) ? context : null;
         }
 
         // Trigger character not associated with the current language. Transform the context into an invoked context.

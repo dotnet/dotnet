@@ -83,6 +83,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CompletionListProvider>();
         services.AddSingleton<DelegatedCompletionListProvider>();
         services.AddSingleton<RazorCompletionListProvider>();
+        services.AddSingleton<CompletionTriggerAndCommitCharacters>();
 
         services.AddSingleton<AggregateCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, RazorCompletionItemResolver>();

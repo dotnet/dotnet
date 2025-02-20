@@ -84,6 +84,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             ShowAllCSharpCodeActions = false,
             UseNewFormattingEngine = false,
             SupportsSoftSelectionInCompletion = true,
+            UseVsCodeCompletionTriggerCharacters = false,
         };
         UpdateClientInitializationOptions(c => c);
 

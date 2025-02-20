@@ -10,7 +10,8 @@ internal class TestLanguageServerFeatureOptions(
     bool forceRuntimeCodeGeneration = false,
     bool updateBuffersForClosedDocuments = false,
     bool useNewFormattingEngine = false,
-    bool supportsSoftSelectionInCompletion = true) : LanguageServerFeatureOptions
+    bool supportsSoftSelectionInCompletion = true,
+    bool vsCodeCompletionTriggerCharacters = false) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
 
@@ -43,4 +44,6 @@ internal class TestLanguageServerFeatureOptions(
     public override bool UseNewFormattingEngine => useNewFormattingEngine;
 
     public override bool SupportsSoftSelectionInCompletion => supportsSoftSelectionInCompletion;
+
+    public override bool UseVsCodeCompletionTriggerCharacters => vsCodeCompletionTriggerCharacters;
 }

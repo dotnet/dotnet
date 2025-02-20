@@ -30,7 +30,8 @@ internal class TestDelegatedCompletionListProvider : DelegatedCompletionListProv
             {
                 [LanguageServerConstants.RazorCompletionEndpointName] = completionFactory.OnDelegationAsync,
             }),
-            new CompletionListCache())
+            new CompletionListCache(),
+            new CompletionTriggerAndCommitCharacters(TestLanguageServerFeatureOptions.Instance))
     {
         _completionFactory = completionFactory;
     }

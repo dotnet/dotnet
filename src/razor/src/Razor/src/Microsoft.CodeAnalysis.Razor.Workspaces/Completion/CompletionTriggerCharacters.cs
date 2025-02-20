@@ -3,21 +3,33 @@
 
 using System.Collections.Frozen;
 using System.Linq;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal static class CompletionTriggerAndCommitCharacters
+internal class CompletionTriggerAndCommitCharacters(LanguageServerFeatureOptions languageServerFeatureOptions)
 {
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+
+    private static readonly FrozenSet<string> s_vsHtmlTriggerCharacters = new[] { ":", "@", "#", ".", "!", "*", ",", "(", "[", "-", "<", "&", "\\", "/", "'", "\"", "=", ":", " ", "`" }.ToFrozenSet();
+    private static readonly FrozenSet<string> s_vsCodeHtmlTriggerCharacters = new[] { "@", "#", ".", "!", ",", "-", "<", }.ToFrozenSet();
+    private FrozenSet<string>? _allDelegationTriggerCharacters;
+    private string[]? _allTriggerCharacters;
+
     public static FrozenSet<string> RazorTriggerCharacters { get; } = new[] { "@", "<", ":", " " }.ToFrozenSet();
     /// <summary>
     /// Tigger characters that can trigger both Razor and Delegation completion (e.g."@" triggers Razor directives and C#)
     /// </summary>
     public static FrozenSet<string> RazorDelegationTriggerCharacters { get; } = new[] { "@" }.ToFrozenSet();
     public static FrozenSet<string> CSharpTriggerCharacters { get; } = new[] { " ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~" }.ToFrozenSet();
-    public static FrozenSet<string> HtmlTriggerCharacters { get; } = new[] { ":", "@", "#", ".", "!", "*", ",", "(", "[", "-", "<", "&", "\\", "/", "'", "\"", "=", ":", " ", "`" }.ToFrozenSet();
-    public static FrozenSet<string> AllDelegationTriggerCharacters { get; } = RazorDelegationTriggerCharacters.Union(CSharpTriggerCharacters).Union(HtmlTriggerCharacters).ToFrozenSet();
-    public static string[] AllTriggerCharacters { get; } = RazorTriggerCharacters.Union(AllDelegationTriggerCharacters).ToArray();
+    public FrozenSet<string> HtmlTriggerCharacters =>
+        _languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters ? s_vsCodeHtmlTriggerCharacters : s_vsHtmlTriggerCharacters;
+
+    public FrozenSet<string> AllDelegationTriggerCharacters => _allDelegationTriggerCharacters
+        ??= RazorDelegationTriggerCharacters.Union(CSharpTriggerCharacters).Union(HtmlTriggerCharacters).ToFrozenSet();
+
+    public string[] AllTriggerCharacters => _allTriggerCharacters ??= [.. RazorTriggerCharacters.Union(AllDelegationTriggerCharacters)];
 
     /// <summary>
     /// This is the intersection of C# and HTML commit characters.
