@@ -47,4 +47,9 @@ internal abstract class LanguageServerFeatureOptions
     /// character with a soft-selected item will not commit that item.
     /// </summary>
     public abstract bool SupportsSoftSelectionInCompletion { get; }
+
+    /// <summary>
+    /// Indicates that VSCode-compatible completion trigger character set should be used
+    /// </summary>
+    public abstract bool UseVsCodeCompletionTriggerCharacters { get; }
 }

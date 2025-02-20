@@ -178,6 +178,7 @@ internal sealed class RemoteServiceInvoker(
                     ShowAllCSharpCodeActions = _languageServerFeatureOptions.ShowAllCSharpCodeActions,
                     UseNewFormattingEngine = _languageServerFeatureOptions.UseNewFormattingEngine,
                     SupportsSoftSelectionInCompletion = _languageServerFeatureOptions.SupportsSoftSelectionInCompletion,
+                    UseVsCodeCompletionTriggerCharacters = _languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters,
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");

@@ -40,6 +40,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration ?? _defaults.ForceRuntimeCodeGeneration;
     public override bool UseNewFormattingEngine => _useNewFormattingEngine ?? _defaults.UseNewFormattingEngine;
     public override bool SupportsSoftSelectionInCompletion => false;
+    public override bool UseVsCodeCompletionTriggerCharacters => true;
 
     public ConfigurableLanguageServerFeatureOptions(string[] args)
     {

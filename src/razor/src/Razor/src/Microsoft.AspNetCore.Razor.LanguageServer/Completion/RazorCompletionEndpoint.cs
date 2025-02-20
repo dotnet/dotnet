@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -18,11 +19,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 [RazorLanguageServerEndpoint(Methods.TextDocumentCompletionName)]
 internal class RazorCompletionEndpoint(
     CompletionListProvider completionListProvider,
+    CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters,
     ITelemetryReporter? telemetryReporter,
     RazorLSPOptionsMonitor optionsMonitor)
     : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
+    private readonly CompletionTriggerAndCommitCharacters _completionTriggerAndCommitCharacters = completionTriggerAndCommitCharacters;
     private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
 
@@ -37,7 +40,7 @@ internal class RazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = CompletionTriggerAndCommitCharacters.AllTriggerCharacters,
+            TriggerCharacters = _completionTriggerAndCommitCharacters.AllTriggerCharacters,
             AllCommitCharacters = CompletionTriggerAndCommitCharacters.AllCommitCharacters
         };
     }

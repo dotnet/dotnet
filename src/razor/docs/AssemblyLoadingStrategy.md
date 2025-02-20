@@ -33,7 +33,7 @@ sequenceDiagram
   #create participant factory(2) as Factory
   #(see https://github.com/mermaid-js/mermaid/issues/5023)
   factory(1)->>factory(2): Create New Factory
-  factory(2)-->>factory(1):
+  factory(2)-->>factory(1):  
   factory(1)->>factory(2): Create Service Internal
   #create participant serviceInstance as Service Instance
   factory(2)->>serviceInstance: Create Service instance
@@ -42,7 +42,7 @@ sequenceDiagram
   serviceHub->>serviceInstance: Handle Request
   serviceInstance-->>razorAlc: Implicit load request
   razorAlc->>razorAlc: Load source generator
-  razorAlc-->>serviceInstance:
+  razorAlc-->>serviceInstance:  
   serviceInstance->>serviceInstance: Handle Request
   serviceInstance-->>serviceHub: Result
 ```
