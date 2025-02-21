@@ -759,8 +759,8 @@ namespace Microsoft.Build.Execution
 #endif
                 case "2":
                     // Sometimes easier to attach rather than deal with JIT prompt
-                    Process currentProcess = Process.GetCurrentProcess();
-                    Console.WriteLine($"Waiting for debugger to attach ({currentProcess.MainModule!.FileName} PID {currentProcess.Id}).  Press enter to continue...");
+                    Console.WriteLine($"Waiting for debugger to attach ({EnvironmentUtilities.ProcessPath} PID {EnvironmentUtilities.CurrentProcessId}).  Press enter to continue...");
+
                     Console.ReadLine();
                     break;
             }
@@ -2940,7 +2940,7 @@ namespace Microsoft.Build.Execution
                     ((IBuildComponentHost)this).GetComponent(BuildComponentType.BuildCheckManagerProvider) as IBuildCheckManagerProvider;
                 buildCheckManagerProvider!.Instance.SetDataSource(BuildCheckDataSource.EventArgs);
 
-                // We do want to dictate our own forwarding logger (otherwise CentralForwardingLogger with minimum transferred importance MessageImportnace.Low is used)
+                // We do want to dictate our own forwarding logger (otherwise CentralForwardingLogger with minimum transferred importance MessageImportance.Low is used)
                 // In the future we might optimize for single, in-node build scenario - where forwarding logger is not needed (but it's just quick pass-through)
                 LoggerDescription forwardingLoggerDescription = new LoggerDescription(
                     loggerClassName: typeof(BuildCheckForwardingLogger).FullName,
@@ -2954,6 +2954,25 @@ namespace Microsoft.Build.Execution
                         buildCheckManagerProvider.Instance);
 
                 ForwardingLoggerRecord[] forwardingLogger = { new ForwardingLoggerRecord(buildCheckLogger, forwardingLoggerDescription) };
+
+                forwardingLoggers = forwardingLoggers?.Concat(forwardingLogger) ?? forwardingLogger;
+            }
+
+            if (_buildParameters.IsTelemetryEnabled)
+            {
+                // We do want to dictate our own forwarding logger (otherwise CentralForwardingLogger with minimum transferred importance MessageImportance.Low is used)
+                // In the future we might optimize for single, in-node build scenario - where forwarding logger is not needed (but it's just quick pass-through)
+                LoggerDescription forwardingLoggerDescription = new LoggerDescription(
+                    loggerClassName: typeof(InternalTelemeteryForwardingLogger).FullName,
+                    loggerAssemblyName: typeof(InternalTelemeteryForwardingLogger).GetTypeInfo().Assembly.GetName().FullName,
+                    loggerAssemblyFile: null,
+                    loggerSwitchParameters: null,
+                    verbosity: LoggerVerbosity.Quiet);
+
+                ILogger internalTelemetryLogger =
+                    new InternalTelemetryConsumingLogger();
+
+                ForwardingLoggerRecord[] forwardingLogger = { new ForwardingLoggerRecord(internalTelemetryLogger, forwardingLoggerDescription) };
 
                 forwardingLoggers = forwardingLoggers?.Concat(forwardingLogger) ?? forwardingLogger;
             }
