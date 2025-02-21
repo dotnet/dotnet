@@ -4,3 +4,4 @@
 ;; This issue tracks a way to implement exclusions via Signing.props and avoid this extra file: https://github.com/dotnet/arcade/issues/2888
 *.js;;We don't need to code sign .js files because they are not used in Windows Script Host
 *.exe;*.whl;The .whl files are not supported by ESRP, https://github.com/dotnet/runtime/issues/53252
+libbinaryen.dylib;;fails to sign via ESRP, skip for now
