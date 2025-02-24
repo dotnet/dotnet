@@ -42,6 +42,8 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Runtime.CompilerServices.Unsafe.6.1.1.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.DispatchProxy.4.8.1.csproj" />
 
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.MetadataLoadContext.8.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.17.12.6.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
