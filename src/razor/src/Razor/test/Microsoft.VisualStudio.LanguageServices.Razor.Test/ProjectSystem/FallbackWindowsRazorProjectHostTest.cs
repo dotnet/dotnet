@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Xunit;
@@ -661,7 +662,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
             IUnconfiguredProjectCommonServices commonServices,
             IServiceProvider serviceProvider,
             ProjectSnapshotManager projectManager)
-            : base(commonServices, serviceProvider, projectManager)
+            : base(commonServices, serviceProvider, projectManager, TestLanguageServerFeatureOptions.Instance)
         {
         }
 

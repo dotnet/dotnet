@@ -49,7 +49,7 @@ public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOu
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);

@@ -86,11 +86,23 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
 
     public override bool TryCreateFor(ITextBuffer hostDocumentBuffer, [NotNullWhen(true)] out VirtualDocument? virtualDocument)
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            virtualDocument = null;
+            return false;
+        }
+
         throw new NotImplementedException("Multiple C# documents per Razor documents are supported, and should be accounted for.");
     }
 
     public override bool TryCreateMultipleFor(ITextBuffer hostDocumentBuffer, [NotNullWhen(true)] out VirtualDocument[]? virtualDocuments)
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            virtualDocuments = null;
+            return false;
+        }
+
         if (hostDocumentBuffer is null)
         {
             throw new ArgumentNullException(nameof(hostDocumentBuffer));

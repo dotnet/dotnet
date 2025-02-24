@@ -1173,8 +1173,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             {
                 if (NextIs(SyntaxKind.Transition))
                 {
-                    // The attribute name is escaped (@@), eat the first @ sign.
+                    // The attribute name is escaped (@@), skip the first @ sign.
                     ephemeralToken = CurrentToken;
+                    NextToken();
+
+                    // And accept the second @ sign.
+                    Debug.Assert(nameTokens.Count == 0);
+                    nameTokens.Add(CurrentToken);
                     NextToken();
                 }
                 else
@@ -1190,7 +1195,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         }
 
-        if (IsValidAttributeNameToken(CurrentToken))
+        if (ephemeralToken is not null || IsValidAttributeNameToken(CurrentToken))
         {
             ReadWhile(
                 static (token, self) =>
@@ -1199,9 +1204,11 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     token.Kind != SyntaxKind.Equals &&
                     token.Kind != SyntaxKind.CloseAngle &&
                     token.Kind != SyntaxKind.OpenAngle &&
+                    (token.Kind != SyntaxKind.Transition || !self.Context.FeatureFlags.AllowCSharpInMarkupAttributeArea) &&
                     (token.Kind != SyntaxKind.ForwardSlash || !self.NextIs(SyntaxKind.CloseAngle)),
                 this,
-                ref nameTokens);
+                ref nameTokens,
+                expectsEmptyBuilder: ephemeralToken is null);
 
             return AttributeNameParsingResult.Success;
         }

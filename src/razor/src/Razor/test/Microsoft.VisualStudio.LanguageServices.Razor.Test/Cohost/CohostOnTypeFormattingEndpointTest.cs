@@ -105,7 +105,7 @@ public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFor
     {
         UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 

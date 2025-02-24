@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact]
+    [FuseFact(Skip = "Cannot edit source generated documents")]
     public Task CSharp_Method()
         => VerifyRenamesAsync(
             input: """
@@ -54,7 +54,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 The end.
                 """);
 
-    [FuseTheory]
+    [FuseTheory(Skip = "Cannot edit source generated documents")]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -102,7 +102,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 """,
             renames: [("Component.razor", "DifferentName.razor")]);
 
-    [FuseTheory]
+    [FuseTheory(Skip = "Cannot edit source generated documents")]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -172,7 +172,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
-        var document = await CreateProjectAndRazorDocumentAsync(source, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 

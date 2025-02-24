@@ -61,7 +61,7 @@ public class RemoveDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
                 $$<p>@currentCount</p>
                 """;
 
-        await VerifyProximityExpressionsAsync(input, ["__o", "this"]);
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class RemoveDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
                 <p>@curr$$entCount</p>
                 """;
 
-        await VerifyProximityExpressionsAsync(input, ["__o", "this"]);
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
     }
 
     [Fact]
@@ -176,7 +176,7 @@ public class RemoveDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
 
     private async Task VerifyProximityExpressionsAsync(TestCode input, string[] extraExpressions)
     {
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var span = inputText.GetLinePosition(input.Position);
@@ -202,7 +202,7 @@ public class RemoveDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
 
     private async Task VerifyBreakpointRangeAsync(TestCode input)
     {
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var span = inputText.GetLinePosition(input.Position);

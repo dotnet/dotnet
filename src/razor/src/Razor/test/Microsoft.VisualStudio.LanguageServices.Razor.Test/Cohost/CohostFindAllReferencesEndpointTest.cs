@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseTheory]
+    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
     [CombinatorialData]
     public Task FindCSharpMember(bool supportsVSExtensions)
         => VerifyFindAllReferencesAsync("""
@@ -36,7 +36,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             """,
             supportsVSExtensions);
 
-    [FuseTheory]
+    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
     [CombinatorialData]
     public async Task ComponentAttribute(bool supportsVSExtensions)
     {
@@ -60,7 +60,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             (FilePath("SurveyPrompt.razor"), surveyPrompt));
     }
 
-    [FuseTheory]
+    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
     [CombinatorialData]
     public async Task OtherCSharpFile(bool supportsVSExtensions)
     {
@@ -100,7 +100,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             return c;
         });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, additionalFiles: additionalFiles.Select(f => (f.fileName, f.testCode.Text)).ToArray());
+        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: additionalFiles.Select(f => (f.fileName, f.testCode.Text)).ToArray());
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 

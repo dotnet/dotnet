@@ -33,8 +33,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool UseRazorCohostServer { get; }
 
-    public abstract bool DisableRazorLanguageServer { get; }
-
     /// <summary>
     /// When enabled, design time code will not be generated. All tooling, except formatting, will be using runtime code generation.
     /// </summary>

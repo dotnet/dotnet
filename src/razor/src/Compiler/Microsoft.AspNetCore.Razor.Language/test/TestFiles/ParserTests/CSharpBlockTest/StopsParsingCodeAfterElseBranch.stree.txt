@@ -178,31 +178,32 @@
                         Whitespace;[ ];
                     MarkupTextLiteral - [274..275)::1 - [{] - Gen<Markup>
                         Text;[{];
-                MarkupMinimizedAttributeBlock - [275..302)::27 - [LF    Debug.WriteLine(@"bar]
+                MarkupMinimizedAttributeBlock - [275..297)::22 - [LF    Debug.WriteLine(]
                     MarkupTextLiteral - [275..281)::6 - [LF    ] - Gen<Markup>
                         NewLine;[LF];
                         Whitespace;[    ];
-                    MarkupTextLiteral - [281..302)::21 - [Debug.WriteLine(@"bar] - Gen<Markup>
+                    MarkupTextLiteral - [281..297)::16 - [Debug.WriteLine(] - Gen<Markup>
                         Text;[Debug.WriteLine(];
-                        Transition;[@];
+                MarkupMiscAttributeContent - [297..298)::1
+                    CSharpCodeBlock - [297..298)::1
+                        CSharpImplicitExpression - [297..298)::1
+                            CSharpTransition - [297..298)::1 - Gen<None>
+                                Transition;[@];
+                            CSharpImplicitExpressionBody - [298..298)::0
+                                CSharpCodeBlock - [298..298)::0
+                                    CSharpExpressionLiteral - [298..298)::0 - [] - Gen<Expr>
+                                        Marker;[];
+                MarkupMiscAttributeContent - [298..314)::16
+                    MarkupTextLiteral - [298..314)::16 - ["bar } baz");LF}] - Gen<Markup>
                         DoubleQuote;["];
                         Text;[bar];
-                MarkupMinimizedAttributeBlock - [302..304)::2 - [ }]
-                    MarkupTextLiteral - [302..303)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
-                    MarkupTextLiteral - [303..304)::1 - [}] - Gen<Markup>
                         Text;[}];
-                MarkupMinimizedAttributeBlock - [304..311)::7 - [ baz");]
-                    MarkupTextLiteral - [304..305)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
-                    MarkupTextLiteral - [305..311)::6 - [baz");] - Gen<Markup>
                         Text;[baz];
                         DoubleQuote;["];
                         Text;[);];
-                MarkupMinimizedAttributeBlock - [311..314)::3 - [LF}]
-                    MarkupTextLiteral - [311..313)::2 - [LF] - Gen<Markup>
                         NewLine;[LF];
-                    MarkupTextLiteral - [313..314)::1 - [}] - Gen<Markup>
                         Text;[}];
                 CloseAngle;[<Missing>];
     EndOfFile;[];

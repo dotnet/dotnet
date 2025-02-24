@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostDocumentPullDiagnosticsTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact]
+    [FuseFact(Skip = "Need to get generated C# doc without OOP")]
     public Task CSharp()
         => VerifyDiagnosticsAsync("""
             <div></div>
@@ -107,7 +107,7 @@ public class CohostDocumentPullDiagnosticsTest(FuseTestContext context, ITestOut
             }]);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to get generated C# doc without OOP")]
     public Task CombinedAndNestedDiagnostics()
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
@@ -139,7 +139,7 @@ public class CohostDocumentPullDiagnosticsTest(FuseTestContext context, ITestOut
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
+        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);

@@ -187,7 +187,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input);
 
         Assert.NotNull(result);
@@ -201,7 +201,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input, htmlResponse);
 
         Assert.NotNull(result);

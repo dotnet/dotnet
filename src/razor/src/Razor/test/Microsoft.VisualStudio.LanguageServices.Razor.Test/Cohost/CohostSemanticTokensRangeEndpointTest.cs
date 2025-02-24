@@ -61,7 +61,7 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
         await VerifySemanticTokensAsync(input, colorBackground, precise);
     }
 
-    [FuseTheory(SkipFuse = "https://github.com/dotnet/razor/issues/10857 and https://github.com/dotnet/razor/issues/11329")]
+    [FuseTheory(Skip = "https://github.com/dotnet/razor/issues/10857 and https://github.com/dotnet/razor/issues/11329")]
     [CombinatorialData]
     public async Task Legacy(bool colorBackground, bool precise)
     {
@@ -118,7 +118,7 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input, fileKind);
+        var document = CreateProjectAndRazorDocument(input, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var legend = TestRazorSemanticTokensLegendService.Instance;

@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
 {
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task NoCodeBlock()
     {
         var input = """
@@ -30,7 +30,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task CodeBlock()
     {
         var input = """
@@ -56,7 +56,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task BindSet()
     {
         var input = """
@@ -84,7 +84,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task BindAfter()
     {
         var input = """
@@ -112,7 +112,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task Callback()
     {
         var input = """
@@ -138,7 +138,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task AsyncCallback()
     {
         var input = """
@@ -164,7 +164,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExistAsync"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task BadCodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -192,7 +192,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
             codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task CodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -231,7 +231,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
             codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task EmptyCodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -264,7 +264,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
             codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task GenerateAsyncEventHandler_NoCodeBlock()
     {
         var input = """
@@ -284,7 +284,7 @@ public class GenerateEventHandlerTests(FuseTestContext context, ITestOutputHelpe
         await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExist"));
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task GenerateAsyncEventHandler_CodeBlock()
     {
         var input = """

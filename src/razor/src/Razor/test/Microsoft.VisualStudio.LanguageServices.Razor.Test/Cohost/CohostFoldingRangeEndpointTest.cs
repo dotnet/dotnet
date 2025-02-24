@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFoldingRangeEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact(SkipFuse = "https://github.com/dotnet/razor/issues/10860")]
+    [FuseFact(Skip = "https://github.com/dotnet/razor/issues/10860")]
     public Task IfStatements()
         => VerifyFoldingRangesAsync("""
             <div>
@@ -54,7 +54,7 @@ public class CohostFoldingRangeEndpointTest(FuseTestContext context, ITestOutput
             }|]
             """);
 
-    [FuseFact(SkipFuse = "https://github.com/dotnet/razor/issues/10860")]
+    [FuseFact(Skip = "https://github.com/dotnet/razor/issues/10860")]
     public Task IfElseStatements()
         => VerifyFoldingRangesAsync("""
             <div>
@@ -220,7 +220,7 @@ public class CohostFoldingRangeEndpointTest(FuseTestContext context, ITestOutput
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
-        var document = await CreateProjectAndRazorDocumentAsync(source, fileKind);
+        var document = CreateProjectAndRazorDocument(source, fileKind);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlSpans = spans.GetValueOrDefault("html").NullToEmpty();

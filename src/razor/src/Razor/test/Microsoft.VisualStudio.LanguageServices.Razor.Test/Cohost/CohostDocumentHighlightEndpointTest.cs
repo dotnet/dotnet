@@ -150,7 +150,7 @@ public class CohostDocumentHighlightEndpointTest(FuseTestContext context, ITestO
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetPositionAndSpans(input, out var source, out int cursorPosition, out ImmutableArray<TextSpan> spans);
-        var document = await CreateProjectAndRazorDocumentAsync(source);
+        var document = CreateProjectAndRazorDocument(source);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 

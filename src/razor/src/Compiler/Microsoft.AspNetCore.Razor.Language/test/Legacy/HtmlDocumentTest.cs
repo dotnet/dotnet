@@ -265,4 +265,92 @@ public class HtmlDocumentTest() : ParserTestBase(layer: TestProject.Layer.Compil
     {
         ParseDocumentTest("<span foo='@ @' />");
     }
+
+    [Fact]
+    public void OpenAngle_01()
+    {
+        ParseDocumentTest("""
+            < @("a").@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_02()
+    {
+        ParseDocumentTest("""
+            < @("a").@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_03()
+    {
+        ParseDocumentTest("""
+            < @("a")x@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_04()
+    {
+        ParseDocumentTest("""
+            < @("a")x@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_05()
+    {
+        ParseDocumentTest("""
+            < @("a").@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_06()
+    {
+        ParseDocumentTest("""
+            < @("a").@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_07()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_08()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_09()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_10()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_11()
+    {
+        ParseDocumentTest("""
+            < @@
+            """);
+    }
 }

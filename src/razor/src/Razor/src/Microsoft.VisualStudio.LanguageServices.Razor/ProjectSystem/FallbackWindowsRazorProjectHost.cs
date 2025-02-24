@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
 using ContentItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
@@ -44,8 +45,9 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        ProjectSnapshotManager projectManager)
-        : base(commonServices, serviceProvider, projectManager)
+        ProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
+        : base(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
     {
     }
 

@@ -50,6 +50,11 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         {
             var lineInfo = generatedDocument.LineInfo[iOriginal];
 
+            if (lineInfo.SkipPreviousLine)
+            {
+                iFormatted++;
+            }
+
             var formattedLine = formattedCSharpText.Lines[iFormatted];
             if (lineInfo.ProcessIndentation &&
                 formattedLine.GetFirstNonWhitespaceOffset() is { } formattedIndentation)

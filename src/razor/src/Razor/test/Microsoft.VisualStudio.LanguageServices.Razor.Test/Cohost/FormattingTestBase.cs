@@ -47,7 +47,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
         if (!allowDiagnostics)
         {
             //TODO: Tests in LanguageServer have extra components that are not present in this project, like Counter, etc.
@@ -102,7 +102,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 

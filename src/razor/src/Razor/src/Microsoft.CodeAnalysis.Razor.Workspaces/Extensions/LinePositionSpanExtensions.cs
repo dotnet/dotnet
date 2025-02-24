@@ -60,4 +60,7 @@ internal static class LinePositionSpanExtensions
 
     public static LinePositionSpan WithEnd(this LinePositionSpan span, Func<LinePosition, LinePosition> computeNewEnd)
         => new(span.Start, computeNewEnd(span.End));
+
+    public static bool SpansMultipleLines(this LinePositionSpan span)
+        => span.Start.Line != span.End.Line;
 }

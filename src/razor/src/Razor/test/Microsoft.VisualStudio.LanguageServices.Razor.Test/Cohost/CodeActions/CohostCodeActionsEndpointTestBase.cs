@@ -52,7 +52,7 @@ public abstract class CohostCodeActionsEndpointTestBase(FuseTestContext context,
             return options;
         });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
 
         var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex, expectOffer: expected is not null);
 

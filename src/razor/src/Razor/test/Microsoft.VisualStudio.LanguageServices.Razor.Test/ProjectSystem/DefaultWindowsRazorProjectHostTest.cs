@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Xunit;
@@ -624,7 +625,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         // Act & Assert
         await host.GetTestAccessor().InitializeAsync();
@@ -639,7 +640,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         // Act & Assert
         await Task.Run(async () => await host.GetTestAccessor().InitializeAsync());
@@ -658,7 +659,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -704,7 +705,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -758,7 +759,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     public void IntermediateOutputPathCalculationHandlesRelativePaths(string baseIntermediateOutputPath, string intermediateOutputPath, string expectedCombinedIOP)
     {
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var state = TestProjectRuleSnapshot.CreateProperties(
             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
@@ -786,7 +787,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     public void IntermediateOutputPathCalculationHandlesRelativePaths_BaseIntermediateOutputPath(string baseIntermediateOutputPath, string msbuildProjectDirectoryPropertyName, string intermediateOutputPath, string expectedCombinedIOP)
     {
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var state = TestProjectRuleSnapshot.CreateProperties(
             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
@@ -830,7 +831,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -883,7 +884,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -938,7 +939,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1095,7 +1096,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1171,7 +1172,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1252,7 +1253,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1350,7 +1351,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 

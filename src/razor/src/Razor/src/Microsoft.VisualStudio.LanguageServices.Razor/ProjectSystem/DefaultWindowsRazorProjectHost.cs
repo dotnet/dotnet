@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
@@ -31,8 +32,9 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 internal class DefaultWindowsRazorProjectHost(
     IUnconfiguredProjectCommonServices commonServices,
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    ProjectSnapshotManager projectManager)
-    : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager)
+    ProjectSnapshotManager projectManager,
+    LanguageServerFeatureOptions languageServerFeatureOptions)
+    : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
 {
     private const string RootNamespaceProperty = "RootNamespace";
     private static readonly ImmutableHashSet<string> s_ruleNames = ImmutableHashSet.CreateRange(new string[]

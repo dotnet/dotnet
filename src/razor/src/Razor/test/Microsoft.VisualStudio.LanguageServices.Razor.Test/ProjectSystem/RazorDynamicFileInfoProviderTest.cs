@@ -75,7 +75,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
             NoOpTelemetryReporter.Instance);
 
         _provider = new RazorDynamicFileInfoProvider(
-            documentServiceFactory, editorFeatureDetector, filePathService, WorkspaceProvider, _projectManager, fallbackProjectManager);
+            documentServiceFactory, editorFeatureDetector, filePathService, WorkspaceProvider, _projectManager, fallbackProjectManager, languageServerFeatureOptions);
         _testAccessor = _provider.GetTestAccessor();
 
         var lspDocumentContainerMock = new StrictMock<IDynamicDocumentContainer>();

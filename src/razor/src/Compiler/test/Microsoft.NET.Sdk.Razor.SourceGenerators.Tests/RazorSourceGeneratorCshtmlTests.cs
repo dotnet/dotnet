@@ -116,4 +116,26 @@ public sealed class RazorSourceGeneratorCshtmlTests : RazorSourceGeneratorTestsB
         // The style attribute should not be rendered at all.
         Assert.DoesNotContain("style", html);
     }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11518")]
+    public async Task OpenAngle()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Pages/Index.cshtml"] = """
+                < @("a").@("b")
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
+    }
 }
