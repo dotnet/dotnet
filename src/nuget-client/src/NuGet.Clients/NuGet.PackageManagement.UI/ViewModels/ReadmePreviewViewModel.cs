@@ -11,7 +11,7 @@ using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.UI.ViewModels
 {
-    public sealed class ReadmePreviewViewModel : TitledPageViewModelBase
+    public sealed class ReadmePreviewViewModel : TitledPageViewModelBase, IDisposable
     {
         private bool _errorWithReadme;
         private INuGetPackageFileService _nugetPackageFileService;
@@ -19,6 +19,9 @@ namespace NuGet.PackageManagement.UI.ViewModels
         private DetailedPackageMetadata _packageMetadata;
         private bool _canRenderLocalReadme;
         private bool _isBusy;
+        private bool _disposed;
+        private CancellationTokenSource _readmeLoadingCancellationTokenSource = new CancellationTokenSource();
+
 
 #pragma warning disable CS0618 // Type or member is obsolete
         public ReadmePreviewViewModel(INuGetPackageFileService packageFileService, ItemFilter itemFilter, bool isReadmeFeatureEnabled)
@@ -68,9 +71,6 @@ namespace NuGet.PackageManagement.UI.ViewModels
             set => SetAndRaisePropertyChanged(ref _rawReadme, value);
         }
 
-        //For testing purposes
-        internal DetailedPackageMetadata PackageMetadata => _packageMetadata;
-
         public async Task ItemFilterChangedAsync(ItemFilter filter)
         {
             var oldRenderLocalReadme = _canRenderLocalReadme;
@@ -79,23 +79,31 @@ namespace NuGet.PackageManagement.UI.ViewModels
             {
                 if (_packageMetadata != null)
                 {
-                    await LoadReadmeAsync(CancellationToken.None);
+                    var newToken = ExchangeCancellationTokenSource();
+                    await LoadReadmeAsync(newToken.Token);
                 }
             }
         }
 
-        public async Task SetPackageMetadataAsync(DetailedPackageMetadata packageMetadata, CancellationToken cancellationToken)
+        public async Task SetPackageMetadataAsync(DetailedPackageMetadata packageMetadata)
         {
-            if (packageMetadata != null && (
+            if (ShouldUpdatePackageMetadata(packageMetadata))
+            {
+                var newToken = ExchangeCancellationTokenSource();
+                _packageMetadata = packageMetadata;
+                await LoadReadmeAsync(newToken.Token);
+            }
+        }
+
+        // for testing purposes
+        internal bool ShouldUpdatePackageMetadata(DetailedPackageMetadata packageMetadata)
+        {
+            return packageMetadata != null && (
                 !string.Equals(packageMetadata.Id, _packageMetadata?.Id)
                 || packageMetadata.Version != _packageMetadata?.Version
                 || !string.Equals(packageMetadata.ReadmeFileUrl, _packageMetadata?.ReadmeFileUrl)
                 || !string.Equals(packageMetadata.PackagePath, _packageMetadata?.PackagePath)
-                ))
-            {
-                _packageMetadata = packageMetadata;
-                await LoadReadmeAsync(cancellationToken);
-            }
+                );
         }
 
         private static bool CanRenderLocalReadme(ItemFilter filter)
@@ -150,6 +158,34 @@ namespace NuGet.PackageManagement.UI.ViewModels
                     IsBusy = false;
                 }
             }
+        }
+
+        private CancellationTokenSource ExchangeCancellationTokenSource()
+        {
+            var newCts = new CancellationTokenSource();
+            var oldCts = Interlocked.Exchange(ref _readmeLoadingCancellationTokenSource, newCts);
+            oldCts?.Cancel();
+            oldCts?.Dispose();
+            return newCts;
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _readmeLoadingCancellationTokenSource?.Cancel();
+                    _readmeLoadingCancellationTokenSource?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

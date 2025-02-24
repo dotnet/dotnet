@@ -440,11 +440,32 @@ namespace NuGet.Frameworks.Test
 
         public static IEnumerable<object[]> NuGetFramework_Parse_CommonFramework_ReturnsStaticInstance_Data()
         {
-            yield return new object[] { "net472", FrameworkConstants.CommonFrameworks.Net472 };
-            yield return new object[] { "net5.0", FrameworkConstants.CommonFrameworks.Net50 };
-            yield return new object[] { "net6.0", FrameworkConstants.CommonFrameworks.Net60 };
-            yield return new object[] { "net7.0", FrameworkConstants.CommonFrameworks.Net70 };
-            yield return new object[] { "net8.0", FrameworkConstants.CommonFrameworks.Net80 };
+            var commonFrameworksType = typeof(FrameworkConstants.CommonFrameworks);
+
+            foreach (var field in commonFrameworksType.GetFields())
+            {
+                var frameworkObject = field.GetValue(null) as NuGetFramework;
+                if (frameworkObject is null)
+                {
+                    Assert.Fail($"FrameworkConstants.CommonFrameworks.{field.Name} is not a NuGetFramework");
+                }
+
+                // Check all versions of .NET Standard and .NET (CoreApp)
+                if (frameworkObject.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard
+                    || frameworkObject.Framework == FrameworkConstants.FrameworkIdentifiers.NetCoreApp)
+                {
+                    var shortFolderName = frameworkObject.GetShortFolderName();
+                    yield return [shortFolderName, frameworkObject];
+                }
+
+                // For .NET Framework, only check versions 4.0 and above, since few packages target older versions
+                if (frameworkObject.Framework == FrameworkConstants.FrameworkIdentifiers.Net
+                    && frameworkObject.Version.Major >= 4)
+                {
+                    var shortFolderName = frameworkObject.GetShortFolderName();
+                    yield return [shortFolderName, frameworkObject];
+                }
+            }
         }
 
         [Theory]

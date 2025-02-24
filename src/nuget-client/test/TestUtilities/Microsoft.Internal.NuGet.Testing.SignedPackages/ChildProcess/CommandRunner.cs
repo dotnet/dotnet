@@ -29,6 +29,17 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
         /// <returns>A <see cref="CommandRunnerResult" /> containing details about the result of the running the executable including the exit code and console output.</returns>
         public static CommandRunnerResult Run(string filename, string workingDirectory = null, string arguments = null, int timeOutInMilliseconds = 60000, Action<StreamWriter> inputAction = null, IDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null, int timeoutRetryCount = 1)
         {
+            if (workingDirectory is null)
+            {
+                workingDirectory = Environment.CurrentDirectory;
+            }
+            workingDirectory = Path.GetFullPath(workingDirectory);
+
+            if (!Directory.Exists(workingDirectory))
+            {
+                throw new DirectoryNotFoundException($"The working directory '{workingDirectory}' does not exist.");
+            }
+
             return RetryRunner.RunWithRetries<CommandRunnerResult, TimeoutException>(() =>
             {
                 StringBuilder output = new();
@@ -40,7 +51,7 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
                     EnableRaisingEvents = true,
                     StartInfo = new ProcessStartInfo(Path.GetFullPath(filename), arguments)
                     {
-                        WorkingDirectory = Path.GetFullPath(workingDirectory ?? Environment.CurrentDirectory),
+                        WorkingDirectory = workingDirectory,
                         UseShellExecute = false,
                         RedirectStandardError = true,
                         RedirectStandardOutput = true,
