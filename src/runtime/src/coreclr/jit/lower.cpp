@@ -1562,7 +1562,7 @@ void Lowering::LowerArg(GenTreeCall* call, CallArg* callArg)
     // If we hit this we are probably double-lowering.
     assert(!arg->OperIsPutArg());
 
-    const ABIPassingInformation& abiInfo = callArg->NewAbiInfo;
+    const ABIPassingInformation& abiInfo = callArg->AbiInfo;
     JITDUMP("Passed in ");
     DBEXEC(comp->verbose, abiInfo.Dump());
 
@@ -1589,7 +1589,7 @@ void Lowering::LowerArg(GenTreeCall* call, CallArg* callArg)
 
     if (varTypeIsLong(arg))
     {
-        assert(callArg->NewAbiInfo.CountRegsAndStackSlots() == 2);
+        assert(callArg->AbiInfo.CountRegsAndStackSlots() == 2);
 
         noway_assert(arg->OperIs(GT_LONG));
         GenTreeFieldList* fieldList = new (comp, GT_FIELD_LIST) GenTreeFieldList();
@@ -3027,7 +3027,6 @@ void Lowering::LowerFastTailCall(GenTreeCall* call)
 
             unsigned int overwrittenStart = put->getArgOffset();
             unsigned int overwrittenEnd   = overwrittenStart + put->GetStackByteSize();
-            int          baseOff          = -1; // Stack offset of first arg on stack
 
             for (unsigned callerArgLclNum = 0; callerArgLclNum < comp->info.compArgsCount; callerArgLclNum++)
             {
@@ -3038,34 +3037,12 @@ void Lowering::LowerFastTailCall(GenTreeCall* call)
                     continue;
                 }
 
-                unsigned int argStart;
-                unsigned int argEnd;
-#if defined(TARGET_AMD64)
-                if (TargetOS::IsWindows)
-                {
-                    // On Windows x64, the argument position determines the stack slot uniquely, and even the
-                    // register args take up space in the stack frame (shadow space).
-                    argStart = callerArgLclNum * TARGET_POINTER_SIZE;
-                    argEnd   = argStart + static_cast<unsigned int>(callerArgDsc->lvArgStackSize());
-                }
-                else
-#endif // TARGET_AMD64
-                {
-                    assert(callerArgDsc->GetStackOffset() != BAD_STK_OFFS);
+                const ABIPassingInformation& abiInfo = comp->lvaGetParameterABIInfo(callerArgLclNum);
+                assert(abiInfo.HasExactlyOneStackSegment());
+                const ABIPassingSegment& seg = abiInfo.Segment(0);
 
-                    if (baseOff == -1)
-                    {
-                        baseOff = callerArgDsc->GetStackOffset();
-                    }
-
-                    // On all ABIs where we fast tail call the stack args should come in order.
-                    assert(baseOff <= callerArgDsc->GetStackOffset());
-
-                    // Compute offset of this stack argument relative to the first stack arg.
-                    // This will be its offset into the incoming arg space area.
-                    argStart = static_cast<unsigned int>(callerArgDsc->GetStackOffset() - baseOff);
-                    argEnd   = argStart + comp->lvaLclSize(callerArgLclNum);
-                }
+                unsigned argStart = seg.GetStackOffset();
+                unsigned argEnd   = argStart + seg.GetStackSize();
 
                 // If ranges do not overlap then this PUTARG_STK will not mess up the arg.
                 if ((overwrittenEnd <= argStart) || (overwrittenStart >= argEnd))
@@ -3531,14 +3508,10 @@ void Lowering::LowerCFGCall(GenTreeCall* call)
             call->gtArgs.PushLateBack(targetArg);
 
             // Set up ABI information for this arg.
-            targetArg->NewAbiInfo =
+            targetArg->AbiInfo =
                 ABIPassingInformation::FromSegmentByValue(comp,
                                                           ABIPassingSegment::InRegister(REG_DISPATCH_INDIRECT_CALL_ADDR,
                                                                                         0, TARGET_POINTER_SIZE));
-            targetArg->AbiInfo.ArgType = callTarget->TypeGet();
-            targetArg->AbiInfo.SetRegNum(0, REG_DISPATCH_INDIRECT_CALL_ADDR);
-            targetArg->AbiInfo.NumRegs  = 1;
-            targetArg->AbiInfo.ByteSize = TARGET_POINTER_SIZE;
 
             // Lower the newly added args now that call is updated
             LowerArg(call, targetArg);
@@ -7756,9 +7729,7 @@ void Lowering::WidenSIMD12IfNecessary(GenTreeLclVarCommon* node)
         // as a return buffer pointer. The callee doesn't write the high 4 bytes, and we don't need to clear
         // it either.
 
-        LclVarDsc* varDsc = comp->lvaGetDesc(node->AsLclVarCommon());
-
-        if (comp->lvaMapSimd12ToSimd16(varDsc))
+        if (comp->lvaMapSimd12ToSimd16(node->AsLclVarCommon()->GetLclNum()))
         {
             JITDUMP("Mapping TYP_SIMD12 lclvar node to TYP_SIMD16:\n");
             DISPNODE(node);
@@ -8308,7 +8279,8 @@ void Lowering::CheckNode(Compiler* compiler, GenTree* node)
 #if defined(FEATURE_SIMD) && defined(TARGET_64BIT)
             if (node->TypeIs(TYP_SIMD12))
             {
-                assert(compiler->lvaIsFieldOfDependentlyPromotedStruct(varDsc) || (varDsc->lvSize() == 12));
+                assert(compiler->lvaIsFieldOfDependentlyPromotedStruct(varDsc) ||
+                       (compiler->lvaLclStackHomeSize(node->AsLclVar()->GetLclNum()) == 12));
             }
 #endif // FEATURE_SIMD && TARGET_64BIT
             if (varDsc->lvPromoted)
@@ -8804,7 +8776,7 @@ void Lowering::ContainCheckRet(GenTreeUnOp* ret)
         {
             const LclVarDsc* varDsc = comp->lvaGetDesc(op1->AsLclVarCommon());
             // This must be a multi-reg return or an HFA of a single element.
-            assert(varDsc->lvIsMultiRegRet || (varDsc->lvIsHfa() && varTypeIsValidHfaType(varDsc->lvType)));
+            assert(varDsc->lvIsMultiRegRet);
 
             // Mark var as contained if not enregisterable.
             if (!varDsc->IsEnregisterableLcl())
@@ -10929,5 +10901,38 @@ void Lowering::FinalizeOutgoingArgSpace()
     comp->lvaOutgoingArgSpaceSize = m_outgoingArgSpaceSize;
     comp->lvaOutgoingArgSpaceSize.MarkAsReadOnly();
     comp->lvaGetDesc(comp->lvaOutgoingArgSpaceVar)->GrowBlockLayout(comp->typGetBlkLayout(m_outgoingArgSpaceSize));
+
+    SetFramePointerFromArgSpaceSize();
 #endif
+}
+
+//----------------------------------------------------------------------------------------------
+// Lowering::SetFramePointerFromArgSpaceSize:
+//   Set the frame pointer from the arg space size. This is a quirk because
+//   StackLevelSetter used to do this even outside x86.
+//
+void Lowering::SetFramePointerFromArgSpaceSize()
+{
+    unsigned stackLevelSpace = m_outgoingArgSpaceSize;
+
+    if (comp->compTailCallUsed)
+    {
+        // StackLevelSetter also used to count tailcalls.
+        for (BasicBlock* block : comp->Blocks())
+        {
+            GenTreeCall* tailCall;
+            if (block->endsWithTailCall(comp, true, false, &tailCall))
+            {
+                stackLevelSpace = max(stackLevelSpace, tailCall->gtArgs.OutgoingArgsStackSize());
+            }
+        }
+    }
+
+    unsigned stackLevel =
+        (max(stackLevelSpace, (unsigned)MIN_ARG_AREA_FOR_CALL) - MIN_ARG_AREA_FOR_CALL) / TARGET_POINTER_SIZE;
+
+    if (stackLevel >= 4)
+    {
+        comp->codeGen->setFramePointerRequired(true);
+    }
 }
