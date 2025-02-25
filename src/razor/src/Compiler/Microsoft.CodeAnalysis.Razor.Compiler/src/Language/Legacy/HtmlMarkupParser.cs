@@ -1075,14 +1075,14 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         }
 
-        // http://dev.w3.org/html5/spec/tokenization.html#before-attribute-name-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#before-attribute-name-state
         // Capture whitespace
         using var attributePrefixWhitespace = new PooledArrayBuilder<SyntaxToken>();
         ReadWhile(
             static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine,
             ref attributePrefixWhitespace.AsRef());
 
-        // http://dev.w3.org/html5/spec/tokenization.html#attribute-name-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#attribute-name-state
         // Read the 'name' (i.e. read until the '=' or whitespace/newline)
         using var nameTokens = new PooledArrayBuilder<SyntaxToken>();
         var nameParsingResult = TryParseAttributeName(out SyntaxToken? ephemeralToken, ref nameTokens.AsRef());
@@ -1436,7 +1436,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private bool IsUnquotedEndOfAttributeValue(SyntaxToken token)
     {
         // If unquoted, we have a larger set of terminating characters:
-        // http://dev.w3.org/html5/spec/tokenization.html#attribute-value-unquoted-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#attribute-value-(unquoted)-state
         // Also we need to detect "/" and ">"
         return token.Kind == SyntaxKind.DoubleQuote ||
                token.Kind == SyntaxKind.SingleQuote ||
@@ -1977,7 +1977,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     // Internal for testing
     internal bool IsHtmlCommentAhead()
     {
-        // From HTML5 Specification, available at http://www.w3.org/TR/html52/syntax.html#comments
+        // From HTML5 Specification, available at https://html.spec.whatwg.org/multipage/syntax.html#comments
 
         // Comments must have the following format:
         // 1. The string "<!--"
@@ -2240,7 +2240,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             return false;
         }
 
-        // These restrictions cover most of the spec defined: http://www.w3.org/TR/html5/syntax.html#attributes-0
+        // These restrictions cover most of the spec defined: https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
         // However, it's not all of it. For instance we don't special case control characters or allow OpenAngle.
         // It also doesn't try to exclude Razor specific features such as the @ transition. This is based on the
         // expectation that the parser handles such scenarios prior to falling through to name resolution.
@@ -2250,8 +2250,6 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             tokenType != SyntaxKind.CloseAngle &&
             tokenType != SyntaxKind.OpenAngle &&
             tokenType != SyntaxKind.ForwardSlash &&
-            tokenType != SyntaxKind.DoubleQuote &&
-            tokenType != SyntaxKind.SingleQuote &&
             tokenType != SyntaxKind.Equals &&
             tokenType != SyntaxKind.Marker;
     }

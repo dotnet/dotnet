@@ -15,7 +15,7 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
     public string GetRazorCSharpFilePath(ProjectKey projectKey, string razorFilePath)
         => GetGeneratedFilePath(projectKey, razorFilePath, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
 
-    public Uri GetRazorDocumentUri(Uri virtualDocumentUri)
+    public virtual Uri GetRazorDocumentUri(Uri virtualDocumentUri)
     {
         var uriPath = virtualDocumentUri.AbsoluteUri;
         var razorFilePath = GetRazorFilePath(uriPath);
@@ -23,7 +23,7 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
         return uri;
     }
 
-    public bool IsVirtualCSharpFile(Uri uri)
+    public virtual bool IsVirtualCSharpFile(Uri uri)
         => CheckIfFileUriAndExtensionMatch(uri, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
 
     public bool IsVirtualHtmlFile(Uri uri)
@@ -37,20 +37,23 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
 
     private string GetRazorFilePath(string filePath)
     {
-        var trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
-        if (trimIndex == -1)
+        var trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.HtmlVirtualDocumentSuffix);
+
+        // We don't check for C# in cohosting, as it will throw, and people might call this method on any
+        // random path.
+        if (trimIndex == -1 && !_languageServerFeatureOptions.UseRazorCohostServer)
         {
-            trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.HtmlVirtualDocumentSuffix);
-        }
-        else if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
-        {
+            trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
+
             // If this is a C# generated file, and we're including the project suffix, then filename will be
             // <Page>.razor.<project slug><c# suffix>
-            // This means we can remove the project key easily, by just looking for the last '.'. The project
-            // slug itself cannot a '.', enforced by the assert below in GetProjectSuffix
-
-            trimIndex = filePath.LastIndexOf('.', trimIndex - 1);
-            Debug.Assert(trimIndex != -1, "There was no project element to the generated file name?");
+            if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+            {
+                // We can remove the project key easily, by just looking for the last '.'. The project
+                // slug itself cannot a '.', enforced by the assert below in GetProjectSuffix
+                trimIndex = filePath.LastIndexOf('.', trimIndex - 1);
+                Debug.Assert(trimIndex != -1, "There was no project element to the generated file name?");
+            }
         }
 
         if (trimIndex != -1)

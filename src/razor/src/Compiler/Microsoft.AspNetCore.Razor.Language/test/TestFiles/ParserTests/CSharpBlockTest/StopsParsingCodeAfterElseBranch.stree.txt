@@ -193,17 +193,26 @@
                                 CSharpCodeBlock - [298..298)::0
                                     CSharpExpressionLiteral - [298..298)::0 - [] - Gen<Expr>
                                         Marker;[];
-                MarkupMiscAttributeContent - [298..314)::16
-                    MarkupTextLiteral - [298..314)::16 - ["bar } baz");LF}] - Gen<Markup>
+                MarkupMinimizedAttributeBlock - [298..302)::4 - ["bar]
+                    MarkupTextLiteral - [298..302)::4 - ["bar] - Gen<Markup>
                         DoubleQuote;["];
                         Text;[bar];
+                MarkupMinimizedAttributeBlock - [302..304)::2 - [ }]
+                    MarkupTextLiteral - [302..303)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
+                    MarkupTextLiteral - [303..304)::1 - [}] - Gen<Markup>
                         Text;[}];
+                MarkupMinimizedAttributeBlock - [304..311)::7 - [ baz");]
+                    MarkupTextLiteral - [304..305)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
+                    MarkupTextLiteral - [305..311)::6 - [baz");] - Gen<Markup>
                         Text;[baz];
                         DoubleQuote;["];
                         Text;[);];
+                MarkupMinimizedAttributeBlock - [311..314)::3 - [LF}]
+                    MarkupTextLiteral - [311..313)::2 - [LF] - Gen<Markup>
                         NewLine;[LF];
+                    MarkupTextLiteral - [313..314)::1 - [}] - Gen<Markup>
                         Text;[}];
                 CloseAngle;[<Missing>];
     EndOfFile;[];

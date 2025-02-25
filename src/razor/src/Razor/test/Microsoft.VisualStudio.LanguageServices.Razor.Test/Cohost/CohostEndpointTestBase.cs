@@ -32,7 +32,6 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
-    private const string CSharpVirtualDocumentSuffix = ".g.cs";
     private ExportProvider? _exportProvider;
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private RemoteClientInitializationOptions _clientInitializationOptions;
@@ -76,7 +75,6 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
         _clientInitializationOptions = new()
         {
-            CSharpVirtualDocumentSuffix = CSharpVirtualDocumentSuffix,
             HtmlVirtualDocumentSuffix = ".g.html",
             IncludeProjectKeyInGeneratedFilePath = false,
             UsePreciseSemanticTokenRanges = false,

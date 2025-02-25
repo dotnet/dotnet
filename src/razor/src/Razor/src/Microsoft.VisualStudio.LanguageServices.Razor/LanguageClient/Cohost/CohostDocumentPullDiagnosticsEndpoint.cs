@@ -13,12 +13,11 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Razor.Extensions;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 using RoslynDiagnostic = Roslyn.LanguageServer.Protocol.Diagnostic;
@@ -36,14 +35,12 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     LSPRequestInvoker requestInvoker,
-    IFilePathService filePathService,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
-    private readonly IFilePathService _filePathService = filePathService;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentPullDiagnosticsEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -124,13 +121,8 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
 
     private async Task<LspDiagnostic[]> GetCSharpDiagnosticsAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        // TODO: This code will not work when the source generator is hooked up.
-        //       How do we get the source generated C# document without OOP? Can we reverse engineer a file path?
-        var projectKey = razorDocument.Project.ToProjectKey();
-        var csharpFilePath = _filePathService.GetRazorCSharpFilePath(projectKey, razorDocument.FilePath.AssumeNotNull());
-        // We put the project Id in the generated document path, so there can only be one document
-        if (razorDocument.Project.Solution.GetDocumentIdsWithFilePath(csharpFilePath) is not [{ } generatedDocumentId] ||
-            razorDocument.Project.GetDocument(generatedDocumentId) is not { } generatedDocument)
+        if (!razorDocument.TryComputeHintNameFromRazorDocument(out var hintName) ||
+            await razorDocument.Project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken).ConfigureAwait(false) is not { } generatedDocument)
         {
             return [];
         }

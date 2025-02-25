@@ -138,4 +138,33 @@ public sealed class RazorSourceGeneratorCshtmlTests : RazorSourceGeneratorTestsB
         Assert.Single(result.GeneratedSources);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
     }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public async Task QuoteInAttributeName()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Pages/Index.cshtml"] = """
+                <div class="test"">
+                    <img src="~/test">
+                </div>
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+        var html = await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
+
+        // The img tag helper should rewrite `~/` to `/`.
+        Assert.Contains("""
+            <img src="/test">
+            """, html);
+    }
 }

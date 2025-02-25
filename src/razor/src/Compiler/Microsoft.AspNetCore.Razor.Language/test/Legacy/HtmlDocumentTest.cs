@@ -5,6 +5,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -351,6 +352,22 @@ public class HtmlDocumentTest() : ParserTestBase(layer: TestProject.Layer.Compil
     {
         ParseDocumentTest("""
             < @@
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public void QuoteInAttributeName_01()
+    {
+        ParseDocumentTest("""
+            <div class="test""></div>
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public void QuoteInAttributeName_02()
+    {
+        ParseDocumentTest("""
+            <div class="test"'></div>
             """);
     }
 }
