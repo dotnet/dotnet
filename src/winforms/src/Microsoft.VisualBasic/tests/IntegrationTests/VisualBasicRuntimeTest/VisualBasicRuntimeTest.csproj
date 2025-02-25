@@ -9,11 +9,4 @@
     <ProjectReference Include="..\..\..\src\Microsoft.VisualBasic.Facade.csproj" />
   </ItemGroup>
 
-  <!-- NuGet package pruning complains about the Microsoft.VisualBasic project reference -->
-  <Target Name="RemoveVisualBasicFromPrunePackageReference" AfterTargets="CollectPrunePackageReferences">
-    <ItemGroup>
-      <PrunePackageReference Remove="Microsoft.VisualBasic" />
-    </ItemGroup>
-  </Target>
-
 </Project>
