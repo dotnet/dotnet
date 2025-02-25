@@ -134,7 +134,8 @@ namespace NuGet.Build.Tasks.Console
             }
 
             bool restorePackagesConfig = IsOptionTrue(nameof(RestoreTaskEx.RestorePackagesConfig), options);
-            if (string.Equals(Path.GetExtension(entryProjectFilePath), ".sln", StringComparison.OrdinalIgnoreCase)
+            if ((string.Equals(Path.GetExtension(entryProjectFilePath), ".sln", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(Path.GetExtension(entryProjectFilePath), ".slnx", StringComparison.OrdinalIgnoreCase))
                     && !HasProjectToRestore(dependencyGraphSpec, restorePackagesConfig))
             {
                 MSBuildLogger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Log_NoProjectsForRestore));
@@ -667,7 +668,9 @@ namespace NuGet.Build.Tasks.Console
         private List<ProjectGraphEntryPoint> GetProjectGraphEntryPoints(string entryProjectPath, IDictionary<string, string> globalProperties)
         {
             // If the project's extension is .sln, parse it as a Visual Studio solution and return the projects it contains
-            if (string.Equals(Path.GetExtension(entryProjectPath), ".sln", StringComparison.OrdinalIgnoreCase))
+            var extension = Path.GetExtension(entryProjectPath);
+            if (string.Equals(extension, ".sln", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(extension, ".slnx", StringComparison.OrdinalIgnoreCase))
             {
                 var solutionFile = SolutionFile.Parse(entryProjectPath);
 

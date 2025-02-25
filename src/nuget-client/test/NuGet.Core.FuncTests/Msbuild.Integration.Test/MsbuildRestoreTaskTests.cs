@@ -2076,5 +2076,34 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             kvp.Value.Name.Should().Be("y");
             kvp.Value.VersionRange.Should().Be(VersionRange.Parse("(,2.0.0]"));
         }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void MsbuildRestore_StaticGraphRestore_CanReadSolutionFiles(bool useSlnx)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            // Set up solution, project, and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx);
+
+            var project = SimpleTestProjectContext.CreateLegacyPackageReference(
+                "a",
+                pathContext.SolutionRoot,
+                NuGetFramework.Parse("net472"));
+
+            solution.Projects.Add(project);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory,
+                $"/t:restore {project.ProjectPath} /p:RestoreUseStaticGraphEvaluation=true /p:RestoreProjectStyle=PackageReference",
+                ignoreExitCode: true,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            project.AssetsFile.Should().NotBeNull();
+        }
     }
 }
