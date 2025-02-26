@@ -23,7 +23,7 @@
                       Private="false"
                       OutputItemType="_TarToolPath" />
 
-    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Microsoft.DotNet.MacOsPkg.csproj"
+    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
                       ReferenceOutputAssembly="false"
                       SetTargetFramework="TargetFramework=$(NetToolCurrent)"
                       SkipGetTargetFrameworkProperties="true"

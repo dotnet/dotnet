@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <NoWarn>$(NoWarn);NU5128;NU5123</NoWarn>
     <PackageId>__PACKAGE_ID__</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl Condition="'$(_PackageProjectUrl)' != ''">$(_PackageProjectUrl)</PackageProjectUrl>

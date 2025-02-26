@@ -21,7 +21,7 @@
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
 
     <ProjectReference Condition="$([MSBuild]::IsOSPlatform('osx'))"
-                  Include="..\Microsoft.DotNet.MacOsPkg\Microsoft.DotNet.MacOsPkg.csproj"
+                  Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
                   ReferenceOutputAssembly="false"
                   SetTargetFramework="TargetFramework=$(NetToolCurrent)"
                   SkipGetTargetFrameworkProperties="true"

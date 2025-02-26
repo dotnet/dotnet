@@ -34,7 +34,7 @@
     <TargetVsixContainerName Condition="'$(TargetVsixContainerName)' == ''">$(TargetName).vsix</TargetVsixContainerName>
     <TargetVsixContainer Condition="'$(TargetVsixContainer)' == ''">$(_TargetVsixContainerDir)$(TargetVsixContainerName)</TargetVsixContainer>
 
-    <DeployExtension Condition="'$(DeployProjectOutput)' == 'true'">true</DeployExtension>
+    <DeployExtension Condition="'$(DeployProjectOutput)' == 'true' and '$(DeployExtension)' != 'false'">true</DeployExtension>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VisualStudioInsertionComponent)' != ''">

@@ -3,6 +3,12 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <!-- The assemblyIdentity node is needed to fix a binding problem on Win2003 (PS72518) -->
   <assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+  <!-- Make the application long-path aware (see #5179) -->
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+      <ws2:longPathAware>true</ws2:longPathAware>
+    </windowsSettings>
+  </application>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
       <!-- Windows 10 -->

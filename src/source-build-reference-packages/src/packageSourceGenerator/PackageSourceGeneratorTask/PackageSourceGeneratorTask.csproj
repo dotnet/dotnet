@@ -9,8 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" ExcludeAssets="runtime" PrivateAssets="all" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" ExcludeAssets="runtime" PrivateAssets="all" />
-    <!-- Transitive dependency of Nuget.Packaging. Needed to fix CVE for 6.0.0. -->
-    <PackageReference Include="System.Formats.Asn1" Version="$(SystemFormatsAsn1Version)" />
   </ItemGroup>
 
 </Project>

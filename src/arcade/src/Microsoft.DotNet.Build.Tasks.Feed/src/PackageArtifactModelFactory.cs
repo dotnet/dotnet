@@ -36,7 +36,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 Attributes = MSBuildListSplitter.GetNamedProperties(item.GetMetadata("ManifestArtifactData")),
                 Id = info.Id,
                 Version = info.Version,
-                RepoOrigin = repoOrigin
+                RepoOrigin = repoOrigin,
+                OriginalFile = item.ItemSpec
             };
         }
     }
