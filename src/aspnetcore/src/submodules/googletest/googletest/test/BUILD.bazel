@@ -45,6 +45,7 @@ cc_test(
             "gtest-*.cc",
             "googletest-*.cc",
             "*.h",
+            "googletest/include/gtest/**/*.h",
         ],
         exclude = [
             "gtest-unittest-api_test.cc",
