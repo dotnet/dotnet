@@ -226,7 +226,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 Directory.CreateDirectory(pluginPath);
                 var myPlugin = Path.Combine(pluginPath, fileName);
                 Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
-                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("NUGET_PLUGIN_PATHS")).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns($"{Path.PathSeparator}{pluginPath}{Path.PathSeparator}");
                 environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATHS")).Returns("");
                 File.WriteAllText(myPlugin, string.Empty);
 

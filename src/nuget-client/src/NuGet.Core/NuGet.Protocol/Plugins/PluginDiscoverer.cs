@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Plugins
         internal List<PluginFile> GetPluginsInNuGetPluginPaths()
         {
             var pluginFiles = new List<PluginFile>();
-            string[] paths = _nuGetPluginPaths?.Split(Path.PathSeparator) ?? Array.Empty<string>();
+            string[] paths = _nuGetPluginPaths?.Split([Path.PathSeparator], StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
 
             foreach (var path in paths)
             {
