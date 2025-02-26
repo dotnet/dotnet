@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
 {
-    public class PackageArtifactModel
+    public class PackageArtifactModel : ArtifactModel
     {
         private static readonly string[] RequiredAttributes =
         {
@@ -21,14 +21,6 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
         {
             nameof(OriginBuildName)
         }).ToArray();
-
-        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
-
-        public string Id
-        {
-            get { return Attributes.GetOrDefault(nameof(Id)); }
-            set { Attributes[nameof(Id)] = value; }
-        }
 
         public string Version
         {
@@ -42,101 +34,15 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
             set { Attributes[nameof(OriginBuildName)] = value; }
         }
 
-        public bool NonShipping
+        public string CouldBeStable
         {
-            get
-            {
-                string val = Attributes.GetOrDefault(nameof(NonShipping));
-                if (!string.IsNullOrEmpty(val))
-                {
-                    return bool.Parse(val);
-                }
-                return false;
-            }
-        }
-
-        public ArtifactVisibility Visibility
-        {
-            get
-            {
-                string val = Attributes.GetOrDefault(nameof(Visibility));
-                if (string.IsNullOrEmpty(val))
-                {
-                    return ArtifactVisibility.External;
-                }
-                else if (Enum.TryParse(val, out ArtifactVisibility visibility))
-                {
-                    return visibility;
-                }
-                else
-                {
-                    throw new ArgumentException($"Invalid value for {nameof(Visibility)}: {val}");
-                }
-            }
-            set
-            {
-                Attributes[nameof(Visibility)] = value.ToString();
-            }
-        }
-
-        public string RepoOrigin
-        {
-            get => Attributes.GetOrDefault(nameof(RepoOrigin));
-            set => Attributes[nameof(RepoOrigin)] = value;
+            get { return Attributes.GetOrDefault(nameof(CouldBeStable)); }
+            set { Attributes[nameof(CouldBeStable)] = value; }
         }
 
         public override string ToString() => $"Package {Id} {Version}";
 
-        public override bool Equals(object obj)
-        {
-            if (obj is PackageArtifactModel other)
-            {
-                if (ReferenceEquals(this, obj))
-                {
-                    return true;
-                }
-
-                if (Attributes.Count() != other.Attributes.Count())
-                {
-                    return false;
-                }
-
-                foreach (var localAttr in Attributes)
-                {
-                    if (localAttr.Value == null)
-                    {
-                        if (other.Attributes.GetOrDefault(localAttr.Key) != null)
-                        {
-                            return false;
-                        }
-                    }
-                    else if (localAttr.Value.Equals(
-                        other.Attributes.GetOrDefault(localAttr.Key),
-                        StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 1;
-
-            foreach (var item in Attributes)
-            {
-                hash *= (item.Key, item.Value).GetHashCode();
-            }
-
-            return hash;
-        }
-
-        public XElement ToXml() => new XElement(
+        public override XElement ToXml() => new XElement(
             "Package",
             Attributes
                 .ThrowIfMissingAttributes(RequiredAttributes)

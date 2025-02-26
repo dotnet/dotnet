@@ -826,7 +826,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 id: 5708,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: [],
+                akaMSChannelNames: ["10.0.1xx-ub", "10.0-ub"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,

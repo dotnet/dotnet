@@ -20,6 +20,7 @@ namespace Microsoft.DotNet.SignTool
     {
         private readonly string _dotnetPath;
         private readonly string _logDir;
+        private readonly string _msbuildVerbosity;
         private readonly string _snPath;
         private readonly int _dotnetTimeout;
 
@@ -38,6 +39,7 @@ namespace Microsoft.DotNet.SignTool
         {
             TestSign = args.TestSign;
             _dotnetPath = args.DotNetPath;
+            _msbuildVerbosity = args.MSBuildVerbosity;
             _snPath = args.SNBinaryPath;
             _logDir = args.LogDir;
             _dotnetTimeout = args.DotNetTimeout;
@@ -57,7 +59,7 @@ namespace Microsoft.DotNet.SignTool
                 process.StartInfo = new ProcessStartInfo()
                 {
                     FileName = _dotnetPath,
-                    Arguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""",
+                    Arguments = $@"build ""{projectFilePath}"" -v:""{_msbuildVerbosity}"" -bl:""{binLogPath}""",
                     UseShellExecute = false,
                     WorkingDirectory = TempDir,
                     RedirectStandardOutput = true,
@@ -77,8 +79,9 @@ namespace Microsoft.DotNet.SignTool
                 bool success = true;
                 if (!process.WaitForExit(_dotnetTimeout))
                 {
-                    process.Kill();
                     _log.LogError($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
+                    process.Kill();
+                    process.WaitForExit();
                     success = false;
                 }
 
@@ -89,13 +92,13 @@ namespace Microsoft.DotNet.SignTool
                     success = false;
                 }
 
-                string outputStr = output.ToString();
+                string outputStr = output.ToString().Trim();
                 if (!string.IsNullOrWhiteSpace(outputStr))
                 {
                     File.WriteAllText(logPath, outputStr);
                 }
                 
-                string errorStr = error.ToString();
+                string errorStr = error.ToString().Trim();
                 if (!string.IsNullOrWhiteSpace(errorStr))
                 {
                     File.WriteAllText(errorLogPath, errorStr);

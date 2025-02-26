@@ -31,8 +31,8 @@ stages:
           -PromoteToChannelIds ${{ parameters.PromoteToChannelIds }}
           -DarcVersion $(DarcVersion)
 
-    - task: DownloadBuildArtifacts@0
-      displayName: Download Build Assets
+    - task: DownloadPipelineArtifact@2
+      displayName: Download Merged Manifest
       continueOnError: true
       enabled: true
       inputs:
@@ -42,12 +42,40 @@ stages:
         pipeline: $(AzDOPipelineId)
         buildId: $(AzDOBuildId)
         downloadType: 'specific'
+        artifact: BlobArtifacts
         itemPattern: |
-          AssetManifests/**
           BlobArtifacts/MergedManifest.xml
-          PdbArtifacts/**
+        downloadPath: '$(Build.ArtifactStagingDirectory)/BlobArtifacts'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: Download PDB Artifacts
+      continueOnError: true
+      enabled: true
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: $(AzDOProject)
+        pipeline: $(AzDOPipelineId)
+        buildId: $(AzDOBuildId)
+        downloadType: 'specific'
+        artifact: PdbArtifacts
+        downloadPath: '$(Build.ArtifactStagingDirectory)/PdbArtifacts'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: Download Release Configs
+      continueOnError: true
+      enabled: true
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: $(AzDOProject)
+        pipeline: $(AzDOPipelineId)
+        buildId: $(AzDOBuildId)
+        downloadType: 'specific'
+        artifact: ReleaseConfigs
+        itemPattern: |
           ReleaseConfigs/SymbolPublishingExclusionsFile.txt
-        downloadPath: '$(Build.ArtifactStagingDirectory)'
+        downloadPath: '$(Build.ArtifactStagingDirectory)/ReleaseConfigs'
 
     - task: NuGetToolInstaller@1
       displayName: 'Install NuGet.exe'

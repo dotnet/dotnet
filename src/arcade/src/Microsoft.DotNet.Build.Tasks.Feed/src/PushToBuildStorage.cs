@@ -1,18 +1,17 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Security;
+using System.Xml.Linq;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Microsoft.DotNet.VersionTools.Automation;
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -20,8 +19,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     {
         [Required]
         public ITaskItem[] ItemsToPush { get; set; }
-
-        public string AssetsTemporaryDirectory { get; set; }
 
         public string ManifestRepoName { get; set; }
 
@@ -63,13 +60,38 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public bool IsReleaseOnlyPackageVersion { get; set; }
 
+        /// <summary>
+        /// Represents where assets should be copied locally, either for staging for upload
+        /// or for propagation to another phase of the VMR build.
+        /// </summary>
         public string AssetsLocalStorageDir { get; set; }
 
+        /// <summary>
+        /// Represents where shipping packages should be copied locally, either for staging for upload
+        /// or for propagation to another phase of the VMR build.
+        /// </summary>
         public string ShippingPackagesLocalStorageDir { get; set; }
 
+        /// <summary>
+        /// Represents where nonshipping packages should be copied locally, either for staging for upload
+        /// or for propagation to another phase of the VMR build.
+        /// </summary>
         public string NonShippingPackagesLocalStorageDir { get; set; }
 
+        /// <summary>
+        /// Represents where asset manifests should be copied locally, either for staging for upload
+        /// or for propagation to another phase of the VMR build.
+        /// </summary>
         public string AssetManifestsLocalStorageDir { get; set; }
+
+        /// <summary>
+        /// Represents where pdb artifacts should be copied locally, either for staging for upload
+        /// or for propagation to another phase of the VMR build.
+        /// 
+        /// NOTE: In non-VMR builds, this represents the location of the PDBs that are copied
+        /// to before uploading to the PDBArtifacts dir.
+        /// </summary>
+        public string PdbArtifactsLocalStorageDir { get; set; }
 
         public bool PushToLocalStorage { get; set; }
 
@@ -87,17 +109,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         public bool UseHardlinksIfPossible { get; set; } = true;
 
-        public enum ItemType
-        {
-            AssetManifest = 0,
-            PackageArtifact,
-            BlobArtifact
-        }
-
         public override void ConfigureServices(IServiceCollection collection)
         {
             collection.TryAddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>();
             collection.TryAddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>();
+            collection.TryAddSingleton<IPdbArtifactModelFactory, PdbArtifactModelFactory>();
             collection.TryAddSingleton<IBuildModelFactory, BuildModelFactory>();
             collection.TryAddSingleton<IFileSystem, FileSystem>();
             collection.TryAddSingleton<IPackageArchiveReaderFactory, PackageArchiveReaderFactory>();
@@ -108,6 +124,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public bool ExecuteTask(IFileSystem fileSystem,
             IBlobArtifactModelFactory blobArtifactModelFactory,
             IPackageArtifactModelFactory packageArtifactModelFactory,
+            IPdbArtifactModelFactory pdbArtifactModelFactory,
             IBuildModelFactory buildModelFactory)
         {
             try
@@ -129,109 +146,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     Log.LogMessage(MessageImportance.High, "Performing push to Azure DevOps artifacts storage.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(AssetsTemporaryDirectory))
-                {
-                    Log.LogMessage(MessageImportance.High, $"It's no longer necessary to specify a value for the {nameof(AssetsTemporaryDirectory)} property. " +
-                        $"Please consider patching your code to not use it.");
-                }
-
                 if (ItemsToPush == null)
                 {
                     Log.LogError($"No items to push. Please check ItemGroup ItemsToPush.");
                 }
                 else
                 {
-                    IEnumerable<BlobArtifactModel> blobArtifacts = Enumerable.Empty<BlobArtifactModel>();
-                    IEnumerable<PackageArtifactModel> packageArtifacts = Enumerable.Empty<PackageArtifactModel>();
-
-                    var itemsToPushNoExcludes = ItemsToPush.
-                        Where(i => !string.Equals(i.GetMetadata("ExcludeFromManifest"), "true", StringComparison.OrdinalIgnoreCase));
-
-                    // This block should eventually be removed, and symbol packages should just always have kind Blob.
-                    // This may require updates in repos though.
-                    ITaskItem[] symbolItems = itemsToPushNoExcludes
-                        .Where(i => i.ItemSpec.EndsWith("symbols.nupkg"))
-                        .Select(i =>
-                        {
-                            string fileName = Path.GetFileName(i.ItemSpec);
-                            i.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
-                            return i;
-                        })
-                        .ToArray();
-
-                    var blobItems = itemsToPushNoExcludes
-                        .Where(i =>
-                        {
-                            var kind = i.GetMetadata("Kind");
-                            if (!string.IsNullOrEmpty(kind))
-                            {
-                                return string.Equals(kind, "Blob", StringComparison.OrdinalIgnoreCase);
-                            }
-
-                            var isFlatString = i.GetMetadata("PublishFlatContainer");
-                            if (!string.IsNullOrEmpty(isFlatString) && bool.TryParse(isFlatString, out var isFlat))
-                            {
-                                return isFlat;
-                            }
-
-                            return false;
-                        })
-                        .Union(symbolItems)
-                        .ToArray();
-
-                    ITaskItem[] packageItems = itemsToPushNoExcludes
-                        .Where(i =>
-                        {
-                            var kind = i.GetMetadata("Kind");
-                            if (!string.IsNullOrEmpty(kind))
-                            {
-                                return string.Equals(kind, "Package", StringComparison.OrdinalIgnoreCase);
-                            }
-
-                            var isFlatString = i.GetMetadata("PublishFlatContainer");
-                            if (!string.IsNullOrEmpty(isFlatString) && bool.TryParse(isFlatString, out var isFlat))
-                            {
-                                return !isFlat;
-                            }
-
-                            return true; // Default to package if not set
-                        })
-                        .Except(blobItems) // This is unnecessary after symbol packages are handled properly.
-                        .ToArray();
-
-                    foreach (var packagePath in packageItems)
-                    {
-                        if (!fileSystem.FileExists(packagePath.ItemSpec))
-                        {
-                            Log.LogError($"Could not find file {packagePath.ItemSpec}.");
-                            continue;
-                        }
-
-                        PushToLocalStorageOrAzDO(ItemType.PackageArtifact, packagePath);
-                    }
-
-                    foreach (var blobItem in blobItems)
-                    {
-                        if (!fileSystem.FileExists(blobItem.ItemSpec))
-                        {
-                            Log.LogError($"Could not find file {blobItem.ItemSpec}.");
-                            continue;
-                        }
-
-                        PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
-                    }
-
-                    packageArtifacts = packageItems.Select(
-                        i => packageArtifactModelFactory.CreatePackageArtifactModel(i, ManifestRepoOrigin));
-                    blobArtifacts = blobItems.Select(
-                            i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin))
-                        .Where(blob => blob != null);
-
-                    ArtifactVisibility[] visibilitiesToPublish = GetVisibilitiesToPublish(ArtifactVisibilitiesToPublish);
-
-                    packageArtifacts = packageArtifacts.Where(p => visibilitiesToPublish.Contains(p.Visibility));
-                    blobArtifacts = blobArtifacts.Where(b => visibilitiesToPublish.Contains(b.Visibility));
-
                     PublishingInfraVersion targetPublishingVersion = PublishingInfraVersion.Latest;
 
                     if (!string.IsNullOrEmpty(PublishingVersion))
@@ -242,20 +162,82 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         }
                     }
 
-                    buildModelFactory.CreateBuildManifest(
-                        blobArtifacts,
-                        packageArtifacts,
-                        AssetManifestPath,
-                        !string.IsNullOrEmpty(ManifestRepoName) ? ManifestRepoName : ManifestRepoUri,
+                    var artifactVisibilities = GetVisibilitiesToPublish(ArtifactVisibilitiesToPublish);
+
+                    var buildModel = buildModelFactory.CreateModel(
+                        ItemsToPush,
+                        artifactVisibilities,
                         ManifestBuildId,
+                        ManifestBuildData,
+                        !string.IsNullOrEmpty(ManifestRepoName) ? ManifestRepoName : ManifestRepoUri,
                         ManifestBranch,
                         ManifestCommit,
-                        ManifestBuildData,
+                        ManifestRepoOrigin,
                         IsStableBuild,
                         targetPublishingVersion,
                         IsReleaseOnlyPackageVersion);
 
-                    PushToLocalStorageOrAzDO(ItemType.AssetManifest, new TaskItem(AssetManifestPath));
+                    if (buildModel == null)
+                    {
+                        Log.LogError($"Failed to construct build model from input artifacts.");
+                        return false;
+                    }
+
+                    if (buildModel.Artifacts.Pdbs.Any() && string.IsNullOrEmpty(PdbArtifactsLocalStorageDir))
+                    {
+                        throw new Exception($"PdbArtifactsLocalStorageDir must be specified.");
+                    }
+
+                    foreach (var package in buildModel.Artifacts.Packages)
+                    {
+                        if (!fileSystem.FileExists(package.OriginalFile))
+                        {
+                            Log.LogError($"Could not find file {package.OriginalFile}.");
+                            continue;
+                        }
+
+                        PushToLocalStorageOrAzDO(package);
+                    }
+
+                    foreach (var blobArtifact in buildModel.Artifacts.Blobs)
+                    {
+                        if (!fileSystem.FileExists(blobArtifact.OriginalFile))
+                        {
+                            Log.LogError($"Could not find file {blobArtifact.OriginalFile}.");
+                            continue;
+                        }
+
+                        PushToLocalStorageOrAzDO(blobArtifact);
+                    }
+
+                    foreach (var pdbArtifact in buildModel.Artifacts.Pdbs)
+                    {
+                        if (!fileSystem.FileExists(pdbArtifact.OriginalFile))
+                        {
+                            Log.LogError($"Could not find file {pdbArtifact.OriginalFile}.");
+                            continue;
+                        }
+                        PushToLocalStorageOrAzDO(pdbArtifact);
+                    }
+
+                    if (!PushToLocalStorage && buildModel.Artifacts.Pdbs.Any())
+                    {
+                        // Upload the full set of PDBs
+                        Log.LogMessage(MessageImportance.High,
+                            $"##vso[artifact.upload containerfolder=PdbArtifacts;artifactname=PdbArtifacts]{PdbArtifactsLocalStorageDir}");
+                    }
+
+                    // Write the manifest, then create an artifact for it.
+                    Log.LogMessage(MessageImportance.High, $"Writing build manifest file '{AssetManifestPath}'...");
+                    fileSystem.WriteToFile(AssetManifestPath, buildModel.ToXml().ToString(SaveOptions.DisableFormatting));
+
+                    // Generate an artifact for the asset manifest and push it to storage.
+                    AssetManifestModel assetManifestModel = new AssetManifestModel
+                    {
+                        OriginalFile = AssetManifestPath,
+                        Id = Path.GetFileName(AssetManifestPath)
+                    };
+                    PushToLocalStorageOrAzDO(assetManifestModel);
                 }
             }
             catch (Exception e)
@@ -266,22 +248,22 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             return !Log.HasLoggedErrors;
         }
 
-        private void PushToLocalStorageOrAzDO(ItemType itemType, ITaskItem item)
+        private void PushToLocalStorageOrAzDO(ArtifactModel artifactModel)
         {
-            string path = item.ItemSpec;
+            string path = artifactModel.OriginalFile;
 
             if (PushToLocalStorage)
             {
                 string filename = Path.GetFileName(path);
-                switch (itemType)
+                switch (artifactModel)
                 {
-                    case ItemType.AssetManifest:
+                    case AssetManifestModel _:
                         Directory.CreateDirectory(AssetManifestsLocalStorageDir);
                         CopyFileAsHardLinkIfPossible(path, Path.Combine(AssetManifestsLocalStorageDir, filename), true);
                         break;
 
-                    case ItemType.PackageArtifact:
-                        if (string.Equals(item.GetMetadata("IsShipping"), "true", StringComparison.OrdinalIgnoreCase))
+                    case PackageArtifactModel _:
+                        if (!artifactModel.NonShipping)
                         {
                             Directory.CreateDirectory(ShippingPackagesLocalStorageDir);
                             CopyFileAsHardLinkIfPossible(path, Path.Combine(ShippingPackagesLocalStorageDir, filename), true);
@@ -293,55 +275,86 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         }
                         break;
 
-                    case ItemType.BlobArtifact:
-                        string relativeBlobPath = item.GetMetadata("RelativeBlobPath");
-                        string destinationPath = Path.Combine(
+                    case BlobArtifactModel _:
+                        string relativeBlobPath = artifactModel.Id;
+                        string blobDestinationPath = Path.Combine(
                                                     AssetsLocalStorageDir,
                                                     string.IsNullOrEmpty(relativeBlobPath) ? filename : relativeBlobPath);
 
-                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-                        CopyFileAsHardLinkIfPossible(path, destinationPath, true);
+                        Directory.CreateDirectory(Path.GetDirectoryName(blobDestinationPath));
+                        CopyFileAsHardLinkIfPossible(path, blobDestinationPath, true);
+                        break;
+
+                    case PdbArtifactModel _:
+                        string relativePdbPath = artifactModel.Id;
+                        string pdbDestinationPath = Path.Combine(
+                                                    PdbArtifactsLocalStorageDir,
+                                                    string.IsNullOrEmpty(relativePdbPath) ? filename : relativePdbPath);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(pdbDestinationPath));
+                        CopyFileAsHardLinkIfPossible(path, pdbDestinationPath, true);
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(itemType));
+                        throw new ArgumentOutOfRangeException(nameof(artifactModel));
                 }
             }
             else
             {
                 // Push to AzDO artifacts storage
 
-                switch (itemType)
+                switch (artifactModel)
                 {
-                    case ItemType.AssetManifest:
+                    case AssetManifestModel _:
                         Log.LogMessage(MessageImportance.High,
                             $"##vso[artifact.upload containerfolder=AssetManifests;artifactname=AssetManifests]{path}");
                         break;
 
-                    case ItemType.PackageArtifact:
+                    case PackageArtifactModel _:
                         Log.LogMessage(MessageImportance.High,
                             $"##vso[artifact.upload containerfolder=PackageArtifacts;artifactname=PackageArtifacts]{path}");
                         break;
 
-                    case ItemType.BlobArtifact:
+                    case BlobArtifactModel _:
                         Log.LogMessage(MessageImportance.High,
                             $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{path}");
                         break;
 
+                    case PdbArtifactModel _:
+                        string pdbArtifactTarget = Path.Combine(PdbArtifactsLocalStorageDir, artifactModel.Id);
+                        Directory.CreateDirectory(Path.GetDirectoryName(pdbArtifactTarget));
+                        // Copy the PDB artifact to the temp local dir.
+                        File.Copy(path, pdbArtifactTarget, false);
+                        break;
+
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(itemType));
+                        throw new ArgumentOutOfRangeException(nameof(artifactModel));
                 }
             }
         }
 
-        private static ArtifactVisibility[] GetVisibilitiesToPublish(ITaskItem[] allowedVisibilities)
+        private static ArtifactVisibility GetVisibilitiesToPublish(ITaskItem[] allowedVisibilities)
         {
             if (allowedVisibilities is null || allowedVisibilities.Length == 0)
             {
-                return [ArtifactVisibility.External];
+                return ArtifactVisibility.External;
             }
 
-            return allowedVisibilities.Select(item => (ArtifactVisibility)Enum.Parse(typeof(ArtifactVisibility), item.ItemSpec)).ToArray();
+            ArtifactVisibility visibility = 0;
+
+            foreach (var item in allowedVisibilities)
+            {
+                if (Enum.TryParse(item.ItemSpec, true, out ArtifactVisibility parsedVisibility))
+                {
+                    visibility |= parsedVisibility;
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid visibility: {item.ItemSpec}");
+                }
+            }
+
+            return visibility;
         }
 
         // The below method implementation is copied from msbuild's Copy task and adjusted.

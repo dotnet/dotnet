@@ -12,7 +12,8 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
     {
         UnsupportedV1 = 1,
         UnsupportedV2 = 2,
-        Latest = 3
+        Latest = 3,
+        Dev = 4
     }
 
     public class BuildIdentity

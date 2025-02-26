@@ -73,7 +73,7 @@
     
     <PropertyGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
       <_InstallerArchSuffix>$(InstallerTargetArchitecture)</_InstallerArchSuffix>
-      <_InstallerArchSuffix Condition="'$(BuildRpmPackage)' == 'true' and '$(InstallerTargetArchitecture)' == 'arm64'">aarch64</_InstallerArchSuffix>
+      <_InstallerArchSuffix Condition="'$(GenerateRpm)' == 'true' and '$(InstallerTargetArchitecture)' == 'arm64'">aarch64</_InstallerArchSuffix>
       <InstallerBuildPart>$(Version)-$(_InstallerArchSuffix)</InstallerBuildPart>
       <InstallerBuildPart Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_InstallerArchSuffix)</InstallerBuildPart>
     </PropertyGroup>
@@ -234,7 +234,7 @@
       <_ConflictsProperty Condition="'@(LinuxPackageConflicts)' != ''">@(LinuxPackageConflicts->'%(Identity)',', ')</_ConflictsProperty>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(_ConflictsProperty)' != ''">
       <_ConflictsControlProperty Include="Conflicts" Value="$(_ConflictsProperty)" />
     </ItemGroup>
 

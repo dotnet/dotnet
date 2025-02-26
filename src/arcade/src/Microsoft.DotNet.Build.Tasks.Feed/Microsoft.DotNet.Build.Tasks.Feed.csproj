@@ -75,12 +75,14 @@
     <Compile Remove="src\model\PublishingConstants.cs" />
     <Compile Remove="src\model\SetupTargetFeedConfigBase.cs" />
     <Compile Remove="src\model\SetupTargetFeedConfigV3.cs" />
+    <Compile Remove="src\model\SetupTargetFeedConfigV4.cs" />
     <Compile Remove="src\model\TargetChannelConfig.cs" />
     <Compile Remove="src\model\TargetFeedConfig.cs" />
     <Compile Remove="src\PATCredential.cs" />
     <Compile Remove="src\PublishArtifactsInManifest.cs" />
     <Compile Remove="src\PublishArtifactsInManifestBase.cs" />
     <Compile Remove="src\PublishArtifactsInManifestV3.cs" />
+    <Compile Remove="src\PublishArtifactsInManifestV4.cs" />
     <Compile Remove="src\PublishSignedAssets.cs" />
     <Compile Remove="src\TaskTracer.cs" />
   </ItemGroup>

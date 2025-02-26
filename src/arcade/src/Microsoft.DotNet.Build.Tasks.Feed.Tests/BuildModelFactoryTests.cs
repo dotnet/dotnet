@@ -1,20 +1,20 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
+using FluentAssertions;
 using Microsoft.Arcade.Common;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
 using Microsoft.DotNet.VersionTools.Automation;
+using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Xunit;
-using FluentAssertions;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
@@ -42,6 +42,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         readonly MockBuildEngine _buildEngine;
         readonly StubTask _stubTask;
         readonly BuildModelFactory _buildModelFactory;
+        readonly FileSystem _fileSystem;
 
         public BuildModelFactoryTests()
         {
@@ -52,6 +53,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             ServiceProvider provider = new ServiceCollection()
                 .AddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>()
                 .AddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>()
+                .AddSingleton<IPdbArtifactModelFactory, PdbArtifactModelFactory>()
                 .AddSingleton<IPackageArchiveReaderFactory, PackageArchiveReaderFactory>()
                 .AddSingleton<INupkgInfoFactory, NupkgInfoFactory>()
                 .AddSingleton<IFileSystem, FileSystem>()
@@ -60,9 +62,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 .BuildServiceProvider();
             
             _buildModelFactory = ActivatorUtilities.CreateInstance<BuildModelFactory>(provider);
+            _fileSystem = ActivatorUtilities.CreateInstance<FileSystem>(provider);
         }
 
-        #region Artifact related tests
         /// <summary>
         /// A model with no input artifacts is invalid
         /// </summary>
@@ -70,9 +72,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         public void AttemptToCreateModelWithNoArtifactsFails()
         {
             Action act = () =>
-                _buildModelFactory.CreateModelFromItems(null, null,
-                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+                _buildModelFactory.CreateModel(artifacts: null,
+                                               artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                               buildId: _testAzdoBuildId,
+                                               manifestBuildData: null,
+                                               repoUri: _testAzdoRepoUri,
+                                               repoBranch: _testBuildBranch,
+                                               repoCommit: _testBuildCommit,
+                                               repoOrigin: _testRepoOrigin,
+                                               isStableBuild: false,
+                                               publishingVersion: PublishingInfraVersion.Latest,
+                                               isReleaseOnlyPackageVersion: true);
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -96,17 +106,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             const string bopSnupkg = "foo/bar/baz/bop.symbols.nupkg";
             string bopSnupkgExpectedId = $"assets/symbols/{Path.GetFileName(bopSnupkg)}";
             const string zipArtifact = "foo/bar/baz/bing.zip";
+            // New PDB artifact
+            const string pdbArtifact = "foo/bar/baz/bing.pdb";
 
             var artifacts = new ITaskItem[]
             {
                 new TaskItem(bopSymbolsNupkg, new Dictionary<string, string>
                 {
                     { "ManifestArtifactData", "NonShipping=true;Category=SMORKELER" },
-                    { "ThisIsntArtifactMetadata", "YouGoofed!" }
+                    { "RelativeBlobPath", bobSymbolsExpectedId},
+                    { "ThisIsntArtifactMetadata", "YouGoofed!" },
+                    { "Kind", "Blob" }
                 }),
                 new TaskItem(bopSnupkg, new Dictionary<string, string>
                 {
-                    { "ManifestArtifactData", "NonShipping=false;Category=SNORPKEG;" }
+                    { "ManifestArtifactData", "NonShipping=false;Category=SNORPKEG;" },
+                    { "RelativeBlobPath", bopSnupkgExpectedId},
+                    { "Kind", "Blob" },
                 }),
                 // Include a package and a fake zip too
                 // Note that the relative blob path is a "first class" attribute,
@@ -115,20 +131,39 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 {
                     { "RelativeBlobPath", zipArtifact },
                     { "ManifestArtifactData", "ARandomBitOfMAD=" },
+                    { "Kind", "Blob" }
                 }),
                 new TaskItem(localPackagePath, new Dictionary<string, string>()
                 {
                     // This isn't recognized or used for a nupkg
                     { "RelativeBlobPath", zipArtifact },
                     { "ManifestArtifactData", "ShouldWePushDaNorpKeg=YES" },
+                    { "Kind", "Package" }
+                }),
+                // New PDB artifact with RelativePdbPath
+                new TaskItem(pdbArtifact, new Dictionary<string, string>
+                {
+                    { "RelativePdbPath", pdbArtifact },
+                    { "ManifestArtifactData", "NonShipping=false;Category=PDB" },
+                    { "Kind", "PDB" }
                 })
             };
 
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+            var model = _buildModelFactory.CreateModel(artifacts: artifacts,
+                                                       artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                                       buildId: _testAzdoBuildId,
+                                                       manifestBuildData: _defaultManifestBuildData,
+                                                       repoUri: _testAzdoRepoUri,
+                                                       repoBranch: _testBuildBranch,
+                                                       repoCommit: _testBuildCommit,
+                                                       repoOrigin: _testRepoOrigin,
+                                                       isStableBuild: false,
+                                                       publishingVersion: PublishingInfraVersion.Latest,
+                                                       isReleaseOnlyPackageVersion: true);
 
+            model.Should().NotBeNull();
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
+
             // When Maestro sees a symbol package, it is supposed to re-do the symbol package path to
             // be assets/symbols/<file-name>
             model.Artifacts.Blobs.Should().SatisfyRespectively(
@@ -171,6 +206,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 });
 
+            // New verification for the PDB artifact
+            model.Artifacts.Pdbs.Should().SatisfyRespectively(
+                pdb =>
+                {
+                    pdb.Id.Should().Be(pdbArtifact);
+                    pdb.NonShipping.Should().BeFalse();
+                    pdb.Attributes.Should().Contain("NonShipping", "false");
+                    pdb.Attributes.Should().Contain("Category", "PDB");
+                    pdb.Attributes.Should().Contain("Id", pdbArtifact);
+                    pdb.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
+                }
+            );
+
             model.Identity.Attributes.Should().Contain("AzureDevOpsRepository", _normalizedTestAzdoRepoUri);
         }
 
@@ -187,12 +235,24 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 new TaskItem(localPackagePath, new Dictionary<string, string>()
                 {
                     { "ManifestArtifactData", "nonshipping=true;Category=CASE" },
+                    { "Kind", "Package" }
                 })
             };
 
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+            var model = _buildModelFactory.CreateModel(artifacts: artifacts,
+                                                       artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                                       buildId: _testAzdoBuildId,
+                                                       manifestBuildData: _defaultManifestBuildData,
+                                                       repoUri: _testAzdoRepoUri,
+                                                       repoBranch: _testBuildBranch,
+                                                       repoCommit: _testBuildCommit,
+                                                       repoOrigin: _testRepoOrigin,
+                                                       isStableBuild: false,
+                                                       publishingVersion: PublishingInfraVersion.Latest,
+                                                       isReleaseOnlyPackageVersion: true);
+
+            model.Should().NotBeNull();
+            _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
 
             model.Artifacts.Blobs.Should().BeEmpty();
             model.Artifacts.Packages.Should().SatisfyRespectively(
@@ -210,6 +270,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 });
         }
 
+        
+
         /// <summary>
         /// We can't create a blob artifact model without a RelativeBlobPath
         /// </summary>
@@ -226,15 +288,60 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 new TaskItem(zipArtifact, new Dictionary<string, string>
                 {
                     { "ManifestArtifactData", "ARandomBitOfMAD=" },
+                    { "Kind", "Blob" },
                 }),
             };
 
-            _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+            _buildModelFactory.CreateModel(artifacts: artifacts,
+                                           artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                           buildId: _testAzdoBuildId,
+                                           manifestBuildData: _defaultManifestBuildData,
+                                           repoUri: _testAzdoRepoUri,
+                                           repoBranch: _testBuildBranch,
+                                           repoCommit: _testBuildCommit,
+                                           repoOrigin: _testRepoOrigin,
+                                           isStableBuild: false,
+                                           publishingVersion: PublishingInfraVersion.Latest,
+                                           isReleaseOnlyPackageVersion: true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
             _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Equals($"Missing 'RelativeBlobPath' property on blob {zipArtifact}"));
+        }
+
+        /// <summary>
+        /// We can't create a PDB artifact model without a RelativePdbPath
+        /// </summary>
+        [Fact]
+        public void PdbsWithoutARelativePdbPathIsInvalid()
+        {
+            const string pdbArtifact = "foo/bar/baz/bing.pdb";
+
+            var artifacts = new ITaskItem[]
+            {
+                // Include a package and a fake pdb too
+                // Note that the relative pdb path is a "first class" attribute,
+                // not parsed from ManifestArtifactData
+                new TaskItem(pdbArtifact, new Dictionary<string, string>
+                {
+                    { "ManifestArtifactData", "ARandomBitOfMAD=" },
+                    { "Kind", "PDB" },
+                }),
+            };
+
+            _buildModelFactory.CreateModel(artifacts: artifacts,
+                                           artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                           buildId: _testAzdoBuildId,
+                                           manifestBuildData: _defaultManifestBuildData,
+                                           repoUri: _testAzdoRepoUri,
+                                           repoBranch: _testBuildBranch,
+                                           repoCommit: _testBuildCommit,
+                                           repoOrigin: _testRepoOrigin,
+                                           isStableBuild: false,
+                                           publishingVersion: PublishingInfraVersion.Latest,
+                                           isReleaseOnlyPackageVersion: true);
+
+            _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Equals($"Missing 'RelativePdbPath' property on pdb {pdbArtifact}"));
         }
 
         /// <summary>
@@ -249,13 +356,22 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 new TaskItem(localPackagePath, new Dictionary<string, string>
                 {
-                    { "ManifestArtifactData", "NonShipping=true" }
+                    { "ManifestArtifactData", "NonShipping=true" },
+                    { "Kind", "Package" }
                 })
             };
 
-            _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+            _buildModelFactory.CreateModel(artifacts: artifacts,
+                                           artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                           buildId: _testAzdoBuildId,
+                                           manifestBuildData: null,
+                                           repoUri: _testAzdoRepoUri,
+                                           repoBranch: _testBuildBranch,
+                                           repoCommit: _testBuildCommit,
+                                           repoOrigin: _testRepoOrigin,
+                                           isStableBuild: false,
+                                           publishingVersion: PublishingInfraVersion.Latest,
+                                           isReleaseOnlyPackageVersion: true);
 
             // Should have logged an error that an initial location was not present.
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
@@ -277,7 +393,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 new TaskItem(localPackagePath, new Dictionary<string, string>
                 {
-                    { "ManifestArtifactData", "NonShipping=true" }
+                    { "ManifestArtifactData", "NonShipping=true" },
+                    { "Kind", "Package" }
                 })
             };
 
@@ -286,9 +403,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 $"{attributeName}={_testInitialLocation}"
             };
 
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, manifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
+            var model = _buildModelFactory.CreateModel(artifacts: artifacts,
+                                                       artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                                       buildId: _testAzdoBuildId,
+                                                       manifestBuildData: manifestBuildData,
+                                                       repoUri: _testAzdoRepoUri,
+                                                       repoBranch: _testBuildBranch,
+                                                       repoCommit: _testBuildCommit,
+                                                       repoOrigin: _testRepoOrigin,
+                                                       isStableBuild: false,
+                                                       publishingVersion: PublishingInfraVersion.Latest,
+                                                       isReleaseOnlyPackageVersion: true);
 
             // Should have logged an error that an initial location was not present.
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -296,10 +421,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             // Check that the build model has the initial assets location
             model.Identity.Attributes.Should().Contain(attributeName, _normalizedTestInitialLocation);
         }
-
-        #endregion
-
-        #region Round trip tests
 
         /// <summary>
         /// Basic round trip from model -> xml -> model has the desired results.
@@ -319,17 +440,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             const string bopSnupkg = "foo/bar/baz/bop.symbols.nupkg";
             string bopSnupkgExpectedId = $"assets/symbols/{Path.GetFileName(bopSnupkg)}";
             const string zipArtifact = "foo/bar/baz/bing.zip";
+            // New PDB artifact
+            const string pdbArtifact = "foo/bar/baz/bing.pdb";
 
             var artifacts = new ITaskItem[]
             {
                 new TaskItem(bopSymbolsNupkg, new Dictionary<string, string>
                 {
                     { "ManifestArtifactData", "NonShipping=true;Category=SMORKELER" },
-                    { "ThisIsntArtifactMetadata", "YouGoofed!" }
+                    { "RelativeBlobPath", bobSymbolsExpectedId},
+                    { "ThisIsntArtifactMetadata", "YouGoofed!" },
+                    { "Kind", "Blob" }
                 }),
                 new TaskItem(bopSnupkg, new Dictionary<string, string>
                 {
-                    { "ManifestArtifactData", "NonShipping=false;Category=SNORPKEG;" }
+                    { "ManifestArtifactData", "NonShipping=false;Category=SNORPKEG;" },
+                    { "RelativeBlobPath", bopSnupkgExpectedId},
+                    { "Kind", "Blob" },
                 }),
                 // Include a package and a fake zip too
                 // Note that the relative blob path is a "first class" attribute,
@@ -338,97 +465,44 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 {
                     { "RelativeBlobPath", zipArtifact },
                     { "ManifestArtifactData", "ARandomBitOfMAD=" },
+                    { "Kind", "Blob" }
                 }),
                 new TaskItem(localPackagePath, new Dictionary<string, string>()
                 {
                     // This isn't recognized or used for a nupkg
                     { "RelativeBlobPath", zipArtifact },
                     { "ManifestArtifactData", "ShouldWePushDaNorpKeg=YES" },
-                })
-            };
-
-            var itemsToSign = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath),
-                new TaskItem(zipArtifact)
-            };
-
-            var strongNameSignInfo = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()
-                {
-                    { "CertificateName", "IHasACert" },
-                    { "PublicKeyToken", "abcdabcdabcdabcd" }
-                })
-            };
-
-            var fileSignInfo = new ITaskItem[]
-            {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()
-                {
-                    { "CertificateName", "IHasACert2" }
+                    { "Kind", "Package" }
                 }),
-                // Added per issue: dotnet/arcade#7064
-                new TaskItem("Microsoft.DiaSymReader.dll", new Dictionary<string, string>()
+                // New PDB artifact with RelativePdbPath
+                new TaskItem(pdbArtifact, new Dictionary<string, string>
                 {
-                    { "CertificateName", "MicrosoftWin8WinBlue" },
-                    { "TargetFramework", ".NETFramework,Version=v2.0" },
-                    { "PublicKeyToken", "31bf3856ad364e35" }
-                }),
-                new TaskItem("Microsoft.DiaSymReader.dll", new Dictionary<string, string>()
-                {
-                    { "CertificateName", "Microsoft101240624" }, // lgtm [cs/common-default-passwords] Safe, these are certificate names
-                    { "TargetFramework", ".NETStandard,Version=v1.1" },
-                    { "PublicKeyToken", "31bf3856ad364e35" }
-                })
-            };
-
-            var certificatesSignInfo = new ITaskItem[]
-            {
-                new TaskItem("MyCert", new Dictionary<string, string>()
-                {
-                    { "DualSigningAllowed", "false" }
-                }),
-                new TaskItem("MyOtherCert", new Dictionary<string, string>()
-                {
-                    { "DualSigningAllowed", "true" }
-                }),
-                new TaskItem("MySpecialCert", new Dictionary<string, string>()
-                {
-                    { "MacCertificate", "MacMac" },
-                    { "MacNotarizationAppName", "dotnet" }
-                })
-            };
-
-            var fileExtensionSignInfo = new ITaskItem[]
-            {
-                new TaskItem(".dll", new Dictionary<string, string>()
-                {
-                    { "CertificateName", "MyCert" }
+                    { "RelativePdbPath", pdbArtifact },
+                    { "ManifestArtifactData", "NonShipping=false;Category=PDB" },
+                    { "Kind", "PDB" }
                 })
             };
 
             string tempXmlFile = Path.GetTempFileName();
             try
             {
-                var modelFromItems = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
-                    strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo, _testAzdoBuildId,
-                    _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, _testRepoOrigin, true,
-                    VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                    false);
+                var modelFromItems = _buildModelFactory.CreateModel(artifacts: artifacts,
+                                                                    artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                                                                    buildId: _testAzdoBuildId,
+                                                                    manifestBuildData: _defaultManifestBuildData,
+                                                                    repoUri: _testAzdoRepoUri,
+                                                                    repoBranch: _testBuildBranch,
+                                                                    repoCommit: _testBuildCommit,
+                                                                    repoOrigin: _testRepoOrigin,
+                                                                    isStableBuild: true,
+                                                                    publishingVersion: PublishingInfraVersion.Latest,
+                                                                    isReleaseOnlyPackageVersion: false);
 
-                _buildModelFactory.CreateBuildManifest(
-                        modelFromItems.Artifacts.Blobs,
-                        modelFromItems.Artifacts.Packages,
-                        tempXmlFile,
-                        modelFromItems.Identity.Name,
-                        modelFromItems.Identity.BuildId,
-                        modelFromItems.Identity.Branch,
-                        modelFromItems.Identity.Commit,
-                        modelFromItems.Identity.Attributes.Select(kv => $"{kv.Key}={kv.Value}").ToArray(),
-                        modelFromItems.Identity.IsStable,
-                        modelFromItems.Identity.PublishingVersion,
-                        modelFromItems.Identity.IsReleaseOnlyPackageVersion);
+                modelFromItems.Should().NotBeNull();
+                _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
+
+                // Write to file
+                _fileSystem.WriteToFile(tempXmlFile, modelFromItems.ToXml().ToString(SaveOptions.DisableFormatting));
 
                 // Read the xml file back in and create a model from it.
                 var modelFromFile = _buildModelFactory.ManifestFileToModel(tempXmlFile);
@@ -482,6 +556,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         package.Attributes.Should().Contain("ShouldWePushDaNorpKeg", "YES");
                         package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     });
+
+                // New verification for the PDB artifact round trip
+                modelFromFile.Artifacts.Pdbs.Should().SatisfyRespectively(
+                    pdb =>
+                    {
+                        pdb.Id.Should().Be(pdbArtifact);
+                        pdb.NonShipping.Should().BeFalse();
+                        pdb.Attributes.Should().Contain("NonShipping", "false");
+                        pdb.Attributes.Should().Contain("Category", "PDB");
+                        pdb.Attributes.Should().Contain("Id", pdbArtifact);
+                        pdb.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
+                    }
+                );
             }
             finally
             {
@@ -492,35 +579,40 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             }
         }
 
-        #endregion
-
-        #region Signing Model Information
-
         /// <summary>
-        /// If no signing information is present, we should still get a signing model,
-        /// with nothing in it
+        /// Validates that errors are logged and null is returned when Kind metadata is missing from an artifact.
         /// </summary>
         [Fact]
-        public void NoSigningInformationDoesNotThrowAnError()
+        public void CreateModel_MissingKindMetadata_ReturnsNullAndLogsError()
         {
-            var localPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
-
+            // Arrange
             var artifacts = new ITaskItem[]
             {
-                new TaskItem(localPackagePath, new Dictionary<string, string>()
+                new TaskItem("missingKindArtifact.nupkg", new Dictionary<string, string>
                 {
-                    { "ManifestArtifactData", "nonshipping=true;Category=CASE" },
+                    { "ManifestArtifactData", "NonShipping=true;Category=TEST" }
+                    // "Kind" metadata is intentionally missing
                 })
             };
 
-            var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
-                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+            // Act
+            var model = _buildModelFactory.CreateModel(
+                artifacts: artifacts,
+                artifactVisibilitiesToInclude: ArtifactVisibility.All,
+                buildId: _testAzdoBuildId,
+                manifestBuildData: _defaultManifestBuildData,
+                repoUri: _testAzdoRepoUri,
+                repoBranch: _testBuildBranch,
+                repoCommit: _testBuildCommit,
+                repoOrigin: _testRepoOrigin,
+                isStableBuild: false,
+                publishingVersion: PublishingInfraVersion.Latest,
+                isReleaseOnlyPackageVersion: true);
 
-            _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
+            // Assert
+            model.Should().BeNull();
+            _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("Missing 'Kind' property on artifact missingKindArtifact.nupkg"));
         }
-
-        #endregion
     }
 }

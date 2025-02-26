@@ -8,6 +8,7 @@
     Optional variables:
       EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
                                         Defaults to true.
+      EnableDefaultRidSpecificArtifacts Do not sign *.nupkg packages under "/artifacts/packages/**" that do not contain the current TargetRid.
       DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
 
     Optional items:
@@ -61,7 +62,7 @@
       <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
       
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
-      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.dll</PkgToolPath>
+      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -92,7 +93,8 @@
         PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
-        DotNetTimeout="$(SignToolDotNetTimeout)" />
+        DotNetTimeout="$(SignToolDotNetTimeout)"
+        MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
   </Target>
 
 </Project>

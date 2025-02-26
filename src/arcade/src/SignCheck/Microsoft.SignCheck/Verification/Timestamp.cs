@@ -46,6 +46,28 @@ namespace Microsoft.SignCheck.Verification
         {
             get;
             set;
-        }       
+        }
+
+        /// <summary>
+        /// Adds a timestamp detail to the <see cref="SignatureVerificationResult"/>.
+        /// </summary>
+        public void AddToSignatureVerificationResult(SignatureVerificationResult svr)
+        {
+            if (IsValid)
+            {
+                svr.AddDetail(DetailKeys.Misc, SignCheckResources.DetailTimestamp, SignedOn, SignatureAlgorithm);
+            }
+            else
+            {
+                if (SignedOn == DateTime.MaxValue || ExpiryDate == DateTime.MinValue || EffectiveDate == DateTime.MaxValue)
+                {
+                    svr.AddDetail(DetailKeys.Error, SignCheckResources.ErrorInvalidOrMissingTimestamp);
+                }
+                else
+                {
+                    svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailTimestampOutisdeCertValidity, SignedOn, EffectiveDate, ExpiryDate);
+                }
+            }
+        }
     }
 }

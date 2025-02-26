@@ -10,7 +10,7 @@
   <ItemDefinitionGroup>
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
-      <!-- Possible values: Blob, Package -->
+      <!-- Possible values: Blob, Package, PDB -->
       <!-- Currently unset, indicating that a repo hasn't started using this property. If it's set, then it
            wins over PublishFlatContaner. If it is not set, then PublishFlatContainer wins.
            After existing usage of PublishFlatContainer is no longer around, set to "Blob" -->
@@ -32,14 +32,33 @@
     <CertificatesSignInfo Include="MacDeveloperVNextHardenWithNotarization" MacCertificate="MacDeveloperVNextHarden" MacNotarizationAppName="dotnet" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
-    <!-- List of container files that will be opened and checked for files that need to be signed. -->
-    <_DefaultItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
-    <_DefaultItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
-    <_DefaultItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
+  <!-- Only publish packages that contain this build's Target RID in the name.
+       PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(PostBuildSign)' != 'true' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)**/*.$(TargetRid).*.nupkg"/>
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/*.$(TargetRid).*.nupkg" />
+    <!--
+      Integration with Microsoft.DotNet.Build.Tasks.Installers: Publish packages of the following formats as well.
+      These are arch-specific Visual Studio insertion packages. As they're Windows-only, they only include architecture in the name:
+      - VS.Redist.Common.*.$(TargetArchitecture).*.nupkg
+      - VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg
+      
+      These packages are always non-shipping, so only look there.
+    -->
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" />
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg" />
 
-    <!-- PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
-    <ItemsToSign Include="@(_DefaultItemsToSign)" Condition="'$(PostBuildSign)' != 'true'" />
+    <!-- Always sign all vsix packages and VS Build Packages. These may be arch specific or agnostic, but they likely won't have the RID included. -->
+    <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
+    <ItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
+  </ItemGroup>
+
+  <!-- PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(PostBuildSign)' != 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true'">
+    <!-- List of container files that will be opened and checked for files that need to be signed. -->
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
+    <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
+    <ItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,6 +115,9 @@
 
     <!-- Timeout in milliseconds for DotNet MicroBuild build command. '-1' is infinite. -->
     <SignToolDotNetTimeout Condition="'$(SignToolDotNetTimeout)' == ''">-1</SignToolDotNetTimeout>
+
+    <!-- Verbosity for DotNet MicroBuild build command. -->
+    <SignToolMSBuildVerbosity Condition="'$(SignToolMSBuildVerbosity)' == ''">quiet</SignToolMSBuildVerbosity>
 
     <NETCORE_ENGINEERING_TELEMETRY>Signing</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>

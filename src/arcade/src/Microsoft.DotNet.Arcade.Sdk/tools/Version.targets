@@ -107,6 +107,7 @@
     -->
     <Copy SourceFiles="$(MSBuildThisFileDirectory)NativeVersion.rc"
           DestinationFolder="$([System.IO.Path]::GetDirectoryName($(NativeVersionFile)))"
+          SkipUnchangedFiles="true"
           Condition="'$(OS)' == 'Windows_NT'" />
 
     <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">

@@ -102,8 +102,15 @@ namespace Microsoft.SignCheck.Verification
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
             AddFileVerifier(new VsixVerifier(log, exclusions, options));
+#else
+            AddFileVerifier(new DebVerifier(log, exclusions, options));
+            AddFileVerifier(new PkgVerifier(log, exclusions, options, ".pkg"));
+            AddFileVerifier(new PkgVerifier(log, exclusions, options, ".app"));
+            AddFileVerifier(new TarVerifier(log, exclusions, options, ".tar"));
+            AddFileVerifier(new TarVerifier(log, exclusions, options, ".tgz"));
+            AddFileVerifier(new TarVerifier(log, exclusions, options, ".gz"));
+            AddFileVerifier(new RpmVerifier(log, exclusions, options));
 #endif
-
             AddFileVerifier(new LzmaVerifier(log, exclusions, options));
             AddFileVerifier(new NupkgVerifier(log, exclusions, options));
             AddFileVerifier(new XmlVerifier(log, exclusions, options));

@@ -57,6 +57,32 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             which.Should().BeOfType<PublishArtifactsInManifestV3>();
         }
 
+        [Fact]
+        public void ConstructV4PublishingTask()
+        {
+            var manifestFullPath = TestInputs.GetFullPath(Path.Combine("Manifests", "SampleV4.xml"));
+
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifest()
+            {
+                BuildEngine = buildEngine,
+                TargetChannels = GeneralTestingChannelId
+            };
+
+            // Dependency Injection setup
+            var collection = new ServiceCollection()
+                .AddSingleton<IFileSystem, FileSystem>()
+                .AddSingleton<IBuildModelFactory, BuildModelFactory>();
+            task.ConfigureServices(collection);
+            using var provider = collection.BuildServiceProvider();
+
+            // Act and Assert
+            task.InvokeExecute(provider);
+
+            var which = task.WhichPublishingTask(manifestFullPath);
+            which.Should().BeOfType<PublishArtifactsInManifestV4>();
+        }
+
         [Theory]
         [InlineData("https://pkgs.dev.azure.com/dnceng/public/_packaging/mmitche-test-transport/nuget/v3/index.json", "dnceng", "public/", "mmitche-test-transport")]
         [InlineData("https://pkgs.dev.azure.com/DevDiv/public/_packaging/1234.5/nuget/v3/index.json", "DevDiv", "public/", "1234.5")]

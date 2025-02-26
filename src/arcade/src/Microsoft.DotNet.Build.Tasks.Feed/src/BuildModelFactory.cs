@@ -16,26 +16,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public interface IBuildModelFactory
     {
-        void CreateBuildManifest(
-            IEnumerable<BlobArtifactModel> blobArtifacts,
-            IEnumerable<PackageArtifactModel> packageArtifacts,
-            string assetManifestPath,
-            string manifestRepoName,
-            string manifestBuildId,
-            string manifestBranch,
-            string manifestCommit,
-            string[] manifestBuildData,
-            bool isStableBuild,
-            PublishingInfraVersion publishingVersion,
-            bool isReleaseOnlyPackageVersion);
-
-        BuildModel CreateModelFromItems(
+        BuildModel CreateModel(
             ITaskItem[] artifacts,
-            ITaskItem[] itemsToSign,
-            ITaskItem[] strongNameSignInfo,
-            ITaskItem[] fileSignInfo,
-            ITaskItem[] fileExtensionSignInfo,
-            ITaskItem[] certificatesSignInfo,
+            ArtifactVisibility artifactVisibilitiesToInclude,
             string buildId,
             string[] manifestBuildData,
             string repoUri,
@@ -52,17 +35,20 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     public class BuildModelFactory : IBuildModelFactory
     {
         private readonly IBlobArtifactModelFactory _blobArtifactModelFactory;
+        private readonly IPdbArtifactModelFactory _pdbArtifactModelFactory;
         private readonly IPackageArtifactModelFactory _packageArtifactModelFactory;
         private readonly IFileSystem _fileSystem;
         private readonly TaskLoggingHelper _log;
 
         public BuildModelFactory(
             IBlobArtifactModelFactory blobArtifactModelFactory,
+            IPdbArtifactModelFactory pdbArtifactModelFactory,
             IPackageArtifactModelFactory packageArtifactModelFactory,
             IFileSystem fileSystem,
             TaskLoggingHelper logger)
         {
             _blobArtifactModelFactory = blobArtifactModelFactory;
+            _pdbArtifactModelFactory = pdbArtifactModelFactory;
             _packageArtifactModelFactory = packageArtifactModelFactory;
             _fileSystem = fileSystem;
             _log = logger;
@@ -75,57 +61,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private readonly Regex LegacyRepositoryUriPattern = new Regex(
             @"^https://(?<account>[a-zA-Z0-9]+)\.visualstudio\.com/");
 
-        /// <summary>
-        /// Create a build manifest for packages, blobs, and associated signing information
-        /// </summary>
-        /// <param name="log">MSBuild log helper</param>
-        /// <param name="blobArtifacts">Collection of blobs</param>
-        /// <param name="packageArtifacts">Collection of packages</param>
-        /// <param name="assetManifestPath">Asset manifest file that should be written</param>
-        /// <param name="manifestRepoName">Repository name</param>
-        /// <param name="manifestBuildId">Azure devops build id</param>
-        /// <param name="manifestBranch">Name of the branch that was built</param>
-        /// <param name="manifestCommit">Commit that was built</param>
-        /// <param name="manifestBuildData">Additional build data properties</param>
-        /// <param name="isStableBuild">True if the build is stable, false otherwise.</param>
-        /// <param name="publishingVersion">Publishing version in use.</param>
-        /// <param name="isReleaseOnlyPackageVersion">True if this repo uses release-only package versions</param>
-        public void CreateBuildManifest(
-            IEnumerable<BlobArtifactModel> blobArtifacts,
-            IEnumerable<PackageArtifactModel> packageArtifacts,
-            string assetManifestPath,
-            string manifestRepoName,
-            string manifestBuildId,
-            string manifestBranch,
-            string manifestCommit,
-            string[] manifestBuildData,
-            bool isStableBuild,
-            PublishingInfraVersion publishingVersion,
-            bool isReleaseOnlyPackageVersion)
-        {
-            BuildModel model = CreateModel(
-                blobArtifacts,
-                packageArtifacts,
-                manifestBuildId,
-                manifestBuildData,
-                manifestRepoName,
-                manifestBranch,
-                manifestCommit,
-                isStableBuild,
-                publishingVersion,
-                isReleaseOnlyPackageVersion);
+        private const string ArtifactKindMetadata = "Kind";
 
-            _log.LogMessage(MessageImportance.High, $"Writing build manifest file '{assetManifestPath}'...");
-            _fileSystem.WriteToFile(assetManifestPath, model.ToXml().ToString(SaveOptions.DisableFormatting));
-        }
-
-        public BuildModel CreateModelFromItems(
+        public BuildModel CreateModel(
             ITaskItem[] artifacts,
-            ITaskItem[] itemsToSign,
-            ITaskItem[] strongNameSignInfo,
-            ITaskItem[] fileSignInfo,
-            ITaskItem[] fileExtensionSignInfo,
-            ITaskItem[] certificatesSignInfo,
+            ArtifactVisibility artifactVisibilitiesToInclude,
             string buildId,
             string[] manifestBuildData,
             string repoUri,
@@ -141,37 +81,49 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 throw new ArgumentNullException(nameof(artifacts));
             }
 
-            var blobArtifacts = new List<BlobArtifactModel>();
-            var packageArtifacts = new List<PackageArtifactModel>();
+            // Filter out artifacts that are excluded from the manifest
+            var itemsToPushNoExcludes = artifacts.
+                Where(i => !string.Equals(i.GetMetadata("ExcludeFromManifest"), "true", StringComparison.OrdinalIgnoreCase));
 
-            foreach (var artifact in artifacts)
+            // Verify that Kind is set on all items
+            bool missingKind = false;
+            foreach (var item in itemsToPushNoExcludes)
             {
-                if (string.Equals(artifact.GetMetadata("ExcludeFromManifest"), "true", StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(item.GetMetadata("Kind")))
                 {
-                    continue;
-                }
-
-                var isSymbolsPackage = GeneralUtils.IsSymbolPackage(artifact.ItemSpec);
-
-                if (artifact.ItemSpec.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase) && !isSymbolsPackage)
-                {
-                    packageArtifacts.Add(_packageArtifactModelFactory.CreatePackageArtifactModel(artifact, repoOrigin));
-                }
-                else
-                {
-                    if (isSymbolsPackage)
-                    {
-                        string fileName = Path.GetFileName(artifact.ItemSpec);
-                        artifact.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
-                    }
-
-                    blobArtifacts.Add(_blobArtifactModelFactory.CreateBlobArtifactModel(artifact, repoOrigin));
+                    _log.LogError($"Missing 'Kind' property on artifact {item.ItemSpec}. Possible values are 'Blob', 'PDB', 'Package'.");
+                    missingKind = true;
                 }
             }
 
-            var buildModel = CreateModel(
+            if (missingKind)
+            {
+                return null;
+            }
+
+            // Split the non-excluded items into the different artifact types based on the Kind metadata,
+            // where the visibility of the artifact should be included in the manifest,
+            // and create the corresponding artifact models.
+
+            var blobArtifacts = itemsToPushNoExcludes
+                .Where(i => i.GetMetadata(ArtifactKindMetadata).Equals(nameof(ArtifactKind.Blob), StringComparison.OrdinalIgnoreCase))
+                .Select(i => _blobArtifactModelFactory.CreateBlobArtifactModel(i, repoOrigin))
+                .Where(b => artifactVisibilitiesToInclude.HasFlag(b.Visibility));
+
+            var packageArtifacts = itemsToPushNoExcludes
+                .Where(i => i.GetMetadata(ArtifactKindMetadata).Equals(nameof(ArtifactKind.Package), StringComparison.OrdinalIgnoreCase))
+                .Select(i => _packageArtifactModelFactory.CreatePackageArtifactModel(i, repoOrigin))
+                .Where(b => artifactVisibilitiesToInclude.HasFlag(b.Visibility));
+
+            var pdbArtifacts = itemsToPushNoExcludes
+                .Where(i => i.GetMetadata(ArtifactKindMetadata).Equals(nameof(ArtifactKind.Pdb), StringComparison.OrdinalIgnoreCase))
+                .Select(i => _pdbArtifactModelFactory.CreatePdbArtifactModel(i, repoOrigin))
+                .Where(b => artifactVisibilitiesToInclude.HasFlag(b.Visibility));
+
+            return CreateModel(
                 blobArtifacts,
                 packageArtifacts,
+                pdbArtifacts,
                 buildId,
                 manifestBuildData,
                 repoUri,
@@ -180,12 +132,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 isStableBuild,
                 publishingVersion,
                 isReleaseOnlyPackageVersion);
-            return buildModel;
         }
-
-        private BuildModel CreateModel(
+                    
+        private BuildModel CreateModel( 
             IEnumerable<BlobArtifactModel> blobArtifacts,
             IEnumerable<PackageArtifactModel> packageArtifacts,
+            IEnumerable<PdbArtifactModel> pdbArtifacts,
             string manifestBuildId,
             string[] manifestBuildData,
             string manifestRepoName,
@@ -218,6 +170,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             buildModel.Artifacts.Blobs.AddRange(blobArtifacts);
             buildModel.Artifacts.Packages.AddRange(packageArtifacts);
+            buildModel.Artifacts.Pdbs.AddRange(pdbArtifacts);
             return buildModel;
         }
 
