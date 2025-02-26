@@ -43,11 +43,11 @@
       "commitSha": "cd80a354d76b78df8f8a1f5c10aa14760a5a797f"
     },
     {
-      "packageVersion": "9.0.0-preview.25116.1",
+      "packageVersion": "9.0.0-preview.25121.1",
       "barId": null,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "aa5cd1d8cec4f5a41719bb556303a70f11dc88d7"
+      "commitSha": "6626d0ac5d10532ef9c0939b4b65c7381715340a"
     },
     {
       "packageVersion": "10.0.0-preview.3.25124.3",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ac789f03262b0f441eed5edfbe17fd224c0bdb37"
+      "commitSha": "acb58eccc6914251a761c126568bc934d177c09f"
     },
     {
       "packageVersion": "10.0.611801",
@@ -162,11 +162,11 @@
       "commitSha": "7895acc2b61bd280b236865942068494297be0a4"
     },
     {
-      "packageVersion": "17.14.0-preview-25117-01",
+      "packageVersion": "17.14.0-preview-25124-01",
       "barId": null,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "fa1172341736fdcab08a591fe4e5a6fb71117ad2"
+      "commitSha": "ae0246012a389cd83909cedf05a9b9332c083de5"
     },
     {
       "packageVersion": "10.0.0-preview.3.25121.1",
