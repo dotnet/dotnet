@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace NuGet.Commands
     /// </summary>
     internal static class UnresolvedMessages
     {
+        private static readonly NuGetVersion V0 = new NuGetVersion(0, 0, 0);
+
         /// <summary>
         /// Log errors for missing dependencies.
         /// </summary>
@@ -110,9 +113,8 @@ namespace NuGet.Commands
                 // Package
                 var range = unresolved.VersionRange ?? VersionRange.All;
                 var sourceInfo = await GetSourceInfosForIdAsync(unresolved.Name, applicableRemoteLibraryProviders, sourceCacheContext, logger, token);
-                var allVersions = new SortedSet<NuGetVersion>(sourceInfo.SelectMany(e => e.Value));
 
-                if (allVersions.Count == 0)
+                if (sourceInfo.All(static kvp => kvp.Value.Length == 0))
                 {
                     // No versions found
                     code = NuGetLogCode.NU1101;
@@ -136,6 +138,7 @@ namespace NuGet.Commands
                     // At least one version found
                     var firstLine = string.Empty;
                     var rangeString = range.ToNonSnapshotRange().PrettyPrint();
+                    var allVersions = sourceInfo.SelectMany(static e => e.Value);
 
                     if (!IsPrereleaseAllowed(range) && HasPrereleaseVersionsOnly(range, allVersions))
                     {
@@ -228,7 +231,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Found 2839 version(s) in nuget-build [ Nearest version: 1.0.0-beta ]
         /// </summary>
-        internal static string FormatSourceInfo(KeyValuePair<PackageSource, SortedSet<NuGetVersion>> sourceInfo, VersionRange range)
+        internal static string FormatSourceInfo(KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>> sourceInfo, VersionRange range)
         {
             var bestMatch = GetBestMatch(sourceInfo.Value, range);
 
@@ -236,28 +239,28 @@ namespace NuGet.Commands
             {
                 return string.Format(CultureInfo.CurrentCulture,
                     Strings.FoundVersionsInSource,
-                    sourceInfo.Value.Count,
+                    sourceInfo.Value.Length,
                     sourceInfo.Key.Name,
                     bestMatch.ToNormalizedString());
             }
 
             return string.Format(CultureInfo.CurrentCulture,
                                 Strings.FoundVersionsInSourceWithoutMatch,
-                                sourceInfo.Value.Count,
+                                sourceInfo.Value.Length,
                                 sourceInfo.Key.Name);
         }
 
         /// <summary>
         /// Get the complete set of source info for a package id.
         /// </summary>
-        internal static async Task<List<KeyValuePair<PackageSource, SortedSet<NuGetVersion>>>> GetSourceInfosForIdAsync(
+        internal static async Task<List<KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>>> GetSourceInfosForIdAsync(
             string id,
             IList<IRemoteDependencyProvider> remoteLibraryProviders,
             SourceCacheContext sourceCacheContext,
             ILogger logger,
             CancellationToken token)
         {
-            var sources = new List<KeyValuePair<PackageSource, SortedSet<NuGetVersion>>>();
+            var sources = new List<KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>>();
 
             // Get versions from all sources. These should be cached by the providers already.
             var tasks = remoteLibraryProviders
@@ -270,7 +273,7 @@ namespace NuGet.Commands
             }
 
             // Sort by most package versions, then by source path.
-            return sources.OrderByDescending(e => e.Value.Count)
+            return sources.OrderByDescending(e => e.Value.Length)
                 .ThenBy(e => e.Key.Source, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
@@ -278,7 +281,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Find all package versions from a source.
         /// </summary>
-        internal static async Task<KeyValuePair<PackageSource, SortedSet<NuGetVersion>>> GetSourceInfoForIdAsync(
+        internal static async Task<KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>> GetSourceInfoForIdAsync(
             IRemoteDependencyProvider provider,
             string id,
             SourceCacheContext cacheContext,
@@ -286,38 +289,38 @@ namespace NuGet.Commands
             CancellationToken token)
         {
             // Find all versions from a source.
-            var versions = await provider.GetAllVersionsAsync(id, cacheContext, logger, token) ?? Enumerable.Empty<NuGetVersion>();
+            var versions = await provider.GetAllVersionsAsync(id, cacheContext, logger, token);
 
-            return new KeyValuePair<PackageSource, SortedSet<NuGetVersion>>(
+            return new KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>(
                 provider.Source,
-                new SortedSet<NuGetVersion>(versions));
+                versions != null ? [.. versions] : ImmutableArray<NuGetVersion>.Empty);
         }
 
         /// <summary>
         /// Find the best match on the feed.
         /// </summary>
-        internal static NuGetVersion GetBestMatch(SortedSet<NuGetVersion> versions, VersionRange range)
+        internal static NuGetVersion GetBestMatch(ImmutableArray<NuGetVersion> versions, VersionRange range)
         {
-            if (versions.Count == 0)
+            if (versions.Length == 0)
             {
                 return null;
             }
 
             // Find a pivot point
-            var ideal = new NuGetVersion(0, 0, 0);
+            var ideal = V0;
             NuGetVersion bestMatch = null;
             if (range != null)
             {
-                if (range.HasUpperBound)
-                {
-                    ideal = range.MaxVersion;
-                }
-
                 if (range.HasLowerBound)
                 {
                     ideal = range.MinVersion;
                 }
+                else if (range.HasUpperBound)
+                {
+                    ideal = range.MaxVersion;
+                }
             }
+
             //|      Range     |          Available         | Closest  |
             //| [1.0.0, )      | 0.7.0, 0.9.0               | 0.7.0    |
             //| (0.5.0, 1.0.0) | 0.1.0, 1.0.0               | 1.0.0    |
@@ -332,13 +335,27 @@ namespace NuGet.Commands
 
             if (floatlessRangeHasBounds || floatingRangeHasUpperBound)
             {
-                bestMatch = versions.FirstOrDefault(e => e >= ideal);
+                foreach (var version in versions)
+                {
+                    if (version == ideal)
+                    {
+                        return version;
+                    }
+
+                    if (version > ideal)
+                    {
+                        if (bestMatch == null || version < bestMatch)
+                        {
+                            bestMatch = version;
+                        }
+                    }
+                }
             }
 
             if (bestMatch == null)
             {
                 // Take the highest possible version.
-                bestMatch = versions.Last();
+                bestMatch = versions.Max();
             }
 
             return bestMatch;

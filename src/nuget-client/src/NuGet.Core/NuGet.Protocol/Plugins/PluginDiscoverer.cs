@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Plugins
         internal List<PluginFile> GetPluginsInNuGetPluginPaths()
         {
             var pluginFiles = new List<PluginFile>();
-            string[] paths = _nuGetPluginPaths?.Split(Path.PathSeparator) ?? Array.Empty<string>();
+            string[] paths = _nuGetPluginPaths?.Split([Path.PathSeparator], StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
 
             foreach (var path in paths)
             {
@@ -192,14 +192,11 @@ namespace NuGet.Protocol.Plugins
                     if (File.Exists(path))
                     {
                         FileInfo fileInfo = new FileInfo(path);
-                        if (fileInfo.Name.StartsWith("nuget-plugin-", StringComparison.CurrentCultureIgnoreCase))
+                        if (IsValidPluginFile(fileInfo))
                         {
                             // A DotNet tool plugin
-                            if (IsValidPluginFile(fileInfo))
-                            {
-                                PluginFile pluginFile = new PluginFile(fileInfo.FullName, new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: false);
-                                pluginFiles.Add(pluginFile);
-                            }
+                            PluginFile pluginFile = new PluginFile(fileInfo.FullName, new Lazy<PluginFileState>(() => PluginFileState.Valid), requiresDotnetHost: false);
+                            pluginFiles.Add(pluginFile);
                         }
                         else
                         {
@@ -274,6 +271,11 @@ namespace NuGet.Protocol.Plugins
         /// <returns></returns>
         internal static bool IsValidPluginFile(FileInfo fileInfo)
         {
+            if (!fileInfo.Name.StartsWith("nuget-plugin-", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return fileInfo.Extension.Equals(".exe", StringComparison.OrdinalIgnoreCase) ||

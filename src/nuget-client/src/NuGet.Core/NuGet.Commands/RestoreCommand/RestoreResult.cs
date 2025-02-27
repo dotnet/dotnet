@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,6 +85,11 @@ namespace NuGet.Commands
 
         /// <inheritdoc cref="RestoreSummary.AuditRan"/>
         internal bool AuditRan { get; init; }
+
+        /// <summary>
+        /// If the dg spec did not change, we can assume that we don't need to write the dg spec.
+        /// </summary>
+        internal bool DidDGHashChange { get; init; }
 
 
         private readonly string _dependencyGraphSpecFilePath;
@@ -310,7 +316,7 @@ namespace NuGet.Commands
 
         private async Task CommitDgSpecFileAsync(ILogger log, bool toolCommit)
         {
-            if (!toolCommit && _dependencyGraphSpecFilePath != null && _dependencyGraphSpec != null)
+            if (!toolCommit && _dependencyGraphSpecFilePath != null && _dependencyGraphSpec != null && (DidDGHashChange || !File.Exists(_dependencyGraphSpecFilePath)))
             {
                 log.LogVerbose($"Persisting dg to {_dependencyGraphSpecFilePath}");
 
