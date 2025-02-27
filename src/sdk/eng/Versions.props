@@ -193,23 +193,23 @@
          At usage sites, either we use MicrosoftBuildMinimumVersion, or MicrosoftBuildVersion in source-only modes.
 
          Additionally, set the MinimumVSVersion for the installer UI that's required for targeting NetCurrent -->
-    <MicrosoftBuildVersion>17.14.0-preview-25124-03</MicrosoftBuildVersion>
-    <MicrosoftBuildLocalizationVersion>17.14.0-preview-25124-03</MicrosoftBuildLocalizationVersion>
+    <MicrosoftBuildVersion>17.14.0-preview-25126-06</MicrosoftBuildVersion>
+    <MicrosoftBuildLocalizationVersion>17.14.0-preview-25126-06</MicrosoftBuildLocalizationVersion>
     <MicrosoftBuildMinimumVersion Condition="'$(DotNetBuildSourceOnly)' != 'true'">17.11.4</MicrosoftBuildMinimumVersion>
     <MinimumVSVersion>17.13</MinimumVSVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/templating -->
-    <MicrosoftTemplateEngineAbstractionsPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineAbstractionsPackageVersion>
-    <MicrosoftTemplateEngineEdgePackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineEdgePackageVersion>
-    <MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>
-    <MicrosoftTemplateEngineUtilsPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineUtilsPackageVersion>
-    <MicrosoftTemplateSearchCommonPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateSearchCommonPackageVersion>
+    <MicrosoftTemplateEngineAbstractionsPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineAbstractionsPackageVersion>
+    <MicrosoftTemplateEngineEdgePackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineEdgePackageVersion>
+    <MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>
+    <MicrosoftTemplateEngineUtilsPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineUtilsPackageVersion>
+    <MicrosoftTemplateSearchCommonPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateSearchCommonPackageVersion>
     <!-- test dependencies -->
-    <MicrosoftTemplateEngineMocksPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineMocksPackageVersion>
-    <MicrosoftTemplateEngineTestHelperPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineTestHelperPackageVersion>
-    <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
-    <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>10.0.100-preview.3.25124.2</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
+    <MicrosoftTemplateEngineMocksPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineMocksPackageVersion>
+    <MicrosoftTemplateEngineTestHelperPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineTestHelperPackageVersion>
+    <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
+    <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>10.0.100-preview.3.25127.1</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/visualfsharp -->
