@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -11,20 +9,22 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 
+    protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
+    {
+        builder.Features.Add(new DefaultMetadataIdentifierFeature());
+    }
+
     [Fact]
     public void GetIdentifier_ReturnsNull_ForNullRelativePath()
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", null));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var source = TestRazorSourceDocument.Create("content", filePath: "Test.cshtml", relativePath: null);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var feature = new DefaultMetadataIdentifierFeature()
-        {
-            Engine = CreateProjectEngine().Engine,
-        };
+        Assert.True(ProjectEngine.Engine.TryGetFeature<IMetadataIdentifierFeature>(out var feature));
 
         // Act
-        var result = feature.GetIdentifier(codeDocument, sourceDocument);
+        var result = feature.GetIdentifier(codeDocument, source);
 
         // Assert
         Assert.Null(result);
@@ -34,16 +34,13 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
     public void GetIdentifier_ReturnsNull_ForEmptyRelativePath()
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", string.Empty));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var source = TestRazorSourceDocument.Create("content", filePath: "Test.cshtml", relativePath: string.Empty);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var feature = new DefaultMetadataIdentifierFeature()
-        {
-            Engine = CreateProjectEngine().Engine,
-        };
+        Assert.True(ProjectEngine.Engine.TryGetFeature<IMetadataIdentifierFeature>(out var feature));
 
         // Act
-        var result = feature.GetIdentifier(codeDocument, sourceDocument);
+        var result = feature.GetIdentifier(codeDocument, source);
 
         // Assert
         Assert.Null(result);
@@ -58,13 +55,10 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
     public void GetIdentifier_SanitizesRelativePath(string relativePath, string expected)
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", relativePath));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var sourceDocument = TestRazorSourceDocument.Create("content", filePath: "Test.cshtml", relativePath: relativePath);
+        var codeDocument = ProjectEngine.CreateCodeDocument(sourceDocument);
 
-        var feature = new DefaultMetadataIdentifierFeature()
-        {
-            Engine = CreateProjectEngine().Engine,
-        };
+        Assert.True(ProjectEngine.Engine.TryGetFeature<IMetadataIdentifierFeature>(out var feature));
 
         // Act
         var result = feature.GetIdentifier(codeDocument, sourceDocument);

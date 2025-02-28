@@ -90,10 +90,10 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
     }
 
     public CSharpCodeParser(IEnumerable<DirectiveDescriptor> directives, ParserContext context)
-        : base(context.ParseLeadingDirectives
+        : base(context.Options.ParseLeadingDirectives
             ? FirstDirectiveCSharpLanguageCharacteristics.Instance
-            : context.UseRoslynTokenizer
-                ? new RoslynCSharpLanguageCharacteristics(context.CSharpParseOptions)
+            : context.Options.UseRoslynTokenizer
+                ? new RoslynCSharpLanguageCharacteristics(context.Options.CSharpParseOptions)
                 : NativeCSharpLanguageCharacteristics.Instance, context)
     {
         ArgHelper.ThrowIfNull(directives);
@@ -548,7 +548,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     }
                 }
             }
-            else if (At(SyntaxKind.Not) && Context.FeatureFlags.AllowNullableForgivenessOperator)
+            else if (At(SyntaxKind.Not) && Context.Options.AllowNullableForgivenessOperator)
             {
                 // C# 8.0 Null forgiveness Operator
 
@@ -941,7 +941,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                   not SyntaxKind.RightBrace,
                 ref read.AsRef());
 
-            if ((!Context.FeatureFlags.AllowRazorInAllCodeBlocks && At(SyntaxKind.LeftBrace)) ||
+            if ((!Context.Options.AllowRazorInAllCodeBlocks && At(SyntaxKind.LeftBrace)) ||
                 At(SyntaxKind.LeftParenthesis) ||
                 At(SyntaxKind.LeftBracket))
             {
@@ -957,7 +957,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     return;
                 }
             }
-            else if (Context.FeatureFlags.AllowRazorInAllCodeBlocks && At(SyntaxKind.LeftBrace))
+            else if (Context.Options.AllowRazorInAllCodeBlocks && At(SyntaxKind.LeftBrace))
             {
                 Accept(in read);
                 return;
@@ -1799,7 +1799,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 CodeBlockEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString);
                             }
 
-                            if (Context.FeatureFlags.AllowRazorInAllCodeBlocks)
+                            if (Context.Options.AllowRazorInAllCodeBlocks)
                             {
                                 var block = new Block(descriptor.Directive, directiveStart);
                                 ParseCodeBlock(childBuilder, block);
@@ -2405,7 +2405,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             {
                 // using Variable Declaration
 
-                if (!Context.FeatureFlags.AllowUsingVariableDeclarations)
+                if (!Context.Options.AllowUsingVariableDeclarations)
                 {
                     Context.ErrorSink.OnError(
                         RazorDiagnosticFactory.CreateParsing_NamespaceImportAndTypeAliasCannotExistWithinCodeBlock(

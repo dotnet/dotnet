@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2431,10 +2429,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Build(),
         ];
 
-        var featureFlags = CreateFeatureFlags();
-
         // Act & Assert
-        EvaluateData(descriptors, document, featureFlags: featureFlags);
+        EvaluateData(descriptors, document, languageVersion: RazorLanguageVersion.Version_2_0, fileKind: FileKinds.Legacy);
     }
 
     [Fact]
@@ -2475,10 +2471,11 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Build(),
         ];
 
-        var featureFlags = CreateFeatureFlags(allowCSharpInMarkupAttributeArea: false);
-
         // Act & Assert
-        EvaluateData(descriptors, document, featureFlags: featureFlags);
+        EvaluateData(descriptors, document, configureParserOptions: builder =>
+        {
+            builder.AllowCSharpInMarkupAttributeArea = false;
+        });
     }
 
     [Fact]
@@ -2520,28 +2517,10 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Build(),
         ];
 
-        var featureFlags = CreateFeatureFlags(allowCSharpInMarkupAttributeArea: false);
-
         // Act & Assert
-        EvaluateData(descriptors, document, featureFlags: featureFlags);
+        EvaluateData(descriptors, document, configureParserOptions: builder =>
+        {
+            builder.AllowCSharpInMarkupAttributeArea = false;
+        });
     }
-
-    private static RazorParserFeatureFlags CreateFeatureFlags(
-            bool allowMinimizedBooleanTagHelperAttributes = false,
-            bool allowHtmlCommentsInTagHelper = false,
-            bool allowComponentFileKind = false,
-            bool allowRazorInCodeAllBlocks = false,
-            bool allowUsingVariableDeclarations = false,
-            bool allowConditionalDataDashAttributesInComponents = false,
-            bool allowCSharpInMarkupAttributeArea = true,
-            bool allowNullableForgivenessOperator = false)
-            => new(
-                allowMinimizedBooleanTagHelperAttributes,
-                allowHtmlCommentsInTagHelper,
-                allowComponentFileKind,
-                allowRazorInCodeAllBlocks,
-                allowUsingVariableDeclarations,
-                allowConditionalDataDashAttributesInComponents,
-                allowCSharpInMarkupAttributeArea,
-                allowNullableForgivenessOperator);
 }

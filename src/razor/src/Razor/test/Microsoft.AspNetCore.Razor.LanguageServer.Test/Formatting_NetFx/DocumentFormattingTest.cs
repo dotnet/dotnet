@@ -5906,4 +5906,140 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 }
                 """);
     }
+
+#if COHOSTING
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+#else
+    [FormattingTestFact(Skip = "Language server test infra doesn't have a partial tag helper")]
+#endif
+    public async Task PartialTagHelper()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+                
+                <div>
+                    <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                    model="new DefaultTitleContentAreaViewModel
+                    {
+                    Title = Model.CurrentPage.TestimonialsTitle,
+                    ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                    ChildCssClass = string.Empty
+                    }" />
+                </div>
+                """,
+            expected: """
+                @page "/"
+                
+                <div>
+                    <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                             model="new DefaultTitleContentAreaViewModel
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             }" />
+                </div>
+                """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task MultilineExplicitExpression()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                    model="@(new DefaultTitleContentAreaViewModel
+                    {
+                        Title = Model.CurrentPage.TestimonialsTitle,
+                        ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                        ChildCssClass = string.Empty
+                    })" />
+
+                <partial model="@(new DefaultTitleContentAreaViewModel
+                    {
+                        Title = Model.CurrentPage.TestimonialsTitle,
+                        ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                        ChildCssClass = string.Empty
+                    })" />
+                
+                <div>
+                    <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                    model="@(new DefaultTitleContentAreaViewModel
+                    {
+                    Title = Model.CurrentPage.TestimonialsTitle,
+                    ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                    ChildCssClass = string.Empty
+                    })" />
+                </div>
+                """,
+            expected: """
+                @page "/"
+
+                <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                         model="@(new DefaultTitleContentAreaViewModel
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
+
+                <partial model="@(new DefaultTitleContentAreaViewModel
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
+
+                <div>
+                    <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                             model="@(new DefaultTitleContentAreaViewModel
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
+                </div>
+                """);
+    }
+
+    [FormattingTestFact]
+    public async Task MultilineExplicitExpression_IsStable()
+    {
+        // This test explicitly validates that the expected output from the above test results in stable formatting.
+        var code = """
+                @page "/"
+
+                <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                         model="@(new DefaultTitleContentAreaViewModel
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
+
+                <partial model="@(new DefaultTitleContentAreaViewModel
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
+
+                <div>
+                    <partial name="~/Views/Shared/_TestimonialRow.cshtml"
+                             model="@(new DefaultTitleContentAreaViewModel
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
+                </div>
+                """;
+        await RunFormattingTestAsync(
+            input: code,
+            expected: code);
+    }
 }

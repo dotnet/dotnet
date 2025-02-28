@@ -11,12 +11,12 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal sealed partial class ParserContext : IDisposable
 {
-    private readonly RazorParserOptions _options;
     private readonly Stack<ErrorSink> _errorSinkStack;
     private readonly HashSet<string> _seenDirectivesSet;
 
     public RazorSourceDocument SourceDocument { get; }
     public SeekableTextReader Source { get; }
+    public RazorParserOptions Options { get; }
 
     public bool WhiteSpaceIsSignificantToAncestorBlock { get; set; }
     public bool NullGenerateWhitespaceAndNewLine { get; set; }
@@ -31,7 +31,7 @@ internal sealed partial class ParserContext : IDisposable
         ArgHelper.ThrowIfNull(options);
 
         SourceDocument = source;
-        _options = options;
+        Options = options;
 
         _errorSinkStack = StackPool<ErrorSink>.Default.Get();
         _errorSinkStack.Push(new ErrorSink());
@@ -55,19 +55,9 @@ internal sealed partial class ParserContext : IDisposable
 
     public ErrorSink ErrorSink => _errorSinkStack.Peek();
 
-    public RazorParserFeatureFlags FeatureFlags => _options.FeatureFlags;
-
     public HashSet<string> SeenDirectives => _seenDirectivesSet;
 
-    public bool DesignTimeMode => _options.DesignTime;
-
-    public bool UseRoslynTokenizer => _options.UseRoslynTokenizer;
-
-    public CSharpParseOptions CSharpParseOptions => _options.CSharpParseOptions;
-
-    public bool ParseLeadingDirectives => _options.ParseLeadingDirectives;
-
-    public bool EnableSpanEditHandlers => _options.EnableSpanEditHandlers;
+    public bool DesignTimeMode => Options.DesignTime;
 
     public bool IsEndOfFile
         => Source.Peek() == -1;

@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
@@ -30,9 +30,10 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
     public ProjectKey Key { get; }
 
     private readonly Project _project;
+#if !FORMAT_FUSE
     private readonly AsyncLazy<RazorConfiguration> _lazyConfiguration;
     private readonly AsyncLazy<RazorProjectEngine> _lazyProjectEngine;
-    private readonly AsyncLazy<ImmutableArray<TagHelperDescriptor>> _lazyTagHelpers;
+#endif
     private readonly Dictionary<TextDocument, RemoteDocumentSnapshot> _documentMap = [];
 
     public RemoteProjectSnapshot(Project project, RemoteSolutionSnapshot solutionSnapshot)
@@ -46,9 +47,10 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         SolutionSnapshot = solutionSnapshot;
         Key = _project.ToProjectKey();
 
+#if !FORMAT_FUSE
         _lazyConfiguration = AsyncLazy.Create(ComputeConfigurationAsync);
         _lazyProjectEngine = AsyncLazy.Create(ComputeProjectEngineAsync);
-        _lazyTagHelpers = AsyncLazy.Create(ComputeTagHelpersAsync);
+#endif
     }
 
     public IEnumerable<string> DocumentFilePaths
@@ -68,14 +70,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
-    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        if (_lazyTagHelpers.TryGetValue(out var result))
-        {
-            return new(result);
-        }
+        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        if (generatorResult is null)
+            return [];
 
-        return new(_lazyTagHelpers.GetValueAsync(cancellationToken));
+        return [.. generatorResult.TagHelpers];
     }
 
     public RemoteDocumentSnapshot GetDocument(DocumentId documentId)
@@ -157,6 +158,57 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return false;
     }
 
+    internal async Task<RazorCodeDocument?> GetCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    {
+        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        if (generatorResult is null)
+        {
+            return null;
+        }
+
+        return generatorResult.GetCodeDocument(documentSnapshot.FilePath);
+    }
+
+    internal async Task<Document?> GetGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    {
+        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        if (generatorResult is null)
+        {
+            return null;
+        }
+
+        var hintName = generatorResult.GetHintName(documentSnapshot.FilePath);
+
+        var generatedDocument = await _project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken).ConfigureAwait(false);
+
+        return generatedDocument ?? throw new InvalidOperationException("Couldn't get the source generated document for a hint name that we got from the generator?");
+    }
+
+    private async Task<RazorGeneratorResult?> GetRazorGeneratorResultAsync(CancellationToken cancellationToken)
+    {
+        var result = await _project.GetSourceGeneratorRunResultAsync(cancellationToken).ConfigureAwait(false);
+        if (result is null)
+        {
+            return null;
+        }
+
+        var runResult = result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Assembly.Location == typeof(RazorSourceGenerator).Assembly.Location);
+        if (runResult.Generator is null)
+        {
+            return null;
+        }
+
+#pragma warning disable RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        if (!runResult.HostOutputs.TryGetValue(nameof(RazorGeneratorResult), out var objectResult) || objectResult is not RazorGeneratorResult generatorResult)
+        {
+            return null;
+        }
+#pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+        return generatorResult;
+    }
+
+#if !FORMAT_FUSE
     /// <summary>
     /// NOTE: This will be removed when the source generator is used directly.
     /// </summary>
@@ -192,15 +244,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
                 builder.SetRootNamespace(RootNamespace);
                 builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
                 builder.SetSupportLocalizedComponentNames();
-                builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer, parseOptions));
+
+                builder.ConfigureParserOptions(builder =>
+                {
+                    builder.UseRoslynTokenizer = useRoslynTokenizer;
+                    builder.CSharpParseOptions = parseOptions;
+                });
             });
     }
-
-    private async Task<ImmutableArray<TagHelperDescriptor>> ComputeTagHelpersAsync(CancellationToken cancellationToken)
-    {
-        var projectEngine = await _lazyProjectEngine.GetValueAsync(cancellationToken).ConfigureAwait(false);
-        var telemetryReporter = SolutionSnapshot.SnapshotManager.TelemetryReporter;
-
-        return await _project.GetTagHelpersAsync(projectEngine, telemetryReporter, cancellationToken).ConfigureAwait(false);
-    }
+#endif
 }

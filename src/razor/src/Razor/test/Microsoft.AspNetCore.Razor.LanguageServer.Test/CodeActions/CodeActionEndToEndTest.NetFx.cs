@@ -26,6 +26,30 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
     #region CSharp CodeAction Tests
 
     [Fact]
+    public async Task Handle_GenerateConstructor_SelectionOutsideRange()
+    {
+        var input = """
+
+            <div></div>
+
+            @functions
+            {
+                public Goo [|M()|]
+                {
+                    return new Goo();
+                }
+
+                public class {|selection:Goo|}
+                {
+                }
+            }
+
+            """;
+
+        await ValidateCodeActionAsync(input, expected: null, RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers);
+    }
+
+    [Fact]
     public async Task Handle_GenerateConstructor()
     {
         var input = """

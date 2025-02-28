@@ -4,8 +4,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
@@ -29,7 +27,11 @@ internal static class RazorCodeDocumentFactory
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+
             RazorExtensions.Register(builder);
         });
 

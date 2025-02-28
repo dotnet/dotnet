@@ -1,17 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
-using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Language;
+using Microsoft.CodeAnalysis.CSharp;
 using RazorExtensionsV1_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.RazorExtensions;
 using RazorExtensionsV2_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.RazorExtensions;
 using RazorExtensionsV3 = Microsoft.AspNetCore.Mvc.Razor.Extensions.RazorExtensions;
@@ -55,66 +49,23 @@ public static class RazorProjectEngineBuilderExtensions
         }
     }
 
-
-    /// <summary>
-    /// Registers a class configuration delegate that gets invoked during code generation.
-    /// </summary>
-    /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
-    /// <param name="configureClass"><see cref="Action"/> invoked to configure
-    /// <see cref="ClassDeclarationIntermediateNode"/> during code generation.</param>
-    /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder ConfigureClass(
-        this RazorProjectEngineBuilder builder,
-        Action<RazorCodeDocument, ClassDeclarationIntermediateNode> configureClass)
+    public static RazorProjectEngineBuilder ConfigureParserOptions(this RazorProjectEngineBuilder builder, Action<RazorParserOptions.Builder> configure)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
+        ArgHelper.ThrowIfNull(configure);
 
-        if (configureClass == null)
-        {
-            throw new ArgumentNullException(nameof(configureClass));
-        }
+        builder.Features.Add(new ConfigureParserOptionsFeature(configure));
 
-        var configurationFeature = GetDefaultDocumentClassifierPassFeature(builder);
-        configurationFeature.ConfigureClass.Add(configureClass);
         return builder;
     }
 
-    /// <summary>
-    /// Sets the base type for generated types.
-    /// </summary>
-    /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
-    /// <param name="baseType">The name of the base type.</param>
-    /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder SetBaseType(this RazorProjectEngineBuilder builder, string baseType)
+    public static RazorProjectEngineBuilder ConfigureCodeGenerationOptions(this RazorProjectEngineBuilder builder, Action<RazorCodeGenerationOptions.Builder> configure)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
+        ArgHelper.ThrowIfNull(configure);
 
-        var configurationFeature = GetDefaultDocumentClassifierPassFeature(builder);
-        configurationFeature.ConfigureClass.Add((document, @class) => @class.BaseType = new BaseTypeWithModel(baseType));
-        return builder;
-    }
+        builder.Features.Add(new ConfigureCodeGenerationOptionsFeature(configure));
 
-    /// <summary>
-    /// Sets the namespace for generated types.
-    /// </summary>
-    /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
-    /// <param name="namespaceName">The name of the namespace.</param>
-    /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder SetNamespace(this RazorProjectEngineBuilder builder, string namespaceName)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        var configurationFeature = GetDefaultDocumentClassifierPassFeature(builder);
-        configurationFeature.ConfigureNamespace.Add((document, @namespace) => @namespace.Content = namespaceName);
         return builder;
     }
 
@@ -124,14 +75,15 @@ public static class RazorProjectEngineBuilderExtensions
     /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
     /// <param name="rootNamespace">The root namespace.</param>
     /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder SetRootNamespace(this RazorProjectEngineBuilder builder, string rootNamespace)
+    public static RazorProjectEngineBuilder SetRootNamespace(this RazorProjectEngineBuilder builder, string? rootNamespace)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
 
-        builder.Features.Add(new ConfigureRootNamespaceFeature(rootNamespace));
+        builder.ConfigureCodeGenerationOptions(builder =>
+        {
+            builder.RootNamespace = rootNamespace;
+        });
+
         return builder;
     }
 
@@ -142,12 +94,13 @@ public static class RazorProjectEngineBuilderExtensions
     /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
     public static RazorProjectEngineBuilder SetSupportLocalizedComponentNames(this RazorProjectEngineBuilder builder)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
 
-        builder.Features.Add(new SetSupportLocalizedComponentNamesFeature());
+        builder.ConfigureCodeGenerationOptions(builder =>
+        {
+            builder.SupportLocalizedComponentNames = true;
+        });
+
         return builder;
     }
 
@@ -157,44 +110,13 @@ public static class RazorProjectEngineBuilderExtensions
     /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
     /// <param name="extension">The <see cref="ICodeTargetExtension"/> to add.</param>
     /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder AddTargetExtension(this RazorProjectEngineBuilder builder, ICodeTargetExtension extension)
+    internal static RazorProjectEngineBuilder AddTargetExtension(this RazorProjectEngineBuilder builder, ICodeTargetExtension extension)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
+        ArgHelper.ThrowIfNull(extension);
 
-        if (extension == null)
-        {
-            throw new ArgumentNullException(nameof(extension));
-        }
-
-        var targetExtensionFeature = GetTargetExtensionFeature(builder);
+        var targetExtensionFeature = builder.GetOrCreateFeature<IRazorTargetExtensionFeature, DefaultRazorTargetExtensionFeature>();
         targetExtensionFeature.TargetExtensions.Add(extension);
-
-        return builder;
-    }
-
-    /// <summary>
-    /// Adds the specified <see cref="DirectiveDescriptor"/>.
-    /// </summary>
-    /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
-    /// <param name="directive">The <see cref="DirectiveDescriptor"/> to add.</param>
-    /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder AddDirective(this RazorProjectEngineBuilder builder, DirectiveDescriptor directive)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (directive == null)
-        {
-            throw new ArgumentNullException(nameof(directive));
-        }
-
-        var directiveFeature = GetDirectiveFeature(builder);
-        directiveFeature.Directives.Add(directive);
 
         return builder;
     }
@@ -206,139 +128,119 @@ public static class RazorProjectEngineBuilderExtensions
     /// <param name="directive">The <see cref="DirectiveDescriptor"/> to add.</param>
     /// <param name="fileKinds">The file kinds, for which to register the directive. See <see cref="FileKinds"/>.</param>
     /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder AddDirective(this RazorProjectEngineBuilder builder, DirectiveDescriptor directive, params string[] fileKinds)
+    internal static RazorProjectEngineBuilder AddDirective(this RazorProjectEngineBuilder builder, DirectiveDescriptor directive, params ReadOnlySpan<string> fileKinds)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgHelper.ThrowIfNull(builder);
+        ArgHelper.ThrowIfNull(directive);
 
-        if (directive == null)
-        {
-            throw new ArgumentNullException(nameof(directive));
-        }
-
-        if (fileKinds == null)
-        {
-            throw new ArgumentNullException(nameof(fileKinds));
-        }
-
-        var directiveFeature = GetDirectiveFeature(builder);
-
-        foreach (var fileKind in fileKinds)
-        {
-            if (!directiveFeature.DirectivesByFileKind.TryGetValue(fileKind, out var directives))
-            {
-                directives = new List<DirectiveDescriptor>();
-                directiveFeature.DirectivesByFileKind.Add(fileKind, directives);
-            }
-
-            directives.Add(directive);
-        }
+        var directiveFeature = builder.GetOrCreateFeature<ConfigureDirectivesFeature>();
+        directiveFeature.AddDirective(directive, fileKinds);
 
         return builder;
     }
 
     /// <summary>
-    /// Adds the provided <see cref="RazorProjectItem" />s as imports to all project items processed
-    /// by the <see cref="RazorProjectEngine"/>.
+    /// Sets the C# language version to target when generating code.
     /// </summary>
     /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
-    /// <param name="imports">The collection of imports.</param>
+    /// <param name="csharpLanguageVersion">The C# <see cref="LanguageVersion"/>.</param>
     /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
-    public static RazorProjectEngineBuilder AddDefaultImports(this RazorProjectEngineBuilder builder, params string[] imports)
+    public static RazorProjectEngineBuilder SetCSharpLanguageVersion(this RazorProjectEngineBuilder builder, LanguageVersion csharpLanguageVersion)
     {
-        if (builder == null)
+        ArgHelper.ThrowIfNull(builder);
+
+        var existingFeature = builder.Features.OfType<ConfigureParserForCSharpVersionFeature>().FirstOrDefault();
+        if (existingFeature != null)
         {
-            throw new ArgumentNullException(nameof(builder));
+            builder.Features.Remove(existingFeature);
         }
 
-        builder.Features.Add(new AdditionalImportsProjectFeature(imports));
+        // This will convert any "latest", "default" or "LatestMajor" LanguageVersions into their numerical equivalent.
+        var effectiveCSharpLanguageVersion = LanguageVersionFacts.MapSpecifiedToEffectiveVersion(csharpLanguageVersion);
+        builder.Features.Add(new ConfigureParserForCSharpVersionFeature(effectiveCSharpLanguageVersion));
 
         return builder;
     }
 
-    private static DefaultRazorDirectiveFeature GetDirectiveFeature(RazorProjectEngineBuilder builder)
+    private static T GetOrCreateFeature<T>(this RazorProjectEngineBuilder builder)
+        where T : class, IRazorEngineFeature, new()
+        => builder.GetOrCreateFeature<T, T>();
+
+    private static TInterface GetOrCreateFeature<TInterface, TFeature>(this RazorProjectEngineBuilder builder)
+        where TInterface : IRazorEngineFeature
+        where TFeature : class, TInterface, new()
     {
-        var directiveFeature = builder.Features.OfType<DefaultRazorDirectiveFeature>().FirstOrDefault();
-        if (directiveFeature == null)
+        if (builder.Features.OfType<TInterface>().FirstOrDefault() is not { } feature)
         {
-            directiveFeature = new DefaultRazorDirectiveFeature();
-            builder.Features.Add(directiveFeature);
+            feature = new TFeature();
+            builder.Features.Add(feature);
         }
 
-        return directiveFeature;
+        return feature;
     }
 
-    private static IRazorTargetExtensionFeature GetTargetExtensionFeature(RazorProjectEngineBuilder builder)
+    private sealed class ConfigureParserOptionsFeature(Action<RazorParserOptions.Builder> configure) : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
     {
-        var targetExtensionFeature = builder.Features.OfType<IRazorTargetExtensionFeature>().FirstOrDefault();
-        if (targetExtensionFeature == null)
+        public int Order => 0;
+
+        public void Configure(RazorParserOptions.Builder builder)
         {
-            targetExtensionFeature = new DefaultRazorTargetExtensionFeature();
-            builder.Features.Add(targetExtensionFeature);
-        }
-
-        return targetExtensionFeature;
-    }
-
-    private static DefaultDocumentClassifierPassFeature GetDefaultDocumentClassifierPassFeature(RazorProjectEngineBuilder builder)
-    {
-        var configurationFeature = builder.Features.OfType<DefaultDocumentClassifierPassFeature>().FirstOrDefault();
-        if (configurationFeature == null)
-        {
-            configurationFeature = new DefaultDocumentClassifierPassFeature();
-            builder.Features.Add(configurationFeature);
-        }
-
-        return configurationFeature;
-    }
-
-    private sealed class AdditionalImportsProjectFeature(string[] imports) : RazorProjectEngineFeatureBase, IImportProjectFeature
-    {
-        private readonly ImmutableArray<RazorProjectItem> _imports = imports.SelectAsArray(
-            static import => (RazorProjectItem)new DefaultImportProjectItem("Additional default imports", import));
-
-        public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
-        {
-            imports.AddRange(_imports);
+            configure(builder);
         }
     }
 
-    private class SetSupportLocalizedComponentNamesFeature : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
+    private sealed class ConfigureCodeGenerationOptionsFeature(Action<RazorCodeGenerationOptions.Builder> configure) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
     {
-        public int Order { get; set; }
+        public int Order => 0;
 
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
+        public void Configure(RazorCodeGenerationOptions.Builder builder)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            options.SupportLocalizedComponentNames = true;
+            configure(builder);
         }
     }
 
-    private class ConfigureRootNamespaceFeature : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
+    private sealed class ConfigureParserForCSharpVersionFeature(LanguageVersion languageVersion) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
     {
-        private readonly string _rootNamespace;
-
-        public ConfigureRootNamespaceFeature(string rootNamespace)
-        {
-            _rootNamespace = rootNamespace;
-        }
+        public LanguageVersion CSharpLanguageVersion { get; } = languageVersion;
 
         public int Order { get; set; }
 
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
+        public void Configure(RazorCodeGenerationOptions.Builder builder)
         {
-            if (options == null)
+            if (builder.LanguageVersion.Major is < 3)
             {
-                throw new ArgumentNullException(nameof(options));
+                // Prior to 3.0 there were no C# version specific controlled features. Suppress nullability enforcement.
+                builder.SuppressNullabilityEnforcement = true;
+            }
+            else if (CSharpLanguageVersion < LanguageVersion.CSharp8)
+            {
+                // Having nullable flags < C# 8.0 would cause compile errors.
+                builder.SuppressNullabilityEnforcement = true;
+            }
+            else
+            {
+                // Given that nullability enforcement can be a compile error we only turn it on for C# >= 8.0. There are
+                // cases in tooling when the project isn't fully configured yet at which point the CSharpLanguageVersion
+                // may be Default (value 0). In those cases that C# version is equivalently "unspecified" and is up to the consumer
+                // to act in a safe manner to not cause unneeded errors for older compilers. Therefore if the version isn't
+                // >= 8.0 (Latest has a higher value) then nullability enforcement is suppressed.
+                //
+                // Once the project finishes configuration the C# language version will be updated to reflect the effective
+                // language version for the project by our workspace change detectors. That mechanism extracts the correlated
+                // Roslyn project and acquires the effective C# version at that point.
+                builder.SuppressNullabilityEnforcement = false;
             }
 
-            options.RootNamespace = _rootNamespace;
+            if (builder.LanguageVersion.Major is >= 5)
+            {
+                // This is a useful optimization but isn't supported by older framework versions
+                builder.OmitMinimizedComponentAttributeValues = true;
+            }
+
+            if (CSharpLanguageVersion >= LanguageVersion.CSharp10)
+            {
+                builder.UseEnhancedLinePragma = true;
+            }
         }
     }
 }

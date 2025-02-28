@@ -224,8 +224,8 @@ internal class RazorLanguageServerClient(
 
     public Task OnLoadedAsync()
     {
-        // If the user hasn't turned on the Cohost server, then don't disable the Razor server
-        if (_languageServerFeatureOptions.DisableRazorLanguageServer && _languageServerFeatureOptions.UseRazorCohostServer)
+        // If the user has turned on the Cohost server, then disable the Razor server
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
         {
             return Task.CompletedTask;
         }

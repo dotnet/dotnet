@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Sdk;
 
@@ -107,22 +106,25 @@ public class RazorIntegrationTestBase
         {
             b.SetRootNamespace(DefaultRootNamespace);
 
-            // Turn off checksums, we're testing code generation.
-            b.Features.Add(new SuppressChecksum());
-
-            if (supportLocalizedComponentNames)
+            b.ConfigureCodeGenerationOptions(builder =>
             {
-                b.Features.Add(new SupportLocalizedComponentNames());
-            }
+                // Turn off checksums, we're testing code generation.
+                builder.SuppressChecksum = true;
+
+                if (supportLocalizedComponentNames)
+                {
+                    builder.SupportLocalizedComponentNames = true;
+                }
+
+                if (LineEnding != null)
+                {
+                    builder.NewLine = LineEnding;
+                }
+
+                builder.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
+            });
 
             b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
-
-            if (LineEnding != null)
-            {
-                b.Features.Add(new SetNewLineOptionFeature(LineEnding));
-            }
-
-            b.Features.Add(new SuppressUniqueIdsPhase());
 
             b.Features.Add(new CompilationTagHelperFeature());
             b.Features.Add(new DefaultMetadataReferenceFeature()
@@ -133,7 +135,12 @@ public class RazorIntegrationTestBase
             csharpParseOptions ??= CSharpParseOptions;
 
             b.SetCSharpLanguageVersion(csharpParseOptions.LanguageVersion);
-            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, csharpParseOptions));
+
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = csharpParseOptions;
+            });
 
             CompilerFeatures.Register(b);
         });
@@ -482,46 +489,6 @@ public class RazorIntegrationTestBase
 
                 return builder.ToString();
             }
-        }
-    }
-
-    private class SuppressChecksum : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    private class SupportLocalizedComponentNames : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SupportLocalizedComponentNames = true;
-        }
-    }
-
-    private sealed class SetNewLineOptionFeature(string newLine) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.NewLine = newLine;
-        }
-    }
-
-    private sealed class SuppressUniqueIdsPhase : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
         }
     }
 }

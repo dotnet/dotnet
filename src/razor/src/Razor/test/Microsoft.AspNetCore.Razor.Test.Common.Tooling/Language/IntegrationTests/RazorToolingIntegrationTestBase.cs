@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -110,15 +109,18 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         {
             b.SetRootNamespace(DefaultRootNamespace);
 
-            // Turn off checksums, we're testing code generation.
-            b.Features.Add(new SuppressChecksum());
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
+                // Turn off checksums, we're testing code generation.
+                builder.SuppressChecksum = true;
+
+                if (LineEnding != null)
+                {
+                    builder.NewLine = LineEnding;
+                }
+            });
 
             b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
-
-            if (LineEnding != null)
-            {
-                b.Features.Add(new SetNewLineOptionFeature(LineEnding));
-            }
 
             b.Features.Add(new DefaultTypeNameFeature());
 
@@ -129,7 +131,12 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             });
 
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
-            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions));
+
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions;
+            });
 
             CompilerFeatures.Register(b);
         });
@@ -395,26 +402,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
                 return builder.ToString();
             }
-        }
-    }
-
-    private class SuppressChecksum : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    private sealed class SetNewLineOptionFeature(string newLine) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.NewLine = newLine;
         }
     }
 }

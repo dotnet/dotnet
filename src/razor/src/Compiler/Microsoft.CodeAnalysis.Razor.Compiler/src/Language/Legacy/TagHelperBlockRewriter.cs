@@ -150,7 +150,7 @@ internal static class TagHelperBlockRewriter
 
             // Check if it's a non-boolean bound attribute that is minimized or if it's a bound
             // non-string attribute that has null or whitespace content.
-            var isValidMinimizedAttribute = options.FeatureFlags.AllowMinimizedBooleanTagHelperAttributes && result.IsBoundBooleanAttribute;
+            var isValidMinimizedAttribute = options.AllowMinimizedBooleanTagHelperAttributes && result.IsBoundBooleanAttribute;
             if ((isMinimized &&
                 result.IsBoundAttribute &&
                 !isValidMinimizedAttribute) ||

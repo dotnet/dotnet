@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Moq;
@@ -244,7 +243,8 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
     public void CodeDocumentRequest_Complete_CanBeCalledMultipleTimes()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(TestRazorSourceDocument.Create());
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = RazorCodeDocument.Create(source);
         var request = new VisualStudioRazorParser.CodeDocumentRequest(StringTextSnapshot.Empty, DisposalToken);
 
         // Act & Assert
@@ -257,7 +257,8 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
     public async Task CodeDocumentRequest_Complete_FinishesTask()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(TestRazorSourceDocument.Create());
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = RazorCodeDocument.Create(source);
         var request = new VisualStudioRazorParser.CodeDocumentRequest(StringTextSnapshot.Empty, DisposalToken);
 
         // Act
@@ -312,7 +313,8 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
     public void CodeDocumentRequest_CompleteToCancelNoops()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(TestRazorSourceDocument.Create());
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = RazorCodeDocument.Create(source);
         var request = new VisualStudioRazorParser.CodeDocumentRequest(StringTextSnapshot.Empty, DisposalToken);
 
         // Act - 1
@@ -332,7 +334,8 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
     public void CodeDocumentRequest_CancelToCompleteNoops()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(TestRazorSourceDocument.Create());
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = RazorCodeDocument.Create(source);
         var request = new VisualStudioRazorParser.CodeDocumentRequest(StringTextSnapshot.Empty, DisposalToken);
 
         // Act - 1

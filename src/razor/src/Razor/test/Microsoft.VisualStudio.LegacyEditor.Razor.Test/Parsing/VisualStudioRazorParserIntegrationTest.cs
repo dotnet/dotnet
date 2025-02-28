@@ -597,7 +597,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
 
             builder.AddDefaultImports("@addTagHelper *, Test");
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         var factoryMock = new StrictMock<IProjectEngineFactory>();

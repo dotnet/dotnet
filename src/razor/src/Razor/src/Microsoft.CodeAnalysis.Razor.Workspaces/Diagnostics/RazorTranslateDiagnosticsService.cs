@@ -497,16 +497,14 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             out originalRange))
         {
             // Couldn't remap the range correctly.
-            // If this isn't an `Error` Severity Diagnostic we can discard it.
-            if (diagnostic.Severity != LspDiagnosticSeverity.Error)
+            // If this is error it's worth at least logging so we know if there's an issue
+            // for mapping when a user reports not seeing an error they thought they should
+            if (diagnostic.Severity == LspDiagnosticSeverity.Error)
             {
-                return false;
+                this._logger.LogWarning($"Dropping diagnostic {diagnostic.Code}:{diagnostic.Message} at csharp range {diagnostic.Range}");
             }
 
-            // For `Error` Severity diagnostics we still show the diagnostics to
-            // the user, however we set the range to an undefined range to ensure
-            // clicking on the diagnostic doesn't cause errors.
-            originalRange = VsLspFactory.UndefinedRange;
+            return false;
         }
 
         return true;

@@ -1,9 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.CodeAnalysis.CSharp;
 using Moq;
 using Xunit;
 
@@ -78,8 +78,8 @@ public class RazorProjectEngineBuilderExtensionsTest
 
         // Assert
         var feature = Assert.Single(builder.Features);
-        var directiveFeature = Assert.IsAssignableFrom<IRazorDirectiveFeature>(feature);
-        var directive = Assert.Single(directiveFeature.Directives);
+        var directiveFeature = Assert.IsType<ConfigureDirectivesFeature>(feature);
+        var directive = Assert.Single(directiveFeature.GetDirectives());
         Assert.Same(expectedDirective, directive);
     }
 
@@ -88,17 +88,51 @@ public class RazorProjectEngineBuilderExtensionsTest
     {
         // Arrange
         var builder = new RazorProjectEngineBuilder(RazorConfiguration.Default, Mock.Of<RazorProjectFileSystem>());
-        var directiveFeature = new DefaultRazorDirectiveFeature();
+        var directiveFeature = new ConfigureDirectivesFeature();
         builder.Features.Add(directiveFeature);
-        var expecteDirective = Mock.Of<DirectiveDescriptor>();
+        var expectedDirective = Mock.Of<DirectiveDescriptor>();
 
         // Act
-        builder.AddDirective(expecteDirective);
+        builder.AddDirective(expectedDirective);
 
         // Assert
         var feature = Assert.Single(builder.Features);
         Assert.Same(directiveFeature, feature);
-        var directive = Assert.Single(directiveFeature.Directives);
-        Assert.Same(expecteDirective, directive);
+        var directive = Assert.Single(directiveFeature.GetDirectives());
+        Assert.Same(expectedDirective, directive);
+    }
+
+    [Fact]
+    public void SetCSharpLanguageVersion_ResolvesLatestCSharpLangVersions()
+    {
+        // Arrange
+        var csharpLanguageVersion = LanguageVersion.Latest;
+
+        // Act
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.SetCSharpLanguageVersion(csharpLanguageVersion);
+
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions.Default.WithLanguageVersion(csharpLanguageVersion);
+            });
+        });
+
+        var features = projectEngine.Engine.GetFeatures<IConfigureRazorCodeGenerationOptionsFeature>().OrderByAsArray(static x => x.Order);
+        var builder = new RazorCodeGenerationOptions.Builder(RazorLanguageVersion.Latest, FileKinds.Legacy);
+
+        foreach (var feature in features)
+        {
+            feature.Configure(builder);
+        }
+
+        var options = builder.ToOptions();
+
+        // Assert
+        Assert.False(options.SuppressNullabilityEnforcement);
+        Assert.True(options.UseEnhancedLinePragma);
+        Assert.True(options.OmitMinimizedComponentAttributeValues);
     }
 }

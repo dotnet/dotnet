@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -70,7 +69,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         var targetPath = "/Components/Pages/Generated.razor";
 
         DocumentUri = new Uri(_filePath);
-        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
+        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath, "Root.Namespace");
         DocumentText = await DocumentSnapshot.GetTextAsync(CancellationToken.None);
 
         RazorCodeActionRange = DocumentText.GetZeroWidthRange(razorCodeActionIndex);
@@ -78,10 +77,6 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         HtmlCodeActionRange = DocumentText.GetZeroWidthRange(htmlCodeActionIndex);
 
         var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
-
-        var codeDocument = await documentContext.GetCodeDocumentAsync(CancellationToken.None);
-        // Need a root namespace for the Extract to Code Behind light bulb to be happy
-        codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(c => c.RootNamespace = "Root.Namespace"));
 
         RazorRequestContext = new RazorRequestContext(documentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
     }

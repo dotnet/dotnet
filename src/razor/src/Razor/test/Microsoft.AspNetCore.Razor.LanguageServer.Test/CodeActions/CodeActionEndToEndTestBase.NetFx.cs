@@ -160,7 +160,6 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
             diagnostics,
             selectionRange: selectionRange);
 
-        Assert.NotEmpty(result);
         var codeActionToRun = GetCodeActionToRun(codeAction, childActionIndex, result);
 
         if (expected is null)

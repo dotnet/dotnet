@@ -13,9 +13,6 @@ internal struct RemoteClientInitializationOptions
     [JsonPropertyName("usePreciseSemanticTokenRanges")]
     public required bool UsePreciseSemanticTokenRanges { get; set; }
 
-    [JsonPropertyName("csharpVirtualDocumentSuffix")]
-    public required string CSharpVirtualDocumentSuffix { get; set; }
-
     [JsonPropertyName("htmlVirtualDocumentSuffix")]
     public required string HtmlVirtualDocumentSuffix { get; set; }
 

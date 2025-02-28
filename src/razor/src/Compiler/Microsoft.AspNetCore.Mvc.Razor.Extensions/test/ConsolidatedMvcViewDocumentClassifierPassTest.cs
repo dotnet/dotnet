@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Roslyn.Test.Utilities;
@@ -14,80 +12,72 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
+    }
+
     [Fact]
     public void ConsolidatedMvcViewDocumentClassifierPass_SetsDifferentNamespace()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", "Test.cshtml"));
-
-        var projectEngine = CreateProjectEngine();
-        var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new MvcViewDocumentClassifierPass(useConsolidatedMvcViews: true)
-        {
-            Engine = projectEngine.Engine
-        };
+        var codeDocument = ProjectEngine.CreateCodeDocument("some-content");
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>(() => new(useConsolidatedMvcViews: true));
 
         // Assert
-        Assert.Equal("AspNetCoreGeneratedDocument", visitor.Namespace.Content);
+        var documentNode = processor.GetDocumentNode();
+        var namespaceNode = documentNode.GetNamespaceNode();
+
+        Assert.Equal("AspNetCoreGeneratedDocument", namespaceNode.Content);
     }
 
     [Fact]
     public void ConsolidatedMvcViewDocumentClassifierPass_SetsClass()
     {
         // Arrange
-        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.cshtml");
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
-
-        var projectEngine = CreateProjectEngine();
-        var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new MvcViewDocumentClassifierPass(useConsolidatedMvcViews: true)
-        {
-            Engine = projectEngine.Engine
-        };
+        var source = TestRazorSourceDocument.Create("some-content", filePath: "ignored", relativePath: "Test.cshtml");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>(() => new(useConsolidatedMvcViews: true));
 
         // Assert
-        var baseNode = Assert.IsType<BaseTypeWithModel>(visitor.Class.BaseType);
+        var documentNode = processor.GetDocumentNode();
+        var classNode = documentNode.GetClassNode();
+        var baseNode = Assert.IsType<BaseTypeWithModel>(classNode.BaseType);
+
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
+        Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(new[] { "internal", "sealed" }, visitor.Class.Modifiers);
-        Assert.Equal("Test", visitor.Class.ClassName);
+        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
+        Assert.Equal("Test", classNode.ClassName);
     }
 
     [Fact]
     public void MvcViewDocumentClassifierPass_NullFilePath_SetsClass()
     {
         // Arrange
-        var properties = RazorSourceDocumentProperties.Create(filePath: null, relativePath: null);
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
-
-        var projectEngine = CreateProjectEngine();
-        var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new MvcViewDocumentClassifierPass(useConsolidatedMvcViews: true)
-        {
-            Engine = projectEngine.Engine
-        };
+        var source = TestRazorSourceDocument.Create("some-content", filePath: null, relativePath: null);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>(() => new(useConsolidatedMvcViews: true));
 
         // Assert
-        var baseNode = Assert.IsType<BaseTypeWithModel>(visitor.Class.BaseType);
+        var documentNode = processor.GetDocumentNode();
+        var classNode = documentNode.GetClassNode();
+        var baseNode = Assert.IsType<BaseTypeWithModel>(classNode.BaseType);
+
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
+        Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(new[] { "internal", "sealed" }, visitor.Class.Modifiers);
-        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", visitor.Class.ClassName);
+        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
+        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", classNode.ClassName);
     }
 
     [Theory]
@@ -96,88 +86,37 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
     public void ConsolidatedMvcViewDocumentClassifierPass_UsesRelativePathToGenerateTypeName(string relativePath, string expected)
     {
         // Arrange
-        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: relativePath);
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
-
-        var projectEngine = CreateProjectEngine();
-        var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new MvcViewDocumentClassifierPass(useConsolidatedMvcViews: true)
-        {
-            Engine = projectEngine.Engine
-        };
+        var source = TestRazorSourceDocument.Create("some-content", filePath: "ignored", relativePath: relativePath);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>(() => new(useConsolidatedMvcViews: true));
 
         // Assert
-        Assert.Equal(expected, visitor.Class.ClassName);
-        Assert.Equal(new[] { "internal", "sealed" }, visitor.Class.Modifiers);
+        var documentNode = processor.GetDocumentNode();
+        var classNode = documentNode.GetClassNode();
+
+        Assert.Equal(expected, classNode.ClassName);
+        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
     }
 
     [Fact]
     public void ConsolidatedMvcViewDocumentClassifierPass_SetsUpExecuteAsyncMethod()
     {
         // Arrange
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", "Test.cshtml"));
-
-        var projectEngine = CreateProjectEngine();
-        var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new MvcViewDocumentClassifierPass(useConsolidatedMvcViews: true)
-        {
-            Engine = projectEngine.Engine
-        };
+        var codeDocument = ProjectEngine.CreateCodeDocument("some-content");
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>(() => new(useConsolidatedMvcViews: true));
 
         // Assert
-        Assert.Equal("ExecuteAsync", visitor.Method.MethodName);
-        Assert.Equal("global::System.Threading.Tasks.Task", visitor.Method.ReturnType);
-        Assert.Equal(new[] { "public", "async", "override" }, visitor.Method.Modifiers);
-    }
+        var documentNode = processor.GetDocumentNode();
+        var methodNode = documentNode.GetMethodNode();
 
-    private static DocumentIntermediateNode CreateIRDocument(RazorProjectEngine projectEngine, RazorCodeDocument codeDocument)
-    {
-        foreach (var phase in projectEngine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorIntermediateNodeLoweringPhase)
-            {
-                break;
-            }
-        }
-
-        return codeDocument.GetDocumentIntermediateNode();
-    }
-
-    private class Visitor : IntermediateNodeWalker
-    {
-        public NamespaceDeclarationIntermediateNode Namespace { get; private set; }
-
-        public ClassDeclarationIntermediateNode Class { get; private set; }
-
-        public MethodDeclarationIntermediateNode Method { get; private set; }
-
-        public override void VisitMethodDeclaration(MethodDeclarationIntermediateNode node)
-        {
-            Method = node;
-        }
-
-        public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
-        {
-            Namespace = node;
-            base.VisitNamespaceDeclaration(node);
-        }
-
-        public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
-        {
-            Class = node;
-            base.VisitClassDeclaration(node);
-        }
+        Assert.Equal("ExecuteAsync", methodNode.MethodName);
+        Assert.Equal("global::System.Threading.Tasks.Task", methodNode.ReturnType);
+        Assert.Equal(["public", "async", "override"], methodNode.Modifiers);
     }
 }

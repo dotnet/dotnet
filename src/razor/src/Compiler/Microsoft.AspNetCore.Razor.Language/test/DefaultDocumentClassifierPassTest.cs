@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
@@ -19,19 +17,16 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void Execute_IgnoresDocumentsWithDocumentKind()
     {
         // Arrange
+        var codeDocument = ProjectEngine.CreateEmptyCodeDocument();
+
         var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "ignore",
-            Options = RazorCodeGenerationOptions.Default,
-        };
-
-        var pass = new DefaultDocumentClassifierPass()
-        {
-            Engine = CreateProjectEngine().Engine
+            Options = codeDocument.CodeGenerationOptions
         };
 
         // Act
-        pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
+        ProjectEngine.ExecutePass<DefaultDocumentClassifierPass>(codeDocument, documentNode);
 
         // Assert
         Assert.Equal("ignore", documentNode.DocumentKind);
@@ -42,18 +37,15 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void Execute_CreatesClassStructure()
     {
         // Arrange
+        var codeDocument = ProjectEngine.CreateEmptyCodeDocument();
+
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.Default,
-        };
-
-        var pass = new DefaultDocumentClassifierPass()
-        {
-            Engine = CreateProjectEngine().Engine
+            Options = codeDocument.CodeGenerationOptions
         };
 
         // Act
-        pass.Execute(TestRazorCodeDocument.CreateEmpty(), documentNode);
+        ProjectEngine.ExecutePass<DefaultDocumentClassifierPass>(codeDocument, documentNode);
 
         // Assert
         Assert.Equal("default", documentNode.DocumentKind);

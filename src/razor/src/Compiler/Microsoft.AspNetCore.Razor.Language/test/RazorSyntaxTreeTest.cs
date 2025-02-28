@@ -48,7 +48,7 @@ public class RazorSyntaxTreeTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("\r\n  \r\n    @*SomeComment*@ \r\n  @tagHelperPrefix \"SomePrefix\"\r\n<html>\r\n@if (true) {\r\n @if(false) { <div>@something.</div> } \r\n}");
-        var options = RazorParserOptions.Create(builder => builder.ParseLeadingDirectives = true);
+        var options = RazorParserOptions.Default.WithFlags(parseLeadingDirectives: true);
 
         // Act
         var syntaxTree = RazorSyntaxTree.Parse(source, options);

@@ -113,7 +113,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             @class.BaseType = new BaseTypeWithModel("global::" + ComponentsApi.ComponentBase.FullTypeName);
 
             // Constrained type parameters are only supported in Razor language versions v6.0
-            var razorLanguageVersion = codeDocument.GetParserOptions()?.Version ?? RazorLanguageVersion.Latest;
+            var razorLanguageVersion = codeDocument.ParserOptions.LanguageVersion;
             var directiveType = razorLanguageVersion >= RazorLanguageVersion.Version_6_0
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;

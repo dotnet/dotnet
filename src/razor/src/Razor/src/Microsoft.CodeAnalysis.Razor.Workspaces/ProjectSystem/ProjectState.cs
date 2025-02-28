@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.ObjectPool;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -114,7 +113,12 @@ internal sealed class ProjectState
                     builder.SetRootNamespace(HostProject.RootNamespace);
                     builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
                     builder.SetSupportLocalizedComponentNames();
-                    builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer, parseOptions));
+
+                    builder.ConfigureParserOptions(builder =>
+                    {
+                        builder.UseRoslynTokenizer = useRoslynTokenizer;
+                        builder.CSharpParseOptions = parseOptions;
+                    });
                 });
             }
         }

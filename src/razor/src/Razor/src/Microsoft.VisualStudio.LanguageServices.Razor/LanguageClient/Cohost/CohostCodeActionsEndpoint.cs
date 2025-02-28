@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
@@ -72,19 +73,7 @@ internal sealed class CohostCodeActionsEndpoint(
         var correlationId = Guid.NewGuid();
         using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CodeActionRazorTelemetryThreshold, correlationId);
 
-        // VS Provides `CodeActionParams.Context.SelectionRange` in addition to
-        // `CodeActionParams.Range`. The `SelectionRange` is relative to where the
-        // code action was invoked (ex. line 14, char 3) whereas the `Range` is
-        // always at the start of the line (ex. line 14, char 0). We want to utilize
-        // the relative positioning to ensure we provide code actions for the appropriate
-        // context.
-        //
-        // Note: VS Code doesn't provide a `SelectionRange`.
-        var vsCodeActionContext = request.Context;
-        if (vsCodeActionContext.SelectionRange != null)
-        {
-            request.Range = vsCodeActionContext.SelectionRange;
-        }
+        CodeActionsService.AdjustRequestRangeIfNecessary(request);
 
         var requestInfo = await _remoteServiceInvoker.TryInvokeAsync<IRemoteCodeActionsService, CodeActionRequestInfo>(
             razorDocument.Project.Solution,

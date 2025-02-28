@@ -88,7 +88,13 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
             .Metadata(TypeName("TestTagHelper"))
             .Build();
 
-        var engine = CreateProjectEngine(builder => builder.Features.Add(new VisualStudioEnableTagHelpersFeature()));
+        var engine = CreateProjectEngine(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.EnableSpanEditHandlers = true;
+            });
+        });
 
         var sourceDocument = TestRazorSourceDocument.Create(source, normalizeNewLines: true);
         var importDocument = TestRazorSourceDocument.Create("@addTagHelper *, TestAssembly", filePath: "import.cshtml", relativePath: "import.cshtml");
@@ -96,15 +102,5 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
         var codeDocument = engine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: ImmutableArray.Create(importDocument), new []{ taghelper });
 
         return RazorWrapperFactory.WrapCodeDocument(codeDocument);
-    }
-
-    private class VisualStudioEnableTagHelpersFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.EnableSpanEditHandlers = true;
-        }
     }
 }

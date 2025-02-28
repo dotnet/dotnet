@@ -131,7 +131,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
     private static TestTokenizerBackedParser CreateContentTokenizer(string content)
     {
         var source = TestRazorSourceDocument.Create(content);
-        var options = RazorParserOptions.CreateDefault();
+        var options = RazorParserOptions.Default;
         var context = new ParserContext(source, options);
 
         return new TestTokenizerBackedParser(HtmlLanguageCharacteristics.Instance, context);

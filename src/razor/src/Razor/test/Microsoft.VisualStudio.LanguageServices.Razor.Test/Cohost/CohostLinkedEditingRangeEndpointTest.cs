@@ -162,7 +162,7 @@ public class CohostLinkedEditingRangeEndpointTest(FuseTestContext context, ITest
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetPositionAndSpans(input, out input, out int cursorPosition, out ImmutableArray<TextSpan> spans);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostLinkedEditingRangeEndpoint(RemoteServiceInvoker);

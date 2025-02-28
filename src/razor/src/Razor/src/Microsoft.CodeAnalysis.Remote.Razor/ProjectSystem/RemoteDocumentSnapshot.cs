@@ -2,14 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -23,9 +21,8 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
     public TextDocument TextDocument { get; }
     public RemoteProjectSnapshot ProjectSnapshot { get; }
 
-    // TODO: Delete this field when the source generator is hooked up
-    private readonly AsyncLazy<Document> _lazyDocument;
-    private readonly AsyncLazy<RazorCodeDocument> _lazyCodeDocument;
+    private RazorCodeDocument? _codeDocument;
+    private Document? _generatedDocument;
 
     public RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSnapshot projectSnapshot)
     {
@@ -36,9 +33,6 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
 
         TextDocument = textDocument;
         ProjectSnapshot = projectSnapshot;
-
-        _lazyDocument = AsyncLazy.Create(HACK_ComputeDocumentAsync);
-        _lazyCodeDocument = AsyncLazy.Create(ComputeGeneratedOutputAsync);
     }
 
     public string FileKind => FileKinds.GetFileKindFromFilePath(FilePath);
@@ -70,26 +64,20 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
         => TextDocument.TryGetTextVersion(out result);
 
     public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
-        => _lazyCodeDocument.TryGetValue(out result);
+        => (result = _codeDocument) is not null;
 
-    public ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(CancellationToken cancellationToken)
+    public async ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(CancellationToken cancellationToken)
     {
-        if (TryGetGeneratedOutput(out var result))
+        if (_codeDocument is not null)
         {
-            return new(result);
+            return _codeDocument;
         }
 
-        return new(_lazyCodeDocument.GetValueAsync(cancellationToken));
-    }
+        // TODO: What happens if we can't get the document? (https://github.com/dotnet/razor/issues/11522)
+        var document = await ProjectSnapshot.GetCodeDocumentAsync(this, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException("Could not get the code document");
 
-    private async Task<RazorCodeDocument> ComputeGeneratedOutputAsync(CancellationToken cancellationToken)
-    {
-        var projectEngine = await ProjectSnapshot.GetProjectEngineAsync(cancellationToken).ConfigureAwait(false);
-        var compilerOptions = ProjectSnapshot.SolutionSnapshot.SnapshotManager.CompilerOptions;
-
-        return await CompilationHelpers
-            .GenerateCodeDocumentAsync(this, projectEngine, compilerOptions, cancellationToken)
-            .ConfigureAwait(false);
+        return InterlockedOperations.Initialize(ref _codeDocument, document);
     }
 
 #if !FORMAT_FUSE
@@ -103,26 +91,6 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
     }
 #endif
 
-    private async Task<Document> HACK_ComputeDocumentAsync(CancellationToken cancellationToken)
-    {
-        // TODO: A real implementation needs to get the SourceGeneratedDocument from the solution
-
-        var solution = TextDocument.Project.Solution;
-        var filePathService = ProjectSnapshot.SolutionSnapshot.SnapshotManager.FilePathService;
-        var generatedFilePath = filePathService.GetRazorCSharpFilePath(Project.Key, FilePath);
-        var generatedDocumentId = solution
-            .GetDocumentIdsWithFilePath(generatedFilePath)
-            .First(TextDocument.Project.Id, static (d, projectId) => d.ProjectId == projectId);
-
-        var generatedDocument = solution.GetRequiredDocument(generatedDocumentId);
-
-        var codeDocument = await GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
-
-        // HACK: We're not in the same solution fork as the LSP server that provides content for this document
-        return generatedDocument.WithText(csharpSourceText);
-    }
-
     public IDocumentSnapshot WithText(SourceText text)
     {
         var id = TextDocument.Id;
@@ -135,22 +103,23 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
         return snapshotManager.GetSnapshot(newDocument);
     }
 
-    public bool TryGetGeneratedDocument([NotNullWhen(true)] out Document? result)
-        => _lazyDocument.TryGetValue(out result);
-
-    public ValueTask<Document> GetGeneratedDocumentAsync(CancellationToken cancellationToken)
+    public async ValueTask<Document> GetGeneratedDocumentAsync(CancellationToken cancellationToken)
     {
-        if (TryGetGeneratedDocument(out var result))
+        if (_generatedDocument is not null)
         {
-            return new(result);
+            return _generatedDocument;
         }
 
-        return new(_lazyDocument.GetValueAsync(cancellationToken));
+        var generatedDocument = await ProjectSnapshot.GetGeneratedDocumentAsync(this, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException("Could not get the generated document"); // TODO: what happens if we can't get the generated document?
+
+        return InterlockedOperations.Initialize(ref _generatedDocument, generatedDocument);
     }
 
     public ValueTask<SyntaxTree> GetCSharpSyntaxTreeAsync(CancellationToken cancellationToken)
     {
-        if (TryGetGeneratedDocument(out var document) &&
+        var document = _generatedDocument;
+        if (document is not null &&
             document.TryGetSyntaxTree(out var tree))
         {
             return new(tree.AssumeNotNull());

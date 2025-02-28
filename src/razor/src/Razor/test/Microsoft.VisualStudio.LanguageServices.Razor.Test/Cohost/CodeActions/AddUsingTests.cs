@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
 {
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify()
     {
         var input = """
@@ -30,7 +30,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, "System.Text.StringBuilder");
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify_Multiple()
     {
         await VerifyCodeActionAsync(
@@ -58,7 +58,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
             childActionIndex: 0);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing()
     {
         var input = """
@@ -79,7 +79,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_Typo()
     {
         var input = """
@@ -100,7 +100,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_WithExisting()
     {
         var input = """

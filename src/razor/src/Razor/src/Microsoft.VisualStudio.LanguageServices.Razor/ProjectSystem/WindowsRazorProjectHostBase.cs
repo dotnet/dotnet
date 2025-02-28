@@ -12,6 +12,7 @@ using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Threading;
@@ -27,6 +28,7 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     private readonly IServiceProvider _serviceProvider;
     private readonly ProjectSnapshotManager _projectManager;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly AsyncSemaphore _lock;
 
     private readonly Dictionary<ProjectConfigurationSlice, IDisposable> _projectSubscriptions = new();
@@ -43,12 +45,14 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
     protected WindowsRazorProjectHostBase(
         IUnconfiguredProjectCommonServices commonServices,
         IServiceProvider serviceProvider,
-        ProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
         : base(commonServices.ThreadingService.JoinableTaskContext)
     {
         CommonServices = commonServices;
         _serviceProvider = serviceProvider;
         _projectManager = projectManager;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
 
         _lock = new AsyncSemaphore(initialCount: 1);
     }
@@ -61,6 +65,11 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected sealed override Task InitializeCoreAsync(CancellationToken cancellationToken)
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return Task.CompletedTask;
+        }
+
         CommonServices.UnconfiguredProject.ProjectRenaming += UnconfiguredProject_ProjectRenamingAsync;
 
         // CPS represents the various target frameworks that a project has in configuration groups, which are called "slices". Each

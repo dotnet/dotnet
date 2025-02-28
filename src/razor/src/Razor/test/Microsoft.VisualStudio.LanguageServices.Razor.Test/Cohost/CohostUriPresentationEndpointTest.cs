@@ -244,7 +244,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = await CreateProjectAndRazorDocumentAsync(input, additionalFiles: additionalFiles);
+        var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);

@@ -1174,26 +1174,4 @@ private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeMana
 
         return descriptor;
     }
-
-    private class DesignTimeOptionsFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        private readonly bool _designTime;
-
-        public DesignTimeOptionsFeature(bool designTime)
-        {
-            _designTime = designTime;
-        }
-
-        public int Order { get; }
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.SetDesignTime(_designTime);
-        }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SetDesignTime(_designTime);
-        }
-    }
 }

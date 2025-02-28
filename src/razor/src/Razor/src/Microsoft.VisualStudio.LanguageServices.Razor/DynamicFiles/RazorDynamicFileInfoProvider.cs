@@ -36,6 +36,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     private readonly IFilePathService _filePathService;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly FallbackProjectManager _fallbackProjectManager;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
     [ImportingConstructor]
     public RazorDynamicFileInfoProvider(
@@ -44,13 +45,16 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         IFilePathService filePathService,
         IWorkspaceProvider workspaceProvider,
         ProjectSnapshotManager projectManager,
-        FallbackProjectManager fallbackProjectManager)
+        FallbackProjectManager fallbackProjectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
     {
         _factory = factory;
         _lspEditorFeatureDetector = lspEditorFeatureDetector;
         _filePathService = filePathService;
         _workspaceProvider = workspaceProvider;
         _fallbackProjectManager = fallbackProjectManager;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
+
         _entries = new ConcurrentDictionary<Key, Entry>();
         _createEmptyEntry = (key) => new Entry(CreateEmptyInfo(key));
 
@@ -62,6 +66,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     // Called by us to update LSP document entries
     public void UpdateLSPFileInfo(Uri documentUri, IDynamicDocumentContainer documentContainer)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (documentUri is null)
         {
             throw new ArgumentNullException(nameof(documentUri));
@@ -101,6 +107,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     // Called by us to update entries
     public void UpdateFileInfo(ProjectKey projectKey, IDynamicDocumentContainer documentContainer)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (documentContainer is null)
         {
             throw new ArgumentNullException(nameof(documentContainer));
@@ -137,6 +145,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     // document will allow it to be recognized by the C# server.
     public void PromoteBackgroundDocument(Uri documentUri, IRazorDocumentPropertiesService propertiesService)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (documentUri is null)
         {
             throw new ArgumentNullException(nameof(documentUri));
@@ -197,6 +207,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     // Called by us when a document opens in the editor
     public void SuppressDocument(ProjectKey projectKey, string documentFilePath)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -238,6 +250,11 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
     public Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return SpecializedTasks.Null<RazorDynamicFileInfo>();
+        }
+
         if (projectFilePath is null)
         {
             throw new ArgumentNullException(nameof(projectFilePath));
@@ -266,6 +283,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
     public Task RemoveDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (projectFilePath is null)
         {
             throw new ArgumentNullException(nameof(projectFilePath));
@@ -320,6 +339,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
     private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
+
         if (args.IsSolutionClosing)
         {
             if (_entries.Count > 0)

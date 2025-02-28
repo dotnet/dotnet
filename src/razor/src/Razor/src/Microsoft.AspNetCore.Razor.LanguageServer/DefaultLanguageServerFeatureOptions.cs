@@ -35,8 +35,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool UseRazorCohostServer => false;
 
-    public override bool DisableRazorLanguageServer => false;
-
     public override bool ForceRuntimeCodeGeneration => true;
 
     public override bool UseNewFormattingEngine => true;

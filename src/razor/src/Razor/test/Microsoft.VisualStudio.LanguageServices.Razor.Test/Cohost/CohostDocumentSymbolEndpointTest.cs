@@ -72,7 +72,7 @@ public class CohostDocumentSymbolEndpointTest(FuseTestContext context, ITestOutp
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
 
         var endpoint = new CohostDocumentSymbolEndpoint(RemoteServiceInvoker);
 

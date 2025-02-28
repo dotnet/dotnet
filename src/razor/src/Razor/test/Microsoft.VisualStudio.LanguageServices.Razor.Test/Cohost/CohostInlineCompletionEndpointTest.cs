@@ -26,7 +26,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact]
+    [FuseFact(Skip = "Cannot edit source generated documents")]
     public Task Constructor()
         => VerifyInlineCompletionAsync(
             input: """
@@ -49,7 +49,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
                 }
                 """);
 
-    [FuseFact]
+    [FuseFact(Skip = "Cannot edit source generated documents")]
     public Task Constructor_SmallIndent()
         => VerifyInlineCompletionAsync(
             input: """
@@ -84,7 +84,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
+        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetLinePosition(input.Position);
 

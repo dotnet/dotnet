@@ -1,11 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Immutable;
-using System.IO;
-using Moq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -24,10 +20,11 @@ public class DefaultRazorProjectEngineIntegrationTest
         var codeDocument = projectEngine.Process(projectItem);
 
         // Assert
-        var parserOptions = codeDocument.GetParserOptions();
+        var parserOptions = codeDocument.ParserOptions;
         Assert.False(parserOptions.DesignTime);
 
-        var codeGenerationOptions = codeDocument.GetCodeGenerationOptions();
+        var codeGenerationOptions = codeDocument.CodeGenerationOptions;
+        Assert.NotNull(codeGenerationOptions);
         Assert.False(codeGenerationOptions.DesignTime);
         Assert.False(codeGenerationOptions.SuppressChecksum);
         Assert.False(codeGenerationOptions.SuppressMetadataAttributes);
@@ -45,10 +42,11 @@ public class DefaultRazorProjectEngineIntegrationTest
         var codeDocument = projectEngine.ProcessDesignTime(projectItem);
 
         // Assert
-        var parserOptions = codeDocument.GetParserOptions();
+        var parserOptions = codeDocument.ParserOptions;
         Assert.True(parserOptions.DesignTime);
 
-        var codeGenerationOptions = codeDocument.GetCodeGenerationOptions();
+        var codeGenerationOptions = codeDocument.CodeGenerationOptions;
+        Assert.NotNull(codeGenerationOptions);
         Assert.True(codeGenerationOptions.DesignTime);
         Assert.True(codeGenerationOptions.SuppressChecksum);
         Assert.True(codeGenerationOptions.SuppressMetadataAttributes);

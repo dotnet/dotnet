@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Test.Utilities;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
@@ -300,7 +299,11 @@ public abstract class IntegrationTestBase
     {
         return RazorProjectEngine.Create(configuration, FileSystem, b =>
         {
-            b.Features.Add(new ConfigureCodeGenerationOptionsFeature(LineEnding));
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.NewLine = LineEnding;
+                builder.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
+            });
 
             b.RegisterExtensions();
 
@@ -318,7 +321,12 @@ public abstract class IntegrationTestBase
 
             b.Features.Add(new DefaultTypeNameFeature());
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
-            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions));
+
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions;
+            });
 
             // Decorate each import feature so we can normalize line endings.
             foreach (var importFeature in b.Features.OfType<IImportProjectFeature>().ToArray())
@@ -779,17 +787,6 @@ public abstract class IntegrationTestBase
     private static string NormalizeNewLines(string content, string lineEnding)
     {
         return Regex.Replace(content, "(?<!\r)\n", lineEnding, RegexOptions.None, TimeSpan.FromSeconds(10));
-    }
-
-    private sealed class ConfigureCodeGenerationOptionsFeature(string lineEnding) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.NewLine = lineEnding;
-            options.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
-        }
     }
 
     // 'Default' imports won't have normalized line-endings, which is unfriendly for testing.

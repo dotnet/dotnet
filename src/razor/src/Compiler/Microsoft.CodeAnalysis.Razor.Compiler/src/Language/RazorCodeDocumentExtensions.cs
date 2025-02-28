@@ -167,22 +167,16 @@ public static class RazorCodeDocumentExtensions
         document.Items[typeof(DocumentIntermediateNode)] = documentNode;
     }
 
-    internal static RazorHtmlDocument GetHtmlDocument(this RazorCodeDocument document)
+    internal static RazorHtmlDocument GetHtmlDocument(this RazorCodeDocument codeDocument)
     {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
+        ArgHelper.ThrowIfNull(codeDocument);
 
-        var razorHtmlObj = document.Items[typeof(RazorHtmlDocument)];
+        var razorHtmlObj = codeDocument.Items[typeof(RazorHtmlDocument)];
         if (razorHtmlObj == null)
         {
-            var razorHtmlDocument = RazorHtmlWriter.GetHtmlDocument(document);
-            if (razorHtmlDocument != null)
-            {
-                document.Items[typeof(RazorHtmlDocument)] = razorHtmlDocument;
-                return razorHtmlDocument;
-            }
+            var razorHtmlDocument = RazorHtmlWriter.GetHtmlDocument(codeDocument);
+            codeDocument.Items[typeof(RazorHtmlDocument)] = razorHtmlDocument;
+            return razorHtmlDocument;
         }
 
         return (RazorHtmlDocument)razorHtmlObj;
@@ -206,46 +200,6 @@ public static class RazorCodeDocumentExtensions
         }
 
         document.Items[typeof(RazorCSharpDocument)] = csharp;
-    }
-
-    public static RazorParserOptions GetParserOptions(this RazorCodeDocument document)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        return (RazorParserOptions)document.Items[typeof(RazorParserOptions)];
-    }
-
-    public static void SetParserOptions(this RazorCodeDocument document, RazorParserOptions parserOptions)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        document.Items[typeof(RazorParserOptions)] = parserOptions;
-    }
-
-    public static RazorCodeGenerationOptions GetCodeGenerationOptions(this RazorCodeDocument document)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        return (RazorCodeGenerationOptions)document.Items[typeof(RazorCodeGenerationOptions)];
-    }
-
-    public static void SetCodeGenerationOptions(this RazorCodeDocument document, RazorCodeGenerationOptions codeGenerationOptions)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        document.Items[typeof(RazorCodeGenerationOptions)] = codeGenerationOptions;
     }
 
     public static string GetFileKind(this RazorCodeDocument document)
@@ -303,32 +257,29 @@ public static class RazorCodeDocumentExtensions
     }
 #nullable disable
 
-    public static bool TryComputeNamespace(this RazorCodeDocument document, bool fallbackToRootNamespace, out string @namespace)
-        => TryComputeNamespace(document, fallbackToRootNamespace, out @namespace, out _);
+    public static bool TryComputeNamespace(this RazorCodeDocument codeDocument, bool fallbackToRootNamespace, out string @namespace)
+        => TryComputeNamespace(codeDocument, fallbackToRootNamespace, out @namespace, out _);
 
     // In general documents will have a relative path (relative to the project root).
     // We can only really compute a nice namespace when we know a relative path.
     //
     // However all kinds of thing are possible in tools. We shouldn't barf here if the document isn't
     // set up correctly.
-    public static bool TryComputeNamespace(this RazorCodeDocument document, bool fallbackToRootNamespace, out string @namespace, out SourceSpan? namespaceSpan)
+    public static bool TryComputeNamespace(this RazorCodeDocument codeDocument, bool fallbackToRootNamespace, out string @namespace, out SourceSpan? namespaceSpan)
     {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
+        ArgHelper.ThrowIfNull(codeDocument);
 
-        var cachedNsInfo = document.Items[NamespaceKey];
+        var cachedNsInfo = codeDocument.Items[NamespaceKey];
         if (cachedNsInfo is not null)
         {
             (@namespace, namespaceSpan) = ((string, SourceSpan?))cachedNsInfo;
         }
         else
         {
-            var result = TryComputeNamespaceCore(document, fallbackToRootNamespace, out @namespace, out namespaceSpan);
+            var result = TryComputeNamespaceCore(codeDocument, fallbackToRootNamespace, out @namespace, out namespaceSpan);
             if (result)
             {
-                document.Items[NamespaceKey] = (@namespace, namespaceSpan);
+                codeDocument.Items[NamespaceKey] = (@namespace, namespaceSpan);
             }
             return result;
         }
@@ -336,17 +287,17 @@ public static class RazorCodeDocumentExtensions
 #if DEBUG
         // In debug mode, even if we're cached, lets take the hit to run this again and make sure the cached value is correct.
         // This is to help us find issues with caching logic during development.
-        var validateResult = TryComputeNamespaceCore(document, fallbackToRootNamespace, out var validateNamespace, out _);
+        var validateResult = TryComputeNamespaceCore(codeDocument, fallbackToRootNamespace, out var validateNamespace, out _);
         Debug.Assert(validateResult, "We couldn't compute the namespace, but have a cached value, so something has gone wrong");
         Debug.Assert(validateNamespace == @namespace, $"We cached a namespace of {@namespace} but calculated that it should be {validateNamespace}");
 #endif
 
         return true;
 
-        bool TryComputeNamespaceCore(RazorCodeDocument document, bool fallbackToRootNamespace, out string @namespace, out SourceSpan? namespaceSpan)
+        bool TryComputeNamespaceCore(RazorCodeDocument codeDocument, bool fallbackToRootNamespace, out string @namespace, out SourceSpan? namespaceSpan)
         {
-            var filePath = document.Source.FilePath;
-            if (filePath == null || document.Source.RelativePath == null || filePath.Length < document.Source.RelativePath.Length)
+            var filePath = codeDocument.Source.FilePath;
+            if (filePath == null || codeDocument.Source.RelativePath == null || filePath.Length < codeDocument.Source.RelativePath.Length)
             {
                 @namespace = null;
                 namespaceSpan = null;
@@ -359,7 +310,7 @@ public static class RazorCodeDocumentExtensions
             var lastNamespaceContent = string.Empty;
             namespaceSpan = null;
 
-            if (document.GetImportSyntaxTrees() is { IsDefault: false } importSyntaxTrees)
+            if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } importSyntaxTrees)
             {
                 // ImportSyntaxTrees is usually set. Just being defensive.
                 foreach (var importSyntaxTree in importSyntaxTrees)
@@ -372,14 +323,14 @@ public static class RazorCodeDocumentExtensions
                 }
             }
 
-            var syntaxTree = document.GetSyntaxTree();
+            var syntaxTree = codeDocument.GetSyntaxTree();
             if (syntaxTree != null && NamespaceVisitor.TryGetLastNamespaceDirective(syntaxTree, out var namespaceContent, out var namespaceLocation))
             {
                 lastNamespaceContent = namespaceContent;
                 namespaceSpan = namespaceLocation;
             }
 
-            var relativePath = document.Source.RelativePath.AsSpan();
+            var relativePath = codeDocument.Source.RelativePath.AsSpan();
 
             // If there are multiple @namespace directives in the hierarchy,
             // we want to pick the closest one to the current document.
@@ -388,7 +339,7 @@ public static class RazorCodeDocumentExtensions
                 baseNamespace = lastNamespaceContent;
                 var directiveLocationDirectory = NormalizeDirectory(namespaceSpan.Value.FilePath);
 
-                var sourceFilePath = document.Source.FilePath.AsSpan();
+                var sourceFilePath = codeDocument.Source.FilePath.AsSpan();
                 // We're specifically using OrdinalIgnoreCase here because Razor treats all paths as case-insensitive.
                 if (!sourceFilePath.StartsWith(directiveLocationDirectory, StringComparison.OrdinalIgnoreCase) ||
                     sourceFilePath.Length <= directiveLocationDirectory.Length)
@@ -405,12 +356,11 @@ public static class RazorCodeDocumentExtensions
             }
             else if (fallbackToRootNamespace)
             {
-                var options = document.GetCodeGenerationOptions() ?? document.GetDocumentIntermediateNode()?.Options;
-                baseNamespace = options?.RootNamespace;
+                baseNamespace = codeDocument.CodeGenerationOptions.RootNamespace;
                 appendSuffix = true;
 
                 // Empty RootNamespace is allowed only in components.
-                if (!FileKinds.IsComponent(document.GetFileKind()) && string.IsNullOrEmpty(baseNamespace))
+                if (!FileKinds.IsComponent(codeDocument.GetFileKind()) && string.IsNullOrEmpty(baseNamespace))
                 {
                     @namespace = null;
                     return false;
@@ -565,7 +515,7 @@ public static class RazorCodeDocumentExtensions
         {
             if (node != null && node.DirectiveDescriptor == NamespaceDirective.Directive)
             {
-                if (node.Body?.ChildNodes() is [_, CSharpCodeBlockSyntax { Children: [ _, CSharpSyntaxNode @namespace, ..] }])
+                if (node.Body?.ChildNodes() is [_, CSharpCodeBlockSyntax { Children: [_, CSharpSyntaxNode @namespace, ..] }])
                 {
                     LastNamespaceContent = @namespace.GetContent();
                     LastNamespaceLocation = @namespace.GetSourceSpan(_source);

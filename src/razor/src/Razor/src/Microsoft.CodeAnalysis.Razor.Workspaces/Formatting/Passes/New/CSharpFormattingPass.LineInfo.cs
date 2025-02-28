@@ -9,8 +9,9 @@ internal partial class CSharpFormattingPass
     /// Represents the state of a line in the generated C# document.
     /// </summary>
     /// <param name="ProcessIndentation">Whether the formatted document text to the left the first non-whitespace character should be applied to the origin document</param>
-    /// <param name="ProcessFormatting">Whether the formatted document text to the right of the first non-whitepsace character should be applied to the origin document</param>
+    /// <param name="ProcessFormatting">Whether the formatted document text to the right of the first non-whitespace character should be applied to the origin document</param>
     /// <param name="CheckForNewLines">Whether the origin document text could have overflowed to multiple lines in the formatted document</param>
+    /// <param name="SkipPreviousLine">Whether to skip the previous line in the formatted document, since it doesn't represent anything in the origin document</param>
     /// <param name="SkipNextLine">Whether to skip the next line in the formatted document, since it doesn't represent anything in the origin document</param>
     /// <param name="HtmlIndentLevel">The indent level that the Html formatter applied to this line</param>
     /// <param name="OriginOffset">How many characters after the first non-whitespace character of the origin line should be skipped before applying formatting</param>
@@ -22,6 +23,7 @@ internal partial class CSharpFormattingPass
         bool ProcessIndentation,
         bool ProcessFormatting,
         bool CheckForNewLines,
+        bool SkipPreviousLine,
         bool SkipNextLine,
         int HtmlIndentLevel,
         int OriginOffset,

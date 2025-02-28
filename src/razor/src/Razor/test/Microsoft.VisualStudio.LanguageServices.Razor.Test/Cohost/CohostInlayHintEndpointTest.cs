@@ -140,7 +140,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
         var input = """
             <div></div>
             """;
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
 
         var request = new InlayHintParams()
@@ -160,7 +160,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);

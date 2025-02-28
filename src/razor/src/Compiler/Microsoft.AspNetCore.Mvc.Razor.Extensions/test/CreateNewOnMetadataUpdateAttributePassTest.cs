@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -15,33 +12,34 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Version_6_0;
 
+    protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
+    {
+        PageDirective.Register(builder);
+    }
+
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
+    }
+
     [Fact]
     public void Execute_AddsAttributes()
     {
         // Arrange
-        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.cshtml");
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("Hello world", properties));
-
-        var engine = CreateProjectEngine(b =>
-        {
-            PageDirective.Register(b);
-        }).Engine; ;
-        var irDocument = CreateIRDocument(engine, codeDocument);
-        var pass = new CreateNewOnMetadataUpdateAttributePass
-        {
-            Engine = engine
-        };
-        var documentClassifier = new MvcViewDocumentClassifierPass { Engine = engine };
+        var source = TestRazorSourceDocument.Create("Hello world", filePath: "ignored", relativePath: "Test.cshtml");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        documentClassifier.Execute(codeDocument, irDocument);
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<MvcViewDocumentClassifierPass>();
+        processor.ExecutePass<CreateNewOnMetadataUpdateAttributePass>();
 
         // Assert
+        var documentNode = processor.GetDocumentNode();
+        var extensionNodes = documentNode.GetExtensionNodes();
+
         Assert.Collection(
-            visitor.ExtensionNodes,
+            extensionNodes,
             node =>
             {
                 var attributeNode = Assert.IsType<RazorCompiledItemMetadataAttributeIntermediateNode>(node);
@@ -58,53 +56,18 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
     public void Execute_NoOpsForBlazorComponents()
     {
         // Arrange
-        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.razor");
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("Hello world", properties));
-        codeDocument.SetFileKind(FileKinds.Component);
-
-        var engine = CreateProjectEngine(b =>
-        {
-            PageDirective.Register(b);
-        }).Engine;
-        var irDocument = CreateIRDocument(engine, codeDocument);
-        var pass = new CreateNewOnMetadataUpdateAttributePass
-        {
-            Engine = engine
-        };
-        var documentClassifier = new DefaultDocumentClassifierPass { Engine = engine };
+        var source = TestRazorSourceDocument.Create("Hello world", filePath: "ignored", relativePath: "Test.razor");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        documentClassifier.Execute(codeDocument, irDocument);
-        pass.Execute(codeDocument, irDocument);
-        var visitor = new Visitor();
-        visitor.Visit(irDocument);
+        processor.ExecutePass<DefaultDocumentClassifierPass>();
+        processor.ExecutePass<CreateNewOnMetadataUpdateAttributePass>();
 
         // Assert
-        Assert.Empty(visitor.ExtensionNodes);
-    }
+        var documentNode = processor.GetDocumentNode();
+        var extensionNodes = documentNode.GetExtensionNodes();
 
-    private static DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
-    {
-        foreach (var phase in engine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorIntermediateNodeLoweringPhase)
-            {
-                break;
-            }
-        }
-
-        return codeDocument.GetDocumentIntermediateNode();
-    }
-
-    private class Visitor : IntermediateNodeWalker
-    {
-        public List<ExtensionIntermediateNode> ExtensionNodes { get; } = new();
-
-        public override void VisitExtension(ExtensionIntermediateNode node)
-        {
-            ExtensionNodes.Add(node);
-        }
+        Assert.Empty(extensionNodes);
     }
 }

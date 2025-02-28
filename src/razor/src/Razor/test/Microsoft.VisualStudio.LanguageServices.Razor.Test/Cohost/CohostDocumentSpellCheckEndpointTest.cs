@@ -59,7 +59,7 @@ public class CohostDocumentSpellCheckEndpointTest(FuseTestContext context, ITest
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostDocumentSpellCheckEndpoint(RemoteServiceInvoker);

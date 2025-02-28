@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
@@ -30,26 +31,23 @@ public class SyntaxTreeGenerationBenchmark
         var projectItem = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), FileKinds.Legacy);
         MSN = RazorSourceDocument.ReadFrom(projectItem);
 
-        var directiveFeature = ProjectEngine.Engine.GetFeatures<IRazorDirectiveFeature>().FirstOrDefault();
-        Directives = directiveFeature?.Directives.ToArray() ?? Array.Empty<DirectiveDescriptor>();
+        var directiveFeature = ProjectEngine.Engine.GetFeatures<ConfigureDirectivesFeature>().FirstOrDefault();
+        Directives = directiveFeature?.GetDirectives() ?? [];
     }
 
     public RazorProjectEngine ProjectEngine { get; }
 
     public RazorSourceDocument MSN { get; }
 
-    public DirectiveDescriptor[] Directives { get; }
+    public ImmutableArray<DirectiveDescriptor> Directives { get; }
 
     [Benchmark(Description = "Razor Design Time Syntax Tree Generation of MSN.com")]
     public void SyntaxTreeGeneration_DesignTime_LargeStaticFile()
     {
-        var options = RazorParserOptions.CreateDesignTime(o =>
-        {
-            foreach (var directive in Directives)
-            {
-                o.Directives.Add(directive);
-            }
-        });
+        var options = RazorParserOptions.Default
+            .WithDirectives(Directives)
+            .WithFlags(designTime: true);
+
         var syntaxTree = RazorSyntaxTree.Parse(MSN, options);
 
         if (syntaxTree.Diagnostics.Length != 0)
@@ -61,13 +59,7 @@ public class SyntaxTreeGenerationBenchmark
     [Benchmark(Description = "Razor Runtime Syntax Tree Generation of MSN.com")]
     public void SyntaxTreeGeneration_Runtime_LargeStaticFile()
     {
-        var options = RazorParserOptions.Create(o =>
-        {
-            foreach (var directive in Directives)
-            {
-                o.Directives.Add(directive);
-            }
-        });
+        var options = RazorParserOptions.Default.WithDirectives(Directives);
         var syntaxTree = RazorSyntaxTree.Parse(MSN, options);
 
         if (syntaxTree.Diagnostics.Length != 0)

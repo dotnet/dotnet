@@ -41,22 +41,16 @@ internal sealed class LspProjectEngineFactoryProvider(RazorLSPOptionsMonitor opt
             void Configure(RazorProjectEngineBuilder builder)
             {
                 configure?.Invoke(builder);
-                builder.Features.Add(new CodeGenFeature(optionsMonitor));
-            }
-        }
 
-        private class CodeGenFeature(RazorLSPOptionsMonitor optionsMonitor) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-        {
-            public int Order { get; set; }
+                builder.ConfigureCodeGenerationOptions(builder =>
+                {
+                    // We don't need to explicitly subscribe to options changing because this method will be run on every parse.
+                    var currentOptions = optionsMonitor.CurrentValue;
 
-            public void Configure(RazorCodeGenerationOptionsBuilder options)
-            {
-                // We don't need to explicitly subscribe to options changing because this method will be run on every parse.
-                var currentOptions = optionsMonitor.CurrentValue;
-
-                options.IndentSize = currentOptions.TabSize;
-                options.IndentWithTabs = !currentOptions.InsertSpaces;
-                options.RemapLinePragmaPathsOnWindows = true;
+                    builder.IndentSize = currentOptions.TabSize;
+                    builder.IndentWithTabs = !currentOptions.InsertSpaces;
+                    builder.RemapLinePragmaPathsOnWindows = true;
+                });
             }
         }
     }

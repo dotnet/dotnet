@@ -139,12 +139,12 @@ public class CohostDocumentPullDiagnosticsTest(FuseTestContext context, ITestOut
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
+        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
 
-        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, FilePathService, LoggerFactory);
+        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, LoggerFactory);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken);
 

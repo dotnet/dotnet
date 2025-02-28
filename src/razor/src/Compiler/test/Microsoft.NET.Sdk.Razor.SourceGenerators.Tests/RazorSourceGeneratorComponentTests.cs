@@ -1065,4 +1065,28 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         Assert.Empty(result.Diagnostics);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public async Task QuoteInAttributeName()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @(await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static))
+                """,
+            ["Shared/Component1.razor"] = """
+                <div class="test""></div>
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
 }

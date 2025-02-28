@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -130,6 +131,7 @@ internal partial class CSharpFormattingPass
 
             // These are set in GetCSharpDocumentContents so will never be observably null
             private RazorSyntaxToken _currentToken = null!;
+            private RazorSyntaxToken _previousCurrentToken = null!;
 
             /// <summary>
             /// The line number of the last line of the current element, if we're inside one.
@@ -151,6 +153,7 @@ internal partial class CSharpFormattingPass
                 {
                     if (line.GetFirstNonWhitespacePosition() is int firstNonWhitespacePosition)
                     {
+                        _previousCurrentToken = _currentToken;
                         _currentLine = line;
                         _currentFirstNonWhitespacePosition = firstNonWhitespacePosition;
                         _currentToken = root.FindToken(firstNonWhitespacePosition);
@@ -216,8 +219,79 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitCSharpExpressionLiteral(CSharpExpressionLiteralSyntax node)
             {
+                if (_sourceText.GetLinePositionSpan(node.Span).SpansMultipleLines())
+                {
+                    return VisitMultilineCSharpExpressionLiteral(node);
+                }
+
                 Debug.Assert(node.LiteralTokens.Count > 0);
                 return VisitCSharpLiteral(node, node.LiteralTokens[^1]);
+            }
+
+            private LineInfo VisitMultilineCSharpExpressionLiteral(CSharpExpressionLiteralSyntax node)
+            {
+                // Literals that span multiple lines are interesting. eg, given:
+                //
+                // <div class="@(foo
+                //              .bar)" />
+                //
+                // The first line of this we hit will actually be the middle of the expression, so we need to make sure to include
+                // the end of the previous line, so the C# code is more correct, if that line didn't start with C#.
+                // On the last line of C# we need to ensure we don't inadvertently output any non-C# content, ie the ')" />' above.
+                // And of course the second line could be the last line :)
+                var skipPreviousLine = false;
+                var nodeStartLine = GetLineNumber(node);
+                if (nodeStartLine == _currentLine.LineNumber - 1 &&
+                    _sourceText.Lines[nodeStartLine] is { } previousLine &&
+                    previousLine.GetFirstNonWhitespacePosition() != node.Position &&
+                    _previousCurrentToken.Kind != SyntaxKind.Transition)
+                {
+                    // This is a multi-line literal, and we're emiting the 2nd line, and the literal didn't start at the start of
+                    // the previous line, so it wouldn't have been handled by that lines formatting. We need to include it here,
+                    // but skip it to not confuse things.
+                    _builder.AppendLine(_sourceText.GetSubTextString(TextSpan.FromBounds(node.SpanStart, previousLine.End)));
+                    skipPreviousLine = true;
+                }
+
+                // The last line of this might not be entirely C#, so we have to trim off the end so as not to cause issues. For the
+                // middle lines, we don't need to worry about that, but we do have to deal with quirks for Html attribute (see below)
+                // so this code handles both cases:
+
+                // We can't use node.Span because it can contain newlines from the line before.
+                // Emit the whitespace, so user spacing is honoured if possible
+                _builder.Append(_sourceText.ToString(TextSpan.FromBounds(_currentLine.Start, _currentFirstNonWhitespacePosition)));
+                // Now emit the contents
+                var end = _sourceText.GetLinePosition(node.EndPosition).Line == _currentLine.LineNumber
+                    ? node.EndPosition
+                    : _currentLine.End;
+                var span = TextSpan.FromBounds(_currentFirstNonWhitespacePosition, end);
+                _builder.Append(_sourceText.ToString(span));
+                // Append a comment at the end so whitespace isn't removed, as Roslyn thinks its the end of the line, but we know it isn't.
+                _builder.AppendLine(" //");
+
+                // Final quirk: If we're inside an Html attribute, it means the Html formatter won't have formatted this line, as multi-line
+                // Html attributes are not valid.
+                // TODO: The traverse up the tree here is not ideal. See comments in https://github.com/dotnet/razor/issues/11371
+                var htmlIndentLevel = 0;
+                string? additionalIndentation = null;
+                if (node.Ancestors().FirstOrDefault(n => n.IsAnyAttributeSyntax()) is { } attributeNode)
+                {
+                    // The attribute node can have whitespace, including even a newline, in front of it, so we get the first non-whitespace
+                    // character, then find the offset of that in order to calculate our desired indent level.
+                    _sourceText.TryGetFirstNonWhitespaceOffset(attributeNode.Span, out var startChar, out _);
+                    startChar = _sourceText.GetLinePosition(attributeNode.SpanStart + startChar).Character;
+                    htmlIndentLevel = startChar / _tabSize;
+                    additionalIndentation = new string(' ', startChar % _tabSize);
+                }
+
+                return CreateLineInfo(
+                    skipPreviousLine: skipPreviousLine,
+                    processFormatting: true,
+                    formattedLength: span.Length,
+                    formattedOffsetFromEndOfLine: 3,
+                    htmlIndentLevel: htmlIndentLevel,
+                    additionalIndentation: additionalIndentation,
+                    checkForNewLines: false);
             }
 
             public override LineInfo VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
@@ -619,6 +693,7 @@ internal partial class CSharpFormattingPass
                 bool processIndentation = true,
                 bool processFormatting = false,
                 bool checkForNewLines = false,
+                bool skipPreviousLine = false,
                 bool skipNextLine = false,
                 int htmlIndentLevel = 0,
                 int originOffset = 0,
@@ -644,6 +719,7 @@ internal partial class CSharpFormattingPass
                     ProcessIndentation: processIndentation,
                     ProcessFormatting: processFormatting,
                     CheckForNewLines: checkForNewLines,
+                    SkipPreviousLine: skipPreviousLine,
                     SkipNextLine: skipNextLine,
                     HtmlIndentLevel: htmlIndentLevel,
                     OriginOffset: originOffset,

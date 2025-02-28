@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -52,7 +52,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
 
         var languageTokenizer = Language.CreateTokenizer(Context.Source);
         _tokenizer = new TokenizerView<TTokenizer>(languageTokenizer);
-        editHandlerBuilder = context.EnableSpanEditHandlers ? new SpanEditHandlerBuilder(LanguageTokenizeString) : null;
+        editHandlerBuilder = context.Options.EnableSpanEditHandlers ? new SpanEditHandlerBuilder(LanguageTokenizeString) : null;
     }
 
     protected SyntaxListPool Pool => _pool;
@@ -302,9 +302,10 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
     protected void ReadWhile<TArg>(
         Func<SyntaxToken, TArg, bool> predicate,
         TArg arg,
-        ref PooledArrayBuilder<SyntaxToken> result)
+        ref PooledArrayBuilder<SyntaxToken> result,
+        bool expectsEmptyBuilder = true)
     {
-        Debug.Assert(result.Count == 0, "Expected empty builder.");
+        Debug.Assert(!expectsEmptyBuilder || result.Count == 0, "Expected empty builder.");
 
         if (!EnsureCurrent() || !predicate(CurrentToken, arg))
         {

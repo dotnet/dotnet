@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -14,28 +12,27 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorDocumentClassifierPhase>();
+    }
+
     [Fact]
     public void Execute_SkipsDocumentWithNoClassNode()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine();
-        var pass = new FunctionsDirectivePass()
-        {
-            Engine = projectEngine.Engine,
-        };
+        var source = TestRazorSourceDocument.Create("@functions { var value = true; }");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create("@functions { var value = true; }");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode();
-        irDocument.Children.Add(new DirectiveIntermediateNode() { Directive = FunctionsDirective.Directive, });
+        var documentNode = new DocumentIntermediateNode();
+        documentNode.Children.Add(new DirectiveIntermediateNode() { Directive = FunctionsDirective.Directive });
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<FunctionsDirectivePass>(codeDocument, documentNode);
 
         // Assert
         Children(
-            irDocument,
+            documentNode,
             node => Assert.IsType<DirectiveIntermediateNode>(node));
     }
 
@@ -43,26 +40,21 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
     public void Execute_AddsStatementsToClassLevel()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine();
-        var pass = new FunctionsDirectivePass()
-        {
-            Engine = projectEngine.Engine,
-        };
-
-        var sourceDocument = TestRazorSourceDocument.Create("@functions { var value = true; }");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = Lower(codeDocument, projectEngine);
+        var source = TestRazorSourceDocument.Create("@functions { var value = true; }");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<FunctionsDirectivePass>();
 
         // Assert
+        var documentNode = processor.GetDocumentNode();
+
         Children(
-            irDocument,
+            documentNode,
             node => Assert.IsType<NamespaceDeclarationIntermediateNode>(node));
 
-        var @namespace = irDocument.Children[0];
+        var @namespace = documentNode.Children[0];
         Children(
             @namespace,
             node => Assert.IsType<ClassDeclarationIntermediateNode>(node));
@@ -81,27 +73,26 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
     public void Execute_ComponentCodeDirective_AddsStatementsToClassLevel()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine(b => b.AddDirective(ComponentCodeDirective.Directive));
-        var pass = new FunctionsDirectivePass()
+        var projectEngine = CreateProjectEngine(builder =>
         {
-            Engine = projectEngine.Engine,
-        };
+            builder.AddDirective(ComponentCodeDirective.Directive);
+        });
 
-        var sourceDocument = TestRazorSourceDocument.Create("@code { var value = true; }");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        codeDocument.SetFileKind(FileKinds.Component);
-
-        var irDocument = Lower(codeDocument, projectEngine);
+        var source = TestRazorSourceDocument.Create("@code { var value = true; }");
+        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<FunctionsDirectivePass>();
 
         // Assert
+        var documentNode = processor.GetDocumentNode();
+
         Children(
-            irDocument,
+            documentNode,
             node => Assert.IsType<NamespaceDeclarationIntermediateNode>(node));
 
-        var @namespace = irDocument.Children[0];
+        var @namespace = documentNode.Children[0];
         Children(
             @namespace,
             node => Assert.IsType<ClassDeclarationIntermediateNode>(node));
@@ -120,30 +111,29 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
     public void Execute_FunctionsAndComponentCodeDirective_AddsStatementsToClassLevel()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine(b => b.AddDirective(ComponentCodeDirective.Directive));
-        var pass = new FunctionsDirectivePass()
+        var projectEngine = CreateProjectEngine(builder =>
         {
-            Engine = projectEngine.Engine,
-        };
+            builder.AddDirective(ComponentCodeDirective.Directive);
+        });
 
-        var sourceDocument = TestRazorSourceDocument.Create(@"
+        var source = TestRazorSourceDocument.Create(@"
 @functions { var value1 = true; }
 @code { var value2 = true; }
 @functions { var value3 = true; }");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        codeDocument.SetFileKind(FileKinds.Component);
-
-        var irDocument = Lower(codeDocument, projectEngine);
+        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<FunctionsDirectivePass>();
 
         // Assert
+        var documentNode = processor.GetDocumentNode();
+
         Children(
-            irDocument,
+            documentNode,
             node => Assert.IsType<NamespaceDeclarationIntermediateNode>(node));
 
-        var @namespace = irDocument.Children[0];
+        var @namespace = documentNode.Children[0];
         Children(
             @namespace,
             node => Assert.IsType<ClassDeclarationIntermediateNode>(node));
@@ -160,23 +150,5 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
         Children(
             method,
             node => Assert.IsType<HtmlContentIntermediateNode>(node));
-    }
-
-    private static DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine projectEngine)
-    {
-        foreach (var phase in projectEngine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorDocumentClassifierPhase)
-            {
-                break;
-            }
-        }
-
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        Assert.NotNull(irDocument);
-
-        return irDocument;
     }
 }

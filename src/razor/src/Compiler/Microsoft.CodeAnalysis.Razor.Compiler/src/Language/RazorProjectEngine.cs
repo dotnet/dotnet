@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public class RazorProjectEngine
+public sealed class RazorProjectEngine
 {
     public RazorConfiguration Configuration { get; }
     public RazorProjectFileSystem FileSystem { get; }
@@ -22,6 +22,9 @@ public class RazorProjectEngine
     public ImmutableArray<IRazorProjectEngineFeature> Features { get; }
 
     private readonly FeatureCache<IRazorProjectEngineFeature> _featureCache;
+
+    private readonly ImmutableArray<IConfigureRazorParserOptionsFeature> _configureParserOptionsFeatures;
+    private readonly ImmutableArray<IConfigureRazorCodeGenerationOptionsFeature> _configureCodeGenerationOptionsFeatures;
 
     internal RazorProjectEngine(
         RazorConfiguration configuration,
@@ -40,6 +43,14 @@ public class RazorProjectEngine
         {
             projectFeature.Initialize(this);
         }
+
+        _configureParserOptionsFeatures = Engine
+            .GetFeatures<IConfigureRazorParserOptionsFeature>()
+            .OrderByAsArray(static x => x.Order);
+
+        _configureCodeGenerationOptionsFeatures = Engine
+            .GetFeatures<IConfigureRazorCodeGenerationOptionsFeature>()
+            .OrderByAsArray(static x => x.Order);
     }
 
     public ImmutableArray<TFeature> GetFeatures<TFeature>()
@@ -135,17 +146,33 @@ public class RazorProjectEngine
             : CreateCodeDocumentCore(projectItem);
     }
 
-    internal RazorCodeDocument CreateCodeDocument(RazorSourceDocument source, string fileKind)
+    internal RazorCodeDocument CreateCodeDocument(
+        RazorSourceDocument source,
+        string fileKind,
+        ImmutableArray<RazorSourceDocument> importSources,
+        IReadOnlyList<TagHelperDescriptor>? tagHelpers,
+        string? cssScope)
     {
         ArgHelper.ThrowIfNull(source);
 
-        return CreateCodeDocumentCore(source, fileKind, importSources: default, tagHelpers: null, cssScope: null, configureParser: null, configureCodeGeneration: null);
+        return CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers, cssScope, configureParser: null, configureCodeGeneration: null);
+    }
+
+    internal RazorCodeDocument CreateDesignTimeCodeDocument(
+        RazorSourceDocument source,
+        string fileKind,
+        ImmutableArray<RazorSourceDocument> importSources,
+        IReadOnlyList<TagHelperDescriptor>? tagHelpers)
+    {
+        ArgHelper.ThrowIfNull(source);
+
+        return CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
     }
 
     private RazorCodeDocument CreateCodeDocumentCore(
         RazorProjectItem projectItem,
-        Action<RazorParserOptionsBuilder>? configureParser = null,
-        Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration = null)
+        Action<RazorParserOptions.Builder>? configureParser = null,
+        Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration = null)
     {
         var source = projectItem.GetSource();
         var importSources = GetImportSources(projectItem, designTime: false);
@@ -160,20 +187,11 @@ public class RazorProjectEngine
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         string? cssScope,
-        Action<RazorParserOptionsBuilder>? configureParser,
-        Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration)
+        Action<RazorParserOptions.Builder>? configureParser,
+        Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration)
     {
-        var parserOptions = GetRequiredFeature<IRazorParserOptionsFactoryProjectFeature>().Create(fileKind, builder =>
-        {
-            ConfigureParserOptions(builder);
-            configureParser?.Invoke(builder);
-        });
-
-        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(builder =>
-        {
-            ConfigureCodeGenerationOptions(builder);
-            configureCodeGeneration?.Invoke(builder);
-        });
+        var parserOptions = ComputeParserOptions(fileKind, configureParser);
+        var codeGenerationOptions = ComputeCodeGenerationOptions(fileKind, configureCodeGeneration);
 
         var codeDocument = RazorCodeDocument.Create(source, importSources, parserOptions, codeGenerationOptions);
 
@@ -190,8 +208,8 @@ public class RazorProjectEngine
 
     private RazorCodeDocument CreateCodeDocumentDesignTimeCore(
         RazorProjectItem projectItem,
-        Action<RazorParserOptionsBuilder>? configureParser = null,
-        Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration = null)
+        Action<RazorParserOptions.Builder>? configureParser = null,
+        Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration = null)
     {
         var source = projectItem.GetSource();
         var importSources = GetImportSources(projectItem, designTime: true);
@@ -204,20 +222,24 @@ public class RazorProjectEngine
         string fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
-        Action<RazorParserOptionsBuilder>? configureParser,
-        Action<RazorCodeGenerationOptionsBuilder>? configureCodeGeneration)
+        Action<RazorParserOptions.Builder>? configureParser,
+        Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration)
     {
         ArgHelper.ThrowIfNull(sourceDocument);
 
-        var parserOptions = GetRequiredFeature<IRazorParserOptionsFactoryProjectFeature>().Create(fileKind, builder =>
+        var parserOptions = ComputeParserOptions(fileKind, builder =>
         {
-            ConfigureDesignTimeParserOptions(builder);
+            builder.DesignTime = true;
+
             configureParser?.Invoke(builder);
         });
 
-        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(builder =>
+        var codeGenerationOptions = ComputeCodeGenerationOptions(fileKind, builder =>
         {
-            ConfigureDesignTimeCodeGenerationOptions(builder);
+            builder.DesignTime = true;
+            builder.SuppressChecksum = true;
+            builder.SuppressMetadataAttributes = true;
+
             configureCodeGeneration?.Invoke(builder);
         });
 
@@ -229,25 +251,43 @@ public class RazorProjectEngine
         return codeDocument;
     }
 
+    private RazorParserOptions ComputeParserOptions(string fileKind, Action<RazorParserOptions.Builder>? configure)
+    {
+        var builder = new RazorParserOptions.Builder(Configuration.LanguageVersion, fileKind);
+
+        configure?.Invoke(builder);
+
+        foreach (var feature in _configureParserOptionsFeatures)
+        {
+            feature.Configure(builder);
+        }
+
+        return builder.ToOptions();
+    }
+
+    private RazorCodeGenerationOptions ComputeCodeGenerationOptions(string fileKind, Action<RazorCodeGenerationOptions.Builder>? configure)
+    {
+        var configuration = Configuration;
+        var builder = new RazorCodeGenerationOptions.Builder(configuration.LanguageVersion, fileKind)
+        {
+            SuppressAddComponentParameter = configuration.SuppressAddComponentParameter
+        };
+
+        configure?.Invoke(builder);
+
+        foreach (var feature in _configureCodeGenerationOptionsFeatures)
+        {
+            feature.Configure(builder);
+        }
+
+        return builder.ToOptions();
+    }
+
     private void ProcessCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         ArgHelper.ThrowIfNull(codeDocument);
 
         Engine.Process(codeDocument, cancellationToken);
-    }
-
-    private TFeature GetRequiredFeature<TFeature>()
-        where TFeature : class, IRazorProjectEngineFeature
-    {
-        if (GetFeatures<TFeature>() is [var feature, ..])
-        {
-            return feature;
-        }
-
-        throw new InvalidOperationException(
-            Resources.FormatRazorProjectEngineMissingFeatureDependency(
-                typeof(RazorProjectEngine).FullName,
-                typeof(TFeature).FullName));
     }
 
     internal static RazorProjectEngine CreateEmpty(Action<RazorProjectEngineBuilder>? configure = null)
@@ -323,18 +363,8 @@ public class RazorProjectEngine
         features.Add(new DefaultImportProjectFeature());
 
         // General extensibility
-        features.Add(new DefaultRazorDirectiveFeature());
+        features.Add(new ConfigureDirectivesFeature());
         features.Add(new DefaultMetadataIdentifierFeature());
-
-        // Options features
-        features.Add(new DefaultRazorParserOptionsFactoryProjectFeature());
-        features.Add(new DefaultRazorCodeGenerationOptionsFactoryProjectFeature());
-
-        // Legacy options features
-        //
-        // These features are obsolete as of 2.1. Our code will resolve this but not invoke them.
-        features.Add(new DefaultRazorParserOptionsFeature(designTime: false, version: RazorLanguageVersion.Version_2_0, fileKind: null));
-        features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
 
         // Syntax Tree passes
         features.Add(new DefaultDirectiveSyntaxTreePass());
@@ -516,25 +546,5 @@ public class RazorProjectEngine
         }
 
         return imports.DrainToImmutable();
-    }
-
-    private static void ConfigureParserOptions(RazorParserOptionsBuilder builder)
-    {
-    }
-
-    private static void ConfigureDesignTimeParserOptions(RazorParserOptionsBuilder builder)
-    {
-        builder.SetDesignTime(true);
-    }
-
-    private static void ConfigureCodeGenerationOptions(RazorCodeGenerationOptionsBuilder builder)
-    {
-    }
-
-    private static void ConfigureDesignTimeCodeGenerationOptions(RazorCodeGenerationOptionsBuilder builder)
-    {
-        builder.SetDesignTime(true);
-        builder.SuppressChecksum = true;
-        builder.SuppressMetadataAttributes = true;
     }
 }

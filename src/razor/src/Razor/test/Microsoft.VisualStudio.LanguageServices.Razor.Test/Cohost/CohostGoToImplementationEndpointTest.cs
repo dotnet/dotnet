@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact]
+    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
     public async Task CSharp_Method()
     {
         var input = """
@@ -40,7 +40,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
     public async Task CSharp_Field()
     {
         var input = """
@@ -64,7 +64,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [FuseFact]
+    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
     public async Task CSharp_Multiple()
     {
         var input = """
@@ -100,7 +100,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
             </script>
             """;
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlResponse = new SumType<LspLocation[], VSInternalReferenceItem[]>?(new LspLocation[]
@@ -121,7 +121,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
     {
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
 
         var requestInvoker = new TestLSPRequestInvoker();
 

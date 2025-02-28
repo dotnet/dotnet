@@ -55,19 +55,7 @@ internal sealed class CodeActionEndpoint(
             return null;
         }
 
-        // VS Provides `CodeActionParams.Context.SelectionRange` in addition to
-        // `CodeActionParams.Range`. The `SelectionRange` is relative to where the
-        // code action was invoked (ex. line 14, char 3) whereas the `Range` is
-        // always at the start of the line (ex. line 14, char 0). We want to utilize
-        // the relative positioning to ensure we provide code actions for the appropriate
-        // context.
-        //
-        // Note: VS Code doesn't provide a `SelectionRange`.
-        var vsCodeActionContext = request.Context;
-        if (vsCodeActionContext.SelectionRange != null)
-        {
-            request.Range = vsCodeActionContext.SelectionRange;
-        }
+        CodeActionsService.AdjustRequestRangeIfNecessary(request);
 
         var correlationId = Guid.NewGuid();
         using var __ = _telemetryReporter.TrackLspRequest(LspEndpointName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CodeActionRazorTelemetryThreshold, correlationId);

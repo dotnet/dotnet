@@ -193,6 +193,12 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             await UpdateWithErrorTextAsync();
         }
 
+        var openDocument = _projectManager.GetRequiredDocument(s_hostProject.Key, s_openHostDocument.FilePath);
+
+        var generatedDocument = await openDocument.GetGeneratedOutputAsync(DisposalToken);
+        var csharpDocument = generatedDocument.GetCSharpDocument();
+        var diagnosticRange = csharpDocument.Text.GetRange(csharpDocument.SourceMappings[0].GeneratedSpan);
+
         var singleCSharpDiagnostic = new[]
         {
             new Diagnostic()
@@ -200,11 +206,9 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
                 Code = "TestCode",
                 Severity = DiagnosticSeverity.Error,
                 Message = "TestMessage",
-                Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 0, length: 1)
+                Range = diagnosticRange
             }
         };
-
-        var openDocument = _projectManager.GetRequiredDocument(s_hostProject.Key, s_openHostDocument.FilePath);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         var requestResult = new FullDocumentDiagnosticReport();

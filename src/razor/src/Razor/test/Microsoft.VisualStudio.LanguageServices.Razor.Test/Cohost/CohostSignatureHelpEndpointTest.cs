@@ -94,7 +94,7 @@ public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutpu
         UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
 
         TestFileMarkupParser.GetPosition(input, out input, out var cursorPosition);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);

@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -701,7 +699,10 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
         var sourceDocument = TestRazorSourceDocument.Create(razorSource);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
         });
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, "mvc", importSources: default, tagHelpers: []);
 

@@ -40,7 +40,11 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             }
 
             RazorExtensions.Register(builder);
-            builder.Features.Add(new LeadingDirectiveParserOptionsFeature());
+
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.ParseLeadingDirectives = true;
+            });
         });
 
     protected override string DocumentKind => RazorPageDocumentKind;
@@ -147,7 +151,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             // We now want to make sure this page directive exists at the top of the file.
             // We are going to do that by re-parsing the document until the very first line that is not Razor comment
             // or whitespace. We then make sure the page directive still exists in the re-parsed IR tree.
-            var leadingDirectiveCodeDocument = RazorCodeDocument.Create(codeDocument.Source);
+            var leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.CreateCodeDocument(codeDocument.Source);
             LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
             var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetDocumentIntermediateNode();
@@ -157,16 +161,6 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
                 pageDirective.DirectiveNode.Diagnostics.Add(
                     RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.Value));
             }
-        }
-    }
-
-    private class LeadingDirectiveParserOptionsFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.ParseLeadingDirectives = true;
         }
     }
 }

@@ -548,7 +548,7 @@ internal static class TagHelperParseTreeRewriter
             if (HasAllowedChildren())
             {
                 var isDisallowedContent = true;
-                if (_options.FeatureFlags.AllowHtmlCommentsInTagHelpers)
+                if (_options.AllowHtmlCommentsInTagHelpers)
                 {
                     isDisallowedContent = !IsComment(child) &&
                         !child.IsTransitionSpanKind() &&

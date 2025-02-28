@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Xunit;
@@ -37,9 +38,11 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
         ImmutableArray<TagHelperDescriptor> descriptors,
         string documentContent,
         string tagHelperPrefix = null,
-        RazorParserFeatureFlags featureFlags = null)
+        RazorLanguageVersion languageVersion = null,
+        string fileKind = null,
+        Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
-        var syntaxTree = ParseDocument(documentContent, featureFlags: featureFlags);
+        var syntaxTree = ParseDocument(languageVersion, documentContent, directives: null, fileKind: fileKind, configureParserOptions: configureParserOptions);
 
         var binder = new TagHelperBinder(tagHelperPrefix, descriptors);
         var rewrittenTree = TagHelperParseTreeRewriter.Rewrite(syntaxTree, binder, out _);
@@ -48,4 +51,5 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
 
         BaselineTest(rewrittenTree);
     }
+
 }

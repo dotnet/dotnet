@@ -14,7 +14,7 @@
                         MarkupLiteralAttributeValue - [7..12)::5 - [false]
                             MarkupTextLiteral - [7..12)::5 - [false] - Gen<Markup> - SpanEditHandler;Accepts:Any
                                 Text;[false];
-                MarkupMiscAttributeContent - [12..13)::1
+                MarkupMinimizedTagHelperAttribute - [12..13)::1 - ' - Minimized - Unbound - [']
                     MarkupTextLiteral - [12..13)::1 - ['] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         SingleQuote;['];
                 CloseAngle;[<Missing>];

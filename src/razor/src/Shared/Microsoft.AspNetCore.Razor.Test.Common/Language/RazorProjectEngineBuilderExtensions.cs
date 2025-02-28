@@ -4,14 +4,32 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class RazorProjectEngineBuilderExtensions
 {
+    /// <summary>
+    /// Adds the provided <see cref="RazorProjectItem" />s as imports to all project items processed
+    /// by the <see cref="RazorProjectEngine"/>.
+    /// </summary>
+    /// <param name="builder">The <see cref="RazorProjectEngineBuilder"/>.</param>
+    /// <param name="imports">The collection of imports.</param>
+    /// <returns>The <see cref="RazorProjectEngineBuilder"/>.</returns>
+    public static RazorProjectEngineBuilder AddDefaultImports(this RazorProjectEngineBuilder builder, params string[] imports)
+    {
+        ArgHelper.ThrowIfNull(builder);
+
+        builder.Features.Add(new AdditionalImportsProjectFeature(imports));
+
+        return builder;
+    }
+
     public static RazorProjectEngineBuilder AddTagHelpers(this RazorProjectEngineBuilder builder, params TagHelperDescriptor[] tagHelpers)
     {
         return AddTagHelpers(builder, (IEnumerable<TagHelperDescriptor>)tagHelpers);
@@ -81,5 +99,16 @@ public static class RazorProjectEngineBuilderExtensions
         }
 
         builder.Features.Add(feature);
+    }
+
+    private sealed class AdditionalImportsProjectFeature(string[] imports) : RazorProjectEngineFeatureBase, IImportProjectFeature
+    {
+        private readonly ImmutableArray<RazorProjectItem> _imports = imports.SelectAsArray(
+            static import => (RazorProjectItem)new DefaultImportProjectItem("Additional default imports", import));
+
+        public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
+        {
+            imports.AddRange(_imports);
+        }
     }
 }
