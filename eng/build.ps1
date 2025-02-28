@@ -82,6 +82,7 @@ function Build {
   $bl = if ($binaryLog) { '/bl:' + (Join-Path $LogDir 'Build.binlog') } else { '' }
 
   MSBuild -restore `
+    -graph `
     $project `
     $bl `
     $targets `
