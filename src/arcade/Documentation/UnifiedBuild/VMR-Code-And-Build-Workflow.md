@@ -42,6 +42,8 @@ flowchart TD
     end
 
     subgraph VMR[VMR Flow -- .NET 9+]
+        
+        vmrVMR[VMR]
         vmrRuntime-->vmrVMR
         vmrWinforms-->vmrVMR
         vmrWPF-->vmrVMR
@@ -71,7 +73,6 @@ flowchart TD
         vmrMSBuild[msbuild]
         vmrNuGet[nuget]
         vmrFSharp[fsharp]
-        vmrVMR[VMR]
 
         vmrVMR-->vmrEmsdk
         vmrVMR-->vmrRuntime
