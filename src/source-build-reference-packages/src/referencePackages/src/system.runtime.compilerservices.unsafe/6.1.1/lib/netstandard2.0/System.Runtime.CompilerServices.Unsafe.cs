@@ -10,7 +10,7 @@
 [assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.Default | System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
 [assembly: System.Reflection.AssemblyDescription("System.Runtime.CompilerServices.Unsafe")]
-[assembly: System.Reflection.AssemblyFileVersion("6.100.125.10404")]
+[assembly: System.Reflection.AssemblyFileVersion("6.100.125.11301")]
 [assembly: System.Reflection.AssemblyInformationalVersion("6.1.1")]
 [assembly: System.Reflection.AssemblyTitle("System.Runtime.CompilerServices.Unsafe")]
 [assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]

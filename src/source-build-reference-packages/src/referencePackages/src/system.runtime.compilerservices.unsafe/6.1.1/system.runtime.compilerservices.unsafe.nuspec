@@ -11,7 +11,7 @@
     <description>Provides the System.Runtime.CompilerServices.Unsafe class, which provides generic, low-level functionality for manipulating pointers.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
-    <repository type="git" url="https://github.com/dotnet/maintenance-packages" commit="f9ed1720eb9cb6be22116e0e05b010bc612687b1" />
+    <repository type="git" url="https://github.com/dotnet/maintenance-packages" commit="3b65679f5812b0a1f7f173730bd7f628e1197425" />
     <dependencies>
       <group targetFramework="net6.0" />
       <group targetFramework="net7.0" />
