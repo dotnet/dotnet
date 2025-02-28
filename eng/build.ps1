@@ -83,7 +83,7 @@ function Build {
 
   MSBuild -restore `
     -graph `
-    -m:100 `
+    "-m:100" `
     $project `
     $bl `
     $targets `
