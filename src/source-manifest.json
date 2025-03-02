@@ -78,18 +78,18 @@
       "commitSha": "e18e7f0af7252f8ec892a80d9b3523040ab6de0d"
     },
     {
-      "packageVersion": "6.14.0-preview.1.49",
+      "packageVersion": "6.14.0-preview.1.53",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "2be9ee7d8715100071f32c6419b4a8a02d0c7c66"
+      "commitSha": "9202ddad5fabd4d7737fa0c717524fbe2455c972"
     },
     {
-      "packageVersion": "9.0.0-preview.25127.3",
+      "packageVersion": "9.0.0-preview.25128.1",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "29dc15f909a6a1da296d5364940ef579653c3d53"
+      "commitSha": "950b8425022642a9916c37196c9531b7c6d8c8ad"
     },
     {
       "packageVersion": "4.14.0-3.25126.5",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "954142d0e51d761c11f2d43d42a45730f8acb3d6"
+      "commitSha": "d9b70ade3169e5a0cf085625ced8d75cc01a2212"
     },
     {
       "packageVersion": "10.0.612501",
@@ -141,11 +141,11 @@
       "commitSha": "01a36c1695abfc96cc97eec84f76c365d278df81"
     },
     {
-      "packageVersion": "10.0.0-beta.25126.1",
+      "packageVersion": "10.0.0-beta.25128.1",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "fc71ce0f730d0401665470a20efd9206f2791bc0"
+      "commitSha": "5bb16860e957c6b7fc59ecdbdb7135ecd5ec068d"
     },
     {
       "packageVersion": "2.2.0-beta.25123.1",

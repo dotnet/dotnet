@@ -84,12 +84,14 @@ namespace NuGet.Packaging.Test
         {
             // Arrange
             var logger = new TestLogger();
+            string path = "my path";
 
             // Act
-            Assert.Throws<InvalidDataException>(() => Read(contents, logger, "from memory"));
+            Assert.Throws<InvalidDataException>(() => Read(contents, logger, path));
 
             // Assert
             Assert.Equal(1, logger.Messages.Count);
+            Assert.Contains(logger.Messages, item => item.Contains(path));
         }
 
         [Fact]

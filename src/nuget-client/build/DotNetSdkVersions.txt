@@ -1,4 +1,4 @@
 # Each line represents arguments for the .NET SDK installer script (https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script)
 -Channel 3.1 -Runtime dotnet
 -Channel 8.0 -Runtime dotnet
--Channel 9.0.1xx
+-Channel 9.0.2xx
