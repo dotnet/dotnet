@@ -24,6 +24,9 @@
     -->
     <FileSignInfo Include="__init__.py" CertificateName="None" />
     <FileSignInfo Include="eggs.py" CertificateName="None" />
+
+    <!-- fails to sign via ESRP, skip for now -->
+    <FileSignInfo Include="libbinaryen.dylib" CertificateName="None" />
   </ItemGroup>
   
   <ItemGroup>
