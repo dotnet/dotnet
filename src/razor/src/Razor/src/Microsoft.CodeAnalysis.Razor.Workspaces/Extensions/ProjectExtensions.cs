@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
 namespace Microsoft.CodeAnalysis;
 
@@ -40,7 +41,7 @@ internal static class ProjectExtensions
     /// <summary>
     /// Finds source generated documents by iterating through all of them. In OOP there are better options!
     /// </summary>
-    public static async Task<Document?> TryGetSourceGeneratedDocumentFromHintNameAsync(this Project project, string? hintName, CancellationToken cancellationToken)
+    public static async Task<SourceGeneratedDocument?> TryGetSourceGeneratedDocumentFromHintNameAsync(this Project project, string? hintName, CancellationToken cancellationToken)
     {
         // TODO: use this when the location is case-insensitive on windows (https://github.com/dotnet/roslyn/issues/76869)
         //var generator = typeof(RazorSourceGenerator);
@@ -50,5 +51,17 @@ internal static class ProjectExtensions
 
         var generatedDocuments = await project.GetSourceGeneratedDocumentsAsync(cancellationToken).ConfigureAwait(false);
         return generatedDocuments.SingleOrDefault(d => d.HintName == hintName);
+    }
+
+    /// <summary>
+    /// Finds source generated documents by iterating through all of them. In OOP there are better options!
+    /// </summary>
+    public static async Task<string?> TryGetHintNameFromGeneratedDocumentUriAsync(this Project project, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    {
+        // TODO: Call SourceGeneratedDocumentUri.DeserializeIdentity: https://github.com/dotnet/razor/issues/11557
+
+        var generatedDocuments = await project.GetSourceGeneratedDocumentsAsync(cancellationToken).ConfigureAwait(false);
+        var document = generatedDocuments.SingleOrDefault(d => generatedDocumentUri.Equals(d.CreateUri()));
+        return document?.HintName;
     }
 }

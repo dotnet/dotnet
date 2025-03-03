@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseFact]
     public async Task CSharp_Method()
     {
         var input = """
@@ -40,7 +40,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         await VerifyGoToDefinitionAsync(input);
     }
 
-    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseFact]
     public async Task CSharp_Local()
     {
         var input = """
@@ -87,7 +87,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         Assert.Contains("public sealed class String", line);
     }
 
-    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseTheory]
     [InlineData("$$IncrementCount")]
     [InlineData("In$$crementCount")]
     [InlineData("IncrementCount$$")]
@@ -107,7 +107,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         await VerifyGoToDefinitionAsync(input, FileKinds.Component);
     }
 
-    [FuseFact(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseFact]
     public async Task AttributeValue_BindAfter()
     {
         var input = """
@@ -157,7 +157,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         Assert.Equal(range, location.Range);
     }
 
-    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseTheory]
     [InlineData("Ti$$tle")]
     [InlineData("$$@bind-Title")]
     [InlineData("@$$bind-Title")]

@@ -23,6 +23,6 @@ internal sealed class RemoteFilePathService(LanguageServerFeatureOptions options
 
     public override bool IsVirtualCSharpFile(Uri uri)
     {
-        return uri.Scheme == "source-generated";
+        return uri.Scheme == "roslyn-source-generated";
     }
 }

@@ -22,7 +22,7 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
     public RemoteProjectSnapshot ProjectSnapshot { get; }
 
     private RazorCodeDocument? _codeDocument;
-    private Document? _generatedDocument;
+    private SourceGeneratedDocument? _generatedDocument;
 
     public RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSnapshot projectSnapshot)
     {
@@ -103,7 +103,7 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
         return snapshotManager.GetSnapshot(newDocument);
     }
 
-    public async ValueTask<Document> GetGeneratedDocumentAsync(CancellationToken cancellationToken)
+    public async ValueTask<SourceGeneratedDocument> GetGeneratedDocumentAsync(CancellationToken cancellationToken)
     {
         if (_generatedDocument is not null)
         {

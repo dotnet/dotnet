@@ -171,7 +171,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             var generatedText = await generatedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var change = generatedText.GetTextChange(provisionalTextEdit);
             generatedText = generatedText.WithChanges([change]);
-            generatedDocument = generatedDocument.WithText(generatedText);
+            generatedDocument = (SourceGeneratedDocument)generatedDocument.WithText(generatedText);
         }
 
         // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.

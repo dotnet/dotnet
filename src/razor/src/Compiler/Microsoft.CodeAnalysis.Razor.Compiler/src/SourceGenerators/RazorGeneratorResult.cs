@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
-    internal sealed class RazorGeneratorResult(IReadOnlyList<TagHelperDescriptor> tagHelpers, ImmutableDictionary<string, (string hintName, RazorCodeDocument document)> documents)
+    internal sealed class RazorGeneratorResult(IReadOnlyList<TagHelperDescriptor> tagHelpers, ImmutableDictionary<string, (string hintName, RazorCodeDocument document)> filePathToDocument, ImmutableDictionary<string, string> hintNameToFilePath)
     {
         public IReadOnlyList<TagHelperDescriptor> TagHelpers => tagHelpers;
 
-        public RazorCodeDocument? GetCodeDocument(string physicalPath) => documents.TryGetValue(physicalPath, out var pair) ? pair.document : null;
+        public RazorCodeDocument? GetCodeDocument(string physicalPath) => filePathToDocument.TryGetValue(physicalPath, out var pair) ? pair.document : null;
 
-        public string? GetHintName(string physicalPath) => documents.TryGetValue(physicalPath, out var pair) ? pair.hintName : null;
+        public string? GetHintName(string physicalPath) => filePathToDocument.TryGetValue(physicalPath, out var pair) ? pair.hintName : null;
+
+        public string? GetFilePath(string hintName) => hintNameToFilePath.TryGetValue(hintName, out var filePath) ? filePath : null;
     }
 }

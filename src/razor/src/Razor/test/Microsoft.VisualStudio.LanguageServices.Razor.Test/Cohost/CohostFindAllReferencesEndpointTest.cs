@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
 {
-    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseTheory]
     [CombinatorialData]
     public Task FindCSharpMember(bool supportsVSExtensions)
         => VerifyFindAllReferencesAsync("""
@@ -36,7 +36,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             """,
             supportsVSExtensions);
 
-    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseTheory]
     [CombinatorialData]
     public async Task ComponentAttribute(bool supportsVSExtensions)
     {
@@ -60,7 +60,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             (FilePath("SurveyPrompt.razor"), surveyPrompt));
     }
 
-    [FuseTheory(Skip = "IFilePathService does not yet map generated documents")]
+    [FuseTheory]
     [CombinatorialData]
     public async Task OtherCSharpFile(bool supportsVSExtensions)
     {

@@ -3,10 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -346,8 +347,16 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                 if (!isGeneratorSuppressed)
                 {
-                    var documentDictionary = documents.Select(p => KeyValuePair.Create(p.codeDocument.Source.FilePath!, (p.hintName, p.codeDocument))).ToImmutableDictionary();
-                    context.AddOutput(nameof(RazorGeneratorResult), new RazorGeneratorResult(tagHelpers, documentDictionary));
+                    using var filePathToDocument = new PooledDictionaryBuilder<string, (string, RazorCodeDocument)>();
+                    using var hintNameToFilePath = new PooledDictionaryBuilder<string, string>();
+
+                    foreach (var (hintName, codeDocument, _) in documents)
+                    {
+                        filePathToDocument.Add(codeDocument.Source.FilePath!, (hintName, codeDocument));
+                        hintNameToFilePath.Add(hintName, codeDocument.Source.FilePath!);
+                    }
+
+                    context.AddOutput(nameof(RazorGeneratorResult), new RazorGeneratorResult(tagHelpers, filePathToDocument.ToImmutable(), hintNameToFilePath.ToImmutable()));
                 }
             });
         }

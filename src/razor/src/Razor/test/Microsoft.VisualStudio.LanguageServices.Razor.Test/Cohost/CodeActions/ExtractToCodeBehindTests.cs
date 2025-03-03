@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit.Abstractions;
@@ -11,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class ExtractToCodeBehindTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
 {
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [FuseFact]
     public async Task ExtractToCodeBehind()
     {
         await VerifyCodeActionAsync(
