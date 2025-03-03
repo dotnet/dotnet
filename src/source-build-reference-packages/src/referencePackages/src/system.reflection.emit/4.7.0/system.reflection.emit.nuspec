@@ -30,15 +30,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETStandard1.1">
-        <dependency id="System.IO" version="4.3.0" />
-        <dependency id="System.Reflection" version="4.3.0" />
-        <dependency id="System.Reflection.Emit.ILGeneration" version="4.7.0" />
-        <dependency id="System.Reflection.Primitives" version="4.3.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.InteropServices" version="4.3.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Reflection.Emit.ILGeneration" version="4.7.0" />
       </group>

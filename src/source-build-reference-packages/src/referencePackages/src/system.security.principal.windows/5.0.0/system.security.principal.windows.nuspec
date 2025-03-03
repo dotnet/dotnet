@@ -30,21 +30,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
       <group targetFramework=".NETCoreApp3.0" />
-      <group targetFramework=".NETStandard1.3">
-        <dependency id="Microsoft.Win32.Primitives" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Collections" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Diagnostics.Debug" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Reflection" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.Extensions" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime.Handles" version="4.3.0" />
-        <dependency id="System.Runtime.InteropServices" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Claims" version="4.3.0" />
-        <dependency id="System.Security.Principal" version="4.3.0" />
-        <dependency id="System.Text.Encoding" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Threading" version="4.3.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
   </metadata>

@@ -21,11 +21,11 @@ public class GenerateScriptTests
 
     public static IEnumerable<object[]> Data => new List<object[]>
     {
-        new object[] { "System.Xml.ReaderWriter", "4.3.0", PackageType.Reference },
-        new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference },
-        new object[] { "Microsoft.CodeAnalysis.CSharp", "3.11.0", PackageType.Reference },
-        new object[] { "System.Security.Cryptography.Encoding", "4.3.0", PackageType.Reference },
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text },
+        new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference },
+        new object[] { "NuGet.Protocol", "6.12.1", PackageType.Reference },
+        new object[] { "System.Buffers", "4.6.0", PackageType.Reference },
+        new object[] { "System.Security.Cryptography.ProtectedData", "8.0.0", PackageType.Reference },
     };
     
     public string SandboxDirectory { get; set; }

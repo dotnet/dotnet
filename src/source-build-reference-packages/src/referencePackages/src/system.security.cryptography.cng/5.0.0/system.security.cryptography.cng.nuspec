@@ -27,39 +27,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="System.Formats.Asn1" version="5.0.0" exclude="Compile" />
       </group>
-      <group targetFramework=".NETStandard1.3">
-        <dependency id="System.IO" version="4.3.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.Handles" version="4.3.0" />
-        <dependency id="System.Runtime.InteropServices" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.1" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-      </group>
-      <group targetFramework=".NETStandard1.4">
-        <dependency id="System.IO" version="4.3.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.Extensions" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime.Handles" version="4.3.0" />
-        <dependency id="System.Runtime.InteropServices" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.1" />
-        <dependency id="System.Security.Cryptography.Encoding" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-        <dependency id="System.Text.Encoding" version="4.3.0" exclude="Compile" />
-      </group>
-      <group targetFramework=".NETStandard1.6">
-        <dependency id="System.IO" version="4.3.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.Extensions" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime.Handles" version="4.3.0" />
-        <dependency id="System.Runtime.InteropServices" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.1" />
-        <dependency id="System.Security.Cryptography.Encoding" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-        <dependency id="System.Text.Encoding" version="4.3.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETStandard2.0" />
       <group targetFramework=".NETStandard2.1" />
     </dependencies>

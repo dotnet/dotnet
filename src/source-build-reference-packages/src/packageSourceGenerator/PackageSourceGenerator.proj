@@ -12,7 +12,7 @@
     <ExcludeTargetFrameworks>monoandroid*;monotouch*;net20;net35;net4*;netcore50;netcoreapp2.*;portable*;uap*;win8;win81;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
     <!-- The following target frameworks should be excluded even though they are supported by the current SDK because there is no need to have them.
          Only exclude them when target frameworks to include aren't provided. -->
-    <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1;netstandard1*</ExcludeTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">

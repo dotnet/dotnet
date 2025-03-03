@@ -20,12 +20,6 @@ System.Threading.Tasks.ValueTask&lt;TResult&gt;
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETStandard1.0">
-        <dependency id="System.Collections" version="4.3.0" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.3" />
-        <dependency id="System.Threading.Tasks" version="4.3.0" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.3" />
       </group>
