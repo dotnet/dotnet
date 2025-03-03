@@ -17,4 +17,10 @@ internal interface IRemoteDiagnosticsService : IRemoteJsonService
         RoslynLspDiagnostic[] csharpDiagnostics,
         RoslynLspDiagnostic[] htmlDiagnostics,
         CancellationToken cancellationToken);
+
+    ValueTask<ImmutableArray<RoslynLspDiagnostic>> GetTaskListDiagnosticsAsync(
+        JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
+        JsonSerializableDocumentId documentId,
+        ImmutableArray<string> taskListDescriptors,
+        CancellationToken cancellationToken);
 }

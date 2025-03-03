@@ -53,4 +53,25 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
             .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.Html, htmlDiagnostics, context.Snapshot, cancellationToken).ConfigureAwait(false)
         ];
     }
+
+    public ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
+        JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
+        JsonSerializableDocumentId documentId,
+        ImmutableArray<string> taskListDescriptors,
+        CancellationToken cancellationToken)
+        => RunServiceAsync(
+            solutionInfo,
+            documentId,
+            context => GetTaskListDiagnosticsAsync(context, taskListDescriptors, cancellationToken),
+            cancellationToken);
+
+    private static async ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
+        RemoteDocumentContext context,
+        ImmutableArray<string> taskListDescriptors,
+        CancellationToken cancellationToken)
+    {
+        var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+        return TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, taskListDescriptors);
+    }
 }

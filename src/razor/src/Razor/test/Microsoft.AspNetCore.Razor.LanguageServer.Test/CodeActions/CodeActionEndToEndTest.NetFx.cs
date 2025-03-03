@@ -848,7 +848,8 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             AutoInsertAttributeQuotes: true,
             ColorBackground: false,
             CodeBlockBraceOnNextLine: false,
-            CommitElementsWithSpace: true);
+            CommitElementsWithSpace: true,
+            TaskListDescriptors: []);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         await optionsMonitor.UpdateAsync(razorLSPOptions, DisposalToken);
 

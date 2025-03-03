@@ -2,9 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
@@ -26,6 +29,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
     private readonly WritableSettingsStore _writableSettingsStore;
     private readonly Lazy<ITelemetryReporter> _telemetryReporter;
     private readonly JoinableTask _initializeTask;
+    private ImmutableArray<string> _taskListDescriptors = [];
     private ISettingsReader? _unifiedSettingsReader;
     private IDisposable? _unifiedSettingsSubscription;
 
@@ -83,6 +87,11 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
         set => SetBool(SettingsNames.FormatOnPaste.LegacyName, value);
     }
 
+    public ImmutableArray<string> TaskListDescriptors
+    {
+        get { return _taskListDescriptors; }
+    }
+
     [ImportingConstructor]
     public OptionsStorage(
         SVsServiceProvider synchronousServiceProvider,
@@ -101,7 +110,37 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
             var unifiedSettingsManager = await serviceProvider.GetServiceAsync<SVsUnifiedSettingsManager, Utilities.UnifiedSettings.ISettingsManager>();
             _unifiedSettingsReader = unifiedSettingsManager.GetReader();
             _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
+
+            await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, synchronousServiceProvider);
         });
+    }
+
+    private async Task GetTaskListDescriptorsAsync(JoinableTaskFactory jtf, SVsServiceProvider synchronousServiceProvider)
+    {
+        await jtf.SwitchToMainThreadAsync();
+
+        var taskListService = synchronousServiceProvider.GetService<IVsTaskList, IVsCommentTaskInfo>();
+        if (taskListService is null)
+        {
+            return;
+        }
+
+        // Not sure why, but the VS Threading analyzer isn't recognizing that we switched to the main thread, above.
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+        ErrorHandler.ThrowOnFailure(taskListService.TokenCount(out var count));
+        var tokens = new IVsCommentTaskToken[count];
+        ErrorHandler.ThrowOnFailure(taskListService.EnumTokens(out var enumerator));
+        ErrorHandler.ThrowOnFailure(enumerator.Next((uint)count, tokens, out var numFetched));
+
+        using var tokensBuilder = new PooledArrayBuilder<string>(capacity: (int)numFetched);
+        for (var i = 0; i < numFetched; i++)
+        {
+            tokens[i].Text(out var text);
+            tokensBuilder.Add(text);
+        }
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
+
+        _taskListDescriptors = tokensBuilder.ToImmutable();
     }
 
     public async Task OnChangedAsync(Action<ClientAdvancedSettings> changed)
@@ -113,7 +152,8 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
 
     private EventHandler<ClientAdvancedSettingsChangedEventArgs>? _changed;
 
-    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CodeBlockBraceOnNextLine, CommitElementsWithSpace, Snippets, LogLevel, FormatOnPaste);
+    public ClientAdvancedSettings GetAdvancedSettings()
+        => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CodeBlockBraceOnNextLine, CommitElementsWithSpace, Snippets, LogLevel, FormatOnPaste, TaskListDescriptors);
 
     public bool GetBool(string name, bool defaultValue)
     {

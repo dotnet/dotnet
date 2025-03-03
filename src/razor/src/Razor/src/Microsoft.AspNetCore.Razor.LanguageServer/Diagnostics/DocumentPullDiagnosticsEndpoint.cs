@@ -25,25 +25,19 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
 [RazorLanguageServerEndpoint(VSInternalMethods.DocumentPullDiagnosticName)]
-internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternalDocumentDiagnosticsParams, IEnumerable<VSInternalDiagnosticReport>?>, ICapabilitiesProvider
+internal class DocumentPullDiagnosticsEndpoint(
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    RazorTranslateDiagnosticsService translateDiagnosticsService,
+    RazorLSPOptionsMonitor razorLSPOptionsMonitor,
+    IClientConnection clientConnection,
+    ITelemetryReporter? telemetryReporter) : IRazorRequestHandler<VSInternalDocumentDiagnosticsParams, IEnumerable<VSInternalDiagnosticReport>?>, ICapabilitiesProvider
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IClientConnection _clientConnection;
-    private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService;
-    private readonly ITelemetryReporter? _telemetryReporter;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService = translateDiagnosticsService;
+    private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
     private ImmutableDictionary<ProjectKey, int> _lastReportedProjectTagHelperCount = ImmutableDictionary<ProjectKey, int>.Empty;
-
-    public DocumentPullDiagnosticsEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        RazorTranslateDiagnosticsService translateDiagnosticsService,
-        IClientConnection clientConnection,
-        ITelemetryReporter? telemetryReporter)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _translateDiagnosticsService = translateDiagnosticsService ?? throw new ArgumentNullException(nameof(translateDiagnosticsService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _telemetryReporter = telemetryReporter;
-    }
 
     public bool MutatesSolutionState => false;
 
@@ -51,7 +45,7 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
     {
         serverCapabilities.SupportsDiagnosticRequests = true;
         serverCapabilities.DiagnosticProvider ??= new();
-        serverCapabilities.DiagnosticProvider.DiagnosticKinds = [VSInternalDiagnosticKind.Syntax];
+        serverCapabilities.DiagnosticProvider.DiagnosticKinds = [VSInternalDiagnosticKind.Syntax, VSInternalDiagnosticKind.Task];
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(VSInternalDocumentDiagnosticsParams request)
@@ -71,16 +65,31 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
             return default;
         }
 
-        var correlationId = Guid.NewGuid();
-        using var __ = _telemetryReporter?.TrackLspRequest(VSInternalMethods.DocumentPullDiagnosticName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.DiagnosticsRazorTelemetryThreshold, correlationId);
         var documentContext = context.DocumentContext;
         if (documentContext is null)
         {
             return null;
         }
 
-        var documentSnapshot = documentContext.Snapshot;
+        // This endpoint is called for regular diagnostics, and Task List items, and they're handled separately.
+        if (request.QueryingDiagnosticKind?.Value == VSInternalDiagnosticKind.Task.Value)
+        {
+            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+            var diagnostics = TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, _razorLSPOptionsMonitor.CurrentValue.TaskListDescriptors);
+            return
+            [
+                new()
+                {
+                    Diagnostics = [.. diagnostics],
+                    ResultId = Guid.NewGuid().ToString()
+                }
+            ];
+        }
 
+        var correlationId = Guid.NewGuid();
+        using var __ = _telemetryReporter?.TrackLspRequest(VSInternalMethods.DocumentPullDiagnosticName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.DiagnosticsRazorTelemetryThreshold, correlationId);
+
+        var documentSnapshot = documentContext.Snapshot;
         var razorDiagnostics = await GetRazorDiagnosticsAsync(documentSnapshot, cancellationToken).ConfigureAwait(false);
 
         await ReportRZ10012TelemetryAsync(documentContext, razorDiagnostics, cancellationToken).ConfigureAwait(false);

@@ -2,11 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
-internal record RazorLSPOptions(
+internal sealed record RazorLSPOptions(
     FormattingFlags Formatting,
     bool AutoClosingTags,
     bool InsertSpaces,
@@ -16,7 +19,8 @@ internal record RazorLSPOptions(
     bool AutoInsertAttributeQuotes,
     bool ColorBackground,
     bool CodeBlockBraceOnNextLine,
-    bool CommitElementsWithSpace)
+    bool CommitElementsWithSpace,
+    ImmutableArray<string> TaskListDescriptors)
 {
     public readonly static RazorLSPOptions Default = new(Formatting: FormattingFlags.All,
                                                          AutoClosingTags: true,
@@ -27,7 +31,15 @@ internal record RazorLSPOptions(
                                                          AutoInsertAttributeQuotes: true,
                                                          ColorBackground: false,
                                                          CodeBlockBraceOnNextLine: false,
-                                                         CommitElementsWithSpace: true);
+                                                         CommitElementsWithSpace: true,
+                                                         TaskListDescriptors: []);
+
+    public ImmutableArray<string> TaskListDescriptors
+    {
+        get;
+        init => field = value.NullToEmpty();
+
+    } = TaskListDescriptors.NullToEmpty();
 
     /// <summary>
     /// Initializes the LSP options with the settings from the passed in client settings, and default values for anything
@@ -43,7 +55,8 @@ internal record RazorLSPOptions(
               settings.AdvancedSettings.AutoInsertAttributeQuotes,
               settings.AdvancedSettings.ColorBackground,
               settings.AdvancedSettings.CodeBlockBraceOnNextLine,
-              settings.AdvancedSettings.CommitElementsWithSpace);
+              settings.AdvancedSettings.CommitElementsWithSpace,
+              settings.AdvancedSettings.TaskListDescriptors);
 
     private static FormattingFlags GetFormattingFlags(ClientSettings settings)
     {
@@ -59,5 +72,38 @@ internal record RazorLSPOptions(
         }
 
         return flags;
+    }
+
+    public bool Equals(RazorLSPOptions? other)
+    {
+        return other is not null &&
+            Formatting == other.Formatting &&
+            AutoClosingTags == other.AutoClosingTags &&
+            InsertSpaces == other.InsertSpaces &&
+            TabSize == other.TabSize &&
+            AutoShowCompletion == other.AutoShowCompletion &&
+            AutoListParams == other.AutoListParams &&
+            AutoInsertAttributeQuotes == other.AutoInsertAttributeQuotes &&
+            ColorBackground == other.ColorBackground &&
+            CodeBlockBraceOnNextLine == other.CodeBlockBraceOnNextLine &&
+            CommitElementsWithSpace == other.CommitElementsWithSpace &&
+            TaskListDescriptors.SequenceEqual(other.TaskListDescriptors);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = HashCodeCombiner.Start();
+        hash.Add(Formatting);
+        hash.Add(AutoClosingTags);
+        hash.Add(InsertSpaces);
+        hash.Add(TabSize);
+        hash.Add(AutoShowCompletion);
+        hash.Add(AutoListParams);
+        hash.Add(AutoInsertAttributeQuotes);
+        hash.Add(ColorBackground);
+        hash.Add(CodeBlockBraceOnNextLine);
+        hash.Add(CommitElementsWithSpace);
+        hash.Add(TaskListDescriptors);
+        return hash;
     }
 }

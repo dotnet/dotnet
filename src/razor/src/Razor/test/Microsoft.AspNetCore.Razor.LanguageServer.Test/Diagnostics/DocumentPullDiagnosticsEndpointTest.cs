@@ -23,10 +23,12 @@ public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOu
         var razorTranslate = new Mock<RazorTranslateDiagnosticsService>(MockBehavior.Strict,
             documentMappingService,
             LoggerFactory);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
         var endpoint = new DocumentPullDiagnosticsEndpoint(
             TestLanguageServerFeatureOptions.Instance,
             razorTranslate.Object,
+            optionsMonitor,
             clientConnection.Object,
             telemetryReporter: null);
 
@@ -40,9 +42,11 @@ public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOu
         Assert.NotNull(serverCapabilities);
         Assert.NotNull(serverCapabilities.DiagnosticProvider);
         Assert.NotNull(serverCapabilities.DiagnosticProvider.DiagnosticKinds);
-        Assert.Single(serverCapabilities.DiagnosticProvider.DiagnosticKinds);
+        Assert.Equal(2, serverCapabilities.DiagnosticProvider.DiagnosticKinds.Length);
 
         // use the expected value directly; if the underlying library changes values, there is likely a downstream impact
-        Assert.Equal("syntax", serverCapabilities.DiagnosticProvider.DiagnosticKinds[0].Value);
+        Assert.Collection(serverCapabilities.DiagnosticProvider.DiagnosticKinds,
+            item => Assert.Equal("syntax", item.Value),
+            item => Assert.Equal("task", item.Value));
     }
 }
