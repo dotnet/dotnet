@@ -251,9 +251,6 @@ namespace NuGet.SolutionRestoreManager
 
             try
             {
-                _logger.LogInformation(
-                    $"The nominate API is called for '{projectUniqueName}'.");
-
                 ProjectNames projectNames = await GetProjectNamesAsync(projectUniqueName, token);
 
                 DependencyGraphSpec dgSpec;

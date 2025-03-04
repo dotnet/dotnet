@@ -323,6 +323,8 @@ namespace NuGet.PackageManagement.VisualStudio
                 packageVersion.OriginalString ?? packageVersion.ToShortString(),
                 metadataElements,
                 metadataValues);
+
+            _vsProject4.Project.Save();
         }
 
         public async Task RemovePackageReferenceAsync(string packageName)
@@ -332,6 +334,7 @@ namespace NuGet.PackageManagement.VisualStudio
             await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             _vsProject4.PackageReferences.Remove(packageName);
+            _vsProject4.Project.Save();
         }
 
         private bool IsCentralPackageManagementVersionsEnabled()
