@@ -28,6 +28,9 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
+    <!-- VS does not require Windows PDBs to be published anymore. -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
+
     <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\</SharedSourceRoot>
     <SharedFilesRoot>$(SharedSourceRoot)files\</SharedFilesRoot>
 

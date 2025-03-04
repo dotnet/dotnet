@@ -4,6 +4,9 @@
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the Razor compiler.</Description>
     <TargetFrameworks>$(DefaultNetCoreTargetFramework);netstandard2.0</TargetFrameworks>
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
+    <IsPackable>true</IsPackable>
+    <IsShippingAssembly>true</IsShippingAssembly>
+    <IncludeSymbols>true</IncludeSymbols>
 
     <!--
       RS2008: Enable analyzer release tracking
