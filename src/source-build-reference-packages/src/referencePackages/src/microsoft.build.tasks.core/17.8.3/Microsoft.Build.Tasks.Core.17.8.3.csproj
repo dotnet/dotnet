@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.8.3</PackageVersion>
     <AssemblyName>Microsoft.Build.Tasks.Core</AssemblyName>
   </PropertyGroup>
 
@@ -14,8 +15,7 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
-    <!-- Microsoft.VisualStudio.Setup.Configuration.Interop was accidentally exposed by the product.
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.2.2146" /> -->
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.2.2146" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
 

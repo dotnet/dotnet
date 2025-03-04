@@ -15,19 +15,25 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// The package id.
         /// </summary>
         [Required]
-        public string? PackageId { get; set; }
+        public required string PackageId { get; set; }
+
+        /// <summary>
+        /// The package version.
+        /// </summary>
+        [Required]
+        public required string PackageVersion { get; set; }
 
         /// <summary>
         /// The path to the project template that is being transformed.
         /// </summary>
         [Required]
-        public string? ProjectTemplate { get; set; }
+        public required string ProjectTemplate { get; set; }
 
         /// <summary>
         /// The target path that the project file is written to.
         /// </summary>
         [Required]
-        public string? TargetPath { get; set; }
+        public required string TargetPath { get; set; }
 
        /// <summary>
         /// The package's compile items, including target framework metadata.
@@ -48,7 +54,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         {
             string referenceIncludes = "";
             StrongNameData strongNameData = default;
-            string projectContent = File.ReadAllText(ProjectTemplate!);
+            string projectContent = File.ReadAllText(ProjectTemplate);
 
             // Calculate the target frameworks based on the passed-in items.
             string[] targetFrameworks = CompileItems.Select(compileItem => compileItem.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
@@ -67,6 +73,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             projectContent = projectContent.Replace("$$TargetFrameworks$$", 
                 targetFrameworks.Length > 0 ? string.Join(';', targetFrameworks) : "netstandard2.0");
 
+            projectContent = projectContent.Replace("$$PackageVersion$$", PackageVersion);
+
             foreach (string targetFramework in targetFrameworks)
             {
                 string references = string.Empty;
@@ -74,20 +82,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 // Add package dependencies
                 foreach (ITaskItem packageDependency in PackageDependencies.Where(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
                 {
-                    // Don't emit package references for targeting packs as those are added implicitly by the SDK.
-                    if (packageDependency.ItemSpec == "NETStandard.Library")
-                        continue;
-
                     references += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{packageDependency.GetMetadata("Version")}\" />{Environment.NewLine}";
-                }
-
-                // Add framework references
-                foreach (ITaskItem frameworkReference in FrameworkReferences.Where(frameworkReference => frameworkReference.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
-                {
-                    if (frameworkReference.ItemSpec != "mscorlib")
-                    {
-                        references += $"    <Reference Include=\"{frameworkReference.ItemSpec}\" />{Environment.NewLine}";
-                    }
                 }
 
                 if (references != string.Empty)
@@ -134,11 +129,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 .Distinct()
                 .ToArray();
             projectContent = projectContent.Replace("$$AssemblyName$$",
-                 assemblyNames.Length == 1 ? assemblyNames[0] : PackageId!);
+                 assemblyNames.Length == 1 ? assemblyNames[0] : PackageId);
 
             // Generate the project file
-            Directory.CreateDirectory(Path.GetDirectoryName(TargetPath!)!);
-            File.WriteAllText(TargetPath!, projectContent);
+            Directory.CreateDirectory(Path.GetDirectoryName(TargetPath)!);
+            File.WriteAllText(TargetPath, projectContent);
 
             return true;
         }

@@ -3,22 +3,6 @@
   <Import Project="..\..\Directory.Build.props" />
 
   <PropertyGroup>
-    <CustomizationsPropsPath>$(MSBuildProjectDirectory)\$(CustomizationsPropsFile)</CustomizationsPropsPath>
-    <CustomizationsSourcePath>$(MSBuildProjectDirectory)\$(CustomizationsSourceFile)</CustomizationsSourcePath>
-  </PropertyGroup>
-
-  <!-- Customization extension point -->
-  <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
-
-  <ItemGroup>
-    <!-- Attributes for all Reference Packages -->
-    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
-
-    <!-- Customization extension point -->
-    <Compile Include="$(CustomizationsSourcePath)" Condition="Exists('$(CustomizationsSourcePath)')" />
-  </ItemGroup>
-
-  <PropertyGroup>
     <!-- Common properties for all Reference Packages -->
     <DebugType>None</DebugType>
     <DebugSymbols>false</DebugSymbols>

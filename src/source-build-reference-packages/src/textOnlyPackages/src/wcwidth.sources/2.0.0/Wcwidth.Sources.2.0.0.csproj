@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>2.0.0</PackageVersion>
     <AssemblyName>Wcwidth.Sources</AssemblyName>
   </PropertyGroup>
 

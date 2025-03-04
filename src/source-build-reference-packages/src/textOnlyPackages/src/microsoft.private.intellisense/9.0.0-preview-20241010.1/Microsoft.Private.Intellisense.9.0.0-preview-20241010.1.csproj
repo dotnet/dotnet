@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>9.0.0-preview-20241010.1</PackageVersion>
     <AssemblyName>Microsoft.Private.Intellisense</AssemblyName>
   </PropertyGroup>
 

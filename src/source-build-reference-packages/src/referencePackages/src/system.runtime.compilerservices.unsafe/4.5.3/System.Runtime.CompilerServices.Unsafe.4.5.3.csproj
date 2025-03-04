@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.5.3</PackageVersion>
     <AssemblyName>System.Runtime.CompilerServices.Unsafe</AssemblyName>
   </PropertyGroup>
 

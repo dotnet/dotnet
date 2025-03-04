@@ -1,0 +1,8 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Microsoft.VisualStudio.Setup.Configuration.Interop was accidentally exposed by the product. -->
+    <PackageReference Remove="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+  </ItemGroup>
+
+</Project>

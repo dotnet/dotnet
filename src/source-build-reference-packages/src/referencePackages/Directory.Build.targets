@@ -2,10 +2,24 @@
 
   <Import Project="..\..\Directory.Build.targets" />
 
+  <PropertyGroup>
+    <CustomizationsPropsPath>$(MSBuildProjectDirectory)\$(CustomizationsPropsFile)</CustomizationsPropsPath>
+    <CustomizationsSourcePath>$(MSBuildProjectDirectory)\$(CustomizationsSourceFile)</CustomizationsSourcePath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
     <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+
+    <!-- Attributes for all Reference Packages -->
+    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+
+    <!-- Customization extension point -->
+    <Compile Include="$(CustomizationsSourcePath)" Condition="Exists('$(CustomizationsSourcePath)')" />
   </ItemGroup>
+
+    <!-- Customization extension point -->
+  <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
 
   <!--
     ### Targeting Packs section ###

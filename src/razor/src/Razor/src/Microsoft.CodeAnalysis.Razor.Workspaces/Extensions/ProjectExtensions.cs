@@ -56,12 +56,15 @@ internal static class ProjectExtensions
     /// <summary>
     /// Finds source generated documents by iterating through all of them. In OOP there are better options!
     /// </summary>
-    public static async Task<string?> TryGetHintNameFromGeneratedDocumentUriAsync(this Project project, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    public static bool TryGetHintNameFromGeneratedDocumentUri(this Project project, Uri generatedDocumentUri, [NotNullWhen(true)] out string? hintName)
     {
-        // TODO: Call SourceGeneratedDocumentUri.DeserializeIdentity: https://github.com/dotnet/razor/issues/11557
+        if (!RazorUri.IsGeneratedDocumentUri(generatedDocumentUri))
+        {
+            hintName = null;
+            return false;
+        }
 
-        var generatedDocuments = await project.GetSourceGeneratedDocumentsAsync(cancellationToken).ConfigureAwait(false);
-        var document = generatedDocuments.SingleOrDefault(d => generatedDocumentUri.Equals(d.CreateUri()));
-        return document?.HintName;
+        hintName = RazorUri.GetHintNameFromGeneratedDocumentUri(project.Solution, generatedDocumentUri);
+        return true;
     }
 }

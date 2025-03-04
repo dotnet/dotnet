@@ -3,6 +3,7 @@
 
 using System;
 using System.Composition;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -22,7 +23,5 @@ internal sealed class RemoteFilePathService(LanguageServerFeatureOptions options
     }
 
     public override bool IsVirtualCSharpFile(Uri uri)
-    {
-        return uri.Scheme == "roslyn-source-generated";
-    }
+        => RazorUri.IsGeneratedDocumentUri(uri);
 }

@@ -42,6 +42,10 @@
     <GenAPIVerbosity>high</GenAPIVerbosity>
     <!-- Detected package downgrades are intentional when generating a lower bound version of a package that exists in the dependency graph. -->
     <NoWarn>$(NoWarn);NU1605</NoWarn>
+    <!-- Disable package and project pruning warnings and NuGet Audit. All dependencies in this repository mirror the
+         original package's dependencies and shouldn't get changed here. -->
+    <NoWarn>$(NoWarn);NU1510;NU1511</NoWarn>
+    <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <!-- GenAPI settings -->

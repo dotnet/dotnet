@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>8.0.0</PackageVersion>
     <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
@@ -21,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <!-- Necessary for PermissionSet types but as a dangling compile-time only reference. -->
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>
 

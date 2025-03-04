@@ -164,7 +164,7 @@
   </Target>
 
   <!-- Retrieve compile items, placeholder files, package dependencies and framework references with their target framework. -->
-  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GetPackageItems">
     <PropertyGroup>
       <PackageNupkgPath>$(RestoredPackageDirectory)$(PackageName.ToLowerInvariant()).$(PackageVersion).nupkg</PackageNupkgPath>
@@ -332,7 +332,7 @@
   </Target>
 
   <!-- Generate the final reference package project and write it to the package target directory. -->
-  <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GeneratePackageProject"
           DependsOnTargets="GetPackageItems"
           Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
@@ -342,6 +342,7 @@
     </PropertyGroup>
 
     <GenerateProject PackageId="$(RealPackageId)"
+                     PackageVersion="$(PackageVersion)"
                      ProjectTemplate="$(PackageProjectTemplate)"
                      TargetPath="$(PackageProjectTargetPath)"
                      CompileItems="@(PackageCompileItem)"
@@ -353,7 +354,7 @@
   </Target>
 
   <!-- Rewrite nuspec and copy to target directory. -->
-  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RewriteNuspec"
           Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
     <PropertyGroup>

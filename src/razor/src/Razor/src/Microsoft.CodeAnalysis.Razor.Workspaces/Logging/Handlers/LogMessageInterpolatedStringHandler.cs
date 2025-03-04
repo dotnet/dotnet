@@ -4,6 +4,8 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
@@ -32,7 +34,7 @@ internal ref struct LogMessageInterpolatedStringHandler
 
     public void AppendFormatted<T>(T t)
     {
-        _builder.Object.Append(t?.ToString() ?? "[null]");
+        _builder.Object.Append(GetMessage(t));
     }
 
     public void AppendFormatted<T>(T t, string format)
@@ -46,4 +48,19 @@ internal ref struct LogMessageInterpolatedStringHandler
         _builder.Dispose();
         return result;
     }
+
+    private static string GetMessage(object? value)
+        => value switch
+        {
+            VisualStudio.LanguageServer.Protocol.Range range => range.ToDisplayString(),
+            VisualStudio.LanguageServer.Protocol.Position position => position.ToDisplayString(),
+            VisualStudio.LanguageServer.Protocol.ISumType sumType => GetMessage(sumType.Value),
+
+            Roslyn.LanguageServer.Protocol.Range range => range.ToDisplayString(),
+            Roslyn.LanguageServer.Protocol.Position position => position.ToDisplayString(),
+            Roslyn.LanguageServer.Protocol.ISumType sumType => GetMessage(sumType.Value),
+
+            null => "[null]",
+            _ => value.ToString() ?? "[null]"
+        };
 }

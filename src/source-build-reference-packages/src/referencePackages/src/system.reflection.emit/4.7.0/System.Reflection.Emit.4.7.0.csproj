@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.7.0</PackageVersion>
     <AssemblyName>System.Reflection.Emit</AssemblyName>
   </PropertyGroup>
 

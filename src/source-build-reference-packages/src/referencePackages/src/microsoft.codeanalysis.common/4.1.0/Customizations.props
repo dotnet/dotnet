@@ -1,0 +1,8 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Analyzers are excluded from SBRPs -->
+    <PackageReference Remove="Microsoft.CodeAnalysis.Analyzers" />
+  </ItemGroup>
+
+</Project>

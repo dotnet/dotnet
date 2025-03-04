@@ -186,7 +186,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedDocumentUriAsync(Uri generatedDocumentUri, CancellationToken cancellationToken)
     {
-        if (await _project.TryGetHintNameFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false) is not { } hintName)
+        if (!_project.TryGetHintNameFromGeneratedDocumentUri(generatedDocumentUri, out var hintName))
         {
             return null;
         }

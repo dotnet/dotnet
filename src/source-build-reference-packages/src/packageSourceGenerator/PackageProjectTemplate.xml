@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>$$TargetFrameworks$$</TargetFrameworks>
+    <PackageVersion>$$PackageVersion$$</PackageVersion>
     <AssemblyName>$$AssemblyName$$</AssemblyName>$$KeyFileTag$$
   </PropertyGroup>
 

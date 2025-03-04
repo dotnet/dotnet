@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>10.3.0</PackageVersion>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
   </PropertyGroup>
 

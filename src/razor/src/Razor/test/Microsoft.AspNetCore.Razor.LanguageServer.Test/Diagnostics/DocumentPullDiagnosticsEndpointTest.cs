@@ -42,7 +42,6 @@ public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOu
         Assert.NotNull(serverCapabilities);
         Assert.NotNull(serverCapabilities.DiagnosticProvider);
         Assert.NotNull(serverCapabilities.DiagnosticProvider.DiagnosticKinds);
-        Assert.Equal(2, serverCapabilities.DiagnosticProvider.DiagnosticKinds.Length);
 
         // use the expected value directly; if the underlying library changes values, there is likely a downstream impact
         Assert.Collection(serverCapabilities.DiagnosticProvider.DiagnosticKinds,
