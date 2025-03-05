@@ -86,7 +86,6 @@
     <FileExtensionSignInfo Include=".tgz" CertificateName="None" />
     <FileExtensionSignInfo Include=".tar.gz" CertificateName="None" />
     <!-- Note, RPMs can only be unpack/repacked on Linux. They can be signed on non-Linux -->
-    <FileExtensionSignInfo Include=".azl.rpm" CertificateName="LinuxSignMariner" />
     <FileExtensionSignInfo Include=".rpm" CertificateName="LinuxSign" />
     <!-- Note, these can only be unpack/repacked on Mac. They can be signed on a non-Mac -->
     <FileExtensionSignInfo Include=".pkg" CertificateName="MacDeveloper" />

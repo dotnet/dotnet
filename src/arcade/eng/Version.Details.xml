@@ -22,25 +22,25 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>d617bc8ed2787c235a57cf0dcdfd087b86ff9521</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="10.0.100-preview.3.25120.1">
+    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="10.0.100-preview.3.25152.1">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>fc76b11510b84e3295f4c7961f767a8fe5da98a4</Sha>
+      <Sha>bcb27f16702686a7eb24af2250574c2daff25ecf</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25120.6">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25126.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ecdb2f499cb5f5c99b58fba1a14fdf977c56e1ac</Sha>
+      <Sha>6d4b01bce3a29c172faff5abc0bfe2ae3d1fef3d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25120.6">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25126.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ecdb2f499cb5f5c99b58fba1a14fdf977c56e1ac</Sha>
+      <Sha>6d4b01bce3a29c172faff5abc0bfe2ae3d1fef3d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25120.4">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25153.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>563856b74236b9e5d76e7092687808e97231507c</Sha>
+      <Sha>f74cf36a170b2edd335711bc6a451311d08502bf</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.25120.4">
+    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.25153.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>563856b74236b9e5d76e7092687808e97231507c</Sha>
+      <Sha>f74cf36a170b2edd335711bc6a451311d08502bf</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25103.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -132,9 +132,9 @@
       <Sha>ef4c24166691977558e5312758df4313ab310dc0</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25120.6">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25126.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ecdb2f499cb5f5c99b58fba1a14fdf977c56e1ac</Sha>
+      <Sha>6d4b01bce3a29c172faff5abc0bfe2ae3d1fef3d</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -168,9 +168,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.611901">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.615303">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>d794781cc75921b4ebbefe2eabdb0d6cd1713005</Sha>
+      <Sha>964c28e59a72516a64d4c8ff06b797703c5cdbfd</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Transitive dependency needed for source build. -->
@@ -199,9 +199,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25118.2">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25128.1">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>f8f9d70eeb54a2f9bdbef0901a3b422ee4d0003d</Sha>
+      <Sha>f227435f0d995d302b8548f214ab8cf63ae1be12</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

@@ -407,7 +407,6 @@ namespace Microsoft.DotNet.SignTool
 
         private readonly HashSet<string> specialExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            ".azl.rpm",
             ".tar.gz"
         };
 

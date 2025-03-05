@@ -6,7 +6,6 @@
       - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Publishing.md
   
     Optional variables:
-      DotNetPublishUsingPipelines       Whether publishing to BAR should be performed or not.
       DotNetFinalVersionKind            Global property that stores the type of the current build: https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#build-kind
       DotNetSymbolServerTokenMsdl       Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
@@ -87,7 +86,7 @@
     <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
       ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
 
-    <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts and PublishSymbols. We can't rename this
+    <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts. We can't rename this
          property as it is used by other repositories already. -->
     <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
 
@@ -136,9 +135,8 @@
   <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
-  <Import Project="$(NuGetPackageRoot)microsoft.symboluploader.build.task\$(MicrosoftSymbolUploaderBuildTaskVersion)\build\PublishSymbols.targets" Condition="$(PublishToSymbolServer)"/>
 
-  <Target Name="Publish" DependsOnTargets="PublishSymbols;PublishToAzureDevOpsArtifacts" />
+  <Target Name="Publish" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
 
   <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
     <ItemGroup>
@@ -242,7 +240,6 @@
   </Target>
 
   <Target Name="PublishToAzureDevOpsArtifacts"
-          Condition="'$(DotNetPublishUsingPipelines)' == 'true'"
           DependsOnTargets="$(PublishDependsOnTargets);GenerateChecksumsFromArtifacts">
     <!-- 
       Sadly AzDO doesn't have a variable to tell the account name. Also
@@ -374,69 +371,6 @@
       PdbArtifactsLocalStorageDir="$(PdbArtifactsSourceBuiltOrTempDir)"
       ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)"
       UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)" />
-  </Target>
-
-  <Target Name="PublishSymbols"
-          Condition="'$(PublishToSymbolServer)' == 'true'"
-          DependsOnTargets="$(PublishDependsOnTargets)">
-    <PropertyGroup>
-      <DotNetSymbolExpirationInDays Condition="'$(DotNetSymbolExpirationInDays)' == ''">3650</DotNetSymbolExpirationInDays>
-      <DryRun>false</DryRun>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(OfficialBuild)' != 'true'">
-      <DryRun>true</DryRun>
-      <DotNetSymbolServerTokenSymWeb>DryRunPTA</DotNetSymbolServerTokenSymWeb>
-      <DotNetSymbolServerTokenMsdl>DryRunPTA</DotNetSymbolServerTokenMsdl>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <!-- 
-        Publish Windows PDBs produced by SymStore.targets (by default, only shipping PDBs are placed there).
-        SymbolUploader doesn't support embedded PDBs yet, so let SymStore.targets do the conversion for now.
-        https://github.com/dotnet/core-eng/issues/3645
-      -->
-      <FilesToPublishToSymbolServer Include="$(ArtifactsSymStoreDirectory)**\*.pdb"/>
-
-      <!--
-        Publish Portable PDBs contained in symbol packages.
-      -->
-      <PackagesToPublishToSymbolServer Include="@(_ExistingSymbolPackage);@(_SymbolPackageToGenerate)"/>
-    </ItemGroup>
-
-    <PropertyGroup>
-      <PublishToSymbolServer Condition="'@(FilesToPublishToSymbolServer)' == '' and '@(PackagesToPublishToSymbolServer)' == ''">false</PublishToSymbolServer>
-    </PropertyGroup>
-
-    <!-- Symbol Uploader: MSDL -->
-    <Message Importance="High" Text="Publishing symbol packages to MSDL ..." Condition="$(PublishToSymbolServer)" />
-    <PublishSymbols PackagesToPublish="@(PackagesToPublishToSymbolServer)"
-                    FilesToPublish="@(FilesToPublishToSymbolServer)"
-                    PersonalAccessToken="$(DotNetSymbolServerTokenMsdl)"
-                    SymbolServerPath="https://microsoftpublicsymbols.artifacts.visualstudio.com/DefaultCollection"
-                    ExpirationInDays="$(DotNetSymbolExpirationInDays)"
-                    VerboseLogging="true"
-                    DryRun="$(DryRun)"
-                    ConvertPortablePdbsToWindowsPdbs="false"
-                    PdbConversionTreatAsWarning=""
-                    Condition="$(PublishToSymbolServer)"/>
-
-    <!-- 
-      Symbol Uploader: SymWeb 
-      Watson, VS insertion testings and the typical internal dev usage require SymWeb.
-      Currently we need to call the task twice (https://github.com/dotnet/core-eng/issues/3489).
-    -->
-    <Message Importance="High" Text="Publishing symbol packages to SymWeb ..." Condition="$(PublishToSymbolServer)" />
-    <PublishSymbols PackagesToPublish="@(PackagesToPublishToSymbolServer)"
-                    FilesToPublish="@(FilesToPublishToSymbolServer)"
-                    PersonalAccessToken="$(DotNetSymbolServerTokenSymWeb)"
-                    SymbolServerPath="https://microsoft.artifacts.visualstudio.com/DefaultCollection"
-                    ExpirationInDays="$(DotNetSymbolExpirationInDays)"
-                    VerboseLogging="true"
-                    DryRun="$(DryRun)"
-                    ConvertPortablePdbsToWindowsPdbs="false"
-                    PdbConversionTreatAsWarning=""
-                    Condition="$(PublishToSymbolServer)"/>
   </Target>
 
   <!-- Import the publish targets when in the inner or outer repo builds. -->

@@ -41,13 +41,15 @@ In V3, a single job or stage 'Publish Using Darc' handles all publishing for all
 The [maestro promotion pipeline](https://dnceng.visualstudio.com/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel(s).
 `Add-build-to-channel` queues a new build of this pipeline and waits for it to publish assets to the appropriate locations. The publishing job is run against Arcade's main branch by default, meaning that repositories do not need to take an Arcade update to be able to publish to newly created channels or get most publishing fixes.
 
-Example from arcade-validation: 
+Example from arcade-validation:
 
 ![V3-publishing](./images/V3-publishing.PNG)
 
 ## Basic onboarding scenario for new repositories to the current publishing version (V3)
 
 In order to use the new publishing mechanism, the easiest way to start is by turning your existing build pipeline into an AzDO YAML stage, and then making use of a YAML template ([eng/common/templates/post-build/post-build.yml](https://github.com/dotnet/arcade/blob/66175ebd3756697a3ca515e16cd5ffddc30582cd/eng/common/templates/post-build/post-build.yml)) provided by Arcade to use the default publishing stages. The process is explained below step by step.
+
+These steps are needed for Arcade versions before `10.0.0`. After that, V3 is the default publishing version and no additional steps are needed to opt-in to it.
 
 1. Update the Arcade SDK version used by the repository to `5.0.0-beta.20461.7` or newer.
 

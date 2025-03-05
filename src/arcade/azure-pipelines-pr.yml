@@ -60,7 +60,6 @@ stages:
           logs: true
           manifests: true
       enableMicrobuild: true
-      enablePublishUsingPipelines: true
       enableSourceIndex: true
       enableSourceBuild: true
       workspace:
