@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
+    <ProjectReference Include="../../system.reflection.emit.ilgeneration/4.7.0/System.Reflection.Emit.ILGeneration.4.7.0.csproj" />
   </ItemGroup>
 
 </Project>

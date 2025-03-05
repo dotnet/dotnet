@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="System.Formats.Asn1" Version="5.0.0" />
+    <ProjectReference Include="../../system.formats.asn1/5.0.0/System.Formats.Asn1.5.0.0.csproj" />
   </ItemGroup>
 
 </Project>

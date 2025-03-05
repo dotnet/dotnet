@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+    <ProjectReference Include="../../system.collections.immutable/7.0.0/System.Collections.Immutable.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+    <ProjectReference Include="../../system.collections.immutable/7.0.0/System.Collections.Immutable.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <ProjectReference Include="../../system.collections.immutable/7.0.0/System.Collections.Immutable.7.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
   </ItemGroup>
 
 </Project>

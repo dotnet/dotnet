@@ -7,22 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.12.6" />
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.12.6/Microsoft.Build.Framework.17.12.6.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.6/Microsoft.NET.StringTools.17.12.6.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.12.6" />
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.12.6/Microsoft.Build.Framework.17.12.6.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.6/Microsoft.NET.StringTools.17.12.6.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encoding.codepages/7.0.0/System.Text.Encoding.CodePages.7.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
   </ItemGroup>
 
 </Project>

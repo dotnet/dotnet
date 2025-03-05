@@ -26,6 +26,11 @@
     <PackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(BasePackageTargetDirectory)', '$(PackageVersion)'))</PackageTargetDirectory>
   </PropertyGroup>
 
+  <!-- The list of allowed external dependencies -->
+  <ItemGroup>
+    <AllowedPackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="PackageSourceGeneratorTask\PackageSourceGeneratorTask.csproj"
                       ReferenceOutputAssembly="false"
@@ -344,10 +349,12 @@
     <GenerateProject PackageId="$(RealPackageId)"
                      PackageVersion="$(PackageVersion)"
                      ProjectTemplate="$(PackageProjectTemplate)"
+                     ProjectRoot="$(PackagesTargetDirectory)"
                      TargetPath="$(PackageProjectTargetPath)"
                      CompileItems="@(PackageCompileItem)"
                      PackageDependencies="@(PackageDependency)"
-                     FrameworkReferences="@(PackageFrameworkReference)" />
+                     FrameworkReferences="@(PackageFrameworkReference)"
+                     AllowedPackageReference="@(AllowedPackageReference)" />
 
     <Message Text="$(MSBuildProjectName) -> $(PackageProjectTargetPath)"
              Importance="high" />
@@ -402,13 +409,9 @@
     
     <!-- External packages aren't visited as they shouldn't be added to SBRP. --> 
     <ItemGroup>
-      <ExternalPackage Include="Newtonsoft.Json" />
-    </ItemGroup>
-
-    <ItemGroup>
       <FilteredPackageDependency Include="@(PackageDependency)"
                                  Exclude="@(TargetingPackage);
-                                          @(ExternalPackage)" />
+                                          @(AllowedPackageReference)" />
     </ItemGroup>
 
     <MSBuild Projects="$(MSBuildThisFileFullPath)"

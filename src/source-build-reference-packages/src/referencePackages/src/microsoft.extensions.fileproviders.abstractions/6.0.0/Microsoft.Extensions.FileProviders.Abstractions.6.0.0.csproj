@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/6.0.0/Microsoft.Extensions.Primitives.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/6.0.0/Microsoft.Extensions.Primitives.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.accesscontrol/6.0.0/System.Security.AccessControl.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.0/System.Security.Cryptography.Pkcs.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <ProjectReference Include="../../system.security.accesscontrol/6.0.0/System.Security.AccessControl.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.0/System.Security.Cryptography.Pkcs.6.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.4/System.Memory.4.5.4.csproj" />
   </ItemGroup>
 
 </Project>

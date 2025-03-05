@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0" />
+    <ProjectReference Include="../../microsoft.win32.systemevents/7.0.0/Microsoft.Win32.SystemEvents.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0" />
+    <ProjectReference Include="../../microsoft.win32.systemevents/7.0.0/Microsoft.Win32.SystemEvents.7.0.0.csproj" />
   </ItemGroup>
 
 </Project>

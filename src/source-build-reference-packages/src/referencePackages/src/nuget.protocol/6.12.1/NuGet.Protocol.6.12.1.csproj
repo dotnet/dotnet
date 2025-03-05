@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
+    <ProjectReference Include="../../nuget.packaging/6.12.1/NuGet.Packaging.6.12.1.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <ProjectReference Include="../../nuget.packaging/6.12.1/NuGet.Packaging.6.12.1.csproj" />
+    <ProjectReference Include="../../system.text.json/8.0.4/System.Text.Json.8.0.4.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,21 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/8.0.0/System.Security.Cryptography.ProtectedData.8.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/8.0.0/System.Diagnostics.EventLog.8.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/8.0.0/System.Security.Cryptography.ProtectedData.8.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/8.0.0/System.Diagnostics.EventLog.8.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/8.0.0/System.Security.Cryptography.ProtectedData.8.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/8.0.0/System.Security.Cryptography.ProtectedData.8.0.0.csproj" />
   </ItemGroup>
 
 </Project>

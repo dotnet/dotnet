@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <ProjectReference Include="../../system.drawing.common/7.0.0/System.Drawing.Common.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <ProjectReference Include="../../system.drawing.common/7.0.0/System.Drawing.Common.7.0.0.csproj" />
   </ItemGroup>
 
 </Project>

@@ -35,6 +35,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         [Required]
         public required string TargetPath { get; set; }
 
+        /// <summary>
+        /// The root directory that the projects are written into.
+        /// </summary>
+        [Required]
+        public required string ProjectRoot { get; set; }
+
        /// <summary>
         /// The package's compile items, including target framework metadata.
         /// </summary>
@@ -49,6 +55,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// The package's framework references with the framework reference assembly as the identity and the target framework as metadata.
         /// </summary>
         public ITaskItem[] FrameworkReferences { get; set; } = Array.Empty<ITaskItem>();
+
+        /// <summary>
+        /// The list of dependencies (package id) that should get emitted as PackageReference items.
+        /// </summary>
+        public string[]? AllowedPackageReference { get; set; }
 
         public override bool Execute()
         {
@@ -77,18 +88,31 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             foreach (string targetFramework in targetFrameworks)
             {
-                string references = string.Empty;
+                string packageReferences = string.Empty;
+                string projectReferences = string.Empty;
 
                 // Add package dependencies
                 foreach (ITaskItem packageDependency in PackageDependencies.Where(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
                 {
-                    references += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{packageDependency.GetMetadata("Version")}\" />{Environment.NewLine}";
+                    string dependencyVersion = packageDependency.GetMetadata("Version");
+                    string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj"); 
+
+                    // If the dependency is on the package reference allowed list (i.e. for source-build-externals packages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
+                    if (AllowedPackageReference is not null && AllowedPackageReference.Contains(packageDependency.ItemSpec))
+                    {
+                        packageReferences += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{dependencyVersion}\" />{Environment.NewLine}";
+                    }
+                    else
+                    {
+                        // Make sure that the path always uses forward slashes, even on Windows.
+                        projectReferences += $"    <ProjectReference Include=\"../../{dependencyProjectRelativePath.Replace('\\', '/')}\" />{Environment.NewLine}";
+                    }
                 }
 
-                if (references != string.Empty)
+                if (packageReferences != string.Empty || projectReferences != string.Empty)
                 {
                     referenceIncludes += $"  <ItemGroup Condition=\"'$(TargetFramework)' == '{targetFramework}'\">{Environment.NewLine}";
-                    referenceIncludes += references;
+                    referenceIncludes += packageReferences + projectReferences;
                     referenceIncludes += $"  </ItemGroup>{Environment.NewLine}{Environment.NewLine}";
                 }
 

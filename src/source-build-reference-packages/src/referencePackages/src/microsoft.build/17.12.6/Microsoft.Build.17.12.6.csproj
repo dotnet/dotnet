@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.12.6" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.12.6/Microsoft.Build.Framework.17.12.6.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.6/Microsoft.NET.StringTools.17.12.6.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadataloadcontext/8.0.0/System.Reflection.MetadataLoadContext.8.0.0.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/8.0.0/System.Reflection.Metadata.8.0.0.csproj" />
   </ItemGroup>
 
 </Project>

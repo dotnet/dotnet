@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <!-- Microsoft.VisualStudio.Setup.Configuration.Interop was accidentally exposed by the product. -->
-    <PackageReference Remove="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+    <ProjectReference Remove="../../microsoft.visualstudio.setup.configuration.interop/3.2.2146/Microsoft.VisualStudio.Setup.Configuration.Interop.3.2.2146.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/4.5.3/System.Runtime.CompilerServices.Unsafe.4.5.3.csproj" />
   </ItemGroup>
 
 </Project>
