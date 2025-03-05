@@ -15,18 +15,18 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.3.25154.2",
+      "packageVersion": "10.0.0-preview.3.25154.4",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "f31188bec315c89bbc5d90f2867a6a071bf8e62d"
+      "commitSha": "99c501c1bd0a8665aba8beea828f83336f375920"
     },
     {
-      "packageVersion": "0.11.5-alpha.25109.3",
+      "packageVersion": "0.11.5-alpha.25125.1",
       "barId": null,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "864dffa259f3931b3d51dea0db54a2488ae455ba"
+      "commitSha": "f7a78a77069262841fe3c3c6b89ff243fc43cefc"
     },
     {
       "packageVersion": "0.1.607102",
@@ -106,11 +106,11 @@
       "commitSha": "345816fb41f40db5463ecc9b4308d29fbc0e4eaf"
     },
     {
-      "packageVersion": "10.0.0-preview.3.25153.8",
+      "packageVersion": "10.0.0-preview.3.25154.11",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "3cf22b78d833dbac3d7e32f32406419bcb7511c0"
+      "commitSha": "6e2274c87c699f6749473b83969f12949e48ec7d"
     },
     {
       "packageVersion": "10.0.0-preview.25126.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e591fd83f8fdde4936553069376c83c7bfc7799e"
+      "commitSha": "4264d3393e9d182ed8121bdfa827c6fb7ce2aca5"
     },
     {
       "packageVersion": "10.0.615301",
