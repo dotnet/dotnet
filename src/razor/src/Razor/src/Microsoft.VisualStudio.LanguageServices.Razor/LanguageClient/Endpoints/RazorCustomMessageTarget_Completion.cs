@@ -157,9 +157,6 @@ internal partial class RazorCustomMessageTarget
 
             completionList.Items = builder.ToArray();
 
-            completionList.Data = JsonHelpers.TryConvertFromJObject(completionList.Data);
-            ConvertJsonElementToJObject(completionList);
-
             return completionList;
         }
         finally
@@ -170,14 +167,6 @@ internal partial class RazorCustomMessageTarget
                 var revertedProvisionalChange = new VisualStudioTextChange(revertedProvisionalTextEdit, virtualDocumentSnapshot.Snapshot);
                 UpdateVirtualDocument(revertedProvisionalChange, request.ProjectedKind, request.Identifier.Version, hostDocumentUri, virtualDocumentSnapshot.Uri);
             }
-        }
-    }
-
-    private void ConvertJsonElementToJObject(VSInternalCompletionList completionList)
-    {
-        foreach (var item in completionList.Items)
-        {
-            item.Data = JsonHelpers.TryConvertFromJObject(item.Data);
         }
     }
 
@@ -222,7 +211,7 @@ internal partial class RazorCustomMessageTarget
             trackingDocumentManager.UpdateVirtualDocument<CSharpVirtualDocument>(
                 documentSnapshotUri,
                 virtualDocumentUri,
-                new[] { textChange },
+                [textChange],
                 hostDocumentVersion,
                 state: null);
         }
@@ -231,7 +220,7 @@ internal partial class RazorCustomMessageTarget
             trackingDocumentManager.UpdateVirtualDocument<HtmlVirtualDocument>(
                 documentSnapshotUri,
                 virtualDocumentUri,
-                new[] { textChange },
+                [textChange],
                 hostDocumentVersion,
                 state: null);
         }
@@ -291,25 +280,15 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        var completionResolveParams = request.CompletionItem;
-
-        completionResolveParams.Data = JsonHelpers.TryConvertBackToJObject(completionResolveParams.Data);
-
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, CompletionItem?>(
             textBuffer,
             Methods.TextDocumentCompletionResolve.Name,
             languageServerName,
-            completionResolveParams,
+            request.CompletionItem,
             cancellationToken).ConfigureAwait(false);
 
-        var item = response?.Response;
-        if (item is not null)
-        {
-            item.Data = JsonHelpers.TryConvertFromJObject(item.Data);
-        }
-
-        return item;
+        return response?.Response;
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorGetFormattingOptionsEndpointName, UseSingleObjectParameterDeserialization = true)]

@@ -80,8 +80,7 @@ internal sealed class CohostCodeActionsEndpoint(
             (service, solutionInfo, cancellationToken) => service.GetCodeActionRequestInfoAsync(solutionInfo, razorDocument.Id, request, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-        if (requestInfo is null ||
-            requestInfo.LanguageKind == RazorLanguageKind.CSharp && requestInfo.CSharpRequest is null)
+        if (requestInfo is null or { LanguageKind: RazorLanguageKind.CSharp, CSharpRequest: null })
         {
             return null;
         }
@@ -137,18 +136,7 @@ internal sealed class CohostCodeActionsEndpoint(
                 request,
                 cancellationToken).ConfigureAwait(false);
 
-            if (result?.Response is null)
-            {
-                return [];
-            }
-
-            // WebTools is still using Newtonsoft, so we have to convert to STJ
-            foreach (var codeAction in result.Response)
-            {
-                codeAction.Data = JsonHelpers.TryConvertFromJObject(codeAction.Data);
-            }
-
-            return result.Response;
+            return result?.Response ?? [];
         }
         finally
         {

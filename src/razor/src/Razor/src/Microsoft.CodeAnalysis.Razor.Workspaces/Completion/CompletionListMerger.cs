@@ -8,15 +8,14 @@ using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal static class CompletionListMerger
 {
-    private static readonly string Data1Key = nameof(MergedCompletionListData.Data1);
-    private static readonly string Data2Key = nameof(MergedCompletionListData.Data2);
-    private static readonly object EmptyData = new object();
+    private static readonly string s_data1Key = nameof(MergedCompletionListData.Data1);
+    private static readonly string s_data2Key = nameof(MergedCompletionListData.Data2);
+    private static readonly object s_emptyData = new();
 
     public static VSInternalCompletionList? Merge(VSInternalCompletionList? razorCompletionList, VSInternalCompletionList? delegatedCompletionList)
     {
@@ -109,10 +108,7 @@ internal static class CompletionListMerger
             return;
         }
 
-        // We have to be agnostic to which serialization method the delegated servers use, including
-        // the scenario where they use different ones, so we normalize the data to JObject.
         TrySplitJsonElement(data, ref collector);
-        TrySplitJObject(data, ref collector);
     }
 
     private static void TrySplitJsonElement(object data, ref PooledArrayBuilder<JsonElement> collector)
@@ -122,8 +118,8 @@ internal static class CompletionListMerger
             return;
         }
 
-        if (jsonElement.TryGetProperty(Data1Key, out _) || jsonElement.TryGetProperty(Data1Key.ToLowerInvariant(), out _) &&
-            jsonElement.TryGetProperty(Data2Key, out _) || jsonElement.TryGetProperty(Data2Key.ToLowerInvariant(), out _))
+        if ((jsonElement.TryGetProperty(s_data1Key, out _) || jsonElement.TryGetProperty(s_data1Key.ToLowerInvariant(), out _)) &&
+            (jsonElement.TryGetProperty(s_data2Key, out _) || jsonElement.TryGetProperty(s_data2Key.ToLowerInvariant(), out _)))
         {
             // Merged data
             var mergedCompletionListData = jsonElement.Deserialize<MergedCompletionListData>();
@@ -143,39 +139,10 @@ internal static class CompletionListMerger
         }
     }
 
-    private static void TrySplitJObject(object data, ref PooledArrayBuilder<JsonElement> collector)
-    {
-        if (data is not JObject jObject)
-        {
-            return;
-        }
-
-        if ((jObject.ContainsKey(Data1Key) || jObject.ContainsKey(Data1Key.ToLowerInvariant())) &&
-            (jObject.ContainsKey(Data2Key) || jObject.ContainsKey(Data2Key.ToLowerInvariant())))
-        {
-            // Merged data
-            var mergedCompletionListData = jObject.ToObject<MergedCompletionListData>();
-
-            if (mergedCompletionListData is null)
-            {
-                Debug.Fail("Merged completion list data is null, this should never happen.");
-                return;
-            }
-
-            Split(mergedCompletionListData.Data1, ref collector);
-            Split(mergedCompletionListData.Data2, ref collector);
-        }
-        else
-        {
-            // Normal, non-merged data
-            collector.Add(JsonDocument.Parse(jObject.ToString()).RootElement);
-        }
-    }
-
     private static void EnsureMergeableData(VSInternalCompletionList completionListA, VSInternalCompletionList completionListB)
     {
         if (completionListA.Data != completionListB.Data &&
-            completionListA.Data is null || completionListB.Data is null)
+            (completionListA.Data is null || completionListB.Data is null))
         {
             // One of the completion lists have data while the other does not, we need to ensure that any non-data centric items don't get incorrect data associated
 
@@ -185,10 +152,7 @@ internal static class CompletionListMerger
             for (var i = 0; i < candidateCompletionList.Items.Length; i++)
             {
                 var item = candidateCompletionList.Items[i];
-                if (item.Data is null)
-                {
-                    item.Data = EmptyData;
-                }
+                item.Data ??= s_emptyData;
             }
         }
     }
