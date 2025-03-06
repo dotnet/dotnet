@@ -261,6 +261,19 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
+        /// </summary>
+        /// <param name="detailKey"></param>
+        /// <returns></returns>
+        public string ToString(string detailKey)
+        {
+            if (Detail.TryGetValue(detailKey, out string value))
+            {
+                return value;
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
         /// Creates a SignatureVerificationResult for an unsupported file type or file extension.
         /// </summary>
         /// <param name="path">The path to the file that is unsupported</param>

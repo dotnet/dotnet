@@ -86,6 +86,11 @@ namespace SignCheckTask
             get;
             set;
         }
+        public string ResultsXmlFile
+        {
+            get;
+            set;
+        }
         public string Verbosity
         {
             get;
@@ -130,6 +135,7 @@ namespace SignCheckTask
             options.VerifyStrongName = VerifyStrongName;
             options.LogFile = LogFile;
             options.ErrorLogFile = ErrorLogFile;
+            options.ResultsXmlFile = ResultsXmlFile;
 
             List<string> inputFiles = new List<string>();
             if (InputFiles != null)

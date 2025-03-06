@@ -95,6 +95,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public bool PushToLocalStorage { get; set; }
 
+        /// <summary>
+        /// The final path for any packages published to <see cref="ShippingPackagesLocalStorageDir"/>
+        /// or <see cref="NonShippingPackagesLocalStorageDir"/> should have the artifact's RepoOrigin
+        /// appended as a subfolder to the published path.
+        /// </summary>
+        public bool PreserveRepoOrigin { get; set; }
+
         public ITaskItem[] ArtifactVisibilitiesToPublish { get; set; }
 
         /// <summary>
@@ -263,17 +270,20 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         break;
 
                     case PackageArtifactModel _:
-                        if (!artifactModel.NonShipping)
+                    {
+                        string packageDestinationPath = artifactModel.NonShipping
+                            ? NonShippingPackagesLocalStorageDir
+                            : ShippingPackagesLocalStorageDir;
+
+                        if (PreserveRepoOrigin)
                         {
-                            Directory.CreateDirectory(ShippingPackagesLocalStorageDir);
-                            CopyFileAsHardLinkIfPossible(path, Path.Combine(ShippingPackagesLocalStorageDir, filename), true);
+                            packageDestinationPath = Path.Combine(packageDestinationPath, artifactModel.RepoOrigin);
                         }
-                        else
-                        {
-                            Directory.CreateDirectory(NonShippingPackagesLocalStorageDir);
-                            CopyFileAsHardLinkIfPossible(path, Path.Combine(NonShippingPackagesLocalStorageDir, filename), true);
-                        }
+
+                        Directory.CreateDirectory(packageDestinationPath);
+                        CopyFileAsHardLinkIfPossible(path, Path.Combine(packageDestinationPath, filename), true);
                         break;
+                    }
 
                     case BlobArtifactModel _:
                         string relativeBlobPath = artifactModel.Id;

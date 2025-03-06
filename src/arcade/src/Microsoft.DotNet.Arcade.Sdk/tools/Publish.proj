@@ -86,6 +86,8 @@
     <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
       ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
 
+    <PreserveRepoOrigin Condition="'$(PreserveRepoOrigin)' == ''">false</PreserveRepoOrigin>
+
     <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts. We can't rename this
          property as it is used by other repositories already. -->
     <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
@@ -365,6 +367,7 @@
       IsReleaseOnlyPackageVersion="$(IsReleaseOnlyPackageVersion)"
       PushToLocalStorage="$(PushToLocalStorage)"
       AssetsLocalStorageDir="$(SourceBuiltAssetsDir)"
+      PreserveRepoOrigin="$(PreserveRepoOrigin)"
       ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
       NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
       AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"

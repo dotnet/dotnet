@@ -135,7 +135,7 @@ namespace SignCheckTask
         {
             Options = options;
 
-            Log = new Log(options.LogFile, options.ErrorLogFile, options.Verbosity);
+            Log = new Log(options.LogFile, options.ErrorLogFile, options.ResultsXmlFile, options.Verbosity);
 
             if (Options.FileStatus.Count() > 0)
             {
@@ -308,29 +308,35 @@ namespace SignCheckTask
             foreach (SignatureVerificationResult result in results)
             {
                 TotalFiles++;
+                string resultType = "Unknown";
 
                 if (result.IsSigned && !result.IsExcluded)
                 {
                     TotalSignedFiles++;
+                    resultType = "Signed";
                 }
                 else if (!(result.IsExcluded || result.IsSkipped) && (!result.IsSigned && !result.IsDoNotSign))
                 {
                     TotalUnsignedFiles++;
+                    resultType = "Unsigned";
                 }
 
                 if (result.IsExcluded || (!result.IsSigned && result.IsDoNotSign))
                 {
                     TotalExcludedFiles++;
+                    resultType = "Excluded";
                 }
 
                 if (result.IsSkipped)
                 {
                     TotalSkippedFiles++;
+                    resultType = "Skipped";
                 }
 
                 if (result.IsSkipped && result.IsExcluded)
                 {
                     TotalSkippedExcludedFiles++;
+                    resultType = "SkippedExcluded";
                 }
 
                 // Regardless of the file status reporting settings, a container file like an MSI or NuGet package
@@ -352,10 +358,12 @@ namespace SignCheckTask
                     NoSignIssues = false;
                 }
 
+                Log.WriteStartResult(result.VirtualPath, resultType, result.ToString(DetailKeys.Error));
                 if (result.NestedResults.Count > 0)
                 {
                     ProcessResults(result.NestedResults, indent + 2);
                 }
+                Log.WriteEndResult();
             }
         }
 

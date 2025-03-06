@@ -25,5 +25,9 @@ namespace Microsoft.SignCheck.Logging
         void WriteError(LogVerbosity verbosity, string message);
 
         void WriteError(LogVerbosity verbosity, string message, params object[] values);
+
+        void WriteStartResult(string fileName, string resultType, string error = null);
+
+        void WriteEndResult();
     }
 }

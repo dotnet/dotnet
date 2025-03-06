@@ -58,6 +58,16 @@ namespace Microsoft.SignCheck.Logging
             }
         }
 
+        public void WriteStartResult(string fileName, string resultType, string error = null)
+        {
+            throw new NotImplementedException("ConsoleLogger does not support WriteStartResult.");
+        }
+
+        public void WriteEndResult()
+        {
+            throw new NotImplementedException("ConsoleLogger does not support WriteEndResult.");
+        }
+
         public void WriteLine()
         {
             Console.WriteLine();
