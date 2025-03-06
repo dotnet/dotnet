@@ -94,11 +94,11 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                   autoReference: false)
         { }
 
-        public ListReportPackage(string packageId, string version, List<PackageVulnerabilityMetadata> vulnerabilities)
+        public ListReportPackage(string packageId, string requestedVersion, string resolvedVersion, List<PackageVulnerabilityMetadata> vulnerabilities)
             : this(
                   packageId: packageId,
-                  requestedVersion: version,
-                  resolvedVersion: null,
+                  requestedVersion: requestedVersion,
+                  resolvedVersion: resolvedVersion,
                   latestVersion: null,
                   vulnerabilities: vulnerabilities.Count == 0 ? null : vulnerabilities)
         { }
