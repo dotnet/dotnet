@@ -50,4 +50,10 @@ internal abstract class LanguageServerFeatureOptions
     /// Indicates that VSCode-compatible completion trigger character set should be used
     /// </summary>
     public abstract bool UseVsCodeCompletionTriggerCharacters { get; }
+
+    /// <summary>
+    /// Indicates whether the language server's miscellanous files project will be initialized with
+    /// all Razor files found under the workspace root path.
+    /// </summary>
+    public abstract bool DoNotInitializeMiscFilesProjectFromWorkspace { get; }
 }

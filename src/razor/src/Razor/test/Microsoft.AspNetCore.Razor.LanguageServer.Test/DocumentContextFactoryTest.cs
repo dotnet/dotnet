@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
 public class DocumentContextFactoryTest : LanguageServerTestBase
 {
-    private static readonly string s_baseDirectory = PathUtilities.CreateRootedPath("path", "to");
+    private static readonly string s_baseDirectory = TestPathUtilities.CreateRootedPath("path", "to");
 
     private readonly TestProjectSnapshotManager _projectManager;
 

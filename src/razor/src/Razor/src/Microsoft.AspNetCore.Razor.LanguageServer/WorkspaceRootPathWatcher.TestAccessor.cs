@@ -1,17 +1,16 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal partial class RazorFileChangeDetector
+internal partial class WorkspaceRootPathWatcher
 {
     internal TestAccessor GetTestAccessor() => new(this);
 
-    internal sealed class TestAccessor(RazorFileChangeDetector instance)
+    internal readonly struct TestAccessor(WorkspaceRootPathWatcher instance)
     {
         public void AddWork(string filePath, RazorFileChangeKind kind)
         {

@@ -107,4 +107,8 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool SupportsSoftSelectionInCompletion => true;
 
     public override bool UseVsCodeCompletionTriggerCharacters => false;
+
+    // In VS, we do not want the language server to add all documents in the workspace root path
+    // to the misc-files project when initialized.
+    public override bool DoNotInitializeMiscFilesProjectFromWorkspace => true;
 }

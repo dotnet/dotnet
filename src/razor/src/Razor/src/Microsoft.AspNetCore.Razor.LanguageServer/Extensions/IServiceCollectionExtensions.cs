@@ -214,11 +214,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IDocumentMappingService, LspDocumentMappingService>();
         services.AddSingleton<IEditMappingService, LspEditMappingService>();
-        services.AddSingleton<RazorFileChangeDetectorManager>();
-        services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<RazorFileChangeDetectorManager>());
-
-        services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
-        services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
+        services.AddSingleton<WorkspaceRootPathWatcher>();
+        services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<WorkspaceRootPathWatcher>());
 
         // Document processed listeners
         if (!featureOptions.SingleServerSupport)

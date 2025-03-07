@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-public static class PathUtilities
+public static class TestPathUtilities
 {
     public static string CreateRootedPath(params string[] parts)
     {

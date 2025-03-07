@@ -53,4 +53,6 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
     public override bool SupportsSoftSelectionInCompletion => _options.SupportsSoftSelectionInCompletion;
 
     public override bool UseVsCodeCompletionTriggerCharacters => _options.UseVsCodeCompletionTriggerCharacters;
+
+    public override bool DoNotInitializeMiscFilesProjectFromWorkspace => throw new NotImplementedException("This option has not been synced to OOP.");
 }

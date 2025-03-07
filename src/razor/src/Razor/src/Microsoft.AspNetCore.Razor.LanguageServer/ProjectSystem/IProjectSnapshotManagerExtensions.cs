@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -26,7 +27,7 @@ internal static partial class ProjectSnapshotManagerExtensions
         foreach (var project in projectManager.GetProjects())
         {
             // Always exclude the miscellaneous project.
-            if (project.FilePath == MiscFilesProject.FilePath)
+            if (project.IsMiscellaneousProject())
             {
                 continue;
             }
@@ -67,6 +68,21 @@ internal static partial class ProjectSnapshotManagerExtensions
 
         projects = builder.DrainToImmutable();
         return projects.Length > 0;
+    }
+
+    public static bool TryFindContainingProject(this ProjectSnapshotManager projectManager, string documentFilePath, out ProjectKey projectKey)
+    {
+        foreach (var project in projectManager.GetProjects())
+        {
+            if (project.ContainsDocument(documentFilePath))
+            {
+                projectKey = project.Key;
+                return true;
+            }
+        }
+
+        projectKey = default;
+        return false;
     }
 
     public static bool TryResolveDocumentInAnyProject(

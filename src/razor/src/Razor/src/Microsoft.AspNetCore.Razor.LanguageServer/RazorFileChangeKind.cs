@@ -1,14 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal interface IFileChangeDetector
+internal enum RazorFileChangeKind
 {
-    Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken);
-
-    void Stop();
+    Added,
+    Removed,
+    Changed,
 }
