@@ -29,6 +29,9 @@
     <ItemGroup>
       <_InnerBuildProperties Include="DotNetBuildPhase=InnerRepo" />
       <_InnerBuildProperties Include="DotNetBuildInnerRepo=true" />
+      <!-- NuGet uses a pre-release string that is dependent on the build revision. This is normally set via their
+           YAML. Set based on the parsed version information. -->
+      <_InnerBuildProperties Condition="'$(VersionSuffixBuildOfTheDay)' != ''" Include="BuildNumber=$(VersionSuffixBuildOfTheDay)" />
     </ItemGroup>
 
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
