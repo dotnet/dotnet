@@ -29,12 +29,6 @@ public sealed class InvalidSolutions
     [Fact]
     public async Task InvalidSlnxAsync()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         ResourceStream wrongRoot = SlnAssets.LoadResource("Invalid/WrongRoot.slnx");
         string wrongRootFile = wrongRoot.SaveResourceToTempFile();
 
@@ -55,12 +49,6 @@ public sealed class InvalidSolutions
     [Fact]
     public async Task InvalidSlnAsync()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         ResourceStream invalidSln = SlnAssets.LoadResource("Invalid/Invalid.sln");
         string invalidSlnFile = invalidSln.SaveResourceToTempFile();
 
@@ -238,5 +226,100 @@ public sealed class InvalidSolutions
         Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, "11111111-1111-1111-1111-111111111111", nameof(SolutionFolderModel)), ex.Message);
         Assert.Equal(3, ex.Line);
         Assert.Equal(4, ex.Column);
+    }
+
+    /// <summary>
+    /// Ensure the slnx parser does fail if project id collides with folder id.
+    /// Expected behavior is the folder id is changed to a new value.
+    /// </summary>
+    [Fact]
+    public async Task DuplicateItemIdSlnAsync()
+    {
+        ResourceStream duplicateId = SlnAssets.LoadResource("Invalid/DuplicateItemId.sln");
+        SolutionModel solution = await SolutionSerializers.SlnFileV12.OpenAsync(duplicateId.Stream, CancellationToken.None);
+        Assert.NotNull(solution.SerializerExtension);
+        Assert.True(solution.SerializerExtension.Tarnished);
+
+        SolutionProjectModel? projectModel = solution.FindProject("DuplicateProjectId.csproj");
+        Assert.NotNull(projectModel);
+        Assert.Equal(projectModel.Id, new Guid("11111111-1111-1111-1111-111111111111"));
+
+        SolutionFolderModel? folderModel = solution.FindFolder("/DuplicateFolderId/");
+        Assert.NotNull(folderModel);
+        Assert.NotEqual(folderModel.Id, new Guid("11111111-1111-1111-1111-111111111111"));
+    }
+
+    /// <summary>
+    /// Recreate legacy bug behavior when duplicate project id guids are found in .sln files.
+    /// Use corrupt configuration and change second project id to new value.
+    /// </summary>
+    [Fact]
+    public async Task DuplicateProjectIdSlnAsync()
+    {
+        ResourceStream duplicateId = SlnAssets.LoadResource("Invalid/DuplicateProjectId.sln");
+        SolutionModel solution = await SolutionSerializers.SlnFileV12.OpenAsync(duplicateId.Stream, CancellationToken.None);
+        Assert.NotNull(solution.SerializerExtension);
+        Assert.True(solution.SerializerExtension.Tarnished);
+
+        SolutionProjectModel? project = solution.FindProject("DuplicateProjectId.csproj");
+        Assert.NotNull(project);
+        Assert.Equal(project.Id, new Guid("8BADBEEF-1111-2222-3333-444444444444"));
+
+        SolutionProjectModel? project2 = solution.FindProject("DuplicateProjectIdOpposite.csproj");
+        Assert.NotNull(project2);
+        Assert.NotEqual(project2.Id, new Guid("8BADBEEF-2222-3333-4444-555555555555"));
+
+        (string? buildType, string? platform, bool build, bool deploy) = project.GetProjectConfiguration(BuildTypeNames.Debug, PlatformNames.AnySpaceCPU);
+
+        (string? buildType2, string? platform2, bool build2, bool deploy2) = project2.GetProjectConfiguration(BuildTypeNames.Debug, PlatformNames.AnySpaceCPU);
+
+        // The configuration from the "opposite" project should be used by both as it appears last in the file.
+        Assert.Equal(BuildTypeNames.Release, buildType);
+        Assert.Equal(PlatformNames.AnySpaceCPU, platform);
+        Assert.True(build);
+        Assert.False(deploy);
+
+        // The configuration from the "opposite" project should be used by both as it appears last in the file.
+        Assert.Equal(BuildTypeNames.Release, buildType2);
+        Assert.Equal(PlatformNames.AnySpaceCPU, platform2);
+        Assert.True(build2);
+        Assert.False(deploy2);
+
+        // Compare the new model to the 'After' sln (Change the new Guid to FFFF to match).
+        project2.Id = new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+        ResourceStream duplicateIdAfter = SlnAssets.LoadResource("DuplicateProjectId-After.sln");
+        AssertSolutionsAreEqual(duplicateIdAfter.ToLines(), await solution.ToLinesAsync(SolutionSerializers.SlnFileV12));
+    }
+
+    /// <summary>
+    /// Ensure the slnx parser does fail on duplicate project guids.
+    /// </summary>
+    [Fact]
+    public async Task DuplicateProjectIdSlnxAsync()
+    {
+        ResourceStream duplicateId = SlnAssets.LoadResource("Invalid/DuplicateProjectId.slnx");
+        SolutionException ex = await Assert.ThrowsAsync<SolutionException>(
+            async () => _ = await SolutionSerializers.SlnXml.OpenAsync(duplicateId.Stream, CancellationToken.None));
+
+        Assert.StartsWith(string.Format(Errors.DuplicateItemRef_Args2, "8badbeef-1111-2222-3333-444444444444", nameof(SolutionProjectModel)), ex.Message);
+        Assert.Equal(5, ex.Line);
+        Assert.Equal(6, ex.Column);
+    }
+
+    /// <summary>
+    /// Verifies that a malformed project type id is loaded as an empty guid without errors, and
+    /// the solution is marked as tarnished.
+    /// </summary>
+    [Fact]
+    public async Task InvalidProjectTypeSlnAsync()
+    {
+        ResourceStream invalidProjectType = SlnAssets.LoadResource("Invalid/InvalidProjectType.sln");
+        SolutionModel solution = await SolutionSerializers.SlnFileV12.OpenAsync(invalidProjectType.Stream, CancellationToken.None);
+        Assert.NotNull(solution.SerializerExtension);
+        Assert.True(solution.SerializerExtension.Tarnished);
+
+        SolutionProjectModel? project = solution.FindProject("InvalidProjectType.csproj");
+        Assert.NotNull(project);
+        Assert.Equal(Guid.Empty, project.TypeId);
     }
 }

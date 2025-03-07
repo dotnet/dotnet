@@ -226,6 +226,9 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {210A5C78-8B93-42DA-8FB9-A667D3B01618}
 	EndGlobalSection
+	GlobalSection(DevPartner Solution Properties) = postSolution
+		SharedCPS\SharedCPS.vcxitems*{919107bb-2e8e-4dbb-ac5d-36ff8a211ffc}*SharedItemsImports = 9
+	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CSharpShared\CSharpShared.projitems*{51cc7781-a8d3-4c60-8065-f3ceedba8032}*SharedItemsImports = 13
 		SharedCPS\SharedCPS.vcxitems*{919107bb-2e8e-4dbb-ac5d-36ff8a211ffc}*SharedItemsImports = 9
