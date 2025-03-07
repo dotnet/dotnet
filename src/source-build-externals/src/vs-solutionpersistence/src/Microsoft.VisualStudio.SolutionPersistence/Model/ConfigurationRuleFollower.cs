@@ -30,7 +30,7 @@ internal readonly ref struct ConfigurationRuleFollower(IReadOnlyList<Configurati
         return value == "*" ? solutionBuildType : value.NullIfEmpty();
     }
 
-    internal readonly string? GetProjectPlatform(string solutionBuildType, string solutionPlatform)
+    internal readonly string? GetProjectPlatform(string? solutionBuildType = null, string? solutionPlatform = null)
     {
         string value = this.GetDimensionValue(BuildDimension.Platform, solutionBuildType, solutionPlatform);
         return value == "*" ? solutionPlatform : value.NullIfEmpty();

@@ -32,6 +32,7 @@
         <ProjectType Name="Javascript" Extension=".esproj" TypeId="54a90642-561a-4bb1-a94e-469adee60c69" IsBuildable="false" />
         <ProjectType Name="Node.js" Extension=".njsproj" TypeId="9092aa53-fb77-4645-b42d-1ccca6bd08bd" IsBuildable="false" />
         <ProjectType Name="SQL" Extension=".sqlproj" TypeId="00d1a9c2-b5f0-4af3-8072-f6c62b433612" IsBuildable="false" />
+        <ProjectType Name="SSRS" Extension=".rptproj" TypeId="f14b399a-7131-4c87-9e4b-1186c45ef12d" SupportsPlatform="false" />
         <ProjectType Name="Shared" Extension=".shproj" TypeId="d954291e-2a0b-460d-934e-dc6b0785db48" IsBuildable="false" />
         <ProjectType Name="U-SQL" Extension=".usqlproj" TypeId="182e2583-ecad-465b-bb50-91101d7c24ce" IsBuildable="false" />
         <ProjectType Name="U-SQL-DB" Extension=".usqldbproj" TypeId="0c603c2c-620a-423b-a800-4f3e2f6281f1" IsBuildable="false" />

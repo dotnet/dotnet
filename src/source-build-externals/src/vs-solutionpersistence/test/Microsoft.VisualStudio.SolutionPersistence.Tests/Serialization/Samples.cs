@@ -14,12 +14,6 @@ public class Samples
     [Fact]
     public async Task ConvertToSlnx()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         string filePath = SlnAssets.ClassicSlnEverything.SaveResourceToTempFile();
         string slnxFilePath = Path.ChangeExtension(filePath, SolutionSerializers.SlnXml.DefaultFileExtension);
 
