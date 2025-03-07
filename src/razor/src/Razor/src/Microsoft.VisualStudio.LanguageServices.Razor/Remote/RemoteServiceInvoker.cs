@@ -26,8 +26,7 @@ internal sealed class RemoteServiceInvoker(
     IClientCapabilitiesService clientCapabilitiesService,
     ISemanticTokensLegendService semanticTokensLegendService,
     ITelemetryReporter telemetryReporter,
-    ILoggerFactory loggerFactory)
-    : IRemoteServiceInvoker
+    ILoggerFactory loggerFactory) : IRemoteServiceInvoker, IDisposable
 {
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
@@ -36,10 +35,23 @@ internal sealed class RemoteServiceInvoker(
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteServiceInvoker>();
 
+    private readonly CancellationTokenSource _disposeTokenSource = new();
+
     private readonly object _gate = new();
     private ValueTask<bool>? _isInitializedTask;
     private ValueTask<bool>? _isLSPInitializedTask;
     private bool _fullyInitialized;
+
+    public void Dispose()
+    {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
+    }
 
     public async ValueTask<TResult?> TryInvokeAsync<TService, TResult>(
         Solution solution,
@@ -94,7 +106,7 @@ internal sealed class RemoteServiceInvoker(
             return null;
         }
 
-        await InitializeRemoteClientAsync(remoteClient, cancellationToken).ConfigureAwait(false);
+        await InitializeRemoteClientAsync(remoteClient).ConfigureAwait(false);
 
         return remoteClient;
     }
@@ -117,7 +129,7 @@ internal sealed class RemoteServiceInvoker(
             cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task InitializeRemoteClientAsync(RazorRemoteHostClient remoteClient, CancellationToken cancellationToken)
+    private async Task InitializeRemoteClientAsync(RazorRemoteHostClient remoteClient)
     {
         if (_fullyInitialized)
         {
@@ -142,7 +154,7 @@ internal sealed class RemoteServiceInvoker(
 
                 _isInitializedTask = remoteClient.TryInvokeAsync<IRemoteClientInitializationService>(
                     (s, ct) => s.InitializeAsync(initParams, ct),
-                    cancellationToken);
+                    _disposeTokenSource.Token);
             }
         }
 
@@ -164,7 +176,7 @@ internal sealed class RemoteServiceInvoker(
 
                     _isLSPInitializedTask = remoteClient.TryInvokeAsync<IRemoteClientInitializationService>(
                         (s, ct) => s.InitializeLSPAsync(initParams, ct),
-                        cancellationToken);
+                        _disposeTokenSource.Token);
                 }
             }
 
