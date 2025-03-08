@@ -42,19 +42,16 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
     <!-- Interop -->
-    <Compile Remove="Interop\**" />
-    <EmbeddedResource Remove="Interop\**" />
+    <Compile Remove="Interop\ICLRStrongName.cs" />
+    <Compile Remove="Interop\Ole32.cs" />
+    <Compile Remove="Interop\StructuredStorage.cs" />
 
     <!-- Unsupported file types -->
-    <Compile Remove="Verification\AuthentiCode.cs" />
-    <Compile Remove="Verification\AuthentiCodeVerifier.cs" />
     <Compile Remove="Verification\CabVerifier.cs" />
-    <Compile Remove="Verification\ExeVerifier.cs" />
     <Compile Remove="Verification\JarVerifier.cs" />
     <Compile Remove="Verification\MsiVerifier.cs" />
     <Compile Remove="Verification\MspVerifier.cs" />
     <Compile Remove="Verification\MsuVerifier.cs" />
-    <Compile Remove="Verification\PortableExecutableVerifier.cs" />
     <Compile Remove="Verification\StrongName.cs" />
     <Compile Remove="Verification\VsixVerifier.cs" />
     <Compile Remove="Verification\Jar\JarFile.cs" />
