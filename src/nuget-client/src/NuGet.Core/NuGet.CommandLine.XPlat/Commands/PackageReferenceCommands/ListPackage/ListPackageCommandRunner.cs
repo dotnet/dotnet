@@ -207,7 +207,6 @@ namespace NuGet.CommandLine.XPlat
                     reportPackages.Add(
                         new ListReportPackage(
                             package.Name,
-                            package.OriginalRequestedVersion,
                             package.ResolvedPackageMetadata.Identity.Version.ToString(),
                             vuln));
                 }

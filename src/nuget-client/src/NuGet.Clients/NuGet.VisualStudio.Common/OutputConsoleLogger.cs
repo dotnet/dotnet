@@ -42,7 +42,6 @@ namespace NuGet.VisualStudio.Common
 
         private IOutputConsole _outputConsole;
         private AsyncLazyInt _verbosityLevel;
-        private bool _errorsReported;
 
         [ImportingConstructor]
         public OutputConsoleLogger(
@@ -105,13 +104,8 @@ namespace NuGet.VisualStudio.Common
                 await _outputConsole.WriteLineAsync(Resources.Finished);
                 await _outputConsole.WriteLineAsync(string.Empty);
 
-                if (_errorsReported)
-                {
-                    // Give the error list focus
-                    await _errorList.Value.BringToFrontIfSettingsPermitAsync();
-
-                    _errorsReported = false;
-                }
+                // Give the error list focus
+                await _errorList.Value.BringToFrontIfSettingsPermitAsync();
             });
         }
 
@@ -186,7 +180,6 @@ namespace NuGet.VisualStudio.Common
         {
             var errorListEntry = new ErrorListTableEntry(message);
             _errorList.Value.AddNuGetEntries(errorListEntry);
-            _errorsReported = true;
         }
 
         private void Run(Func<Task> action, [CallerMemberName] string methodName = null)

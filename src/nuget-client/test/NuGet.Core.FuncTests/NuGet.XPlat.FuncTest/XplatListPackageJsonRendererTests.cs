@@ -1246,8 +1246,7 @@ namespace NuGet.XPlat.FuncTest
                                     {
                                         new ListReportPackage(
                                             packageId : "A",
-                                            requestedVersion : "1.0.0",
-                                            resolvedVersion : "1.0.1",
+                                            version : "1.0.0",
                                             vulnerabilities : new List<PackageVulnerabilityMetadata>(){ new PackageVulnerabilityMetadata() }
                                             )
                                     }
@@ -1280,7 +1279,7 @@ namespace NuGet.XPlat.FuncTest
                             {{
                               'id': 'A',
                               'requestedVersion': '1.0.0',
-                              'resolvedVersion': '1.0.1',
+                              'resolvedVersion': null,
                               'vulnerabilities': [
                                 {{
                                   'severity': 'Low',
@@ -1344,8 +1343,7 @@ namespace NuGet.XPlat.FuncTest
                                     {
                                         new ListReportPackage(
                                             packageId : "A",
-                                            requestedVersion : "1.0.0",
-                                            resolvedVersion : "1.0.1",
+                                            version : "1.0.0",
                                             vulnerabilities : new List<PackageVulnerabilityMetadata>(){ new PackageVulnerabilityMetadata() }
                                             )
                                     }
@@ -1376,7 +1374,7 @@ namespace NuGet.XPlat.FuncTest
                             {{
                               'id': 'A',
                               'requestedVersion': '1.0.0',
-                              'resolvedVersion': '1.0.1',
+                              'resolvedVersion': null,
                               'latestVersion': null
                             }}
                           ]
