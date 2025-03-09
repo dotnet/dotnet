@@ -2360,6 +2360,20 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11551")]
+    public void LayoutDirective()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @layout System.Object
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Bind
@@ -10568,7 +10582,7 @@ namespace Test
                Diagnostic(ErrorCode.ERR_NameNotInContext, "Foo").WithArguments("Foo").WithLocation(5, 2),
                // (33,13): error CS0103: The name '__builder' does not exist in the current context
                //             __builder.AddContent(0,
-               Diagnostic(ErrorCode.ERR_NameNotInContext, "__builder").WithArguments("__builder").WithLocation(33, 13)]);
+               Diagnostic(ErrorCode.ERR_NameNotInContext, "__builder").WithArguments("__builder").WithLocation(41, 13)]);
     }
 
     [IntegrationTestFact]

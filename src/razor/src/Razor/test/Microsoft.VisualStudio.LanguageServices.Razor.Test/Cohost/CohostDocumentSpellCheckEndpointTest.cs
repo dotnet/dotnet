@@ -13,9 +13,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentSpellCheckEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostDocumentSpellCheckEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task Handle()
     {
         var input = """
@@ -57,8 +57,6 @@ public class CohostDocumentSpellCheckEndpointTest(FuseTestContext context, ITest
 
     private async Task VerifySpellCheckableRangesAsync(TestCode input)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 

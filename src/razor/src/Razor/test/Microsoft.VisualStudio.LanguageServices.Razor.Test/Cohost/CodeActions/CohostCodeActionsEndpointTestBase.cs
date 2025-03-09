@@ -28,14 +28,10 @@ using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public abstract class CohostCodeActionsEndpointTestBase(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    protected bool ForceRuntimeCodeGeneration => context.ForceRuntimeCodeGeneration;
-
     private protected async Task VerifyCodeActionAsync(TestCode input, string? expected, string codeActionName, int childActionIndex = 0, string? fileKind = null, (string filePath, string contents)[]? additionalFiles = null, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var fileSystem = (RemoteFileSystem)OOPExportProvider.GetExportedValue<IFileSystem>();
         fileSystem.GetTestAccessor().SetFileSystem(new TestFileSystem(additionalFiles));
 

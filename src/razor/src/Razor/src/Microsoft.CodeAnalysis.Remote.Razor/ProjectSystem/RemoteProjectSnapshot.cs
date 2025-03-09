@@ -5,15 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -30,10 +27,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
     public ProjectKey Key { get; }
 
     private readonly Project _project;
-#if !FORMAT_FUSE
-    private readonly AsyncLazy<RazorConfiguration> _lazyConfiguration;
-    private readonly AsyncLazy<RazorProjectEngine> _lazyProjectEngine;
-#endif
     private readonly Dictionary<TextDocument, RemoteDocumentSnapshot> _documentMap = [];
 
     public RemoteProjectSnapshot(Project project, RemoteSolutionSnapshot solutionSnapshot)
@@ -46,11 +39,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         _project = project;
         SolutionSnapshot = solutionSnapshot;
         Key = _project.ToProjectKey();
-
-#if !FORMAT_FUSE
-        _lazyConfiguration = AsyncLazy.Create(ComputeConfigurationAsync);
-        _lazyProjectEngine = AsyncLazy.Create(ComputeProjectEngineAsync);
-#endif
     }
 
     public IEnumerable<string> DocumentFilePaths
@@ -230,50 +218,4 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
         return generatorResult;
     }
-
-#if !FORMAT_FUSE
-    /// <summary>
-    /// NOTE: This will be removed when the source generator is used directly.
-    /// </summary>
-    public ValueTask<RazorProjectEngine> GetProjectEngineAsync(CancellationToken cancellationToken)
-    {
-        if (_lazyProjectEngine.TryGetValue(out var result))
-        {
-            return new(result);
-        }
-
-        return new(_lazyProjectEngine.GetValueAsync(cancellationToken));
-    }
-
-    private async Task<RazorConfiguration> ComputeConfigurationAsync(CancellationToken cancellationToken)
-    {
-        var compilation = await _project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-
-        return RazorProjectInfoFactory.ComputeRazorConfigurationOptions(_project, compilation, out _);
-    }
-
-    private async Task<RazorProjectEngine> ComputeProjectEngineAsync(CancellationToken cancellationToken)
-    {
-        var configuration = await _lazyConfiguration.GetValueAsync(cancellationToken).ConfigureAwait(false);
-
-        var useRoslynTokenizer = configuration.UseRoslynTokenizer;
-        var parseOptions = new CSharpParseOptions(languageVersion: CSharpLanguageVersion, preprocessorSymbols: configuration.PreprocessorSymbols);
-
-        return ProjectEngineFactories.DefaultProvider.Create(
-            configuration,
-            rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
-            configure: builder =>
-            {
-                builder.SetRootNamespace(RootNamespace);
-                builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
-                builder.SetSupportLocalizedComponentNames();
-
-                builder.ConfigureParserOptions(builder =>
-                {
-                    builder.UseRoslynTokenizer = useRoslynTokenizer;
-                    builder.CSharpParseOptions = parseOptions;
-                });
-            });
-    }
-#endif
 }

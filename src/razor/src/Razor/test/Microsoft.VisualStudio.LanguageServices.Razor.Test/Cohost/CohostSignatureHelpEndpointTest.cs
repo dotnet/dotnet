@@ -16,9 +16,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task CSharpMethodCSharp()
     {
         var input = """
@@ -37,7 +37,7 @@ public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutpu
         await VerifySignatureHelpAsync(input, "string M1(int i)");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpMethodInRazor()
     {
         var input = """
@@ -51,7 +51,7 @@ public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutpu
         await VerifySignatureHelpAsync(input, "string GetDiv()");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AutoListParamsOff_Invoked_ReturnsResult()
     {
         var input = """
@@ -70,7 +70,7 @@ public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutpu
         await VerifySignatureHelpAsync(input, "string M1(int i)", autoListParams: false, triggerKind: SignatureHelpTriggerKind.Invoked);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AutoListParamsOff_NotInvoked_ReturnsNoResult()
     {
         var input = """
@@ -91,8 +91,6 @@ public class CohostSignatureHelpEndpointTest(FuseTestContext context, ITestOutpu
 
     private async Task VerifySignatureHelpAsync(string input, string expected, bool autoListParams = true, SignatureHelpTriggerKind? triggerKind = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetPosition(input, out input, out var cursorPosition);
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);

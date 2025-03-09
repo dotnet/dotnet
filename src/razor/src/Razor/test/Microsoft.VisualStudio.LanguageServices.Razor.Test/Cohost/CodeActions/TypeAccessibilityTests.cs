@@ -2,14 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class TypeAccessibilityTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task FixCasing()
     {
         await VerifyCodeActionAsync(
@@ -26,7 +26,7 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
             codeActionName: "EditForm");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task FullyQualify()
     {
         await VerifyCodeActionAsync(
@@ -43,7 +43,7 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
             codeActionName: "Microsoft.AspNetCore.Components.Sections.SectionOutlet");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing()
     {
         await VerifyCodeActionAsync(
@@ -61,7 +61,7 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
             codeActionName: "@using Microsoft.AspNetCore.Components.Sections");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing_FixTypo()
     {
         await VerifyCodeActionAsync(

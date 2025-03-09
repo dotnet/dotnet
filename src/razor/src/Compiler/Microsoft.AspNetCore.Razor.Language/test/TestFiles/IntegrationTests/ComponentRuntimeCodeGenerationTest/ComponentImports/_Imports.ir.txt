@@ -8,7 +8,9 @@
         UsingDirective - (1:0,1 [17] x:\dir\subdir\Test\_Imports.razor) - System.Text
         UsingDirective - (21:1,1 [23] x:\dir\subdir\Test\_Imports.razor) - System.Reflection
         CSharpCode - 
-            IntermediateToken -  - CSharp - [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+            IntermediateToken -  - CSharp - [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(
+            IntermediateToken - (56:3,8 [10] x:\dir\subdir\Test\_Imports.razor) - CSharp - MainLayout
+            IntermediateToken -  - CSharp - ))]
         ClassDeclaration -  - public partial - _Imports - object - 
             MethodDeclaration -  - protected - void - Execute
                 CSharpExpression - (69:4,1 [3] x:\dir\subdir\Test\_Imports.razor)

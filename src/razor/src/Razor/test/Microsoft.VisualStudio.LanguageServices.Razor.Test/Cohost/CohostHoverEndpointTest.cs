@@ -16,9 +16,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 using static HoverAssertions;
 
-public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task Razor()
     {
         TestCode code = """
@@ -53,7 +53,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html()
     {
         TestCode code = """
@@ -73,7 +73,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         await VerifyHoverAsync(code, htmlResponse, h => Assert.Same(htmlResponse, h));
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp()
     {
         TestCode code = """
@@ -106,7 +106,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ComponentAttribute()
     {
         // Component attributes are within HTML but actually map to C#.
@@ -145,7 +145,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithCallbacks()
     {
         TestCode code = """
@@ -185,8 +185,6 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
 
     private async Task VerifyHoverAsync(TestCode input, Func<RoslynHover, TextDocument, Task> verifyHover)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input);
 
@@ -199,8 +197,6 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
 
     private async Task VerifyHoverAsync(TestCode input, Hover htmlResponse, Action<Hover?> verifyHover)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input, htmlResponse);
 

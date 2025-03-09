@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
@@ -19,9 +18,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public Task InlayHints()
         => VerifyInlayHintsAsync(
             input: """
@@ -63,7 +62,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
             """);
 
-    [FuseFact]
+    [Fact]
     public Task InlayHints_DisplayAllOverride()
         => VerifyInlayHintsAsync(
             input: """
@@ -106,7 +105,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
             """,
             displayAllOverride: true);
 
-    [FuseFact]
+    [Fact]
     public Task InlayHints_ComponentAttributes()
         => VerifyInlayHintsAsync(
             input: """
@@ -129,14 +128,12 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
                 """);
 
-    [FuseTheory]
+    [Theory]
     [InlineData(0, 0, 0, 20)]
     [InlineData(0, 0, 2, 0)]
     [InlineData(2, 0, 4, 0)]
     public async Task InlayHints_InvalidRange(int startLine, int starChar, int endLine, int endChar)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var input = """
             <div></div>
             """;
@@ -157,8 +154,6 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output, bool displayAllOverride = false)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
         var document = CreateProjectAndRazorDocument(input);
         var inputText = await document.GetTextAsync(DisposalToken);

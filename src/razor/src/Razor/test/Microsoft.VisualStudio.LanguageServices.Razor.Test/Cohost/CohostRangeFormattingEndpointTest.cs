@@ -19,10 +19,10 @@ using Xunit.Abstractions;
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CohostRangeFormattingEndpointTest(FuseTestContext context, HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
-    : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
+    : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public Task RangeFormatting()
         => VerifyRangeFormattingAsync(
             input: """
@@ -102,8 +102,6 @@ public class CohostRangeFormattingEndpointTest(FuseTestContext context, HtmlForm
 
     private async Task VerifyRangeFormattingAsync(TestCode input, string expected)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 

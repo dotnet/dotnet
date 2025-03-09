@@ -8,45 +8,24 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
-#nullable restore
-#line (1,2)-(1,19) "x:\dir\subdir\Test\_Imports.razor"
-using System.Text
-
-#nullable disable
-    ;
-#nullable restore
-#line (2,2)-(2,25) "x:\dir\subdir\Test\_Imports.razor"
-using System.Reflection
-
-#nullable disable
-    ;
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(
 #nullable restore
-#line (4,9)-(4,19) "x:\dir\subdir\Test\_Imports.razor"
-MainLayout
+#line (1,9)-(1,22) "x:\dir\subdir\Test\TestComponent.cshtml"
+System.Object
 
 #line default
 #line hidden
 #nullable disable
     ))]
     #nullable restore
-    public partial class _Imports : object
+    public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
     {
         #pragma warning disable 1998
-        protected void Execute()
+        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.AddContent(0, 
-#nullable restore
-#line (5,2)-(5,5) "x:\dir\subdir\Test\_Imports.razor"
-Foo
-
-#line default
-#line hidden
-#nullable disable
-            );
         }
         #pragma warning restore 1998
     }

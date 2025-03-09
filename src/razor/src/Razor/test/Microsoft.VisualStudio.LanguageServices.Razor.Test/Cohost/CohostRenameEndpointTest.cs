@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
@@ -17,9 +16,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact(Skip = "Cannot edit source generated documents")]
+    [Fact(Skip = "Cannot edit source generated documents")]
     public Task CSharp_Method()
         => VerifyRenamesAsync(
             input: """
@@ -54,7 +53,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 The end.
                 """);
 
-    [FuseTheory(Skip = "Cannot edit source generated documents")]
+    [Theory(Skip = "Cannot edit source generated documents")]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -102,7 +101,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 """,
             renames: [("Component.razor", "DifferentName.razor")]);
 
-    [FuseTheory(Skip = "Cannot edit source generated documents")]
+    [Theory(Skip = "Cannot edit source generated documents")]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -150,7 +149,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 """,
             renames: [("Component.razor", "DifferentName.razor")]);
 
-    [FuseFact]
+    [Fact]
     public Task Mvc()
        => VerifyRenamesAsync(
            input: """
@@ -169,8 +168,6 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
 
     private async Task VerifyRenamesAsync(string input, string newName, string expected, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null, (string oldName, string newName)[]? renames = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
         var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);

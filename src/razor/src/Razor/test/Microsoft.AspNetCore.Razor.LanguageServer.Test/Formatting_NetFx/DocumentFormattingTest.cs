@@ -1358,7 +1358,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                             Welcome to your new app.
 
-                    <SurveyPrompt Title="How is Blazor working for you?" />
+                    <PageTitle Title="How is Blazor working for you?" />
 
                     <div class="FF"
                          id="ERT">
@@ -1411,7 +1411,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                             Welcome to your new app.
 
-                    <SurveyPrompt Title="How is Blazor working for you?" />
+                    <PageTitle Title="How is Blazor working for you?" />
 
                     <div class="FF"
                          id="ERT">
@@ -1820,7 +1820,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     public async Task FormatRenderFragmentInCSharpCodeBlock1()
     {
         // Sadly the first thing the HTML formatter does with this input
-        // is put a newline after the @, which means <SurveyPrompt /> won't be
+        // is put a newline after the @, which means <PageTitle /> won't be
         // seen as a component any more, so we have to turn off our validation,
         // or the test fails before we have a chance to fix the formatting.
         FormattingContext.SkipValidateComponents = true;
@@ -1832,9 +1832,9 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         public void DoStuff(RenderFragment renderFragment)
                         {
                             DoThings();
-                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            renderFragment(@<PageTitle Title="Foo" />);
                     DoThings();
-                    renderFragment(@<SurveyPrompt          Title="Foo"             />);
+                    renderFragment(@<PageTitle          Title="Foo"             />);
 
                             @* comment *@
                     <div></div>
@@ -1849,9 +1849,9 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         public void DoStuff(RenderFragment renderFragment)
                         {
                             DoThings();
-                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            renderFragment(@<PageTitle Title="Foo" />);
                             DoThings();
-                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            renderFragment(@<PageTitle Title="Foo" />);
 
                             @* comment *@
                             <div></div>
@@ -1868,7 +1868,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     public async Task FormatRenderFragmentInCSharpCodeBlock2()
     {
         // Sadly the first thing the HTML formatter does with this input
-        // is put a newline after the @, which means <SurveyPrompt /> won't be
+        // is put a newline after the @, which means <PageTitle /> won't be
         // seen as a component any more, so we have to turn off our validation,
         // or the test fails before we have a chance to fix the formatting.
         FormattingContext.SkipValidateComponents = true;
@@ -1877,7 +1877,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: """
                     <div>
                     @{
-                        renderFragment(@<SurveyPrompt Title="Foo" />);
+                        renderFragment(@<PageTitle Title="Foo" />);
 
                             @* comment *@
                     <div></div>
@@ -1889,7 +1889,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: """
                     <div>
                         @{
-                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            renderFragment(@<PageTitle Title="Foo" />);
 
                             @* comment *@
                             <div></div>
@@ -1906,7 +1906,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     public async Task FormatRenderFragmentInCSharpCodeBlock3()
     {
         // Sadly the first thing the HTML formatter does with this input
-        // is put a newline after the @, which means <SurveyPrompt /> won't be
+        // is put a newline after the @, which means <PageTitle /> won't be
         // seen as a component any more, so we have to turn off our validation,
         // or the test fails before we have a chance to fix the formatting.
         FormattingContext.SkipValidateComponents = true;
@@ -1915,7 +1915,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: """
                     <div>
                     @{
-                        renderFragment    (@<SurveyPrompt      Title=  "Foo"     />);
+                        renderFragment    (@<PageTitle      Title=  "Foo"     />);
 
                             @* comment *@
                     <div></div>
@@ -1927,7 +1927,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: """
                     <div>
                         @{
-                            renderFragment(@<SurveyPrompt Title="Foo" />);
+                            renderFragment(@<PageTitle Title="Foo" />);
 
                             @* comment *@
                             <div></div>
@@ -2050,12 +2050,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         <CascadingValue Value="Variable1">
                             <CascadingValue Value="Variable2">
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                         </CascadingValue>
@@ -2077,12 +2077,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         <CascadingValue Value="Variable1">
                             <CascadingValue Value="Variable2">
-                                <SurveyPrompt />
+                                <PageTitle />
                                 @if (VarBool)
                                 {
                                     <div class="mb-16">
-                                        <SurveyPrompt />
-                                        <SurveyPrompt />
+                                        <PageTitle />
+                                        <PageTitle />
                                     </div>
                                 }
                             </CascadingValue>
@@ -2111,12 +2111,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @if (Object1!= null)
                     {
                         <CascadingValue Value="Variable1">
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                     </CascadingValue>
@@ -2136,12 +2136,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @if (Object1 != null)
                     {
                         <CascadingValue Value="Variable1">
-                            <SurveyPrompt />
+                            <PageTitle />
                             @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt />
-                                    <SurveyPrompt />
+                                    <PageTitle />
+                                    <PageTitle />
                                 </div>
                             }
                         </CascadingValue>
@@ -2170,12 +2170,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         @if (VarBool)
                         {
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                     }
@@ -2196,12 +2196,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         @if (VarBool)
                         {
-                            <SurveyPrompt />
+                            <PageTitle />
                             @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt />
-                                    <SurveyPrompt />
+                                    <PageTitle />
+                                    <PageTitle />
                                 </div>
                             }
                         }
@@ -2227,12 +2227,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @using Microsoft.AspNetCore.Components.Forms;
 
                         <CascadingValue Value="Variable1">
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                     </CascadingValue>
@@ -2249,12 +2249,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @using Microsoft.AspNetCore.Components.Forms;
 
                     <CascadingValue Value="Variable1">
-                        <SurveyPrompt />
+                        <PageTitle />
                         @if (VarBool)
                         {
                             <div class="mb-16">
-                                <SurveyPrompt />
-                                <SurveyPrompt />
+                                <PageTitle />
+                                <PageTitle />
                             </div>
                         }
                     </CascadingValue>
@@ -2281,12 +2281,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @if (Object1!= null)
                     {
                         <PageTitle>
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                     </PageTitle>
@@ -2306,12 +2306,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     @if (Object1 != null)
                     {
                         <PageTitle>
-                            <SurveyPrompt />
+                            <PageTitle />
                             @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt />
-                                    <SurveyPrompt />
+                                    <PageTitle />
+                                    <PageTitle />
                                 </div>
                             }
                         </PageTitle>
@@ -2340,12 +2340,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         <CascadingValue Value="Variable1">
                         <div>
-                                <SurveyPrompt  />
+                                <PageTitle  />
                                 @if (VarBool)
                             {
                                 <div class="mb-16">
-                                    <SurveyPrompt  />
-                                    <SurveyPrompt  />
+                                    <PageTitle  />
+                                    <PageTitle  />
                                 </div>
                             }
                             </div>
@@ -2367,12 +2367,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     {
                         <CascadingValue Value="Variable1">
                             <div>
-                                <SurveyPrompt />
+                                <PageTitle />
                                 @if (VarBool)
                                 {
                                     <div class="mb-16">
-                                        <SurveyPrompt />
-                                        <SurveyPrompt />
+                                        <PageTitle />
+                                        <PageTitle />
                                     </div>
                                 }
                             </div>
@@ -4463,12 +4463,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                         protected override async Task OnInitializedAsync()
                         {
-                            <Counter>
+                            <PageTitle>
                                 @{
                                         var t = DateTime.Now;
                                         t.ToString();
                                     }
-                                </Counter>
+                                </PageTitle>
                             forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
                         }
                     }
@@ -4479,12 +4479,12 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                         protected override async Task OnInitializedAsync()
                         {
-                            <Counter>
+                            <PageTitle>
                                 @{
                                     var t = DateTime.Now;
                                     t.ToString();
                                 }
-                            </Counter>
+                            </PageTitle>
                             forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
                         }
                     }
@@ -5907,11 +5907,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 """);
     }
 
-#if COHOSTING
     [FormattingTestFact(SkipOldFormattingEngine = true)]
-#else
-    [FormattingTestFact(Skip = "Language server test infra doesn't have a partial tag helper")]
-#endif
     public async Task PartialTagHelper()
     {
         await RunFormattingTestAsync(

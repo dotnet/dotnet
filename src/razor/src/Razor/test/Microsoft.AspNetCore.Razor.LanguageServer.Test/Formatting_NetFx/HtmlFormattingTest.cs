@@ -24,11 +24,11 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
         var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
-                       <Counter>
+                       <PageTitle>
                         @if(true){
                             <p>@DateTime.Now</p>
                     }
-                    </Counter>
+                    </PageTitle>
 
                         <GridTable>
                         @foreach (var row in rows){
@@ -39,12 +39,12 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     </GridTable>
                     """,
             expected: """
-                    <Counter>
+                    <PageTitle>
                         @if (true)
                         {
                             <p>@DateTime.Now</p>
                         }
-                    </Counter>
+                    </PageTitle>
 
                     <GridTable>
                         @foreach (var row in rows)

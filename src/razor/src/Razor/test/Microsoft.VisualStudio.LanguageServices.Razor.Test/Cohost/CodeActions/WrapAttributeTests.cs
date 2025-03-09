@@ -2,15 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class WrapAttributeTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class WrapAttributeTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task WrapAttributes()
     {
         await VerifyCodeActionAsync(
@@ -35,7 +35,7 @@ public class WrapAttributeTests(FuseTestContext context, ITestOutputHelper testO
             codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component()
     {
         await VerifyCodeActionAsync(
@@ -56,7 +56,7 @@ public class WrapAttributeTests(FuseTestContext context, ITestOutputHelper testO
             codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Whitespace()
     {
         await VerifyCodeActionAsync(
@@ -75,7 +75,7 @@ public class WrapAttributeTests(FuseTestContext context, ITestOutputHelper testO
             codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task MultiLine()
     {
         await VerifyCodeActionAsync(
@@ -89,7 +89,7 @@ public class WrapAttributeTests(FuseTestContext context, ITestOutputHelper testO
             codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task OneAttribute()
     {
         await VerifyCodeActionAsync(

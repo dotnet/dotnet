@@ -12,9 +12,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task RandomFile()
     {
         await VerifyUriPresentationAsync(
@@ -33,7 +33,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlResponse_TranslatesVirtualDocumentUri()
     {
         var siteCssFileUriString = "file:///C:/path/to/site.css";
@@ -67,7 +67,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: htmlTag);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component()
     {
         await VerifyUriPresentationAsync(
@@ -87,7 +87,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ImportsFile()
     {
         await VerifyUriPresentationAsync(
@@ -104,7 +104,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html_IntoCSharp_NoTag()
     {
         var siteCssFileUriString = "file:///C:/path/to/site.css";
@@ -139,7 +139,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_IntoCSharp_NoTag()
     {
         await VerifyUriPresentationAsync(
@@ -160,7 +160,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithChildFile()
     {
         await VerifyUriPresentationAsync(
@@ -184,7 +184,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithChildFile_RazorNotFirst()
     {
         await VerifyUriPresentationAsync(
@@ -208,7 +208,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_RequiredParameter()
     {
         await VerifyUriPresentationAsync(
@@ -241,8 +241,6 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
 
     private async Task VerifyUriPresentationAsync(string input, Uri[] uris, string? expected, WorkspaceEdit? htmlResponse = null, (string fileName, string contents)[]? additionalFiles = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpan(input, out input, out var span);
         var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);

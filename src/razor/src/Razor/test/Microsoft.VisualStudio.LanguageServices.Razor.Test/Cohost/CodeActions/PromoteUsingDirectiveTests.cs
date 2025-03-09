@@ -3,15 +3,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task PromoteUsingDirective()
     {
         await VerifyCodeActionAsync(
@@ -35,7 +35,7 @@ public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelp
                     """)]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Indented()
     {
         await VerifyCodeActionAsync(
@@ -63,7 +63,7 @@ public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelp
                     """)]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Mvc()
     {
         await VerifyCodeActionAsync(
@@ -88,7 +88,7 @@ public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelp
                     """)]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ExistingImports()
     {
         await VerifyCodeActionAsync(
@@ -119,7 +119,7 @@ public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelp
                     """)]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ExistingImports_BlankLineAtEnd()
     {
         await VerifyCodeActionAsync(
@@ -151,7 +151,7 @@ public class PromoteUsingDirectiveTests(FuseTestContext context, ITestOutputHelp
                     """)]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ExistingImports_WhitespaceLineAtEnd()
     {
         await VerifyCodeActionAsync(

@@ -33,11 +33,11 @@ internal class ComponentLayoutDirectivePass : IntermediateNodePassBase, IRazorDi
         }
 
         var attributeNode = new CSharpCodeIntermediateNode();
-        attributeNode.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = $"[global::{ComponentsApi.LayoutAttribute.FullTypeName}(typeof({token.Content}))]",
-        });
+        attributeNode.Children.AddRange([
+            IntermediateToken.CreateCSharpToken($"[global::{ComponentsApi.LayoutAttribute.FullTypeName}(typeof("),
+            IntermediateToken.CreateCSharpToken(token.Content, documentNode.Options.DesignTime ? null : token.Source),
+            IntermediateToken.CreateCSharpToken("))]")
+        ]);
 
         // Insert the new attribute on top of the class
         for (var i = 0; i < @namespace.Children.Count; i++)

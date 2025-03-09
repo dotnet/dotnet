@@ -19,10 +19,10 @@ using Xunit.Abstractions;
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
-    : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
+    : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task InvalidTrigger()
     {
         await VerifyOnTypeFormattingAsync(
@@ -39,7 +39,7 @@ public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFor
             triggerCharacter: 'h');
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_InvalidTrigger()
     {
         await VerifyOnTypeFormattingAsync(
@@ -56,7 +56,7 @@ public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFor
             triggerCharacter: '\n');
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp()
     {
         await VerifyOnTypeFormattingAsync(
@@ -73,7 +73,7 @@ public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFor
             triggerCharacter: '}');
     }
 
-    [FuseFact]
+    [Fact]
     public async Task FormatsSimpleHtmlTag_OnType()
     {
         await VerifyOnTypeFormattingAsync(
@@ -103,8 +103,6 @@ public class CohostOnTypeFormattingEndpointTest(FuseTestContext context, HtmlFor
 
     private async Task VerifyOnTypeFormattingAsync(TestCode input, string expected, char triggerCharacter, bool html = false)
     {
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);

@@ -47,9 +47,6 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
 
     <DefaultNetFxTargetFramework>net472</DefaultNetFxTargetFramework>
-
-    <!-- Uncomment this line to run formatting on runtime code-gen if FUSE is turned on -->
-    <!-- <DefineConstants>$(DefineConstants);FORMAT_FUSE</DefineConstants> -->
   </PropertyGroup>
 
   <!--

@@ -14,9 +14,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentSymbolEndpointTest(FuseTestContext context, ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput), IClassFixture<FuseTestContext>
+public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput)
 {
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpClassWithMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
@@ -43,7 +43,7 @@ public class CohostDocumentSymbolEndpointTest(FuseTestContext context, ITestOutp
             
             """, hierarchical);
 
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
@@ -69,8 +69,6 @@ public class CohostDocumentSymbolEndpointTest(FuseTestContext context, ITestOutp
 
     private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
         var document = CreateProjectAndRazorDocument(input);
 

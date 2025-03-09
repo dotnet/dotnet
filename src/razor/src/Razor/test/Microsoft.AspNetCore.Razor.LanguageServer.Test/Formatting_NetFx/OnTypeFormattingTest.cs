@@ -976,7 +976,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             input: """
                     <div>
                         @{
-                          if(true) { }
+                            if(true) { }
                         }
                     </div>
 

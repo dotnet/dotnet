@@ -84,7 +84,8 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
         var context = FormattingContext.Create(
             documentSnapshot,
             codeDocument,
-            options);
+            options,
+            useNewFormattingEngine: false);
         return context;
     }
 
@@ -105,7 +106,7 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
         var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(
-            path, fileKind, codeDocument, projectEngine, imports: [], importDocuments: [], tagHelpers, inGlobalNamespace: false);
+            path, fileKind, codeDocument, codeDocument, projectEngine, imports: [], importDocuments: [], tagHelpers, inGlobalNamespace: false, forceRuntimeCodeGeneration: false);
 
         return (codeDocument, documentSnapshot);
     }

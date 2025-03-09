@@ -2,15 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify()
     {
         var input = """
@@ -30,7 +30,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, "System.Text.StringBuilder");
     }
 
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify_Multiple()
     {
         await VerifyCodeActionAsync(
@@ -58,7 +58,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
             childActionIndex: 0);
     }
 
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing()
     {
         var input = """
@@ -79,7 +79,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_Typo()
     {
         var input = """
@@ -100,7 +100,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_WithExisting()
     {
         var input = """

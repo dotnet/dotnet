@@ -24,9 +24,9 @@ using RoslynSnippets = Microsoft.CodeAnalysis.Snippets;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact(Skip = "Cannot edit source generated documents")]
+    [Fact(Skip = "Cannot edit source generated documents")]
     public Task Constructor()
         => VerifyInlineCompletionAsync(
             input: """
@@ -49,7 +49,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
                 }
                 """);
 
-    [FuseFact(Skip = "Cannot edit source generated documents")]
+    [Fact(Skip = "Cannot edit source generated documents")]
     public Task Constructor_SmallIndent()
         => VerifyInlineCompletionAsync(
             input: """
@@ -73,7 +73,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
                 """,
             tabSize: 2);
 
-    [FuseFact]
+    [Fact]
     public Task InHtml_DoesNothing()
         => VerifyInlineCompletionAsync(
             input: """
@@ -82,8 +82,6 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
 
     private async Task VerifyInlineCompletionAsync(TestCode input, string? output = null, int tabSize = 4)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetLinePosition(input.Position);

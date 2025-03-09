@@ -8,15 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
-#if !FORMAT_FUSE
-    , IDesignTimeCodeGenerator
-#endif
 {
     public TextDocument TextDocument { get; }
     public RemoteProjectSnapshot ProjectSnapshot { get; }
@@ -79,17 +75,6 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
 
         return InterlockedOperations.Initialize(ref _codeDocument, document);
     }
-
-#if !FORMAT_FUSE
-    public async Task<RazorCodeDocument> GenerateDesignTimeOutputAsync(CancellationToken cancellationToken)
-    {
-        var projectEngine = await ProjectSnapshot.GetProjectEngineAsync(cancellationToken).ConfigureAwait(false);
-
-        return await CompilationHelpers
-            .GenerateDesignTimeCodeDocumentAsync(this, projectEngine, cancellationToken)
-            .ConfigureAwait(false);
-    }
-#endif
 
     public IDocumentSnapshot WithText(SourceText text)
     {

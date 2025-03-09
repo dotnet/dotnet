@@ -2,15 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Xunit;
 using Xunit.Abstractions;
 using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class ExtractToCodeBehindTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class ExtractToCodeBehindTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task ExtractToCodeBehind()
     {
         await VerifyCodeActionAsync(

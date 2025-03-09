@@ -42,13 +42,13 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => _options.ReturnCodeActionAndRenamePathsWithPrefixedSlash;
 
-    public override bool IncludeProjectKeyInGeneratedFilePath => _options.IncludeProjectKeyInGeneratedFilePath;
+    public override bool IncludeProjectKeyInGeneratedFilePath => throw new InvalidOperationException("This option does not apply in cohosting.");
 
     public override bool UseRazorCohostServer => _options.UseRazorCohostServer;
 
-    public override bool ForceRuntimeCodeGeneration => _options.ForceRuntimeCodeGeneration;
+    public override bool ForceRuntimeCodeGeneration => true;
 
-    public override bool UseNewFormattingEngine => _options.UseNewFormattingEngine;
+    public override bool UseNewFormattingEngine => true;
 
     public override bool SupportsSoftSelectionInCompletion => _options.SupportsSoftSelectionInCompletion;
 

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -19,9 +18,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public async Task Razor(bool colorBackground, bool precise)
     {
@@ -61,7 +60,7 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
         await VerifySemanticTokensAsync(input, colorBackground, precise);
     }
 
-    [FuseTheory(Skip = "https://github.com/dotnet/razor/issues/10857 and https://github.com/dotnet/razor/issues/11329")]
+    [Theory]
     [CombinatorialData]
     public async Task Legacy(bool colorBackground, bool precise)
     {
@@ -89,7 +88,7 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
         await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: FileKinds.Legacy);
     }
 
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public async Task Legacy_Compatibility(bool colorBackground, bool precise)
     {
@@ -116,8 +115,6 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
 
     private async Task VerifySemanticTokensAsync(string input, bool colorBackground, bool precise, string? fileKind = null, [CallerMemberName] string? testName = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var document = CreateProjectAndRazorDocument(input, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
@@ -221,7 +218,7 @@ public class CohostSemanticTokensRangeEndpointTest(FuseTestContext context, ITes
         var modifiersBuilder = ArrayBuilder<string>.GetInstance();
         for (var i = 0; i < modifiers.Length; i++)
         {
-            if ((tokenModifiers & (1 << i % 32)) != 0)
+            if ((tokenModifiers & (1 << (i % 32))) != 0)
             {
                 modifiersBuilder.Add(modifiers[i]);
             }
