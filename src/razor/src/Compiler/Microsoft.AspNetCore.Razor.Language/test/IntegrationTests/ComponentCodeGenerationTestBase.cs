@@ -9293,6 +9293,31 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11505")]
+    public void CaptureParametersConstraint()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public interface IMyInterface;
+
+            public class MyClass<T> where T : IMyInterface;
+
+            [CascadingTypeParameter(nameof(T))]
+            public class MyComponent<T> : ComponentBase where T : IMyInterface
+            {
+                [Parameter] public MyClass<T> Param { get; set; }
+            }
+            """));
+        var generated = CompileToCSharp("""
+            <MyComponent Param="new MyClass<IMyInterface>()" />
+            """);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Key

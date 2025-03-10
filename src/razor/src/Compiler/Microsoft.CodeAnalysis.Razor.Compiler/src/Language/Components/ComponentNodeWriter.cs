@@ -153,19 +153,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
         writer.Write(")");
 
-        // Writes out a list of generic type constraints with indentation
-        // public void Foo<T, U>(T t, U u)
-        //      where T: new()
-        //      where U: Foo, notnull
-        foreach (var constraint in node.GenericTypeConstraints)
-        {
-            writer.WriteLine();
-            writer.Indent(writer.CurrentIndent + writer.TabSize);
-            writer.Write(constraint);
-
-        }
-
-        writer.WriteLine();
+        writeConstraints(writer, node);
 
         writer.WriteLine("{");
 
@@ -319,7 +307,10 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                 writer.Write("_out");
             }
 
-            writer.WriteLine(")");
+            writer.Write(")");
+
+            writeConstraints(writer, node);
+
             writer.WriteLine("{");
             foreach (var parameter in parameters.Where(p => p.UsedForTypeInference))
             {
@@ -330,6 +321,22 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                 writer.WriteLine(";");
             }
             writer.WriteLine("}");
+        }
+
+        static void writeConstraints(CodeWriter writer, ComponentTypeInferenceMethodIntermediateNode node)
+        {
+            // Writes out a list of generic type constraints with indentation
+            // public void Foo<T, U>(T t, U u)
+            //      where T: new()
+            //      where U: Foo, notnull
+            foreach (var constraint in node.GenericTypeConstraints)
+            {
+                writer.WriteLine();
+                writer.Indent(writer.CurrentIndent + writer.TabSize);
+                writer.Write(constraint);
+            }
+
+            writer.WriteLine();
         }
     }
 
