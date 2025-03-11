@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25157.1",
+      "packageVersion": "10.0.0-beta.25160.4",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "1ec6078c26e4a60b77d8fe64881491cd28335a08"
+      "commitSha": "ff649d8e03e3463b5af6dddad0016e904048990a"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -92,11 +92,11 @@
       "commitSha": "e0517b8e469412a4b4be8f82bbb194f13a4226e0"
     },
     {
-      "packageVersion": "4.14.0-3.25157.4",
+      "packageVersion": "4.14.0-3.25160.11",
       "barId": null,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "46223204b646f96104bac46f9dfa4959da9d86ac"
+      "commitSha": "0544987e8d90cf530c887f52ec32fde80b79fe50"
     },
     {
       "packageVersion": "3.12.0-beta1.25155.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0dbbdbac22cb74e74238f1773adb9833b8589e9c"
+      "commitSha": "470831153b3434365303ff208e43e270e56665ef"
     },
     {
       "packageVersion": "10.0.615301",
@@ -134,18 +134,18 @@
       "commitSha": "f023162b1e92e7ecf801a88733668d4021f72bdb"
     },
     {
-      "packageVersion": "10.0.615601",
+      "packageVersion": "10.0.616001",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "232bcf31aad21949f80d6706720540b85e43fff3"
+      "commitSha": "8f9f6fa14523b2f2475ea0a86be1cf60b5de5336"
     },
     {
-      "packageVersion": "10.0.0-beta.25158.1",
+      "packageVersion": "10.0.0-beta.25160.1",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "d555cac33e58c0f60ab282bf0d07782720746c96"
+      "commitSha": "b46885e38b11d363a8582b795b35a00778f56bb8"
     },
     {
       "packageVersion": "2.2.0-beta.25124.1",

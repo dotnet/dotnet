@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using Azure.Storage.Blobs.Models;
 using FluentAssertions;
 using Microsoft.Arcade.Common;
 using Microsoft.Arcade.Test.Common;
@@ -14,7 +15,9 @@ using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
 using Microsoft.DotNet.VersionTools.Automation;
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
+using static Microsoft.Build.Utilities.SDKManifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
@@ -719,6 +722,348 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             model.Should().BeNull();
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
             _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("Missing 'Kind' property on artifact missingKindArtifact.nupkg"));
+        }
+
+        [Fact]
+        public void CreateMergedModel_NullModels_LogsErrorAndReturnsNull()
+        {
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(null);
+
+            // Assert
+            _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("No manifests to merge."));
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateMergedModel_EmptyModels_LogsErrorAndReturnsNull()
+        {
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(new List<BuildModel>());
+
+            // Assert
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("No manifests to merge."));
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateMergedModel_SingleModel_ReturnsSameModel()
+        {
+            // Arrange
+            var buildModel = new BuildModel(new BuildIdentity());
+
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(new List<BuildModel> { buildModel });
+
+            // Assert
+            result.Should().Be(buildModel);
+        }
+
+        /*
+         * var identity = manifest.Identity;
+                if (!string.Equals(refIdentity.AzureDevOpsAccount, identity.AzureDevOpsAccount, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsBranch, identity.AzureDevOpsBranch, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.AzureDevOpsBuildDefinitionId != identity.AzureDevOpsBuildDefinitionId ||
+                    refIdentity.AzureDevOpsBuildId != identity.AzureDevOpsBuildId ||
+                    !string.Equals(refIdentity.AzureDevOpsBuildNumber, identity.AzureDevOpsBuildNumber, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsProject, identity.AzureDevOpsProject, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsRepository, identity.AzureDevOpsRepository, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.Branch, identity.Branch, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.BuildId, identity.BuildId, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.InitialAssetsLocation, identity.InitialAssetsLocation, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.IsReleaseOnlyPackageVersion != identity.IsReleaseOnlyPackageVersion ||
+                    refIdentity.IsStable != identity.IsStable ||
+                    !string.Equals(refIdentity.ProductVersion, identity.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.PublishingVersion != identity.PublishingVersion ||
+                    !string.Equals(refIdentity.VersionStamp, identity.VersionStamp, StringComparison.OrdinalIgnoreCase))
+                {
+                    _log.LogError("Build identity properties are not identical across manifests.");
+                    return null;
+                }
+        */
+
+        [Theory]
+        [InlineData("AzureDevOpsAccount", "https://dev.azure.com/dnceng", "https://dnceng.visualstudio.com")]
+        [InlineData("AzureDevOpsBranch", "refs/heads/main", "main")]
+        [InlineData("AzureDevOpsBuildDefinitionId", "100", "1001")]
+        [InlineData("AzureDevOpsBuildId", "100", "1001")]
+        [InlineData("AzureDevOpsBuildNumber", "20250102.1", "20250102.2")]
+        [InlineData("AzureDevOpsProject", "internal", "DevDiv")]
+        [InlineData("AzureDevOpsRepository", "dotnet-arcade", "dotnet-roslyn")]
+        [InlineData("Branch", "main", "main2")]
+        [InlineData("BuildId", "100", "1001")]
+        [InlineData("InitialAssetsLocation", "https://dev.azure.com/dnceng/internal/_apis/build/builds/2650337/artifacts", "https://dev.azure.com/dnceng/internal/_apis/build/builds/2650332/artifacts")]
+        [InlineData("IsReleaseOnlyPackageVersion", "true", "false")]
+        [InlineData("IsStable", "true", "false")]
+        [InlineData("ProductVersion", "1", "2")]
+        [InlineData("PublishingVersion", "3", "4")]
+        [InlineData("VersionStamp", "3", "4")]
+        public void CreateMergedModel_MultipleModelsWithDifferentIdentities_LogsErrorAndReturnsNull(string propertyName, string valueA, string valueB)
+        {
+            var buildIdentityA = new BuildIdentity();
+            buildIdentityA.Attributes[propertyName] = valueA;
+            var buildIdentityB = new BuildIdentity();
+            buildIdentityB.Attributes[propertyName] = valueB;
+            // Arrange
+            var buildModel1 = new BuildModel(buildIdentityA);
+            var buildModel2 = new BuildModel(buildIdentityB);
+
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(new List<BuildModel> { buildModel1, buildModel2 });
+
+            // Assert
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("Build identity properties are not identical across manifests."));
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateMergedModel_MultipleModelsWithSameIdentities_MergesArtifacts()
+        {
+            // Arrange
+            var buildIdentityA = new BuildIdentity {
+                AzureDevOpsAccount = "https://dev.azure.com/dnceng",
+                AzureDevOpsBranch = "refs/heads/main",
+                AzureDevOpsBuildDefinitionId = 100,
+                AzureDevOpsBuildId = 100000,
+                AzureDevOpsBuildNumber = "20250102.1",
+                AzureDevOpsProject = "internal",
+                AzureDevOpsRepository = "dotnet-arcade",
+                Branch = "refs/heads/main", // Typically not seen but should merge properly
+                BuildId = "100000",
+                InitialAssetsLocation = "https://dev.azure.com/dnceng/internal/_apis/build/builds/100000/artifacts",
+                IsReleaseOnlyPackageVersion = false,
+                IsStable = false,
+                ProductVersion = "1.0.0",
+                PublishingVersion = VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
+                VersionStamp = "1.0.0"
+            };
+            var buildIdentityB = new BuildIdentity();
+            // Copy all attributes from A
+            foreach (var kvp in buildIdentityA.Attributes)
+            {
+                buildIdentityB.Attributes[kvp.Key] = kvp.Value;
+            }
+
+
+            var buildModel1 = new BuildModel(buildIdentityA)
+            {
+                Artifacts = new ArtifactSet
+                {
+                    Blobs = new List<BlobArtifactModel> { new BlobArtifactModel() },
+                    Packages = new List<PackageArtifactModel> { new PackageArtifactModel() },
+                    Pdbs = new List<PdbArtifactModel> { new PdbArtifactModel() }
+                }
+            };
+            var buildModel2 = new BuildModel(buildIdentityB)
+            {
+                Artifacts = new ArtifactSet
+                {
+                    Blobs = new List<BlobArtifactModel> { new BlobArtifactModel() },
+                    Packages = new List<PackageArtifactModel> { new PackageArtifactModel() },
+                    Pdbs = new List<PdbArtifactModel> { new PdbArtifactModel() }
+                }
+            };
+
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(new List<BuildModel> { buildModel1, buildModel2 });
+
+            // Assert
+            result.Artifacts.Blobs.Count.Should().Be(2);
+            result.Artifacts.Packages.Count.Should().Be(2);
+            result.Artifacts.Pdbs.Count.Should().Be(2);
+
+            // Verify that the attributes of the merged model match the first model
+            result.Identity.AzureDevOpsAccount.Should().Be(buildIdentityA.AzureDevOpsAccount);
+            result.Identity.AzureDevOpsBranch.Should().Be(buildIdentityA.AzureDevOpsBranch);
+            result.Identity.AzureDevOpsBuildDefinitionId.Should().Be(buildIdentityA.AzureDevOpsBuildDefinitionId);
+            result.Identity.AzureDevOpsBuildId.Should().Be(buildIdentityA.AzureDevOpsBuildId);
+            result.Identity.AzureDevOpsBuildNumber.Should().Be(buildIdentityA.AzureDevOpsBuildNumber);
+            result.Identity.AzureDevOpsProject.Should().Be(buildIdentityA.AzureDevOpsProject);
+            result.Identity.AzureDevOpsRepository.Should().Be(buildIdentityA.AzureDevOpsRepository);
+            result.Identity.Branch.Should().Be(buildIdentityA.Branch);
+            result.Identity.BuildId.Should().Be(buildIdentityA.BuildId);
+            result.Identity.InitialAssetsLocation.Should().Be(buildIdentityA.InitialAssetsLocation);
+            result.Identity.IsReleaseOnlyPackageVersion.Should().Be(buildIdentityA.IsReleaseOnlyPackageVersion);
+            result.Identity.IsStable.Should().Be(buildIdentityA.IsStable);
+            result.Identity.ProductVersion.Should().Be(buildIdentityA.ProductVersion);
+            result.Identity.PublishingVersion.Should().Be(buildIdentityA.PublishingVersion);
+            result.Identity.VersionStamp.Should().Be(buildIdentityA.VersionStamp);
+        }
+        [Fact]
+        public void CreateMergedModel_ArtifactsWithAttributes_PreservesAttributes()
+        {
+            // Arrange
+            var buildIdentityA = new BuildIdentity();
+            var buildIdentityB = new BuildIdentity();
+
+            var blobArtifactA = new BlobArtifactModel
+            {
+                Id = "blobA",
+                NonShipping = true,
+                RepoOrigin = "repoA",
+                OriginalFile = "OriginalPathA",
+                Visibility = ArtifactVisibility.External,
+            };
+            blobArtifactA.Attributes["AttributeA"] = "ValueA";
+            blobArtifactA.Attributes["AttributeB"] = "ValueB";
+
+            var blobArtifactB = new BlobArtifactModel
+            {
+                Id = "blobB",
+                NonShipping = false,
+                RepoOrigin = "repoB",
+                OriginalFile = "OriginalPathB",
+                Visibility = ArtifactVisibility.Internal,
+            };
+            blobArtifactB.Attributes["AttributeC"] = "ValueC";
+            blobArtifactB.Attributes["AttributeD"] = "ValueD";
+
+            var packageArtifactA = new PackageArtifactModel
+            {
+                Id = "packageA",
+                Version = "1.0.0",
+                CouldBeStable = "true",
+                NonShipping = false,
+                OriginalFile = "OriginalPathA",
+                Visibility = ArtifactVisibility.External,
+                OriginBuildName = "OriginBuildNameA",
+                RepoOrigin = "repoA"
+            };
+            packageArtifactA.Attributes["AttributeE"] = "ValueE";
+            packageArtifactA.Attributes["AttributeF"] = "ValueF";
+
+            var packageArtifactB = new PackageArtifactModel
+            {
+                Id = "packageB",
+                Version = "2.0.0",
+                CouldBeStable = "false",
+                NonShipping = true,
+                OriginalFile = "OriginalPathB",
+                Visibility = ArtifactVisibility.Internal,
+                OriginBuildName = "OriginBuildNameB",
+                RepoOrigin = "repoB"
+            };
+            packageArtifactB.Attributes["AttributeG"] = "ValueG";
+            packageArtifactB.Attributes["AttributeH"] = "ValueH";
+
+            var pdbArtifactA = new PdbArtifactModel
+            {
+                Id = "pdbA",
+                NonShipping = false,
+                OriginalFile = "OriginalPathA",
+                Visibility = ArtifactVisibility.External,
+                RepoOrigin = "repoA"
+            };
+            pdbArtifactA.Attributes["AttributeI"] = "ValueI";
+            pdbArtifactA.Attributes["AttributeJ"] = "ValueJ";
+
+            var pdbArtifactB = new PdbArtifactModel
+            {
+                Id = "pdbB",
+                NonShipping = true,
+                OriginalFile = "OriginalPathB",
+                Visibility = ArtifactVisibility.Internal,
+                RepoOrigin = "repoB"
+            };
+            pdbArtifactB.Attributes["AttributeK"] = "ValueK";
+            pdbArtifactB.Attributes["AttributeL"] = "ValueL";
+
+            var buildModel1 = new BuildModel(buildIdentityA)
+            {
+                Artifacts = new ArtifactSet
+                {
+                    Blobs = new List<BlobArtifactModel> { blobArtifactA },
+                    Packages = new List<PackageArtifactModel> { packageArtifactA },
+                    Pdbs = new List<PdbArtifactModel> { pdbArtifactA }
+                }
+            };
+
+            var buildModel2 = new BuildModel(buildIdentityB)
+            {
+                Artifacts = new ArtifactSet
+                {
+                    Blobs = new List<BlobArtifactModel> { blobArtifactB },
+                    Packages = new List<PackageArtifactModel> { packageArtifactB },
+                    Pdbs = new List<PdbArtifactModel> { pdbArtifactB }
+                }
+            };
+
+            // Act
+            var result = _buildModelFactory.CreateMergedModel(new List<BuildModel> { buildModel1, buildModel2 });
+
+            // Assert
+            result.Artifacts.Blobs.Should().SatisfyRespectively(
+                blob =>
+                {
+                    blob.Id.Should().Be("blobA");
+                    blob.NonShipping.Should().BeTrue();
+                    blob.RepoOrigin.Should().Be("repoA");
+                    blob.Visibility.Should().Be(ArtifactVisibility.External);
+                    blob.OriginalFile.Should().Be("OriginalPathA");
+                    blob.Attributes.Should().Contain("AttributeA", "ValueA");
+                    blob.Attributes.Should().Contain("AttributeB", "ValueB");
+                },
+                blob =>
+                {
+                    blob.Id.Should().Be("blobB");
+                    blob.NonShipping.Should().BeFalse();
+                    blob.RepoOrigin.Should().Be("repoB");
+                    blob.Visibility.Should().Be(ArtifactVisibility.Internal);
+                    blob.OriginalFile.Should().Be("OriginalPathB");
+                    blob.Attributes.Should().Contain("AttributeC", "ValueC");
+                    blob.Attributes.Should().Contain("AttributeD", "ValueD");
+                });
+
+            result.Artifacts.Packages.Should().SatisfyRespectively(
+                package =>
+                {
+                    package.Id.Should().Be("packageA");
+                    package.Version.Should().Be("1.0.0");
+                    package.CouldBeStable.Should().Be("true");
+                    package.NonShipping.Should().BeFalse();
+                    package.Visibility.Should().Be(ArtifactVisibility.External);
+                    package.OriginalFile.Should().Be("OriginalPathA");
+                    package.OriginBuildName.Should().Be("OriginBuildNameA");
+                    package.RepoOrigin.Should().Be("repoA");
+                    package.Attributes.Should().Contain("AttributeE", "ValueE");
+                    package.Attributes.Should().Contain("AttributeF", "ValueF");
+                },
+                package =>
+                {
+                    package.Id.Should().Be("packageB");
+                    package.Version.Should().Be("2.0.0");
+                    package.CouldBeStable.Should().Be("false");
+                    package.NonShipping.Should().BeTrue();
+                    package.Visibility.Should().Be(ArtifactVisibility.Internal);
+                    package.OriginalFile.Should().Be("OriginalPathB");
+                    package.OriginBuildName.Should().Be("OriginBuildNameB");
+                    package.RepoOrigin.Should().Be("repoB");
+                    package.Attributes.Should().Contain("AttributeG", "ValueG");
+                    package.Attributes.Should().Contain("AttributeH", "ValueH");
+                });
+
+            result.Artifacts.Pdbs.Should().SatisfyRespectively(
+                pdb =>
+                {
+                    pdb.Id.Should().Be("pdbA");
+                    pdb.NonShipping.Should().BeFalse();
+                    pdb.RepoOrigin.Should().Be("repoA");
+                    pdb.Visibility.Should().Be(ArtifactVisibility.External);
+                    pdb.OriginalFile.Should().Be("OriginalPathA");
+                    pdb.Attributes.Should().Contain("AttributeI", "ValueI");
+                    pdb.Attributes.Should().Contain("AttributeJ", "ValueJ");
+                },
+                pdb =>
+                {
+                    pdb.Id.Should().Be("pdbB");
+                    pdb.NonShipping.Should().BeTrue();
+                    pdb.RepoOrigin.Should().Be("repoB");
+                    pdb.Visibility.Should().Be(ArtifactVisibility.Internal);
+                    pdb.OriginalFile.Should().Be("OriginalPathB");
+                    pdb.Attributes.Should().Contain("AttributeK", "ValueK");
+                    pdb.Attributes.Should().Contain("AttributeL", "ValueL");
+                });
         }
     }
 }

@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <Description>This package provides support for publishing assets to appropriate channels.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IsBuildTaskProject>true</IsBuildTaskProject>
@@ -27,6 +27,7 @@
     This functionality should eventually be moved into an arcade-services package,
     but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
     <PackageReference Include="Microsoft.DotNet.ProductConstructionService.Client" />
+    <PackageReference Include="Microsoft.DotNet.DarcLib" />
     <!-- SymbolUploadHelper uses Azure SDKs, S.T.Json, and several other dependencies that can't be downgraded safely.
     On .NET Core/.NET these deps come from the shared framework and we don't need try to do version fixups, and 
     the symbol publishing doesn't run on framework anyway (this project has a throwing stub for .NET framework in that path
@@ -47,9 +48,14 @@
     <ProjectReference Include="..\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.ArcadeAzureIntegration\Microsoft.DotNet.ArcadeAzureIntegration.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
-
+ 
   <ItemGroup>
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
+  </ItemGroup>
+
+  <!-- Task is not supported on Framework -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Compile Remove="src\PublishBuildToMaestro.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
@@ -84,6 +90,7 @@
     <Compile Remove="src\PublishArtifactsInManifestV3.cs" />
     <Compile Remove="src\PublishArtifactsInManifestV4.cs" />
     <Compile Remove="src\PublishSignedAssets.cs" />
+    <Compile Remove="src\PublishBuildToMaestro.cs" />
     <Compile Remove="src\TaskTracer.cs" />
   </ItemGroup>
 

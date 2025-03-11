@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetToolCurrent)</TargetFramework>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

@@ -30,6 +30,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             bool isReleaseOnlyPackageVersion);
 
         BuildModel ManifestFileToModel(string assetManifestPath);
+        BuildModel CreateMergedModel(List<BuildModel> models);
     }
 
     public class BuildModelFactory : IBuildModelFactory
@@ -229,6 +230,70 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             return repoUri;
+        }
+
+        /// <summary>
+        /// Merges multiple BuildModels into a single BuildModel.
+        /// If there is only one model, the original is returned.
+        /// </summary>
+        /// <param name="models">Manifests</param>
+        /// <returns>Build model with the contents of all manifests. Please note, the identity and assets may be ref-equal</returns>
+        public BuildModel CreateMergedModel(List<BuildModel> models)
+        {
+            if (models == null || models.Count == 0)
+            {
+                _log.LogError("No manifests to merge.");
+                return null;
+            }
+
+            // If there is only one manifest, return it.
+            if (models.Count == 1)
+            {
+                return models.First();
+            }
+
+            // Use the first manifest as the reference identity.
+            BuildModel reference = models.First();
+            var refIdentity = reference.Identity;
+
+            // Validate that all manifests have identical build identity properties.
+            foreach (BuildModel manifest in models)
+            {
+                // Compare the identities of the manifests.
+                var identity = manifest.Identity;
+                if (!string.Equals(refIdentity.AzureDevOpsAccount, identity.AzureDevOpsAccount, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsBranch, identity.AzureDevOpsBranch, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.AzureDevOpsBuildDefinitionId != identity.AzureDevOpsBuildDefinitionId ||
+                    refIdentity.AzureDevOpsBuildId != identity.AzureDevOpsBuildId ||
+                    !string.Equals(refIdentity.AzureDevOpsBuildNumber, identity.AzureDevOpsBuildNumber, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsProject, identity.AzureDevOpsProject, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.AzureDevOpsRepository, identity.AzureDevOpsRepository, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.Branch, identity.Branch, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.BuildId, identity.BuildId, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(refIdentity.InitialAssetsLocation, identity.InitialAssetsLocation, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.IsReleaseOnlyPackageVersion != identity.IsReleaseOnlyPackageVersion ||
+                    refIdentity.IsStable != identity.IsStable ||
+                    !string.Equals(refIdentity.ProductVersion, identity.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
+                    refIdentity.PublishingVersion != identity.PublishingVersion ||
+                    !string.Equals(refIdentity.VersionStamp, identity.VersionStamp, StringComparison.OrdinalIgnoreCase))
+                {
+                    _log.LogError("Build identity properties are not identical across manifests.");
+                    return null;
+                }
+            }
+
+            // Create a new BuildModel with the shared identity.
+            BuildModel mergedModel = new BuildModel(refIdentity);
+
+            // Concatenate artifacts from all manifests.
+            foreach (BuildModel manifest in models)
+            {
+                mergedModel.Artifacts.Blobs.AddRange(manifest.Artifacts.Blobs);
+                mergedModel.Artifacts.Packages.AddRange(manifest.Artifacts.Packages);
+                mergedModel.Artifacts.Pdbs.AddRange(manifest.Artifacts.Pdbs);
+            }
+
+            return mergedModel;
         }
     }
 }
