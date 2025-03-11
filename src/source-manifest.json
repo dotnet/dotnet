@@ -71,11 +71,11 @@
       "commitSha": "345742da75dc6c5fe485ef1236d3f034ebcdcb53"
     },
     {
-      "packageVersion": "17.14.0-preview-25155-03",
+      "packageVersion": "17.14.0-preview-25161-12",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "428195cb74072bbb5314889119525369cb9bdeb0"
+      "commitSha": "7871c1d0c68c04134d3bf525705ef03e0d23bf98"
     },
     {
       "packageVersion": "6.14.0-preview.1.66",
@@ -124,14 +124,14 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a00601c45cfce47bd1e07cdeea94c5d3465f0ca3"
+      "commitSha": "4c55da1cdcde8fab5fb28b103f01d643bd43c203"
     },
     {
-      "packageVersion": "10.0.615301",
+      "packageVersion": "10.0.615601",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "f023162b1e92e7ecf801a88733668d4021f72bdb"
+      "commitSha": "148cf3e1d71c4164887e8ef7e77430baa7ad5185"
     },
     {
       "packageVersion": "10.0.616001",
@@ -268,7 +268,7 @@
     {
       "path": "source-build-externals/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
-      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
+      "commitSha": "19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe"
     },
     {
       "path": "source-build-externals/src/xunit",

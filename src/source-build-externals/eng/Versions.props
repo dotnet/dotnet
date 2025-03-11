@@ -13,7 +13,7 @@
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
-    <SolutionPersistenceVersion>1.0.28</SolutionPersistenceVersion>
+    <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
     <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
     <XunitReleaseVersion>2.9.2</XunitReleaseVersion>
   </PropertyGroup>

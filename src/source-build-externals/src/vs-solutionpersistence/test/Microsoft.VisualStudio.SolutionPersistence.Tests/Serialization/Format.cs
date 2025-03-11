@@ -14,12 +14,6 @@ public class Format
     [Fact]
     public async Task ConvertASCIItoUTF8Async()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         const string asciiFolderName = "directory123";
         const string utf8FolderName = "répertoire123";
 

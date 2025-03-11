@@ -143,7 +143,7 @@ public sealed class Folders
 
         // Try moving project to folder with existing project
         ArgumentException ex = Assert.Throws<SolutionArgumentException>(() => wanderingProject.MoveToFolder(folderA));
-        Assert.Equal(string.Format(Errors.DuplicateProjectName_Arg1, wanderingProject.ActualDisplayName), ex.Message);
+        Assert.Equal(string.Format(Errors.DuplicateProjectName_Arg2, wanderingProject.ActualDisplayName, folderA.Path), ex.Message);
         Assert.Equal("/This/Is/A/Nested/Folder/", wanderingProject.Parent.ItemRef);
 
         // Move project to root

@@ -50,7 +50,7 @@ internal abstract partial class XmlContainer(SlnxFile root, XmlElement element, 
 
     /// <summary>
     /// Wraps the given element with a new decorator and adds it to the cache.
-    /// If this is a new element, pass itemRef and validateItemRef to true.
+    /// If this is a new element, pass itemRef and validateItemRef to <see langword="true"/>.
     /// </summary>
     private XmlDecorator? CreateChildDecorator(XmlElement xmlElement, string? itemRef = null, bool validateItemRef = false)
     {

@@ -57,7 +57,7 @@ internal abstract partial class XmlContainer
     /// <param name="decoratorItems">The list of existing decorator items in the XML.</param>
     /// <param name="decoratorElementName">The element name for the decorator, can be dynamic by using getDecoratorElementName.</param>
     /// <param name="applyModelToXml">Applies the model item changes to the decorator.</param>
-    /// <returns>true if the XML was changed.</returns>
+    /// <returns><see langword="true"/> if the XML was changed.</returns>
     internal bool ApplyModelItemsToXml<TModelItem, TDecorator>(
         List<(string ItemRef, TModelItem Item)>? modelItems,
         ref ItemRefList<TDecorator> decoratorItems,
