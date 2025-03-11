@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.13-servicing.25066.10",
+      "packageVersion": "8.0.14-servicing.25112.21",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "009e1ccafde4086ea52999e878f6e7aa5a7c4ccf"
+      "commitSha": "25ef4aa38b77974263cb10f6e9cbd10135f17b59"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.13-servicing.25071.1",
+      "packageVersion": "8.0.14-servicing.25105.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "b767aaba495c5666e715d070cf2556e6a6bb58dc"
+      "commitSha": "ec84e775d21d3b7a6698ec30f7b2a5a9e3acd314"
     },
     {
       "packageVersion": "8.1.546807",
@@ -64,13 +64,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "8e6c4dd7083c13bdf78be61b26b40b1758d5db77"
+      "commitSha": "fa570c6978e63bb299bd3a219c2c558a2da0b132"
     },
     {
-      "packageVersion": "17.8.18-preview-25066-03",
+      "packageVersion": "17.8.19-preview-25071-04",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "31744dfcae98daa4dcc011c6ebf6d404b93fcf5c"
+      "commitSha": "c3ade832ad989bc4258b064bedc866742b873a12"
     },
     {
       "packageVersion": "6.8.1-rc.2",
@@ -79,10 +79,10 @@
       "commitSha": "550277e0616e549446f03fda35d3e23dff75dc01"
     },
     {
-      "packageVersion": "7.0.0-preview.24629.6",
+      "packageVersion": "7.0.0-preview.25104.6",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "90608b56d9ba975bd83dd7527071ffac6c1ac7d3"
+      "commitSha": "738705b78cec78396b98e793dcb3466a03a7a269"
     },
     {
       "packageVersion": "4.8.0-7.25056.18",
@@ -91,22 +91,22 @@
       "commitSha": "a77b6e41d030878096fa496e00e4c0dffe5af9f0"
     },
     {
-      "packageVersion": "3.11.0-beta1.24303.2",
+      "packageVersion": "3.11.0-beta1.25074.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "223fa62ea09457588b4b0f88ee8ac62ea5ab5db5"
+      "commitSha": "de4aff542dacdc8027c1b4c4580a385dc097341f"
     },
     {
-      "packageVersion": "8.0.13-servicing.25066.9",
+      "packageVersion": "8.0.14-servicing.25111.18",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "eba546b0f0d448e0176a2222548fd7a2fbf464c0"
+      "commitSha": "1584e493603cfc4e9b36b77d6d4afe97de6363f9"
     },
     {
-      "packageVersion": "8.0.113-servicing.25067.32",
+      "packageVersion": "8.0.114-servicing.25113.20",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "8f216348dc6ef1be4bf99e60632c26c236c903c4"
+      "commitSha": "eb4de33b1280d6787b402da6a62e083c2e936299"
     },
     {
       "packageVersion": "8.0.0-alpha.1.25060.2",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.113-servicing.25066.8",
+      "packageVersion": "8.0.114-servicing.25111.6",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "335a66efa4126495303c20598f1d9537d5d6897c"
+      "commitSha": "a977119e0201a0270ac119b429661bbd71993221"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
@@ -167,7 +167,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "7d76a231b0e29caf86e68d1df858308cd53b2a66"
+      "commitSha": "e235eb34c6c4fed790ccdad4b16394301360dcd4"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
