@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.ProjectSystem;
@@ -590,7 +589,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             clientSettingsManager,
             TestHtmlDocumentSynchronizer.Instance,
             snippetCompletionItemProvider,
-            new CompletionTriggerAndCommitCharacters(TestLanguageServerFeatureOptions.Instance),
+            TestLanguageServerFeatureOptions.Instance,
             requestInvoker,
             LoggerFactory);
 

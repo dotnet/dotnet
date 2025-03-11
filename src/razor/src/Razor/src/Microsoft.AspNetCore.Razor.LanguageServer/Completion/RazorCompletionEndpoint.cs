@@ -25,7 +25,7 @@ internal class RazorCompletionEndpoint(
     : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
-    private readonly CompletionTriggerAndCommitCharacters _completionTriggerAndCommitCharacters = completionTriggerAndCommitCharacters;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = completionTriggerAndCommitCharacters;
     private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
 
@@ -40,8 +40,8 @@ internal class RazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = _completionTriggerAndCommitCharacters.AllTriggerCharacters,
-            AllCommitCharacters = CompletionTriggerAndCommitCharacters.AllCommitCharacters
+            TriggerCharacters = [.. _triggerAndCommitCharacters.AllTriggerCharacters],
+            AllCommitCharacters = [.. _triggerAndCommitCharacters.AllCommitCharacters]
         };
     }
 

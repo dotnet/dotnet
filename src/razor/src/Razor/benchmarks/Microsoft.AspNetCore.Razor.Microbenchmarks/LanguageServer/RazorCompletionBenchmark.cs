@@ -41,14 +41,14 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var documentMappingService = lspServices.GetRequiredService<IDocumentMappingService>();
         var clientConnection = lspServices.GetRequiredService<IClientConnection>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
-        var completionTriggerAndCommitCharacters = lspServices.GetRequiredService<CompletionTriggerAndCommitCharacters>();
+        var triggerAndCommitCharacters = lspServices.GetRequiredService<CompletionTriggerAndCommitCharacters>();
         var loggerFactory = lspServices.GetRequiredService<ILoggerFactory>();
 
-        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache, completionTriggerAndCommitCharacters);
-        var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
+        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache, triggerAndCommitCharacters);
+        var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider, triggerAndCommitCharacters);
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, completionTriggerAndCommitCharacters, telemetryReporter: null, optionsMonitor);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, triggerAndCommitCharacters, telemetryReporter: null, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {

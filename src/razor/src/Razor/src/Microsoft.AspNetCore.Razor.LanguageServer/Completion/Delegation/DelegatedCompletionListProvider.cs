@@ -27,7 +27,7 @@ internal class DelegatedCompletionListProvider
     private readonly IDocumentMappingService _documentMappingService;
     private readonly IClientConnection _clientConnection;
     private readonly CompletionListCache _completionListCache;
-    private readonly CompletionTriggerAndCommitCharacters _completionTriggerAndCommitCharacters;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters;
 
     public DelegatedCompletionListProvider(
         IDocumentMappingService documentMappingService,
@@ -38,11 +38,8 @@ internal class DelegatedCompletionListProvider
         _documentMappingService = documentMappingService;
         _clientConnection = clientConnection;
         _completionListCache = completionListCache;
-        _completionTriggerAndCommitCharacters = completionTriggerAndCommitCharacters;
+        _triggerAndCommitCharacters = completionTriggerAndCommitCharacters;
     }
-
-    // virtual for tests
-    public virtual FrozenSet<string> TriggerCharacters => _completionTriggerAndCommitCharacters.AllDelegationTriggerCharacters;
 
     // virtual for tests
     public virtual async Task<VSInternalCompletionList?> GetCompletionListAsync(
@@ -77,7 +74,7 @@ internal class DelegatedCompletionListProvider
             positionInfo = provisionalCompletionValue.DocumentPositionInfo;
         }
 
-        if (DelegatedCompletionHelper.RewriteContext(completionContext, positionInfo.LanguageKind, _completionTriggerAndCommitCharacters) is not { } rewrittenContext)
+        if (DelegatedCompletionHelper.RewriteContext(completionContext, positionInfo.LanguageKind, _triggerAndCommitCharacters) is not { } rewrittenContext)
         {
             return null;
         }
