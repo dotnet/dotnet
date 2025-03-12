@@ -1,0 +1,9 @@
+<Solution>
+    <Project Path="DuplicateProjectId.csproj" Id="8badbeef-1111-2222-3333-444444444444" />
+
+
+    <Project Path="DuplicateProjectIdOpposite.csproj" Id="8badbeef-1111-2222-3333-444444444444">
+        <BuildType Solution="Debug|*" Project="Release" />
+        <BuildType Solution="Release|*" Project="Debug" />
+    </Project>
+</Solution>

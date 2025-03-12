@@ -77,12 +77,6 @@ public sealed class IdGenerator
     [Fact]
     public async Task CheckModelIds()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         SolutionModel solution = await SolutionSerializers.SlnXml.OpenAsync(SlnAssets.XmlSlnxMany.Stream, CancellationToken.None);
 
         SolutionProjectModel? urlProject = solution.FindProject("http://localhost:8080");

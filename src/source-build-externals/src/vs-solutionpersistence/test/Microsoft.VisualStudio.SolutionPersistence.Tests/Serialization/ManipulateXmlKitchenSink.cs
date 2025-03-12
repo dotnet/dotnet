@@ -20,12 +20,6 @@ public class ManipulateXmlKitchenSink
     [Fact]
     public async Task AddConfigurations()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         await ValidateModifiedSolutionAsync(
             CreateModifiedModel,
             SlnAssets.LoadResource("SlnxWhitespace/KitchenSink.slnx"),
