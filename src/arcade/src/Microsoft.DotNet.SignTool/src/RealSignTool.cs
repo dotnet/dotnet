@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.DotNet.StrongName;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -110,7 +111,7 @@ namespace Microsoft.DotNet.SignTool
 
         public override void RemoveStrongNameSign(string assemblyPath)
         {
-            StrongName.ClearStrongNameSignedBit(assemblyPath);
+            StrongNameHelper.ClearStrongNameSignedBit(assemblyPath);
         }
 
         public override SigningStatus VerifySignedPEFile(Stream assemblyStream)
@@ -131,7 +132,7 @@ namespace Microsoft.DotNet.SignTool
                 return SigningStatus.Signed;
             }
 
-            return StrongName.IsSigned(fileFullPath, snPath:_snPath, log: _log) ? SigningStatus.Signed : SigningStatus.NotSigned;
+            return StrongNameHelper.IsSigned(fileFullPath, snPath:_snPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
         public override SigningStatus VerifySignedDeb(TaskLoggingHelper log, string filePath)

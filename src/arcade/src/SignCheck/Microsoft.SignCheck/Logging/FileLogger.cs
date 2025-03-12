@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using Microsoft.SignCheck.Verification;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -164,16 +165,25 @@ namespace Microsoft.SignCheck.Logging
             }
         }
 
-        public void WriteStartResult(string fileName, string resultType, string error = null)
+        public void WriteStartResult(SignatureVerificationResult result, string outcome)
         {
             if (ResultsWriter != null)
             {
                 ResultsWriter.WriteStartElement("File");
-                ResultsWriter.WriteAttributeString("Name", fileName);
-                ResultsWriter.WriteAttributeString("ResultType", resultType);
-                if (!String.IsNullOrEmpty(error))
+                ResultsWriter.WriteAttributeString("Name", result.VirtualPath);
+                ResultsWriter.WriteAttributeString("Outcome", outcome);
+                foreach (var detail in DetailKeys.ResultKeysVerbose)
                 {
-                    ResultsWriter.WriteAttributeString("Error", error);
+                    if (detail == DetailKeys.File)
+                    {
+                        // Skip the file detail because it's already written as an attribute
+                        continue;
+                    }
+                    string value = result.ToString(detail);
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        ResultsWriter.WriteAttributeString(detail.ToString(), value);
+                    }
                 }
             }
         }

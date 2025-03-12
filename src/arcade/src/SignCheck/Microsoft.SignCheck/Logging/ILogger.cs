@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.SignCheck.Verification;
+
 namespace Microsoft.SignCheck.Logging
 {
     public interface ILogger
@@ -26,7 +28,7 @@ namespace Microsoft.SignCheck.Logging
 
         void WriteError(LogVerbosity verbosity, string message, params object[] values);
 
-        void WriteStartResult(string fileName, string resultType, string error = null);
+        void WriteStartResult(SignatureVerificationResult result, string outcome);
 
         void WriteEndResult();
     }

@@ -308,35 +308,35 @@ namespace SignCheckTask
             foreach (SignatureVerificationResult result in results)
             {
                 TotalFiles++;
-                string resultType = "Unknown";
+                string outcome = "Unknown";
 
                 if (result.IsSigned && !result.IsExcluded)
                 {
                     TotalSignedFiles++;
-                    resultType = "Signed";
+                    outcome = "Signed";
                 }
                 else if (!(result.IsExcluded || result.IsSkipped) && (!result.IsSigned && !result.IsDoNotSign))
                 {
                     TotalUnsignedFiles++;
-                    resultType = "Unsigned";
+                    outcome = "Unsigned";
                 }
 
                 if (result.IsExcluded || (!result.IsSigned && result.IsDoNotSign))
                 {
                     TotalExcludedFiles++;
-                    resultType = "Excluded";
+                    outcome = "Excluded";
                 }
 
                 if (result.IsSkipped)
                 {
                     TotalSkippedFiles++;
-                    resultType = "Skipped";
+                    outcome = "Skipped";
                 }
 
                 if (result.IsSkipped && result.IsExcluded)
                 {
                     TotalSkippedExcludedFiles++;
-                    resultType = "SkippedExcluded";
+                    outcome = "SkippedExcluded";
                 }
 
                 // Regardless of the file status reporting settings, a container file like an MSI or NuGet package
@@ -358,7 +358,7 @@ namespace SignCheckTask
                     NoSignIssues = false;
                 }
 
-                Log.WriteStartResult(result.VirtualPath, resultType, result.ToString(DetailKeys.Error));
+                Log.WriteStartResult(result, outcome);
                 if (result.NestedResults.Count > 0)
                 {
                     ProcessResults(result.NestedResults, indent + 2);

@@ -234,6 +234,9 @@
   <data name="ErrorInvalidOrMissingTimestamp" xml:space="preserve">
     <value>Invalid or missing timestamp.</value>
   </data>
+  <data name="ErrorInvalidOrMissingStrongNamePublicKeyToken" xml:space="preserve">
+    <value>Invalid or missing strong name public key token.</value>
+  </data>
   <data name="ExclusionYourComment" xml:space="preserve">
     <value>Add you comment here</value>
   </data>

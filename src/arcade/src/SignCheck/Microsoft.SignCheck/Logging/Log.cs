@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.SignCheck.Verification;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -72,9 +73,9 @@ namespace Microsoft.SignCheck.Logging
             _loggers.ForEach(p => p.WriteLine());
         }
 
-        public void WriteStartResult(string fileName, string resultType, string error = null)
+        public void WriteStartResult(SignatureVerificationResult result, string outcome)
         {
-            _loggers.OfType<FileLogger>().FirstOrDefault().WriteStartResult(fileName, resultType, error);
+            _loggers.OfType<FileLogger>().FirstOrDefault().WriteStartResult(result, outcome);
         }
 
         public void WriteEndResult()

@@ -410,6 +410,15 @@ namespace Microsoft.SignCheck {
                 return ResourceManager.GetString("ErrorInvalidOrMissingTimestamp", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid or missing strong name public key token..
+        /// </summary>
+        internal static string ErrorInvalidOrMissingStrongNamePublicKeyToken {
+            get {
+                return ResourceManager.GetString("ErrorInvalidOrMissingStrongNamePublicKeyToken", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Add you comment here.

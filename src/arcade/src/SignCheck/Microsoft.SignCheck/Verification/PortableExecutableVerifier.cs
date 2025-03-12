@@ -3,6 +3,7 @@
 
 using Microsoft.SignCheck.Interop.PortableExecutable;
 using Microsoft.SignCheck.Logging;
+using Microsoft.DotNet.StrongName;
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -38,7 +39,7 @@ namespace Microsoft.SignCheck.Verification
 
             if (VerifyStrongNameSignature)
             {
-                VerifyStrongName(svr, PEHeader);
+                VerifyStrongName(svr);
             }
 
             svr.IsSigned = svr.IsAuthentiCodeSigned & ((svr.IsStrongNameSigned) || (!VerifyStrongNameSignature) || svr.IsNativeImage);
@@ -47,46 +48,35 @@ namespace Microsoft.SignCheck.Verification
             return svr;
         }
 
-        public void VerifyStrongName(SignatureVerificationResult svr, PortableExecutableHeader portableExecutableHeader)
+        private void VerifyStrongName(SignatureVerificationResult svr)
         {
-            if (portableExecutableHeader.IsManagedCode)
+            if (PEHeader.IsManagedCode && PEHeader.IsILImage)
             {
-                svr.IsNativeImage = !portableExecutableHeader.IsILImage;
-                // NGEN/CrossGen don't preserve StrongName signatures.
-                if (!svr.IsNativeImage)
-                {
-#if NETFRAMEWORK
-                    bool wasVerified = false;
-                    int hresult = StrongName.ClrStrongName.StrongNameSignatureVerificationEx(svr.FullPath, fForceVerification: true, pfWasVerified: out wasVerified);
-                    svr.IsStrongNameSigned = hresult == StrongName.S_OK;
-                    svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailSignedStrongName, svr.IsStrongNameSigned);
-
-                    if (hresult != StrongName.S_OK)
-                    {
-                        svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailHResult, hresult);
-                    }
-                    else
-                    {
-                        string publicToken;
-                        hresult = StrongName.GetStrongNameTokenFromAssembly(svr.FullPath, out publicToken);
-                        if (hresult == StrongName.S_OK)
-                        {
-                            svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailPublicKeyToken, publicToken);
-                        }
-                    }
-#else
-                    svr.IsStrongNameSigned = false;
-                    svr.AddDetail(DetailKeys.StrongName, $"StrongName signature verification is not supported on .NET Core.");
-#endif
-                }
-                else
-                {
-                    svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailNativeImage);
-                }
+                VerifyManagedStrongName(svr);
             }
             else
             {
+                // NGEN/CrossGen don't preserve StrongName signatures.
                 svr.IsNativeImage = true;
+                svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailNativeImage);
+            }
+        }
+
+        private void VerifyManagedStrongName(SignatureVerificationResult svr)
+        {
+            svr.IsStrongNameSigned = StrongNameHelper.IsSigned(svr.FullPath);
+            svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailSignedStrongName, svr.IsStrongNameSigned);
+
+            if (svr.IsStrongNameSigned)
+            {
+                if (StrongNameHelper.GetStrongNameTokenFromAssembly(svr.FullPath, out string tokenStr) == 0)
+                {
+                    svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailPublicKeyToken, tokenStr);
+                }
+                else
+                {
+                    svr.AddDetail(DetailKeys.Error, SignCheckResources.ErrorInvalidOrMissingStrongNamePublicKeyToken);
+                }
             }
         }
     }

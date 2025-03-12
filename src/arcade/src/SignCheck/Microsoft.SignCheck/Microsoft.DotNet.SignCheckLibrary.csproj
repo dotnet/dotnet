@@ -3,7 +3,7 @@
   <Import Project="ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>
     <!-- This assembly is bundled in the Microsoft.DotNet.SignCheck package and is not mean to be used as a class library package. -->
     <IsPackable>false</IsPackable>
@@ -11,14 +11,12 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
-    <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
-    <ProjectReference Include="..\..\Microsoft.DotNet.MacOsPkg\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.DotNet.StrongName\Microsoft.DotNet.StrongName.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LZMA-SDK" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Condition="$(TargetFramework) != $(NetToolCurrent)"/>
     <PackageReference Include="NuGet.Frameworks" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="System.IO.Packaging" />
@@ -41,8 +39,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+    <!-- Project References -->
+    <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+    <ProjectReference Include="..\..\Microsoft.DotNet.MacOsPkg\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+
     <!-- Interop -->
-    <Compile Remove="Interop\ICLRStrongName.cs" />
     <Compile Remove="Interop\Ole32.cs" />
     <Compile Remove="Interop\StructuredStorage.cs" />
 
@@ -59,6 +60,12 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != '$(NetToolCurrent)'">
+    <!-- Package References -->
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop"/>
+
+    <!-- References -->
+    <Reference Include="System.Net.Http"/>
+
     <!-- Unsupported file types -->
     <Compile Remove="Verification\DebVerifier.cs" />
     <Compile Remove="Verification\LinuxPackageVerifier.cs" />
