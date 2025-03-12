@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the language server library assets.</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.CommonLanguageServerProtocol.Framework" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.

@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 [ShortRunJob]
 public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 {
-    private DocumentPullDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
+    private VSDocumentDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
     private RazorCodeDocument? RazorCodeDocument { get; set; }
     private SourceText? SourceText { get; set; }
@@ -94,7 +94,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         var optionsMonitor = Mock.Of<RazorLSPOptionsMonitor>(MockBehavior.Strict);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, loggerFactory);
-        DocumentPullDiagnosticsEndpoint = new DocumentPullDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
+        DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
     }
 
     private object BuildDiagnostics()

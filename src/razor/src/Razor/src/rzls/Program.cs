@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Logging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -96,6 +97,7 @@ public class Program
             {
                 services.AddSingleton<IRazorProjectInfoDriver, NamedPipeBasedRazorProjectInfoDriver>();
                 services.AddHandler<RazorNamedPipeConnectEndpoint>();
+                services.AddHandlerWithCapabilities<DocumentDiagnosticsEndpoint>();
 
                 services.AddSingleton(logLevelProvider);
                 services.AddHandler<UpdateLogLevelEndpoint>();

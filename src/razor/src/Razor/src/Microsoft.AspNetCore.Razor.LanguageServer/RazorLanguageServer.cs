@@ -128,7 +128,7 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
         services.AddSemanticTokensServices(featureOptions);
-        services.AddDocumentManagementServices(featureOptions);
+        services.AddDocumentManagementServices();
         services.AddFormattingServices(featureOptions);
         services.AddOptionsServices(_lspOptions);
         services.AddTextDocumentServices(featureOptions);

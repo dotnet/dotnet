@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
 
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>

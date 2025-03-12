@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the Razor design-time infrastructure for Visual Studio.</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <RulesDirectory>$(PkgMicrosoft_NET_Sdk_Razor)\build\netstandard2.0\Rules\</RulesDirectory>
@@ -30,7 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <!-- Manually upgrade to address CG alert. When the VS packages
          pull in the right version, this can be removed. -->
-    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.

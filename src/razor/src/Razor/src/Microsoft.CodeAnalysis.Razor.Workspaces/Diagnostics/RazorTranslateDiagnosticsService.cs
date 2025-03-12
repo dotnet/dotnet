@@ -125,7 +125,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         IDocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument)
     {
-        var projects = RazorDiagnosticConverter.GetProjectInformation(documentSnapshot);
+        var projects = RazorDiagnosticHelper.GetProjectInformation(documentSnapshot);
         using var mappedDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
 
         foreach (var diagnostic in diagnostics)

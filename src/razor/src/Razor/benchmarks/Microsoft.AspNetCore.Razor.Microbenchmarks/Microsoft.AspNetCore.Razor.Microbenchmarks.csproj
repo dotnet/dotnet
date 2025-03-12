@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFramework);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVS);$(NetFxVS)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ServerGarbageCollection>true</ServerGarbageCollection>

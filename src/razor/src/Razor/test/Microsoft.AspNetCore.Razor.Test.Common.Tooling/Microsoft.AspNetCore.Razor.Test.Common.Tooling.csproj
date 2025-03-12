@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
     <IsShipping>false</IsShipping>
 
     <RootNamespace>Microsoft.AspNetCore.Razor.Test.Common</RootNamespace>
@@ -11,7 +11,7 @@
 
     <!-- We only import JSON serialization on non-NetFx.
          For NetFx, we rely on the JSON serialization compiled into Microsoft.VisualStudio.LanguageService.Razor for Live Share. -->
-    <DefineConstants Condition="'$(TargetFramework)' != '$(DefaultNetFxTargetFramework)'">$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' != '$(NetFxVS)'">$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +29,7 @@
     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
+  <ItemGroup Condition="'$(TargetFramework)' == '$(NetFxVS)'">
     <PackageReference Include="Microsoft.WebTools.Languages.Html" />
     <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" />
     <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" />
@@ -65,7 +65,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
+  <ItemGroup Condition="'$(TargetFramework)' == '$(NetFxVS)'">
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
@@ -87,6 +87,6 @@
 
   <!-- We only import JSON serialization on non-NetFx.
        For NetFx, we rely on the JSON serialization compiled into Microsoft.VisualStudio.LanguageService.Razor for Live Share. -->
-  <Import Condition="'$(TargetFramework)' != '$(DefaultNetFxTargetFramework)'" Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
+  <Import Condition="'$(TargetFramework)' != '$(NetFxVS)'" Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
 </Project>

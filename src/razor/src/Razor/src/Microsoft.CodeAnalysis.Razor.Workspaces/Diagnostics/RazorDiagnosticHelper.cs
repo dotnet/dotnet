@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -14,23 +16,21 @@ using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
-internal static class RazorDiagnosticConverter
+internal static class RazorDiagnosticHelper
 {
-    public static VSDiagnostic Convert(RazorDiagnostic razorDiagnostic, SourceText sourceText, IDocumentSnapshot? documentSnapshot)
+    public static async Task<LspDiagnostic[]?> GetRazorDiagnosticsAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var diagnostic = new VSDiagnostic()
-        {
-            Message = razorDiagnostic.GetMessage(CultureInfo.InvariantCulture),
-            Code = razorDiagnostic.Id,
-            Source = "Razor",
-            Severity = ConvertSeverity(razorDiagnostic.Severity),
-            // This is annotated as not null, but we have tests that validate the behaviour when
-            // we pass in null here
-            Range = ConvertSpanToRange(razorDiagnostic.Span, sourceText)!,
-            Projects = GetProjectInformation(documentSnapshot)
-        };
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var sourceText = codeDocument.Source.Text;
+        var csharpDocument = codeDocument.GetCSharpDocument();
+        var diagnostics = csharpDocument.Diagnostics;
 
-        return diagnostic;
+        if (diagnostics.Length == 0)
+        {
+            return null;
+        }
+
+        return Convert(diagnostics, sourceText, documentSnapshot);
     }
 
     public static VSDiagnosticProjectInformation[] GetProjectInformation(IDocumentSnapshot? documentSnapshot)
@@ -55,7 +55,7 @@ internal static class RazorDiagnosticConverter
         var i = 0;
         foreach (var diagnostic in diagnostics)
         {
-            convertedDiagnostics[i++] = Convert(diagnostic, sourceText, documentSnapshot);
+            convertedDiagnostics[i++] = ConvertToVSDiagnostic(diagnostic, sourceText, documentSnapshot);
         }
 
         return convertedDiagnostics;
@@ -84,5 +84,23 @@ internal static class RazorDiagnosticConverter
         var spanEndIndex = Math.Min(sourceSpan.AbsoluteIndex + sourceSpan.Length, sourceText.Length);
 
         return sourceText.GetRange(spanStartIndex, spanEndIndex);
+    }
+
+    // Internal for testing
+    internal static VSDiagnostic ConvertToVSDiagnostic(RazorDiagnostic razorDiagnostic, SourceText sourceText, IDocumentSnapshot? documentSnapshot)
+    {
+        var diagnostic = new VSDiagnostic()
+        {
+            Message = razorDiagnostic.GetMessage(CultureInfo.InvariantCulture),
+            Code = razorDiagnostic.Id,
+            Source = "Razor",
+            Severity = ConvertSeverity(razorDiagnostic.Severity),
+            // This is annotated as not null, but we have tests that validate the behaviour when
+            // we pass in null here
+            Range = ConvertSpanToRange(razorDiagnostic.Span, sourceText)!,
+            Projects = GetProjectInformation(documentSnapshot)
+        };
+
+        return diagnostic;
     }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetVS)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release</Configurations>

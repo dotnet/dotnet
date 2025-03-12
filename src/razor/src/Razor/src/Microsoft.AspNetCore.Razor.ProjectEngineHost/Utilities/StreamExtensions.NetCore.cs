@@ -103,7 +103,7 @@ internal static class StreamExtensions
     public unsafe static int ReadSize(this Stream stream)
     {
         Span<byte> bytes = stackalloc byte[4];
-        stream.Read(bytes);
+        stream.ReadExactly(bytes);
         return BitConverter.ToInt32(bytes);
     }
 }

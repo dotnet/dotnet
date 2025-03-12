@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetVS)</TargetFramework>
     <OutputType>Exe</OutputType>
 
     <!-- The purpose of this project is to include all dependencies of Microsoft.CodeAnalysis.Remote.Razor targeting .Net Core -->

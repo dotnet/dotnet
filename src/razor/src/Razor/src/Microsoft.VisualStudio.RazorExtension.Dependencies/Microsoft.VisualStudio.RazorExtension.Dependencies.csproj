@@ -8,7 +8,7 @@
       extra dependencies + codebases that may not be present in public VS installs.
     -->
 
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
 
@@ -43,7 +43,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <!-- Manually upgrade to address CG alert. When the VS packages
          pull in the right version, this can be removed. -->
-    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
   </ItemGroup>
 
   <!-- Reference the LSP protocol dlls so that we can include them in the code base and output them with the VSIX. -->

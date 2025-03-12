@@ -6,6 +6,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
@@ -64,10 +65,25 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 CustomMessageNames.RazorSimplifyMethodEndpointName => HandleSimplifyMethod(@params),
                 CustomMessageNames.RazorInlayHintEndpoint => await HandleInlayHintAsync(@params),
                 CustomMessageNames.RazorInlayHintResolveEndpoint => await HandleInlayHintResolveAsync(@params),
+                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName => await HandleCSharpDiagnosticsAsync(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
             return (TResponse)result;
+        }
+
+        private Task<SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?> HandleCSharpDiagnosticsAsync<TParams>(TParams @params)
+        {
+            Assert.IsType<DelegatedDiagnosticParams>(@params);
+            var actualParams = new DocumentDiagnosticParams()
+            {
+                TextDocument = new TextDocumentIdentifier { Uri = _csharpDocumentUri }
+            };
+
+            return _csharpServer.ExecuteRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                Methods.TextDocumentDiagnosticName,
+                actualParams,
+                _cancellationToken);
         }
 
         private static TextEdit[] HandleSimplifyMethod<TParams>(TParams @params)

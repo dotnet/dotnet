@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
 
     <!-- To generate baselines, run tests with /p:GenerateJsonFiles=true -->
     <DefineConstants Condition="'$(GenerateJsonFiles)'=='true'">$(DefineConstants);GENERATE_JSON_FILES</DefineConstants>

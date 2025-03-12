@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Diagnostics;
 
-public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
+public sealed class VSDocumentDiagnosticsEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
     public void ApplyCapabilities_AddsExpectedCapabilities()
@@ -25,7 +25,7 @@ public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOu
             LoggerFactory);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        var endpoint = new DocumentPullDiagnosticsEndpoint(
+        var endpoint = new VSDocumentDiagnosticsEndpoint(
             TestLanguageServerFeatureOptions.Instance,
             razorTranslate.Object,
             optionsMonitor,

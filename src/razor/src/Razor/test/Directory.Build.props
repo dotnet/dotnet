@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-    <DeveloperBuildTestTfms>$(DefaultNetCoreTargetFrameworks)</DeveloperBuildTestTfms>
+    <DeveloperBuildTestTfms>$(NetVSAndVSCode)</DeveloperBuildTestTfms>
     <StandardTestTfms>$(DeveloperBuildTestTfms)</StandardTestTfms>
     <StandardTestTfms Condition=" '$(DeveloperBuild)' != 'true' ">$(StandardTestTfms)</StandardTestTfms>
     <StandardTestTfms Condition=" '$(DeveloperBuild)' != 'true' AND '$(OS)' == 'Windows_NT' ">net472;$(StandardTestTfms)</StandardTestTfms>

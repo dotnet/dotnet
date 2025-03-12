@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
 
@@ -164,20 +164,20 @@
   <ItemGroup>
     <!-- Don't trim this list. It is used to feed into the binding redirects -->
     <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
 
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.csproj">
@@ -208,7 +208,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <!-- Manually upgrade to address CG alert. When the VS packages
          pull in the right version, this can be removed. -->
-    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.
