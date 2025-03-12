@@ -6,7 +6,7 @@
     <VersionMajor>9</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>1</VersionSDKMinor>
-    <VersionFeature>04</VersionFeature>
+    <VersionFeature>05</VersionFeature>
     <!-- This property powers the SdkAnalysisLevel property in end-user MSBuild code.
          It should always be the hundreds-value of the current SDK version, never any
          preview version components or anything else. E.g. 8.0.100, 9.0.300, etc. -->
@@ -158,8 +158,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/roslyn-analyzers -->
-    <MicrosoftCodeAnalysisNetAnalyzersVersion>9.0.0-preview.25076.3</MicrosoftCodeAnalysisNetAnalyzersVersion>
-    <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.25076.3</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
+    <MicrosoftCodeAnalysisNetAnalyzersVersion>9.0.0-preview.25123.3</MicrosoftCodeAnalysisNetAnalyzersVersion>
+    <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.25123.3</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/msbuild -->
@@ -180,20 +180,20 @@
          At usage sites, either we use MicrosoftBuildMinimumVersion, or MicrosoftBuildVersion in source-only modes.
 
          Additionally, set the MinimumVSVersion for the installer UI that's required for targeting NetCurrent -->
-    <MicrosoftBuildVersion>17.12.27</MicrosoftBuildVersion>
-    <MicrosoftBuildLocalizationVersion>17.12.27-preview-25106-01</MicrosoftBuildLocalizationVersion>
+    <MicrosoftBuildVersion>17.12.32</MicrosoftBuildVersion>
+    <MicrosoftBuildLocalizationVersion>17.12.32-preview-25125-10</MicrosoftBuildLocalizationVersion>
     <MicrosoftBuildMinimumVersion Condition="'$(DotNetBuildSourceOnly)' != 'true'">17.11.4</MicrosoftBuildMinimumVersion>
     <MinimumVSVersion>17.12</MinimumVSVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/templating -->
-    <MicrosoftTemplateEngineAbstractionsPackageVersion>9.0.104</MicrosoftTemplateEngineAbstractionsPackageVersion>
+    <MicrosoftTemplateEngineAbstractionsPackageVersion>9.0.105</MicrosoftTemplateEngineAbstractionsPackageVersion>
     <MicrosoftTemplateEngineEdgePackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineEdgePackageVersion>
     <MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>
     <MicrosoftTemplateEngineUtilsPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineUtilsPackageVersion>
     <MicrosoftTemplateSearchCommonPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateSearchCommonPackageVersion>
     <!-- test dependencies -->
-    <MicrosoftTemplateEngineMocksPackageVersion>9.0.104-servicing.25105.3</MicrosoftTemplateEngineMocksPackageVersion>
+    <MicrosoftTemplateEngineMocksPackageVersion>9.0.105-servicing.25156.13</MicrosoftTemplateEngineMocksPackageVersion>
     <MicrosoftTemplateEngineTestHelperPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateEngineTestHelperPackageVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
     <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
@@ -204,14 +204,14 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetVersion>4.12.0-3.25105.5</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftNetCompilersToolsetFrameworkPackageVersion>4.12.0-3.25105.5</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
-    <MicrosoftCodeAnalysisPackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.12.0-3.25105.5</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.12.0-3.25124.2</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetFrameworkPackageVersion>4.12.0-3.25124.2</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
+    <MicrosoftCodeAnalysisPackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.12.0-3.25124.2</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
@@ -231,9 +231,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/razor -->
-    <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>9.0.0-preview.25104.3</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
-    <MicrosoftCodeAnalysisRazorToolingInternalVersion>9.0.0-preview.25104.3</MicrosoftCodeAnalysisRazorToolingInternalVersion>
-    <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>9.0.0-preview.25104.3</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
+    <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>9.0.0-preview.25123.4</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
+    <MicrosoftCodeAnalysisRazorToolingInternalVersion>9.0.0-preview.25123.4</MicrosoftCodeAnalysisRazorToolingInternalVersion>
+    <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>9.0.0-preview.25123.4</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/wpf -->
@@ -261,7 +261,7 @@
   <PropertyGroup Label="Infrastructure and test only dependencies">
     <VersionToolsVersion>2.2.0-beta.19072.10</VersionToolsVersion>
     <DotnetDebToolVersion>2.0.0</DotnetDebToolVersion>
-    <MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>9.0.0-preview.25102.1</MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>
+    <MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>9.0.0-preview.25112.2</MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>
   </PropertyGroup>
   <PropertyGroup Label="Manually updated">
     <!-- Dependencies from https://github.com/microsoft/MSBuildLocator -->
@@ -270,10 +270,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/arcade -->
-    <MicrosoftDotNetBuildTasksInstallersPackageVersion>9.0.0-beta.25077.4</MicrosoftDotNetBuildTasksInstallersPackageVersion>
-    <MicrosoftDotNetSignToolVersion>9.0.0-beta.25077.4</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetXliffTasksVersion>9.0.0-beta.25077.4</MicrosoftDotNetXliffTasksVersion>
-    <MicrosoftDotNetXUnitExtensionsVersion>9.0.0-beta.25077.4</MicrosoftDotNetXUnitExtensionsVersion>
+    <MicrosoftDotNetBuildTasksInstallersPackageVersion>9.0.0-beta.25111.5</MicrosoftDotNetBuildTasksInstallersPackageVersion>
+    <MicrosoftDotNetSignToolVersion>9.0.0-beta.25111.5</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetXliffTasksVersion>9.0.0-beta.25111.5</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXUnitExtensionsVersion>9.0.0-beta.25111.5</MicrosoftDotNetXUnitExtensionsVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sourcelink -->
