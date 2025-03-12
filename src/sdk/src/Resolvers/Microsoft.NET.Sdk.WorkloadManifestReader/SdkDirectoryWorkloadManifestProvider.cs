@@ -230,10 +230,10 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
                 return comparison;
             }
 
-            var modifiedFirst = "1.1.1" + (firstDash == first.Length ? string.Empty : first.Substring(firstDash));
-            var modifiedSecond = "1.1.1" + (secondDash == second.Length ? string.Empty : second.Substring(secondDash));
+            var modifiedFirst = new ReleaseVersion(1, 1, 1, firstDash == first.Length ? null : first.Substring(firstDash));
+            var modifiedSecond = new ReleaseVersion(1, 1, 1, secondDash == second.Length ? null : second.Substring(secondDash));
 
-            return new ReleaseVersion(modifiedFirst).CompareTo(new ReleaseVersion(modifiedSecond));
+            return modifiedFirst.CompareTo(modifiedSecond);
         }
 
         void ThrowExceptionIfManifestsNotAvailable()
@@ -565,14 +565,17 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
                         var workloadSetVersion = Path.GetFileName(workloadSetDirectory);
                         var workloadSet = WorkloadSet.FromWorkloadSetFolder(workloadSetDirectory, workloadSetVersion, featureBand);
 
-                        if (!WorkloadSet.GetWorkloadSetFeatureBand(workloadSet.Version!).Equals(featureBand))
+                        if (workloadSet is not null)
                         {
-                            //  We have a workload set version where the feature band doesn't match the feature band folder that it's in.
-                            //  Skip it, as if we try to actually load it via the workload set version, we'll fail
-                            continue;
-                        }
+                            if (!WorkloadSet.GetWorkloadSetFeatureBand(workloadSet.Version!).Equals(featureBand))
+                            {
+                                //  We have a workload set version where the feature band doesn't match the feature band folder that it's in.
+                                //  Skip it, as if we try to actually load it via the workload set version, we'll fail
+                                continue;
+                            }
 
-                        availableWorkloadSets[workloadSet.Version!] = workloadSet;
+                            availableWorkloadSets[workloadSet.Version!] = workloadSet;
+                        }
                     }
                 }
             }

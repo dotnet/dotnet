@@ -86,7 +86,7 @@ internal sealed class SlnxFile
     /// Update the Xml DOM with changes from the model.
     /// </summary>
     /// <returns>
-    /// true if any changes were made to the XML.
+    /// <see langword="true"/> if any changes were made to the XML.
     /// </returns>
     internal bool ApplyModel(SolutionModel model)
     {

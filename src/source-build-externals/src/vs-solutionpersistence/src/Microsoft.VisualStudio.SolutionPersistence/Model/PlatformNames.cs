@@ -6,7 +6,13 @@ namespace Microsoft.VisualStudio.SolutionPersistence.Model;
 internal static class PlatformNames
 {
     internal const string All = "*";
+
+    // Some project types do not support platforms, so this either indicates
+    // the project type doesn't support platforms or that the platform mapping is missing.
     internal const string Missing = "?";
+
+    // Used if the project type doesn't support platforms.
+    internal const string Default = nameof(Default);
 
     internal const string AnyCPU = nameof(AnyCPU);
     internal const string AnySpaceCPU = "Any CPU";
@@ -35,6 +41,8 @@ internal static class PlatformNames
         {
             All => All,
             Missing => Missing,
+            Default => Default,
+            AnyCPU => AnyCPU,
             AnySpaceCPU => AnySpaceCPU,
             Win32 => Win32,
             x64 => x64,

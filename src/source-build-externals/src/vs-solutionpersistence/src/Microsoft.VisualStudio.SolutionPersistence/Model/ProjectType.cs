@@ -32,7 +32,7 @@ public sealed class ProjectType(Guid projectTypeId, IReadOnlyList<ConfigurationR
     /// Gets rules to determine the default configurations for projects of this type.
     /// </summary>
     /// <remarks>
-    /// If a project type should not build, it should have a single rule with Build set to false.
+    /// If a project type should not build, it should have a single rule with Build set to <see langword="false"/>.
     /// </remarks>
     public IReadOnlyList<ConfigurationRule> ConfigurationRules { get; } = rules;
 
@@ -51,8 +51,8 @@ public sealed class ProjectType(Guid projectTypeId, IReadOnlyList<ConfigurationR
     public string? Extension { get; init; }
 
     /// <summary>
-    /// Gets references a base project type to inherit its configuration rules and project type id.
-    /// This uses the Name or Extension of the base project type to find it.
+    /// Gets a references to a base project type to inherit its configuration rules and project type id.
+    /// This uses the <see cref="Name"/> or <see cref="Extension"/> of the base project type to find it.
     /// </summary>
     public string? BasedOn { get; init; }
 }

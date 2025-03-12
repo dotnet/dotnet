@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25077.4",
+      "packageVersion": "9.0.0-beta.25111.5",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "bac7e1caea791275b7c3ccb4cb75fd6a04a26618"
+      "commitSha": "5da211e1c42254cb35e7ef3d5a8428fb24853169"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.27-preview-25106-01",
+      "packageVersion": "17.12.32-preview-25125-10",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "e0b90a9a8ad3d8fdd186566b33859450c9e4e06c"
+      "commitSha": "8314f8fc4d11b3ea9bc86fba82b79e167cac41c6"
     },
     {
       "packageVersion": "6.12.2-rc.1",
@@ -73,19 +73,19 @@
       "commitSha": "c097388782da305f47c395f90bea2d7c83909b6d"
     },
     {
-      "packageVersion": "9.0.0-preview.25104.3",
+      "packageVersion": "9.0.0-preview.25123.4",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "36abdce12db3b9c9360e8c7711d489204a4eac71"
+      "commitSha": "d0fbb0748128955a5c5e5dd4289b3859d7d70600"
     },
     {
-      "packageVersion": "4.12.0-3.25105.5",
+      "packageVersion": "4.12.0-3.25124.2",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "25acc509a1cb1d1a4923b0091cbc5ce837b024d0"
+      "commitSha": "3f5cf9fbbd91f2047e988801a5142ca1cb6bab45"
     },
     {
-      "packageVersion": "3.11.0-beta1.25076.3",
+      "packageVersion": "3.11.0-beta1.25123.3",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
       "commitSha": "16865ea61910500f1022ad2b96c499e5df02c228"
@@ -97,22 +97,22 @@
       "commitSha": "831d23e56149cd59c40fc00c7feb7c5334bd19c4"
     },
     {
-      "packageVersion": "9.0.0-preview.25102.1",
+      "packageVersion": "9.0.0-preview.25112.2",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "008b3a357044b102ec30e15ac381c2e880f573af"
+      "commitSha": "f219fd635f701e3142be92cb0bb4039cadb39d4d"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2750432faabfdcf0d08b9650ff1d0a5e45ca6e59"
+      "commitSha": "1b40c2acb138f2e3f867dda68e152af8d184aefe"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.25056.2",
+      "packageVersion": "9.0.0-alpha.1.25157.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "884764492bf2cbc8d38037d9eee84f16960daa74"
+      "commitSha": "71dbdccd13f28cfd1a35649263b55ebbeab26ee7"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25081.6",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.104-servicing.25105.3",
+      "packageVersion": "9.0.105-servicing.25156.13",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "5936acfcfd47d64eaadd59a15c33d0de07db171b"
+      "commitSha": "693a4fd2526759d8408ec1388970143e666b03e2"
     },
     {
       "packageVersion": "1.1.0-rtm.24606.1",
@@ -245,7 +245,7 @@
     {
       "path": "source-build-externals/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
-      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
+      "commitSha": "19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe"
     },
     {
       "path": "source-build-externals/src/xunit",

@@ -8,6 +8,8 @@ internal sealed partial class ProjectTypeTable
 {
     internal static readonly ConfigurationRule[] NoBuildRules = [ModelHelper.CreateNoBuildRule()];
 
+    internal static readonly ConfigurationRule NoPlatformsRule = ModelHelper.CreateNoPlatformsRule();
+
     internal static readonly Guid VCXProj = new Guid("8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942");
     internal static readonly Guid SolutionFolder = new Guid("2150E333-8FDC-42A3-9474-1A3956D46DE8");
 
@@ -87,6 +89,7 @@ internal sealed partial class ProjectTypeTable
             new ProjectType(new Guid("00D1A9C2-B5F0-4AF3-8072-F6C62B433612"), NoBuildRules) { Name = "SQL", Extension = ".sqlproj" },
             new ProjectType(new Guid("0C603C2C-620A-423B-A800-4F3E2F6281F1"), NoBuildRules) { Name = "U-SQL-DB", Extension = ".usqldbproj" },
             new ProjectType(new Guid("182E2583-ECAD-465B-BB50-91101D7C24CE"), NoBuildRules) { Name = "U-SQL", Extension = ".usqlproj" },
+            new ProjectType(new Guid("F14B399A-7131-4C87-9E4B-1186C45EF12D"), [NoPlatformsRule]) { Name = "SSRS", Extension = ".rptproj" },
 
             // Azure project types
             new ProjectType(new Guid("A07B5EB6-E848-4116-A8D0-A826331D98C6"), NoBuildRules) { Name = "Fabric", Extension = ".sfproj" },

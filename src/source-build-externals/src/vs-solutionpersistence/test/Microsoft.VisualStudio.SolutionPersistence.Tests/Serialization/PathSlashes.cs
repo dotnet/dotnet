@@ -17,12 +17,6 @@ public sealed class PathSlashes
     [Fact]
     public async Task VerifyModelSlahesAsync()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         ResourceStream slashesResource = SlnAssets.LoadResource("Invalid/PathSlashes.slnx");
 
         SolutionModel solution = await SolutionSerializers.SlnXml.OpenAsync(slashesResource.Stream, CancellationToken.None);
@@ -64,12 +58,6 @@ public sealed class PathSlashes
     [Fact]
     public async Task ProjectReferencesFixedUpAsync()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         FileContents fixedSlashesResource = SlnAssets.LoadResource("PathSlashes.slnx").ToLines();
 
         // Save the Model back to stream.
