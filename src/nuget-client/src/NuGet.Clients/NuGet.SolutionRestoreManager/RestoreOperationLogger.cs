@@ -44,7 +44,6 @@ namespace NuGet.SolutionRestoreManager
 
         private bool _cancelled;
         private bool _hasHeaderBeenShown;
-        private bool _showErrorList;
 
         // The value of the "MSBuild project build output verbosity" setting
         // of VS. From 0 (quiet) to 4 (Diagnostic).
@@ -122,11 +121,8 @@ namespace NuGet.SolutionRestoreManager
         {
             await _jtc.JoinTillEmptyAsync();
 
-            if (_showErrorList)
-            {
-                // Give the error list focus
-                await _errorList.Value.BringToFrontIfSettingsPermitAsync();
-            }
+            // Give the error list focus
+            await _errorList.Value.BringToFrontIfSettingsPermitAsync();
         }
 
         public override void LogInformationSummary(string data)
@@ -239,9 +235,6 @@ namespace NuGet.SolutionRestoreManager
 
                 // Add the entry to the list
                 _errorList.Value.AddNuGetEntries(errorListEntry);
-
-                // Display the error list after restore completes
-                _showErrorList = true;
             }
         }
 

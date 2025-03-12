@@ -346,11 +346,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         ProjectItemProperties.IncludeAssets,
                         MSBuildStringUtility.Convert(LibraryIncludeFlagUtils.GetFlagString(installationContext.IncludeType)));
                 }
-
             }
-
-            // Save the project
-            await _unconfiguredProject.SaveAsync();
 
             return true;
         }
@@ -404,10 +400,6 @@ namespace NuGet.PackageManagement.VisualStudio
 
                 await configuredProject?.Services.PackageReferences.RemoveAsync(packageId);
             }
-
-            // Save the project
-            await _unconfiguredProject.SaveAsync();
-
             return true;
         }
 

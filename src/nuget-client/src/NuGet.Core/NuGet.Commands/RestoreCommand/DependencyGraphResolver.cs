@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -212,9 +213,19 @@ namespace NuGet.Commands
                     context,
                     token);
 
+                if (NuGetEventSource.IsEnabled)
+                {
+                    TraceEvents.CreateRestoreTargetGraphStart(_request.Project.FilePath, frameworkRuntimePair);
+                }
+
                 // Now that the graph has been resolved, we need to create walk all of the defined dependencies again to detect any cycles and downgrades.  The RestoreTargetGraph stores all of the
                 // information about the graph including the nodes with their parent/child relationships, cycles, downgrades, and conflicts.
                 (bool wasRestoreTargetGraphCreationSuccessful, RestoreTargetGraph restoreTargetGraph) = await CreateRestoreTargetGraphAsync(frameworkRuntimePair, runtimeGraph, isCentralPackageTransitivePinningEnabled, unresolvedPackages, resolvedPackages, resolvedDependencyGraphItems, context);
+
+                if (NuGetEventSource.IsEnabled)
+                {
+                    TraceEvents.CreateRestoreTargetGraphStop(_request.Project.FilePath, frameworkRuntimePair, wasRestoreTargetGraphCreationSuccessful, resolvedPackages.Count, unresolvedPackages.Count);
+                }
 
                 success &= wasRestoreTargetGraphCreationSuccessful;
 
@@ -901,6 +912,11 @@ namespace NuGet.Commands
             RemoteWalkContext context,
             CancellationToken token)
         {
+            if (NuGetEventSource.IsEnabled)
+            {
+                TraceEvents.ResolveDependencyGraphItemsStart(_request.Project.FilePath, pair);
+            }
+
             // Stores the resolved dependency graph items
             Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItems = new(ResolvedDependencyGraphItemDictionarySize);
 
@@ -912,6 +928,12 @@ namespace NuGet.Commands
 
             // Stores any evictions to process
             Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)> evictions = new Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)>(EvictionsDictionarySize);
+
+            // Keeps track of the number of times the entire walk is started over
+            int restartCount = -1;
+
+            // Keeps track of the total number of items that have been queued for processing
+            int totalQueuedItemCount = 0;
 
         // Used to start over when a dependency has multiple descendants of an item to be evicted.
         //
@@ -933,6 +955,7 @@ namespace NuGet.Commands
         // In this case, the entire walk is started over and B 1.0.0 is left out of the graph, leading to C 1.0.0 and D 1.0.0 also being left out.
         //
         StartOver:
+            restartCount++;
 
             dependencyGraphItemQueue.Clear();
             resolvedDependencyGraphItems.Clear();
@@ -1374,7 +1397,13 @@ namespace NuGet.Commands
                     };
 
                     dependencyGraphItemQueue.Enqueue(dependencyGraphItem);
+                    totalQueuedItemCount++;
                 }
+            }
+
+            if (NuGetEventSource.IsEnabled)
+            {
+                TraceEvents.ResolveDependencyGraphItemsStop(_request.Project.FilePath, pair, resolvedDependencyGraphItems.Count, restartCount, totalQueuedItemCount);
             }
 
             return resolvedDependencyGraphItems;
@@ -1409,6 +1438,74 @@ namespace NuGet.Commands
             runtimeGraph = ProjectRestoreCommand.GetRuntimeGraph(restoreTargetGraphForTargetFramework, localRepositories, projectRuntimeGraph: projectProviderRuntimeGraph, _logger);
 
             return true;
+        }
+
+        private static class TraceEvents
+        {
+            private const string EventNameCreateRestoreTargetGraph = "DependencyGraphResolver/CreateRestoreTargetGraph";
+            private const string EventNameResolveDependencyGraphItems = "DependencyGraphResolver/ResolveDependencyGraphItems";
+
+            public static void CreateRestoreTargetGraphStart(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair)
+            {
+                EventSourceOptions eventOptions = new()
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Tags = (EventTags)1,
+                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStartEventData(projectFullPath, frameworkRuntimePair.ToString()));
+            }
+
+            public static void CreateRestoreTargetGraphStop(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair, bool wasRestoreTargetGraphCreationSuccessful, int resolvedPackageCount, int unresolvedPackageCount)
+            {
+                EventSourceOptions eventOptions = new()
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStopEventData(projectFullPath, frameworkRuntimePair.ToString(), wasRestoreTargetGraphCreationSuccessful, resolvedPackageCount, unresolvedPackageCount));
+            }
+
+            public static void ResolveDependencyGraphItemsStart(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair)
+            {
+                EventSourceOptions eventOptions = new()
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Tags = (EventTags)1,
+                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStartEventData(projectFullPath, frameworkRuntimePair.ToString()));
+            }
+
+            public static void ResolveDependencyGraphItemsStop(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair, int resolvedPackagesCount, int restartCount, int totalQueuedItemCount)
+            {
+                EventSourceOptions eventOptions = new()
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStopEventData(projectFullPath, frameworkRuntimePair.ToString(), resolvedPackagesCount, restartCount, totalQueuedItemCount));
+            }
+
+            [EventData]
+            private record struct CreateRestoreTargetGraphStartEventData(string FilePath, string FrameworkRuntimePair);
+
+            [EventData]
+            private record struct CreateRestoreTargetGraphStopEventData(string FilePath, string FrameworkRuntimePair, bool Success, int ResolvedPackageCount, int UnresolvedPackageCount);
+
+            [EventData]
+            private record struct ResolveDependencyGraphItemsStartEventData(string FilePath, string FrameworkRuntimePair);
+
+            [EventData]
+            private record struct ResolveDependencyGraphItemsStopEventData(string FilePath, string FrameworkRuntimePair, int ResolvedPackagesCount, int RestartCount, int TotalQueuedItemCount);
         }
     }
 }

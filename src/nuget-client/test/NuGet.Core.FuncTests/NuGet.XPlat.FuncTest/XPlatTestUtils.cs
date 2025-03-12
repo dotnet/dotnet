@@ -263,12 +263,12 @@ namespace NuGet.XPlat.FuncTest
 
         // Assert Helper Methods
 
-        public static bool ValidateReference(XElement root, string packageId, string version, PackageType packageType = null, bool developmentDependency = false)
+        public static bool ValidateReference(XElement root, string packageId, string version, PackageType packageType = null, bool developmentDependency = false, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
 
             var packageReferences = root
                     .Descendants(GetReferenceType(packageType))
-                    .Where(d => d.FirstAttribute.Value.Equals(packageId, StringComparison.OrdinalIgnoreCase));
+                    .Where(d => d.FirstAttribute.Value.Equals(packageId, stringComparison));
 
             if (packageReferences.Count() != 1)
             {
@@ -280,7 +280,7 @@ namespace NuGet.XPlat.FuncTest
                 .Attribute("Version");
 
             if (versionAttribute == null ||
-                !versionAttribute.Value.Equals(version, StringComparison.OrdinalIgnoreCase))
+                !versionAttribute.Value.Equals(version, stringComparison))
             {
                 return false;
             }
@@ -298,7 +298,7 @@ namespace NuGet.XPlat.FuncTest
                 var includeAssets = packageReferences.First().Element("IncludeAssets");
 
                 if (includeAssets == null ||
-                    !includeAssets.Value.Equals("runtime; build; native; contentfiles; analyzers; buildtransitive", StringComparison.OrdinalIgnoreCase))
+                    !includeAssets.Value.Equals("runtime; build; native; contentfiles; analyzers; buildtransitive", stringComparison))
                 {
                     return false;
                 }

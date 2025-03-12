@@ -47,6 +47,7 @@ namespace NuGet.Commands
         // status names for ProjectRestoreInformation
         private const string ErrorCodes = nameof(ErrorCodes);
         private const string WarningCodes = nameof(WarningCodes);
+        private const string SuppressedWarningCodes = nameof(SuppressedWarningCodes);
         private const string RestoreSuccess = nameof(RestoreSuccess);
         private const string ProjectFilePath = nameof(ProjectFilePath);
         private const string IsCentralVersionManagementEnabled = nameof(IsCentralVersionManagementEnabled);
@@ -622,6 +623,7 @@ namespace NuGet.Commands
 
                 var errorCodes = ConcatAsString(new HashSet<NuGetLogCode>(logs.Where(l => l.Level == LogLevel.Error).Select(l => l.Code)));
                 var warningCodes = ConcatAsString(new HashSet<NuGetLogCode>(logs.Where(l => l.Level == LogLevel.Warning).Select(l => l.Code)));
+                var suppressedWarningCodes = ConcatAsString(new HashSet<NuGetLogCode>(_logger.SuppressedWarnings.Select(l => l.Code)));
 
                 if (!string.IsNullOrEmpty(errorCodes))
                 {
@@ -631,6 +633,11 @@ namespace NuGet.Commands
                 if (!string.IsNullOrEmpty(warningCodes))
                 {
                     telemetry.TelemetryEvent[WarningCodes] = warningCodes;
+                }
+
+                if (!string.IsNullOrEmpty(suppressedWarningCodes))
+                {
+                    telemetry.TelemetryEvent[SuppressedWarningCodes] = suppressedWarningCodes;
                 }
 
                 telemetry.TelemetryEvent[NewPackagesInstalledCount] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Install).Distinct().Count();
