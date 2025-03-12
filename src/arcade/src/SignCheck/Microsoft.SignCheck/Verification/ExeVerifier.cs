@@ -5,7 +5,9 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.SignCheck.Logging;
+#if NETFRAMEWORK
 using Microsoft.Tools.WindowsInstallerXml;
+#endif
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -24,6 +26,7 @@ namespace Microsoft.SignCheck.Verification
 
             if (VerifyRecursive)
             {
+#if NETFRAMEWORK
                 if (PEHeader.ImageSectionHeaders.Select(s => s.SectionName).Contains(".wixburn"))
                 {
                     Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagSectionHeader, ".wixburn");
@@ -54,6 +57,9 @@ namespace Microsoft.SignCheck.Verification
                         unbinder.DeleteTempFiles();
                     }
                 }
+#else
+                Log.WriteMessage(LogVerbosity.Normal, $"Unable to verify contents of '{svr.FullPath}' on .NET Core.");
+#endif
             }
 
             // TODO: Check for SFXCAB, IronMan, etc.
@@ -64,9 +70,11 @@ namespace Microsoft.SignCheck.Verification
         /// <summary>
         /// Event handler for WiX Burn to extract a bundle.
         /// </summary>
+#if NETFRAMEWORK
         private void UnbinderEventHandler(object sender, MessageEventArgs e)
         {
             Log.WriteMessage(LogVerbosity.Detailed, String.Format("{0}|{1}|{2}|{3}", e.Id, e.Level, e.ResourceName, e.SourceLineNumbers));
         }
+#endif
     }
 }

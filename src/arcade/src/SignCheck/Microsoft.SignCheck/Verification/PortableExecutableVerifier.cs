@@ -55,6 +55,7 @@ namespace Microsoft.SignCheck.Verification
                 // NGEN/CrossGen don't preserve StrongName signatures.
                 if (!svr.IsNativeImage)
                 {
+#if NETFRAMEWORK
                     bool wasVerified = false;
                     int hresult = StrongName.ClrStrongName.StrongNameSignatureVerificationEx(svr.FullPath, fForceVerification: true, pfWasVerified: out wasVerified);
                     svr.IsStrongNameSigned = hresult == StrongName.S_OK;
@@ -73,6 +74,10 @@ namespace Microsoft.SignCheck.Verification
                             svr.AddDetail(DetailKeys.StrongName, SignCheckResources.DetailPublicKeyToken, publicToken);
                         }
                     }
+#else
+                    svr.IsStrongNameSigned = false;
+                    svr.AddDetail(DetailKeys.StrongName, $"StrongName signature verification is not supported on .NET Core.");
+#endif
                 }
                 else
                 {

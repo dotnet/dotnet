@@ -42,16 +42,8 @@ namespace Microsoft.SignCheck.Verification
         protected SignatureVerificationResult VerifyAuthentiCode(string path, string parent, string virtualPath)
         {
             var svr = new SignatureVerificationResult(path, parent, virtualPath);
-            uint hresult = AuthentiCode.IsSigned(path);
-            svr.IsAuthentiCodeSigned = hresult == 0;
+            svr.IsAuthentiCodeSigned = AuthentiCode.IsSigned(path, svr);
             svr.IsSigned = svr.IsAuthentiCodeSigned;
-
-            // Log non-zero HRESULTs
-            if (hresult != 0)
-            {
-                string errorMessage = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-                svr.AddDetail(DetailKeys.Error, String.Format(SignCheckResources.ErrorHResult, hresult, errorMessage));
-            }
 
             // TODO: Should only check if there is a signature, even if it's invalid
             if (VerifyAuthenticodeTimestamps)

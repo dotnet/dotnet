@@ -168,7 +168,6 @@ Write-Host "Add runtime->sdk flow"
 AddFlow https://github.com/dotnet/aspnetcore $RuntimeChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/windowsdesktop $RuntimeChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/runtime $RuntimeChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
-AddFlow https://github.com/dotnet/runtime $RuntimeChannel https://github.com/dotnet/templating $SdkBranch EveryBuild
 
 if ($AddInternalFlow) {
     Write-Host "Adding internal runtime->internal sdk flow"

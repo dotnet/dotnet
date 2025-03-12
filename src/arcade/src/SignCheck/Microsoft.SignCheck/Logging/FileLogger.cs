@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -20,13 +21,19 @@ namespace Microsoft.SignCheck.Logging
             set;
         }
 
+        internal XmlWriter ResultsWriter
+        {
+            get;
+            set;
+        }
+
         internal long Lines
         {
             get;
             set;
         }
 
-        public FileLogger(LogVerbosity verbosity, string messageFile, string errorFile) : base(verbosity)
+        public FileLogger(LogVerbosity verbosity, string messageFile, string errorFile, string resultsFile) : base(verbosity)
         {
             if (!String.IsNullOrEmpty(messageFile))
             {
@@ -47,6 +54,22 @@ namespace Microsoft.SignCheck.Logging
                 ErrorWriter.AutoFlush = true;
             }
 
+            if (!String.IsNullOrEmpty(resultsFile))
+            {
+                if (!Directory.Exists(resultsFile))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(resultsFile)));
+                }
+                ResultsWriter = XmlWriter.Create(resultsFile, new XmlWriterSettings()
+                {
+                    Indent = true,
+                    IndentChars = "\t",
+                    OmitXmlDeclaration = true
+                });
+                ResultsWriter.WriteStartDocument();
+                ResultsWriter.WriteStartElement("SignCheckResults");
+            }
+
             Lines = 0;
         }
 
@@ -62,6 +85,12 @@ namespace Microsoft.SignCheck.Logging
             {
                 ErrorWriter.Flush();
                 ErrorWriter.Close();
+            }
+
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteEndElement();
+                ResultsWriter.Close();
             }
         }
 
@@ -132,6 +161,28 @@ namespace Microsoft.SignCheck.Logging
                 {
                     MessageWriter.Flush();
                 }
+            }
+        }
+
+        public void WriteStartResult(string fileName, string resultType, string error = null)
+        {
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteStartElement("File");
+                ResultsWriter.WriteAttributeString("Name", fileName);
+                ResultsWriter.WriteAttributeString("ResultType", resultType);
+                if (!String.IsNullOrEmpty(error))
+                {
+                    ResultsWriter.WriteAttributeString("Error", error);
+                }
+            }
+        }
+
+        public void WriteEndResult()
+        {
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteEndElement();
             }
         }
     }

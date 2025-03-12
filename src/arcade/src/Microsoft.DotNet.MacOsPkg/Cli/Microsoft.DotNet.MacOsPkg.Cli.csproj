@@ -7,12 +7,13 @@
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
-    <Description>The MacOsPkg tool is used for unpacking and packing MacOS .pkg files and nested .app bundles.</Description>
+    <Description>The MacOsPkg CLI tool is used for unpacking, packing, and validating MacOS .pkg files and nested .app bundles.</Description>
     <PackageTags>Arcade Build Tool MacOS Pkg</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
     <PackageReference Include="System.CommandLine" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
   </ItemGroup>
 
@@ -20,4 +21,5 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-macos-pkg</ToolCommandName>
   </PropertyGroup>
+
 </Project>

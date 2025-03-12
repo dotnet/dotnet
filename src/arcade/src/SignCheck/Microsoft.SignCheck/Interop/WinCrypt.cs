@@ -161,6 +161,7 @@ namespace Microsoft.SignCheck.Interop
         public const int CMSG_SIGNER_CERT_ID_PARAM = 38;
         public const int CMSG_CMS_SIGNER_INFO_PARAM = 39;
 
+        public const string SPC_INDIRECT_DATA_OBJID = "1.3.6.1.4.1.311.2.1.4";
         public const string szOID_RSA_signingTime = "1.2.840.113549.1.9.5";
         public const string szOID_RSA_counterSign = "1.2.840.113549.1.9.6";
         public const string szOID_RFC3161_counterSign = "1.3.6.1.4.1.311.3.3.1";

@@ -107,6 +107,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             collection.TryAddSingleton<IBuildModelFactory, BuildModelFactory>();
             collection.TryAddSingleton<IBlobArtifactModelFactory, BlobArtifactModelFactory>();
             collection.TryAddSingleton<IPackageArtifactModelFactory, PackageArtifactModelFactory>();
+            collection.TryAddSingleton<IPdbArtifactModelFactory, PdbArtifactModelFactory>();
             collection.TryAddSingleton<INupkgInfoFactory, NupkgInfoFactory>();
             collection.TryAddSingleton<IPackageArchiveReaderFactory, PackageArchiveReaderFactory>();
             collection.TryAddSingleton<IFileSystem, FileSystem>();
@@ -129,13 +130,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                 }
                 
-                var buildModel = buildModelFactory.CreateModelFromItems(
+                var buildModel = buildModelFactory.CreateModel(
                     Artifacts,
-                    ItemsToSign,
-                    StrongNameSignInfo,
-                    FileSignInfo,
-                    FileExtensionSignInfo,
-                    CertificatesSignInfo,
+                    ArtifactVisibility.All,
                     BuildId,
                     BuildData,
                     RepoUri,

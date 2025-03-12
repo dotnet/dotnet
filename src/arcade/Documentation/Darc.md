@@ -418,10 +418,6 @@ PS C:\enlistments\arcade> cat .\eng\Version.Details.xml
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>14d1133b6074b463784a7adbbf385df0462f4010</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.0.0-beta.19060.8">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>67384d20d310611afc1c2b4dd3b953fda182def4</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.DotNet.SignTool" Version="1.0.0-beta.19080.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>14d1133b6074b463784a7adbbf385df0462f4010</Sha>
@@ -1086,10 +1082,6 @@ PS D:\enlistments\arcade> cat .\eng\Version.Details.xml
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>14d1133b6074b463784a7adbbf385df0462f4010</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.0.0-beta.19060.8">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>67384d20d310611afc1c2b4dd3b953fda182def4</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.DotNet.SignTool" Version="1.0.0-beta.19080.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>14d1133b6074b463784a7adbbf385df0462f4010</Sha>
@@ -1129,10 +1121,6 @@ PS D:\enlistments\arcade> cat .\eng\Version.Details.xml
     <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="2.2.0-beta.19080.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>14d1133b6074b463784a7adbbf385df0462f4010</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.0.0-beta.19060.8">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>67384d20d310611afc1c2b4dd3b953fda182def4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.SignTool" Version="1.0.0-beta.19080.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
@@ -2041,12 +2029,6 @@ Name:    Microsoft.DotNet.Build.Tasks.Feed
 Version: 2.2.0-beta.19081.3
 Repo:    https://github.com/dotnet/arcade
 Commit:  1e859f1c17fffbe9c4fb6bbfc0fc71cd0c56563b
-Type:    Toolset
-
-Name:    Microsoft.DotNet.Maestro.Tasks
-Version: 1.0.0-beta.19060.8
-Repo:    https://github.com/dotnet/arcade
-Commit:  67384d20d310611afc1c2b4dd3b953fda182def4
 Type:    Toolset
 ```
 

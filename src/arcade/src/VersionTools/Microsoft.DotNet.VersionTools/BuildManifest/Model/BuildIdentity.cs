@@ -12,7 +12,9 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
     {
         UnsupportedV1 = 1,
         UnsupportedV2 = 2,
-        Latest = 3
+        V3 = 3,
+        Latest = V3,
+        Dev = 4
     }
 
     public class BuildIdentity
@@ -62,6 +64,100 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
         {
             get { return Attributes.GetOrDefault(nameof(Commit)); }
             set { Attributes[nameof(Commit)] = value; }
+        }
+
+        public string AzureDevOpsRepository
+        {
+            get { return Attributes.GetOrDefault(nameof(AzureDevOpsRepository)); }
+            set { Attributes[nameof(AzureDevOpsRepository)] = value; }
+        }
+
+        public string AzureDevOpsBranch
+        {
+            get { return Attributes.GetOrDefault(nameof(AzureDevOpsBranch)); }
+            set { Attributes[nameof(AzureDevOpsBranch)] = value; }
+        }
+
+        public string AzureDevOpsBuildNumber
+        {
+            get { return Attributes.GetOrDefault(nameof(AzureDevOpsBuildNumber)); }
+            set { Attributes[nameof(AzureDevOpsBuildNumber)] = value; }
+        }
+
+        public string AzureDevOpsAccount
+        {
+            get { return Attributes.GetOrDefault(nameof(AzureDevOpsAccount)); }
+            set { Attributes[nameof(AzureDevOpsAccount)] = value; }
+        }
+
+        public string AzureDevOpsProject
+        {
+            get { return Attributes.GetOrDefault(nameof(AzureDevOpsProject)); }
+            set { Attributes[nameof(AzureDevOpsProject)] = value; }
+        }
+
+        public int? AzureDevOpsBuildDefinitionId
+        {
+            get
+            {
+                string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildDefinitionId));
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    return null;
+                }
+                else
+                {
+                    return int.Parse(value);
+                }
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    Attributes.Remove(nameof(AzureDevOpsBuildDefinitionId));
+                }
+                else
+                {
+                    Attributes[nameof(AzureDevOpsBuildDefinitionId)] = value.ToString();
+                }
+            }
+        }
+
+        public int? AzureDevOpsBuildId
+        {
+            get
+            {
+                string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildId));
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    return null;
+                }
+                else
+                {
+                    return int.Parse(value);
+                }
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    Attributes.Remove(nameof(AzureDevOpsBuildId));
+                }
+                else
+                {
+                    Attributes[nameof(AzureDevOpsBuildId)] = value.ToString();
+                }
+            }
+        }
+
+        public string InitialAssetsLocation
+        {
+            get { return Attributes.GetOrDefault(nameof(InitialAssetsLocation)); }
+            set { Attributes[nameof(InitialAssetsLocation)] = value; }
         }
 
         public bool IsStable

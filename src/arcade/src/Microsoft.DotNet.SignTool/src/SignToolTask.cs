@@ -124,6 +124,11 @@ namespace Microsoft.DotNet.SignTool
         public string DotNetPath { get; set; }
 
         /// <summary>
+        /// Verbosity level for MSBuild.
+        /// </summary>
+        public string MSBuildVerbosity { get; set; } = "quiet";
+
+        /// <summary>
         /// Path to sn.exe. Required if strong name signing files locally is needed.
         /// </summary>
         public string SNBinaryPath { get; set; }
@@ -232,7 +237,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();
@@ -402,7 +407,6 @@ namespace Microsoft.DotNet.SignTool
 
         private readonly HashSet<string> specialExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            ".azl.rpm",
             ".tar.gz"
         };
 

@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Microsoft.DotNet.MacOsPkg
+namespace Microsoft.DotNet.MacOsPkg.Core
 {
     internal static class AppBundle
     {
