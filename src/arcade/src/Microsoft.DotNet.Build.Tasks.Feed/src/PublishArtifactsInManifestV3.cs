@@ -181,7 +181,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                 }
 
-                CheckForStableAssetsInNonIsolatedFeeds();
+                if (!BuildModel.Identity.IsReleaseOnlyPackageVersion && !SkipSafetyChecks)
+                {
+                    CheckForStableAssetsInNonIsolatedFeeds();
+                }
 
                 if (Log.HasLoggedErrors)
                 {

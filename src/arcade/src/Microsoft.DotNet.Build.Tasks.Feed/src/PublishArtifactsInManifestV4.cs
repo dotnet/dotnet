@@ -140,11 +140,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     var targetFeedsSetup = new SetupTargetFeedConfigV4(
                         targetChannelConfig: targetChannelConfig,
+                        buildModel: BuildModel,
                         isInternalBuild: targetChannelConfig.IsInternal,
-                        isStableBuild: BuildModel.Identity.IsStable,
                         repositoryName: BuildModel.Identity.Name,
                         commitSha: BuildModel.Identity.Commit,
-                        publishInstallersAndChecksums: PublishInstallersAndChecksums,
                         feedKeys: FeedKeys,
                         feedSasUris: FeedSasUris,
                         feedOverrides: AllowFeedOverrides ? FeedOverrides : Array.Empty<ITaskItem>(),
@@ -177,7 +176,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                 }
 
-                CheckForStableAssetsInNonIsolatedFeeds();
+                if (!SkipSafetyChecks)
+                {
+                    CheckForStableAssetsInNonIsolatedFeeds();
+                }
 
                 if (Log.HasLoggedErrors)
                 {
@@ -217,6 +219,21 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string GetFeed(string feed, string feedOverride)
         {
             return (AllowFeedOverrides && !string.IsNullOrEmpty(feedOverride)) ? feedOverride : feed;
+        }
+
+        protected override HashSet<PackageArtifactModel> SplitPackageByAssetSelection(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
+        {
+            return feedConfig.AssetSelection switch
+            {
+                AssetSelection.All => packages,
+                AssetSelection.NonShippingOnly => packages.Where(p => p.NonShipping && p.CouldBeStable != true).ToHashSet(),
+                AssetSelection.ShippingOnly => packages.Where(p => !p.NonShipping && p.CouldBeStable != true).ToHashSet(),
+                AssetSelection.CouldBeStable => packages.Where(p => p.CouldBeStable == true).ToHashSet(),
+
+                // Throw NIE here instead of logging an error because error would have already been logged in the
+                // parser for the user.
+                _ => throw new NotImplementedException($"Unknown asset selection type '{feedConfig.AssetSelection}'")
+            };
         }
 
         public PublishArtifactsInManifestV4(AssetPublisherFactory assetPublisherFactory = null) : base(assetPublisherFactory)

@@ -34,10 +34,28 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
             set { Attributes[nameof(OriginBuildName)] = value; }
         }
 
-        public string CouldBeStable
+        public bool? CouldBeStable
         {
-            get { return Attributes.GetOrDefault(nameof(CouldBeStable)); }
-            set { Attributes[nameof(CouldBeStable)] = value; }
+            get
+            {
+                string val = Attributes.GetOrDefault(nameof(CouldBeStable));
+                if (!string.IsNullOrEmpty(val))
+                {
+                    return bool.Parse(val);
+                }
+                return null;
+            }
+            set
+            {
+                if (!value.HasValue)
+                {
+                    Attributes.Remove(nameof(CouldBeStable));
+                }
+                else
+                {
+                    Attributes[nameof(CouldBeStable)] = value.Value.ToString();
+                }
+            }
         }
 
         public override string ToString() => $"Package {Id} {Version}";

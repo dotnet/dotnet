@@ -321,22 +321,22 @@
     </ItemGroup>
 
     <!-- Propagate stability data to the asset level for packages. We do this so that VMR builds which have some repo builds that are not stable, and others that are, do not end up having to use the default logic
-          where ALL assets that are shipping in a stable build go to isolated feeds. Instead, we can just choose CouldBeStable==true, CouldBeStable==false.
-          This only applies currently to Packages. Blobs are required to provide paths that are always non-stable. Pdbs don't have a stability concept.
+         where ALL assets that are shipping in a stable build go to isolated feeds. Instead, we can just choose CouldBeStable==true, CouldBeStable==false.
+         This only applies currently to Packages. Blobs are required to provide paths that are always non-stable. Pdbs don't have a stability concept.
 
-          NOTE: This flag doesn't strictly mean that the package is stable versioned. A repo might suppress a stable version for a given package. -->
+         NOTE: This flag doesn't strictly mean that the package is stable versioned. A repo might suppress a stable version for a given package. -->
     <ItemGroup>
       <ItemsToPushToBlobFeed>
-			  <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
+			  <ManifestArtifactData Condition="'$(PublishingVersion)' == '4' and
+                                         '%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
 																			   '$(IsStableBuild)' == 'true' and
 																			   '$(IsReleaseOnlyPackageVersion)' != 'true' and
 																			   '%(ItemsToPushToBlobFeed.IsShipping)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=true</ManifestArtifactData>
-				<ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
-																				 (
-                                          '$(IsStableBuild)' != 'true' or
-																				  '$(IsReleaseOnlyPackageVersion)' == 'true' or
-																				  '%(ItemsToPushToBlobFeed.IsShipping)' != 'true'
-                                         )">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=false</ManifestArtifactData>
+        <!-- We narrowly set CouldBeStable=false only for packages we know won't generate a stable version because of IsReleaseOnlyPackageVersion == true.
+             This allows for the default 'stable asset to non-isolated feed' detection behavior to still pick up accidental cases of stabilization. -->
+				<ManifestArtifactData Condition="'$(PublishingVersion)' == '4' and
+                                         '%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
+																				 '$(IsReleaseOnlyPackageVersion)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=false</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 

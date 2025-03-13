@@ -5,6 +5,7 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using System;

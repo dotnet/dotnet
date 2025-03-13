@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -40,7 +39,7 @@ using MsBuildUtils = Microsoft.Build.Utilities;
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
 
-#if !NET472_OR_GREATER
+#if NET
     /// <summary>
     /// The intended use of this task is to push artifacts described in
     /// a build manifest to a static package feed.
@@ -376,11 +375,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         public void CheckForStableAssetsInNonIsolatedFeeds()
         {
-            if (BuildModel.Identity.IsReleaseOnlyPackageVersion || SkipSafetyChecks)
-            {
-                return;
-            }
-
             foreach (var packagesPerCategory in PackagesByCategory)
             {
                 var category = packagesPerCategory.Key;
@@ -391,13 +385,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     foreach (var feedConfig in feedConfigsForCategory)
                     {
                         // Look at the version numbers. If any of the packages here are stable and about to be published to a
-                        // non-isolated feed, then issue an error. Isolated feeds may recieve all packages.
+                        // non-isolated feed, then issue an error. Isolated feeds may receive all packages.
                         if (feedConfig.Isolated)
                         {
                             continue;
                         }
 
-                        HashSet<PackageArtifactModel> filteredPackages = FilterPackages(packages, feedConfig);
+                        HashSet<PackageArtifactModel> filteredPackages = SplitPackageByAssetSelection(packages, feedConfig);
 
                         foreach (var package in filteredPackages)
                         {
@@ -414,7 +408,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             // use by the public. This is for technical (can't overwrite the original packages) reasons as well as 
                             // to avoid confusion. Because .NET core generally brands its "final" bits without prerelease version
                             // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists.
-                            else if (!version.IsPrerelease)
+                            else if (!version.IsPrerelease && package.CouldBeStable != false)
                             {
                                 Log.LogError($"Package '{package.Id}' has stable version '{package.Version}' but is targeted at a non-isolated feed '{feedConfig.TargetURL}'");
                             }
@@ -778,7 +772,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 {
                     foreach (var feedConfig in feedConfigsForCategory)
                     {
-                        HashSet<PackageArtifactModel> filteredPackages = FilterPackages(packages, feedConfig);
+                        HashSet<PackageArtifactModel> filteredPackages = SplitPackageByAssetSelection(packages, feedConfig);
 
                         foreach (var package in filteredPackages)
                         {
@@ -817,7 +811,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             Log.LogMessage(MessageImportance.High, "\nCompleted publishing of packages: ");
         }
 
-        private HashSet<PackageArtifactModel> FilterPackages(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
+        protected virtual HashSet<PackageArtifactModel> SplitPackageByAssetSelection(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
         {
             return feedConfig.AssetSelection switch
             {

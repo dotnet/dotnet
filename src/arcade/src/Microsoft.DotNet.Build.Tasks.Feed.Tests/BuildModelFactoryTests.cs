@@ -923,7 +923,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 Id = "packageA",
                 Version = "1.0.0",
-                CouldBeStable = "true",
+                CouldBeStable = true,
                 NonShipping = false,
                 OriginalFile = "OriginalPathA",
                 Visibility = ArtifactVisibility.External,
@@ -937,7 +937,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 Id = "packageB",
                 Version = "2.0.0",
-                CouldBeStable = "false",
+                CouldBeStable = false,
                 NonShipping = true,
                 OriginalFile = "OriginalPathB",
                 Visibility = ArtifactVisibility.Internal,
@@ -1020,7 +1020,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 {
                     package.Id.Should().Be("packageA");
                     package.Version.Should().Be("1.0.0");
-                    package.CouldBeStable.Should().Be("true");
+                    package.CouldBeStable.Should().Be(true);
                     package.NonShipping.Should().BeFalse();
                     package.Visibility.Should().Be(ArtifactVisibility.External);
                     package.OriginalFile.Should().Be("OriginalPathA");
@@ -1033,7 +1033,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 {
                     package.Id.Should().Be("packageB");
                     package.Version.Should().Be("2.0.0");
-                    package.CouldBeStable.Should().Be("false");
+                    package.CouldBeStable.Should().Be(false);
                     package.NonShipping.Should().BeTrue();
                     package.Visibility.Should().Be(ArtifactVisibility.Internal);
                     package.OriginalFile.Should().Be("OriginalPathB");
