@@ -74,7 +74,7 @@
   <!-- Dependencies from maintenance-packages -->
   <PropertyGroup>
     <SystemBuffersVersion>4.6.0</SystemBuffersVersion>
-    <SystemMemoryVersion>4.6.0</SystemMemoryVersion>
+    <SystemMemoryVersion>4.6.1</SystemMemoryVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
   <PropertyGroup>
