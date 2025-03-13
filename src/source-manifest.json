@@ -113,11 +113,11 @@
       "commitSha": "5ff417fd7fbff9bbd3c66f35a1721ddaa37840eb"
     },
     {
-      "packageVersion": "10.0.0-preview.25156.1",
-      "barId": 259083,
+      "packageVersion": "10.0.0-preview.25162.1",
+      "barId": 260106,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "4e27ef46b5c19d3e0c06116cfbf52ce41b3c5d0f"
+      "commitSha": "a266992976e23ba43d226d13dd4fcdc72bd0c506"
     },
     {
       "packageVersion": null,
