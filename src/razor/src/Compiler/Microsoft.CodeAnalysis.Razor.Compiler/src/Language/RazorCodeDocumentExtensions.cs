@@ -202,26 +202,6 @@ public static class RazorCodeDocumentExtensions
         document.Items[typeof(RazorCSharpDocument)] = csharp;
     }
 
-    public static string GetFileKind(this RazorCodeDocument document)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        return (string)document.Items[typeof(FileKinds)];
-    }
-
-    public static void SetFileKind(this RazorCodeDocument document, string fileKind)
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        document.Items[typeof(FileKinds)] = fileKind;
-    }
-
     public static string GetCssScope(this RazorCodeDocument document)
     {
         if (document == null)
@@ -360,7 +340,7 @@ public static class RazorCodeDocumentExtensions
                 appendSuffix = true;
 
                 // Empty RootNamespace is allowed only in components.
-                if (!FileKinds.IsComponent(codeDocument.GetFileKind()) && string.IsNullOrEmpty(baseNamespace))
+                if (!FileKinds.IsComponent(codeDocument.FileKind) && string.IsNullOrEmpty(baseNamespace))
                 {
                     @namespace = null;
                     return false;

@@ -65,8 +65,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
             Context = new VSInternalCodeActionContext()
         };
 
-        var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents, fileKind: FileKinds.Legacy);
 
         var provider = new ExtractToComponentCodeActionProvider();
 
@@ -611,19 +610,23 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         string filePath,
         string text,
         string? relativePath = null,
+        string? fileKind = null,
         bool supportsFileCreation = true)
     {
         relativePath ??= filePath;
+        fileKind ??= FileKinds.Component;
 
         var source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(filePath, relativePath));
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Default.WithDirectives(ComponentCodeDirective.Directive, FunctionsDirective.Directive),
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKind, builder =>
+            {
+                builder.Directives = [ComponentCodeDirective.Directive, FunctionsDirective.Directive];
+            }),
             codeGenerationOptions: RazorCodeGenerationOptions.Default.WithRootNamespace("ExtractToComponentTest"));
 
         var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
 
-        codeDocument.SetFileKind(FileKinds.Component);
         codeDocument.SetSyntaxTree(syntaxTree);
 
         var documentSnapshot = new StrictMock<IDocumentSnapshot>();

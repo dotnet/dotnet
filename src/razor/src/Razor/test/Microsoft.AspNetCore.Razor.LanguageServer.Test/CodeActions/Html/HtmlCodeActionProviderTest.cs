@@ -41,7 +41,6 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var documentMappingService = StrictMock.Of<IEditMappingService>();
         var provider = new HtmlCodeActionProvider(documentMappingService);
@@ -73,7 +72,6 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var remappedEdit = new WorkspaceEdit
         {
@@ -156,7 +154,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
                 builder.UseRoslynTokenizer = true;
             });
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: default, tagHelpers);
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock

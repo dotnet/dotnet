@@ -26,7 +26,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        if (!FileKinds.IsComponent(context.CodeDocument.GetFileKind()))
+        if (!FileKinds.IsComponent(context.CodeDocument.FileKind))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }

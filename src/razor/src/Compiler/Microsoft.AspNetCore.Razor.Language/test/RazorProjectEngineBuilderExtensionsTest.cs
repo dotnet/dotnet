@@ -121,7 +121,7 @@ public class RazorProjectEngineBuilderExtensionsTest
         });
 
         var features = projectEngine.Engine.GetFeatures<IConfigureRazorCodeGenerationOptionsFeature>().OrderByAsArray(static x => x.Order);
-        var builder = new RazorCodeGenerationOptions.Builder(RazorLanguageVersion.Latest, FileKinds.Legacy);
+        var builder = new RazorCodeGenerationOptions.Builder();
 
         foreach (var feature in features)
         {

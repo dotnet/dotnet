@@ -157,7 +157,7 @@ public static class RazorProjectEngineBuilderExtensions
 
         // This will convert any "latest", "default" or "LatestMajor" LanguageVersions into their numerical equivalent.
         var effectiveCSharpLanguageVersion = LanguageVersionFacts.MapSpecifiedToEffectiveVersion(csharpLanguageVersion);
-        builder.Features.Add(new ConfigureParserForCSharpVersionFeature(effectiveCSharpLanguageVersion));
+        builder.Features.Add(new ConfigureParserForCSharpVersionFeature(builder.Configuration.LanguageVersion, effectiveCSharpLanguageVersion));
 
         return builder;
     }
@@ -199,20 +199,21 @@ public static class RazorProjectEngineBuilderExtensions
         }
     }
 
-    private sealed class ConfigureParserForCSharpVersionFeature(LanguageVersion languageVersion) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
+    private sealed class ConfigureParserForCSharpVersionFeature(
+        RazorLanguageVersion razorLanguageVersion,
+        LanguageVersion csharpLanguageVersion)
+        : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
     {
-        public LanguageVersion CSharpLanguageVersion { get; } = languageVersion;
-
         public int Order { get; set; }
 
         public void Configure(RazorCodeGenerationOptions.Builder builder)
         {
-            if (builder.LanguageVersion.Major is < 3)
+            if (razorLanguageVersion.Major is < 3)
             {
                 // Prior to 3.0 there were no C# version specific controlled features. Suppress nullability enforcement.
                 builder.SuppressNullabilityEnforcement = true;
             }
-            else if (CSharpLanguageVersion < LanguageVersion.CSharp8)
+            else if (csharpLanguageVersion < LanguageVersion.CSharp8)
             {
                 // Having nullable flags < C# 8.0 would cause compile errors.
                 builder.SuppressNullabilityEnforcement = true;
@@ -231,13 +232,13 @@ public static class RazorProjectEngineBuilderExtensions
                 builder.SuppressNullabilityEnforcement = false;
             }
 
-            if (builder.LanguageVersion.Major is >= 5)
+            if (razorLanguageVersion.Major is >= 5)
             {
                 // This is a useful optimization but isn't supported by older framework versions
                 builder.OmitMinimizedComponentAttributeValues = true;
             }
 
-            if (CSharpLanguageVersion >= LanguageVersion.CSharp10)
+            if (csharpLanguageVersion >= LanguageVersion.CSharp10)
             {
                 builder.UseEnhancedLinePragma = true;
             }

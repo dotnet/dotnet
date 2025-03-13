@@ -49,6 +49,14 @@ public sealed partial class RazorParserOptions
         _flags = flags;
     }
 
+    public static RazorParserOptions Create(RazorLanguageVersion languageVersion, string fileKind, Action<Builder>? configure = null)
+    {
+        var builder = new Builder(languageVersion, fileKind);
+        configure?.Invoke(builder);
+
+        return builder.ToOptions();
+    }
+
     public bool DesignTime
         => _flags.IsFlagSet(Flags.DesignTime);
 

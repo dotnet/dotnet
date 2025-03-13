@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -59,7 +60,6 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -89,7 +89,6 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -116,7 +115,6 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(13, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -148,7 +146,6 @@ $$Path;
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(13, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -181,7 +178,6 @@ $$Path;
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(13, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -211,7 +207,6 @@ $$Path;
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -247,7 +242,6 @@ $$Path;
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var options = new ConfigurableLanguageServerFeatureOptions(new[] { $"--{nameof(ConfigurableLanguageServerFeatureOptions.ShowAllCSharpCodeActions)}" });
         var provider = new CSharpCodeActionProvider(options);
@@ -292,7 +286,6 @@ $$Path;
         };
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new CSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
@@ -326,7 +319,8 @@ $$Path;
                 builder.UseRoslynTokenizer = true;
             });
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
+
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

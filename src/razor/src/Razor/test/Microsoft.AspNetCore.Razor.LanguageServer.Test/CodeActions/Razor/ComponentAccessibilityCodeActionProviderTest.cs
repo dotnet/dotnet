@@ -70,8 +70,13 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             Context = new VSInternalCodeActionContext()
         };
 
-        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(0, 0));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(
+            request,
+            cursorPosition,
+            documentPath,
+            contents,
+            new SourceSpan(0, 0),
+            fileKind: FileKinds.Legacy);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new FileSystem());
 
@@ -423,7 +428,14 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             });
     }
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, int absoluteIndex, string filePath, string text, SourceSpan componentSourceSpan, bool supportsFileCreation = true)
+    private static RazorCodeActionContext CreateRazorCodeActionContext(
+        VSCodeActionParams request,
+        int absoluteIndex,
+        string filePath,
+        string text,
+        SourceSpan componentSourceSpan,
+        string? fileKind = null,
+        bool supportsFileCreation = true)
     {
         var shortComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
         shortComponent.CaseSensitive = true;
@@ -455,7 +467,10 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
                 builder.UseRoslynTokenizer = true;
             });
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
+
+        fileKind ??= FileKinds.Component;
+
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

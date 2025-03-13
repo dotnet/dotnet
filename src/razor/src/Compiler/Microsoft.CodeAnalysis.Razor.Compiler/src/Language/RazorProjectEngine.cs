@@ -191,12 +191,11 @@ public sealed class RazorProjectEngine
         Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration)
     {
         var parserOptions = ComputeParserOptions(fileKind, configureParser);
-        var codeGenerationOptions = ComputeCodeGenerationOptions(fileKind, configureCodeGeneration);
+        var codeGenerationOptions = ComputeCodeGenerationOptions(configureCodeGeneration);
 
         var codeDocument = RazorCodeDocument.Create(source, importSources, parserOptions, codeGenerationOptions);
 
         codeDocument.SetTagHelpers(tagHelpers);
-        codeDocument.SetFileKind(fileKind);
 
         if (cssScope != null)
         {
@@ -234,7 +233,7 @@ public sealed class RazorProjectEngine
             configureParser?.Invoke(builder);
         });
 
-        var codeGenerationOptions = ComputeCodeGenerationOptions(fileKind, builder =>
+        var codeGenerationOptions = ComputeCodeGenerationOptions(builder =>
         {
             builder.DesignTime = true;
             builder.SuppressChecksum = true;
@@ -246,7 +245,6 @@ public sealed class RazorProjectEngine
         var codeDocument = RazorCodeDocument.Create(sourceDocument, importSources, parserOptions, codeGenerationOptions);
 
         codeDocument.SetTagHelpers(tagHelpers);
-        codeDocument.SetFileKind(fileKind);
 
         return codeDocument;
     }
@@ -265,10 +263,10 @@ public sealed class RazorProjectEngine
         return builder.ToOptions();
     }
 
-    private RazorCodeGenerationOptions ComputeCodeGenerationOptions(string fileKind, Action<RazorCodeGenerationOptions.Builder>? configure)
+    private RazorCodeGenerationOptions ComputeCodeGenerationOptions(Action<RazorCodeGenerationOptions.Builder>? configure)
     {
         var configuration = Configuration;
-        var builder = new RazorCodeGenerationOptions.Builder(configuration.LanguageVersion, fileKind)
+        var builder = new RazorCodeGenerationOptions.Builder()
         {
             SuppressAddComponentParameter = configuration.SuppressAddComponentParameter
         };

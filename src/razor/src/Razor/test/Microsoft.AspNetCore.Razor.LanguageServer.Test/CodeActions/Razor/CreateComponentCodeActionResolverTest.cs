@@ -49,8 +49,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
         var contents = $"@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetFileKind(FileKinds.Legacy);
+        var codeDocument = CreateCodeDocument(contents, fileKind: FileKinds.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var resolver = new CreateComponentCodeActionResolver(TestLanguageServerFeatureOptions.Instance);
@@ -129,14 +128,24 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         Assert.Contains("@namespace Another.Namespace", editNewComponentEdit.NewText, StringComparison.Ordinal);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text)
+    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
     {
-        var projectItem = new TestRazorProjectItem("c:/Test.razor", "c:/Test.razor", "Test.razor") { Content = text };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) => builder.SetRootNamespace("test.Pages"));
+        fileKind ??= FileKinds.Component;
 
-        var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Component);
+        var projectItem = new TestRazorProjectItem(
+            filePath: "c:/Test.razor",
+            physicalPath: "c:/Test.razor",
+            relativePhysicalPath: "Test.razor",
+            fileKind: fileKind)
+        {
+            Content = text
+        };
 
-        return codeDocument;
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
+        {
+            builder.SetRootNamespace("test.Pages");
+        });
+
+        return projectEngine.Process(projectItem);
     }
 }

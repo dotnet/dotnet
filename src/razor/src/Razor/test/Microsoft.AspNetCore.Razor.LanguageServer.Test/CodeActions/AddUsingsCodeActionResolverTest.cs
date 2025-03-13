@@ -166,14 +166,22 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             @model IndexModel
             """;
 
-        var projectItem = new TestRazorProjectItem("c:/Test.cshtml", "c:/Test.cshtml", "Test.cshtml") { Content = contents };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) =>
+        var projectItem = new TestRazorProjectItem(
+            filePath: "c:/Test.cshtml",
+            physicalPath: "c:/Test.cshtml",
+            relativePhysicalPath: "Test.cshtml",
+            fileKind: FileKinds.Legacy)
+        {
+            Content = contents
+        };
+
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
         {
             PageDirective.Register(builder);
             ModelDirective.Register(builder);
         });
+
         var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var resolver = new AddUsingsCodeActionResolver();
@@ -390,11 +398,21 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     private static RazorCodeDocument CreateCodeDocument(string text)
     {
         var fileName = "Test.razor";
-        var filePath = "c:/{fileName}";
-        var projectItem = new TestRazorProjectItem(filePath, filePath, fileName) { Content = text };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) => PageDirective.Register(builder));
-        var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Component);
-        return codeDocument;
+        var filePath = $"c:/{fileName}";
+        var projectItem = new TestRazorProjectItem(
+            filePath,
+            physicalPath: filePath,
+            relativePhysicalPath: fileName,
+            fileKind: FileKinds.Component)
+        {
+            Content = text
+        };
+
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
+        {
+            PageDirective.Register(builder);
+        });
+
+        return projectEngine.Process(projectItem);
     }
 }
