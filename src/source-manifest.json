@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "9.0.3-servicing.25112.20",
+      "packageVersion": "9.0.4-servicing.25164.3",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "b96167fbfe8bd45d94e4dcda42c7d09eb5745459"
+      "commitSha": "d5dc8a13cc618b9cbdc1e5744b4806c594d49553"
     },
     {
       "packageVersion": "0.11.5-alpha.25112.2",
@@ -43,10 +43,10 @@
       "commitSha": "513150c2f25077b1fcb194407e53c433c975f39b"
     },
     {
-      "packageVersion": "9.0.3",
+      "packageVersion": "9.0.4",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "68c7e19496df80819410fc6de1682a194aad33d3"
+      "commitSha": "9275e9ac55e413546a09551c29d5227d6d009747"
     },
     {
       "packageVersion": "9.0.4-servicing.25157.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "35b2229be054baaec115a252f60c0056ea703732"
+      "commitSha": "0308b89e31901496df0350cf59b98f18add1bd3d"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -185,7 +185,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "e235eb34c6c4fed790ccdad4b16394301360dcd4"
+      "commitSha": "24a9e940d481f992ba852599c78bb2217362847b"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
