@@ -39,6 +39,57 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Fact]
+        public void GetRestoreAuditProperties_MultiTargetingHasDifferentModeValues_ReturnsAuditModeAllWhenDefined()
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAuditMode] = "direct"
+                    }),
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAuditMode] = "all"
+                    }),
+            };
+
+            // Act
+            var actual = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks);
+
+            // Assert
+            actual.AuditMode.Should().Be("all");
+        }
+
+        [Fact]
+        public void GetRestoreAuditProperties_MultiTargetingHasDifferentModeValues_ThrowsWhenValuesAreDifferentAndNoneAreAll()
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAuditMode] = "one"
+                    }),
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAuditMode] = "two"
+                    }),
+            };
+
+            // Act && Assert
+            Assert.Throws<InvalidOperationException>(() => VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks));
+        }
+
+        [Fact]
         public void GetRestoreAuditProperties_WithEmptySuppressionsList_ReturnsNull()
         {
             // Arrange

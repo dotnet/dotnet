@@ -30,7 +30,6 @@
     <ProjectReference Include="..\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
     <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
     <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj" />
     <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
   </ItemGroup>
 

@@ -1,1 +1,2 @@
 #nullable enable
+~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> allItems) -> NuGet.ProjectModel.RestoreAuditProperties

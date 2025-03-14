@@ -923,7 +923,7 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, projectStyle);
 
-            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, GetAuditSuppressions(project));
+            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, projectsByTargetFramework.Values);
 
             List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
 
