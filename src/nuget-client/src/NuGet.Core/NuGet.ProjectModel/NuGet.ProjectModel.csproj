@@ -49,4 +49,8 @@
   <ItemGroup>
     <InternalsVisibleTo Include="NuGet.ProjectModel.Test" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+  </ItemGroup>
 </Project>
