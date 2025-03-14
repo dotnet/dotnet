@@ -55,10 +55,6 @@
       <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
     </KnownFrameworkReference>
 
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
-    </KnownFrameworkReference>
-
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'netstandard2.1'">2.1.0</TargetingPackVersion>
     </KnownFrameworkReference>

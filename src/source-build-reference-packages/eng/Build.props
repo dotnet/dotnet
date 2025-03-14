@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
-    <!-- The BuildStep attribute makes the targeting packs build first. -->
-    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" BuildStep="targetingpacks" />
+    <!-- The BuildInParallel="false" flag makes sure that the targeting packs get built first. -->
+    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" BuildInParallel="false" />
     <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" />
   </ItemGroup>
