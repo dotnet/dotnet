@@ -39,12 +39,15 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
         VSInternalCompletionList initialCompletionList,
         RazorCompletionOptions razorCompletionOptions)
     {
+        const string FilePath = "C:/path/to/file.cshtml";
+
         var completionContext = new VSInternalCompletionContext();
-        var codeDocument = CreateCodeDocument(documentContent);
-        var documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml", codeDocument);
+        var codeDocument = CreateCodeDocument(documentContent, filePath: FilePath);
+        var documentContext = TestDocumentContext.Create(FilePath, codeDocument);
         var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory);
         var clientCapabilities = new VSInternalClientCapabilities();
         var completionList = await provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex,
             completionContext,
             documentContext,

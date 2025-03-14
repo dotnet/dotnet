@@ -50,6 +50,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 1,
             completionContext,
             documentContext,
@@ -83,6 +84,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 1,
             completionContext,
             documentContext,
@@ -117,6 +119,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 1,
             completionContext,
             documentContext,
@@ -146,6 +149,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var delegatedCompletionList = await provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 1,
             completionContext,
             documentContext,
@@ -199,6 +203,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var completionList = await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 11,
             completionContext,
             documentContext,
@@ -228,6 +233,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 10,
             completionContext,
             documentContext,
@@ -264,6 +270,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 
         // Act
         await _provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: 10,
             completionContext,
             documentContext,
@@ -337,6 +344,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         };
 
         await completionProvider.GetCompletionListAsync(
+            codeDocument,
             cursorPosition,
             completionContext,
             documentContext,
@@ -380,6 +388,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         var provider = TestDelegatedCompletionListProvider.Create(csharpServer, LoggerFactory, DisposalToken);
 
         var completionList = await provider.GetCompletionListAsync(
+            codeDocument,
             absoluteIndex: cursorPosition,
             completionContext,
             documentContext,

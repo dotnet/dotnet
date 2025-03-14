@@ -233,7 +233,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     private async Task<VSInternalCompletionItem> ResolveCompletionItemAsync(string content, string itemToResolve, CancellationToken cancellationToken)
     {
         TestFileMarkupParser.GetPosition(content, out var documentContent, out var cursorPosition);
-        var codeDocument = CreateCodeDocument(documentContent);
+        var codeDocument = CreateCodeDocument(documentContent, filePath: "C:/path/to/file.razor");
         await using var csharpServer = await CreateCSharpServerAsync(codeDocument);
 
         var server = TestDelegatedCompletionItemResolverServer.Create(csharpServer, DisposalToken);
@@ -288,6 +288,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var provider = TestDelegatedCompletionListProvider.Create(csharpServer, LoggerFactory, DisposalToken);
 
         var completionList = await provider.GetCompletionListAsync(
+            codeDocument,
             cursorPosition,
             completionContext,
             documentContext,

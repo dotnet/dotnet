@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -88,7 +89,8 @@ public class CompletionListProviderTest : LanguageServerTestBase
             _completionList = completionList;
         }
 
-        public override Task<VSInternalCompletionList> GetCompletionListAsync(
+        public override ValueTask<VSInternalCompletionList> GetCompletionListAsync(
+            RazorCodeDocument codeDocument,
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
             DocumentContext documentContext,
@@ -97,7 +99,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
             Guid correlationId,
             CancellationToken cancellationToken)
         {
-            return Task.FromResult(_completionList);
+            return new(_completionList);
         }
     }
 
@@ -113,16 +115,13 @@ public class CompletionListProviderTest : LanguageServerTestBase
             _completionList = completionList;
         }
 
-        public override Task<VSInternalCompletionList> GetCompletionListAsync(
+        public override VSInternalCompletionList GetCompletionList(
+            RazorCodeDocument codeDocument,
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
-            DocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
             HashSet<string> existingCompletions,
-            RazorCompletionOptions razorCompletionOptions,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_completionList);
-        }
+            RazorCompletionOptions razorCompletionOptions)
+            => _completionList;
     }
 }

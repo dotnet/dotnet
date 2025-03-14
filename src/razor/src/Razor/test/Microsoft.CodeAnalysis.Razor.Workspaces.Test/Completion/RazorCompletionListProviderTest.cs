@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -378,18 +377,17 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     [InlineData("@page\r\n<div></div>\r\n@f$$\r\n")]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/4547")]
     [WorkItem("https://github.com/dotnet/razor/issues/9955")]
-    public async Task GetCompletionListAsync_ProvidesDirectiveCompletionItems(string documentText)
+    public void GetCompletionList_ProvidesDirectiveCompletionItems(string documentText)
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         TestFileMarkupParser.GetPosition(documentText, out documentText, out var cursorPosition);
-        var codeDocument = CreateCodeDocument(documentText);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
+        var codeDocument = CreateCodeDocument(documentText, documentPath);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: cursorPosition, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: cursorPosition, _defaultCompletionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
 
@@ -402,22 +400,22 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task GetCompletionListAsync_ProvidesDirectiveCompletions_IncompleteTriggerOnDeletion()
+    public void GetCompletionListAsync_ProvidesDirectiveCompletions_IncompleteTriggerOnDeletion()
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var codeDocument = CreateCodeDocument("@");
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
+        var codeDocument = CreateCodeDocument("@", documentPath);
         var completionContext = new VSInternalCompletionContext()
         {
             TriggerKind = CompletionTriggerKind.TriggerForIncompleteCompletions,
             InvokeKind = VSInternalCompletionInvokeKind.Deletion,
         };
+
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, completionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -430,7 +428,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/4547")]
-    public async Task GetCompletionListAsync_ProvidesInjectOnIncomplete_KeywordIn()
+    public void GetCompletionList_ProvidesInjectOnIncomplete_KeywordIn()
     {
         // Arrange
         var documentPath = "C:/path/to/document.razor";
@@ -439,9 +437,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("@in");
+        var codeDocument = CreateCodeDocument("@in", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -449,8 +446,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         };
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, completionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -461,7 +458,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task GetCompletionListAsync_DoesNotProvideInjectOnInvoked()
+    public void GetCompletionList_DoesNotProvideInjectOnInvoked()
     {
         // Arrange
         var documentPath = "C:/path/to/document.razor";
@@ -470,9 +467,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("@inje");
+        var codeDocument = CreateCodeDocument("@inje", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -480,8 +476,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         };
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, completionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -490,7 +486,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/4547")]
-    public async Task GetCompletionListAsync_ProvidesInjectOnIncomplete()
+    public void GetCompletionList_ProvidesInjectOnIncomplete()
     {
         // Arrange
         var documentPath = "C:/path/to/document.razor";
@@ -499,9 +495,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("@inje");
+        var codeDocument = CreateCodeDocument("@inje", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -509,8 +504,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         };
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, completionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -522,7 +517,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
 
     // This is more of an integration test to validate that all the pieces work together
     [Fact]
-    public async Task GetCompletionListAsync_ProvidesTagHelperElementCompletionItems()
+    public void GetCompletionList_ProvidesTagHelperElementCompletionItems()
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
@@ -531,14 +526,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("<");
+        var codeDocument = CreateCodeDocument("<", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 1, _defaultCompletionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -547,7 +541,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
 
     // This is more of an integration test to validate that all the pieces work together
     [Fact]
-    public async Task GetCompletionListAsync_ProvidesTagHelperAttributeItems()
+    public void GetCompletionList_ProvidesTagHelperAttributeItems()
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
@@ -562,14 +556,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("<test  ");
+        var codeDocument = CreateCodeDocument("<test  ", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 6, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 6, _defaultCompletionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
@@ -577,7 +570,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task GetCompletionListAsync_ProvidesTagHelperAttributeItems_AttributeQuotesOff()
+    public void GetCompletionList_ProvidesTagHelperAttributeItems_AttributeQuotesOff()
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
@@ -592,9 +585,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.SetMetadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
-        var codeDocument = CreateCodeDocument("<test  ");
+        var codeDocument = CreateCodeDocument("<test  ", documentPath);
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.Create(documentPath, codeDocument);
 
         // Set up desired options
         var razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true);
@@ -603,18 +595,18 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         var provider = new RazorCompletionListProvider(completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 6, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, razorCompletionOptions, DisposalToken);
+        var completionList = provider.GetCompletionList(
+            codeDocument, absoluteIndex: 6, _defaultCompletionContext, _clientCapabilities, existingCompletions: null, razorCompletionOptions);
 
         // Assert
         Assert.NotNull(completionList);
         Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=$0");
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text)
+    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath)
     {
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var sourceDocument = TestRazorSourceDocument.Create(text);
+        var sourceDocument = TestRazorSourceDocument.Create(text, filePath: documentFilePath);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         codeDocument.SetSyntaxTree(syntaxTree);
         var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);

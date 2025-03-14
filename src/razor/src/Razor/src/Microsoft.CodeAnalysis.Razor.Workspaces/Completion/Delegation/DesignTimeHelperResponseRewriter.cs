@@ -3,12 +3,10 @@
 
 using System.Collections.Frozen;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -32,23 +30,24 @@ internal class DesignTimeHelperResponseRewriter : IDelegatedCSharpCompletionResp
         "BuildRenderTree"
     }.ToFrozenSet();
 
-    public async Task<VSInternalCompletionList> RewriteAsync(
+    public VSInternalCompletionList Rewrite(
         VSInternalCompletionList completionList,
+        RazorCodeDocument codeDocument,
         int hostDocumentIndex,
-        DocumentContext hostDocumentContext,
         Position projectedPosition,
-        RazorCompletionOptions completionOptions,
-        CancellationToken cancellationToken)
+        RazorCompletionOptions completionOptions)
     {
-        var syntaxTree = await hostDocumentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var owner = syntaxTree.Root.FindInnermostNode(hostDocumentIndex);
+        var owner = codeDocument
+            .GetRequiredSyntaxRoot()
+            .FindInnermostNode(hostDocumentIndex);
+
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");
             return completionList;
         }
 
-        var sourceText = await hostDocumentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var sourceText = codeDocument.Source.Text;
 
         // We should remove Razor design-time helpers from C#'s completion list. If the current identifier
         // being targeted does not start with a double underscore, we trim out all items starting with "__"

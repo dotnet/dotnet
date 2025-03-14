@@ -7,12 +7,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -48,7 +50,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider, triggerAndCommitCharacters);
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, triggerAndCommitCharacters, telemetryReporter: null, optionsMonitor);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, triggerAndCommitCharacters, NoOpTelemetryReporter.Instance, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -145,12 +147,13 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
             IDocumentMappingService documentMappingService,
             IClientConnection clientConnection,
             CompletionListCache completionListCache,
-            CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
-            : base(documentMappingService, clientConnection, completionListCache, completionTriggerAndCommitCharacters)
+            CompletionTriggerAndCommitCharacters triggerAndCommitCharacters)
+            : base(documentMappingService, clientConnection, completionListCache, triggerAndCommitCharacters)
         {
         }
 
-        public override Task<VSInternalCompletionList?> GetCompletionListAsync(
+        public override ValueTask<VSInternalCompletionList?> GetCompletionListAsync(
+            RazorCodeDocument codeDocument,
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
             DocumentContext documentContext,
@@ -158,11 +161,6 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
             RazorCompletionOptions completionOptions,
             Guid correlationId,
             CancellationToken cancellationToken)
-        {
-            return Task.FromResult<VSInternalCompletionList?>(
-                new VSInternalCompletionList
-                {
-                });
-        }
+            => new(new VSInternalCompletionList());
     }
 }

@@ -1,10 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
@@ -17,13 +15,12 @@ namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 /// </remarks>
 internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewriter
 {
-    public Task<VSInternalCompletionList> RewriteAsync(
+    public VSInternalCompletionList Rewrite(
         VSInternalCompletionList completionList,
+        RazorCodeDocument codeDocument,
         int hostDocumentIndex,
-        DocumentContext hostDocumentContext,
         Position projectedPosition,
-        RazorCompletionOptions completionOptions,
-        CancellationToken cancellationToken)
+        RazorCompletionOptions completionOptionsn)
     {
         using var items = new PooledArrayBuilder<CompletionItem>(completionList.Items.Length);
 
@@ -43,6 +40,6 @@ internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewri
             completionList.Items = items.ToArray();
         }
 
-        return Task.FromResult(completionList);
+        return completionList;
     }
 }
