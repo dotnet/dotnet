@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -17,6 +18,8 @@ internal static class CompletionListMerger
     private static readonly string s_data2Key = nameof(MergedCompletionListData.Data2);
     private static readonly object s_emptyData = new();
 
+    [return: NotNullIfNotNull(nameof(razorCompletionList))]
+    [return: NotNullIfNotNull(nameof(delegatedCompletionList))]
     public static VSInternalCompletionList? Merge(VSInternalCompletionList? razorCompletionList, VSInternalCompletionList? delegatedCompletionList)
     {
         if (razorCompletionList is null)

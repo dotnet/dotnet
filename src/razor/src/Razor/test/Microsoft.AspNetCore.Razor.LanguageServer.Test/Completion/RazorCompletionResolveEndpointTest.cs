@@ -1,14 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -34,7 +33,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
 
         _endpoint = new RazorCompletionResolveEndpoint(
             new AggregateCompletionItemResolver(
-                new[] { new TestCompletionItemResolver() },
+                [new TestCompletionItemResolver()],
                 LoggerFactory),
             _completionListCache,
             componentAvailabilityService);
@@ -46,7 +45,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
                 {
                     CompletionItem = new CompletionItemSetting()
                     {
-                        DocumentationFormat = new[] { MarkupKind.Markdown },
+                        DocumentationFormat = [MarkupKind.Markdown],
                     }
                 }
             }
@@ -74,7 +73,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = new[] { completionItem } };
+        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
         completionList.SetResultId(1337, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -91,8 +90,8 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = new[] { completionItem } };
-        var resultId = _completionListCache.Add(completionList, context: null);
+        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
+        var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
         completionList.SetResultId(resultId, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -101,6 +100,8 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
+        Assert.NotNull(resolvedItem);
+        Assert.NotNull(resolvedItem.Documentation);
         Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
     }
 
@@ -110,9 +111,9 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         await InitializeAsync();
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = new[] { completionItem } };
+        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
         completionList.SetResultId(/* Invalid */ 1337, completionSetting: null);
-        var resultId = _completionListCache.Add(completionList, context: null);
+        var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
         completionList.SetResultId(resultId, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -121,6 +122,8 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
+        Assert.NotNull(resolvedItem);
+        Assert.NotNull(resolvedItem.Documentation);
         Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
     }
 
@@ -130,14 +133,14 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         await InitializeAsync();
         var completionSetting = new VSInternalCompletionSetting() { CompletionList = new VSInternalCompletionListSetting() { Data = true } };
-        var completionList1 = new VSInternalCompletionList() { Items = Array.Empty<CompletionItem>() };
-        var completion1Context = new object();
+        var completionList1 = new VSInternalCompletionList() { Items = [] };
+        var completion1Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId1 = _completionListCache.Add(completionList1, completion1Context);
         completionList1.SetResultId(resultId1, completionSetting);
 
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList2 = new VSInternalCompletionList() { Items = new[] { completionItem } };
-        var completion2Context = new object();
+        var completionList2 = new VSInternalCompletionList() { Items = [completionItem] };
+        var completion2Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId2 = _completionListCache.Add(completionList2, completion2Context);
         completionList2.SetResultId(resultId2, completionSetting);
         var mergedCompletionList = CompletionListMerger.Merge(completionList1, completionList2);
@@ -150,6 +153,8 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
+        Assert.NotNull(resolvedItem);
+        Assert.NotNull(resolvedItem.Documentation);
         Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
         Assert.Same(completion2Context, resolvedItem.Data);
     }
@@ -158,16 +163,16 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         var serialized = JsonSerializer.Serialize(completionItem, SerializerOptions);
         var bridgedItem = JsonSerializer.Deserialize<VSInternalCompletionItem>(serialized, SerializerOptions);
-        return bridgedItem;
+        return bridgedItem.AssumeNotNull();
     }
 
     private class TestCompletionItemResolver : CompletionItemResolver
     {
-        public override Task<VSInternalCompletionItem> ResolveAsync(
+        public override Task<VSInternalCompletionItem?> ResolveAsync(
             VSInternalCompletionItem item,
             VSInternalCompletionList containingCompletionList,
-            object originalRequestContext,
-            VSInternalClientCapabilities clientCapabilities,
+            ICompletionResolveContext originalRequestContext,
+            VSInternalClientCapabilities? clientCapabilities,
             IComponentAvailabilityService componentAvailabilityService,
             CancellationToken cancellationToken)
         {
@@ -175,7 +180,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
             var documentationKind = completionSupportedKinds?.Contains(MarkupKind.Markdown) == true ? MarkupKind.Markdown : MarkupKind.PlainText;
             item.Documentation = "I was resolved using " + documentationKind.Value;
             item.Data = originalRequestContext;
-            return Task.FromResult(item);
+            return Task.FromResult<VSInternalCompletionItem?>(item);
         }
     }
 }

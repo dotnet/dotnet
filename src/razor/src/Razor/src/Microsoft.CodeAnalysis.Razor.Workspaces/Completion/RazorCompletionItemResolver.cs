@@ -17,7 +17,7 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem completionItem,
         VSInternalCompletionList containingCompletionList,
-        object? originalRequestContext,
+        ICompletionResolveContext originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)

@@ -8,17 +8,10 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class CompletionListCacheTest : ToolingTestBase
+public class CompletionListCacheTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly CompletionListCache _completionListCache;
-    private readonly object _context;
-
-    public CompletionListCacheTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _completionListCache = new CompletionListCache();
-        _context = new object();
-    }
+    private readonly CompletionListCache _completionListCache = new CompletionListCache();
+    private readonly ICompletionResolveContext _context = StrictMock.Of<ICompletionResolveContext>();
 
     [Fact]
     public void TryGet_SetCompletionList_ReturnsTrue()
@@ -28,12 +21,12 @@ public class CompletionListCacheTest : ToolingTestBase
         var resultId = _completionListCache.Add(completionList, _context);
 
         // Act
-        var result = _completionListCache.TryGet(resultId, out var cacheEntry);
+        var result = _completionListCache.TryGet(resultId, out var cachedCompletionList, out var context);
 
         // Assert
         Assert.True(result);
-        Assert.Same(completionList, cacheEntry.CompletionList);
-        Assert.Same(_context, cacheEntry.Context);
+        Assert.Same(completionList, cachedCompletionList);
+        Assert.Same(_context, context);
     }
 
     [Fact]
@@ -51,23 +44,24 @@ public class CompletionListCacheTest : ToolingTestBase
         var resultId = _completionListCache.Add(completionList, _context);
 
         // Act
-        var result = _completionListCache.TryGet(resultId, out var cacheEntry);
+        var result = _completionListCache.TryGet(resultId, out var cachedCompletionList, out var context);
 
         // Assert
         Assert.True(result);
-        Assert.Same(completionList, cacheEntry.CompletionList);
-        Assert.Same(_context, cacheEntry.Context);
+        Assert.Same(completionList, cachedCompletionList);
+        Assert.Same(_context, context);
     }
 
     [Fact]
     public void TryGet_UnknownCompletionList_ReturnsTrue()
     {
         // Act
-        var result = _completionListCache.TryGet(1234, out var cachedEntry);
+        var result = _completionListCache.TryGet(1234, out var cachedCompletionList, out var context);
 
         // Assert
         Assert.False(result);
-        Assert.Equal(default, cachedEntry);
+        Assert.Null(cachedCompletionList);
+        Assert.Null(context);
     }
 
     [Fact]
@@ -84,12 +78,12 @@ public class CompletionListCacheTest : ToolingTestBase
         }
 
         // Act
-        var result = _completionListCache.TryGet(initialCompletionListResultId, out var cachedEntry);
+        var result = _completionListCache.TryGet(initialCompletionListResultId, out var cachedCompletionList, out var context);
 
         // Assert
         Assert.True(result);
-        Assert.Same(initialCompletionList, cachedEntry.CompletionList);
-        Assert.Same(_context, cachedEntry.Context);
+        Assert.Same(initialCompletionList, cachedCompletionList);
+        Assert.Same(_context, context);
     }
 
     [Fact]
@@ -106,10 +100,11 @@ public class CompletionListCacheTest : ToolingTestBase
         }
 
         // Act
-        var result = _completionListCache.TryGet(initialCompletionListResultId, out var cachedEntry);
+        var result = _completionListCache.TryGet(initialCompletionListResultId, out var cachedCompletionList, out var context);
 
         // Assert
         Assert.False(result);
-        Assert.Equal(default, cachedEntry);
+        Assert.Null(cachedCompletionList);
+        Assert.Null(context);
     }
 }

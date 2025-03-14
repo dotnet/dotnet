@@ -1,18 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal class CompletionListCache
 {
-    private record struct Slot(
-        int Id,
-        VSInternalCompletionList CompletionList,
-        object? Context,
-        bool Used = true);
+    private record struct Slot(int Id, VSInternalCompletionList CompletionList, ICompletionResolveContext Context);
 
     // Internal for testing
     internal const int MaxCacheSize = 10;
@@ -25,13 +21,8 @@ internal class CompletionListCache
     private int _nextIndex;
     private int _nextId;
 
-    public int Add(VSInternalCompletionList completionList, object? context)
+    public int Add(VSInternalCompletionList completionList, ICompletionResolveContext context)
     {
-        if (completionList is null)
-        {
-            throw new ArgumentNullException(nameof(completionList));
-        }
-
         lock (_accessLock)
         {
             var index = _nextIndex++;
@@ -52,7 +43,7 @@ internal class CompletionListCache
         }
     }
 
-    public bool TryGet(int id, out (VSInternalCompletionList CompletionList, object? Context) result)
+    public bool TryGet(int id, [NotNullWhen(true)] out VSInternalCompletionList? completionList, [NotNullWhen(true)] out ICompletionResolveContext? context)
     {
         lock (_accessLock)
         {
@@ -74,14 +65,18 @@ internal class CompletionListCache
 
                 var slot = _items[index];
 
-                if (!slot.Used)
+                // CompletionList is annotated as non-nullable, but we are allocating an array of 10 items for our cache, so initially
+                // those array entries will be default. By checking for null here, we detect if we're hitting an unused part of the array
+                // so stop looping.
+                if (slot.CompletionList is null)
                 {
                     break;
                 }
 
                 if (slot.Id == id)
                 {
-                    result = (slot.CompletionList, slot.Context);
+                    completionList = slot.CompletionList;
+                    context = slot.Context;
                     return true;
                 }
 
@@ -89,7 +84,8 @@ internal class CompletionListCache
             }
 
             // A cache entry associated with the given id was not found.
-            result = default;
+            completionList = null;
+            context = null;
             return false;
         }
     }

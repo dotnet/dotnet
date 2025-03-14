@@ -937,9 +937,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         return false;
                     }
 
-                    switch (artifactInfo.resource.type)
+                    switch (artifactInfo.resource.type.ToLowerInvariant())
                     {
-                        case "Container":
+                        case "container":
                             string[] segment = artifactInfo.resource.data.Split('/');
                             if (segment.Length < 2)
                             {
@@ -953,11 +953,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                                 AzureDevOpsOrg,
                                 AzureApiVersionForFileDownload);
                             return true;
-                        case "PipelineArtifact":
+                        case "pipelineartifact":
                             helper = new PipelineArtifactDownloadHelper(artifactInfo.resource.downloadUrl);
                             return true;
                         default:
-                            throw new Exception($"Artifact '{artifactName}' is not a build or pipeline artifact");
+                            throw new Exception($"Artifact '{artifactName}' is not a build or pipeline artifact but a '{artifactInfo.resource.type}'");
                     }
                 }
                 catch (Exception toStore) when (toStore is HttpRequestException || toStore is TaskCanceledException)
