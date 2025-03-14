@@ -105,6 +105,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <MicrosoftIORedistVersion>6.1.0</MicrosoftIORedistVersion>
-    <SystemThreadingTasksExtensionsVersion>4.6.0</SystemThreadingTasksExtensionsVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.1</SystemThreadingTasksExtensionsVersion>
   </PropertyGroup>
 </Project>
