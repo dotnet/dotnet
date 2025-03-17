@@ -6038,4 +6038,48 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: code,
             expected: code);
     }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/11622")]
+    public async Task TextArea()
+    {
+        var code = """
+                @page "/"
+                
+                @if (true)
+                {
+                    <textarea id="textarea1">
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </textarea>
+                }
+                
+                <textarea id="textarea2">
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </textarea>
+                
+                <div>
+                    <textarea id="textarea3">
+                            a
+                                @if (true)
+                                {
+                                b
+                                    }
+                                    c
+                        </textarea>
+                </div>
+                """;
+        await RunFormattingTestAsync(
+            input: code,
+            expected: code);
+    }
 }

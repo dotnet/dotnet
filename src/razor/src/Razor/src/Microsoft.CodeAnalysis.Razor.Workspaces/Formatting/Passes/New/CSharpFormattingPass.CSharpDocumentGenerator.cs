@@ -141,6 +141,16 @@ internal partial class CSharpFormattingPass
             /// having to do lots of tree traversal.
             /// </remarks>
             private int? _elementEndLine;
+            /// <summary>
+            /// The line number of the last line of a block where formatting should be completely ignored
+            /// </summary>
+            /// <remarks>
+            /// Some Html constructs, namely &lt;textarea&gt; and &lt;pre&gt;, should not be formatted at all, and we essentially
+            /// need to treat them as multiline Razor comments. This field is used to track the line number of the last line of such
+            /// an element, so we can ignore every line in it without having to do lots of tree traversal to check "are we parented
+            /// by a pre tag" etc.
+            /// </remarks>
+            private int? _ignoreUntilLine;
 
             public void Generate()
             {
@@ -206,10 +216,27 @@ internal partial class CSharpFormattingPass
                     {
                         _elementEndLine = null;
                     }
+
+                    if (_ignoreUntilLine is { } endLine2 &&
+                        endLine2 == line.LineNumber)
+                    {
+                        _ignoreUntilLine = null;
+                    }
                 }
 
                 _builder.AppendLine();
                 _builder.AppendLine(additionalLinesBuilder.ToString());
+            }
+
+            public override LineInfo Visit(RazorSyntaxNode node)
+            {
+                // Sometimes we are in a block where we want to do no formatting at all
+                if (_ignoreUntilLine is not null)
+                {
+                    return EmitCurrentLineWithNoFormatting();
+                }
+
+                return base.Visit(node);
             }
 
             protected override LineInfo DefaultVisit(RazorSyntaxNode node)
@@ -350,11 +377,17 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitMarkupStartTag(MarkupStartTagSyntax node)
             {
-                // If this is an element at the root level, we want to record where it ends. We can't rely on the Visit method
-                // for it, because it might not be at the start of a line.
-                if (_elementEndLine is null)
+                var element = (MarkupElementSyntax)node.Parent;
+
+                if (node.Name.Content == "textarea")
                 {
-                    var element = (MarkupElementSyntax)node.Parent;
+                    // The contents of textareas is significant, so we never want any formatting to happen inside them
+                    _ignoreUntilLine = GetLineNumber(element.EndTag?.CloseAngle ?? element.StartTag.CloseAngle);
+                }
+                else if (_elementEndLine is null)
+                {
+                    // If this is an element at the root level, we want to record where it ends. We can't rely on the Visit method
+                    // for it, because it might not be at the start of a line.
                     _elementEndLine = GetLineNumber(element.EndTag?.CloseAngle ?? element.StartTag.CloseAngle);
                 }
 
@@ -461,8 +494,7 @@ internal partial class CSharpFormattingPass
                 }
 
                 // Do nothing for any lines inside the comment
-                _builder.AppendLine();
-                return CreateLineInfo(processIndentation: false);
+                return EmitCurrentLineWithNoFormatting();
             }
 
             public override LineInfo VisitCSharpTransition(CSharpTransitionSyntax node)
@@ -687,6 +719,12 @@ internal partial class CSharpFormattingPass
                 _builder.AppendLine($"//");
 #endif
                 return CreateLineInfo();
+            }
+
+            private LineInfo EmitCurrentLineWithNoFormatting()
+            {
+                _builder.AppendLine();
+                return CreateLineInfo(processIndentation: false);
             }
 
             private LineInfo CreateLineInfo(
