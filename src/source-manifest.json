@@ -78,11 +78,11 @@
       "commitSha": "a2cac59fdfbef73025329990864c1f8d2c7ece23"
     },
     {
-      "packageVersion": "6.14.0-preview.1.77",
+      "packageVersion": "6.14.0-preview.1.78",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5759cb3739c039ac6fb56fbbaed2107bfff44150"
+      "commitSha": "7890545a4d8a9232de4a74c90c093c8b2b4c7407"
     },
     {
       "packageVersion": "9.0.0-preview.25164.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c6df2abca20f7d50275901b88b9d76d38f347b4c"
+      "commitSha": "bfbdeecb67323382cd8072744a9fb974e19dd972"
     },
     {
       "packageVersion": "10.0.616001",
