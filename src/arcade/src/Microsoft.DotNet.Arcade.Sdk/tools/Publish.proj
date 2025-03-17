@@ -87,6 +87,7 @@
       ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
 
     <PreserveRepoOrigin Condition="'$(PreserveRepoOrigin)' == ''">false</PreserveRepoOrigin>
+    <PublishManifestOnly Condition="'$(PublishManifestOnly)' == ''">false</PublishManifestOnly>
 
     <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts. We can't rename this
          property as it is used by other repositories already. -->
@@ -373,7 +374,8 @@
       AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"
       PdbArtifactsLocalStorageDir="$(PdbArtifactsSourceBuiltOrTempDir)"
       ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)"
-      UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)" />
+      UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)"
+      PublishManifestOnly="$(PublishManifestOnly)" />
   </Target>
 
   <!-- Import the publish targets when in the inner or outer repo builds. -->

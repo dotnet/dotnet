@@ -102,6 +102,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         public bool PreserveRepoOrigin { get; set; }
 
+        /// <summary>
+        /// The visibility of the artifacts to put in the manifest.
+        /// </summary>
         public ITaskItem[] ArtifactVisibilitiesToPublish { get; set; }
 
         /// <summary>
@@ -115,6 +118,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// rather than copy the files, if it's possible to do so.
         /// </summary>
         public bool UseHardlinksIfPossible { get; set; } = true;
+
+        public bool PublishManifestOnly { get; set; } = false;
 
         public override void ConfigureServices(IServiceCollection collection)
         {
@@ -138,12 +143,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 if (PushToLocalStorage)
                 {
-                    if (string.IsNullOrEmpty(AssetsLocalStorageDir) ||
-                        string.IsNullOrEmpty(ShippingPackagesLocalStorageDir) ||
-                        string.IsNullOrEmpty(NonShippingPackagesLocalStorageDir) ||
-                        string.IsNullOrEmpty(AssetManifestsLocalStorageDir))
+                    if (!PublishManifestOnly)
                     {
-                        throw new Exception($"AssetsLocalStorageDir, ShippingPackagesLocalStorageDir, NonShippingPackagesLocalStorageDir and AssetManifestsLocalStorageDir need to be specified if PublishToLocalStorage is set to true");
+                        if (string.IsNullOrEmpty(AssetsLocalStorageDir) ||
+                            string.IsNullOrEmpty(ShippingPackagesLocalStorageDir) ||
+                            string.IsNullOrEmpty(NonShippingPackagesLocalStorageDir) ||
+                            string.IsNullOrEmpty(PdbArtifactsLocalStorageDir))
+                        {
+                            throw new Exception($"AssetsLocalStorageDir, ShippingPackagesLocalStorageDir, NonShippingPackagesLocalStorageDir and PdbArtifactsLocalStorageDir need to be specified if PublishToLocalStorage is set to true");
+                        }
+                    }
+                    if (string.IsNullOrEmpty(AssetManifestsLocalStorageDir))
+                    {
+                        throw new Exception($"AssetManifestsLocalStorageDir needs to be specified if PublishToLocalStorage is set to true");
                     }
 
                     Log.LogMessage(MessageImportance.High, "Performing push to local artifacts storage.");
@@ -195,43 +207,46 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         throw new Exception($"PdbArtifactsLocalStorageDir must be specified.");
                     }
 
-                    foreach (var package in buildModel.Artifacts.Packages)
+                    if (!PublishManifestOnly)
                     {
-                        if (!fileSystem.FileExists(package.OriginalFile))
+                        foreach (var package in buildModel.Artifacts.Packages)
                         {
-                            Log.LogError($"Could not find file {package.OriginalFile}.");
-                            continue;
+                            if (!fileSystem.FileExists(package.OriginalFile))
+                            {
+                                Log.LogError($"Could not find file {package.OriginalFile}.");
+                                continue;
+                            }
+
+                            PushToLocalStorageOrAzDO(package);
                         }
 
-                        PushToLocalStorageOrAzDO(package);
-                    }
-
-                    foreach (var blobArtifact in buildModel.Artifacts.Blobs)
-                    {
-                        if (!fileSystem.FileExists(blobArtifact.OriginalFile))
+                        foreach (var blobArtifact in buildModel.Artifacts.Blobs)
                         {
-                            Log.LogError($"Could not find file {blobArtifact.OriginalFile}.");
-                            continue;
+                            if (!fileSystem.FileExists(blobArtifact.OriginalFile))
+                            {
+                                Log.LogError($"Could not find file {blobArtifact.OriginalFile}.");
+                                continue;
+                            }
+
+                            PushToLocalStorageOrAzDO(blobArtifact);
                         }
 
-                        PushToLocalStorageOrAzDO(blobArtifact);
-                    }
-
-                    foreach (var pdbArtifact in buildModel.Artifacts.Pdbs)
-                    {
-                        if (!fileSystem.FileExists(pdbArtifact.OriginalFile))
+                        foreach (var pdbArtifact in buildModel.Artifacts.Pdbs)
                         {
-                            Log.LogError($"Could not find file {pdbArtifact.OriginalFile}.");
-                            continue;
+                            if (!fileSystem.FileExists(pdbArtifact.OriginalFile))
+                            {
+                                Log.LogError($"Could not find file {pdbArtifact.OriginalFile}.");
+                                continue;
+                            }
+                            PushToLocalStorageOrAzDO(pdbArtifact);
                         }
-                        PushToLocalStorageOrAzDO(pdbArtifact);
-                    }
 
-                    if (!PushToLocalStorage && buildModel.Artifacts.Pdbs.Any())
-                    {
-                        // Upload the full set of PDBs
-                        Log.LogMessage(MessageImportance.High,
-                            $"##vso[artifact.upload containerfolder=PdbArtifacts;artifactname=PdbArtifacts]{PdbArtifactsLocalStorageDir}");
+                        if (!PushToLocalStorage && buildModel.Artifacts.Pdbs.Any())
+                        {
+                            // Upload the full set of PDBs
+                            Log.LogMessage(MessageImportance.High,
+                                $"##vso[artifact.upload containerfolder=PdbArtifacts;artifactname=PdbArtifacts]{PdbArtifactsLocalStorageDir}");
+                        }
                     }
 
                     // Write the manifest, then create an artifact for it.
