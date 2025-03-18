@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="scenario-tests" Sha="4e62285cf789b9583f56266ac8b6f80673ddb812" BarId="259866" />
+  <Source Mapping="scenario-tests" Uri="https://github.com/dotnet/dotnet" Sha="de007bb9d4d27601d50134f1478aeaa2f4062f93" BarId="260646" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.25161.120">
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.25167.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>4e62285cf789b9583f56266ac8b6f80673ddb812</Sha>
+      <Sha>de007bb9d4d27601d50134f1478aeaa2f4062f93</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25161.120">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25167.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>4e62285cf789b9583f56266ac8b6f80673ddb812</Sha>
+      <Sha>de007bb9d4d27601d50134f1478aeaa2f4062f93</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
