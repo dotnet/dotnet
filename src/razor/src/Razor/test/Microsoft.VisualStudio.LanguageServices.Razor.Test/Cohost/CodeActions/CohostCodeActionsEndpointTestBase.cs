@@ -89,10 +89,14 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             }
         }
 
+        var range = input.HasSpans
+            ? inputText.GetRange(input.Span)
+            : inputText.GetRange(input.Position, input.Position);
+
         var request = new VSCodeActionParams
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = document.CreateUri() },
-            Range = inputText.GetRange(input.Span),
+            Range = range,
             Context = new VSInternalCodeActionContext() { Diagnostics = diagnostics.ToArray() }
         };
 

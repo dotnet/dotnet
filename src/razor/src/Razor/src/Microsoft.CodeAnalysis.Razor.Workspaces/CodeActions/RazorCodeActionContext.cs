@@ -22,4 +22,24 @@ internal sealed record class RazorCodeActionContext(
     bool SupportsCodeActionResolve)
 {
     public bool HasSelection => StartAbsoluteIndex != EndAbsoluteIndex;
+
+    public bool ContainsDiagnostic(string code)
+    {
+        if (Request.Context.Diagnostics is null)
+        {
+            return false;
+        }
+
+        foreach (var diagnostic in Request.Context.Diagnostics)
+        {
+            if (diagnostic.Code is { } codeSumType &&
+                codeSumType.TryGetSecond(out var codeString) &&
+                codeString == code)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

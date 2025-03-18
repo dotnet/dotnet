@@ -31,11 +31,6 @@ internal class WrapAttributesCodeActionProvider : IRazorCodeActionProvider
         }
 
         var owner = syntaxTree.Root.FindNode(TextSpan.FromBounds(context.StartAbsoluteIndex, context.EndAbsoluteIndex));
-        if (owner is null)
-        {
-            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
-        }
-
         var attributes = FindAttributes(owner);
         if (attributes.Count == 0)
         {
@@ -100,8 +95,24 @@ internal class WrapAttributesCodeActionProvider : IRazorCodeActionProvider
         return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>([action]);
     }
 
-    private AspNetCore.Razor.Language.Syntax.SyntaxList<RazorSyntaxNode> FindAttributes(AspNetCore.Razor.Language.Syntax.SyntaxNode owner)
+    private static AspNetCore.Razor.Language.Syntax.SyntaxList<RazorSyntaxNode> FindAttributes(AspNetCore.Razor.Language.Syntax.SyntaxNode? owner)
     {
+        // Sometimes FindNode will find the start tag, sometimes the element. We always start from the start tag to make searching
+        // easier, and since we are concerned with attributes, things without start tags wouldn't be applicalbe anyway
+        if (owner is MarkupElementSyntax element)
+        {
+            owner = element.StartTag;
+        }
+        else if (owner is MarkupTagHelperElementSyntax tagHelperElement)
+        {
+            owner = tagHelperElement.StartTag;
+        }
+
+        if (owner is null)
+        {
+            return [];
+        }
+
         foreach (var node in owner.AncestorsAndSelf())
         {
             if (node is MarkupStartTagSyntax startTag)

@@ -38,4 +38,23 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
                     </div>
                     """)]);
     }
+
+    [Fact]
+    public async Task DontOfferOnNonExistentComponent()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <div></div>
+
+                <div>
+                    Hello World
+                </div>
+
+                <{|RZ10012:Not$$AComponent|} />
+
+                <div></div>
+                """,
+            expected: null,
+            codeActionName: WorkspacesSR.ExtractTo_Component_Title);
+    }
 }

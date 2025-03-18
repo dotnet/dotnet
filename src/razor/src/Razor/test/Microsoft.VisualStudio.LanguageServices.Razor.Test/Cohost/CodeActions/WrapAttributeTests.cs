@@ -101,4 +101,31 @@ public class WrapAttributeTests(ITestOutputHelper testOutputHelper) : CohostCode
             expected: null,
             codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
     }
+
+    [Fact]
+    public async Task SelfClosing()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @if (true)
+                {
+                    <div>
+                        <in[||]put bar="Baz" Zip="Zap" checked @onclick="foo" Pop="Pap" />
+                    </div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    <div>
+                        <input bar="Baz"
+                               Zip="Zap"
+                               checked
+                               @onclick="foo"
+                               Pop="Pap" />
+                    </div>
+                }
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.WrapAttributes);
+    }
 }
