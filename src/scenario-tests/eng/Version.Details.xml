@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Sha="4e62285cf789b9583f56266ac8b6f80673ddb812" BarId="259866" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="scenario-tests" Sha="4e62285cf789b9583f56266ac8b6f80673ddb812" BarId="259866" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
