@@ -42,7 +42,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- manually maintained versions -->
-    <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
     <MicrosoftVisualStudioOpenTelemetryVersion>0.2.104-beta</MicrosoftVisualStudioOpenTelemetryVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
   </PropertyGroup>
