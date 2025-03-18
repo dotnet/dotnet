@@ -73,9 +73,10 @@ public unsafe partial class DataObject :
     ///  Initializes a new instance of the <see cref="DataObject"/> class, containing the specified data and its
     ///  associated format.
     /// </summary>
-    public DataObject(string format, object data) : this() => SetData(format, data);
+    public DataObject(string format, object data) : this() => SetData(format, data.OrThrowIfNull());
 
-    internal DataObject(string format, bool autoConvert, object data) : this() => SetData(format, autoConvert, data);
+    internal DataObject(string format, bool autoConvert, object data) : this() =>
+        SetData(format, autoConvert, data.OrThrowIfNull());
 
     bool IDataObjectInternal<DataObject, IDataObject>.TryUnwrapUserDataObject([NotNullWhen(true)] out IDataObject? dataObject) =>
         TryUnwrapUserDataObject(out dataObject);
@@ -246,7 +247,7 @@ public unsafe partial class DataObject :
     {
         string[] strings = new string[filePaths.OrThrowIfNull().Count];
         filePaths.CopyTo(strings, 0);
-        SetData(DataFormatNames.FileDrop, true, strings);
+        SetData(DataFormatNames.FileDrop, autoConvert: true, strings);
     }
 
     public virtual void SetImage(Image image) => SetData(DataFormatNames.Bitmap, true, image.OrThrowIfNull());

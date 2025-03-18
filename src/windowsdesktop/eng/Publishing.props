@@ -8,6 +8,17 @@
     <PlatformName Condition="'$(TargetArchitecture)' != ''">$(TargetArchitecture)</PlatformName>
   </PropertyGroup>
 
+  <!--
+    Only generate the productVersion.txt and windowsdesktop-productVersion.txt files when we're building
+    either the full VMR repo or not building in the VMR infrastructure.
+    This ensures that we don't produce these files in the "Repo source build" builds,
+    but we do produce them in both the VMR and the runtime official build.
+  -->
+  <PropertyGroup>
+    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuildOrchestrator)' == 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')">true</ShouldGenerateProductVersionFiles>
+    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuildOrchestrator)' != 'true' and '$(EnableDefaultArtifacts)' == 'true'">true</ShouldGenerateProductVersionFiles>
+  </PropertyGroup>
+
   <Target Name="GetNonStableProductVersion">
     <!-- Retrieve the non-stable runtime pack product version.
          Don't stabilize the package version in order to retrieve the VersionSuffix. -->
@@ -21,8 +32,8 @@
   <!-- This target only runs when EnableDefaultArtifacts=true which is a single build leg in CI. -->
   <Target Name="GenerateProductVersionFiles"
           DependsOnTargets="GetNonStableProductVersion"
-          BeforeTargets="PublishToAzureDevOpsArtifacts"
-          Condition="'$(EnableDefaultArtifacts)' == 'true'">
+          BeforeTargets="AddRelativeBlobPathToBlobArtifacts;PublishToAzureDevOpsArtifacts"
+          Condition="'$(ShouldGenerateProductVersionFiles)' == 'true'">
     <!-- Retrieve the runtime pack version -->
     <MSBuild Projects="$(RepoRoot)src/windowsdesktop/src/sfx/Microsoft.WindowsDesktop.App.Runtime.sfxproj"
              Targets="ReturnProductVersion">
@@ -41,17 +52,16 @@
                       Encoding="ASCII" />
 
     <ItemGroup>
-      <Artifact Include="@(ProductVersionFile)"
-                RelativeBlobPath="WindowsDesktop/$(NonStableProductVersion)/%(Filename)%(Extension)" />
+      <Artifact Include="@(ProductVersionFile)" Kind="Blob" />
     </ItemGroup>
   </Target>
 
-  <Target Name="AddRelativeBlobPathToInstallerArtifacts"
+  <Target Name="AddRelativeBlobPathToBlobArtifacts"
           DependsOnTargets="GetNonStableProductVersion"
           BeforeTargets="PublishToAzureDevOpsArtifacts"
           AfterTargets="GenerateChecksumsFromArtifacts">
     <ItemGroup>
-      <Artifact Condition="'%(Artifact.PublishFlatContainer)' == 'true' and '%(Artifact.RelativeBlobPath)' == ''"
+      <Artifact Condition="'%(Artifact.Kind)' == 'Blob' and '%(Artifact.RelativeBlobPath)' == ''"
                 RelativeBlobPath="WindowsDesktop/$(NonStableProductVersion)/%(Filename)%(Extension)" />
     </ItemGroup>
   </Target>
