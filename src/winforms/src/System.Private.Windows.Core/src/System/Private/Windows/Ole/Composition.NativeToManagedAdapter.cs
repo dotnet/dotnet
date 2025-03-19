@@ -105,7 +105,7 @@ internal unsafe partial class Composition<TOleServices, TNrbfSerializer, TDataFo
             {
                 DataFormatNames.Text or DataFormatNames.Rtf or DataFormatNames.OemText =>
                     ReadStringFromHGLOBAL(hglobal, unicode: false),
-                DataFormatNames.Html => ReadUtf8StringFromHGLOBAL(hglobal),
+                DataFormatNames.Html or DataFormatNames.Xaml => ReadUtf8StringFromHGLOBAL(hglobal),
                 DataFormatNames.UnicodeText => ReadStringFromHGLOBAL(hglobal, unicode: true),
                 DataFormatNames.FileDrop => ReadFileListFromHDROP((HDROP)(nint)hglobal),
                 DataFormatNames.FileNameAnsi => new string[] { ReadStringFromHGLOBAL(hglobal, unicode: false) },
@@ -258,9 +258,8 @@ internal unsafe partial class Composition<TOleServices, TNrbfSerializer, TDataFo
 
             try
             {
-                // Try to get the data as a bitmap first.
-                if (request.Format == DataFormatNames.Bitmap
-                    && TOleServices.TryGetBitmapFromDataObject(dataObject, out data))
+                // Try to get platform specific data first.
+                if (TOleServices.TryGetObjectFromDataObject(dataObject, request.Format, out data))
                 {
                     return true;
                 }

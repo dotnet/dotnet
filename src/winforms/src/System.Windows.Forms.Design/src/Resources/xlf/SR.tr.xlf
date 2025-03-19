@@ -686,6 +686,11 @@
         <target state="translated">{0} DataSource değiştirildi</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataGridViewColumnCollectionTransaction">
+        <source>DataGridView ColumnCollection Edit</source>
+        <target state="translated">DataGridView ColumnCollection Düzenleme</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataGridViewColumnTypePropertyDescription">
         <source>The DataGridViewColumn type.</source>
         <target state="translated">DataGridViewColumn türü.</target>
@@ -1151,8 +1156,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DesignerShortcutHorizontalOrientation">
-        <source>Horizontal Splitter Orientation.</source>
-        <target state="translated">Yatay Bölümlendirici Yönü.</target>
+        <source>Horizontal Splitter Orientation</source>
+        <target state="translated">Yatay Bölümlendirici Yönü</target>
         <note />
       </trans-unit>
       <trans-unit id="DesignerShortcutReparentControls">
@@ -2334,12 +2339,12 @@ Metni kabul etmek için Ctrl+Enter tuşlarına basın.</target>
       </trans-unit>
       <trans-unit id="ToolStripItemCollectionEditorLabelMultipleItems">
         <source>(&amp;Multiple Items)</source>
-        <target state="new">(&amp;Multiple Items)</target>
+        <target state="translated">(&amp;Birden Çok Öğe)</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolStripItemCollectionEditorLabelNone">
         <source>(&amp;None)</source>
-        <target state="new">(&amp;None)</target>
+        <target state="translated">(&amp;Yok)</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolStripItemCollectionEditorVerb">
