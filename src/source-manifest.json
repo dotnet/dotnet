@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "19abc9871bae485d86f6f1c3ec3da480af71ebfc"
+      "commitSha": "3b121e258bdc8e1fa31048bb7e239fa0e5cc01db"
     },
     {
       "packageVersion": "10.0.616801",
@@ -148,11 +148,11 @@
       "commitSha": "135f35b615bf81eee330a77083c6924a057fb706"
     },
     {
-      "packageVersion": "2.2.0-beta.25124.1",
+      "packageVersion": "2.2.0-beta.25168.1",
       "barId": null,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "e3d70b066e2e27c7050928e1095df9e5ae859dfd"
+      "commitSha": "ffe2934fd3800a78c2bc17327a65ea39a993755f"
     },
     {
       "packageVersion": "10.0.100-preview.3.25168.1",
