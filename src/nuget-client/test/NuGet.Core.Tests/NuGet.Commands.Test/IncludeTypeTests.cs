@@ -30,7 +30,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                 ""dependencies"": {
@@ -59,17 +59,17 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
-                result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
+                result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -87,7 +87,7 @@ namespace NuGet.Commands.Test
             // Arrange
             var logger = new TestLogger();
             var framework = "net46";
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                 ""dependencies"": {
@@ -114,17 +114,17 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
-                result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
+                result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -143,7 +143,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                 ""dependencies"": {
@@ -166,17 +166,17 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
-                result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
+                result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -212,7 +212,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                 ""dependencies"": {
@@ -236,17 +236,17 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
-                result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
+                result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -282,7 +282,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                 ""dependencies"": {
@@ -306,16 +306,16 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -351,7 +351,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson3 = @"{
                     ""dependencies"": {
@@ -388,10 +388,10 @@ namespace NuGet.Commands.Test
                   ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await TriangleProjectSetupAsync(workingDir, logger, configJson1, configJson2, configJson3);
+                var result = await TriangleProjectSetupAsync(pathContext, logger, configJson1, configJson2, configJson3);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
@@ -439,7 +439,7 @@ namespace NuGet.Commands.Test
                         ""runtimes"": { ""any"": { } }
                     }";
 
-                await CreateAToBAsync(Path.Combine(workingDir, "repository"));
+                await CreateAToBAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -512,7 +512,7 @@ namespace NuGet.Commands.Test
                     x
                 };
 
-                await SimpleTestPackageUtility.CreatePackagesAsync(packages, Path.Combine(workingDir, "repository"));
+                await SimpleTestPackageUtility.CreatePackagesAsync(packages, Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -608,7 +608,7 @@ namespace NuGet.Commands.Test
                     b
                 };
 
-                await SimpleTestPackageUtility.CreatePackagesAsync(packages, Path.Combine(workingDir, "repository"));
+                await SimpleTestPackageUtility.CreatePackagesAsync(packages, Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -636,7 +636,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -661,14 +661,14 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -687,7 +687,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -711,14 +711,14 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -737,7 +737,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -760,14 +760,14 @@ namespace NuGet.Commands.Test
                 ""runtimes"": { ""any"": { } }
             }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(pathContext.SolutionRoot);
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -786,7 +786,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -809,10 +809,10 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
@@ -833,35 +833,35 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
-                var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""suppressParent"": ""all""
-                        },
-                        ""packageZ"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""net46"": {}
-                    },
-                    ""runtimes"": { ""any"": { } }
-                }";
-
                 var configJson1 = @"{
-                    ""dependencies"": {
-                    },
+                    
                     ""frameworks"": {
                     ""net46"": {}
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                var configJson2 = @"{
+                    ""frameworks"": {
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""suppressParent"": ""all""
+                            },
+                            ""packageZ"": ""1.0.0""
+                    }
+}
+                    },
+                    ""runtimes"": { ""any"": { } }
+                }";
+
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
@@ -887,7 +887,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -912,10 +912,10 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(pathContext.PackageSource);
 
                 // Act
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
@@ -941,7 +941,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -965,7 +965,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
 
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
@@ -989,7 +989,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
                     ""dependencies"": {
@@ -1012,8 +1012,8 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "all", string.Empty);
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                await CreateXYZAsync(pathContext.PackageSource, "all", string.Empty);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
                 var dependencies = target.Libraries.Single(lib => lib.Name == "TestProject2").Dependencies;
 
@@ -1034,7 +1034,7 @@ namespace NuGet.Commands.Test
             var logger = new TestLogger();
             var framework = "net46";
 
-            using (var workingDir = TestDirectory.Create())
+            using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson1 = @"{
                     ""dependencies"": {
@@ -1058,7 +1058,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                 }";
 
-                var repository = Path.Combine(workingDir, "repository");
+                var repository = pathContext.PackageSource;
 
                 var contextY = new SimpleTestPackageContext()
                 {
@@ -1074,7 +1074,7 @@ namespace NuGet.Commands.Test
                 await SimpleTestPackageUtility.CreateFullPackageAsync(repository, contextX);
                 await SimpleTestPackageUtility.CreateFullPackageAsync(repository, contextY);
 
-                var result = await ProjectToProjectSetupAsync(workingDir, logger, configJson1, configJson2);
+                var result = await ProjectToProjectSetupAsync(pathContext, logger, configJson1, configJson2);
                 var target = result.LockFile.GetTarget(NuGetFramework.Parse(framework), "any");
 
                 // Assert
@@ -1110,7 +1110,7 @@ namespace NuGet.Commands.Test
                         ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1156,7 +1156,7 @@ namespace NuGet.Commands.Test
                          ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), string.Empty, "build");
+                await CreateXYZAsync(Path.Combine(workingDir, "source"), string.Empty, "build");
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1165,7 +1165,7 @@ namespace NuGet.Commands.Test
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -1198,7 +1198,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), string.Empty, "build");
+                await CreateXYZAsync(Path.Combine(workingDir, "source"), string.Empty, "build");
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1207,7 +1207,7 @@ namespace NuGet.Commands.Test
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -1241,7 +1241,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1250,7 +1250,7 @@ namespace NuGet.Commands.Test
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -1282,7 +1282,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), string.Empty, "build");
+                await CreateXYZAsync(Path.Combine(workingDir, "source"), string.Empty, "build");
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1291,7 +1291,7 @@ namespace NuGet.Commands.Test
 
                 var targets = target.Libraries.ToDictionary(lib => lib.Name);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -1324,7 +1324,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "runtime", string.Empty);
+                await CreateXYZAsync(Path.Combine(workingDir, "source"), "runtime", string.Empty);
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1368,7 +1368,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"), "contentFiles", string.Empty);
+                await CreateXYZAsync(Path.Combine(workingDir, "source"), "contentFiles", string.Empty);
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1412,7 +1412,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                     }";
 
-                await CreateAToBAsync(Path.Combine(workingDir, "repository"));
+                await CreateAToBAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1455,7 +1455,7 @@ namespace NuGet.Commands.Test
                     ""runtimes"": { ""any"": { } }
                     }";
 
-                await CreateAToBAsync(Path.Combine(workingDir, "repository"));
+                await CreateAToBAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1596,7 +1596,7 @@ namespace NuGet.Commands.Test
 
             using (var workingDir = TestDirectory.Create())
             {
-                await CreateAToBAsync(Path.Combine(workingDir, "repository"));
+                await CreateAToBAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
@@ -1608,7 +1608,7 @@ namespace NuGet.Commands.Test
                 var a = targets["packageA"];
                 var b = targets["packageB"];
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
 
                 // Assert
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
@@ -1653,12 +1653,12 @@ namespace NuGet.Commands.Test
                          ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
                 var buildTargets = msbuildTargets["TestProject"].ToList();
 
                 // Assert
@@ -1697,14 +1697,14 @@ namespace NuGet.Commands.Test
                          ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXYZAsync(Path.Combine(workingDir, "repository"));
+                await CreateXYZAsync(Path.Combine(workingDir, "source"));
 
-                await CreateAToBAsync(Path.Combine(workingDir, "repository"));
+                await CreateAToBAsync(Path.Combine(workingDir, "source"));
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
                 var buildTargets = msbuildTargets["TestProject"].ToList();
 
                 // Assert
@@ -1743,12 +1743,12 @@ namespace NuGet.Commands.Test
                          ""runtimes"": { ""any"": { } }
                  }";
 
-                await CreateXyzIndividuallyAsync(Path.Combine(workingDir, "repository"), string.Empty, string.Empty);
+                await CreateXyzIndividuallyAsync(Path.Combine(workingDir, "source"), string.Empty, string.Empty);
 
                 // Act
                 var result = await StandardSetupAsync(workingDir, logger, projectJson);
 
-                var msbuildTargets = GetInstalledTargets(workingDir);
+                var msbuildTargets = GetInstalledTargets(Path.Combine(workingDir, "project"));
                 var buildTargets = msbuildTargets["TestProject"].ToList();
 
                 // Assert
@@ -1867,20 +1867,14 @@ namespace NuGet.Commands.Test
         }
 
         private async Task<RestoreResult> ProjectToProjectSetupAsync(
-            string workingDir,
+            SimpleTestPathContext pathContext,
             NuGet.Common.ILogger logger,
             string configJson1,
             string configJson2)
         {
-            // Arrange
-            var repository = Path.Combine(workingDir, "repository");
-            Directory.CreateDirectory(repository);
+            var projectDir = pathContext.SolutionRoot;
 
-            var projectDir = Path.Combine(workingDir, "project");
-            Directory.CreateDirectory(projectDir);
-
-            var packagesDir = Path.Combine(workingDir, "packages");
-            Directory.CreateDirectory(packagesDir);
+            var packagesDir = pathContext.UserPackagesFolder;
 
             var testProject1Dir = Path.Combine(projectDir, "TestProject1");
             Directory.CreateDirectory(testProject1Dir);
@@ -1889,7 +1883,7 @@ namespace NuGet.Commands.Test
             Directory.CreateDirectory(testProject2Dir);
 
             var specPath1 = Path.Combine(testProject1Dir, "project.json");
-            var spec1 = JsonPackageSpecReader.GetPackageSpec(configJson1, "TestProject1", specPath1).EnsureProjectJsonRestoreMetadata();
+            var spec1 = JsonPackageSpecReader.GetPackageSpec(configJson1, "TestProject1", specPath1).WithTestRestoreMetadata();
 
             using (var writer = new StreamWriter(File.OpenWrite(specPath1)))
             {
@@ -1897,38 +1891,15 @@ namespace NuGet.Commands.Test
             }
 
             var specPath2 = Path.Combine(testProject2Dir, "project.json");
-            var spec2 = JsonPackageSpecReader.GetPackageSpec(configJson2, "TestProject2", specPath2).EnsureProjectJsonRestoreMetadata();
+            var spec2 = JsonPackageSpecReader.GetPackageSpec(configJson2, "TestProject2", specPath2).WithTestRestoreMetadata();
 
             using (var writer = new StreamWriter(File.OpenWrite(specPath2)))
             {
                 writer.WriteLine(configJson2.ToString());
             }
 
-            var sources = new List<PackageSource>
-            {
-                new PackageSource(repository)
-            };
-
-            var request = new TestRestoreRequest(spec1, sources, packagesDir, logger)
-            {
-                LockFilePath = Path.Combine(testProject1Dir, "project.lock.json"),
-
-                ExternalProjects = new List<ExternalProjectReference>()
-            {
-                new ExternalProjectReference(
-                    "TestProject1",
-                    spec1,
-                    Path.Combine(testProject1Dir, "TestProject1.csproj"),
-                    new string[] { "TestProject2" }),
-
-                new ExternalProjectReference(
-                    "TestProject2",
-                    spec2,
-                    Path.Combine(testProject1Dir, "TestProject2.csproj"),
-                    Enumerable.Empty<string>())
-            }
-            };
-
+            spec1 = spec1.WithTestProjectReference(spec2);
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2);
             var command = new RestoreCommand(request);
 
             // Act
@@ -1939,19 +1910,18 @@ namespace NuGet.Commands.Test
         }
 
         private async Task<RestoreResult> TriangleProjectSetupAsync(
-            string workingDir,
+            SimpleTestPathContext pathContext,
             NuGet.Common.ILogger logger,
             string configJson1,
             string configJson2,
             string configJson3)
         {
             // Arrange
-            var repository = Path.Combine(workingDir, "repository");
+            var repository = pathContext.PackageSource;
             Directory.CreateDirectory(repository);
-            var projectDir = Path.Combine(workingDir, "project");
-            Directory.CreateDirectory(projectDir);
-            var packagesDir = Path.Combine(workingDir, "packages");
-            Directory.CreateDirectory(packagesDir);
+            var projectDir = pathContext.SolutionRoot;
+            var packagesDir = pathContext.UserPackagesFolder;
+
             var testProject1Dir = Path.Combine(projectDir, "TestProject1");
             Directory.CreateDirectory(testProject1Dir);
             var testProject2Dir = Path.Combine(projectDir, "TestProject2");
@@ -1960,41 +1930,30 @@ namespace NuGet.Commands.Test
             Directory.CreateDirectory(testProject3Dir);
 
             var specPath1 = Path.Combine(testProject1Dir, "project.json");
-            var spec1 = JsonPackageSpecReader.GetPackageSpec(configJson1, "TestProject1", specPath1).EnsureProjectJsonRestoreMetadata();
+            var spec1 = JsonPackageSpecReader.GetPackageSpec(configJson1, "TestProject1", specPath1).WithTestRestoreMetadata();
             using (var writer = new StreamWriter(File.OpenWrite(specPath1)))
             {
                 writer.WriteLine(configJson1);
             }
 
             var specPath2 = Path.Combine(testProject2Dir, "project.json");
-            var spec2 = JsonPackageSpecReader.GetPackageSpec(configJson2, "TestProject2", specPath2).EnsureProjectJsonRestoreMetadata();
+            var spec2 = JsonPackageSpecReader.GetPackageSpec(configJson2, "TestProject2", specPath2).WithTestRestoreMetadata();
             using (var writer = new StreamWriter(File.OpenWrite(specPath2)))
             {
                 writer.WriteLine(configJson2);
             }
 
             var specPath3 = Path.Combine(testProject3Dir, "project.json");
-            var spec3 = JsonPackageSpecReader.GetPackageSpec(configJson3, "TestProject3", specPath3).EnsureProjectJsonRestoreMetadata();
+            var spec3 = JsonPackageSpecReader.GetPackageSpec(configJson3, "TestProject3", specPath3).WithTestRestoreMetadata();
             using (var writer = new StreamWriter(File.OpenWrite(specPath3)))
             {
                 writer.WriteLine(configJson3);
             }
 
-            var sources = new List<PackageSource>
-            {
-                new PackageSource(repository)
-            };
+            spec1 = spec1.WithTestProjectReference(spec2);
+            spec1 = spec1.WithTestProjectReference(spec3);
 
-            var request = new TestRestoreRequest(spec1, sources, packagesDir, logger)
-            {
-                LockFilePath = Path.Combine(testProject1Dir, "project.lock.json"),
-                ExternalProjects = new List<ExternalProjectReference>()
-            {
-                new ExternalProjectReference("TestProject1", spec1, null, new string[] { "TestProject2", "TestProject3" }),
-                new ExternalProjectReference("TestProject2", spec2, null, Enumerable.Empty<string>()),
-                new ExternalProjectReference("TestProject3", spec3, null, Enumerable.Empty<string>())
-            }
-            };
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2, spec3);
 
             var command = new RestoreCommand(request);
 
@@ -2011,7 +1970,7 @@ namespace NuGet.Commands.Test
             string configJson)
         {
             // Arrange
-            var repository = Path.Combine(workingDir, "repository");
+            var repository = Path.Combine(workingDir, "source");
             Directory.CreateDirectory(repository);
             var projectDir = Path.Combine(workingDir, "project");
             Directory.CreateDirectory(projectDir);
@@ -2026,7 +1985,7 @@ namespace NuGet.Commands.Test
             };
 
             var specPath = Path.Combine(testProjectDir, "project.json");
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson, "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson, "TestProject", specPath).WithTestRestoreMetadata();
 
             var request = new TestRestoreRequest(spec, sources, packagesDir, logger)
             {
@@ -2161,13 +2120,13 @@ namespace NuGet.Commands.Test
         private static Dictionary<string, HashSet<string>> GetInstalledTargets(string workingDir)
         {
             var result = new Dictionary<string, HashSet<string>>();
-            var projectDir = new DirectoryInfo(Path.Combine(workingDir, "project"));
+            var projectDir = new DirectoryInfo(workingDir);
 
             foreach (var dir in projectDir.GetDirectories())
             {
                 result.Add(dir.Name, new HashSet<string>());
 
-                var targets = dir.GetFiles("*.nuget.targets").SingleOrDefault();
+                var targets = dir.GetFiles("*.nuget.g.targets", SearchOption.AllDirectories).SingleOrDefault();
 
                 if (targets != null)
                 {

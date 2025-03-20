@@ -28,11 +28,13 @@ namespace NuGet.ProjectModel
         public PackageSpec PackageSpec { get; set; }
         public IList<CentralTransitiveDependencyGroup> CentralTransitiveDependencyGroups { get; set; } = new List<CentralTransitiveDependencyGroup>();
 
+        [Obsolete("Unused in PackageReference, will be removed in a future version.")]
         public bool IsValidForPackageSpec(PackageSpec spec)
         {
             return IsValidForPackageSpec(spec, Version);
         }
 
+        [Obsolete("Unused in PackageReference, will be removed in a future version.")]
         public bool IsValidForPackageSpec(PackageSpec spec, int requestLockFileVersion)
         {
             if (Version != requestLockFileVersion)

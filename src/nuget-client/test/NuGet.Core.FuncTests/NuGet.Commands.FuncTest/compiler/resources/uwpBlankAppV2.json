@@ -16898,17 +16898,18 @@
     }
   },
   "projectFileDependencyGroups": {
-    "": [
+    "UAP,Version=v10.0": [
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
-    ],
-    "UAP,Version=v10.0": []
+    ]
   },
   "project": {
     "dependencies": {
       "Microsoft.NETCore.UniversalWindowsPlatform": "[5.0.0, )"
     },
     "frameworks": {
-      "uap10.0": {}
+      "uap10.0": {
+        "targetAlias": "uap10.0"
+      }
     },
     "runtimes": {
       "win10-arm": {
