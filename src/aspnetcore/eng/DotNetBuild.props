@@ -25,6 +25,7 @@
   <!-- Build RepoTasks - this is normally triggered via the build script but the inner ArPow source-build is run via msbuild.
        https://github.com/dotnet/source-build/issues/3807 -->
   <Target Name="BuildRepoTasks"
+          DependsOnTargets="GetSourceBuildCommandConfiguration"
           Condition="'$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildSourceOnly)' == 'true'"
           BeforeTargets="Execute">
     <!-- If the alternative runtime location and key are present, pass those through -->
