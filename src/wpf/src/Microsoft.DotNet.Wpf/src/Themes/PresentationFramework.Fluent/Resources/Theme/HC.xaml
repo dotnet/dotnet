@@ -350,6 +350,14 @@
     <SolidColorBrush x:Key="FlyoutBackground" Color="{StaticResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="FlyoutBorderBrush" Color="{StaticResource SystemColorWindowTextColor}" />
 
+    <!--  Frame  -->
+    <SolidColorBrush x:Key="FrameBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="FrameForeground" Color="{StaticResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="FrameMenuItemBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="FrameMenuItemBorderBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="FrameMenuItemBackgroundSelected" Color="{StaticResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="FrameMenuItemForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+
     <!-- GridSplitter -->
     <SolidColorBrush x:Key="GridsplitterBackground" Color="Transparent" />
     <SolidColorBrush x:Key="GridsplitterBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
@@ -449,6 +457,10 @@
     <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedLeftFluent" Color="{StaticResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="NavigationViewItemForegroundLeftFluent" Color="{StaticResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOverLeftFluent" Color="{StaticResource SystemColorWindowTextColor}" />
+
+    <!--  NavigationWindow  -->
+    <SolidColorBrush x:Key="NavigationWindowBackground" Color="{StaticResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="NavigationWindowForeground" Color="{StaticResource SystemColorWindowTextColor}" />
 
     <!-- Page -->
     <SolidColorBrush x:Key="PageForeground" Color="{StaticResource SystemColorWindowTextColor}" />
@@ -668,7 +680,7 @@
 
     <Color x:Key="ControlStrongFillColorDefault">#2D3236</Color>
     <Color x:Key="ControlStrongFillColorDisabled">#2D3236</Color>
-    
+
     <Color x:Key="ControlSolidFillColorDefault">#2D3236</Color>
 
     <Color x:Key="SubtleFillColorTransparent">#2D3236</Color>
