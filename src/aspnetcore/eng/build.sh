@@ -249,10 +249,11 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+commandline_args=()
+
 if [ ${#msbuild_args[@]} -ne 0 ]; then
     commandline_args=("${msbuild_args[@]}")
 fi
-
 
 if [ "$build_all" = true ]; then
     msbuild_args[${#msbuild_args[*]}]="-p:BuildAllProjects=true"
@@ -393,6 +394,10 @@ InitializeToolset
 
 restore=$_tmp_restore=
 
+if [ ${#commandline_args[@]} -gt 0 ]; then
+  toolset_build_args+=("${commandline_args[@]}")
+fi
+
 if [ "$build_repo_tasks" = true ]; then
     MSBuild $_InitializeToolset \
         -p:RepoRoot="$repo_root" \
@@ -402,7 +407,6 @@ if [ "$build_repo_tasks" = true ]; then
         -p:Build=true \
         -clp:NoSummary \
         ${toolset_build_args[@]+"${toolset_build_args[@]}"}
-        ${commandline_args[@]+"${commandline_args[@]}"}
 fi
 
 if [ "$only_build_repo_tasks" != true ]; then
