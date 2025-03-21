@@ -106,7 +106,17 @@ internal class DocumentOnTypeFormattingEndpoint(
         }
         else if (triggerCharacterKind == RazorLanguageKind.Html)
         {
-            var htmlChanges = await _htmlFormatter.GetOnTypeFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Position, request.Character, request.Options, cancellationToken).ConfigureAwait(false);
+            if (await _htmlFormatter.GetOnTypeFormattingEditsAsync(
+                documentContext.Snapshot,
+                documentContext.Uri,
+                request.Position,
+                request.Character,
+                request.Options,
+                cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
+            {
+                return null;
+            }
+
             formattedChanges = await _razorFormattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
         }
         else
