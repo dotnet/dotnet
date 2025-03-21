@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25169.9",
+      "packageVersion": "10.0.0-preview.4.25170.2",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "caa429c49c4df4237d99c1c43e8b0e0faa8be9c5"
+      "commitSha": "3a1fc4f3beca5ef00766037864ac52d772446c71"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -71,11 +71,11 @@
       "commitSha": "345742da75dc6c5fe485ef1236d3f034ebcdcb53"
     },
     {
-      "packageVersion": "17.15.0-preview-25169-01",
+      "packageVersion": "17.15.0-preview-25170-04",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "51c57ed6bcc8e88d23a5f5463c9f056cb1c86580"
+      "commitSha": "88496b9c8a4e9b4a84bee8889e47cf106dd7d96d"
     },
     {
       "packageVersion": "6.14.0-preview.1.84",
@@ -92,11 +92,11 @@
       "commitSha": "3cbcd8ac9ebf578a0160a7eab0e7a86e68fec15b"
     },
     {
-      "packageVersion": "4.14.0-3.25169.7",
+      "packageVersion": "4.14.0-3.25170.13",
       "barId": null,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "86cdbf5c5a7d0052f4170354bce9d1bd65d0352f"
+      "commitSha": "9d9a3bfa09a90c4e464e0f34eb6896ed9620721c"
     },
     {
       "packageVersion": "3.12.0-beta1.25155.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ab0f60f2b97ab9de24927edc41fe6ee39b9ed414"
+      "commitSha": "ada08782a973575676d7e099a4f5a2a334ef8c34"
     },
     {
       "packageVersion": "10.0.616801",
@@ -141,11 +141,11 @@
       "commitSha": "cf30e8fd726730aa4b142275fb2fc0503528b7dd"
     },
     {
-      "packageVersion": "10.0.0-beta.25165.1",
+      "packageVersion": "10.0.0-beta.25170.1",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "135f35b615bf81eee330a77083c6924a057fb706"
+      "commitSha": "37fb454da5bb5ed53120b296acbeef5c6a900c19"
     },
     {
       "packageVersion": "2.2.0-beta.25168.1",
