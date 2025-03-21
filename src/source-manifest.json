@@ -106,11 +106,11 @@
       "commitSha": "1e98fa3f107e780569a167a9250bb600778456dc"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25169.9",
+      "packageVersion": "10.0.0-preview.4.25170.5",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "bb841230b0c9ec71a8df992a087420b372998a94"
+      "commitSha": "aa8f4a3c8e5737485edd6575c7493011a07b2c66"
     },
     {
       "packageVersion": "10.0.0-preview.25162.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "90382deea910bc5f46d5b14c82937457f8d99950"
+      "commitSha": "ab0f60f2b97ab9de24927edc41fe6ee39b9ed414"
     },
     {
       "packageVersion": "10.0.616801",
@@ -134,11 +134,11 @@
       "commitSha": "b0d22926bbbcbb12ac5264341ac218f0c9f01511"
     },
     {
-      "packageVersion": "10.0.616401",
+      "packageVersion": "10.0.617002",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "c3d4c372a15c2de79a2f26fe2b6b3644996d8550"
+      "commitSha": "cf30e8fd726730aa4b142275fb2fc0503528b7dd"
     },
     {
       "packageVersion": "10.0.0-beta.25165.1",
