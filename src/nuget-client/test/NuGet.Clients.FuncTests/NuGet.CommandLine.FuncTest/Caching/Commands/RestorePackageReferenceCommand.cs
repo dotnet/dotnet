@@ -2,7 +2,7 @@ using NuGet.Packaging.Core;
 
 namespace NuGet.CommandLine.Test.Caching
 {
-    public class RestoreProjectJsonCommand : ICachingCommand
+    public class RestorePackageReferenceCommand : ICachingCommand
     {
         public string Description => "Executes a nuget.exe restore on a project.json";
 
@@ -18,8 +18,7 @@ namespace NuGet.CommandLine.Test.Caching
 
         public string PrepareArguments(CachingTestContext context, PackageIdentity identity)
         {
-            context.WriteProjectJson(identity);
-            context.WriteProject();
+            context.WriteProject(identity);
 
             var args = $"restore {context.ProjectPath} -verbosity detailed";
 
