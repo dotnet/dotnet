@@ -468,7 +468,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 var net461 = NuGetFramework.Parse("net461");
 
-                var projectA = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var projectA = SimpleTestProjectContext.CreatePackagesConfigProject(
                     "a",
                     pathContext.SolutionRoot,
                     net461);
@@ -532,7 +532,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 var net461 = NuGetFramework.Parse("net461");
 
-                var projectA = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var projectA = SimpleTestProjectContext.CreatePackagesConfigProject(
                     "a",
                     pathContext.SolutionRoot,
                     net461);
@@ -780,7 +780,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     "a",
                     pathContext.SolutionRoot,
                     net461);
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 var projectB = SimpleTestProjectContext.CreateLegacyPackageReference(
                     "b",
@@ -840,7 +839,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     "a",
                     pathContext.SolutionRoot,
                     net461);
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 var projectB = SimpleTestProjectContext.CreateLegacyPackageReference(
                     "b",
@@ -1006,7 +1004,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 var net461 = NuGetFramework.Parse("net461");
 
-                var projectA = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var projectA = SimpleTestProjectContext.CreatePackagesConfigProject(
                     "a",
                     pathContext.SolutionRoot,
                     net461);
@@ -1112,7 +1110,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 var net461 = NuGetFramework.Parse("net461");
 
-                var projectA = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var projectA = SimpleTestProjectContext.CreatePackagesConfigProject(
                     "a",
                     pathContext.SolutionRoot,
                     net461);

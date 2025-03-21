@@ -7,10 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
+using NuGet.Frameworks;
 using NuGet.Packaging;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
@@ -128,9 +131,9 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        // Restore project.json from a failing v2 http source.
+        // Restore PackageReference from a failing v2 http source.
         [Fact]
-        public void RestoreRetry_ProjectJsonRetryOnFailingV2Source()
+        public async Task RestoreRetry_PackageReferenceRetryOnFailingV2Source()
         {
             // Arrange
             var nugetexe = Util.GetNuGetExePath();
@@ -139,19 +142,14 @@ namespace NuGet.CommandLine.Test
             {
                 var workingDirectory = pathContext.WorkingDirectory;
                 var packageDirectory = pathContext.PackageSource;
-                var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
-                var package = new FileInfo(packageFileName);
+                var packageContext = new SimpleTestPackageContext("testPackage1", "1.1.0");
+                await SimpleTestPackageUtility.CreatePackagesAsync(packageDirectory, packageContext);
+                var package = new FileInfo(Path.Combine(packageDirectory, packageContext.PackageName));
 
-                var projectJson = @"{
-                    ""dependencies"": {
-                        ""testPackage1"": ""1.1.0""
-                    },
-                    ""frameworks"": {
-                                ""net45"": { }
-                                }
-                  }";
-
-                var projectFile = Util.CreateUAPProject(workingDirectory, projectJson, "a");
+                var projectContext = SimpleTestProjectContext.CreateLegacyPackageReference("project", workingDirectory, FrameworkConstants.CommonFrameworks.Net472);
+                projectContext.AddPackageToAllFrameworks(packageContext);
+                projectContext.Save();
+                var projectFile = projectContext.ProjectPath;
 
                 // Server setup
                 using (var server = new MockServer())
@@ -246,7 +244,7 @@ namespace NuGet.CommandLine.Test
                             Path.Combine(pathContext.UserPackagesFolder,
                                 "testpackage1/1.1.0/testPackage1.1.1.0.nupkg.sha512")));
 
-                    Assert.True(File.Exists(Path.Combine(workingDirectory, "project.lock.json")));
+                    Assert.True(File.Exists(Path.Combine(projectContext.ProjectExtensionsPath, LockFileFormat.AssetsFileName)));
 
                     // Everything should be hit 3 times
                     foreach ((var url, var hits) in hitsByUrl)
@@ -257,9 +255,9 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        // Restore project.json from a failing v3 http source.
+        // Restore PackageReference from a failing v3 http source.
         [Fact]
-        public void RestoreRetry_ProjectJsonRetryOnFailingV3Source()
+        public async Task RestoreRetry_PackageReferenceRetryOnFailingV3Source()
         {
             // Arrange
             var nugetexe = Util.GetNuGetExePath();
@@ -268,19 +266,14 @@ namespace NuGet.CommandLine.Test
             {
                 var workingDirectory = pathContext.WorkingDirectory;
                 var packageDirectory = pathContext.PackageSource;
-                var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
-                var package = new FileInfo(packageFileName);
+                var packageContext = new SimpleTestPackageContext("testPackage1", "1.1.0");
+                await SimpleTestPackageUtility.CreatePackagesAsync(packageDirectory, packageContext);
+                var package = new FileInfo(Path.Combine(packageDirectory, packageContext.PackageName));
 
-                var projectJsonContent = @"{
-                    ""dependencies"": {
-                        ""testPackage1"": ""1.1.0""
-                    },
-                    ""frameworks"": {
-                                ""net45"": { }
-                                }
-                  }";
-
-                var projectFile = Util.CreateUAPProject(workingDirectory, projectJsonContent, "a");
+                var projectContext = SimpleTestProjectContext.CreateLegacyPackageReference("project", workingDirectory, FrameworkConstants.CommonFrameworks.Net472);
+                projectContext.AddPackageToAllFrameworks(packageContext);
+                projectContext.Save();
+                var projectFile = projectContext.ProjectPath;
 
                 // Server setup
                 var indexJson = Util.CreateIndexJson();
@@ -385,7 +378,7 @@ namespace NuGet.CommandLine.Test
                         File.Exists(
                             Path.Combine(pathContext.UserPackagesFolder, "testpackage1/1.1.0/testPackage1.1.1.0.nupkg.sha512")));
 
-                    Assert.True(File.Exists(Path.Combine(workingDirectory, "project.lock.json")));
+                    Assert.True(File.Exists(Path.Combine(projectContext.ProjectExtensionsPath, LockFileFormat.AssetsFileName)));
 
                     // Everything should be hit 3 times
                     foreach ((var url, var hits) in hitsByUrl)
