@@ -57,16 +57,15 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     public void GetRelatedDocuments_NonImportDocument_ReturnsEmpty()
     {
         // Arrange
-        var state = ProjectState.Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+        var state = ProjectState
+            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0]);
 
-        var snapshot = new ProjectSnapshot(state);
-
-        var document = snapshot.GetRequiredDocument(s_documents[0].FilePath);
+        var project = new ProjectSnapshot(state);
 
         // Act
-        var documents = snapshot.GetRelatedDocuments(document);
+        var documents = project.GetRelatedDocumentFilePaths(s_documents[0].FilePath);
 
         // Assert
         Assert.Empty(documents);
@@ -76,23 +75,22 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     public void GetRelatedDocuments_ImportDocument_ReturnsRelated()
     {
         // Arrange
-        var state = ProjectState.Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+        var state = ProjectState
+            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0])
             .AddEmptyDocument(s_documents[1])
             .AddEmptyDocument(TestProjectData.SomeProjectImportFile);
 
-        var snapshot = new ProjectSnapshot(state);
-
-        var document = snapshot.GetRequiredDocument(TestProjectData.SomeProjectImportFile.FilePath);
+        var project = new ProjectSnapshot(state);
 
         // Act
-        var documents = snapshot.GetRelatedDocuments(document);
+        var relatedDocumentFilePaths = project.GetRelatedDocumentFilePaths(TestProjectData.SomeProjectImportFile.FilePath);
 
         // Assert
         Assert.Collection(
-            documents.OrderBy(d => d.FilePath),
-            d => Assert.Equal(s_documents[0].FilePath, d.FilePath),
-            d => Assert.Equal(s_documents[1].FilePath, d.FilePath));
+            relatedDocumentFilePaths.Sort(),
+            path => Assert.Equal(s_documents[0].FilePath, path),
+            path => Assert.Equal(s_documents[1].FilePath, path));
     }
 }

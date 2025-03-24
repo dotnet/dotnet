@@ -726,7 +726,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var net461 = NuGetFramework.Parse("net472");
 
-                var project = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var project = SimpleTestProjectContext.CreateNonNuGet(
                     "a",
                     pathContext.SolutionRoot,
                     net461);

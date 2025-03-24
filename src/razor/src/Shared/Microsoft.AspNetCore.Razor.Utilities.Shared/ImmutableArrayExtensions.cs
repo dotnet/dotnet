@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -91,9 +92,30 @@ internal static partial class ImmutableArrayExtensions
     }
 
     /// <summary>
-    /// Returns an <see cref="ImmutableArray{T}"/> that contains no duplicates from the <paramref name="source"/> array
-    /// and returns the most recent copy of each item.
+    ///  Returns an <see cref="ImmutableArray{T}"/> that contains no duplicates from the <paramref name="source"/> array
+    ///  and returns the most recent copy of each item.
     /// </summary>
+    /// <param name="source">The array to process.</param>
+    public static ImmutableArray<T> GetMostRecentUniqueItems<T>(this ImmutableArray<T> source)
+    {
+        if (source.IsEmpty)
+        {
+            return [];
+        }
+
+        using var _ = HashSetPool<T>.GetPooledObject(out var uniqueItems);
+
+        return source.GetMostRecentUniqueItems(uniqueItems);
+    }
+
+    /// <summary>
+    ///  Returns an <see cref="ImmutableArray{T}"/> that contains no duplicates from the <paramref name="source"/> array
+    ///  and returns the most recent copy of each item.
+    /// </summary>
+    /// <param name="source">The array to process.</param>
+    /// <param name="comparer">
+    ///  A comparer to use for uniqueness.
+    /// </param>
     public static ImmutableArray<T> GetMostRecentUniqueItems<T>(this ImmutableArray<T> source, IEqualityComparer<T> comparer)
     {
         if (source.IsEmpty)
@@ -106,6 +128,32 @@ internal static partial class ImmutableArrayExtensions
 #else
         var uniqueItems = new HashSet<T>(comparer);
 #endif
+
+        return source.GetMostRecentUniqueItems(uniqueItems);
+    }
+
+    /// <summary>
+    ///  Returns an <see cref="ImmutableArray{T}"/> that contains no duplicates from the <paramref name="source"/> array
+    ///  and returns the most recent copy of each item.
+    /// </summary>
+    /// <param name="source">The array to process.</param>
+    /// <param name="uniqueItems">
+    ///  An empty <see cref="HashSet{T}"/> to use for uniqueness.
+    ///  Note that this may still contain items after processing.
+    /// </param>
+    public static ImmutableArray<T> GetMostRecentUniqueItems<T>(this ImmutableArray<T> source, HashSet<T> uniqueItems)
+    {
+        if (source.IsEmpty)
+        {
+            return [];
+        }
+
+        return GetMostRecentUniqueItemsCore(source, uniqueItems);
+    }
+
+    private static ImmutableArray<T> GetMostRecentUniqueItemsCore<T>(ImmutableArray<T> source, HashSet<T> uniqueItems)
+    {
+        Debug.Assert(uniqueItems.Count == 0, $"{nameof(uniqueItems)} should be empty!");
 
         using var stack = new PooledArrayBuilder<T>(capacity: source.Length);
 

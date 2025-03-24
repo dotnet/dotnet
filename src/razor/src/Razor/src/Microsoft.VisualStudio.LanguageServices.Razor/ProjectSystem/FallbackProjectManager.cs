@@ -70,8 +70,8 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
         }
     }
 
-    public bool IsFallbackProject(ProjectSnapshot project)
-        => _fallbackProjects.Contains(project.Key);
+    public bool IsFallbackProject(ProjectKey projectKey)
+        => _fallbackProjects.Contains(projectKey);
 
     internal void DynamicFileAdded(
         ProjectId projectId,
@@ -84,7 +84,7 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
         {
             if (_projectManager.TryGetProject(razorProjectKey, out var project))
             {
-                if (IsFallbackProject(project))
+                if (IsFallbackProject(razorProjectKey))
                 {
                     // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                     // are the only way to know about files in the project.
@@ -114,8 +114,8 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
     {
         try
         {
-            if (_projectManager.TryGetProject(razorProjectKey, out var project) &&
-                IsFallbackProject(project))
+            if (IsFallbackProject(razorProjectKey) &&
+                _projectManager.TryGetProject(razorProjectKey, out var project))
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.

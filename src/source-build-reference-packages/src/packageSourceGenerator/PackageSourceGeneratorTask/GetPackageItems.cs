@@ -3,16 +3,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Client;
 using NuGet.ContentModel;
-using NuGet.Packaging;
 using NuGet.Frameworks;
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks

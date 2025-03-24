@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.8.2</PackageVersion>
+    <AssemblyName>System.Reflection.DispatchProxy</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../system.reflection.emit/4.7.0/System.Reflection.Emit.4.7.0.csproj" />
+  </ItemGroup>
+
+</Project>

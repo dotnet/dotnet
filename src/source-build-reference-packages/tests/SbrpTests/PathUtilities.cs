@@ -9,18 +9,18 @@ namespace SbrpTests;
 
 internal static class PathUtilities
 {
-    public static string GetRepoRoot () =>
+    public static string GetRepoRoot() =>
         (string)AppContext.GetData("SbrpTests.RepoRoot")!;
 
-    public static string GetSourceBuildRepoRoot ()
+    public static string GetSourceBuildRepoRoot()
     {
-        var artifactsDir = (string)AppContext.GetData ("SbrpTests.ArtifactsDir")!;
+        var artifactsDir = (string)AppContext.GetData("SbrpTests.ArtifactsDir")!;
         return Path.Combine(artifactsDir, "sb", "src");
     }
-    
-    public static string GetSourceBuildPackagesShippingDir ()
+
+    public static string GetSourceBuildPackagesShippingDir()
     {
-        var configuration = (string)AppContext.GetData ("SbrpTests.Configuration")!;
+        var configuration = (string)AppContext.GetData("SbrpTests.Configuration")!;
         return Path.Combine(GetSourceBuildRepoRoot(), "artifacts", "packages", configuration, "Shipping");
     }
 }

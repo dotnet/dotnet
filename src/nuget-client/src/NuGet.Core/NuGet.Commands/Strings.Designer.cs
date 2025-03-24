@@ -1042,6 +1042,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more invalid frameworks were detected..
+        /// </summary>
+        internal static string Invalid_Framework {
+            get {
+                return ResourceManager.GetString("Invalid_Framework", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid restore input. {0}.
         /// </summary>
         internal static string InvalidRestoreInput {

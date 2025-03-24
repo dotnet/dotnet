@@ -1,6 +1,6 @@
 # VSTest
 
-The Visual Studio Test Platform is an open and extensible test platform that enables running tests, collect diagnostics data and report results. The Test Platform supports running tests written in various test frameworks, and using a pluggable adapter model. Based on user-choice, the desired test framework and its corresponding adapter can be acquired as a vsix or as NuGet package as the case may be. Adapters can be written in terms of a public API exposed by the Test Platform.
+The Visual Studio Test Platform is an open and extensible test platform that runs tests, collects diagnostics data, and reports results. The Test Platform supports running tests written in various test frameworks, and using a pluggable adapter model. Based on user-choice, the desired test framework and its corresponding adapter can be acquired as a vsix or as NuGet package as the case may be. Adapters can be written in terms of a public API exposed by the Test Platform.
 
 The Test Platform currently ships as part Visual Studio 2019, and in the .NET Core Tools Preview 3.
 

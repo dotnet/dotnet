@@ -96,15 +96,15 @@ internal abstract class EditorDocumentManager : IEditorDocumentManager
             }
 
             // Check if the document is already open and initialized, and associate a buffer if possible.
-            var textBuffer = GetTextBufferForOpenDocument(key.DocumentFilePath);
+            var textBuffer = GetTextBufferForOpenDocument(key.FilePath);
             document = new EditorDocument(
                 this,
                 JoinableTaskContext,
                 projectFilePath,
-                key.DocumentFilePath,
+                key.FilePath,
                 projectKey,
-                new FileTextLoader(key.DocumentFilePath, defaultEncoding: null),
-                _fileChangeTrackerFactory.Create(key.DocumentFilePath),
+                new FileTextLoader(key.FilePath, defaultEncoding: null),
+                _fileChangeTrackerFactory.Create(key.FilePath),
                 textBuffer,
                 changedOnDisk,
                 changedInEditor,
@@ -113,10 +113,10 @@ internal abstract class EditorDocumentManager : IEditorDocumentManager
 
             _documents.Add(key, document);
 
-            if (!_documentsByFilePath.TryGetValue(key.DocumentFilePath, out var documents))
+            if (!_documentsByFilePath.TryGetValue(key.FilePath, out var documents))
             {
                 documents = new List<DocumentKey>();
-                _documentsByFilePath.Add(key.DocumentFilePath, documents);
+                _documentsByFilePath.Add(key.FilePath, documents);
             }
 
             if (!documents.Contains(key))

@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
@@ -113,7 +112,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         var htmlChanges = await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken);
 
         // Act
-        var changes = await formattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges, range, razorOptions, DisposalToken);
+        var changes = await formattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges.AssumeNotNull(), range, razorOptions, DisposalToken);
 
         // Assert
         var edited = source.WithChanges(changes);
@@ -182,7 +181,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
             var htmlFormatter = new HtmlFormatter(client);
             var htmlChanges = await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken);
-            changes = await formattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges, razorOptions, hostDocumentIndex: positionAfterTrigger, triggerCharacter: triggerCharacter, DisposalToken);
+            changes = await formattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges.AssumeNotNull(), razorOptions, hostDocumentIndex: positionAfterTrigger, triggerCharacter: triggerCharacter, DisposalToken);
         }
 
         // Assert
@@ -299,6 +298,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool inGlobalNamespace,
         bool forceRuntimeCodeGeneration)
     {
+        var projectKey = new ProjectKey(Path.Combine(path, "obj"));
         var snapshotMock = new StrictMock<IDocumentSnapshot>();
 
         snapshotMock
@@ -309,7 +309,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             .Returns(path);
         snapshotMock
             .Setup(d => d.Project.Key)
-            .Returns(TestProjectKey.Create("/obj"));
+            .Returns(projectKey);
         snapshotMock
             .Setup(d => d.TargetPath)
             .Returns(path);
