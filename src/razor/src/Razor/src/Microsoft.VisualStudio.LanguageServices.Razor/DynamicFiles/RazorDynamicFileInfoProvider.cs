@@ -205,14 +205,9 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     }
 
     // Called by us when a document opens in the editor
-    public void SuppressDocument(ProjectKey projectKey, string documentFilePath)
+    public void SuppressDocument(DocumentKey documentKey)
     {
         Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "Should never be called in cohosting");
-
-        if (documentFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(documentFilePath));
-        }
 
         if (_lspEditorFeatureDetector.IsLspEditorEnabled())
         {
@@ -222,13 +217,13 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         // There's a possible race condition here where we're processing an update
         // and the project is getting unloaded. So if we don't find an entry we can
         // just ignore it.
-        var projectId = TryFindProjectIdForProjectKey(projectKey);
+        var projectId = TryFindProjectIdForProjectKey(documentKey.ProjectKey);
         if (projectId is null)
         {
             return;
         }
 
-        var key = new Key(projectId, documentFilePath);
+        var key = new Key(projectId, documentKey.FilePath);
         if (_entries.TryGetValue(key, out var entry))
         {
             var updated = false;
@@ -243,7 +238,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
             if (updated)
             {
-                Updated?.Invoke(this, documentFilePath);
+                Updated?.Invoke(this, documentKey.FilePath);
             }
         }
     }

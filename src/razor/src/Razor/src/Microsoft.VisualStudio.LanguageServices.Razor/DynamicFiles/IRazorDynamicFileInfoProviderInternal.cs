@@ -10,5 +10,5 @@ internal interface IRazorDynamicFileInfoProviderInternal
 {
     void UpdateLSPFileInfo(Uri documentUri, IDynamicDocumentContainer documentContainer);
     void UpdateFileInfo(ProjectKey projectKey, IDynamicDocumentContainer documentContainer);
-    void SuppressDocument(ProjectKey projectKey, string documentFilePath);
+    void SuppressDocument(DocumentKey documentKey);
 }

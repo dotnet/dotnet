@@ -63,7 +63,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public async Task Initialize_DoneInCorrectOrderBasedOnInitializePriorityPriority()
+    public async Task Initialize_DoneInCorrectOrderBasedOnInitializePriority()
     {
         // Arrange
         var initializedOrder = new List<string>();
@@ -891,5 +891,32 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             x => x.DocumentAdded(solutionIsClosing: true));
 
         textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()), Times.Never());
+    }
+
+    [Fact]
+    public async Task SolutionClosing_RemovesProjectAndClosesDocument()
+    {
+        // Arrange
+
+        // Add project and open document.
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(s_hostProject);
+            updater.AddDocument(s_hostProject.Key, s_documents[0], EmptyTextLoader.Instance);
+            updater.OpenDocument(s_hostProject.Key, s_documents[0].FilePath, _sourceText);
+        });
+
+        // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.SolutionClosed();
+            updater.RemoveProject(s_hostProject.Key);
+            updater.CloseDocument(s_hostProject.Key, s_documents[0].FilePath, EmptyTextLoader.Instance);
+        });
+
+        // Assert
+        Assert.False(_projectManager.ContainsDocument(s_hostProject.Key, s_documents[0].FilePath));
+        Assert.False(_projectManager.ContainsProject(s_hostProject.Key));
+        Assert.False(_projectManager.IsDocumentOpen(s_documents[0].FilePath));
     }
 }

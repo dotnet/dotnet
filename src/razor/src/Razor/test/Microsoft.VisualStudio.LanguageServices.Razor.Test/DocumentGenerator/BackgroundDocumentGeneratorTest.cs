@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -35,7 +34,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     private static readonly HostProject s_hostProject2 = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
 
     private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
-        x.IsFallbackProject(It.IsAny<ProjectSnapshot>()) == false);
+        x.IsFallbackProject(It.IsAny<ProjectKey>()) == false);
 
     private readonly TestDynamicFileInfoProvider _dynamicFileInfoProvider = new();
 
@@ -127,12 +126,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddDocument(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
-        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
+        generator.EnqueueIfNecessary(documentKey1);
 
         await generator.WaitUntilCurrentBatchCompletesAsync();
     }
@@ -168,12 +167,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddDocument(s_hostProject1.Key, s_documents[0], textLoaderMock.Object);
         });
 
-        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
+        generator.EnqueueIfNecessary(documentKey1);
 
         await generator.WaitUntilCurrentBatchCompletesAsync();
     }
@@ -192,15 +191,14 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddDocument(s_hostProject1.Key, s_documents[1], EmptyTextLoader.Instance);
         });
 
-        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
-        var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
         // Enqueue some work.
-        generator.Enqueue(project, project.GetRequiredDocument(s_documents[0].FilePath));
+        generator.EnqueueIfNecessary(documentKey1);
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
@@ -231,16 +229,15 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.AddDocument(hostProject1.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
-        var project = projectManager.GetRequiredProject(hostProject1.Key);
-        var documentKey1 = new DocumentKey(project.Key, hostDocument1.FilePath);
-        var documentKey2 = new DocumentKey(project.Key, hostDocument2.FilePath);
+        var documentKey1 = new DocumentKey(hostProject1.Key, hostDocument1.FilePath);
+        var documentKey2 = new DocumentKey(hostProject1.Key, hostDocument2.FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
         // First, enqueue some work.
-        generator.Enqueue(project, project.GetRequiredDocument(hostDocument1.FilePath));
+        generator.EnqueueIfNecessary(documentKey1);
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
@@ -249,12 +246,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         Assert.Single(generator.CompletedWork, documentKey1);
 
         // Enqueue more work.
-        generator.Enqueue(project, project.GetRequiredDocument(hostDocument2.FilePath));
+        generator.EnqueueIfNecessary(documentKey2);
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
 
-        Assert.Collection(generator.CompletedWork.OrderBy(key => key.DocumentFilePath),
+        Assert.Collection(generator.CompletedWork.OrderBy(key => key.FilePath),
             key => Assert.Equal(documentKey1, key),
             key => Assert.Equal(documentKey2, key));
     }
@@ -295,7 +292,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         Assert.True(generator.HasPendingWork);
 
-        Assert.Collection(generator.PendingWork.OrderBy(key => key.DocumentFilePath),
+        Assert.Collection(generator.PendingWork.OrderBy(key => key.FilePath),
             key => Assert.Equal(new(s_hostProject1.Key, documents[0].FilePath), key),
             key => Assert.Equal(new(s_hostProject1.Key, documents[1].FilePath), key));
 
@@ -306,7 +303,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         Assert.False(generator.HasPendingWork);
 
-        Assert.Collection(generator.CompletedWork.OrderBy(key => key.DocumentFilePath),
+        Assert.Collection(generator.CompletedWork.OrderBy(key => key.FilePath),
             key => Assert.Equal(new(s_hostProject1.Key, documents[0].FilePath), key),
             key => Assert.Equal(new(s_hostProject1.Key, documents[1].FilePath), key));
     }
@@ -384,10 +381,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             _blockBatchProcessingSource.Set();
         }
 
-        private static DocumentKey GetKey(ProjectSnapshot project, DocumentSnapshot document)
-            => new(project.Key, document.FilePath);
-
-        protected override async ValueTask ProcessBatchAsync(ImmutableArray<(ProjectSnapshot, DocumentSnapshot)> items, CancellationToken token)
+        protected override async ValueTask ProcessBatchAsync(ImmutableArray<DocumentKey> items, CancellationToken token)
         {
             if (_blockBatchProcessingSource is { } blockEvent)
             {
@@ -403,19 +397,19 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             await base.ProcessBatchAsync(items, token);
         }
 
-        public override void Enqueue(ProjectSnapshot project, DocumentSnapshot document)
+        public override void EnqueueIfNecessary(DocumentKey documentKey)
         {
-            PendingWork.Add(GetKey(project, document));
+            PendingWork.Add(documentKey);
 
-            base.Enqueue(project, document);
+            base.EnqueueIfNecessary(documentKey);
         }
 
-        protected override Task ProcessDocumentAsync(ProjectSnapshot project, DocumentSnapshot document, CancellationToken cancellationToken)
+        protected override Task ProcessDocumentAsync(DocumentSnapshot document, CancellationToken cancellationToken)
         {
-            var key = GetKey(project, document);
+            var key = document.Key;
             PendingWork.Remove(key);
 
-            var task = base.ProcessDocumentAsync(project, document, cancellationToken);
+            var task = base.ProcessDocumentAsync(document, cancellationToken);
 
             CompletedWork.Add(key);
 
@@ -434,9 +428,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         public IReadOnlyDictionary<string, IDynamicDocumentContainer?> DynamicDocuments => _dynamicDocuments;
 
-        public void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
+        public void SuppressDocument(DocumentKey documentKey)
         {
-            _dynamicDocuments[documentFilePath] = null;
+            _dynamicDocuments[documentKey.FilePath] = null;
         }
 
         public void UpdateFileInfo(ProjectKey projectKey, IDynamicDocumentContainer documentContainer)

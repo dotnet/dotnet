@@ -98,13 +98,18 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     }
 
     /// <summary>
-    /// If the provided document is an import document, gets the other documents in the project
-    /// that include directives specified by the provided document. Otherwise returns an empty
-    /// list.
+    /// If the provided document file path references an import document, gets the other
+    /// documents in the project that include directives specified by the provided document.
+    /// Otherwise returns an empty array.
     /// </summary>
-    public ImmutableArray<DocumentSnapshot> GetRelatedDocuments(DocumentSnapshot document)
+    public ImmutableArray<string> GetRelatedDocumentFilePaths(string documentFilePath)
     {
-        var targetPath = document.TargetPath;
+        if (!_state.Documents.TryGetValue(documentFilePath, out var documentState))
+        {
+            return [];
+        }
+
+        var targetPath = documentState.HostDocument.TargetPath;
 
         if (!_state.ImportsToRelatedDocuments.TryGetValue(targetPath, out var relatedDocuments))
         {
@@ -113,13 +118,13 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
         lock (_gate)
         {
-            using var builder = new PooledArrayBuilder<DocumentSnapshot>(capacity: relatedDocuments.Count);
+            using var builder = new PooledArrayBuilder<string>(capacity: relatedDocuments.Count);
 
             foreach (var relatedDocumentFilePath in relatedDocuments)
             {
-                if (TryGetDocument(relatedDocumentFilePath, out var relatedDocument))
+                if (ContainsDocument(relatedDocumentFilePath))
                 {
-                    builder.Add(relatedDocument);
+                    builder.Add(relatedDocumentFilePath);
                 }
             }
 

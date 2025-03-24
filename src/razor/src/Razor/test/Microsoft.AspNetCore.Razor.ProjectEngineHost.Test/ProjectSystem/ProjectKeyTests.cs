@@ -2,22 +2,17 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
-using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.ProjectSystem.CompareKeysTestData;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test.ProjectSystem;
+namespace Microsoft.AspNetCore.Razor.ProjectSystem;
 
-public class ProjectKeyTests : WorkspaceTestBase
+public class ProjectKeyTests(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
-    public ProjectKeyTests(ITestOutputHelper testOutput)
-    : base(testOutput)
-    {
-    }
-
     [Theory]
     [InlineData("/path/to/dir", @"\path\to\dir")]
     [InlineData("/path%2Fto/dir", @"\path\to\dir")]
@@ -25,8 +20,8 @@ public class ProjectKeyTests : WorkspaceTestBase
     [InlineData(@"\path%5Cto\dir\", @"\path\to\dir")]
     public void EqualityTests(string id1, string id2)
     {
-        var key1 = TestProjectKey.Create(id1);
-        var key2 = TestProjectKey.Create(id2);
+        var key1 = new ProjectKey(id1);
+        var key2 = new ProjectKey(id2);
 
         // I'm covering all bases out of a complete lack of trust in compilers
         Assert.True(key1 == key2);
@@ -50,8 +45,8 @@ public class ProjectKeyTests : WorkspaceTestBase
     [InlineData(@"\PATH\TO\DIR\", @"\path\to\dir")]
     public void EqualityTests_Windows(string id1, string id2)
     {
-        var key1 = TestProjectKey.Create(id1);
-        var key2 = TestProjectKey.Create(id2);
+        var key1 = new ProjectKey(id1);
+        var key2 = new ProjectKey(id2);
 
         // I'm covering all bases out of a complete lack of trust in compilers
         Assert.True(key1 == key2);
@@ -74,8 +69,8 @@ public class ProjectKeyTests : WorkspaceTestBase
     [InlineData(@"\PATH\TO\OTHER\DIR\", @"\path\to\dir")]
     public void InequalityTests(string id1, string id2)
     {
-        var key1 = TestProjectKey.Create(id1);
-        var key2 = TestProjectKey.Create(id2);
+        var key1 = new ProjectKey(id1);
+        var key2 = new ProjectKey(id2);
 
         // I'm covering all bases out of a complete lack of trust in compilers
         Assert.False(key1 == key2);
@@ -95,12 +90,43 @@ public class ProjectKeyTests : WorkspaceTestBase
         var intermediateOutputPath = @"c:\project\obj";
         var assemblyPath = Path.Combine(intermediateOutputPath, "project.dll");
 
-        var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Default, "Project", "Assembly", "C#").WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(assemblyPath));
-        var project = Workspace.CurrentSolution.AddProject(projectInfo).GetProject(projectInfo.Id).AssumeNotNull();
+        var projectInfo = ProjectInfo
+            .Create(ProjectId.CreateNewId(), VersionStamp.Default, "Project", "Assembly", "C#")
+            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(assemblyPath));
+
+        var project = Workspace.CurrentSolution
+            .AddProject(projectInfo)
+            .GetRequiredProject(projectInfo.Id);
 
         var roslynKey = project.ToProjectKey();
-        var razorKey = TestProjectKey.Create(intermediateOutputPath);
+        var razorKey = new ProjectKey(intermediateOutputPath);
 
         Assert.Equal(roslynKey, razorKey);
     }
+
+    [Theory]
+    [MemberData(nameof(CompareProjectKeysData))]
+    internal void CompareProjectKeys(ProjectKey key1, ProjectKey key2, CompareResult result)
+    {
+        switch (result)
+        {
+            case CompareResult.Equal:
+                Assert.Equal(0, key1.CompareTo(key2));
+                break;
+
+            case CompareResult.LessThan:
+                Assert.True(key1.CompareTo(key2) < 0);
+                break;
+
+            case CompareResult.GreaterThan:
+                Assert.True(key1.CompareTo(key2) > 0);
+                break;
+
+            default:
+                Assumed.Unreachable();
+                break;
+        }
+    }
+
+    public static TheoryData CompareProjectKeysData => CompareKeysTestData.ProjectKeys;
 }
