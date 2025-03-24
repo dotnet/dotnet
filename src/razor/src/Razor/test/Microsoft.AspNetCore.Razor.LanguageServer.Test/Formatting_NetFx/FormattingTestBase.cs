@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
@@ -299,6 +298,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool inGlobalNamespace,
         bool forceRuntimeCodeGeneration)
     {
+        var projectKey = new ProjectKey(Path.Combine(path, "obj"));
         var snapshotMock = new StrictMock<IDocumentSnapshot>();
 
         snapshotMock
@@ -309,7 +309,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             .Returns(path);
         snapshotMock
             .Setup(d => d.Project.Key)
-            .Returns(TestProjectKey.Create("/obj"));
+            .Returns(projectKey);
         snapshotMock
             .Setup(d => d.TargetPath)
             .Returns(path);

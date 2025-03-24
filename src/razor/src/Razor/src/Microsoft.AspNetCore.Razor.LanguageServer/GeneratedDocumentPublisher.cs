@@ -180,7 +180,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     {
                         if (_publishedCSharpData.Remove(key))
                         {
-                            _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.DocumentFilePath}");
+                            _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.FilePath}");
                         }
                     }
 
@@ -208,7 +208,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     {
                         if (_publishedCSharpData.Remove(documentKey))
                         {
-                            _logger.LogDebug($"Removing previous C# publish data for {documentKey.ProjectKey}/{documentKey.DocumentFilePath}");
+                            _logger.LogDebug($"Removing previous C# publish data for {documentKey.ProjectKey}/{documentKey.FilePath}");
                         }
                     }
 
@@ -216,7 +216,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     {
                         if (_publishedHtmlData.Remove(documentFilePath))
                         {
-                            _logger.LogDebug($"Removing previous Html publish data for {documentKey.ProjectKey}/{documentKey.DocumentFilePath}");
+                            _logger.LogDebug($"Removing previous Html publish data for {documentKey.ProjectKey}/{documentKey.FilePath}");
                         }
                     }
                 }
@@ -249,7 +249,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                         {
                             if (_publishedCSharpData.Remove(key))
                             {
-                                _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.DocumentFilePath}");
+                                _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.FilePath}");
                             }
                         }
                     }

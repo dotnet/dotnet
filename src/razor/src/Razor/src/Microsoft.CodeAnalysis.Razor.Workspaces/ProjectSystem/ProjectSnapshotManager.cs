@@ -301,30 +301,22 @@ internal partial class ProjectSnapshotManager : IDisposable
 
     private void OpenDocument(ProjectKey projectKey, string documentFilePath, SourceText text)
     {
-        if (TryUpdateProject(
-            projectKey,
-            transformer: state => state.WithDocumentText(documentFilePath, text),
-            onAfterUpdate: () => _openDocumentSet.Add(documentFilePath),
-            out var oldProject,
-            out var newProject,
-            out var isSolutionClosing))
+        using (_readerWriterLock.DisposableWrite())
         {
-            NotifyListeners(ProjectChangeEventArgs.DocumentChanged(oldProject, newProject, documentFilePath, isSolutionClosing));
+            _openDocumentSet.Add(documentFilePath);
         }
+
+        UpdateDocumentText(projectKey, documentFilePath, text);
     }
 
     private void CloseDocument(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        if (TryUpdateProject(
-            projectKey,
-            transformer: state => state.WithDocumentText(documentFilePath, textLoader),
-            onAfterUpdate: () => _openDocumentSet.Remove(documentFilePath),
-            out var oldProject,
-            out var newProject,
-            out var isSolutionClosing))
+        using (_readerWriterLock.DisposableWrite())
         {
-            NotifyListeners(ProjectChangeEventArgs.DocumentChanged(oldProject, newProject, documentFilePath, isSolutionClosing));
+            _openDocumentSet.Remove(documentFilePath);
         }
+
+        UpdateDocumentText(projectKey, documentFilePath, textLoader);
     }
 
     private void UpdateDocumentText(ProjectKey projectKey, string documentFilePath, SourceText text)
@@ -413,15 +405,6 @@ internal partial class ProjectSnapshotManager : IDisposable
         [NotNullWhen(true)] out ProjectSnapshot? oldProject,
         [NotNullWhen(true)] out ProjectSnapshot? newProject,
         out bool isSolutionClosing)
-        => TryUpdateProject(projectKey, transformer, onAfterUpdate: null, out oldProject, out newProject, out isSolutionClosing);
-
-    private bool TryUpdateProject(
-        ProjectKey projectKey,
-        Func<ProjectState, ProjectState> transformer,
-        Action? onAfterUpdate,
-        [NotNullWhen(true)] out ProjectSnapshot? oldProject,
-        [NotNullWhen(true)] out ProjectSnapshot? newProject,
-        out bool isSolutionClosing)
     {
         if (_initialized)
         {
@@ -458,8 +441,6 @@ internal partial class ProjectSnapshotManager : IDisposable
 
         var newEntry = new Entry(newState);
         _projectMap[projectKey] = newEntry;
-
-        onAfterUpdate?.Invoke();
 
         oldProject = oldEntry.GetSnapshot();
         newProject = newEntry.GetSnapshot();

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -33,7 +32,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
         targetPath: "/path/to/file1.razor");
 
     private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
-        x.IsFallbackProject(It.IsAny<ProjectSnapshot>()) == false);
+        x.IsFallbackProject(It.IsAny<ProjectKey>()) == false);
 
     [UIFact]
     public async Task ProjectManager_Changed_RemoveDocument_RemovesDocument()
@@ -130,7 +129,7 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
             .Returns(GetEditorDocument())
             .Callback<DocumentKey, string, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, filePath, projectKey, _, _, _, _) =>
             {
-                Assert.Equal(s_hostDocument.FilePath, key.DocumentFilePath);
+                Assert.Equal(s_hostDocument.FilePath, key.FilePath);
                 Assert.Equal(s_hostProject.FilePath, filePath);
                 Assert.Equal(s_hostProject.Key, projectKey);
             })

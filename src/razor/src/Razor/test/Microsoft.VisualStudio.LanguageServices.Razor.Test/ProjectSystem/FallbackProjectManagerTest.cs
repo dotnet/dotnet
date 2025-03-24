@@ -75,7 +75,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
-        Assert.False(_fallbackProjectManger.IsFallbackProject(project));
+        Assert.False(_fallbackProjectManger.IsFallbackProject(project.Key));
     }
 
     [UIFact]
@@ -102,7 +102,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         Assert.Equal("DisplayName", project.DisplayName);
         Assert.Equal("RootNamespace", project.RootNamespace);
 
-        Assert.True(_fallbackProjectManger.IsFallbackProject(project));
+        Assert.True(_fallbackProjectManger.IsFallbackProject(project.Key));
 
         var documentFilePath = Assert.Single(project.DocumentFilePaths);
         Assert.Equal(SomeProjectFile1.FilePath, documentFilePath);
@@ -130,7 +130,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
-        Assert.True(_fallbackProjectManger.IsFallbackProject(project));
+        Assert.True(_fallbackProjectManger.IsFallbackProject(project.Key));
 
         var hostProject = SomeProject with
         {
@@ -144,7 +144,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         });
 
         project = Assert.Single(_projectManager.GetProjects());
-        Assert.False(_fallbackProjectManger.IsFallbackProject(project));
+        Assert.False(_fallbackProjectManger.IsFallbackProject(project.Key));
     }
 
     [UIFact]

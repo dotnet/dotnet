@@ -27,6 +27,7 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
 
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<Work> _workQueue;
+    private readonly HashSet<Work> _workerSet;
     private readonly Dictionary<ProjectKey, RazorProjectInfo> _latestProjectInfoMap;
     private ImmutableArray<IRazorProjectInfoListener> _listeners;
     private readonly TaskCompletionSource<bool> _initializationTaskSource;
@@ -37,6 +38,7 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
     {
         Logger = loggerFactory.GetOrCreateLogger(GetType());
 
+        _workerSet = new(Comparer.Instance);
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<Work>(delay ?? DefaultDelay, ProcessBatchAsync, _disposeTokenSource.Token);
         _latestProjectInfoMap = [];
@@ -89,7 +91,9 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
 
     private async ValueTask ProcessBatchAsync(ImmutableArray<Work> items, CancellationToken token)
     {
-        foreach (var work in items.GetMostRecentUniqueItems(Comparer.Instance))
+        _workerSet.Clear();
+
+        foreach (var work in items.GetMostRecentUniqueItems(_workerSet))
         {
             if (token.IsCancellationRequested)
             {
