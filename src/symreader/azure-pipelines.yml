@@ -39,7 +39,7 @@ extends:
         enabled: true
       tsa:
         enabled: true
-        configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
+        configFile: '$(Build.SourcesDirectory)/eng/tsaconfig.gdntsa'
     pool:
       name: AzurePipelines-EO
       image: AzurePipelinesWindows2022compliantGPT
