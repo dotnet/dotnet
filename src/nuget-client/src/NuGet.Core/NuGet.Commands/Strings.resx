@@ -1139,4 +1139,7 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
     <value>A ProjectReference cannot be pruned, {0}.</value>
     <comment>0 - project reference</comment>
   </data>
+  <data name="Invalid_Framework" xml:space="preserve">
+    <value>One or more invalid frameworks were detected.</value>
+  </data>
 </root>

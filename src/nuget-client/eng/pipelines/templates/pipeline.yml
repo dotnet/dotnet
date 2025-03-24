@@ -127,18 +127,21 @@ stages:
         condition: "succeeded()"
         targetPath: '$(Build.Repository.LocalPath)\artifacts\buildinfo.json'
         artifactName: 'BuildInfo'
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.CommandLine.Test as artifact'
         condition: "and(succeeded(),ne(variables['RunMonoTestsOnMac'], 'false'))"
         targetPath: "$(Build.Repository.LocalPath)\\test\\NuGet.Clients.Tests\\NuGet.CommandLine.Test\\bin\\$(BuildConfiguration)\\net472"
         artifactName: "NuGet.CommandLine.Test"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish nupkgs'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)"
         artifactName: "nupkgs - $(RtmLabel)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish BootstrapperInfo.json as a build artifact'
@@ -147,6 +150,7 @@ stages:
         artifactName: MicroBuildOutputs
         # need to make daily Apex test pipeline build its own bootstrapper, and remove this from official pipeline
         codeSignValidationEnabled: false
+        sbomEnabled: false
 
       - output: artifactsDrop
         displayName: 'Publish the .runsettings files to artifact services'
@@ -174,18 +178,21 @@ stages:
         displayName: 'Publish NuGet.exe and VSIX as artifact'
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         artifactName: "$(VsixPublishDir)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish localizationArtifacts artifact'
         condition: "or(eq(variables['OverridePublishLocalizationArtifact'], 'true'), and(succeededOrFailed(), eq(variables['IsOfficialBuild'], 'true')))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\localizationArtifacts\\"
         artifactName: "localizationArtifacts"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\symbolstoindex"
         artifactName: "symbols - $(RtmLabel)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: artifactsDrop
         displayName: 'Upload VSTS Drop'
@@ -202,17 +209,20 @@ stages:
         condition: "succeeded()"
         artifactName: LocValidationLogs
         targetPath: "$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs"
+        sbomEnabled: true
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
-        targetPath: $(Build.StagingDirectory)\binlog
+        targetPath: '$(Build.StagingDirectory)\binlog'
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: Publish SBOM manifest
         artifactName: $(ARTIFACT_NAME)
-        targetPath: '$(Build.ArtifactStagingDirectory)/sbom'
+        targetPath: '$(Build.SourcesDirectory)/artifacts'
+        sbomEnabled: false
 
     steps:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
@@ -254,23 +264,27 @@ stages:
         condition: "succeeded()"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)"
         artifactName: "nupkgs - $(RtmLabel)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.exe and VSIX as artifact'
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         artifactName: "$(VsixPublishDir)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\symbolstoindex"
         artifactName: "symbols - $(RtmLabel)"
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)\binlog
+        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
     steps:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
       parameters:
@@ -315,6 +329,7 @@ stages:
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         targetPath: "artifacts/sb/log/source-inner-build.binlog"
         artifactName: "Source-build log"
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/Source_Build.yml@self
 
@@ -346,12 +361,14 @@ stages:
         condition: "or(failed(), canceled())"
         targetPath: "$(Build.Repository.LocalPath)/build/TestResults"
         artifactName: "$(Agent.JobName)"
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)\binlog
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/Functional_Tests_On_Windows.yml@self
 
@@ -384,12 +401,14 @@ stages:
         condition: "or(failed(), canceled())"
         targetPath: "$(Build.Repository.LocalPath)/build/TestResults"
         artifactName: "$(Agent.JobName)"
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(TestRunDisplayName) On Linux - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)/binlog
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/Tests_On_Linux.yml@self
 
@@ -421,12 +440,14 @@ stages:
         condition: "or(failed(), canceled())"
         targetPath: "$(Build.Repository.LocalPath)/build/TestResults"
         artifactName: "$(Agent.JobName)"
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(TestRunDisplayName) On Mac - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)/binlog
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/Tests_On_Mac.yml@self
 
@@ -448,12 +469,14 @@ stages:
         condition: "or(failed(), canceled())"
         targetPath: "$(Build.Repository.LocalPath)/build/TestResults"
         artifactName: "$(Agent.JobName)"
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)\binlog
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/CrossFramework_Tests_On_Windows.yml@self
 
@@ -483,11 +506,13 @@ stages:
         condition: "or(failed(), canceled())"
         targetPath: "$(Build.Repository.LocalPath)/build/TestResults"
         artifactName: "$(Agent.JobName)"
+        sbomEnabled: false
 
       - output: pipelineArtifact
         displayName: 'Publish binlogs'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
         artifactName: binlog - $(TestRunDisplayName) On Mac - Attempt $(System.JobAttempt)
         targetPath: $(Build.StagingDirectory)/binlog
+        sbomEnabled: false
     steps:
     - template: /eng/pipelines/templates/Tests_On_Mac.yml@self
