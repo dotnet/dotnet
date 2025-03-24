@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.3.25169.11",
+      "packageVersion": "10.0.0-preview.3.25172.1",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "f1fb754a3a702a736421bfd31a641eb48cf15b7d"
+      "commitSha": "de35e2b0a0d8d5d1e307907983a6838da1092898"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -50,11 +50,11 @@
       "commitSha": "6626d0ac5d10532ef9c0939b4b65c7381715340a"
     },
     {
-      "packageVersion": "10.0.0-preview.3.25157.4",
+      "packageVersion": "10.0.0-preview.3.25171.6",
       "barId": null,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ce99d821778610e24395bc2c80b9e05c1230dade"
+      "commitSha": "3ce158ea54ab2b28c17a529d7e87bbe13338f364"
     },
     {
       "packageVersion": "10.0.0-preview.3.25168.2",
@@ -78,11 +78,11 @@
       "commitSha": "bcc2dc6a6509ffb63f1253a9bbbaaa233bd53a50"
     },
     {
-      "packageVersion": "6.14.0-preview.1.84",
+      "packageVersion": "6.14.0-preview.1.89",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "27a0506221b083213df0be5c0618299e49c4d066"
+      "commitSha": "13550619f90e73a1f8b4b5159c6d7f268c9756d0"
     },
     {
       "packageVersion": "9.0.0-preview.25170.2",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9970dddedb3952dc4b558ddf8c7dd3406049a3ed"
+      "commitSha": "aadb1bfdd3126701828bbc610e1b7b3be1d9fc3b"
     },
     {
       "packageVersion": "10.0.616001",

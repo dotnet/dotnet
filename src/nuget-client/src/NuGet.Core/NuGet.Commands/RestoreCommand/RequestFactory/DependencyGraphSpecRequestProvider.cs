@@ -76,7 +76,7 @@ namespace NuGet.Commands
                     projectsWithErrors.Add(projectPath);
                 }
             }
-            SpecValidationUtility.ValidateDependencySpec(dgFile, projectsWithErrors);
+            SpecValidationUtility.ValidateDependencySpec(dgFile, projectsWithErrors, restoreContext.Log);
 
             // Create requests
             var requests = new ConcurrentBag<RestoreSummaryRequest>();

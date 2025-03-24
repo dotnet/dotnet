@@ -1,2 +1,3 @@
 #nullable enable
+~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip, NuGet.Common.ILogger logger) -> void
 ~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> allItems) -> NuGet.ProjectModel.RestoreAuditProperties
