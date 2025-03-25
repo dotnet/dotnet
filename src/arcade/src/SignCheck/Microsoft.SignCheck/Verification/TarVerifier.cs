@@ -43,7 +43,7 @@ namespace Microsoft.SignCheck.Verification
                     }
 
                     TarEntry entry;
-                    while ((entry = reader.GetNextEntry()) != null)
+                    while ((entry = reader.TryGetNextTarEntry()) != null)
                     {
                         // Skip directories
                         if (!entry.Name.EndsWith("/"))

@@ -39,7 +39,7 @@ namespace Microsoft.SignCheck.Verification
             // https://microsoft.sharepoint.com/teams/prss/esrp/info/SitePages/Linux%20GPG%20Signing.aspx
             try
             {
-                Utils.DownloadAndConfigureMicrosoftPublicKey(tempDir);
+                Utils.DownloadAndConfigurePublicKeys(tempDir);
 
                 (string signatureDocument, string signableContent) = GetSignatureDocumentAndSignableContent(path, tempDir);
 

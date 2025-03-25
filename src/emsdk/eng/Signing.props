@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
-    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" />
     <FileExtensionSignInfo Include=".pyd" CertificateName="MicrosoftDotNet500" />
     <FileExtensionSignInfo Include=".cat" CertificateName="MicrosoftDotNet500" />
 

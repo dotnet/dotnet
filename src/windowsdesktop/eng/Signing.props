@@ -8,10 +8,6 @@
                                        '$(TargetArchitecture)' != ''">false</EnableDefaultArtifacts>
   </PropertyGroup>
 
-  <ItemGroup>
-    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" />
-  </ItemGroup>
-
   <!-- Include installers -->
   <ItemGroup>
     <Artifact Include="$(ArtifactsPackagesDir)**\*.zip;

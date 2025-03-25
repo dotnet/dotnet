@@ -37,6 +37,7 @@ parameters:
   #             _TeamName - the name of your team
   #             _SignType - 'test' or 'real'  
   enableMicrobuild: boolean
+  enableMicrobuildForMacAndLinux: boolean # true if build is running on a Mac or Linux agent
   enablePublishBuildArtifacts: boolean # deprecated (replaced by 'artifacts' parameter).  Enables publishing build logs as an Azure DevOps artifact.
   enablePublishBuildAssets: boolean # deprecated (replaced by 'artifacts' parameter). Enables publishing asset manifests as an Azure DevOps artifact.
   enablePublishTestResults: boolean # include publish test results task

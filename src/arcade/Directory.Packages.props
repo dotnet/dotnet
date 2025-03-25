@@ -16,7 +16,7 @@
     <XUnitVersion>2.9.2</XUnitVersion>
     <XUnitAnalyzersVersion>1.16.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion>2.8.2</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion>3.0.2</XUnitRunnerVisualStudioVersion>
   </PropertyGroup>
 
   <ItemGroup>
