@@ -25,9 +25,8 @@ public class KeysConverterTests
         Assert.Equal(keys, result);
     }
 
-    [ActiveIssue("https://github.com/dotnet/winforms/issues/13117")]
-    [Theory(Skip = "Localization tests, see: https://github.com/dotnet/winforms/issues/13117")]
-    [InlineData("fr-FR", "(aucun)", Keys.None)]
+    [Theory]
+    [InlineData("fr-FR", "(aucune)", Keys.None)]
     [InlineData("nb-NO", "None", Keys.None)]
     [InlineData("de-DE", "Ende", Keys.End)]
     public void ConvertFrom_ShouldConvertKeys_Localization(string cultureName, string localizedKeyName, Keys expectedKey)
@@ -72,9 +71,8 @@ public class KeysConverterTests
         Assert.Equal(expectedResult, result);
     }
 
-    [ActiveIssue("https://github.com/dotnet/winforms/issues/13117")]
-    [Theory(Skip = "Localization tests, see: https://github.com/dotnet/winforms/issues/13117")]
-    [InlineData("fr-FR", Keys.None, "(aucun)")]
+    [Theory]
+    [InlineData("fr-FR", Keys.None, "(aucune)")]
     [InlineData("de-DE", Keys.End, "Ende")]
     public void ConvertToString_ShouldConvertKeys_Localization(string cultureName, Keys key, string expectedLocalizedKeyName)
     {
