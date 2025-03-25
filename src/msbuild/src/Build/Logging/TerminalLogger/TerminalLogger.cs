@@ -12,10 +12,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Framework.Logging;
 using Microsoft.Build.Shared;
 
-#if NET
+#if NET7_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-using System.Buffers;
-
 #endif
 
 #if NETFRAMEWORK
@@ -36,10 +34,15 @@ public sealed partial class TerminalLogger : INodeLogger
 {
     private const string FilePathPattern = " -> ";
 
-#if NET
-    private static readonly SearchValues<string> _immediateMessageKeywords = SearchValues.Create(["[CredentialProvider]", "--interactive"], StringComparison.OrdinalIgnoreCase);
+#if NET7_0_OR_GREATER
+    [StringSyntax(StringSyntaxAttribute.Regex)]
+    private const string ImmediateMessagePattern = @"\[CredentialProvider\]|--interactive";
+    private const RegexOptions Options = RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
+
+    [GeneratedRegex(ImmediateMessagePattern, Options)]
+    private static partial Regex ImmediateMessageRegex();
 #else
-    private static readonly string[] _immediateMessageKeywords = ["[CredentialProvider]", "--interactive"];
+    private static readonly string[] _immediateMessageKeywords = { "[CredentialProvider]", "--interactive" };
 #endif
 
     private static readonly string[] newLineStrings = { "\r\n", "\n" };
@@ -161,6 +164,11 @@ public sealed partial class TerminalLogger : INodeLogger
     /// True if we've logged the ".NET SDK is preview" message.
     /// </summary>
     private bool _loggedPreviewMessage;
+
+    /// <summary>
+    /// The two directory separator characters to be passed to methods like <see cref="String.IndexOfAny(char[])"/>.
+    /// </summary>
+    private static readonly char[] PathSeparators = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
 
     /// <summary>
     /// One summary per finished project test run.
@@ -1010,8 +1018,8 @@ public sealed partial class TerminalLogger : INodeLogger
     /// <param name="message">Raised event.</param>
     /// <returns>true if marker is detected.</returns>
     private bool IsImmediateMessage(string message) =>
-#if NET
-        message.AsSpan().ContainsAny(_immediateMessageKeywords);
+#if NET7_0_OR_GREATER
+        ImmediateMessageRegex().IsMatch(message);
 #else
         _immediateMessageKeywords.Any(imk => message.IndexOf(imk, StringComparison.OrdinalIgnoreCase) >= 0);
 #endif
@@ -1050,22 +1058,11 @@ public sealed partial class TerminalLogger : INodeLogger
     private void ThreadProc()
     {
         // 1_000 / 30 is a poor approx of 30Hz
-        var count = 0;
         while (!_cts.Token.WaitHandle.WaitOne(1_000 / 30))
         {
-            count++;
             lock (_lock)
             {
-                // Querying the terminal for it's dimensions is expensive, so we only do it every 30 frames e.g. once a second.
-                if (count >= 30)
-                {
-                    count = 0;
-                    DisplayNodes();
-                }
-                else
-                {
-                    DisplayNodes(false);
-                }
+                DisplayNodes();
             }
         }
 
@@ -1076,11 +1073,9 @@ public sealed partial class TerminalLogger : INodeLogger
     /// Render Nodes section.
     /// It shows what all build nodes do.
     /// </summary>
-    internal void DisplayNodes(bool updateSize = true)
+    internal void DisplayNodes()
     {
-        var width = updateSize ? Terminal.Width : _currentFrame.Width;
-        var height = updateSize ? Terminal.Height : _currentFrame.Height;
-        TerminalNodesFrame newFrame = new TerminalNodesFrame(_nodes, width: width, height: height);
+        TerminalNodesFrame newFrame = new TerminalNodesFrame(_nodes, width: Terminal.Width, height: Terminal.Height);
 
         // Do not render delta but clear everything if Terminal width or height have changed.
         if (newFrame.Width != _currentFrame.Width || newFrame.Height != _currentFrame.Height)
@@ -1187,7 +1182,7 @@ public sealed partial class TerminalLogger : INodeLogger
             return null;
         }
 
-        int index = path.AsSpan().LastIndexOfAny(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        int index = path.LastIndexOfAny(PathSeparators);
         return index >= 0
             ? $"{path.Substring(0, index + 1)}{AnsiCodes.MakeBold(path.Substring(index + 1))}"
             : path;
@@ -1285,7 +1280,7 @@ public sealed partial class TerminalLogger : INodeLogger
         builder.Append($"{category} {code}: ");
 
         // render multi-line message in a special way
-        if (message.Contains('\n'))
+        if (message.IndexOf('\n') >= 0)
         {
             // Place the multiline message under the project in case of minimal and higher verbosity.
             string[] lines = message.Split(newLineStrings, StringSplitOptions.None);

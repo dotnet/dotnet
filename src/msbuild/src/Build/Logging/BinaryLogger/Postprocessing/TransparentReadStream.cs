@@ -116,13 +116,9 @@ namespace Microsoft.Build.Logging
                 count = (int)(_maxAllowedPosition - _position);
             }
 
-            int cnt = await _stream.ReadAsync(
-#if NET
-                buffer.AsMemory(offset, count),
-#else
-                buffer, offset, count,
-#endif
-                cancellationToken).ConfigureAwait(false);
+#pragma warning disable CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
+            int cnt = await _stream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
             _position += cnt;
             return cnt;
         }

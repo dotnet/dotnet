@@ -23,16 +23,23 @@ internal partial class EditorConfigFile
     // Matches EditorConfig property such as "indent_style = space", see https://editorconfig.org for details
     private const string s_propertyMatcherPattern = @"^\s*([\w\.\-_]+)\s*[=:]\s*(.*?)\s*([#;].*)?$";
 
-#if NET
+#if NETCOREAPP
+
     [GeneratedRegex(s_sectionMatcherPattern)]
-    private static partial Regex SectionMatcherRegex { get; }
+    private static partial Regex GetSectionMatcherRegex();
 
     [GeneratedRegex(s_propertyMatcherPattern)]
-    private static partial Regex PropertyMatcherRegex { get; }
-#else
-    private static Regex SectionMatcherRegex { get; } = new Regex(s_sectionMatcherPattern, RegexOptions.Compiled);
+    private static partial Regex GetPropertyMatcherRegex();
 
-    private static Regex PropertyMatcherRegex { get; } = new Regex(s_propertyMatcherPattern, RegexOptions.Compiled);
+#else
+    private static readonly Regex s_sectionMatcher = new Regex(s_sectionMatcherPattern, RegexOptions.Compiled);
+
+    private static readonly Regex s_propertyMatcher = new Regex(s_propertyMatcherPattern, RegexOptions.Compiled);
+
+    private static Regex GetSectionMatcherRegex() => s_sectionMatcher;
+
+    private static Regex GetPropertyMatcherRegex() => s_propertyMatcher;
+
 #endif
 
     internal Section GlobalSection { get; }
@@ -83,12 +90,12 @@ internal partial class EditorConfigFile
                 continue;
             }
 
-            var sectionMatch = SectionMatcherRegex.Match(line);
-            if (sectionMatch.Success && sectionMatch.Groups.Count > 0)
+            var sectionMatches = GetSectionMatcherRegex().Matches(line);
+            if (sectionMatches.Count > 0 && sectionMatches[0].Groups.Count > 0)
             {
                 addNewSection();
 
-                var sectionName = sectionMatch.Groups[1].Value;
+                var sectionName = sectionMatches[0].Groups[1].Value;
                 Debug.Assert(!string.IsNullOrEmpty(sectionName));
 
                 activeSectionName = sectionName;
@@ -96,11 +103,11 @@ internal partial class EditorConfigFile
                 continue;
             }
 
-            var propMatch = PropertyMatcherRegex.Match(line);
-            if (propMatch.Success && propMatch.Groups.Count > 1)
+            var propMatches = GetPropertyMatcherRegex().Matches(line);
+            if (propMatches.Count > 0 && propMatches[0].Groups.Count > 1)
             {
-                var key = propMatch.Groups[1].Value.ToLower();
-                var value = propMatch.Groups[2].Value;
+                var key = propMatches[0].Groups[1].Value.ToLower();
+                var value = propMatches[0].Groups[2].Value;
 
                 Debug.Assert(!string.IsNullOrEmpty(key));
                 Debug.Assert(key == key.Trim());

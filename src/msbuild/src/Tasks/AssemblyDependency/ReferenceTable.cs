@@ -789,7 +789,9 @@ namespace Microsoft.Build.Tasks
                 return;
             }
 
-            string newFusionName = $"{name}, Version={version}, Culture={culture}, PublicKeyToken={publicKeyToken}";
+            string newFusionName = String.Format(CultureInfo.InvariantCulture,
+                "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
+                name, version, culture, publicKeyToken);
 
             // Now try to convert to an AssemblyName.
             try
@@ -810,20 +812,19 @@ namespace Microsoft.Build.Tasks
         private static void TryGetAssemblyNameComponent(string fusionName, string component, ref string value)
         {
             int position = fusionName.IndexOf(component + "=", StringComparison.Ordinal);
-            if (position < 0)
+            if (position == -1)
             {
                 return;
             }
-
             position += component.Length + 1;
-            int nextDelimiter = fusionName.AsSpan(position).IndexOfAny(',', ' ');
-            if (nextDelimiter < 0)
+            int nextDelimiter = fusionName.IndexOfAny([',', ' '], position);
+            if (nextDelimiter == -1)
             {
                 value = fusionName.Substring(position);
             }
             else
             {
-                value = fusionName.Substring(position, nextDelimiter);
+                value = fusionName.Substring(position, nextDelimiter - position);
             }
         }
 
@@ -2300,9 +2301,18 @@ namespace Microsoft.Build.Tasks
 
             byte[] rpkt = @ref.GetPublicKeyToken();
             byte[] dpkt = def.GetPublicKeyToken();
-            if (!rpkt.AsSpan().SequenceEqual(dpkt.AsSpan()))
+
+            if (rpkt.Length != dpkt.Length)
             {
                 return false;
+            }
+
+            for (int i = 0; i < rpkt.Length; i++)
+            {
+                if (rpkt[i] != dpkt[i])
+                {
+                    return false;
+                }
             }
 
             if (@ref.Version != def.Version)

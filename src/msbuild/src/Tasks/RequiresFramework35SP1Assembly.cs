@@ -79,12 +79,7 @@ namespace Microsoft.Build.Tasks
         {
             if (version.StartsWith("v", StringComparison.OrdinalIgnoreCase))
             {
-                return Version.Parse(
-#if NET
-                    version.AsSpan(1));
-#else
-                    version.Substring(1));
-#endif
+                return new Version(version.Substring(1));
             }
             return new Version(version);
         }

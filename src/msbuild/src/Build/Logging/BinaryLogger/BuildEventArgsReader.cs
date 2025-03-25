@@ -56,9 +56,9 @@ namespace Microsoft.Build.Logging
 
         // reflection is needed to set these three fields because public constructors don't provide
         // a way to set these from the outside
-        private static readonly FieldInfo? buildEventArgsFieldThreadId =
+        private static FieldInfo? buildEventArgsFieldThreadId =
             typeof(BuildEventArgs).GetField("threadId", BindingFlags.Instance | BindingFlags.NonPublic);
-        private static readonly FieldInfo? buildEventArgsFieldSenderName =
+        private static FieldInfo? buildEventArgsFieldSenderName =
             typeof(BuildEventArgs).GetField("senderName", BindingFlags.Instance | BindingFlags.NonPublic);
 
         /// <summary>

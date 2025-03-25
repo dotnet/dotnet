@@ -532,6 +532,7 @@ namespace Microsoft.Build.Engine.UnitTests
         {
             UncPattern.IsMatch(string.Empty).ShouldBeFalse();
             StartsWithUncPattern.IsMatch(string.Empty).ShouldBeFalse();
+            StartsWithUncPattern.Match(string.Empty).Success.ShouldBeFalse();
         }
 
         [Fact]

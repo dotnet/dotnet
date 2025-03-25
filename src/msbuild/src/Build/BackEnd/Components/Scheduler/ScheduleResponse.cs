@@ -237,26 +237,26 @@ namespace Microsoft.Build.BackEnd
             {
                 case ScheduleActionType.ReportResults:
                 case ScheduleActionType.ResumeExecution:
-                    return $"Act: {Action} Node: {NodeId} Request: {Unblocker.BlockedRequestId}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Node: {1} Request: {2}", Action, NodeId, Unblocker.BlockedRequestId);
 
                 case ScheduleActionType.Schedule:
-                    return $"Act: {Action} Node: {NodeId} Request: {BuildRequest.GlobalRequestId} Parent {BuildRequest.ParentGlobalRequestId}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Node: {1} Request: {2} Parent {3}", Action, NodeId, BuildRequest.GlobalRequestId, BuildRequest.ParentGlobalRequestId);
 
                 case ScheduleActionType.ScheduleWithConfiguration:
-                    return $"Act: {Action} Node: {NodeId} Request: {BuildRequest.GlobalRequestId} Parent {BuildRequest.ParentGlobalRequestId} Configuration: {BuildRequest.ConfigurationId}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Node: {1} Request: {2} Parent {3} Configuration: {4}", Action, NodeId, BuildRequest.GlobalRequestId, BuildRequest.ParentGlobalRequestId, BuildRequest.ConfigurationId);
 
                 case ScheduleActionType.CircularDependency:
-                    return $"Act: {Action} Node: {NodeId} Request: {BuildRequest.GlobalRequestId} Parent {BuildRequest.ParentGlobalRequestId} Configuration: {BuildRequest.ConfigurationId}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Node: {1} Request: {2} Parent {3} Configuration: {4}", Action, NodeId, BuildRequest.GlobalRequestId, BuildRequest.ParentGlobalRequestId, BuildRequest.ConfigurationId);
 
                 case ScheduleActionType.SubmissionComplete:
-                    return $"Act: {Action} Submission: {BuildResult.SubmissionId}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Submission: {1}", Action, BuildResult.SubmissionId);
 
                 case ScheduleActionType.CreateNode:
-                    return $"Act: {Action} Count: {NumberOfNodesToCreate}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0} Count: {1}", Action, NumberOfNodesToCreate);
 
                 case ScheduleActionType.NoAction:
                 default:
-                    return $"Act: {Action}";
+                    return String.Format(CultureInfo.CurrentCulture, "Act: {0}", Action);
             }
         }
     }

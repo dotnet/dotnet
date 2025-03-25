@@ -26,7 +26,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
     /// <remarks>This is a serialization format, do not remove or change the private fields.</remarks>
     [ComVisible(false)]
     [XmlRoot("AssemblyIdentity")]
-    public sealed partial class AssemblyIdentity
+    public sealed class AssemblyIdentity
     {
         /// <summary>
         /// Specifies which attributes are to be returned by the GetFullName function.
@@ -58,17 +58,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         private string _culture;
         private string _processorArchitecture;
         private string _type;
-
-        private const string AssemblyNamePattern =
-            "^(?<name>[^,]*)(, Version=(?<version>[^,]*))?(, Culture=(?<culture>[^,]*))?(, PublicKeyToken=(?<pkt>[^,]*))?(, ProcessorArchitecture=(?<pa>[^,]*))?(, Type=(?<type>[^,]*))?";
-
-#if NET
-        [GeneratedRegex(AssemblyNamePattern)]
-        private static partial Regex AssemblyNameRegex { get; }
-#else
-        private static Regex AssemblyNameRegex => _assemblyNameRegex ??= new Regex(AssemblyNamePattern);
-        private static Regex _assemblyNameRegex;
-#endif
 
         /// <summary>
         /// Initializes a new instance of the AssemblyIdentity class.
@@ -176,7 +165,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public static AssemblyIdentity FromAssemblyName(string assemblyName)
         {
             // NOTE: We're not using System.Reflection.AssemblyName class here because we need ProcessorArchitecture and Type attributes.
-            Regex re = AssemblyNameRegex;
+            Regex re = new Regex("^(?<name>[^,]*)(, Version=(?<version>[^,]*))?(, Culture=(?<culture>[^,]*))?(, PublicKeyToken=(?<pkt>[^,]*))?(, ProcessorArchitecture=(?<pa>[^,]*))?(, Type=(?<type>[^,]*))?");
             Match m = re.Match(assemblyName);
             string name = m.Result("${name}");
             string version = m.Result("${version}");
@@ -378,15 +367,10 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
             Version version = null;
             if (!string.IsNullOrEmpty(frameworkVersion))
             {
-                if (frameworkVersion[0] == 'v')
+                // CA1307:Specify StringComparison.  Suppressed since a valid string representation of a version would be parsed correctly even if the the first character is not "v".
+                if (frameworkVersion.StartsWith("v"))
                 {
-                    System.Version.TryParse(
-#if NET
-                        frameworkVersion.AsSpan(1),
-#else
-                        frameworkVersion.Substring(1),
-#endif
-                        out version);
+                    System.Version.TryParse(frameworkVersion.Substring(1), out version);
                 }
                 else
                 {
@@ -530,14 +514,14 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
             foreach (string searchPath in searchPaths)
             {
-                string file = $"{_name}.dll";
+                string file = String.Format(CultureInfo.InvariantCulture, "{0}.dll", _name);
                 string path = Path.Combine(searchPath, file);
                 if (FileSystems.Default.FileExists(path) && IsEqual(this, FromFile(path), specificVersion))
                 {
                     return path;
                 }
 
-                file = $"{_name}.manifest";
+                file = String.Format(CultureInfo.InvariantCulture, "{0}.manifest", _name);
                 path = Path.Combine(searchPath, file);
                 if (FileSystems.Default.FileExists(path) && IsEqual(this, FromManifest(path), specificVersion))
                 {

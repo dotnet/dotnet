@@ -692,11 +692,11 @@ namespace Microsoft.Build.Evaluation
         private bool ParseSimpleStringOrFunction(int start)
         {
             SkipSimpleStringChars();
-            if (_expression.AsSpan(start, _parsePoint - start).Equals("and".AsSpan(), StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(_expression.Substring(start, _parsePoint - start), "and", StringComparison.OrdinalIgnoreCase))
             {
                 _lookahead = Token.And;
             }
-            else if (_expression.AsSpan(start, _parsePoint - start).Equals("or".AsSpan(), StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_expression.Substring(start, _parsePoint - start), "or", StringComparison.OrdinalIgnoreCase))
             {
                 _lookahead = Token.Or;
             }

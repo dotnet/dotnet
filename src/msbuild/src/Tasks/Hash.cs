@@ -94,9 +94,6 @@ namespace Microsoft.Build.Tasks
 
                         sha.TransformFinalBlock(shaBuffer, 0, shaBufferPosition);
 
-#if NET
-                        HashResult = Convert.ToHexStringLower(sha.Hash);
-#else
                         using (var stringBuilder = new ReuseableStringBuilder(sha.HashSize))
                         {
                             foreach (var b in sha.Hash)
@@ -105,7 +102,6 @@ namespace Microsoft.Build.Tasks
                             }
                             HashResult = stringBuilder.ToString();
                         }
-#endif
                     }
                     finally
                     {

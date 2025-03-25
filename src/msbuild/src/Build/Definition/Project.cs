@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -57,12 +56,7 @@ namespace Microsoft.Build.Evaluation
         /// <summary>
         /// * and ? are invalid file name characters, but they occur in globs as wild cards.
         /// </summary>
-#if NET
-        private static readonly SearchValues<char> s_invalidGlobChars = SearchValues.Create(
-#else
-        private static readonly char[] s_invalidGlobChars = (
-#endif
-            FileUtilities.InvalidFileNameCharsArray.Where(c => c is not ('*' or '?' or '/' or '\\' or ':')).ToArray());
+        private static readonly char[] s_invalidGlobChars = FileUtilities.InvalidFileNameChars.Where(c => c != '*' && c != '?' && c != '/' && c != '\\' && c != ':').ToArray();
 
         /// <summary>
         /// Context to log messages and events in.
@@ -2624,7 +2618,7 @@ namespace Microsoft.Build.Evaluation
             {
                 var includeItemspec = new EvaluationItemSpec(itemElement.Include, _data.Expander, itemElement.IncludeLocation, itemElement.ContainingProject.DirectoryPath);
 
-                ItemSpecFragment[] includeGlobFragments = includeItemspec.Fragments.Where(f => f is GlobFragment && f.TextFragment.AsSpan().IndexOfAny(s_invalidGlobChars) < 0).ToArray();
+                ImmutableArray<ItemSpecFragment> includeGlobFragments = includeItemspec.Fragments.Where(f => f is GlobFragment && f.TextFragment.IndexOfAny(s_invalidGlobChars) == -1).ToImmutableArray();
                 if (includeGlobFragments.Length == 0)
                 {
                     return null;

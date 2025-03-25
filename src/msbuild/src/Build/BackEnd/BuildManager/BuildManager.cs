@@ -2801,11 +2801,12 @@ namespace Microsoft.Build.Execution
             {
                 // Get the remote loggers
                 ILoggingService loggingService = ((IBuildComponentHost)this).GetComponent<ILoggingService>(BuildComponentType.LoggingService);
+                var remoteLoggers = new List<LoggerDescription>(loggingService.LoggerDescriptions);
 
                 _nodeConfiguration = new NodeConfiguration(
                 -1, /* must be assigned by the NodeManager */
                 _buildParameters,
-                loggingService.LoggerDescriptions.ToArray()
+                remoteLoggers.ToArray()
 #if FEATURE_APPDOMAIN
                 , AppDomain.CurrentDomain.SetupInformation
 #endif

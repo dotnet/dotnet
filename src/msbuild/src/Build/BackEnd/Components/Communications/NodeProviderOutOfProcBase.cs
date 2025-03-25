@@ -416,11 +416,7 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         private string GetProcessesToIgnoreKey(Handshake hostHandshake, int nodeProcessId)
         {
-#if NET
-            return string.Create(CultureInfo.InvariantCulture, $"{hostHandshake}|{nodeProcessId}");
-#else
-            return $"{hostHandshake}|{nodeProcessId.ToString(CultureInfo.InvariantCulture)}";
-#endif
+            return hostHandshake.ToString() + "|" + nodeProcessId.ToString(CultureInfo.InvariantCulture);
         }
 
 #if !FEATURE_PIPEOPTIONS_CURRENTUSERONLY
@@ -837,17 +833,8 @@ namespace Microsoft.Build.BackEnd
                 {
                     // Wait up to 100ms until all remaining packets are sent.
                     // We don't need to wait long, just long enough for the Task to start running on the ThreadPool.
-#if NET
-                    await _packetWriteDrainTask.WaitAsync(TimeSpan.FromMilliseconds(100)).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-#else
-                    using (var cts = new CancellationTokenSource(100))
-                    {
-                        await Task.WhenAny(_packetWriteDrainTask, Task.Delay(100, cts.Token));
-                        cts.Cancel();
-                    }
-#endif
+                    await Task.WhenAny(_packetWriteDrainTask, Task.Delay(100));
                 }
-
                 if (_exitPacketState == ExitPacketState.ExitPacketSent)
                 {
                     CommunicationsUtilities.Trace("Waiting for node with pid = {0} to exit", _process.Id);

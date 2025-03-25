@@ -41,7 +41,12 @@ internal sealed class EditorConfigParser
         {
             var editorConfig = _editorConfigFileCache.GetOrAdd(editorConfigFilePath, (key) =>
             {
-                return EditorConfigFile.Parse(File.ReadAllText(editorConfigFilePath));
+                using (FileStream stream = new FileStream(editorConfigFilePath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read))
+                {
+                    using StreamReader sr = new StreamReader(editorConfigFilePath);
+                    var editorConfigfileContent = sr.ReadToEnd();
+                    return EditorConfigFile.Parse(editorConfigfileContent);
+                }
             });
 
             editorConfigDataFromFilesList.Add(editorConfig);

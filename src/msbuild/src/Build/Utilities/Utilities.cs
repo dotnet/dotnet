@@ -2,13 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Build.BackEnd;
@@ -28,7 +26,7 @@ namespace Microsoft.Build.Internal
     /// <summary>
     /// This class contains utility methods for the MSBuild engine.
     /// </summary>
-    internal static partial class Utilities
+    internal static class Utilities
     {
         /// <summary>
         /// Save off the contents of the environment variable that specifies whether we should treat higher toolsversions as the current
@@ -83,7 +81,7 @@ namespace Microsoft.Build.Internal
         {
             ErrorUtilities.VerifyThrow(s != null, "Need value to set.");
 
-            if (s.Contains('<'))
+            if (s.IndexOf('<') != -1)
             {
                 // If the value looks like it probably contains XML markup ...
                 try
@@ -297,12 +295,7 @@ namespace Microsoft.Build.Internal
         }
 
         // used to find the xmlns attribute
-#if NET
-        [GeneratedRegex("xmlns=\"[^\"]*\"\\s*")]
-        private static partial Regex XmlnsPattern { get; }
-#else
-        private static Regex XmlnsPattern { get; } = new Regex("xmlns=\"[^\"]*\"\\s*");
-#endif
+        private static readonly Regex s_xmlnsPattern = new Regex("xmlns=\"[^\"]*\"\\s*");
 
         /// <summary>
         /// Removes the xmlns attribute from an XML string.
@@ -311,7 +304,7 @@ namespace Microsoft.Build.Internal
         /// <returns>The modified XML string.</returns>
         internal static string RemoveXmlNamespace(string xml)
         {
-            return XmlnsPattern.Replace(xml, String.Empty);
+            return s_xmlnsPattern.Replace(xml, String.Empty);
         }
 
         /// <summary>
@@ -319,19 +312,19 @@ namespace Microsoft.Build.Internal
         /// </summary>
         internal static string CreateToolsVersionListString(IEnumerable<Toolset> toolsets)
         {
-            StringBuilder sb = StringBuilderCache.Acquire();
-
+            string toolsVersionList = String.Empty;
             foreach (Toolset toolset in toolsets)
             {
-                if (sb.Length != 0)
-                {
-                    sb.Append(", ");
-                }
-
-                sb.Append('"').Append(toolset.ToolsVersion).Append('"');
+                toolsVersionList += "\"" + toolset.ToolsVersion + "\", ";
             }
 
-            return StringBuilderCache.GetStringAndRelease(sb);
+            // Remove trailing comma and space
+            if (toolsVersionList.Length > 0)
+            {
+                toolsVersionList = toolsVersionList.Substring(0, toolsVersionList.Length - 2);
+            }
+
+            return toolsVersionList;
         }
 
         /// <summary>
@@ -618,6 +611,19 @@ namespace Microsoft.Build.Internal
             {
                 yield return entry.Value;
             }
+        }
+
+        public static IEnumerable<T> ToEnumerable<T>(this IEnumerator<T> enumerator)
+        {
+            while (enumerator.MoveNext())
+            {
+                yield return enumerator.Current;
+            }
+        }
+
+        public static T[] ToArray<T>(this IEnumerator<T> enumerator)
+        {
+            return enumerator.ToEnumerable().ToArray();
         }
 
         /// <summary>

@@ -70,13 +70,9 @@ namespace Microsoft.Build.Logging
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             count = Math.Min((int)Math.Max(Length - _position, 0), count);
-            int read = await _stream.ReadAsync(
-#if NET
-                buffer.AsMemory(offset, count),
-#else
-                buffer, offset, count,
-#endif
-                cancellationToken).ConfigureAwait(false);
+#pragma warning disable CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
+            int read = await _stream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
             _position += read;
             return read;
         }

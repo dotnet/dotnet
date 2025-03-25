@@ -1090,7 +1090,7 @@ namespace Microsoft.Build.Tasks
                 string currentAssembly = String.Empty;
                 try
                 {
-#if NET
+#if NETCOREAPP
                     currentAssembly = Assembly.GetExecutingAssembly().Location;
 #else
                     currentAssembly = Assembly.GetExecutingAssembly().CodeBase;

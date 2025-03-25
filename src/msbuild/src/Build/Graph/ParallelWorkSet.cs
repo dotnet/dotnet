@@ -145,12 +145,7 @@ namespace Microsoft.Build.Graph
 
             // Release one thread that will release all the threads when all the elements are processed.
             _semaphore.Release();
-            Task.WaitAll(
-#if NET
-                _tasks);
-#else
-                _tasks.ToArray());
-#endif
+            Task.WaitAll(_tasks.ToArray());
 
             if (_exceptions.Count > 0)
             {

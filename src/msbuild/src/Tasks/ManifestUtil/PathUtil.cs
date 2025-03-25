@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.Build.Shared;
 
 #nullable disable
@@ -223,13 +222,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
                 {
                     // Unfortunately Uri.Host is read-only, so we need to reconstruct it manually...
                     int i = path.IndexOf(localHost, StringComparison.OrdinalIgnoreCase);
-                    return i >= 0 ?
-#if NET
-                        $"{path.AsSpan(0, i)}{Environment.MachineName.ToLowerInvariant()}{path.AsSpan(i + localHost.Length)}" :
-#else
-                        $"{path.Substring(0, i)}{Environment.MachineName.ToLowerInvariant()}{path.Substring(i + localHost.Length)}" :
-#endif
-                        path;
+                    return i >= 0 ? path.Substring(0, i) + Environment.MachineName.ToLowerInvariant() + path.Substring(i + localHost.Length) : path;
                 }
                 return path;
             }
@@ -238,11 +231,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
             return Path.GetFullPath(path); // make sure it's a full path
         }
 
-        private static bool IsAsciiString(string str) =>
-#if NET
-            Ascii.IsValid(str);
-#else
-            str.All(c => c <= 127);
-#endif
+        private static bool IsAsciiString(string str)
+            => str.All(c => c <= 127);
     }
 }

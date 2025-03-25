@@ -89,11 +89,7 @@ namespace Microsoft.Build.Tasks.ResourceHandling
             int indexStart = aliasedTypeName.IndexOf(',');
             if (aliases.TryGetValue(aliasedTypeName.Substring(indexStart + 2), out string fullAssemblyIdentity))
             {
-#if NET
-                return string.Concat(aliasedTypeName.AsSpan(0, indexStart + 2), fullAssemblyIdentity);
-#else
                 return aliasedTypeName.Substring(0, indexStart + 2) + fullAssemblyIdentity;
-#endif
             }
 
             // Allow "System.String" bare
@@ -294,7 +290,7 @@ namespace Microsoft.Build.Tasks.ResourceHandling
         /// </remarks>
         private static bool IsByteArray(string fileRefType)
         {
-            return fileRefType.Contains("System.Byte[]") && fileRefType.Contains("mscorlib");
+            return fileRefType.IndexOf("System.Byte[]") != -1 && fileRefType.IndexOf("mscorlib") != -1;
         }
 
         internal static bool IsString(string fileRefType)
@@ -337,7 +333,7 @@ namespace Microsoft.Build.Tasks.ResourceHandling
                 string remainingString;
                 if (stringValue.StartsWith("\""))
                 {
-                    int lastIndexOfQuote = stringValue.LastIndexOf('"');
+                    int lastIndexOfQuote = stringValue.LastIndexOf("\"");
                     if (lastIndexOfQuote - 1 < 0)
                     {
                         throw new ArgumentException(nameof(stringValue));
@@ -353,7 +349,7 @@ namespace Microsoft.Build.Tasks.ResourceHandling
                 }
                 else
                 {
-                    int nextSemiColumn = stringValue.IndexOf(';');
+                    int nextSemiColumn = stringValue.IndexOf(";");
                     if (nextSemiColumn == -1)
                     {
                         throw new ArgumentException(nameof(stringValue));

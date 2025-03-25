@@ -67,25 +67,47 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
                 return null;
             }
 
-#if NET
-            return Convert.ToHexString(a);
-#else
-            StringBuilder s = new StringBuilder(a.Length * 2);
+            StringBuilder s = new StringBuilder(a.Length);
             foreach (Byte b in a)
             {
                 s.Append(b.ToString("X02", CultureInfo.InvariantCulture));
             }
 
             return s.ToString();
-#endif
         }
 
-        public static void CopyStream(Stream input, Stream output)
+        public static string ByteArrayToString(Byte[] a)
+        {
+            if (a == null)
+            {
+                return null;
+            }
+
+            StringBuilder s = new StringBuilder(a.Length);
+            foreach (Byte b in a)
+            {
+                s.Append(Convert.ToChar(b));
+            }
+
+            return s.ToString();
+        }
+
+        public static int CopyStream(Stream input, Stream output)
         {
             const int bufferSize = 0x4000;
-            input.CopyTo(output, bufferSize);
+            byte[] buffer = new byte[bufferSize];
+            int bytesCopied = 0;
+            int bytesRead;
+            do
+            {
+                bytesRead = input.Read(buffer, 0, bufferSize);
+                output.Write(buffer, 0, bytesRead);
+                bytesCopied += bytesRead;
+            } while (bytesRead > 0);
+            output.Flush();
             input.Position = 0;
             output.Position = 0;
+            return bytesCopied;
         }
 
         public static string FilterNonprintableChars(string value)
@@ -172,15 +194,9 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
             Version frameworkVersion = null;
             if (!String.IsNullOrEmpty(targetFramework))
             {
-                if (targetFramework[0] is 'v' or 'V')
+                if (targetFramework.StartsWith("v", StringComparison.OrdinalIgnoreCase))
                 {
-                    Version.TryParse(
-#if NET
-                        targetFramework.AsSpan(1),
-#else
-                        targetFramework.Substring(1),
-#endif
-                        out frameworkVersion);
+                    Version.TryParse(targetFramework.Substring(1), out frameworkVersion);
                 }
                 else
                 {
@@ -200,8 +216,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public static Stream GetEmbeddedResourceStream(string name)
         {
             Assembly a = Assembly.GetExecutingAssembly();
-            Stream s = a.GetManifestResourceStream($"{typeof(Util).Namespace}.{name}");
-            Debug.Assert(s != null, $"EmbeddedResource '{name}' not found");
+            Stream s = a.GetManifestResourceStream(String.Format(CultureInfo.InvariantCulture, "{0}.{1}", typeof(Util).Namespace, name));
+            Debug.Assert(s != null, String.Format(CultureInfo.CurrentCulture, "EmbeddedResource '{0}' not found", name));
             return s;
         }
 
@@ -618,14 +634,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         {
             if (version.StartsWith("v", StringComparison.OrdinalIgnoreCase))
             {
-                return Version.Parse(
-#if NET
-                    version.AsSpan(1));
-#else
-                    version.Substring(1));
-#endif
+                return new Version(version.Substring(1));
             }
-
             return new Version(version);
         }
 

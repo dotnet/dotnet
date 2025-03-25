@@ -536,10 +536,10 @@ namespace Microsoft.Build.Tasks
             // Start with the user specified references and include all of the default references that are language agnostic
             IEnumerable<string> references = taskInfo.References.Union(DefaultReferences[String.Empty]);
 
-            if (DefaultReferences.TryGetValue(taskInfo.CodeLanguage, out IEnumerable<string> value))
+            if (DefaultReferences.ContainsKey(taskInfo.CodeLanguage))
             {
                 // Append default references for the specific language
-                references = references.Union(value);
+                references = references.Union(DefaultReferences[taskInfo.CodeLanguage]);
             }
 
             List<string> directoriesToAddToAppDomain = new();

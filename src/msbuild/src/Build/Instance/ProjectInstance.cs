@@ -2640,12 +2640,7 @@ namespace Microsoft.Build.Execution
                 }
                 else /* Dev 12 and above */
                 {
-                    toolsVersion =
-#if NET
-                        string.Create(CultureInfo.InvariantCulture, $"{visualStudioVersion}.0");
-#else
-                        $"{visualStudioVersion.ToString(CultureInfo.InvariantCulture)}.0";
-#endif
+                    toolsVersion = visualStudioVersion.ToString(CultureInfo.InvariantCulture) + ".0";
                 }
 
                 string toolsVersionToUse = Utilities.GenerateToolsVersionToUse(
@@ -3166,7 +3161,7 @@ namespace Microsoft.Build.Execution
 
             if (Traits.Instance.EscapeHatches.DebugEvaluation)
             {
-                Trace.WriteLine($"MSBUILD: Creating a ProjectInstance from an unevaluated state [{FullPath}]");
+                Trace.WriteLine(String.Format(CultureInfo.InvariantCulture, "MSBUILD: Creating a ProjectInstance from an unevaluated state [{0}]", FullPath));
             }
 
             ErrorUtilities.VerifyThrow(EvaluationId == BuildEventContext.InvalidEvaluationId, "Evaluation ID is invalid prior to evaluation");

@@ -47,14 +47,9 @@ namespace Microsoft.Build.Tasks
             {
                 OutputVersion = "1.0.0.0";
             }
-            else if (Version[Version.Length - 1] == '*')
+            else if (Version.EndsWith("*", StringComparison.Ordinal))
             {
-                OutputVersion =
-#if NET
-                    string.Create(CultureInfo.InvariantCulture, $"{Version.AsSpan(0, Version.Length - 1)}{Revision:G}");
-#else
-                    Version.Substring(0, Version.Length - 1) + Revision.ToString("G", CultureInfo.InvariantCulture);
-#endif
+                OutputVersion = Version.Substring(0, Version.Length - 1) + Revision.ToString("G", CultureInfo.InvariantCulture);
             }
             else
             {

@@ -33,10 +33,10 @@ namespace Microsoft.Build.UnitTests.BackEnd
             var aggregation = aggregator.Aggregate();
 
             aggregation.ConfigCache.ShouldNotBeNull();
-            aggregation.ConfigCache.ShouldBeEmpty();
+            aggregation.ConfigCache.GetEnumerator().ToEnumerable().ShouldBeEmpty();
 
             aggregation.ResultsCache.ShouldNotBeNull();
-            aggregation.ResultsCache.ShouldBeEmpty();
+            aggregation.ResultsCache.GetEnumerator().ToEnumerable().ShouldBeEmpty();
 
             aggregation.LastConfigurationId.ShouldBe(0);
         }
@@ -246,9 +246,9 @@ namespace Microsoft.Build.UnitTests.BackEnd
             var currentConfigurationIndex = 0;
             var currentBuildResultIndex = 0;
 
-            var aggregatedConfigs = aggregation.ConfigCache.ToArray();
+            var aggregatedConfigs = aggregation.ConfigCache.GetEnumerator().ToArray();
 
-            var aggregatedResults = aggregation.ResultsCache.ToArray();
+            var aggregatedResults = aggregation.ResultsCache.GetEnumerator().ToArray();
 
             foreach (var (configCache, resultsCache) in inputCaches)
             {

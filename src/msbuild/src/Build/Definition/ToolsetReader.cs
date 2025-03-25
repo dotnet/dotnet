@@ -686,26 +686,22 @@ namespace Microsoft.Build.Evaluation
         /// </summary>
         public static MSBuildExtensionsPathReferenceKind FindIn(string expression)
         {
-            const string PathBase = "$(MSBuildExtensionsPath";
-            int pos = expression.IndexOf(PathBase, StringComparison.Ordinal);
-            if (pos >= 0)
+            if (expression.IndexOf("$(MSBuildExtensionsPath)") >= 0)
             {
-                ReadOnlySpan<char> remainder = expression.AsSpan(pos + PathBase.Length);
-                if (remainder.StartsWith(")".AsSpan()))
-                {
-                    return Default;
-                }
-                else if (remainder.StartsWith("32)".AsSpan()))
-                {
-                    return Path32;
-                }
-                else if (remainder.StartsWith("64)".AsSpan()))
-                {
-                    return Path64;
-                }
+                return MSBuildExtensionsPathReferenceKind.Default;
             }
 
-            return None;
+            if (expression.IndexOf("$(MSBuildExtensionsPath32)") >= 0)
+            {
+                return MSBuildExtensionsPathReferenceKind.Path32;
+            }
+
+            if (expression.IndexOf("$(MSBuildExtensionsPath64)") >= 0)
+            {
+                return MSBuildExtensionsPathReferenceKind.Path64;
+            }
+
+            return MSBuildExtensionsPathReferenceKind.None;
         }
     }
 }

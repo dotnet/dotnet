@@ -205,9 +205,9 @@ namespace Microsoft.Build.Graph
             {
                 var projectPath = project.Value.GraphNode.ProjectInstance.FullPath;
 
-                if (projectsByPath.TryGetValue(projectPath, out List<ProjectGraphNode> value))
+                if (projectsByPath.ContainsKey(projectPath))
                 {
-                    value.Add(project.Value.GraphNode);
+                    projectsByPath[projectPath].Add(project.Value.GraphNode);
                 }
                 else
                 {

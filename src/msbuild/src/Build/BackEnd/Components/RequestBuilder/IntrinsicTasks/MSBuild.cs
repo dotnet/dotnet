@@ -259,7 +259,7 @@ namespace Microsoft.Build.BackEnd
                 undefinePropertiesArray = RemoveProperties.Split(MSBuildConstants.SemicolonChar, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string property in undefinePropertiesArray)
                 {
-                    Log.LogMessageFromText($"  {property}", MessageImportance.Low);
+                    Log.LogMessageFromText(String.Format(CultureInfo.InvariantCulture, "  {0}", property), MessageImportance.Low);
                 }
             }
 
@@ -296,7 +296,10 @@ namespace Microsoft.Build.BackEnd
             if (BuildInParallel)
             {
                 skipProjects = new bool[Projects.Length];
-                skipProjects.AsSpan().Fill(true);
+                for (int i = 0; i < skipProjects.Length; i++)
+                {
+                    skipProjects[i] = true;
+                }
             }
             else
             {
@@ -591,7 +594,7 @@ namespace Microsoft.Build.BackEnd
                             foreach (string property in propertiesToUndefine)
                             {
                                 undefinePropertiesPerProject[i].Add(property);
-                                log.LogMessageFromText($"  {property}", MessageImportance.Low);
+                                log.LogMessageFromText(String.Format(CultureInfo.InvariantCulture, "  {0}", property), MessageImportance.Low);
                             }
                         }
                     }

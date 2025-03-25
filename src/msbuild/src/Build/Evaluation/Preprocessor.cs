@@ -26,9 +26,6 @@ namespace Microsoft.Build.Evaluation
     /// </remarks>
     internal class Preprocessor
     {
-        /// <summary>140 equal signs.</summary>
-        private const string Equals140 = "============================================================================================================================================";
-
         /// <summary>
         /// Project to preprocess
         /// </summary>
@@ -102,7 +99,7 @@ namespace Microsoft.Build.Evaluation
 
             if (!String.IsNullOrEmpty(_project.FullPath)) // Ignore in-memory projects
             {
-                destinationDocument.AppendChild(destinationDocument.CreateComment($"\r\n{Equals140}\r\n{_project.FullPath.Replace("--", "__")}\r\n{Equals140}\r\n"));
+                destinationDocument.AppendChild(destinationDocument.CreateComment("\r\n" + new String('=', 140) + "\r\n" + _project.FullPath.Replace("--", "__") + "\r\n" + new String('=', 140) + "\r\n"));
             }
 
             CloneChildrenResolvingImports(outerDocument, destinationDocument);
@@ -313,7 +310,7 @@ namespace Microsoft.Build.Evaluation
                         }
 
                         destination.AppendChild(destinationDocument.CreateComment(
-                            $"\r\n{Equals140}\r\n{importTag}\r\n\r\n{resolved.FullPath.Replace("--", "__")}\r\n{Equals140}\r\n"));
+                            $"\r\n{new String('=', 140)}\r\n{importTag}\r\n\r\n{resolved.FullPath.Replace("--", "__")}\r\n{new String('=', 140)}\r\n"));
 
                         _filePaths.Push(resolved.FullPath);
                         CloneChildrenResolvingImports(innerDocument, destination);
@@ -321,11 +318,11 @@ namespace Microsoft.Build.Evaluation
 
                         if (i < resolvedList.Count - 1)
                         {
-                            destination.AppendChild(destinationDocument.CreateComment($"\r\n{Equals140}\r\n  </Import>\r\n{Equals140}\r\n"));
+                            destination.AppendChild(destinationDocument.CreateComment("\r\n" + new String('=', 140) + "\r\n  </Import>\r\n" + new String('=', 140) + "\r\n"));
                         }
                         else
                         {
-                            destination.AppendChild(destinationDocument.CreateComment($"\r\n{Equals140}\r\n  </Import>\r\n\r\n{_filePaths.Peek()?.Replace("--", "__")}\r\n{Equals140}\r\n"));
+                            destination.AppendChild(destinationDocument.CreateComment("\r\n" + new String('=', 140) + "\r\n  </Import>\r\n\r\n" + _filePaths.Peek()?.Replace("--", "__") + "\r\n" + new String('=', 140) + "\r\n"));
                         }
                     }
 
@@ -342,7 +339,7 @@ namespace Microsoft.Build.Evaluation
 
                     CloneChildrenResolvingImports(child, destination);
 
-                    destination.AppendChild(destinationDocument.CreateComment($"</{XMakeElements.importGroup}>"));
+                    destination.AppendChild(destinationDocument.CreateComment("</" + XMakeElements.importGroup + ">"));
 
                     continue;
                 }

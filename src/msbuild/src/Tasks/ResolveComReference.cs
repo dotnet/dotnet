@@ -5,7 +5,7 @@ using System;
 #if !RUNTIME_TYPE_NETCORE
 using System.Collections.Generic;
 #endif
-#if !NET
+#if !NET7_0_OR_GREATER
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;

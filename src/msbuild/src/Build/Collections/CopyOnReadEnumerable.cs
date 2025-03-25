@@ -62,7 +62,7 @@ namespace Microsoft.Build.Collections
         {
             List<TResult> list;
 
-#if NET
+#if NETCOREAPP
             if (_backingEnumerable.TryGetNonEnumeratedCount(out int count))
             {
 #else

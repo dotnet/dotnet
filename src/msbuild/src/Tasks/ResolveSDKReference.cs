@@ -20,7 +20,7 @@ namespace Microsoft.Build.Tasks
     /// Resolves an SDKReference to a full path on disk
     /// </summary>
 #pragma warning disable RS0022 // Constructor make noninheritable base class inheritable: Longstanding API design that we shouldn't change now
-    public partial class ResolveSDKReference : TaskExtension
+    public class ResolveSDKReference : TaskExtension
 #pragma warning restore RS0022 // Constructor make noninheritable base class inheritable
     {
         #region fields
@@ -33,18 +33,13 @@ namespace Microsoft.Build.Tasks
             { "UAP", "Windows" }
         };
 
-        private const string SdkReferenceFormatPattern = @"(?<SDKSIMPLENAME>^[^,]*),\s*Version=(?<SDKVERSION>.*)";
-
         /// <summary>
         /// Regex for breaking up the sdk reference include into pieces.
         /// Example: XNA, Version=8.0
         /// </summary>
-#if NET
-        [GeneratedRegex(SdkReferenceFormatPattern, RegexOptions.IgnoreCase)]
-        private static partial Regex SdkReferenceFormatRegex { get; }
-#else
-        private static Regex SdkReferenceFormatRegex { get; } = new Regex(SdkReferenceFormatPattern, RegexOptions.IgnoreCase);
-#endif
+        private static readonly Regex s_sdkReferenceFormat = new Regex(
+             @"(?<SDKSIMPLENAME>^[^,]*),\s*Version=(?<SDKVERSION>.*)",
+            RegexOptions.IgnoreCase);
 
         /// <summary>
         /// SimpleName group
@@ -414,7 +409,7 @@ namespace Microsoft.Build.Tasks
                         {
                             if (!sdksAlreadyErrorOrWarnedFor.Contains(incompatibleReference) && incompatibleReference != notCompatibleReference /*cannot be incompatible with self*/)
                             {
-                                listOfIncompatibleReferences.Add($"\"{incompatibleReference.SDKName}\"");
+                                listOfIncompatibleReferences.Add(String.Format(CultureInfo.CurrentCulture, "\"{0}\"", incompatibleReference.SDKName));
                                 sdksAlreadyErrorOrWarnedFor.Add(incompatibleReference);
                             }
                         }
@@ -443,7 +438,7 @@ namespace Microsoft.Build.Tasks
                     {
                         if (!sdksAlreadyErrorOrWarnedFor.Contains(incompatibleReference) && incompatibleReference != notCompatibleReference /*cannot be incompatible with self*/)
                         {
-                            listOfIncompatibleReferences.Add($"\"{incompatibleReference.SDKName}\"");
+                            listOfIncompatibleReferences.Add(String.Format(CultureInfo.CurrentCulture, "\"{0}\"", incompatibleReference.SDKName));
                             sdksAlreadyErrorOrWarnedFor.Add(incompatibleReference);
                         }
                     }
@@ -486,7 +481,7 @@ namespace Microsoft.Build.Tasks
                     string sdkSimpleName = referenceItem.SimpleName;
                     string rawSdkVersion = referenceItem.Version;
 
-                    if (referencesToAddMetadata.TryGetValue(sdkSimpleName, out string value) && value.Equals(rawSdkVersion, StringComparison.InvariantCultureIgnoreCase))
+                    if (referencesToAddMetadata.ContainsKey(sdkSimpleName) && referencesToAddMetadata[sdkSimpleName].Equals(rawSdkVersion, StringComparison.InvariantCultureIgnoreCase))
                     {
                         referenceItem.ResolvedItem.SetMetadata(metadataName, metadataValue);
                     }
@@ -538,7 +533,7 @@ namespace Microsoft.Build.Tasks
                 // Return true if no reference could be found
                 return resolvedReference == null;
             })
-            .Select(y => $"\"{y}\"")
+            .Select(y => String.Format(CultureInfo.CurrentCulture, "\"{0}\"", y))
             .ToArray();
 
             return unresolvedDependencyIdentities;
@@ -579,7 +574,7 @@ namespace Microsoft.Build.Tasks
         /// </summary>
         private static bool ParseSDKReference(string reference, out string sdkSimpleName, out string rawSdkVersion)
         {
-            Match match = SdkReferenceFormatRegex.Match(reference);
+            Match match = s_sdkReferenceFormat.Match(reference);
 
             sdkSimpleName = String.Empty;
             bool parsedVersion = false;
@@ -738,7 +733,7 @@ namespace Microsoft.Build.Tasks
                 ReferenceItem = taskItem;
                 SimpleName = sdkName;
                 Version = sdkVersion;
-                SDKName = $"{SimpleName}, Version={Version}";
+                SDKName = String.Format(CultureInfo.InvariantCulture, "{0}, Version={1}", SimpleName, Version);
                 FrameworkIdentitiesFromManifest = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 AppxLocationsFromManifest = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 ResolutionErrors = new List<Tuple<string, object[]>>();
@@ -1294,13 +1289,13 @@ namespace Microsoft.Build.Tasks
                     {
                         // Try and find a framework identity that matches on both the configuration and architecture "FrameworkIdentity-<Config>-<Arch>"
                         FrameworkIdentity = null;
-                        string frameworkIdentityKey = $"{SDKManifest.Attributes.FrameworkIdentity}-{sdkConfiguration}-{sdkArchitecture}";
+                        string frameworkIdentityKey = String.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2}", SDKManifest.Attributes.FrameworkIdentity, sdkConfiguration, sdkArchitecture);
                         FrameworkIdentity = FindFrameworkIdentity(frameworkIdentityKey);
 
                         // Try and find a framework identity that matches on the configuration , Element must be named "FrameworkIdentity-<Config>" only.
                         if (FrameworkIdentity == null)
                         {
-                            frameworkIdentityKey = $"{SDKManifest.Attributes.FrameworkIdentity}-{sdkConfiguration}";
+                            frameworkIdentityKey = String.Format(CultureInfo.InvariantCulture, "{0}-{1}", SDKManifest.Attributes.FrameworkIdentity, sdkConfiguration);
                             FrameworkIdentity = FindFrameworkIdentity(frameworkIdentityKey);
                         }
 

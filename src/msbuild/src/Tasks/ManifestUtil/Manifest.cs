@@ -630,11 +630,11 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
                     // Check for two or more assemblies with the same identity...
                     string identity = assembly.AssemblyIdentity.GetFullName(AssemblyIdentity.FullNameFlags.All);
                     string key = identity.ToLowerInvariant();
-                    if (!identityList.TryGetValue(key, out bool value))
+                    if (!identityList.ContainsKey(key))
                     {
                         identityList.Add(key, false);
                     }
-                    else if (!value)
+                    else if (!identityList[key])
                     {
                         OutputMessages.AddWarningMessage("GenerateManifest.DuplicateAssemblyIdentity", identity);
                         identityList[key] = true; // only warn once per identity

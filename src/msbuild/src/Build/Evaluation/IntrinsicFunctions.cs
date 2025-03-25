@@ -22,8 +22,6 @@ using System.Linq;
 
 // Needed for DoesTaskHostExistForParameters
 using NodeProviderOutOfProcTaskHost = Microsoft.Build.BackEnd.NodeProviderOutOfProcTaskHost;
-using System.Security.Cryptography;
-using System.Buffers.Text;
 
 #nullable disable
 
@@ -42,13 +40,24 @@ namespace Microsoft.Build.Evaluation
         private static readonly object[] DefaultRegistryViews = [RegistryView.Default];
 #pragma warning restore CA1416
 
-#if NET
+#if NET7_0_OR_GREATER
         [GeneratedRegex(RegistrySdkSpecification, RegexOptions.IgnoreCase)]
-        private static partial Regex RegistrySdkRegex { get; }
+        private static partial Regex RegistrySdkPattern();
 #else
-        private static Regex s_registrySdkRegex;
-        private static Regex RegistrySdkRegex => s_registrySdkRegex ??= new Regex(RegistrySdkSpecification, RegexOptions.IgnoreCase);
+        private static readonly Lazy<Regex> RegistrySdkPattern = new Lazy<Regex>(() => new Regex(RegistrySdkSpecification, RegexOptions.IgnoreCase));
 #endif
+
+        private static Regex RegistrySdkRegex
+        {
+            get
+            {
+#if NET7_0_OR_GREATER
+                return RegistrySdkPattern();
+#else
+                return RegistrySdkPattern.Value;
+#endif
+            }
+        }
 
         private static readonly Lazy<NuGetFrameworkWrapper> NuGetFramework = new Lazy<NuGetFrameworkWrapper>(() => NuGetFrameworkWrapper.CreateInstance());
 
@@ -275,8 +284,8 @@ namespace Microsoft.Build.Evaluation
             {
                 if (viewObject is string viewAsString)
                 {
-                    string typeLeafName = $"{typeof(RegistryView).Name}.";
-                    string typeFullName = $"{typeof(RegistryView).FullName}.";
+                    string typeLeafName = typeof(RegistryView).Name + ".";
+                    string typeFullName = typeof(RegistryView).FullName + ".";
 
                     // We'll allow the user to specify the leaf or full type name on the RegistryView enum
                     viewAsString = viewAsString.Replace(typeFullName, "").Replace(typeLeafName, "");
@@ -457,12 +466,7 @@ namespace Microsoft.Build.Evaluation
 
         private static string CalculateSha256(string toHash)
         {
-#if NET
-            Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
-            SHA256.HashData(Encoding.UTF8.GetBytes(toHash), hash);
-            return Convert.ToHexStringLower(hash);
-#else
-            using var sha = SHA256.Create();
+            using var sha = System.Security.Cryptography.SHA256.Create();
             var hashResult = new StringBuilder();
             foreach (byte theByte in sha.ComputeHash(Encoding.UTF8.GetBytes(toHash)))
             {
@@ -470,7 +474,6 @@ namespace Microsoft.Build.Evaluation
             }
 
             return hashResult.ToString();
-#endif
         }
 
         /// <summary>
@@ -648,15 +651,14 @@ namespace Microsoft.Build.Evaluation
             {
                 return string.Empty;
             }
-
             if (start + length > input.Length)
             {
                 length = input.Length - start;
             }
-
             StringBuilder sb = new StringBuilder();
-            foreach (char c in input.AsSpan(start, length))
+            for (int i = start; i < start + length; i++)
             {
+                char c = input[i];
                 if (c >= 32 && c <= 126 && !FileUtilities.InvalidFileNameChars.Contains(c))
                 {
                     sb.Append(c);
@@ -666,7 +668,6 @@ namespace Microsoft.Build.Evaluation
                     sb.Append('_');
                 }
             }
-
             return sb.ToString();
         }
 
@@ -803,7 +804,7 @@ namespace Microsoft.Build.Evaluation
             }
             else
             {
-                subKeyName = keyName.Substring(i + 1);
+                subKeyName = keyName.Substring(i + 1, keyName.Length - i - 1);
             }
 
             return basekey;

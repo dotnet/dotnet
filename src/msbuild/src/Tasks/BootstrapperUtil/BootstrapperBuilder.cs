@@ -492,9 +492,9 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                     Refresh();
                 }
 
-                string[] array = _cultures.Values.Select(v => v.ToString()).ToArray();
-                Array.Sort(array);
-                return array;
+                List<string> list = _cultures.Values.Select(v => v.ToString()).ToList();
+                list.Sort();
+                return list.ToArray();
             }
         }
 
@@ -603,7 +603,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                     foreach (string strSubDirectory in Directory.GetDirectories(packagePath))
                     {
                         int nStartIndex = packagePath.Length;
-                        if (strSubDirectory[nStartIndex] == System.IO.Path.DirectorySeparatorChar)
+                        if ((strSubDirectory.ToCharArray())[nStartIndex] == System.IO.Path.DirectorySeparatorChar)
                         {
                             nStartIndex++;
                         }
@@ -948,7 +948,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                                     }
 
                                     XmlNode langNode = langDoc.SelectSingleNode(BOOTSTRAPPER_PREFIX + ":Package", _xmlNamespaceManager);
-                                    Debug.Assert(langNode != null, $"Unable to find a package node in {strLangManifestFilename}");
+                                    Debug.Assert(langNode != null, string.Format(CultureInfo.CurrentCulture, "Unable to find a package node in {0}", strLangManifestFilename));
                                     if (langNode != null)
                                     {
                                         XmlElement langElement = (XmlElement)(_document.ImportNode(langNode, true));
@@ -1040,7 +1040,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                                 }
                                 else
                                 {
-                                    Debug.WriteLine($"Validation results already added for Product Code '{productCodeAttribute}'");
+                                    Debug.WriteLine(String.Format(CultureInfo.CurrentCulture, "Validation results already added for Product Code '{0}'", productCodeAttribute));
                                 }
                             }
                         }
@@ -1512,7 +1512,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                                 // Add the file size to the PackageFileNode
                                 XmlAttribute sizeAttribute = packageFileNode.OwnerDocument.CreateAttribute("Size");
                                 var fi = new FileInfo(packageFileSource.Value);
-                                sizeAttribute.Value = fi.Length.ToString(CultureInfo.InvariantCulture);
+                                sizeAttribute.Value = "" + (fi.Length.ToString(CultureInfo.InvariantCulture));
                                 MergeAttribute(packageFileNode, sizeAttribute);
                             }
                         }
@@ -1547,7 +1547,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                 if (configElement != null)
                 {
                     configElement.AppendChild(configElement.OwnerDocument.ImportNode(node, true));
-                    DumpXmlToFile(node, $"{package.Product.ProductCode}.{package.Culture}.xml");
+                    DumpXmlToFile(node, string.Format(CultureInfo.CurrentCulture, "{0}.{1}.xml", package.Product.ProductCode, package.Culture));
                 }
             }
 
@@ -1602,17 +1602,13 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
                 return null;
             }
 
-#if NET
-            return Convert.ToHexString(byteArray);
-#else
-            var output = new StringBuilder(byteArray.Length * 2);
+            var output = new StringBuilder(byteArray.Length);
             foreach (byte byteValue in byteArray)
             {
                 output.Append(byteValue.ToString("X02", CultureInfo.InvariantCulture));
             }
 
             return output.ToString();
-#endif
         }
 
         private static string GetFileHash(string filePath)
@@ -1987,7 +1983,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
         {
             Assembly a = Assembly.GetExecutingAssembly();
             Stream s = a.GetManifestResourceStream(String.Format(CultureInfo.InvariantCulture, "{0}.{1}", typeof(BootstrapperBuilder).Namespace, name));
-            Debug.Assert(s != null, $"EmbeddedResource '{name}' not found");
+            Debug.Assert(s != null, String.Format(CultureInfo.CurrentCulture, "EmbeddedResource '{0}' not found", name));
             return s;
         }
 

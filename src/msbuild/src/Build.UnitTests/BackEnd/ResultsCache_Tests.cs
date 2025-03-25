@@ -80,7 +80,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
             result2.AddResultsForTarget("result2target1", BuildResultUtilities.GetEmptyFailingTargetResult());
             cache.AddResult(result2);
 
-            var results = cache.ToArray();
+            var results = cache.GetEnumerator().ToArray();
 
             results.Length.ShouldBe(2);
 

@@ -125,19 +125,21 @@ namespace Microsoft.Build.Utilities
             return new SimpleVersion(major, minor, build, revision);
         }
 
+        private static readonly char[] s_semverSeparators = ['-', '+'];
+
         private static ReadOnlySpan<char> RemoveTrivia(string input)
         {
             // Ignore leading/trailing whitespace in input.
             ReadOnlySpan<char> span = input.AsSpan().Trim();
 
             // Ignore a leading "v".
-            if (span.Length > 0 && (span[0] is 'v' or 'V'))
+            if (span.Length > 0 && (span[0] == 'v' || span[0] == 'V'))
             {
                 span = span.Slice(1);
             }
 
             // Ignore semver separator and anything after.
-            int separatorIndex = span.IndexOfAny('-', '+');
+            int separatorIndex = span.IndexOfAny(s_semverSeparators);
             if (separatorIndex >= 0)
             {
                 span = span.Slice(0, separatorIndex);

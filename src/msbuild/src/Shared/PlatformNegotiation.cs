@@ -61,18 +61,18 @@ namespace Microsoft.Build.Shared
             // Prioritize platformLookupTable **metadata** attached to the ProjectReference item
             // before the current project's table. We do this to allow per-ProjectReference fine tuning.
             else if (projectReferenceLookupTable != null &&
-                    projectReferenceLookupTable.TryGetValue(currentProjectPlatform, out string? value) &&
-                    projectReferencePlatforms.Contains(value))
+                    projectReferenceLookupTable.ContainsKey(currentProjectPlatform) &&
+                    projectReferencePlatforms.Contains(projectReferenceLookupTable[currentProjectPlatform]))
             {
-                buildProjectReferenceAs = value;
+                buildProjectReferenceAs = projectReferenceLookupTable[currentProjectPlatform];
                 log?.LogMessageFromResources(MessageImportance.Low, "GetCompatiblePlatform.FoundMappingInTable", currentProjectPlatform, buildProjectReferenceAs, projectReferenceLookupTableMetadata);
             }
             // Current project's translation table follows
             else if (currentProjectLookupTable != null &&
-                    currentProjectLookupTable.TryGetValue(currentProjectPlatform, out value) &&
-                    projectReferencePlatforms.Contains(value))
+                    currentProjectLookupTable.ContainsKey(currentProjectPlatform) &&
+                    projectReferencePlatforms.Contains(currentProjectLookupTable[currentProjectPlatform]))
             {
-                buildProjectReferenceAs = value;
+                buildProjectReferenceAs = currentProjectLookupTable[currentProjectPlatform];
                 log?.LogMessageFromResources(MessageImportance.Low, "GetCompatiblePlatform.FoundMappingInTable", currentProjectPlatform, buildProjectReferenceAs, platformLookupTable);
             }
             // AnyCPU if possible

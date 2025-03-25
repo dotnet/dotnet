@@ -261,7 +261,10 @@ namespace Microsoft.Build.Tasks
             if (BuildInParallel)
             {
                 skipProjects = new bool[Projects.Length];
-                skipProjects.AsSpan().Fill(true);
+                for (int i = 0; i < skipProjects.Length; i++)
+                {
+                    skipProjects[i] = true;
+                }
             }
             else
             {

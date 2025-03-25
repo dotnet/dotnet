@@ -29,7 +29,7 @@ namespace Microsoft.Build.Evaluation
                     new BuildEventFileInfo(string.Empty),
                     "OM_MatchOnMetadataIsRestrictedToReferencedItems");
 
-                if (!_matchOnMetadata.IsEmpty)
+                if (_matchOnMetadata.Any())
                 {
                     _metadataSet = new MetadataTrie<P, I>(builder.MatchOnMetadataOptions, _matchOnMetadata, _itemSpec);
                 }
@@ -48,7 +48,7 @@ namespace Microsoft.Build.Evaluation
                     return;
                 }
 
-                bool matchingOnMetadata = !_matchOnMetadata.IsEmpty;
+                bool matchingOnMetadata = _matchOnMetadata.Any();
                 if (!matchingOnMetadata)
                 {
                     if (ItemspecContainsASingleBareItemReference(_itemSpec, _itemElement.ItemType))

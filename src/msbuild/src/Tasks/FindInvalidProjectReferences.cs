@@ -13,22 +13,17 @@ namespace Microsoft.Build.Tasks
     /// <summary>
     /// Returns the reference assembly paths to the various frameworks
     /// </summary>
-    public partial class FindInvalidProjectReferences : TaskExtension
+    public class FindInvalidProjectReferences : TaskExtension
     {
         #region Fields
-
-        private const string PlatformMonikerFormatPattern = @"(?<PLATFORMIDENTITY>^[^,]*),\s*Version=(?<PLATFORMVERSION>.*)";
 
         /// <summary>
         /// Regex for breaking up the platform moniker
         /// Example: XNA, Version=8.0
         /// </summary>
-#if NET
-        [GeneratedRegex(PlatformMonikerFormatPattern, RegexOptions.IgnoreCase)]
-        private static partial Regex PlatformMonikerRegex { get; }
-#else
-        private static Regex PlatformMonikerRegex { get; } = new Regex(PlatformMonikerFormatPattern, RegexOptions.IgnoreCase);
-#endif
+        private static readonly Regex s_platformMonikerFormat = new Regex(
+             @"(?<PLATFORMIDENTITY>^[^,]*),\s*Version=(?<PLATFORMVERSION>.*)",
+            RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Reference moniker metadata
@@ -116,7 +111,7 @@ namespace Microsoft.Build.Tasks
         /// </summary>
         private static bool ParseMoniker(string reference, out string platformIdentity, out Version platformVersion)
         {
-            Match match = PlatformMonikerRegex.Match(reference);
+            Match match = s_platformMonikerFormat.Match(reference);
 
             platformIdentity = String.Empty;
             bool parsedVersion = false;
