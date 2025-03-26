@@ -224,6 +224,8 @@
 
     <!-- Microsoft.TestPlatform -->
     <ItemGroup>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Memory.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Text.Json.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>

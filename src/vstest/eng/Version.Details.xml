@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.14.3-preview.25128.2">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.14.3-preview.25164.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>d894fc4ed53c96164fe84e81f38bcc1887fd8ecf</Sha>
+      <Sha>414b8035705ca246a1b7331eab02a656b0dc3706</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.612101">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.617301">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
-      <Sha>6626d0ac5d10532ef9c0939b4b65c7381715340a</Sha>
+      <Sha>e2f850daa95eea9d675ba0c6d793fd41c4b76f7a</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.diagnostics" Version="9.0.0-preview.25121.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.diagnostics" Version="9.0.0-preview.25173.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
-      <Sha>6626d0ac5d10532ef9c0939b4b65c7381715340a</Sha>
+      <Sha>e2f850daa95eea9d675ba0c6d793fd41c4b76f7a</Sha>
       <SourceBuild RepoName="diagnostics" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -22,9 +22,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.615601">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.617002">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>232bcf31aad21949f80d6706720540b85e43fff3</Sha>
+      <Sha>cf30e8fd726730aa4b142275fb2fc0503528b7dd</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
@@ -44,14 +44,14 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25111.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5da211e1c42254cb35e7ef3d5a8428fb24853169</Sha>
+      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.25111.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.25164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5da211e1c42254cb35e7ef3d5a8428fb24853169</Sha>
+      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
@@ -62,9 +62,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.25111.5">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.25164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5da211e1c42254cb35e7ef3d5a8428fb24853169</Sha>
+      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
