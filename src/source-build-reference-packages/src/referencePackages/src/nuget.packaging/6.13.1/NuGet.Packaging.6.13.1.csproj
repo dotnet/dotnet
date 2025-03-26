@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.13.1</PackageVersion>
+    <AssemblyName>NuGet.Packaging</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Include="../../nuget.configuration/6.13.1/NuGet.Configuration.6.13.1.csproj" />
+    <ProjectReference Include="../../nuget.versioning/6.13.1/NuGet.Versioning.6.13.1.csproj" />
+    <ProjectReference Include="../../system.formats.asn1/8.0.1/System.Formats.Asn1.8.0.1.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.4/System.Security.Cryptography.Pkcs.6.0.4.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Include="../../nuget.configuration/6.13.1/NuGet.Configuration.6.13.1.csproj" />
+    <ProjectReference Include="../../nuget.versioning/6.13.1/NuGet.Versioning.6.13.1.csproj" />
+    <ProjectReference Include="../../system.formats.asn1/8.0.1/System.Formats.Asn1.8.0.1.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.4/System.Security.Cryptography.Pkcs.6.0.4.csproj" />
+    <ProjectReference Include="../../system.text.json/8.0.5/System.Text.Json.8.0.5.csproj" />
+  </ItemGroup>
+
+</Project>
