@@ -85,7 +85,7 @@ generated packages show changes when being regenerated.
 You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
 
 **Note:** When porting new packages between branches, you must regenerate the packages when crossing the 10.0/9.0 boundary.
-This is because in 10.0 the generated projects switched from using PackageReference to PojectReference.
+This is because in 10.0 the generated projects switched from using PackageReference to ProjectReference.
 Porting new packages across 10.0/9.0 boundary will introduce prebuilts.
 See the workflow documented in the servicing branch readmes for additional requirements when adding new packages pre 10.0.
 
