@@ -110,7 +110,7 @@ public struct SourceSpan : IEquatable<SourceSpan>
 
     internal readonly SourceSpan GetZeroWidthEndSpan()
     {
-        return new SourceSpan(FilePath, AbsoluteIndex + EndCharacterIndex, LineIndex, characterIndex: EndCharacterIndex, length: 0, lineCount: 0, EndCharacterIndex);
+        return new SourceSpan(FilePath, AbsoluteIndex + Length, LineIndex, characterIndex: EndCharacterIndex, length: 0, lineCount: 0, EndCharacterIndex);
     }
 
     internal readonly SourceSpan Slice(int startIndex, int length)
