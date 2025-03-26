@@ -115,11 +115,11 @@ namespace Microsoft.VisualStudio.SolutionPersistence {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Project name &apos;{0}&apos; already exists in the &apos;{1}&apos; solution folder..
+        ///   Looks up a localized string similar to Project name &apos;{0}&apos; already exists in the solution folder..
         /// </summary>
-        internal static string DuplicateProjectName_Arg2 {
+        internal static string DuplicateProjectName_Arg1 {
             get {
-                return ResourceManager.GetString("DuplicateProjectName_Arg2", resourceCulture);
+                return ResourceManager.GetString("DuplicateProjectName_Arg1", resourceCulture);
             }
         }
         
@@ -223,6 +223,15 @@ namespace Microsoft.VisualStudio.SolutionPersistence {
         internal static string InvalidProjectReference_Args1 {
             get {
                 return ResourceManager.GetString("InvalidProjectReference_Args1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing or invalid project type guid..
+        /// </summary>
+        internal static string InvalidProjectType {
+            get {
+                return ResourceManager.GetString("InvalidProjectType", resourceCulture);
             }
         }
         

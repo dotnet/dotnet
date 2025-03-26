@@ -32,10 +32,10 @@ Get-ChildItem "$PSScriptRoot/../variables" |% {
 
     # If that didn't get us anything, just copy the script itself
     if (-not $value) {
-        $value = Get-Content -LiteralPath $_.FullName
+        $value = Get-Content -Path $_.FullName
     }
 
-    Set-Content -LiteralPath "$VariablesArtifactPath/$($_.Name)" -Value $value
+    Set-Content -Path "$VariablesArtifactPath/$($_.Name)" -Value $value
 }
 
 @{

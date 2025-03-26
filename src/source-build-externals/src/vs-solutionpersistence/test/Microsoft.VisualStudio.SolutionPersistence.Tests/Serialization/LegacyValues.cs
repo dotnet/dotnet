@@ -40,6 +40,12 @@ public sealed class LegacyValues
     [Fact]
     public async Task IgnoreDisplayNameSlnx()
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         await ValidateModifiedSolutionAsync(CreateModifiedModel, SlnAssets.XmlSlnxSingleNativeProject, SlnAssets.XmlSlnxSingleNativeProject);
 
         static void CreateModifiedModel(SolutionModel solution)
@@ -58,6 +64,12 @@ public sealed class LegacyValues
     [Fact]
     public async Task IgnoreDisplayNameSln()
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         await ValidateModifiedSolutionAsync(CreateModifiedModel, SlnAssets.ClassicSlnSingleNativeProject, SlnAssets.ClassicSlnSingleNativeProject, SolutionSerializers.SlnFileV12);
 
         static void CreateModifiedModel(SolutionModel solution)

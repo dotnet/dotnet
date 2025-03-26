@@ -32,6 +32,12 @@ public sealed partial class MakeSlnx(MakeSlnx.MakeSlnxFixture fixture) : IClassF
     [Trait("TestCategory", "FailsInCloudTest")]
     public async Task ConvertSlnToSlnxAsync(ResourceName slnFileName)
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         ResourceStream slnFile = slnFileName.Load();
         int sampleFileSize = checked((int)slnFile.Stream.Length);
         string slnToSlnxFile = Path.ChangeExtension(Path.Join(fixture.SlnToSlnxDirectory, slnFile.Name), SolutionSerializers.SlnXml.DefaultFileExtension);
@@ -59,6 +65,12 @@ public sealed partial class MakeSlnx(MakeSlnx.MakeSlnxFixture fixture) : IClassF
     [Trait("TestCategory", "FailsInCloudTest")]
     public async Task ConvertSlnxToSlnAsync(ResourceName slnxFileName)
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         ResourceStream slnxFile = slnxFileName.Load();
 
         string slnxToSlnFile = Path.ChangeExtension(Path.Join(fixture.SlnxToSlnDirectory, slnxFile.Name), SolutionSerializers.SlnFileV12.DefaultFileExtension);

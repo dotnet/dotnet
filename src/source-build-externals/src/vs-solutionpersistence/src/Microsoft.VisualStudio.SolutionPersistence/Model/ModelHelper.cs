@@ -122,9 +122,4 @@ internal static class ModelHelper
     {
         return new ConfigurationRule(BuildDimension.Build, solutionBuildType: string.Empty, solutionPlatform: string.Empty, projectValue: bool.FalseString);
     }
-
-    internal static ConfigurationRule CreateNoPlatformsRule()
-    {
-        return new ConfigurationRule(BuildDimension.Platform, solutionBuildType: string.Empty, solutionPlatform: string.Empty, projectValue: PlatformNames.Missing);
-    }
 }

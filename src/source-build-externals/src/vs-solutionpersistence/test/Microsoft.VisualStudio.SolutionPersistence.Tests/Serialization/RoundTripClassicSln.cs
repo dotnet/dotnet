@@ -42,9 +42,6 @@ public class RoundTripClassicSln
     [Fact]
     public Task FolderIdAsync() => TestRoundTripSerializerAsync(SlnAssets.LoadResource("FolderId.sln"));
 
-    [Fact]
-    public Task ReportProjectAsync() => TestRoundTripSerializerAsync(SlnAssets.LoadResource("Report Project.sln"));
-
     [Theory]
     [MemberData(nameof(ClassicSlnFiles))]
     public Task AllClassicSolutionAsync(ResourceName sampleFile)
@@ -59,6 +56,12 @@ public class RoundTripClassicSln
     /// <returns>Task to track the asynchronous call status.</returns>
     private static async Task TestRoundTripSerializerAsync(ResourceStream slnStream)
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         FileContents originalSolution = slnStream.ToLines();
 
         // Open the Model from stream.

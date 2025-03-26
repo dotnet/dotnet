@@ -37,7 +37,6 @@ internal enum Keyword
     Extension,
     BasedOn,
     IsBuildable,
-    SupportsPlatform,
 
     // Configuration properties
     Configuration,
@@ -88,7 +87,6 @@ internal static class Keywords
                 new(nameof(Keyword.Extension), Keyword.Extension),
                 new(nameof(Keyword.BasedOn), Keyword.BasedOn),
                 new(nameof(Keyword.IsBuildable), Keyword.IsBuildable),
-                new(nameof(Keyword.SupportsPlatform), Keyword.SupportsPlatform),
                 new(nameof(Keyword.Configuration), Keyword.Configuration),
                 new(nameof(Keyword.Dimension), Keyword.Dimension),
                 new(nameof(Keyword.BuildType), Keyword.BuildType),
@@ -127,8 +125,6 @@ internal static class Keywords
         stringTable.AddString(BuildTypeNames.Debug);
         stringTable.AddString(BuildTypeNames.Release);
         stringTable.AddString(PlatformNames.All);
-        stringTable.AddString(PlatformNames.Missing);
-        stringTable.AddString(PlatformNames.Default);
         stringTable.AddString(PlatformNames.AnyCPU);
         stringTable.AddString(PlatformNames.AnySpaceCPU);
         stringTable.AddString(PlatformNames.Win32);

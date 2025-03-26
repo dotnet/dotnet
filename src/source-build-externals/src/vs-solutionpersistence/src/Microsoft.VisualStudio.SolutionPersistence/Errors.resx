@@ -129,6 +129,10 @@
     <value>Missing or invalid scope.</value>
     <comment>Error message</comment>
   </data>
+  <data name="InvalidProjectType" xml:space="preserve">
+    <value>Missing or invalid project type guid.</value>
+    <comment>Error message</comment>
+  </data>
   <data name="SyntaxError" xml:space="preserve">
     <value>Syntax error.</value>
     <comment>Error message</comment>
@@ -205,8 +209,8 @@
     <value>Project path '{0}' already exists in the solution.</value>
     <comment>Error message. {0} is the file path that already exists.</comment>
   </data>
-  <data name="DuplicateProjectName_Arg2" xml:space="preserve">
-    <value>Project name '{0}' already exists in the '{1}' solution folder.</value>
+  <data name="DuplicateProjectName_Arg1" xml:space="preserve">
+    <value>Project name '{0}' already exists in the solution folder.</value>
     <comment>Error message. {0} is the name of the folder.</comment>
   </data>
   <data name="InvalidFolderPath_Args1" xml:space="preserve">

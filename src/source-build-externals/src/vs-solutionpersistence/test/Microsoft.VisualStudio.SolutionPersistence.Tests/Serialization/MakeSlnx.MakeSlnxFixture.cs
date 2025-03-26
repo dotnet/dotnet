@@ -24,10 +24,7 @@ public sealed partial class MakeSlnx
         /// </summary>
         public MakeSlnxFixture()
         {
-            // Split output based on the .NET version (so we can run tests in parallel)
-            string netVersion = "net" + Environment.Version.ToString(3);
-
-            string outputDirectory = Path.Combine(Path.GetTempPath(), OutputDirectory, netVersion);
+            string outputDirectory = Path.Combine(Path.GetTempPath(), OutputDirectory);
             if (Directory.Exists(outputDirectory))
             {
                 Directory.Delete(outputDirectory, true);

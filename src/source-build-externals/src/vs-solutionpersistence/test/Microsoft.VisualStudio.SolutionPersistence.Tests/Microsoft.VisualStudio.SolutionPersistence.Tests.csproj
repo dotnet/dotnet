@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net472</TargetFrameworks>
-    <OutputType>Exe</OutputType>
     <RootNamespace />
   </PropertyGroup>
 
@@ -14,14 +13,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="xunit.v3" />
-    <!-- We only need System.Memory 4.6 for xunit, don't add unnecessary dependecy in Nuget package. -->
-    <PackageReference Include="System.Memory" VersionOverride="4.6" />
+    <PackageReference Include="xunit" />
   </ItemGroup>
 
   <ItemGroup Label="NetFrameworkPackages" Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="IsExternalInit" PrivateAssets="all" />
     <PackageReference Include="Microsoft.IO.Redist" />
+    <PackageReference Include="System.Memory" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />
   </ItemGroup>
 

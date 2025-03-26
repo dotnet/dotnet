@@ -44,9 +44,6 @@ if ($x86) {
   }
 }
 
-$testBinLog = Join-Path $ArtifactStagingFolder (Join-Path build_logs test.binlog)
-$testDiagLog = Join-Path $ArtifactStagingFolder (Join-Path test_logs diag.log)
-
 & $dotnet test $RepoRoot `
     --no-build `
     -c $Configuration `
@@ -55,8 +52,8 @@ $testDiagLog = Join-Path $ArtifactStagingFolder (Join-Path test_logs diag.log)
     --settings "$PSScriptRoot/test.runsettings" `
     --blame-hang-timeout 60s `
     --blame-crash `
-    -bl:"$testBinLog" `
-    --diag "$testDiagLog;TraceLevel=info" `
+    -bl:"$ArtifactStagingFolder/build_logs/test.binlog" `
+    --diag "$ArtifactStagingFolder/test_logs/diag.log;TraceLevel=info" `
     --logger trx `
 
 $unknownCounter = 0
@@ -64,11 +61,11 @@ Get-ChildItem -Recurse -Path $RepoRoot\test\*.trx |% {
   Copy-Item $_ -Destination $ArtifactStagingFolder/test_logs/
 
   if ($PublishResults) {
-    $x = [xml](Get-Content -LiteralPath $_)
+    $x = [xml](Get-Content -Path $_)
     $runTitle = $null
     if ($x.TestRun.TestDefinitions -and $x.TestRun.TestDefinitions.GetElementsByTagName('UnitTest')) {
       $storage = $x.TestRun.TestDefinitions.GetElementsByTagName('UnitTest')[0].storage -replace '\\','/'
-      if ($storage -match '/(?<tfm>net[^/]+)/(?:(?<rid>[^/]+)/)?(?<lib>[^/]+)\.(dll|exe)$') {
+      if ($storage -match '/(?<tfm>net[^/]+)/(?:(?<rid>[^/]+)/)?(?<lib>[^/]+)\.dll$') {
         if ($matches.rid) {
           $runTitle = "$($matches.lib) ($($matches.tfm), $($matches.rid), $Agent)"
         } else {

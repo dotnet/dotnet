@@ -58,6 +58,12 @@ public sealed class Project
     [Fact]
     public async Task RemoveProjectAsync()
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         SolutionModel solution = await SolutionSerializers.SlnXml.OpenAsync(SlnAssets.XmlSlnxEverything.Stream, CancellationToken.None);
 
         string toRemove = Path.Join("src", "CoreMauiApp", "CoreMauiApp.csproj");
@@ -78,6 +84,12 @@ public sealed class Project
     [Fact]
     public async Task MoveProjectAsync()
     {
+        if (IsMono)
+        {
+            // Mono is not supported.
+            return;
+        }
+
         SolutionModel solution = await SolutionSerializers.SlnXml.OpenAsync(SlnAssets.XmlSlnxEverything.Stream, CancellationToken.None);
 
         string toMove = Path.Join("BlazorApp1", "BlazorApp1.csproj");

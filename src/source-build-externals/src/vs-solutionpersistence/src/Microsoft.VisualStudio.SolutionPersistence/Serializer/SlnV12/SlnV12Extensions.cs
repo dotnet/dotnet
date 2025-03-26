@@ -253,10 +253,9 @@ public static class SlnV12Extensions
                             project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.BuildType, buildType, platform, BuildTypeNames.Missing));
                             project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Platform, buildType, platform, PlatformNames.Missing));
 
-                            // In the old .sln file the default configuration is not to build/deploy unless there is a build/deploy line.
-                            // This rule will get overwritten by the build/deploy line if it exists.
+                            // In the old .sln file the default configuration is not to build unless there is a build line.
+                            // This rule will get overwritten by the build line if it exists.
                             project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Build, buildType, platform, bool.FalseString));
-                            project.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Deploy, buildType, platform, bool.FalseString));
                         }
                     }
                 }
@@ -336,11 +335,6 @@ public static class SlnV12Extensions
                         {
                             projectModel.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.BuildType, solutionBuildType, solutionPlatform, projectBuildType));
                             projectModel.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.Platform, solutionBuildType, solutionPlatform, projectPlatform));
-                        }
-                        else if (!value.IsNullOrEmpty())
-                        {
-                            // If the project configuration does not have a platform, just set the build type.
-                            projectModel.AddProjectConfigurationRule(new ConfigurationRule(BuildDimension.BuildType, solutionBuildType, solutionPlatform, value));
                         }
 
                         break;
@@ -460,15 +454,18 @@ public static class SlnV12Extensions
                         continue;
                     }
 
+                    bool isMissing = mapping.BuildType == BuildTypeNames.Missing || mapping.Platform == PlatformNames.Missing;
+
                     // Default project mapping in SLN was to use "Any CPU"
-                    string platform =
-                        mapping.Platform == PlatformNames.AnyCPU ? PlatformNames.AnySpaceCPU :
-                        mapping.Platform;
+                    string platform = mapping.Platform;
+                    if (platform == PlatformNames.AnyCPU)
+                    {
+                        platform = PlatformNames.AnySpaceCPU;
+                    }
 
-                    // If just the platform is missing, the project doesn't support platforms and only the build type should be written.
-                    string prjCfgPlatString = platform == PlatformNames.Missing ? mapping.BuildType : $"{mapping.BuildType}|{platform}";
+                    string prjCfgPlatString = $"{mapping.BuildType}|{platform}";
 
-                    if (mapping.BuildType != BuildTypeNames.Missing)
+                    if (!isMissing)
                     {
                         WriteProperty(propertyBag, projectId, entry.SlnKey, ActiveCfgSuffix, prjCfgPlatString);
                     }

@@ -124,14 +124,14 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ac5d47622c7ac4e9a6e4b2a00851edd532179f39"
+      "commitSha": "c952ce815c126f88fdc639887165b456263722bf"
     },
     {
-      "packageVersion": "10.0.617401",
+      "packageVersion": "10.0.617501",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "960dc55f53a7bc6fe355fd0a2bdc8eeaa025ab5f"
+      "commitSha": "195acd39568d33ef6e1021c391ed3c3130f0c791"
     },
     {
       "packageVersion": "10.0.617402",
@@ -268,7 +268,7 @@
     {
       "path": "source-build-externals/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
-      "commitSha": "19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe"
+      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
     },
     {
       "path": "source-build-externals/src/xunit",
