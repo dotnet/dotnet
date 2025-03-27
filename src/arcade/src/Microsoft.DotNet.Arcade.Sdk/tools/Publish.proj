@@ -125,8 +125,11 @@
       In the VMR, don't publish packages that didn't match the above conditions externally.
       Instead, add them with Vertical visibility as they still may be needed to build RID-specific packages in other repos.
     -->
-    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" IsShipping="false" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+    <!-- Use different items as otherwise the metadata updates would be applies to even excluded items. -->
+    <_NonTargetRidShippingPackage Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+    <_NonTargetRidNonShippingPackage Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" IsShipping="false" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+    <Artifact Include="@(_NonTargetRidShippingPackage)" />
+    <Artifact Include="@(_NonTargetRidNonShippingPackage)"  />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true'">
