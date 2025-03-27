@@ -3,8 +3,10 @@
   <PropertyGroup>
     <TargetFramework>$(NetVSCode)</TargetFramework>
     <OutputType>Exe</OutputType>
-    <Description>Razor is a markup syntax for adding server-side logic to web pages. This package
-      contains a Razor language server.</Description>
+    <Description>
+      Razor is a markup syntax for adding server-side logic to web pages. This package
+      contains a Razor language server.
+    </Description>
     <RootNamespace>Microsoft.AspNetCore.Razor.LanguageServer</RootNamespace>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>true</IsShippingPackage>

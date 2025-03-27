@@ -178,10 +178,9 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
             // server to recognize the document.
             var documentServiceProvider = associatedEntry.Current.DocumentServiceProvider;
             var excerptService = documentServiceProvider.GetService<IRazorDocumentExcerptServiceImplementation>();
-            var spanMappingService = documentServiceProvider.GetService<IRazorSpanMappingService>();
             var mappingService = documentServiceProvider.GetService<IRazorMappingService>();
             var emptyContainer = new PromotedDynamicDocumentContainer(
-                documentUri, propertiesService, excerptService, spanMappingService, mappingService, associatedEntry.Current.TextLoader);
+                documentUri, propertiesService, excerptService, mappingService, associatedEntry.Current.TextLoader);
 
             lock (associatedEntry.Lock)
             {
@@ -405,17 +404,11 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
     // Using a separate handle to the 'current' file info so that can allow Roslyn to send
     // us the add/remove operations, while we process the update operations.
-    private class Entry
+    private class Entry(RazorDynamicFileInfo current)
     {
-        public Entry(RazorDynamicFileInfo current)
-        {
-            Current = current;
-            Lock = new object();
-        }
+        public RazorDynamicFileInfo Current { get; set; } = current;
 
-        public RazorDynamicFileInfo Current { get; set; }
-
-        public object Lock { get; }
+        public object Lock { get; } = new object();
 
         public override string ToString()
         {
@@ -426,16 +419,10 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         }
     }
 
-    private readonly struct Key : IEquatable<Key>
+    private readonly struct Key(ProjectId projectId, string filePath) : IEquatable<Key>
     {
-        public readonly ProjectId ProjectId;
-        public readonly string FilePath;
-
-        public Key(ProjectId projectId, string filePath)
-        {
-            ProjectId = projectId;
-            FilePath = filePath;
-        }
+        public readonly ProjectId ProjectId = projectId;
+        public readonly string FilePath = filePath;
 
         public bool Equals(Key other)
         {
@@ -458,16 +445,10 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         }
     }
 
-    private class EmptyTextLoader : TextLoader
+    private class EmptyTextLoader(string filePath) : TextLoader
     {
-        private readonly string _filePath;
-        private readonly VersionStamp _version;
-
-        public EmptyTextLoader(string filePath)
-        {
-            _filePath = filePath;
-            _version = VersionStamp.Default; // Version will never change so this can be reused.
-        }
+        private readonly string _filePath = filePath;
+        private readonly VersionStamp _version = VersionStamp.Default;
 
         public override Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         {
@@ -481,14 +462,12 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         Uri documentUri,
         IRazorDocumentPropertiesService documentPropertiesService,
         IRazorDocumentExcerptServiceImplementation? documentExcerptService,
-        IRazorSpanMappingService? spanMappingService,
         IRazorMappingService? mappingService,
         TextLoader textLoader) : IDynamicDocumentContainer
     {
         private readonly Uri _documentUri = documentUri;
         private readonly IRazorDocumentPropertiesService _documentPropertiesService = documentPropertiesService;
         private readonly IRazorDocumentExcerptServiceImplementation? _documentExcerptService = documentExcerptService;
-        private readonly IRazorSpanMappingService? _spanMappingService = spanMappingService;
         private readonly IRazorMappingService? _mappingService = mappingService;
         private readonly TextLoader _textLoader = textLoader;
 
@@ -505,21 +484,14 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         public IRazorDocumentExcerptServiceImplementation? GetExcerptService() => _documentExcerptService;
 
-        public IRazorSpanMappingService? GetSpanMappingService() => _spanMappingService;
-
         public TextLoader GetTextLoader(string filePath) => _textLoader;
 
         public IRazorMappingService? GetMappingService() => _mappingService;
     }
 
-    public class TestAccessor
+    public class TestAccessor(RazorDynamicFileInfoProvider provider)
     {
-        private readonly RazorDynamicFileInfoProvider _provider;
-
-        public TestAccessor(RazorDynamicFileInfoProvider provider)
-        {
-            _provider = provider;
-        }
+        private readonly RazorDynamicFileInfoProvider _provider = provider;
 
         public async Task<TestDynamicFileInfoResult?> GetDynamicFileInfoAsync(ProjectId projectId, string filePath, CancellationToken cancellationToken)
         {

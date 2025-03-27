@@ -1,6 +1,0 @@
-#nullable enable
-Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener
-Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.EnsureInitialized(Microsoft.CodeAnalysis.Workspace! workspace, string! pipeName) -> void
-Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.RazorWorkspaceListener(Microsoft.Extensions.Logging.ILoggerFactory! loggerFactory) -> void
-Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListenerBase
-Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListenerBase.NotifyDynamicFile(Microsoft.CodeAnalysis.ProjectId! projectId) -> void

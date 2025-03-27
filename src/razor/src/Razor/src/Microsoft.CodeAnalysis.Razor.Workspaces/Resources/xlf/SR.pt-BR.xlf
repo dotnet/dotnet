@@ -134,6 +134,26 @@
         <target state="translated">Comportamento de mapeamento desconhecido</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unsupported_Razor_extension_0">
+        <source>Unsupported Razor extension: '{0}'.</source>
+        <target state="new">Unsupported Razor extension: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="new">Unsupported argument kind: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="new">Unsupported argument type: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="new">Unsupported razor project info version encounted.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Wrap_attributes">
         <source>Wrap attributes</source>
         <target state="translated">Empacotar características</target>

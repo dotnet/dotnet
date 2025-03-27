@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
+namespace Microsoft.AspNetCore.Razor.ProjectSystem;
 
 internal static class IProjectEngineFactoryExtensions
 {

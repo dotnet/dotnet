@@ -283,7 +283,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(razorFilePath + "__virtual.g.cs");
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorSpanMappingService: null, capabilitiesUpdater: null, DisposalToken);
+            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorMappingService: null, capabilitiesUpdater: null, DisposalToken);
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);

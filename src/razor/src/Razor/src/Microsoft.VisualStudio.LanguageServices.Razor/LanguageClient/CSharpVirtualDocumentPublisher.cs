@@ -86,7 +86,6 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
         private readonly LSPDocumentSnapshot _documentSnapshot = documentSnapshot;
         private readonly ITextSnapshot _textSnapshot = textSnapshot;
 
-        private IRazorSpanMappingService? _spanMappingService;
         private IRazorMappingService? _mappingService;
         private IRazorDocumentExcerptServiceImplementation? _excerptService;
 
@@ -101,11 +100,7 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
 
         public IRazorDocumentExcerptServiceImplementation GetExcerptService()
             => _excerptService ?? InterlockedOperations.Initialize(ref _excerptService,
-                new CSharpDocumentExcerptService(GetSpanMappingService(), _documentSnapshot));
-
-        public IRazorSpanMappingService GetSpanMappingService()
-            => _spanMappingService ?? InterlockedOperations.Initialize(ref _spanMappingService,
-                new RazorLSPSpanMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot));
+                new CSharpDocumentExcerptService(GetMappingService(), _documentSnapshot));
 
         public IRazorDocumentPropertiesService GetDocumentPropertiesService()
             => CSharpDocumentPropertiesService.Instance;
@@ -113,7 +108,7 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
         public TextLoader GetTextLoader(string filePath)
             => new SourceTextLoader(_textSnapshot.AsText(), filePath);
 
-        public IRazorMappingService? GetMappingService()
+        public IRazorMappingService GetMappingService()
             => _mappingService ?? InterlockedOperations.Initialize(ref _mappingService,
                 new RazorLSPMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot));
 

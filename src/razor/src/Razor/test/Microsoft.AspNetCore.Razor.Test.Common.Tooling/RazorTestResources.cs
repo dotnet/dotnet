@@ -69,7 +69,6 @@ internal static class RazorTestResources
             using var stream = GetResourceStream(name, folder);
 
             value = new byte[stream.Length];
-
 #if NET
             stream.ReadExactly(value);
 #else

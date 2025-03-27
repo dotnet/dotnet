@@ -16,12 +16,12 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
 internal sealed class CSharpDocumentExcerptService : DocumentExcerptService
 {
-    private readonly IRazorSpanMappingService _mappingService;
+    private readonly IRazorMappingService _mappingService;
 
     private readonly LSPDocumentSnapshot _documentSnapshot;
 
     public CSharpDocumentExcerptService(
-        IRazorSpanMappingService mappingService,
+        IRazorMappingService mappingService,
         LSPDocumentSnapshot documentSnapshot)
     {
         if (mappingService is null)
@@ -52,7 +52,7 @@ internal sealed class CSharpDocumentExcerptService : DocumentExcerptService
         RazorClassificationOptionsWrapper options,
         CancellationToken cancellationToken)
     {
-        var mappedSpans = await _mappingService.MapSpansAsync(document, new[] { span }, cancellationToken).ConfigureAwait(false);
+        var mappedSpans = await _mappingService.MapSpansAsync(document, [span], cancellationToken).ConfigureAwait(false);
         if (mappedSpans.Length == 0 || mappedSpans[0].Equals(default(RazorMappedSpanResult)))
         {
             return null;

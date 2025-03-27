@@ -38,13 +38,11 @@
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Language.Legacy.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Language.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ProjectEngineHost" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ProjectEngineHost.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Tooling" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Utilities.Shared.Test" Key="$(RazorKey)" />
