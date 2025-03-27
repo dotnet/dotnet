@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the Razor compiler.</Description>
@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Analyzers\*.resx" Namespace="Microsoft.CodeAnalysis.Razor.Compiler.Analyzers" />
     <EmbeddedResource Update="CSharp\*.resx" Namespace="Microsoft.CodeAnalysis.Razor" />
     <EmbeddedResource Update="Language\*.resx" Namespace="Microsoft.AspNetCore.Razor.Language" />
     <EmbeddedResource Update="Mvc\*.resx" Namespace="Microsoft.AspNetCore.Mvc.Razor.Extensions" />

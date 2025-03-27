@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
@@ -30,7 +30,7 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
 
                 <div></div>
                 """,
-            codeActionName: WorkspacesSR.ExtractTo_Component_Title,
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
             additionalExpectedFiles: [
                 (FileUri("Component.razor"), """
                     <div>
@@ -55,6 +55,6 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
                 <div></div>
                 """,
             expected: null,
-            codeActionName: WorkspacesSR.ExtractTo_Component_Title);
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction);
     }
 }

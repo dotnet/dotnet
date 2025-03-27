@@ -246,7 +246,7 @@ internal class CodeActionsService(
     {
         var results = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        using var codeActions = new PooledArrayBuilder<RazorVSInternalCodeAction>();
+        using var codeActions = new PooledArrayBuilder<RazorVSInternalCodeAction>(capacity: tasks.Length);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -255,7 +255,7 @@ internal class CodeActionsService(
             codeActions.AddRange(result);
         }
 
-        return codeActions.ToImmutable();
+        return codeActions.DrainToImmutableOrderedBy(static r => r.Order);
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()

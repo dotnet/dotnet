@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -87,6 +88,8 @@ namespace Microsoft.SignCheck
         /// <returns>The parsed DateTime value or the default value.</returns>
         public static DateTime DateTimeOrDefault(this string timestamp, DateTime defaultValue)
         {
+            timestamp = Regex.Replace(timestamp, @"\s{2,}", " ").Trim();
+
             // Try to parse the timestamp as a Unix timestamp (seconds since epoch)
             if (long.TryParse(timestamp, out long unixTime) && unixTime > 0)
             {
@@ -95,6 +98,16 @@ namespace Microsoft.SignCheck
 
             // Try to parse the timestamp as a DateTime string
             if (DateTime.TryParse(timestamp, out DateTime dateTime))
+            {
+                return dateTime;
+            }
+
+            if (TryParseCodeSignTimestamp(timestamp, out dateTime))
+            {
+                return dateTime;
+            }
+
+            if (TryParseOpensslTimestamp(timestamp, out dateTime))
             {
                 return dateTime;
             }
@@ -144,8 +157,13 @@ namespace Microsoft.SignCheck
         /// </summary>
         /// <param name="command">The command to run.</param>
         /// <returns>A tuple containing the exit code, output, and error.</returns>
-        public static (int exitCode, string output, string error) RunBashCommand(string command)
+        public static (int exitCode, string output, string error) RunBashCommand(string command, string workingDirectory = null)
         {
+            if (string.IsNullOrEmpty(workingDirectory))
+            {
+                workingDirectory = Environment.CurrentDirectory;
+            }
+
             var psi = new ProcessStartInfo
             {
                 FileName = "bash",
@@ -153,7 +171,8 @@ namespace Microsoft.SignCheck
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = workingDirectory,
             };
 
             using (var process = Process.Start(psi))
@@ -214,5 +233,64 @@ namespace Microsoft.SignCheck
             }
         }
 #endif
+
+        /// <summary>
+        /// Parses a code signing timestamp string into a DateTime object.
+        /// </summary>
+        private static bool TryParseCodeSignTimestamp(string timestamp, out DateTime dateTime)
+        {
+            // Normalize single-digit day and hour by adding a leading zero where necessary (e.g., "Feb 1," or "at 7:" => "Feb 01," or "at 07:")
+            string normalizedTimestamp = Regex.Replace(timestamp, @"(?<=\b[A-Za-z]{3}\s)(\d)(?=,\s)|(?<=at\s)(\d)(?=:)", match =>
+            {
+                return "0" + match.Value;
+            });
+            
+
+            string codesignFormat = "MMM dd, yyyy 'at' hh:mm:ss tt";
+            if (DateTime.TryParseExact(normalizedTimestamp, codesignFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Parses an OpenSSL timestamp string into a DateTime object.
+        /// </summary>
+        private static bool TryParseOpensslTimestamp(string timestamp, out DateTime dateTime)
+        {
+            // As per https://www.ietf.org/rfc/rfc5280.txt, X.509 certificate time fields must be in GMT.
+            string timezone = timestamp.ExtractTimezone();
+            if (!string.IsNullOrEmpty(timezone) && timezone.Equals("GMT"))
+            {
+                // Normalize single-digit day and hour by adding a leading zero where necessary (e.g., "Feb 1" or "7:" => "Feb 01" or "07:").
+                string normalizedTimestamp = Regex.Replace(timestamp, @"(?<=\b[A-Za-z]{3}\s)(\d)(?=\s)|(?<=\s)(\d)(?=:)", match =>
+                {
+                    return "0" + match.Value;
+                });
+
+                // GMT is equivalent to UTC+0
+                normalizedTimestamp = normalizedTimestamp.Replace(timezone, "+00:00").Trim();
+
+                string opensslFormat = "MMM dd HH:mm:ss yyyy zzz";
+                if (DateTime.TryParseExact(normalizedTimestamp, opensslFormat, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out dateTime))
+                {
+                    return true;
+                }
+            }
+
+            dateTime = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Extracts the timezone from a timestamp string.
+        /// </summary>
+        private static string ExtractTimezone(this string timestamp)
+        {
+            var timezoneRegex = new Regex(@"\s(?<timezone>[a-zA-Z]{3,4})");
+            return timezoneRegex.Match(timestamp).GroupValueOrDefault("timezone");
+        }
     }
 }

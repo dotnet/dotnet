@@ -38,8 +38,11 @@ namespace Microsoft.DotNet.XUnitExtensions
 
         public override void Deserialize(IXunitSerializationInfo data)
         {
-            base.Deserialize(data);
             _skipReason = data.GetValue<string>(nameof(_skipReason));
+
+            // we need to call base after reading our value, because Deserialize will call
+            // into GetSkipReason.
+            base.Deserialize(data);
         }
 
         public override void Serialize(IXunitSerializationInfo data)
