@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
@@ -24,7 +24,7 @@ public class CreateComponentFromTagTests(ITestOutputHelper testOutputHelper) : C
 
                 <Hello><Hello>
                 """,
-            codeActionName: WorkspacesSR.Create_Component_FromTag_Title,
+            codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [
                 (FileUri("Hello.razor"), "")]);
     }
@@ -43,7 +43,7 @@ public class CreateComponentFromTagTests(ITestOutputHelper testOutputHelper) : C
 
                 <Hello><Hello>
                 """,
-            codeActionName: WorkspacesSR.Create_Component_FromTag_Title,
+            codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [
                 (FileUri("Hello.razor"), "")]);
     }

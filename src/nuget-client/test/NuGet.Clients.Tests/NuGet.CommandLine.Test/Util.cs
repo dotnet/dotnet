@@ -17,6 +17,7 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
@@ -273,42 +274,16 @@ namespace NuGet.CommandLine.Test
         }
 
         /// <summary>
-        /// Create a project.json based project. Returns the path to the project file.
+        /// Create a PackageReference based project. Returns the path to the project file.
         /// </summary>
-        public static string CreateUAPProject(string directory, string projectJsonContent)
+        public static string CreateUAPProject(string directory, params (string, string)[] packages)
         {
-            return CreateUAPProject(directory, projectJsonContent, "a");
-        }
-
-        /// <summary>
-        /// Create a project.json based project. Returns the path to the project file.
-        /// </summary>
-        public static string CreateUAPProject(string directory, string projectJsonContent, string projectName)
-        {
-            return CreateUAPProject(directory, projectJsonContent, projectName, nugetConfigContent: null);
-        }
-
-        /// <summary>
-        /// Create a project.json based project. Returns the path to the project file.
-        /// </summary>
-        public static string CreateUAPProject(string directory, string projectJsonContent, string projectName, string nugetConfigContent)
-        {
+            string projectName = "a";
             Directory.CreateDirectory(directory);
             var projectDir = directory;
             var projectFile = Path.Combine(projectDir, projectName + ".csproj");
-            var projectJsonPath = Path.Combine(projectDir, "project.json");
             var configPath = Path.Combine(projectDir, "NuGet.Config");
-
-            // Clean up and validate json
-            var json = JObject.Parse(projectJsonContent);
-
-            File.WriteAllText(projectJsonPath, json.ToString());
-            File.WriteAllText(projectFile, GetCSProjXML(projectName));
-
-            if (!string.IsNullOrEmpty(nugetConfigContent))
-            {
-                File.WriteAllText(configPath, nugetConfigContent);
-            }
+            File.WriteAllText(projectFile, GetUAPCSProjXML(projectName, packages));
 
             return projectFile;
         }
@@ -791,34 +766,16 @@ EndProject";
             NativeMethods.CreateReparsePoint(junctionPoint, targetDirectoryPath);
         }
 
-        public static string GetXProjXML()
-        {
-            return @"<?xml version=""1.0"" encoding=""utf-8""?>
-                <Project ToolsVersion=""14.0"" DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-                  <PropertyGroup>
-                    <VisualStudioVersion Condition=""'$(VisualStudioVersion)' == ''"">14.0</VisualStudioVersion>
-                    <VSToolsPath Condition=""'$(VSToolsPath)' == ''"">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-                  </PropertyGroup>
-                  <Import Project=""$(VSToolsPath)\DNX\Microsoft.DNX.Props"" Condition=""'$(VSToolsPath)' != ''"" />
-                  <PropertyGroup Label=""Globals"">
-                    <ProjectGuid>82ff10c5-8724-4187-953e-5096ad90184f</ProjectGuid>
-                  </PropertyGroup>
-                  <ItemGroup>
-                    <Service Include=""{82a7f48d-3b50-4b1e-b82e-3ada8210c358}"" />
-                  </ItemGroup>
-                  <Import Project=""$(VSToolsPath)\DNX\Microsoft.DNX.targets"" Condition=""'$(VSToolsPath)' != ''"" />
-                </Project>";
-        }
-
         /// <summary>
-        /// Create a basic csproj file for net45.
+        /// Create a basic csproj for UAP 10.0
         /// </summary>
-        public static string GetCSProjXML(string projectName)
+        public static string GetUAPCSProjXML(string projectName, (string, string)[] packages = null)
         {
-            return @"<?xml version=""1.0"" encoding=""utf-8""?>
+            return (@"<?xml version=""1.0"" encoding=""utf-8""?>
                 <Project ToolsVersion=""14.0"" DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
                   <Import Project=""$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"" Condition=""Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"" />
                   <PropertyGroup>
+                    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
                     <Configuration Condition="" '$(Configuration)' == '' "">Debug</Configuration>
                     <Platform Condition="" '$(Platform)' == '' "">AnyCPU</Platform>
                     <ProjectGuid>29b6f645-ae2a-4653-a142-d0de9341adba</ProjectGuid>
@@ -835,6 +792,9 @@ EndProject";
                     <DefineConstants>DEBUG;TRACE</DefineConstants>
                     <ErrorReport>prompt</ErrorReport>
                     <WarningLevel>4</WarningLevel>
+                    <TargetPlatformMoniker>UAP, Version=10.0</TargetPlatformMoniker>
+                    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+                    <TargetPlatformVersion>10.0</TargetPlatformVersion>
                   </PropertyGroup>
                   <ItemGroup>
                     <Reference Include=""System""/>
@@ -846,8 +806,22 @@ EndProject";
                     <Reference Include=""System.Net.Http""/>
                     <Reference Include=""System.Xml""/>
                   </ItemGroup>
-                  <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
-                 </Project>".Replace("$NAME$", projectName);
+" + GetPackages(packages) +
+@"                  <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
+                    </Project>").Replace("$NAME$", projectName);
+        }
+
+        private static string GetPackages((string, string)[] packages)
+        {
+            if (packages != null)
+            {
+                return @"<ItemGroup>" +
+                    Environment.NewLine +
+                    string.Join(Environment.NewLine, packages.Select(e => @$"<PackageReference Include=""{e.Item1}"" Version=""{e.Item2}"" />")) +
+                    Environment.NewLine +
+                    @"</ItemGroup>";
+            }
+            return string.Empty;
         }
 
         public static string CreateBasicTwoProjectSolution(TestDirectory workingPath, string proj1ConfigFileName, string proj2ConfigFileName, bool redirectGlobalPackagesFolder = true)
@@ -871,68 +845,12 @@ Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""proj1"", ""proj1\proj1.c
 EndProject
 Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""proj2"", ""proj2\proj2.csproj"", ""{42641DAE-D6C4-49D4-92EA-749D2573554A}""
 EndProject");
+            CreateProject("proj1", proj1ConfigFileName, proj1Directory, new PackageIdentity("packageA", new NuGetVersion("1.1.0")));
+            CreateProject("proj2", proj2ConfigFileName, proj2Directory, new PackageIdentity("packageB", new NuGetVersion("2.2.0")));
 
-            var include1 = proj1ConfigFileName;
-
-            if (string.IsNullOrEmpty(include1))
-            {
-                include1 = Guid.NewGuid().ToString();
-            }
-
-            CreateFile(proj1Directory, "proj1.csproj",
-                $@"<Project ToolsVersion='4.0' DefaultTargets='Build'
-    xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <OutputPath>out</OutputPath>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include='{include1}' />
-  </ItemGroup>
-  <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
-</Project>");
-
-            if (!string.IsNullOrEmpty(proj1ConfigFileName))
-            {
-                CreateConfigFile(proj1Directory, proj1ConfigFileName, "net45", new List<PackageIdentity>
-                {
-                    new PackageIdentity("packageA", new NuGetVersion("1.1.0"))
-                });
-            }
-
-            var include2 = proj2ConfigFileName;
-
-            if (string.IsNullOrEmpty(include2))
-            {
-                include2 = Guid.NewGuid().ToString();
-            }
-
-            CreateFile(proj2Directory, "proj2.csproj",
-                $@"<Project ToolsVersion='4.0' DefaultTargets='Build'
-    xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <OutputPath>out</OutputPath>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include='{include2}' />
-  </ItemGroup>
-  <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
-</Project>");
-
-            if (!string.IsNullOrEmpty(proj2ConfigFileName))
-            {
-                CreateConfigFile(proj2Directory, proj2ConfigFileName, "net45", new List<PackageIdentity>
-                {
-                    new PackageIdentity("packageB", new NuGetVersion("2.2.0"))
-                });
-            }
-
-            // If either project uses project.json, then define "globalPackagesFolder" so the package doesn't get
+            // If either project uses PackageReference, then define "globalPackagesFolder" so the package doesn't get
             // installed in the usual global packages folder.
-            if ((IsProjectJson(proj1ConfigFileName) || IsProjectJson(proj2ConfigFileName)) && redirectGlobalPackagesFolder)
+            if (proj1ConfigFileName.Equals("PackageReference") && redirectGlobalPackagesFolder)
             {
                 CreateFile(workingPath, "nuget.config",
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -944,6 +862,42 @@ EndProject");
             }
 
             return repositoryPath;
+        }
+
+        private static void CreateProject(string projectName, string projConfigFileName, string projectDirectory, PackageIdentity packageIdentity)
+        {
+            if (projConfigFileName.Equals("PackageReference"))
+            {
+                var project = SimpleTestProjectContext.CreateLegacyPackageReference(projectName, Path.GetDirectoryName(projectDirectory), FrameworkConstants.CommonFrameworks.Net472);
+                project.AddPackageToAllFrameworks(new SimpleTestPackageContext(packageIdentity));
+                project.Save();
+            }
+            else
+            {
+                var include = string.IsNullOrEmpty(projConfigFileName) ? Guid.NewGuid().ToString() : projConfigFileName;
+
+                CreateFile(projectDirectory, $"{projectName}.csproj",
+                    $@"<Project ToolsVersion='4.0' DefaultTargets='Build'
+    xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <OutputPath>out</OutputPath>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include='{include}' />
+  </ItemGroup>
+  <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
+</Project>");
+
+                if (!string.IsNullOrEmpty(projConfigFileName) && projConfigFileName.EndsWith("config"))
+                {
+                    CreatePackagesConfigFile(projectDirectory, projConfigFileName, "net45", new List<PackageIdentity>
+                {
+                    packageIdentity
+                });
+                }
+            }
         }
 
         public static string CreateBasicTwoProjectSolutionWithSolutionFilters(TestDirectory workingPath, string proj1ConfigFileName, string proj2ConfigFileName, bool redirectGlobalPackagesFolder = true)
@@ -986,36 +940,15 @@ EndProject");
             return repositoryPath;
         }
 
-        public static void CreateConfigFile(string path, string configFileName, string targetFramework, IEnumerable<PackageIdentity> packages)
-        {
-            var fileContent = IsProjectJson(configFileName)
-                ? GetProjectJsonFileContents(targetFramework, packages)
-                : GetPackagesConfigFileContents(targetFramework, packages);
-
-            CreateFile(path, configFileName, fileContent);
-        }
-
-        public static string GetProjectJsonFileContents(string targetFramework, IEnumerable<PackageIdentity> packages)
-        {
-            var dependencies = string.Join(", ", packages.Select(package => $"\"{package.Id}\": \"{package.Version}\""));
-            return $@"
-{{
-  ""dependencies"": {{
-    {dependencies}
-  }},
-  ""frameworks"": {{
-    ""{targetFramework}"": {{ }}
-  }}
-}}";
-        }
-
-        public static string GetPackagesConfigFileContents(string targetFramework, IEnumerable<PackageIdentity> packages)
+        private static void CreatePackagesConfigFile(string path, string configFileName, string targetFramework, IEnumerable<PackageIdentity> packages)
         {
             var dependencies = string.Join("\n", packages.Select(package => $@"<package id=""{package.Id}"" version=""{package.Version}"" targetFramework=""{targetFramework}"" />"));
-            return $@"
+            var fileContent = $@"
 <packages>
   {dependencies}
 </packages>";
+
+            CreateFile(path, configFileName, fileContent);
         }
 
         public static string GetMsbuildPathOnWindows()
@@ -1027,13 +960,6 @@ EndProject");
         {
             return @"<HintPath>.." + Path.DirectorySeparatorChar + path + @"</HintPath>";
         }
-
-        private static bool IsProjectJson(string configFileName)
-        {
-            // Simply test the extension as that is all we care about
-            return string.Equals(Path.GetExtension(configFileName), ".json", StringComparison.OrdinalIgnoreCase);
-        }
-
 
         /// <summary>
         /// Verify non-zero status code and proper messages

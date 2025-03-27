@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
@@ -20,8 +21,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutput) : CodeActionEndToEndTestBase(testOutput)
 {
-    private const string ExtractToComponentTitle = "Extract element to new component";
-
     [Fact]
     public async Task Handle_SingleElement()
     {
@@ -303,7 +302,7 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             null);
 
         Assert.NotEmpty(result);
-        var codeActionToRun = GetCodeActionToRun(ExtractToComponentTitle, 0, result);
+        var codeActionToRun = GetCodeActionToRun(LanguageServerConstants.CodeActions.ExtractToNewComponentAction, 0, result);
 
         if (expectedNewComponent is null)
         {

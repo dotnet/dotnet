@@ -57,6 +57,9 @@ internal class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactor
             // When the caret is '@$$code' or '@c$$ode' or '@co$$de' or '@cod$$e' then tree is:
             // RazorDirective -> RazorDirectiveBody -> MetaCode
             RazorDirectiveBodySyntax { Parent: RazorDirectiveSyntax d } => d,
+            // When the caret is '$$@code' then tree is:
+            // RazorDirective
+            RazorDirectiveSyntax d => d,
             _ => null
         };
         if (directiveNode is null)

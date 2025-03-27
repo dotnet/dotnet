@@ -41,7 +41,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         [Required]
         public required string ProjectRoot { get; set; }
 
-       /// <summary>
+        /// <summary>
         /// The package's compile items, including target framework metadata.
         /// </summary>
         public ITaskItem[] CompileItems { get; set; } = Array.Empty<ITaskItem>();
@@ -72,16 +72,16 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             if (targetFrameworks.Length == 0)
                 targetFrameworks = PackageDependencies.Select(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
-            
+
             if (targetFrameworks.Length == 0)
                 targetFrameworks = FrameworkReferences.Select(frameworkReference => frameworkReference.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
-                    
+
             targetFrameworks = targetFrameworks.Distinct()
                 .Order()
                 .ToArray();
 
             // If no target framework is supplied, fallback to netstandard2.0.
-            projectContent = projectContent.Replace("$$TargetFrameworks$$", 
+            projectContent = projectContent.Replace("$$TargetFrameworks$$",
                 targetFrameworks.Length > 0 ? string.Join(';', targetFrameworks) : "netstandard2.0");
 
             projectContent = projectContent.Replace("$$PackageVersion$$", PackageVersion);
@@ -95,7 +95,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 foreach (ITaskItem packageDependency in PackageDependencies.Where(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
                 {
                     string dependencyVersion = packageDependency.GetMetadata("Version");
-                    string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj"); 
+                    string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj");
 
                     // If the dependency is on the package reference allowed list (i.e. for source-build-externals packages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
                     if (AllowedPackageReference is not null && AllowedPackageReference.Contains(packageDependency.ItemSpec))

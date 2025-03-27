@@ -497,7 +497,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void ConfigGetCommand_WithInvalidConfigKeyArg_ThrowsCommandException()
+        public void ConfigGetCommand_WithInvalidConfigKeyArg_OutputsErrorMessage()
         {
             // Arrange & Act
             using var testInfo = new TestInfo("NuGet.Config");
@@ -515,7 +515,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void ConfigGetCommand_WithNullAllOrConfigKeyArg_ThrowsCommandException()
+        public void ConfigGetCommand_WithoutConfigKeyArg_OutputsErrorMessage()
         {
             // Arrange & Act
             using var testInfo = new TestInfo("NuGet.Config");
@@ -525,7 +525,7 @@ namespace NuGet.XPlat.FuncTest
                 Directory.GetCurrentDirectory(),
                 $"{XplatDll} config get",
                 testOutputHelper: _testOutputHelper);
-            var expectedError = string.Format(CultureInfo.CurrentCulture, Strings.ConfigCommandKeyNotFound, "");
+            var expectedError = "Required argument missing";
 
             // Assert
             DotnetCliUtil.VerifyResultFailure(result, expectedError);

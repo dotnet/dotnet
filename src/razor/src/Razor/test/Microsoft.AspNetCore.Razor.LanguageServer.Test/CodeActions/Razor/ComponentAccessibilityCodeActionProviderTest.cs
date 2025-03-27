@@ -19,7 +19,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
@@ -143,20 +142,20 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
-                Assert.Equal("@using Fully.Qualified", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             },
             e =>
             {
-                Assert.Equal("Fully.Qualified.Component", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.FullyQualify, e.Name);
                 Assert.NotNull(e.Edit);
                 Assert.NotNull(e.Edit.DocumentChanges);
                 Assert.Null(e.Data);
             },
             e =>
             {
-                Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             });
@@ -190,20 +189,20 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
-                Assert.Equal("Component - @using Fully.Qualified", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             },
             e =>
             {
-                Assert.Equal("Fully.Qualified.Component", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.FullyQualify, e.Name);
                 Assert.NotNull(e.Edit);
                 Assert.NotNull(e.Edit.DocumentChanges);
                 Assert.Null(e.Data);
             },
             e =>
             {
-                Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             });
@@ -239,14 +238,14 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
-                Assert.Equal("Component", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.FullyQualify, e.Name);
                 Assert.NotNull(e.Edit);
                 Assert.NotNull(e.Edit.DocumentChanges);
                 Assert.Null(e.Data);
             },
             e =>
             {
-                Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             });
@@ -280,20 +279,20 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
-                Assert.Equal("@using Fully.Qualified", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             },
             e =>
             {
-                Assert.Equal("Fully.Qualified.GenericComponent", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.FullyQualify, e.Name);
                 Assert.NotNull(e.Edit);
                 Assert.NotNull(e.Edit.DocumentChanges);
                 Assert.Null(e.Data);
             },
             e =>
             {
-                Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             });
@@ -325,7 +324,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
 
         // Assert
         var command = Assert.Single(commandOrCodeActionContainer);
-        Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, command.Title);
+        Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, command.Name);
         Assert.NotNull(command.Data);
     }
 
@@ -355,7 +354,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
 
         // Assert
         var command = Assert.Single(commandOrCodeActionContainer);
-        Assert.Equal(WorkspacesSR.Create_Component_FromTag_Title, command.Title);
+        Assert.Equal(LanguageServerConstants.CodeActions.CreateComponentFromTag, command.Name);
         Assert.NotNull(command.Data);
     }
 
@@ -415,13 +414,13 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
-                Assert.Equal("@using Fully.Qualified", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, e.Name);
                 Assert.NotNull(e.Data);
                 Assert.Null(e.Edit);
             },
             e =>
             {
-                Assert.Equal("Fully.Qualified.Component", e.Title);
+                Assert.Equal(LanguageServerConstants.CodeActions.FullyQualify, e.Name);
                 Assert.NotNull(e.Edit);
                 Assert.NotNull(e.Edit.DocumentChanges);
                 Assert.Null(e.Data);
