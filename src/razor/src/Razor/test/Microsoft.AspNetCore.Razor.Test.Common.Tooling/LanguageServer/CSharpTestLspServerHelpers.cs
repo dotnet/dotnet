@@ -37,7 +37,7 @@ internal static class CSharpTestLspServerHelpers
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
-        IRazorSpanMappingService razorSpanMappingService,
+        IRazorMappingService razorMappingService,
         Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
@@ -46,13 +46,13 @@ internal static class CSharpTestLspServerHelpers
             (csharpDocumentUri, csharpSourceText)
         };
 
-        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, multiTargetProject: true, capabilitiesUpdater, cancellationToken);
+        return CreateCSharpLspServerAsync(files, serverCapabilities, razorMappingService, multiTargetProject: true, capabilitiesUpdater, cancellationToken);
     }
 
     public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         IEnumerable<(Uri Uri, SourceText SourceText)> files,
         VSInternalServerCapabilities serverCapabilities,
-        IRazorSpanMappingService razorSpanMappingService,
+        IRazorMappingService razorMappingService,
         bool multiTargetProject,
          Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
@@ -64,7 +64,7 @@ internal static class CSharpTestLspServerHelpers
         var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
         metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);
 
-        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorSpanMappingService, multiTargetProject);
+        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorMappingService, multiTargetProject);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -104,7 +104,7 @@ internal static class CSharpTestLspServerHelpers
         IEnumerable<CSharpFile> files,
         ExportProvider exportProvider,
         ImmutableArray<MetadataReference> metadataReferences,
-        IRazorSpanMappingService razorSpanMappingService,
+        IRazorMappingService razorMappingService,
         bool multiTargetProject)
     {
         var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
@@ -154,7 +154,7 @@ internal static class CSharpTestLspServerHelpers
                     name: "TestDocument" + documentCount,
                     filePath: documentFilePath,
                     loader: TextLoader.From(textAndVersion),
-                    razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorSpanMappingService));
+                    razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorMappingService));
 
                 workspace.AddDocument(documentInfo);
             }
@@ -167,11 +167,16 @@ internal static class CSharpTestLspServerHelpers
 
     private record CSharpFile(Uri DocumentUri, SourceText CSharpSourceText);
 
-    private class EmptyMappingService : IRazorSpanMappingService
+    private class EmptyMappingService : IRazorMappingService
     {
         public Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
         {
             return SpecializedTasks.EmptyImmutableArray<RazorMappedSpanResult>();
+        }
+
+        public Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorMappedEditResult>();
         }
     }
 }

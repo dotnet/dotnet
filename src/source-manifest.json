@@ -64,18 +64,18 @@
       "commitSha": "c17dd0e6bf60245f81e91cb85b96acf4b2b31c9c"
     },
     {
-      "packageVersion": "9.0.300-beta.25160.5",
+      "packageVersion": "9.0.300-beta.25176.3",
       "barId": null,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "345742da75dc6c5fe485ef1236d3f034ebcdcb53"
+      "commitSha": "46011b970a6b3337596d66f168992051dd134565"
     },
     {
-      "packageVersion": "17.14.0-preview-25175-08",
+      "packageVersion": "17.14.0-preview-25177-05",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "5880e1c759c6ae76e32729ae4b884d9afe1fbf64"
+      "commitSha": "903614e1646f45dfcf0e21ad1969e7935d01bba8"
     },
     {
       "packageVersion": "6.14.0-preview.1.93",
@@ -85,18 +85,18 @@
       "commitSha": "a2b277a37ae21e6479505021ab5863792ef9a7cb"
     },
     {
-      "packageVersion": "9.0.0-preview.25176.2",
+      "packageVersion": "9.0.0-preview.25177.6",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "c598cfa94ab36f64898b90a541df0cdc54c89973"
+      "commitSha": "491f0d80aedf516583fe823aaa54f66114a9dc8a"
     },
     {
-      "packageVersion": "4.14.0-3.25174.14",
+      "packageVersion": "4.14.0-3.25177.9",
       "barId": null,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "4140091b04c9bc5fa46f633007404c196e25e5a7"
+      "commitSha": "4b22efb086df05cc03323e776f4d5842111c89b3"
     },
     {
       "packageVersion": "3.12.0-beta1.25155.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ffb66e9ada36d33418d93c195d3c7593446b9552"
+      "commitSha": "f1136b96aa547132927220cea7207e22ce0f59e1"
     },
     {
       "packageVersion": "10.0.616001",

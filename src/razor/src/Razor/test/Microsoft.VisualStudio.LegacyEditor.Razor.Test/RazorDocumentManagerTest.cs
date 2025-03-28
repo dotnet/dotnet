@@ -2,10 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Text;

@@ -143,7 +143,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
             throw new System.NotImplementedException();
         }
 
-        public bool SnippetShortcutExists_NonBlocking(string shortcut)
+        public bool SnippetShortcutExists_NonBlocking(string? shortcut)
         {
             throw new System.NotImplementedException();
         }
