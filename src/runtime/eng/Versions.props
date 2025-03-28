@@ -80,6 +80,17 @@
   <PropertyGroup>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftCodeAnalysisVersion_LatestVS)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
   </PropertyGroup>
+  <!-- Dependencies from maintenance-packages -->
+  <PropertyGroup>
+    <MicrosoftBclHashCodeVersion>6.0.0</MicrosoftBclHashCodeVersion>
+    <SystemBuffersVersion>4.6.1</SystemBuffersVersion>
+    <SystemDataSqlClientVersion>4.9.0</SystemDataSqlClientVersion>
+    <SystemMemoryVersion>4.6.2</SystemMemoryVersion>
+    <SystemNumericsVectorsVersion>4.6.1</SystemNumericsVectorsVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.2</SystemThreadingTasksExtensionsVersion>
+    <SystemValueTupleVersion>4.6.1</SystemValueTupleVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <StaticCsVersion>0.2.0</StaticCsVersion>
     <!-- SDK dependencies (also used in wasm build tests -->
@@ -112,12 +123,9 @@
     <MicrosoftNETCoreILAsmVersion>10.0.0-preview.3.25152.4</MicrosoftNETCoreILAsmVersion>
     <!-- Libraries dependencies -->
     <MicrosoftBclAsyncInterfacesVersion>6.0.0</MicrosoftBclAsyncInterfacesVersion>
-    <MicrosoftBclHashCodeVersion>6.0.0</MicrosoftBclHashCodeVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.556</StyleCopAnalyzersVersion>
-    <SystemBuffersVersion>4.6.0</SystemBuffersVersion>
     <SystemComponentModelAnnotationsVersion>5.0.0</SystemComponentModelAnnotationsVersion>
-    <SystemDataSqlClientVersion>4.9.0</SystemDataSqlClientVersion>
     <SystemDrawingCommonVersion>8.0.0</SystemDrawingCommonVersion>
     <SystemFormatsAsn1Version>8.0.1</SystemFormatsAsn1Version>
     <SystemIOFileSystemAccessControlVersion>5.0.0</SystemIOFileSystemAccessControlVersion>
