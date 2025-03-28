@@ -201,6 +201,8 @@
       <_SolutionRestoreProps Include="_NETCORE_ENGINEERING_TELEMETRY=Restore" />
       <_SolutionRestoreProps Include="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
       <_SolutionRestoreProps Include="RestoreUseStaticGraphEvaluation=$(RestoreUseStaticGraphEvaluation)" />
+      <_SolutionRestoreProps Include="RestoreEmbedFilesInBinlog=true" />
+      <_SolutionRestoreProps Include="RestoreStaticGraphEnableBinaryLogger=$(GenerateRestoreUseStaticGraphEvaluationBinlog)" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -245,7 +247,7 @@
     <!-- Enable binlog generation during static graph restore evaluation -->
     <ItemGroup Condition="'$(GenerateRestoreUseStaticGraphEvaluationBinlog)' == 'true'">
       <_ProjectToRestore>
-        <AdditionalProperties>RESTORE_TASK_BINLOG_PARAMETERS=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
+        <AdditionalProperties>RestoreStaticGraphBinaryLoggerParameters=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
       </_ProjectToRestore>
     </ItemGroup>
 
