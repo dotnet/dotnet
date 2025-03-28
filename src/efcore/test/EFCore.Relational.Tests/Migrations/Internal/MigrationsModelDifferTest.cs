@@ -44,19 +44,6 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             upOperations => Assert.Equal(0, upOperations.Count));
 
     [ConditionalFact]
-    public void Model_differ_does_not_detect_defining_queries()
-    {
-        DbContext context = null;
-        Execute(
-            _ => { },
-#pragma warning disable CS0618 // Type or member is obsolete
-            modelBuilder => modelBuilder.Entity<TestKeylessType>().HasNoKey().ToQuery(
-                () => context.Set<TestKeylessType>().FromSqlRaw("SELECT * FROM Vista")),
-#pragma warning restore CS0618 // Type or member is obsolete
-            result => Assert.Empty(result));
-    }
-
-    [ConditionalFact]
     public void Model_differ_does_not_detect_queries()
         => Execute(
             _ => { },
@@ -8644,9 +8631,8 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                     {
                         x.Property<int>("Id");
                         x.Property<string>("Name");
-                        x.Property<int>("Discriminator");
 
-                        x.HasDiscriminator()
+                        x.HasDiscriminator<int>("Discriminator")
                             .HasValue(1)
                             .HasValue<Eagle>(2);
 
