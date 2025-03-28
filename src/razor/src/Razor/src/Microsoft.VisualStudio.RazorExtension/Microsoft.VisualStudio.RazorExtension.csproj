@@ -165,6 +165,7 @@
     <!-- Don't trim this list. It is used to feed into the binding redirects -->
     <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj">
       <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
+      <NgenPriority>2</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
 
@@ -190,7 +191,9 @@
       <Ngen>false</Ngen>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
+    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" >
+      <NgenPriority>1</NgenPriority>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.VisualStudio.LegacyEditor.Razor\Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj">
       <Name>Microsoft.CodeAnalysis.Razor.Compiler</Name>
@@ -216,13 +219,9 @@
 
   <!-- Include our Razor package dependency dlls in our extension -->
   <ItemGroup>
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-
-    <VSIXSourceItem Include="@(RazorNgendVSIXSourceItem)">
-      <Ngen>$(Ngen)</Ngen>
-      <NgenApplication>$(NgenApplication)</NgenApplication>
-      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
-      <NgenPriority>$(NgenPriority)</NgenPriority>
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll">
+      <Ngen>true</Ngen>
+      <NgenPriority>1</NgenPriority>
     </VSIXSourceItem>
   </ItemGroup>
 
