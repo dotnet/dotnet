@@ -16,11 +16,8 @@
     -->
     <AssemblyVersion Condition="'$(OfficialBuild)' == 'true' or '$(DotNetUseShippingVersions)' == 'true'">$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
   </PropertyGroup>
-  <!--
-    The maintenance-packages dependency versions need to be conditionally selected:
-    https://github.com/dotnet/sdk/issues/45155
-  -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+  <!-- Dependencies from maintenance-packages -->
+  <PropertyGroup>
     <MicrosoftIORedistVersion>6.1.2</MicrosoftIORedistVersion>
     <SystemBuffersVersion>4.6.1</SystemBuffersVersion>
     <SystemDataSqlClientVersion>4.9.0</SystemDataSqlClientVersion>
@@ -28,6 +25,7 @@
     <SystemNumericsVectorsVersion>4.6.1</SystemNumericsVectorsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.1</SystemRuntimeCompilerServicesUnsafeVersion>
     <SystemThreadingTasksExtensionsVersion>4.6.2</SystemThreadingTasksExtensionsVersion>
+    <SystemValueTupleVersion>4.6.1</SystemValueTupleVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
@@ -41,6 +39,7 @@
     <SystemNumericsVectorsVersion>4.5.0</SystemNumericsVectorsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.0.0</SystemRuntimeCompilerServicesUnsafeVersion>
     <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
+    <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
   </PropertyGroup>
   <!--
     Versions managed by Arcade (see Versions.Details.xml)
