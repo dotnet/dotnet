@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25178.1",
+      "packageVersion": "10.0.0-preview.4.25178.6",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d4bdf0a5d33dc04b90b24668684001e862b5ec12"
+      "commitSha": "25a9b32254806c89859ea2dfd2f03881cf9a4312"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -78,11 +78,11 @@
       "commitSha": "1888b02a8fb36bea403b09b7863e735b183f72d2"
     },
     {
-      "packageVersion": "6.14.0-preview.1.93",
+      "packageVersion": "6.14.0-preview.1.97",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "a2b277a37ae21e6479505021ab5863792ef9a7cb"
+      "commitSha": "8f6362aea4972acab1454de411cfe835619e4e41"
     },
     {
       "packageVersion": "9.0.0-preview.25177.6",
@@ -92,11 +92,11 @@
       "commitSha": "491f0d80aedf516583fe823aaa54f66114a9dc8a"
     },
     {
-      "packageVersion": "4.14.0-3.25177.9",
+      "packageVersion": "4.14.0-3.25178.1",
       "barId": null,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "4b22efb086df05cc03323e776f4d5842111c89b3"
+      "commitSha": "1a06295e3cd3e57be2c79953f16db724db119a4f"
     },
     {
       "packageVersion": "3.12.0-beta1.25177.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3d36e069b7032edaf6afa54134bf02d0e5d427be"
+      "commitSha": "8811dbb86e9672a287c69d591d43726f347b9809"
     },
     {
       "packageVersion": "10.0.617501",

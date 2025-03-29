@@ -29,9 +29,6 @@ parameters:
   - stop
 - name: QBuildSessionId
   type: string
-- name: GitHubStatusName
-  type: string
-  default: ''
 
 stages:
 - template: stages\visual-studio\build-to-build-upgrade\agent.yml@DartLabTemplates
@@ -200,13 +197,3 @@ stages:
         mergeTestResults: "true"
         testRunTitle: "NuGet.Client EndToEnd Tests On Windows"
       condition: "succeededOrFailed()"
-
-    - ${{ if ne(parameters.GitHubStatusName, '') }}:
-      - task: PowerShell@1
-        displayName: "Set result status on GitHub Checks"
-        inputs:
-          scriptType: "inlineScript"
-          inlineScript: |
-            . $(Build.StagingDirectory)\\scripts\\utils\\PostGitCommitStatus.ps1
-            SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "${{ parameters.GitHubStatusName }}"
-        condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

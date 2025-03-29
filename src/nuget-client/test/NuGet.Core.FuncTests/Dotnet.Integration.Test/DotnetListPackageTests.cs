@@ -742,9 +742,10 @@ namespace Dotnet.Integration.Test
 
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             mockServer.Start();
-            pathContext.Settings.AddSource("http-source", mockServer.ServiceIndexUri, allowInsecureConnections);
 
             _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            pathContext.Settings.AddSource("http-source", mockServer.ServiceIndexUri, allowInsecureConnections);
 
             // Act
             CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --outdated", testOutputHelper: _testOutputHelper);

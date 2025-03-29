@@ -50,12 +50,3 @@ steps:
     arguments: '--no-restore --no-build --framework net8.0 --settings:$(Build.Repository.LocalPath)\build\xunit.runsettings /noautorsp /property:Configuration=$(BuildConfiguration) "/binarylogger:$(Build.StagingDirectory)\\binlog\\03.Test-net8.0.binlog"'
     testRunTitle: 'NuGet.Client Cross Verify Tests On Windows (.NET 8.0)'
     condition: "succeededOrFailed()"
-
-- task: PowerShell@1
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion) -VstsPersonalAccessToken $(System.AccessToken) -TestName "$env:AGENT_JOBNAME"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
