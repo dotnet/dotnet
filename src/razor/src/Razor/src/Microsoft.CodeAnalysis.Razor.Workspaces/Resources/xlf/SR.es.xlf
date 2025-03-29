@@ -136,7 +136,7 @@
       </trans-unit>
       <trans-unit id="Unsupported_Razor_extension_0">
         <source>Unsupported Razor extension: '{0}'.</source>
-        <target state="new">Unsupported Razor extension: '{0}'.</target>
+        <target state="translated">Extensión Razor no admitida: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_kind">
@@ -151,7 +151,7 @@
       </trans-unit>
       <trans-unit id="Unsupported_razor_project_info_version_encountered">
         <source>Unsupported razor project info version encounted.</source>
-        <target state="new">Unsupported razor project info version encounted.</target>
+        <target state="translated">Se ha encontrado una versión de información de proyecto de Razor no admitida.</target>
         <note />
       </trans-unit>
       <trans-unit id="Wrap_attributes">

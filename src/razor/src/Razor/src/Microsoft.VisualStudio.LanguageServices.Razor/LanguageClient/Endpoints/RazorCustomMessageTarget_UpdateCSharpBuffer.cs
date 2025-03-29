@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -24,20 +25,33 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(request));
         }
 
-        await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-        await UpdateCSharpBufferCoreAsync(request, cancellationToken);
+        // We're going to try updating the C# buffer, and it has to happen on the UI thread. That is a single shared resource
+        // that can only be updated on a specific thread, and so we can easily hit contention. In particular with provisional
+        // completion we can end up with a state where we are waiting for completion to finish before we can update the document
+        // but other features are waiting on us to update the document with some changes. Normally this is fine, and we handle it
+        // with our sync system and simply cancel the task and let the next one in. When updating buffers from the server though
+        // we can't do that, as the server assumes we can always apply the update. Our only option here is to keep trying until
+        // we get a successful update.
+        // It's worth noting we only try again specifically for provisional completion, so we don't get random deadocks.
+        var tryAgain = true;
+        while (tryAgain)
+        {
+            _logger.LogDebug($"Trying a call to UpdateCSharpBufferCoreAsync for v{request.HostDocumentVersion}");
+            tryAgain = await UpdateCSharpBufferCoreAsync(request, cancellationToken).ConfigureAwait(false);
+        }
     }
 
-    // Internal for testing
-    internal async Task UpdateCSharpBufferCoreAsync(UpdateBufferRequest request, CancellationToken cancellationToken)
+    private async Task<bool> UpdateCSharpBufferCoreAsync(UpdateBufferRequest request, CancellationToken cancellationToken)
     {
-        if (request is null || request.HostDocumentFilePath is null || request.HostDocumentVersion is null)
+        if (request.HostDocumentFilePath is null || request.HostDocumentVersion is null)
         {
-            return;
+            return false;
         }
 
-        var hostDocumentUri = new Uri(request.HostDocumentFilePath);
+        await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var identifier = CreateTextDocumentIdentifier(request);
+        var hostDocumentUri = identifier.Uri;
 
         _logger.LogDebug($"UpdateCSharpBuffer for {request.HostDocumentVersion} of {hostDocumentUri} in {request.ProjectKeyId}");
 
@@ -68,10 +82,25 @@ internal partial class RazorCustomMessageTarget
                     // Sadly there isn't anything we can do here to, we're just in a state where the server and client are out of
                     // sync with their understanding of the document contents, and since changes come in as a list of changes,
                     // the user experience is broken. All we can do is hope the user closes and re-opens the document.
-                    Debug.Fail($"Server wants to update {hostDocumentUri} in {request.ProjectKeyId} but we don't know about the document being in any projects");
                     _logger.LogError($"Server wants to update {hostDocumentUri} in {request.ProjectKeyId} by we only know about that document in misc files. Server and client are now out of sync.");
-                    return;
+                    Debug.Fail($"Server wants to update {hostDocumentUri} in {request.ProjectKeyId} but we don't know about the document being in any projects");
+                    return false;
                 }
+            }
+
+            // First we need to make sure we're synced to the previous version, or the changes won't apply properly. This should no-op in most cases, as this
+            // is (almost) the only thing that actually moves documents forward, we're really just validating we're in a good state.
+            // We're specifically checking here for provisional completion in flight, which is a case where we update the C# document
+            // in a way that doesn't represent the actual state, so we can't let server updates through while in this state (represented
+            // by a negative version number). Due to provisional completion being on the UI thread, we have to return from this method
+            // and try again so we get to the back of the UI thread queue.
+            if (request.PreviousHostDocumentVersion is { } previousVersion &&
+                await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(previousVersion, identifier, cancellationToken, rejectOnNewerParallelRequest: false) is { } synchronizedResult &&
+                !synchronizedResult.Synchronized &&
+                synchronizedResult.VirtualSnapshot?.HostDocumentSyncVersion < 0)
+            {
+                _logger.LogError($"Request to update C# buffer from {previousVersion} to {request.HostDocumentVersion} failed because the server Roslyn and Razor are out of sync. Server version is {synchronizedResult.VirtualSnapshot?.HostDocumentSyncVersion}. Will try again as provisional completion is in flight which is an expected cause of de-sync, which we recover from.");
+                return true;
             }
 
             foreach (var virtualDocument in virtualDocuments)
@@ -89,7 +118,7 @@ internal partial class RazorCustomMessageTarget
 
                     _logger.LogDebug($"UpdateCSharpBuffer finished updating doc for {request.HostDocumentVersion} of {virtualDocument.Uri}. New lines: {GetLineCountOfVirtualDocument(hostDocumentUri, virtualDocument)}");
 
-                    return;
+                    return false;
                 }
             }
 
@@ -108,7 +137,7 @@ internal partial class RazorCustomMessageTarget
 
             // Don't know about document, no-op. This can happen if the language server found a project.razor.bin from an old build
             // and is sending us updates.
-            return;
+            return false;
         }
 
         _logger.LogDebug($"UpdateCSharpBuffer fallback for {request.HostDocumentVersion} of {hostDocumentUri}");
@@ -118,6 +147,26 @@ internal partial class RazorCustomMessageTarget
             request.Changes.Select(change => change.ToVisualStudioTextChange()).ToArray(),
             request.HostDocumentVersion.Value,
             state: request.PreviousWasEmpty);
+
+        return false;
+    }
+
+    private static TextDocumentIdentifier CreateTextDocumentIdentifier(UpdateBufferRequest request)
+    {
+        var hostDocumentUri = new Uri(request.HostDocumentFilePath);
+        if (request.ProjectKeyId is { } id)
+        {
+            return new VSTextDocumentIdentifier
+            {
+                Uri = hostDocumentUri,
+                ProjectContext = new VSProjectContext
+                {
+                    Id = id,
+                }
+            };
+        }
+
+        return new TextDocumentIdentifier { Uri = hostDocumentUri };
     }
 
     private int GetLineCountOfVirtualDocument(Uri hostDocumentUri, CSharpVirtualDocumentSnapshot virtualDocument)

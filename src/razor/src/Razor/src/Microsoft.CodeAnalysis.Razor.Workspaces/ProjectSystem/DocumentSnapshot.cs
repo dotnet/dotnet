@@ -7,15 +7,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Sources;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal sealed class DocumentSnapshot(ProjectSnapshot project, DocumentState state) : IDocumentSnapshot, ILegacyDocumentSnapshot, IDesignTimeCodeGenerator
+internal sealed class DocumentSnapshot : IDocumentSnapshot, ILegacyDocumentSnapshot, IDesignTimeCodeGenerator
 {
-    public ProjectSnapshot Project { get; } = project;
+    private readonly GeneratedOutputSource _generatedOutputSource;
 
-    private readonly DocumentState _state = state;
+    public ProjectSnapshot Project { get; }
+
+    private readonly DocumentState _state;
+
+    public DocumentSnapshot(ProjectSnapshot project, DocumentState state)
+    {
+        Project = project;
+        _state = state;
+        _generatedOutputSource = new(this);
+    }
 
     public HostDocument HostDocument => _state.HostDocument;
 
@@ -40,10 +50,10 @@ internal sealed class DocumentSnapshot(ProjectSnapshot project, DocumentState st
         => _state.GetTextVersionAsync(cancellationToken);
 
     public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
-        => _state.TryGetGeneratedOutput(out result);
+        => _generatedOutputSource.TryGetValue(out result);
 
     public ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(CancellationToken cancellationToken)
-        => _state.GetGeneratedOutputAsync(this, cancellationToken);
+        => _generatedOutputSource.GetValueAsync(cancellationToken);
 
     public IDocumentSnapshot WithText(SourceText text)
     {

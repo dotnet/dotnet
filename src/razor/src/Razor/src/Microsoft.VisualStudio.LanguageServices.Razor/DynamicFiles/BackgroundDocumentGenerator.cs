@@ -86,11 +86,11 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     protected Task WaitUntilCurrentBatchCompletesAsync()
         => _workQueue.WaitUntilCurrentBatchCompletesAsync();
 
-    protected virtual async Task ProcessDocumentAsync(DocumentSnapshot document, CancellationToken cancellationToken)
+    protected virtual Task ProcessDocumentAsync(DocumentSnapshot document, CancellationToken cancellationToken)
     {
-        await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-
         UpdateFileInfo(document);
+
+        return Task.CompletedTask;
     }
 
     public virtual void EnqueueIfNecessary(DocumentKey documentKey)

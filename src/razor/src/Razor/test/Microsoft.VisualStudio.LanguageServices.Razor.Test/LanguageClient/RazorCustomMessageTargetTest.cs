@@ -42,7 +42,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         _editorSettingsManager = new ClientSettingsManager(Array.Empty<IClientSettingsChangedTrigger>());
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateCSharpBuffer_CannotLookupDocument_NoopsGracefully()
     {
         // Arrange
@@ -78,10 +78,10 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act & Assert
-        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
+        await target.UpdateCSharpBufferAsync(request, DisposalToken);
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateCSharpBuffer_UpdatesDocument()
     {
         // Arrange
@@ -124,13 +124,13 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act
-        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
+        await target.UpdateCSharpBufferAsync(request, DisposalToken);
 
         // Assert
         documentManager.VerifyAll();
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateCSharpBuffer_UpdatesCorrectDocument()
     {
         // Arrange
@@ -142,8 +142,8 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var document = Mock.Of<LSPDocumentSnapshot>(d => d.VirtualDocuments == documents, MockBehavior.Strict);
         var documentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         documentManager
-          .Setup(manager => manager.TryGetDocument(It.IsAny<Uri>(), out document))
-          .Returns(true);
+            .Setup(manager => manager.TryGetDocument(It.IsAny<Uri>(), out document))
+            .Returns(true);
         documentManager
             .Setup(manager => manager.UpdateVirtualDocument<CSharpVirtualDocument>(
                 It.IsAny<Uri>(),
@@ -181,7 +181,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act
-        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
+        await target.UpdateCSharpBufferAsync(request, DisposalToken);
 
         // Assert
         documentManager.VerifyAll();
