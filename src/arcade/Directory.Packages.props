@@ -14,6 +14,7 @@
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.2</XUnitVersion>
+    <XUnitV3Version>2.0.0</XUnitV3Version>
     <XUnitAnalyzersVersion>1.16.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <XUnitRunnerVisualStudioVersion>3.0.2</XUnitRunnerVisualStudioVersion>
@@ -25,9 +26,11 @@
     <PackageVersion Include="Microsoft.DotNet.DarcLib" Version="$(MicrosoftDotNetDarcLibVersion)" />
     <!-- command-line-api -->
     <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
-    <!-- corefx -->
+    <!-- maintenance-packages -->
     <PackageVersion Include="Microsoft.Bcl.HashCode" Version="$(MicrosoftBclHashCodeVersion)" />
+    <PackageVersion Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistVersion)" />
     <PackageVersion Include="System.Memory" Version="$(SystemMemoryVersion)" />
+    <!-- corefx -->
     <PackageVersion Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformation)" />
     <!-- deployment-tools -->
     <PackageVersion Include="Microsoft.Deployment.DotNet.Releases" Version="$(MicrosoftDeploymentDotNetReleasesVersion)" />
@@ -42,7 +45,6 @@
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
-    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" /> <!-- Pin transitive dependency to avoid vulnerable 6.0.0 version. -->
     <!-- nuget -->
     <PackageVersion Include="NuGet.Commands" Version="$(NuGetCommandsVersion)" />
     <PackageVersion Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" />
@@ -103,6 +105,7 @@
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="$(XUnitV3Version)" />
     <PackageVersion Include="xunit.runner.reporters" Version="$(XUnitVersion)" />
     <PackageVersion Include="nsubstitute" Version="5.1.0" />
   </ItemGroup>
