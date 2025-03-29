@@ -114,12 +114,12 @@
       Integration with Microsoft.DotNet.Build.Tasks.Installers: Publish packages of the following formats as well.
       These are arch-specific Visual Studio insertion packages. As they're Windows-only, they only include architecture in the name:
       - VS.Redist.Common.*.$(TargetArchitecture).*.nupkg
-      - VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg
+      - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
       
       These packages are always non-shipping, so only look there.
     -->
     <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg" IsShipping="false" Kind="Package" />
+    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
 
     <!--
       In the VMR, don't publish packages that didn't match the above conditions externally.

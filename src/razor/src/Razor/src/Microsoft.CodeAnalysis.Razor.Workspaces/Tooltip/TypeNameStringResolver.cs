@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
 internal static class TypeNameStringResolver
 {
-    private static readonly IReadOnlyDictionary<string, string> s_primitiveDisplayTypeNameLookups = new Dictionary<string, string>(StringComparer.Ordinal)
+    private static readonly Dictionary<string, string> s_primitiveDisplayTypeNameLookups = new(StringComparer.Ordinal)
     {
         [typeof(byte).FullName] = "byte",
         [typeof(sbyte).FullName] = "sbyte",

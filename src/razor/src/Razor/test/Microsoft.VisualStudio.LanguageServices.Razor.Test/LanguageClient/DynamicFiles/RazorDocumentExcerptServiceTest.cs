@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -642,6 +643,6 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
     private RazorDocumentExcerptService CreateExcerptService(IDocumentSnapshot document)
     {
-        return new RazorDocumentExcerptService(document, new RazorSpanMappingService(document));
+        return new RazorDocumentExcerptService(document, new RazorMappingService(document, NoOpTelemetryReporter.Instance, LoggerFactory));
     }
 }

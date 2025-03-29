@@ -23,12 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Basic.Reference.Assemblies.AspNet80" />
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Moq" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
     <PackageReference Include="xunit.extensibility.execution" />
   </ItemGroup>

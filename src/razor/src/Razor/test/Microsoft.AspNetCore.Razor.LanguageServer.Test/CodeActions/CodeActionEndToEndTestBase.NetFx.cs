@@ -191,7 +191,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
 
     internal static VSInternalCodeAction? GetCodeActionToRun(string codeAction, int childActionIndex, SumType<Command, CodeAction>[] result)
     {
-        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeAction || ((RazorVSInternalCodeAction)e.Value!).Title == codeAction).Value;
+        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeAction).Value;
         if (codeActionToRun?.Children?.Length > 0)
         {
             codeActionToRun = codeActionToRun.Children[childActionIndex];
@@ -291,7 +291,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
 
     internal static ImmutableArray<TagHelperDescriptor> CreateTagHelperDescriptors()
     {
-        return BuildTagHelpers().ToImmutableArray();
+        return [.. BuildTagHelpers()];
 
         static IEnumerable<TagHelperDescriptor> BuildTagHelpers()
         {
@@ -346,7 +346,6 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
                 new(TagHelperMetadata.Common.TypeNamespace, "Microsoft.AspNetCore.Components"),
                 new(TagHelperMetadata.Common.TypeNameIdentifier, "TestGenericComponent"));
             yield return builder.Build();
-
 
             // Sets up a component to make the following available
             // <TestComponent OnDragStart="OnDragStart" />

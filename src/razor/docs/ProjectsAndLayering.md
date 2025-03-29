@@ -78,7 +78,7 @@ target the broadest set of frameworks.
 
 ### Razor Language Server (rzls)
 
-- Target Framework: `net8.0`
+- Target Framework: `net9.0`
 - Projects:
   - rzls
 
@@ -101,11 +101,11 @@ target the broadest set of frameworks.
   - Microsoft.VisualStudio.RazorExtension.Dependencies
   - RazorDeployment
 
-### Miscellaneous / Test hosting
+### RazorExtension for Roslyn Language Server in VS Code
 
-- Target Framework: net7.0
+- Target Framework: net9.0
 - Projects:
-  - Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace
+  - Microsoft.VisualStudioCode.RazorExtension
 
 ## Testing Layers
 

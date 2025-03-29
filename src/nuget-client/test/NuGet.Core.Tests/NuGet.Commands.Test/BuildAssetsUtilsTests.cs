@@ -664,6 +664,11 @@ namespace NuGet.Commands.Test
                     ""frameworks"": {
                         ""netcoreapp1.0"": {
                             ""dependencies"": {
+                                ""PACKAGEA"" : {
+                                    ""version"" : ""1.0.0"",
+                                    ""generatePathProperty"": true,
+                                    ""target"": ""package""
+                                }
                             }
                         }
                     }
@@ -674,19 +679,12 @@ namespace NuGet.Commands.Test
 
                 var spec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, Path.Combine(projectDirectory, projectName)).WithTestRestoreMetadata();
 
-                spec.Dependencies.Add(new LibraryDependency
-                {
-                    GeneratePathProperty = true,
-                    IncludeType = LibraryIncludeFlags.All,
-                    LibraryRange = new LibraryRange(identity.Id.ToUpperInvariant(), new VersionRange(identity.Version), LibraryDependencyTarget.Package)
-                });
-
                 var targetGraphs = new List<RestoreTargetGraph>
                 {
                     OriginalCaseGlobalPackageFolderTests.GetRestoreTargetGraph(pathContext.PackageSource, identity, packagePath, logger)
                 };
 
-                targetGraphs[0].Graphs.FirstOrDefault().Item.Data.Dependencies = spec.Dependencies.ToList();
+                targetGraphs[0].Graphs.FirstOrDefault().Item.Data.Dependencies = spec.TargetFrameworks[0].Dependencies.ToList();
 
                 var lockFile = new LockFile
                 {
@@ -776,6 +774,9 @@ namespace NuGet.Commands.Test
                     ""frameworks"": {
                         ""netcoreapp1.0"": {
                             ""dependencies"": {
+                                ""packagea"" : {
+                                    ""version"" : ""1.0.0"",
+                                }
                             }
                         }
                     }
@@ -786,18 +787,12 @@ namespace NuGet.Commands.Test
 
                 var spec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, Path.Combine(projectDirectory, projectName)).WithTestRestoreMetadata();
 
-                spec.Dependencies.Add(new LibraryDependency
-                {
-                    IncludeType = LibraryIncludeFlags.All,
-                    LibraryRange = new LibraryRange(identity.Id, new VersionRange(identity.Version), LibraryDependencyTarget.Package)
-                });
-
                 var targetGraphs = new List<RestoreTargetGraph>
                 {
                     OriginalCaseGlobalPackageFolderTests.GetRestoreTargetGraph(pathContext.PackageSource, identity, packagePath, logger)
                 };
 
-                targetGraphs[0].Graphs.FirstOrDefault().Item.Data.Dependencies = spec.Dependencies.ToList();
+                targetGraphs[0].Graphs.FirstOrDefault().Item.Data.Dependencies = spec.TargetFrameworks[0].Dependencies.ToList();
 
                 var lockFile = new LockFile
                 {

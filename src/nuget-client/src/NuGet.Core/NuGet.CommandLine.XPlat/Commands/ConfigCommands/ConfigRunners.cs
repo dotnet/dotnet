@@ -14,7 +14,7 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class ConfigPathsRunner
     {
-        public static void Run(ConfigPathsArgs args, Func<ILogger> getLogger)
+        public static int Run(ConfigPathsArgs args, Func<ILogger> getLogger)
         {
             RunnerHelper.EnsureArgumentsNotNull(args, getLogger);
 
@@ -23,7 +23,16 @@ namespace NuGet.CommandLine.XPlat
                 args.WorkingDirectory = Directory.GetCurrentDirectory();
             }
 
-            var settings = RunnerHelper.GetSettingsFromDirectory(args.WorkingDirectory);
+            ISettings settings;
+            try
+            {
+                settings = RunnerHelper.GetSettingsFromDirectory(args.WorkingDirectory);
+            }
+            catch (CommandException e)
+            {
+                getLogger().LogError(e.Message);
+                return ExitCodes.InvalidArguments;
+            }
             ILogger logger = getLogger();
 
             var filePaths = settings.GetConfigFilePaths();
@@ -31,24 +40,30 @@ namespace NuGet.CommandLine.XPlat
             {
                 logger.LogMinimal(filePath);
             }
+
+            return ExitCodes.Success;
         }
     }
 
     internal static class ConfigGetRunner
     {
-        public static void Run(ConfigGetArgs args, Func<ILogger> getLogger)
+        public static int Run(ConfigGetArgs args, Func<ILogger> getLogger)
         {
             RunnerHelper.EnsureArgumentsNotNull(args, getLogger);
 
-            if (args.AllOrConfigKey == null)
+            Settings settings;
+            try
             {
-                throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.ConfigCommandKeyNotFound, args.AllOrConfigKey));
+                settings = RunnerHelper.GetSettingsFromDirectory(args.WorkingDirectory) as Settings;
             }
-
-            var settings = RunnerHelper.GetSettingsFromDirectory(args.WorkingDirectory) as Settings;
+            catch (CommandException e)
+            {
+                getLogger().LogError(e.Message);
+                return ExitCodes.InvalidArguments;
+            }
             if (settings == null)
             {
-                return;
+                return ExitCodes.Success;
             }
             ILogger logger = getLogger();
 
@@ -57,7 +72,7 @@ namespace NuGet.CommandLine.XPlat
                 IEnumerable<string> sections = settings.GetAllSettingSections();
                 if (sections == null)
                 {
-                    return;
+                    return ExitCodes.Success;
                 }
                 RunnerHelper.LogSections(sections, settings, logger, args.ShowPath);
             }
@@ -66,39 +81,61 @@ namespace NuGet.CommandLine.XPlat
                 var configValue = RunnerHelper.GetValueForConfigKey(settings, args.AllOrConfigKey, args.ShowPath);
                 if (string.IsNullOrEmpty(configValue))
                 {
-                    throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.ConfigCommandKeyNotFound, args.AllOrConfigKey));
+                    logger.LogError(string.Format(CultureInfo.CurrentCulture, Strings.ConfigCommandKeyNotFound, args.AllOrConfigKey));
+                    return ExitCodes.Error;
                 }
 
                 logger.LogMinimal(configValue);
             }
+
+            return ExitCodes.Success;
         }
     }
 
     internal static class ConfigSetRunner
     {
-        public static void Run(ConfigSetArgs args, Func<ILogger> getLogger)
+        public static int Run(ConfigSetArgs args, Func<ILogger> getLogger)
         {
             RunnerHelper.EnsureArgumentsNotNull(args, getLogger);
-            RunnerHelper.ValidateConfigKey(args.ConfigKey);
+            try
+            {
+                RunnerHelper.ValidateConfigKey(args.ConfigKey);
+            }
+            catch (CommandException e)
+            {
+                getLogger().LogError(e.Message);
+                return ExitCodes.InvalidArguments;
+            }
             ISettings settings = XPlatUtility.ProcessConfigFile(args.ConfigFile);
 
             bool encrypt = args.ConfigKey.Equals(ConfigurationConstants.PasswordKey, StringComparison.OrdinalIgnoreCase);
             SettingsUtility.SetConfigValue(settings, args.ConfigKey, args.ConfigValue, encrypt);
+            return ExitCodes.Success;
         }
     }
 
     internal static class ConfigUnsetRunner
     {
-        public static void Run(ConfigUnsetArgs args, Func<ILogger> getLogger)
+        public static int Run(ConfigUnsetArgs args, Func<ILogger> getLogger)
         {
             RunnerHelper.EnsureArgumentsNotNull(args, getLogger);
-            RunnerHelper.ValidateConfigKey(args.ConfigKey);
+            try
+            {
+                RunnerHelper.ValidateConfigKey(args.ConfigKey);
+            }
+            catch (CommandException e)
+            {
+                getLogger().LogError(e.Message);
+                return ExitCodes.InvalidArguments;
+            }
             ISettings settings = XPlatUtility.ProcessConfigFile(args.ConfigFile);
 
             if (!SettingsUtility.DeleteConfigValue(settings, args.ConfigKey))
             {
                 getLogger().LogMinimal(string.Format(CultureInfo.CurrentCulture, Strings.ConfigUnsetNonExistingKey, args.ConfigKey));
             }
+
+            return ExitCodes.Success;
         }
     }
 

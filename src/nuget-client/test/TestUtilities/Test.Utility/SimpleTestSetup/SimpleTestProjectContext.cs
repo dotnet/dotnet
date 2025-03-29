@@ -431,11 +431,15 @@ namespace NuGet.Test.Utility
             string projectName,
             string solutionRoot,
             NuGetFramework framework,
-            JObject projectJson)
+            string runtimeIdentifiers,
+            params SimpleTestPackageContext[] packages)
         {
-            var context = new SimpleTestProjectContext(projectName, ProjectStyle.ProjectJson, solutionRoot);
-            context.Frameworks.Add(new SimpleTestProjectFrameworkContext(framework));
-            context.ProjectJson = projectJson;
+            var context = new SimpleTestProjectContext(projectName, ProjectStyle.PackageReference, solutionRoot);
+            context.Frameworks.Add(new SimpleTestProjectFrameworkContext(framework, packages));
+            if (string.IsNullOrEmpty(runtimeIdentifiers))
+            {
+                context.Properties.Add("RuntimeIdentifiers", runtimeIdentifiers);
+            }
             return context;
         }
 

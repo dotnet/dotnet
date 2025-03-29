@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <PropertyGroup>
+    <UseDotNetCertificate>true</UseDotNetCertificate>
+  </PropertyGroup>
+
   <ItemGroup>
     <FileExtensionSignInfo Include=".pyd" CertificateName="MicrosoftDotNet500" />
     <FileExtensionSignInfo Include=".cat" CertificateName="MicrosoftDotNet500" />

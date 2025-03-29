@@ -9,7 +9,7 @@
     <_MicrosoftVisualStudioShellPackagesVersion>17.13.40008</_MicrosoftVisualStudioShellPackagesVersion>
     <_MicrosoftVisualStudioPackagesVersion>17.13.226</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>
-    <_MicrosoftExtensionsPackageVersion>8.0.0</_MicrosoftExtensionsPackageVersion>
+    <_MicrosoftExtensionsPackageVersion>9.0.0</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.187-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
@@ -32,13 +32,13 @@
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(_MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.4.1" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(_MicrosoftBuildPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="1.1.2-beta1.24121.1" NoWarn="NU1608" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="1.1.3-beta1.24423.1" />
     <!-- Temporarily force analyzers to match compiler version https://github.com/dotnet/razor-tooling/issues/6758 -->
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(_MicrosoftCodeAnalysisAnalyzersPackageVersion)" NoWarn="NU1608" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(_MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer" Version="$(MicrosoftCodeAnalysisCSharpAnalyzerTestingPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.1.2-beta1.24121.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.3-beta1.24423.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="$(MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
@@ -48,9 +48,9 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Remote.ServiceHub" Version="$(MicrosoftCodeAnalysisRemoteServiceHubPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)"/>
-    <PackageVersion Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" Version="1.1.2-beta1.24121.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces" Version="$(MicrosoftCodeAnalysisWorkspacesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion)" />
@@ -87,7 +87,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.13.7" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.14.2" />
+    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.14.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
@@ -107,13 +107,13 @@
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_RoslynDiagnosticAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
-    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
-    <PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageVersion Include="System.Resources.Extensions" Version="9.0.0" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.2" />
-    <PackageVersion Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
+    <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="$(SystemThreadingTasksExtensionsVersion)" />
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />

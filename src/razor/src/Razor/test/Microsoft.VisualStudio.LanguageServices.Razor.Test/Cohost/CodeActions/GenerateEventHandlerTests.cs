@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
@@ -27,7 +27,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -53,7 +53,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -81,7 +81,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -109,7 +109,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -135,7 +135,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -161,7 +161,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExistAsync"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -189,7 +189,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
                         }
                     }
                     """)],
-            codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+            codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -228,7 +228,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
                         }
                     }
                     """)],
-            codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+            codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -261,7 +261,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
                         }
                     }
                     """)],
-            codeActionName: WorkspacesSR.FormatGenerate_Event_Handler_Title("DoesNotExist"));
+            codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -281,7 +281,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 
     [Fact(Skip = "Need to map uri back to source generated document")]
@@ -307,6 +307,6 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, WorkspacesSR.FormatGenerate_Async_Event_Handler_Title("DoesNotExist"));
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 }

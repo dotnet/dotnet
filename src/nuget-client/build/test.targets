@@ -6,7 +6,7 @@
   <PropertyGroup>
     <NoWarn>$(NoWarn);CS1701;xUnit1012;xUnit1014;xUnit2000;xUnit2009;xUnit2013</NoWarn>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio" />
@@ -17,7 +17,7 @@
 
   <PropertyGroup>
     <VSTestResultsDirectory>$(RepositoryRootDirectory).test\TestResults\</VSTestResultsDirectory>
-    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == ''">$(MSBuildThisFileDirectory)xunit.runsettings</RunSettingsFilePath>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == '' AND '$(BuildingInsideVisualStudio)' != 'true'">$(MSBuildThisFileDirectory)xunit.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <!-- Workaround for test projects not automatically creating binding redirects -->

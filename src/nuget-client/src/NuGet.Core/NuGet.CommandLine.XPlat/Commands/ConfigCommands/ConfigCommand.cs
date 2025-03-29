@@ -4,8 +4,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Help;
-using System.CommandLine.Parsing;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.CommandLine.XPlat.Commands;
@@ -40,8 +38,7 @@ namespace NuGet.CommandLine.XPlat
 
         private static CliArgument<string> AllOrConfigKeyArgument = new CliArgument<string>(name: "all-or-config-key")
         {
-            Arity = ArgumentArity.ZeroOrOne,
-            HelpName = Strings.ConfigGetAllOrConfigKeyDescription,
+            Arity = ArgumentArity.ExactlyOne,
             Description = Strings.ConfigGetAllOrConfigKeyDescription
         };
 
@@ -77,13 +74,6 @@ namespace NuGet.CommandLine.XPlat
 
             // Log the stack trace as verbose output.
             log.LogVerbose(e.ToString());
-        }
-
-        internal static void ShowHelp(ParseResult parseResult, CliCommand cmd)
-        {
-            var tokenList = parseResult.Tokens.TakeWhile(token => token.Type == CliTokenType.Argument || token.Type == CliTokenType.Command || token.Type == CliTokenType.Directive).Select(t => t.Value).ToList();
-            tokenList.Add("-h");
-            cmd.Parse(tokenList).Invoke();
         }
 
         internal static void Register(CommandLineApplication app)
@@ -145,25 +135,12 @@ namespace NuGet.CommandLine.XPlat
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
-                int exitCode;
-
                 var args = new ConfigPathsArgs()
                 {
                     WorkingDirectory = parseResult.GetValue(WorkingDirectory),
                 };
 
-                try
-                {
-                    ConfigPathsRunner.Run(args, getLogger);
-                    exitCode = 0;
-                }
-                catch (Exception e)
-                {
-                    LogException(e, getLogger());
-                    ShowHelp(parseResult, cmd);
-
-                    exitCode = 1;
-                }
+                int exitCode = ConfigPathsRunner.Run(args, getLogger);
                 return Task.FromResult(exitCode);
             });
         }
@@ -178,7 +155,6 @@ namespace NuGet.CommandLine.XPlat
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
-                int exitCode;
                 var args = new ConfigGetArgs()
                 {
                     AllOrConfigKey = parseResult.GetValue(AllOrConfigKeyArgument),
@@ -186,18 +162,7 @@ namespace NuGet.CommandLine.XPlat
                     ShowPath = parseResult.GetValue(ShowPathOption),
                 };
 
-                try
-                {
-                    ConfigGetRunner.Run(args, getLogger);
-                    exitCode = 0;
-                }
-                catch (Exception e)
-                {
-                    LogException(e, getLogger());
-                    ShowHelp(parseResult, cmd);
-
-                    exitCode = 1;
-                }
+                int exitCode = ConfigGetRunner.Run(args, getLogger);
                 return Task.FromResult(exitCode);
             });
         }
@@ -211,7 +176,6 @@ namespace NuGet.CommandLine.XPlat
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
-                int exitCode;
                 var args = new ConfigSetArgs()
                 {
                     ConfigKey = parseResult.GetValue(SetConfigKeyArgument),
@@ -219,18 +183,7 @@ namespace NuGet.CommandLine.XPlat
                     ConfigFile = parseResult.GetValue(ConfigFileOption),
                 };
 
-                try
-                {
-                    ConfigSetRunner.Run(args, getLogger);
-                    exitCode = 0;
-                }
-                catch (Exception e)
-                {
-                    LogException(e, getLogger());
-                    ShowHelp(parseResult, cmd);
-
-                    exitCode = 1;
-                }
+                int exitCode = ConfigSetRunner.Run(args, getLogger);
                 return Task.FromResult(exitCode);
             });
         }
@@ -243,26 +196,13 @@ namespace NuGet.CommandLine.XPlat
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
-                int exitCode;
-
                 var args = new ConfigUnsetArgs()
                 {
                     ConfigKey = parseResult.GetValue(UnsetConfigKeyArgument),
                     ConfigFile = parseResult.GetValue(ConfigFileOption),
                 };
 
-                try
-                {
-                    ConfigUnsetRunner.Run(args, getLogger);
-                    exitCode = 0;
-                }
-                catch (Exception e)
-                {
-                    LogException(e, getLogger());
-                    ShowHelp(parseResult, cmd);
-
-                    exitCode = 1;
-                }
+                int exitCode = ConfigUnsetRunner.Run(args, getLogger);
                 return Task.FromResult(exitCode);
             });
         }

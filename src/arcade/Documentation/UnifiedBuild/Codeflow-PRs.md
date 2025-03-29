@@ -68,6 +68,6 @@ If you need help or have questions around the new flow, please either:
 
 - [VMR Code and Build Workflow](https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/VMR-Code-And-Build-Workflow.md)
 - [VMR Full Code Flow](https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/VMR-Full-Code-Flow.md)
-- [Flat Flow Migration Guide](./Flat-flow-migration-guide.md)
+- [Flat Flow Migration Guide](./Flat-Flow-Migration-Guide.md)
 - [Darc Documentation](https://github.com/dotnet/arcade/tree/main/Documentation/Darc)
 - [Branches, channels, and subscriptions](https://github.com/dotnet/arcade/blob/main/Documentation/BranchesChannelsAndSubscriptions.md)

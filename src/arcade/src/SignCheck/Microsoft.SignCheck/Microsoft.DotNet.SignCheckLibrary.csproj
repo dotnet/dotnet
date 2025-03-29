@@ -69,6 +69,7 @@
     <!-- Unsupported file types -->
     <Compile Remove="Verification\DebVerifier.cs" />
     <Compile Remove="Verification\LinuxPackageVerifier.cs" />
+    <Compile Remove="Verification\MachOVerifier.cs" />
     <Compile Remove="Verification\PkgVerifier.cs" />
     <Compile Remove="Verification\TarVerifier.cs" />
     <Compile Remove="Verification\RpmVerifier.cs" />

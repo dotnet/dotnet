@@ -419,12 +419,3 @@ steps:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     DOTNET_MULTILEVEL_LOOKUP: true
   condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
-
-- task: PowerShell@1
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$env:AGENT_JOBNAME"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

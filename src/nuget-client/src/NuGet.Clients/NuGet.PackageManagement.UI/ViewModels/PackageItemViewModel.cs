@@ -949,9 +949,6 @@ namespace NuGet.PackageManagement.UI
                 _searchService.ClearFromCache(Id, Sources, IncludePrerelease);
             }
 
-            // Set auto referenced to true any reference for the given id contains the flag.
-            AutoReferenced = installedPackages.IsAutoReferenced(Id);
-
             NuGetUIThreadHelper.JoinableTaskFactory
                 .RunAsync(ReloadPackageVersionsAsync)
                 .PostOnFailure(nameof(PackageItemViewModel), nameof(ReloadPackageVersionsAsync));

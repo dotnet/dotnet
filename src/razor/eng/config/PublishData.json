@@ -17,7 +17,8 @@
       "rzls.win-arm64": "vs-impl",
       "rzls.win-x64": "vs-impl",
       "rzls.win-x86": "vs-impl",
-      "Microsoft.VisualStudio.DevKit.Razor": "vs-impl"
+      "Microsoft.VisualStudio.DevKit.Razor": "vs-impl",
+      "Microsoft.VisualStudioCode.RazorExtension": "vs-impl"
     }
   },
   "branches": {

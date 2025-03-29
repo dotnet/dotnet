@@ -20,7 +20,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     private readonly ProjectState _state = state;
 
     private readonly object _gate = new();
-    private readonly Dictionary<string, DocumentSnapshot> _filePathToDocumentMap = new(FilePathNormalizingComparer.Instance);
+    private Dictionary<string, DocumentSnapshot>? _filePathToDocumentMap;
 
     public HostProject HostProject => _state.HostProject;
     public RazorCompilerOptions CompilerOptions => _state.CompilerOptions;
@@ -53,8 +53,12 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
             // ImmutableDictionary<,>, which has O(log n) lookup. So, checking _filePathToDocumentMap
             // first is faster if the DocumentSnapshot has already been created.
 
-            return _filePathToDocumentMap.ContainsKey(filePath) ||
-                   _state.Documents.ContainsKey(filePath);
+            if (_filePathToDocumentMap is not null && _filePathToDocumentMap.ContainsKey(filePath))
+            {
+                return true;
+            }
+
+            return _state.Documents.ContainsKey(filePath);
         }
     }
 
@@ -63,7 +67,8 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
         lock (_gate)
         {
             // Have we already seen this document? If so, return it!
-            if (_filePathToDocumentMap.TryGetValue(filePath, out var snapshot))
+            if (_filePathToDocumentMap is not null &&
+                _filePathToDocumentMap.TryGetValue(filePath, out var snapshot))
             {
                 document = snapshot;
                 return true;
@@ -78,6 +83,8 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
             // If we have DocumentState, go ahead and create a new DocumentSnapshot.
             snapshot = new DocumentSnapshot(this, state);
+
+            _filePathToDocumentMap ??= new(capacity: _state.Documents.Count, FilePathNormalizingComparer.Instance);
             _filePathToDocumentMap.Add(filePath, snapshot);
 
             document = snapshot;

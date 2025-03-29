@@ -135,7 +135,7 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
         var response = new RazorMapToDocumentRangesResponse { Ranges = new Range[] { VsLspFactory.UndefinedRange } };
 
         // Act
-        var results = RazorLSPSpanMappingService.GetMappedSpanResults(_mockDocumentUri.LocalPath, sourceTextRazor, response);
+        var results = RazorLSPMappingService.GetMappedSpanResults(_mockDocumentUri.LocalPath, sourceTextRazor, response);
 
         // Assert
         Assert.Collection(results,
