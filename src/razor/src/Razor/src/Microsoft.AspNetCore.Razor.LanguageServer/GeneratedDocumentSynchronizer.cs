@@ -34,13 +34,9 @@ internal class GeneratedDocumentSynchronizer(
             return;
         }
 
-        // If cohosting is on, then it is responsible for updating the Html buffer
-        if (!_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            var htmlText = codeDocument.GetHtmlSourceText();
+        var htmlText = codeDocument.GetHtmlSourceText();
 
-            _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion);
-        }
+        _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion);
 
         var csharpText = codeDocument.GetCSharpSourceText();
 

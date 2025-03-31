@@ -59,19 +59,16 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IOnInitialized>(clientConnection);
     }
 
-    public static void AddFormattingServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddFormattingServices(this IServiceCollection services)
     {
         // Formatting
         services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
 
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
+        services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
 
-            services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
-        }
+        services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
+        services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
+        services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
     }
 
     public static void AddCompletionServices(this IServiceCollection services)
@@ -113,17 +110,14 @@ internal static class IServiceCollectionExtensions
         services.AddHandlerWithCapabilities<HoverEndpoint>();
     }
 
-    public static void AddSemanticTokensServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddSemanticTokensServices(this IServiceCollection services)
     {
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
-            // Ensure that we don't add the default service if something else has added one.
-            services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
-            services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
+        services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
+        // Ensure that we don't add the default service if something else has added one.
+        services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
+        services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
 
-            services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
-        }
+        services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
 
         services.AddHandler<RazorSemanticTokensRefreshEndpoint>();
 
@@ -168,18 +162,15 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IHtmlCodeActionResolver, HtmlCodeActionResolver>();
     }
 
-    public static void AddTextDocumentServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddTextDocumentServices(this IServiceCollection services)
     {
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
-            services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
+        services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
+        services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
 
-            services.AddSingleton<ISpellCheckService, SpellCheckService>();
-            services.AddSingleton<ICSharpSpellCheckRangeProvider, LspCSharpSpellCheckRangeProvider>();
-            services.AddHandlerWithCapabilities<DocumentSpellCheckEndpoint>();
-            services.AddHandler<WorkspaceSpellCheckEndpoint>();
-        }
+        services.AddSingleton<ISpellCheckService, SpellCheckService>();
+        services.AddSingleton<ICSharpSpellCheckRangeProvider, LspCSharpSpellCheckRangeProvider>();
+        services.AddHandlerWithCapabilities<DocumentSpellCheckEndpoint>();
+        services.AddHandler<WorkspaceSpellCheckEndpoint>();
 
         services.AddHandlerWithCapabilities<DocumentDidChangeEndpoint>();
         services.AddHandler<DocumentDidCloseEndpoint>();

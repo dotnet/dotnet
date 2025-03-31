@@ -82,7 +82,7 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
         _jsonRpc.Dispose();
     }
 
-    private static ILspLogger CreateILspLogger(ILoggerFactory loggerFactory, ITelemetryReporter telemetryReporter)
+    private static ClaspLoggingBridge CreateILspLogger(ILoggerFactory loggerFactory, ITelemetryReporter telemetryReporter)
     {
         return new ClaspLoggingBridge(loggerFactory, telemetryReporter);
     }
@@ -127,40 +127,37 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
 
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
-        services.AddSemanticTokensServices(featureOptions);
+        services.AddSemanticTokensServices();
         services.AddDocumentManagementServices();
-        services.AddFormattingServices(featureOptions);
+        services.AddFormattingServices();
         services.AddOptionsServices(_lspOptions);
-        services.AddTextDocumentServices(featureOptions);
+        services.AddTextDocumentServices();
 
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            // Diagnostics
-            services.AddDiagnosticServices();
+        // Diagnostics
+        services.AddDiagnosticServices();
 
-            services.AddCodeActionsServices();
+        services.AddCodeActionsServices();
 
-            // Completion
-            services.AddCompletionServices();
+        // Completion
+        services.AddCompletionServices();
 
-            // Auto insert
-            services.AddSingleton<IOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
-            services.AddSingleton<IOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
+        // Auto insert
+        services.AddSingleton<IOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
+        services.AddSingleton<IOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
 
-            services.AddSingleton<IAutoInsertService, AutoInsertService>();
+        services.AddSingleton<IAutoInsertService, AutoInsertService>();
 
-            // Folding Range Providers
-            services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
-            services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementFoldingProvider>();
-            services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementKeywordFoldingProvider>();
-            services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
-            services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
+        // Folding Range Providers
+        services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementKeywordFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
 
-            services.AddSingleton<IFoldingRangeService, FoldingRangeService>();
+        services.AddSingleton<IFoldingRangeService, FoldingRangeService>();
 
-            // Hover
-            services.AddHoverServices();
-        }
+        // Hover
+        services.AddHoverServices();
 
         // Other
         services.AddSingleton<IRazorComponentSearchEngine, RazorComponentSearchEngine>();
@@ -171,13 +168,13 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
         // Defaults: For when the caller hasn't provided them through the `configure` action.
         services.TryAddSingleton<IHostServicesProvider, DefaultHostServicesProvider>();
 
-        AddHandlers(services, featureOptions);
+        AddHandlers(services);
 
         var lspServices = new LspServices(services);
 
         return lspServices;
 
-        static void AddHandlers(IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+        static void AddHandlers(IServiceCollection services)
         {
             // Not calling AddHandler because we want to register this endpoint as an IOnInitialized too
             services.AddSingleton<RazorConfigurationEndpoint>();
@@ -185,40 +182,37 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             // Transient because it should only be used once and I'm hoping it doesn't stick around.
             services.AddTransient<IOnInitialized>(sp => sp.GetRequiredService<RazorConfigurationEndpoint>());
 
-            if (!featureOptions.UseRazorCohostServer)
-            {
-                services.AddHandlerWithCapabilities<ImplementationEndpoint>();
+            services.AddHandlerWithCapabilities<ImplementationEndpoint>();
 
-                services.AddSingleton<IRazorComponentDefinitionService, RazorComponentDefinitionService>();
-                services.AddHandlerWithCapabilities<DefinitionEndpoint>();
+            services.AddSingleton<IRazorComponentDefinitionService, RazorComponentDefinitionService>();
+            services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 
-                services.AddSingleton<IRenameService, RenameService>();
-                services.AddHandlerWithCapabilities<RenameEndpoint>();
+            services.AddSingleton<IRenameService, RenameService>();
+            services.AddHandlerWithCapabilities<RenameEndpoint>();
 
-                services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
-                services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
-                services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
-                services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
-                services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
+            services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
+            services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
+            services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
+            services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
+            services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
 
-                services.AddSingleton<IInlayHintService, InlayHintService>();
-                services.AddHandlerWithCapabilities<InlayHintEndpoint>();
-                services.AddHandler<InlayHintResolveEndpoint>();
+            services.AddSingleton<IInlayHintService, InlayHintService>();
+            services.AddHandlerWithCapabilities<InlayHintEndpoint>();
+            services.AddHandler<InlayHintResolveEndpoint>();
 
-                services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
-                services.AddSingleton<IDocumentSymbolService, DocumentSymbolService>();
+            services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
+            services.AddSingleton<IDocumentSymbolService, DocumentSymbolService>();
 
-                services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
-                services.AddHandler<ColorPresentationEndpoint>();
+            services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+            services.AddHandler<ColorPresentationEndpoint>();
 
-                services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
+            services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
 
-                services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
+            services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
 
-                services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
-                services.AddHandler<RazorBreakpointSpanEndpoint>();
-                services.AddHandler<RazorProximityExpressionsEndpoint>();
-            }
+            services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
+            services.AddHandler<RazorBreakpointSpanEndpoint>();
+            services.AddHandler<RazorProximityExpressionsEndpoint>();
 
             services.AddHandler<WrapWithTagEndpoint>();
 

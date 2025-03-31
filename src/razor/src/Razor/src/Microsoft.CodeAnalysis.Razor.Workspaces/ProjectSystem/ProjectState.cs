@@ -259,7 +259,7 @@ internal sealed class ProjectState
             return this;
         }
 
-        var documents = UpdateDocuments(static x => x.WithConfigurationChange());
+        var documents = UpdateDocuments(static x => x.UpdateVersion());
 
         // If the host project has changed then we need to recompute the imports map
         var importsToRelatedDocuments = BuildImportsMap(documents.Values, ProjectEngine);
@@ -277,7 +277,7 @@ internal sealed class ProjectState
             return this;
         }
 
-        var documents = UpdateDocuments(static x => x.WithProjectWorkspaceStateChange());
+        var documents = UpdateDocuments(static x => x.UpdateVersion());
 
         return new(this, HostProject, projectWorkspaceState, documents, ImportsToRelatedDocuments, retainProjectEngine: true);
     }
@@ -378,7 +378,7 @@ internal sealed class ProjectState
             return documents;
         }
 
-        var updates = relatedDocuments.Select(x => KeyValuePair.Create(x, documents[x].WithImportsChange()));
+        var updates = relatedDocuments.Select(x => KeyValuePair.Create(x, documents[x].UpdateVersion()));
         return documents.SetItems(updates);
     }
 

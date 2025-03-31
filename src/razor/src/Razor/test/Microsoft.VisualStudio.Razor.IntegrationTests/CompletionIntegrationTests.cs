@@ -294,33 +294,6 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             commitChar: '\t');
     }
 
-    private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)
-    {
-        await TestServices.SolutionExplorer.AddFileAsync(
-            RazorProjectConstants.BlazorProjectName,
-            "Test.razor",
-            input,
-            open: true,
-            ControlledHangMitigatingCancellationToken);
-
-        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
-
-        await TestServices.Editor.PlaceCaretAsync(search, charsOffset: 1, ControlledHangMitigatingCancellationToken);
-        foreach (var stringToType in stringsToType)
-        {
-            TestServices.Input.Send(stringToType);
-        }
-
-        if (expectedSelectedItemLabel is not null)
-        {
-            await CommitCompletionAndVerifyAsync(output, expectedSelectedItemLabel, commitChar);
-        }
-        else
-        {
-            await CommitCompletionAndVerifyAsync(output, commitChar);
-        }
-    }
-
     [IdeFact]
     public async Task SnippetCompletion_DoesntCommitOnSpace()
     {
@@ -475,6 +448,78 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 }
             }
             """);
+    }
+
+    [IdeFact, WorkItem("https://github.com/dotnet/razor/issues/11385")]
+    public async Task ProvisionalCompletion_DoesntBreakSemanticTokens()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "/counter"
+
+            <PageTitle>Counter</PageTitle>
+
+            <h1>Counter</h1>
+
+            <p role="status">Current count: @currentCount</p>
+
+            @DateTime
+
+            <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+            @code {
+                private int currentCount = 0;
+
+                public void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("@DateTime", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+
+        await Task.Delay(500, HangMitigatingCancellationToken);
+
+        TestServices.Input.Send(".");
+        TestServices.Input.Send("n");
+
+        await Task.Delay(500, HangMitigatingCancellationToken);
+
+        await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
+    }
+
+    private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            input,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync(search, charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        foreach (var stringToType in stringsToType)
+        {
+            TestServices.Input.Send(stringToType);
+        }
+
+        if (expectedSelectedItemLabel is not null)
+        {
+            await CommitCompletionAndVerifyAsync(output, expectedSelectedItemLabel, commitChar);
+        }
+        else
+        {
+            await CommitCompletionAndVerifyAsync(output, commitChar);
+        }
     }
 
     private async Task CommitCompletionAndVerifyAsync(string expected, char? commitChar = null)
