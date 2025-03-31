@@ -31,19 +31,7 @@ namespace NuGet.Commands.Test
             using (var cacheContext = new SourceCacheContext())
             using (var pathContext = new SimpleTestPathContext())
             {
-                var tfi = new List<TargetFrameworkInformation>
-                {
-                    new TargetFrameworkInformation()
-                    {
-                        FrameworkName = NuGetFramework.Parse("net462")
-                    }
-                };
-
-                var spec = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "net46");
-                spec.Dependencies.Add(new LibraryDependency()
-                {
-                    LibraryRange = new LibraryRange("a", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
-                });
+                var spec = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "net46", new LibraryRange("a", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package));
 
                 var project = NETCoreRestoreTestUtility.CreateProjectsFromSpecs(pathContext, spec).Single();
 
