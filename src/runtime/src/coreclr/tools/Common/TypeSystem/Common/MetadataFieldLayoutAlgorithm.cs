@@ -144,12 +144,15 @@ namespace Internal.TypeSystem
                 }
 
                 var layoutMetadata = type.GetClassLayout();
+
                 // If packing is out of range or not a power of two, throw that the size is invalid
                 int packing = layoutMetadata.PackingSize;
                 if (packing < 0 || packing > 128 || ((packing & (packing - 1)) != 0))
                 {
                     ThrowHelper.ThrowTypeLoadException(ExceptionStringID.ClassLoadBadFormat, type);
                 }
+
+                Debug.Assert(layoutMetadata.Offsets == null || layoutMetadata.Offsets.Length == numInstanceFields);
             }
 
             // At this point all special cases are handled and all inputs validated
@@ -326,12 +329,9 @@ namespace Internal.TypeSystem
                 hasVectorTField = type.BaseType.IsVectorTOrHasVectorTFields;
             }
 
-            foreach (FieldDesc field in type.GetFields())
+            foreach (FieldAndOffset fieldAndOffset in layoutMetadata.Offsets)
             {
-                if (field.IsStatic)
-                    continue;
-
-                TypeDesc fieldType = field.FieldType;
+                TypeDesc fieldType = fieldAndOffset.Field.FieldType;
                 var fieldSizeAndAlignment = ComputeFieldSizeAndAlignment(fieldType.UnderlyingType, hasLayout: true, packingSize, out ComputedFieldData fieldData);
                 if (!fieldData.LayoutAbiStable)
                     layoutAbiStable = false;
@@ -344,12 +344,10 @@ namespace Internal.TypeSystem
 
                 largestAlignmentRequired = LayoutInt.Max(fieldSizeAndAlignment.Alignment, largestAlignmentRequired);
 
-                LayoutInt metadataOffset = field.MetadataOffset;
-
-                if (metadataOffset == LayoutInt.Indeterminate)
+                if (fieldAndOffset.Offset == FieldAndOffset.InvalidOffset)
                     ThrowHelper.ThrowTypeLoadException(ExceptionStringID.ClassLoadBadFormat, type);
 
-                LayoutInt computedOffset = metadataOffset + cumulativeInstanceFieldPos + offsetBias;
+                LayoutInt computedOffset = fieldAndOffset.Offset + cumulativeInstanceFieldPos + offsetBias;
 
                 // GC pointers MUST be aligned.
                 bool needsToBeAligned =
@@ -365,11 +363,11 @@ namespace Internal.TypeSystem
                     int offsetModulo = computedOffset.AsInt % type.Context.Target.PointerSize;
                     if (offsetModulo != 0)
                     {
-                        ThrowHelper.ThrowTypeLoadException(ExceptionStringID.ClassLoadExplicitLayout, type, metadataOffset.ToStringInvariant());
+                        ThrowHelper.ThrowTypeLoadException(ExceptionStringID.ClassLoadExplicitLayout, type, fieldAndOffset.Offset.ToStringInvariant());
                     }
                 }
 
-                offsets[fieldOrdinal] = new FieldAndOffset(field, computedOffset);
+                offsets[fieldOrdinal] = new FieldAndOffset(fieldAndOffset.Field, computedOffset);
 
                 LayoutInt fieldExtent = computedOffset + fieldSizeAndAlignment.Size;
                 instanceSize = LayoutInt.Max(fieldExtent, instanceSize);

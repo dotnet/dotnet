@@ -66,7 +66,7 @@ internal sealed class FrameIterator
 
     public void UpdateContextFromFrame(IPlatformAgnosticContext context)
     {
-        switch (GetFrameType(target, CurrentFrame.Identifier))
+        switch (GetFrameType(CurrentFrame))
         {
             case FrameType.InlinedCallFrame:
                 Data.InlinedCallFrame inlinedCallFrame = target.ProcessedData.GetOrAdd<Data.InlinedCallFrame>(CurrentFrame.Address);
@@ -122,7 +122,7 @@ internal sealed class FrameIterator
 
     public bool IsInlineCallFrameWithActiveCall()
     {
-        if (GetFrameType(target, CurrentFrame.Identifier) != FrameType.InlinedCallFrame)
+        if (GetFrameType(CurrentFrame) != FrameType.InlinedCallFrame)
         {
             return false;
         }
@@ -130,26 +130,16 @@ internal sealed class FrameIterator
         return inlinedCallFrame.CallerReturnAddress != 0;
     }
 
-    public static string GetFrameName(Target target, TargetPointer frameIdentifier)
-    {
-        FrameType frameType = GetFrameType(target, frameIdentifier);
-        if (frameType == FrameType.Unknown)
-        {
-            return string.Empty;
-        }
-        return frameType.ToString();
-    }
-
-    private static FrameType GetFrameType(Target target, TargetPointer frameIdentifier)
+    private FrameType GetFrameType(Data.Frame frame)
     {
         foreach (FrameType frameType in Enum.GetValues<FrameType>())
         {
-            TargetPointer foundFrameIdentifier;
+            TargetPointer typeVptr;
             try
             {
                 // not all Frames are in all builds, so we need to catch the exception
-                foundFrameIdentifier = target.ReadGlobalPointer(frameType.ToString() + "Identifier");
-                if (frameIdentifier == foundFrameIdentifier)
+                typeVptr = target.ReadGlobalPointer(frameType.ToString() + "Identifier");
+                if (frame.Identifier == typeVptr)
                 {
                     return frameType;
                 }

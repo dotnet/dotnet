@@ -1481,10 +1481,13 @@ void CodeGen::genRangeCheck(GenTree* oper)
             assert(!arrLen->isContained());
             // For (index == 0), we can just test if (length == 0) as this is the only case that would throw.
             // This may lead to an optimization by using cbz/tbnz.
-            genJumpToThrowHlpBlk(bndsChk->gtThrowKind, [&](BasicBlock* target, bool isInline) {
+            genJumpToThrowHlpBlk(
+                bndsChk->gtThrowKind,
+                [&](BasicBlock* target, bool isInline) {
                 genCompareImmAndJump(isInline ? GenCondition::NE : GenCondition::EQ, arrLen->GetRegNum(), 0,
                                      emitActualTypeSize(arrLen), target);
-            });
+            },
+                bndsChk->gtIndRngFailBB);
             return;
         }
 #endif
@@ -1506,7 +1509,7 @@ void CodeGen::genRangeCheck(GenTree* oper)
 #endif // DEBUG
 
     GetEmitter()->emitInsBinary(INS_cmp, emitActualTypeSize(bndsChkType), src1, src2);
-    genJumpToThrowHlpBlk(jmpKind, bndsChk->gtThrowKind);
+    genJumpToThrowHlpBlk(jmpKind, bndsChk->gtThrowKind, bndsChk->gtIndRngFailBB);
 }
 
 //---------------------------------------------------------------------
@@ -1714,7 +1717,7 @@ void CodeGen::genCodeForIndexAddr(GenTreeIndexAddr* node)
     {
         GetEmitter()->emitIns_R_R_I(INS_ldr, EA_4BYTE, tmpReg, base->GetRegNum(), node->gtLenOffset);
         GetEmitter()->emitIns_R_R(INS_cmp, emitActualTypeSize(index->TypeGet()), indexReg, tmpReg);
-        genJumpToThrowHlpBlk(EJ_hs, SCK_RNGCHK_FAIL);
+        genJumpToThrowHlpBlk(EJ_hs, SCK_RNGCHK_FAIL, node->gtIndRngFailBB);
     }
 
     // Can we use a ScaledAdd instruction?

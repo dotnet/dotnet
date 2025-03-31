@@ -43,7 +43,7 @@ namespace System.Linq
             {
                 HashSet<TKey> set = new(comparer);
 
-                await foreach (TSource element in first.WithCancellation(cancellationToken))
+                await foreach (TSource element in first.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     if (set.Add(keySelector(element)))
                     {
@@ -51,7 +51,7 @@ namespace System.Linq
                     }
                 }
 
-                await foreach (TSource element in second.WithCancellation(cancellationToken))
+                await foreach (TSource element in second.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     if (set.Add(keySelector(element)))
                     {
@@ -94,17 +94,17 @@ namespace System.Linq
             {
                 HashSet<TKey> set = new(comparer);
 
-                await foreach (TSource element in first.WithCancellation(cancellationToken))
+                await foreach (TSource element in first.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    if (set.Add(await keySelector(element, cancellationToken)))
+                    if (set.Add(await keySelector(element, cancellationToken).ConfigureAwait(false)))
                     {
                         yield return element;
                     }
                 }
 
-                await foreach (TSource element in second.WithCancellation(cancellationToken))
+                await foreach (TSource element in second.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    if (set.Add(await keySelector(element, cancellationToken)))
+                    if (set.Add(await keySelector(element, cancellationToken).ConfigureAwait(false)))
                     {
                         yield return element;
                     }

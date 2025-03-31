@@ -31,19 +31,25 @@ namespace System.Linq
                 int count,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                while (count > 0 && await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    count--;
-                }
-
-                if (count <= 0)
-                {
-                    while (await e.MoveNextAsync())
+                    while (count > 0 && await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return e.Current;
+                        count--;
                     }
+
+                    if (count <= 0)
+                    {
+                        while (await e.MoveNextAsync().ConfigureAwait(false))
+                        {
+                            yield return e.Current;
+                        }
+                    }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

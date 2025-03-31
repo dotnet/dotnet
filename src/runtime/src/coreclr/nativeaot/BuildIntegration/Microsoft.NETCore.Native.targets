@@ -157,8 +157,7 @@ The .NET Foundation licenses this file to you under the MIT license.
 
     <ItemGroup Condition="'$(IlcUseNativeAOTRuntimePackLayout)' == 'true'">
       <PrivateSdkAssemblies Include="$(IlcSdkPath)*.dll"/>
-      <FrameworkAssemblies Include="@(RuntimePackAsset)" Condition="'$(PublishAotUsingRuntimePack)' == 'true' and '%(Extension)' == '.dll'" />
-      <FrameworkAssemblies Include="$(_NETCoreAppRuntimePackPath)lib/**/*.dll" Condition="'$(PublishAotUsingRuntimePack)' != 'true'" />
+      <FrameworkAssemblies Include="@(RuntimePackAsset)" Condition="'%(Extension)' == '.dll'" />
       <DefaultFrameworkAssemblies Include="@(FrameworkAssemblies)" />
     </ItemGroup>
 

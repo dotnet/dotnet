@@ -202,15 +202,6 @@ namespace Internal.TypeSystem
                     return false;
                 }
 
-                bool explicitLayout = false;
-                if (!enumMode)
-                {
-                    if (!CompareTypeLayout(type1, type2, out explicitLayout))
-                    {
-                        return false;
-                    }
-                }
-
                 // Compare field types for equivalence
                 var fields1 = type1.GetFields().GetEnumerator();
                 var fields2 = type2.GetFields().GetEnumerator();
@@ -258,22 +249,20 @@ namespace Internal.TypeSystem
                     {
                         return false;
                     }
-
-                    // If we are in explicit layout mode, we need to compare the offsets
-                    if (explicitLayout)
-                    {
-                        if (field1.MetadataOffset != field2.MetadataOffset)
-                        {
-                            return false;
-                        }
-                    }
                 }
 
+                // At this point we know that the set of fields is the same, and have the same types
+                if (!enumMode)
+                {
+                    if (!CompareTypeLayout(type1, type2))
+                    {
+                        return false;
+                    }
+                }
                 return true;
 
-                static bool CompareTypeLayout(MetadataType type1, MetadataType type2, out bool explicitLayout)
+                static bool CompareTypeLayout(MetadataType type1, MetadataType type2)
                 {
-                    explicitLayout = false;
                     // Types must either be Sequential or Explicit layout
                     if (type1.IsSequentialLayout != type2.IsSequentialLayout)
                     {
@@ -290,7 +279,7 @@ namespace Internal.TypeSystem
                         return false;
                     }
 
-                    explicitLayout = type1.IsExplicitLayout;
+                    bool explicitLayout = type1.IsExplicitLayout;
 
                     // they must have the same charset
                     if (type1.PInvokeStringFormat != type2.PInvokeStringFormat)
@@ -303,6 +292,21 @@ namespace Internal.TypeSystem
                     if ((layoutMetadata1.PackingSize != layoutMetadata2.PackingSize) ||
                         (layoutMetadata1.Size != layoutMetadata2.Size))
                         return false;
+
+                    if ((explicitLayout) && !(layoutMetadata1.Offsets == null && layoutMetadata2.Offsets == null))
+                    {
+                        if (layoutMetadata1.Offsets == null)
+                            return false;
+
+                        if (layoutMetadata2.Offsets == null)
+                            return false;
+
+                        for (int index = 0; index < layoutMetadata1.Offsets.Length; index++)
+                        {
+                            if (layoutMetadata1.Offsets[index].Offset != layoutMetadata2.Offsets[index].Offset)
+                                return false;
+                        }
+                    }
 
                     return true;
                 }

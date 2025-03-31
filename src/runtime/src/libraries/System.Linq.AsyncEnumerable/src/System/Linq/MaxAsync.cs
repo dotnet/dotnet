@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -61,45 +62,27 @@ namespace System.Linq
                 IComparer<TSource> comparer,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
                 TSource? value = default;
-                if (default(TSource) is null)
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    do
+                    if (default(TSource) is null)
                     {
-                        if (!await e.MoveNextAsync())
+                        do
                         {
-                            return value;
+                            if (!await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                return value;
+                            }
+
+                            value = e.Current;
                         }
+                        while (value is null);
 
-                        value = e.Current;
-                    }
-                    while (value is null);
-
-                    while (await e.MoveNextAsync())
-                    {
-                        TSource next = e.Current;
-                        if (next is not null && comparer.Compare(next, value) > 0)
-                        {
-                            value = next;
-                        }
-                    }
-                }
-                else
-                {
-                    if (!await e.MoveNextAsync())
-                    {
-                        ThrowHelper.ThrowNoElementsException();
-                    }
-
-                    value = e.Current;
-                    if (comparer == Comparer<TSource>.Default)
-                    {
-                        while (await e.MoveNextAsync())
+                        while (await e.MoveNextAsync().ConfigureAwait(false))
                         {
                             TSource next = e.Current;
-                            if (Comparer<TSource>.Default.Compare(next, value) > 0)
+                            if (next is not null && comparer.Compare(next, value) > 0)
                             {
                                 value = next;
                             }
@@ -107,15 +90,39 @@ namespace System.Linq
                     }
                     else
                     {
-                        while (await e.MoveNextAsync())
+                        if (!await e.MoveNextAsync().ConfigureAwait(false))
                         {
-                            TSource next = e.Current;
-                            if (comparer.Compare(next, value) > 0)
+                            ThrowHelper.ThrowNoElementsException();
+                        }
+
+                        value = e.Current;
+                        if (comparer == Comparer<TSource>.Default)
+                        {
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
                             {
-                                value = next;
+                                TSource next = e.Current;
+                                if (Comparer<TSource>.Default.Compare(next, value) > 0)
+                                {
+                                    value = next;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                TSource next = e.Current;
+                                if (comparer.Compare(next, value) > 0)
+                                {
+                                    value = next;
+                                }
                             }
                         }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
 
                 return value;
@@ -130,37 +137,43 @@ namespace System.Linq
             this IAsyncEnumerable<float> source,
             CancellationToken cancellationToken)
         {
-            await using IAsyncEnumerator<float> e = source.GetAsyncEnumerator(cancellationToken);
-
-            if (!await e.MoveNextAsync())
+            IAsyncEnumerator<float> e = source.GetAsyncEnumerator(cancellationToken);
+            try
             {
-                ThrowHelper.ThrowNoElementsException();
-            }
-
-            // NaN is ordered less than all other values. We need to do explicit checks to ensure this,
-            // but once we've found a value that is not NaN we need no longer worry about it,
-            // so first loop until such a value is found (or not, as the case may be).
-            float value = e.Current;
-            while (float.IsNaN(value))
-            {
-                if (!await e.MoveNextAsync())
+                if (!await e.MoveNextAsync().ConfigureAwait(false))
                 {
-                    return value;
+                    ThrowHelper.ThrowNoElementsException();
                 }
 
-                value = e.Current;
-            }
-
-            while (await e.MoveNextAsync())
-            {
-                float x = e.Current;
-                if (x > value)
+                // NaN is ordered less than all other values. We need to do explicit checks to ensure this,
+                // but once we've found a value that is not NaN we need no longer worry about it,
+                // so first loop until such a value is found (or not, as the case may be).
+                float value = e.Current;
+                while (float.IsNaN(value))
                 {
-                    value = x;
-                }
-            }
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        return value;
+                    }
 
-            return value;
+                    value = e.Current;
+                }
+
+                while (await e.MoveNextAsync().ConfigureAwait(false))
+                {
+                    float x = e.Current;
+                    if (x > value)
+                    {
+                        value = x;
+                    }
+                }
+
+                return value;
+            }
+            finally
+            {
+                await e.DisposeAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>Returns the maximum value in a sequence of values.</summary>
@@ -171,37 +184,43 @@ namespace System.Linq
             this IAsyncEnumerable<double> source,
             CancellationToken cancellationToken)
         {
-            await using IAsyncEnumerator<double> e = source.GetAsyncEnumerator(cancellationToken);
-
-            if (!await e.MoveNextAsync())
+            IAsyncEnumerator<double> e = source.GetAsyncEnumerator(cancellationToken);
+            try
             {
-                ThrowHelper.ThrowNoElementsException();
-            }
-
-            // NaN is ordered less than all other values. We need to do explicit checks to ensure this,
-            // but once we've found a value that is not NaN we need no longer worry about it,
-            // so first loop until such a value is found (or not, as the case may be).
-            double value = e.Current;
-            while (double.IsNaN(value))
-            {
-                if (!await e.MoveNextAsync())
+                if (!await e.MoveNextAsync().ConfigureAwait(false))
                 {
-                    return value;
+                    ThrowHelper.ThrowNoElementsException();
                 }
 
-                value = e.Current;
-            }
-
-            while (await e.MoveNextAsync())
-            {
-                double x = e.Current;
-                if (x > value)
+                // NaN is ordered less than all other values. We need to do explicit checks to ensure this,
+                // but once we've found a value that is not NaN we need no longer worry about it,
+                // so first loop until such a value is found (or not, as the case may be).
+                double value = e.Current;
+                while (double.IsNaN(value))
                 {
-                    value = x;
-                }
-            }
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        return value;
+                    }
 
-            return value;
+                    value = e.Current;
+                }
+
+                while (await e.MoveNextAsync().ConfigureAwait(false))
+                {
+                    double x = e.Current;
+                    if (x > value)
+                    {
+                        value = x;
+                    }
+                }
+
+                return value;
+            }
+            finally
+            {
+                await e.DisposeAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>Returns the maximum value in a sequence of nullable values.</summary>
@@ -211,7 +230,7 @@ namespace System.Linq
         private static async ValueTask<float?> MaxAsync(IAsyncEnumerable<float?> source, CancellationToken cancellationToken)
         {
             float? value = null;
-            await foreach (float? x in source.WithCancellation(cancellationToken))
+            await foreach (float? x in source.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
                 if (x is null)
                 {
@@ -234,7 +253,7 @@ namespace System.Linq
         private static async ValueTask<double?> MaxAsync(IAsyncEnumerable<double?> source, CancellationToken cancellationToken)
         {
             double? value = null;
-            await foreach (double? x in source.WithCancellation(cancellationToken))
+            await foreach (double? x in source.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
                 if (x is null)
                 {

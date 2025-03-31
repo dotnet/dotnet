@@ -111,7 +111,6 @@
 #ifndef __threads_h__
 #define __threads_h__
 
-#include <exception>
 #include "vars.hpp"
 #include "util.hpp"
 #include "eventstore.hpp"
@@ -370,9 +369,9 @@ void SetupTLSForThread();
 // When we resume a thread at a new location, to get an exception thrown, we have to
 // pretend the exception originated elsewhere.
 EXTERN_C void ThrowControlForThread(
-#if !defined(TARGET_X86)
+#ifdef FEATURE_EH_FUNCLETS
         FaultingExceptionFrame *pfef
-#endif // !TARGET_X86
+#endif // FEATURE_EH_FUNCLETS
 #if defined(TARGET_AMD64) && defined(TARGET_WINDOWS)
         , TADDR ssp
 #endif // TARGET_AMD64 && TARGET_WINDOWS
@@ -5234,8 +5233,7 @@ public:
     ~CoopTransitionHolder()
     {
         WRAPPER_NO_CONTRACT;
-        _ASSERTE_MSG(m_pFrame == nullptr || std::uncaught_exception(), "Early return from JIT/EE interface method");
-        if (m_pFrame != nullptr)
+        if (m_pFrame != NULL)
             COMPlusCooperativeTransitionHandler(m_pFrame);
     }
 
@@ -5244,7 +5242,7 @@ public:
         LIMITED_METHOD_CONTRACT;
         // FRAME_TOP and NULL must be distinct values.
         // static_assert_no_msg(FRAME_TOP_VALUE != NULL);
-        m_pFrame = nullptr;
+        m_pFrame = NULL;
     }
 };
 

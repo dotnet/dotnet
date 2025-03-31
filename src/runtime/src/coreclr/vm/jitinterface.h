@@ -562,7 +562,7 @@ public:
             freeArrayInternal(m_pNativeVarInfo);
     }
 
-    virtual void ResetForJitRetry()
+    void ResetForJitRetry()
     {
         CONTRACTL {
             NOTHROW;
@@ -766,7 +766,7 @@ public:
     void BackoutJitData(EECodeGenManager * jitMgr) override;
     void SetDebugInfo(PTR_BYTE pDebugInfo) override;
 
-    void ResetForJitRetry() override
+    void ResetForJitRetry()
     {
         CONTRACTL {
             NOTHROW;
@@ -1025,6 +1025,16 @@ public:
 
     void BackoutJitData(EECodeGenManager * jitMgr) override;
     void SetDebugInfo(PTR_BYTE pDebugInfo) override;
+
+    void ResetForJitRetry()
+    {
+        CONTRACTL {
+            NOTHROW;
+            GC_NOTRIGGER;
+        } CONTRACTL_END;
+
+        CEECodeGenInfo::ResetForJitRetry();
+    }
 };
 #endif // FEATURE_INTERPRETER
 

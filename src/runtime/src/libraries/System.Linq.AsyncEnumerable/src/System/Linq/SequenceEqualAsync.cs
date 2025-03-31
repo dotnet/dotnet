@@ -36,18 +36,31 @@ namespace System.Linq
                 IEqualityComparer<TSource> comparer,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e1 = first.GetAsyncEnumerator(cancellationToken);
-                await using IAsyncEnumerator<TSource> e2 = second.GetAsyncEnumerator(cancellationToken);
-
-                while (await e1.MoveNextAsync())
+                IAsyncEnumerator<TSource> e1 = first.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    if (!await e2.MoveNextAsync() || !comparer.Equals(e1.Current, e2.Current))
+                    IAsyncEnumerator<TSource> e2 = second.GetAsyncEnumerator(cancellationToken);
+                    try
                     {
-                        return false;
+                        while (await e1.MoveNextAsync().ConfigureAwait(false))
+                        {
+                            if (!await e2.MoveNextAsync().ConfigureAwait(false) || !comparer.Equals(e1.Current, e2.Current))
+                            {
+                                return false;
+                            }
+                        }
+
+                        return !await e2.MoveNextAsync().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        await e2.DisposeAsync().ConfigureAwait(false);
                     }
                 }
-
-                return !await e2.MoveNextAsync();
+                finally
+                {
+                    await e1.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
     }

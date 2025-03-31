@@ -27,7 +27,7 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> source,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                TSource[] array = await source.ToArrayAsync(cancellationToken);
+                TSource[] array = await source.ToArrayAsync(cancellationToken).ConfigureAwait(false);
                 for (int i = array.Length - 1; i >= 0; i--)
                 {
                     yield return array[i];

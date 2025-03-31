@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Formats.Asn1;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -111,19 +110,6 @@ namespace Internal.Cryptography
                 Oids.Md5 => 128 >> 3,
                 _ => throw new CryptographicException(SR.Format(SR.Cryptography_UnknownHashAlgorithm, hashOid)),
             };
-        }
-
-        internal static CryptographicException CreateAlgorithmUnknownException(AsnWriter encodedId)
-        {
-#if NET10_0_OR_GREATER
-            return encodedId.Encode(static encoded =>
-                new CryptographicException(
-                    SR.Format(SR.Cryptography_UnknownAlgorithmIdentifier, Convert.ToHexString(encoded))));
-#else
-            return new CryptographicException(
-                SR.Format(SR.Cryptography_UnknownAlgorithmIdentifier,
-                HexConverter.ToString(encodedId.Encode(), HexConverter.Casing.Upper)));
-#endif
         }
     }
 }

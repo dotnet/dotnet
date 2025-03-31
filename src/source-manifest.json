@@ -57,11 +57,11 @@
       "commitSha": "ce019869ea871a14acf56b55ef86bc62b70c38e4"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25176.1",
+      "packageVersion": "10.0.0-preview.3.25155.1",
       "barId": null,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "e7ebd8aa0424ba4dc6ac03419954c3287d891faa"
+      "commitSha": "7619d65bf2534a42257d1d8488552e59790475f6"
     },
     {
       "packageVersion": "9.0.300-beta.25176.3",
@@ -106,11 +106,11 @@
       "commitSha": "d98c60c0da655de406d3c45d0c82bfd82cc15a66"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25178.6",
+      "packageVersion": "10.0.0-preview.4.25174.9",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "65f01395f6af3131b9480e91671c8c96062bca11"
+      "commitSha": "659321ff5db13026f52aec70cf2a6692bd4be454"
     },
     {
       "packageVersion": "10.0.0-preview.25168.2",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4f874f0d7f6e0fb4e39dd8f8235aa87dbe4ce186"
+      "commitSha": "7a68c8da72390ce58f830fc4dcf5d792163205dc"
     },
     {
       "packageVersion": "10.0.617501",

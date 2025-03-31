@@ -34,7 +34,7 @@ namespace System.Linq
                 IAsyncEnumerable<object?> source,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (object? item in source.WithCancellation(cancellationToken))
+                await foreach (object? item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     if (item is TResult target)
                     {

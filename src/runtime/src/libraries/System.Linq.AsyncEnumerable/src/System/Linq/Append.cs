@@ -29,7 +29,7 @@ namespace System.Linq
                 TSource element,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (TSource item in source.WithCancellation(cancellationToken))
+                await foreach (TSource item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return item;
                 }

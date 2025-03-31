@@ -256,10 +256,10 @@ namespace System.Linq
 
             public override async IAsyncEnumerator<TElement> GetAsyncEnumerator(CancellationToken cancellationToken)
             {
-                TElement[] buffer = await _source.ToArrayAsync(cancellationToken);
+                TElement[] buffer = await _source.ToArrayAsync(cancellationToken).ConfigureAwait(false);
                 if (buffer.Length > 0)
                 {
-                    int[] map = await CreateSortedMapAsync(buffer, cancellationToken);
+                    int[] map = await CreateSortedMapAsync(buffer, cancellationToken).ConfigureAwait(false);
                     for (int i = 0; i < map.Length; i++)
                     {
                         yield return buffer[map[i]];
@@ -283,7 +283,7 @@ namespace System.Linq
 
             internal async ValueTask<int[]> SortAsync(TElement[] elements, int count, CancellationToken cancellationToken)
             {
-                await ComputeKeysAsync(elements, count, cancellationToken);
+                await ComputeKeysAsync(elements, count, cancellationToken).ConfigureAwait(false);
 
                 int[] map = new int[count];
                 for (int i = 0; i < map.Length; i++)
@@ -342,7 +342,7 @@ namespace System.Linq
                         var asyncSelector = (Func<TElement, CancellationToken, ValueTask<TKey>>)keySelector;
                         for (int i = 0; i < keys.Length; i++)
                         {
-                            keys[i] = await asyncSelector(elements[i], cancellationToken);
+                            keys[i] = await asyncSelector(elements[i], cancellationToken).ConfigureAwait(false);
                         }
                     }
                     _keys = keys;

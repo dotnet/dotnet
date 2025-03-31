@@ -35,29 +35,35 @@ namespace System.Linq
             static async IAsyncEnumerable<KeyValuePair<TKey, int>> Impl(
                 IAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? keyComparer, [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    Dictionary<TKey, int> countsBy = new(keyComparer);
-                    do
+                    if (await enumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource value = e.Current;
-                        TKey key = keySelector(value);
+                        Dictionary<TKey, int> countsBy = new(keyComparer);
+                        do
+                        {
+                            TSource value = enumerator.Current;
+                            TKey key = keySelector(value);
 
 #if NET
-                        ref int currentCount = ref CollectionsMarshal.GetValueRefOrAddDefault(countsBy, key, out _);
-                        checked { currentCount++; }
+                            ref int currentCount = ref CollectionsMarshal.GetValueRefOrAddDefault(countsBy, key, out _);
+                            checked { currentCount++; }
 #else
-                        countsBy[key] = countsBy.TryGetValue(key, out int currentCount) ? checked(currentCount + 1) : 1;
+                            countsBy[key] = countsBy.TryGetValue(key, out int currentCount) ? checked(currentCount + 1) : 1;
 #endif
-                    }
-                    while (await e.MoveNextAsync());
+                        }
+                        while (await enumerator.MoveNextAsync().ConfigureAwait(false));
 
-                    foreach (KeyValuePair<TKey, int> countBy in countsBy)
-                    {
-                        yield return countBy;
+                        foreach (KeyValuePair<TKey, int> countBy in countsBy)
+                        {
+                            yield return countBy;
+                        }
                     }
+                }
+                finally
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -86,29 +92,35 @@ namespace System.Linq
             static async IAsyncEnumerable<KeyValuePair<TKey, int>> Impl(
                 IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, IEqualityComparer<TKey>? keyComparer, [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    Dictionary<TKey, int> countsBy = new(keyComparer);
-                    do
+                    if (await enumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource value = e.Current;
-                        TKey key = await keySelector(value, cancellationToken);
+                        Dictionary<TKey, int> countsBy = new(keyComparer);
+                        do
+                        {
+                            TSource value = enumerator.Current;
+                            TKey key = await keySelector(value, cancellationToken).ConfigureAwait(false);
 
 #if NET
-                        ref int currentCount = ref CollectionsMarshal.GetValueRefOrAddDefault(countsBy, key, out _);
-                        checked { currentCount++; }
+                            ref int currentCount = ref CollectionsMarshal.GetValueRefOrAddDefault(countsBy, key, out _);
+                            checked { currentCount++; }
 #else
-                        countsBy[key] = countsBy.TryGetValue(key, out int currentCount) ? checked(currentCount + 1) : 1;
+                            countsBy[key] = countsBy.TryGetValue(key, out int currentCount) ? checked(currentCount + 1) : 1;
 #endif
-                    }
-                    while (await e.MoveNextAsync());
+                        }
+                        while (await enumerator.MoveNextAsync().ConfigureAwait(false));
 
-                    foreach (KeyValuePair<TKey, int> countBy in countsBy)
-                    {
-                        yield return countBy;
+                        foreach (KeyValuePair<TKey, int> countBy in countsBy)
+                        {
+                            yield return countBy;
+                        }
                     }
+                }
+                finally
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

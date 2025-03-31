@@ -1839,7 +1839,7 @@ extern "C" VOID JIT_PInvokeEndRarePath();
 
 void JIT_PInvokeEndRarePath()
 {
-    PreserveLastErrorHolder preserveLastError;
+    BEGIN_PRESERVE_LAST_ERROR;
 
     Thread *thread = GetThread();
 
@@ -1864,6 +1864,8 @@ void JIT_PInvokeEndRarePath()
     }
 
     thread->m_pFrame->Pop(thread);
+
+    END_PRESERVE_LAST_ERROR;
 }
 
 /*************************************************************/
@@ -1901,7 +1903,7 @@ void JIT_RareDisableHelper()
     // in the first phase.
     //      </TODO>
 
-    PreserveLastErrorHolder preserveLastError;
+    BEGIN_PRESERVE_LAST_ERROR;
 
     Thread *thread = GetThread();
     // We execute RareDisablePreemptiveGC manually before checking any abort conditions
@@ -1923,6 +1925,8 @@ void JIT_RareDisableHelper()
         END_QCALL;
         thread->DisablePreemptiveGC();
     }
+
+    END_PRESERVE_LAST_ERROR;
 }
 
 FCIMPL0(INT32, JIT_GetCurrentManagedThreadId)
@@ -2350,7 +2354,7 @@ static PCODE PatchpointRequiredPolicy(TransitionBlock* pTransitionBlock, int* co
 
 extern "C" void JIT_PatchpointWorkerWorkerWithPolicy(TransitionBlock * pTransitionBlock)
 {
-    // Manually preserve the last error as we may not return normally from this method.
+    // BEGIN_PRESERVE_LAST_ERROR;
     DWORD dwLastError = ::GetLastError();
 
     // This method may not return normally
@@ -2515,6 +2519,7 @@ extern "C" void JIT_PatchpointWorkerWorkerWithPolicy(TransitionBlock * pTransiti
 #endif
 
         // Restore last error (since call below does not return)
+        // END_PRESERVE_LAST_ERROR;
         ::SetLastError(dwLastError);
 
         // Transition!
@@ -2522,6 +2527,8 @@ extern "C" void JIT_PatchpointWorkerWorkerWithPolicy(TransitionBlock * pTransiti
     }
 
  DONE:
+
+    // END_PRESERVE_LAST_ERROR;
     ::SetLastError(dwLastError);
 }
 

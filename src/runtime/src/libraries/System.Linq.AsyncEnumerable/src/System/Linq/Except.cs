@@ -36,29 +36,35 @@ namespace System.Linq
                 IEqualityComparer<TSource>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
-
-                if (!await firstEnumerator.MoveNextAsync())
+                IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
-                }
-
-                HashSet<TSource> set = new(comparer);
-
-                await foreach (TSource element in second.WithCancellation(cancellationToken))
-                {
-                    set.Add(element);
-                }
-
-                do
-                {
-                    TSource firstElement = firstEnumerator.Current;
-                    if (set.Add(firstElement))
+                    if (!await firstEnumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return firstElement;
+                        yield break;
                     }
+
+                    HashSet<TSource> set = new(comparer);
+
+                    await foreach (TSource element in second.WithCancellation(cancellationToken).ConfigureAwait(false))
+                    {
+                        set.Add(element);
+                    }
+
+                    do
+                    {
+                        TSource firstElement = firstEnumerator.Current;
+                        if (set.Add(firstElement))
+                        {
+                            yield return firstElement;
+                        }
+                    }
+                    while (await firstEnumerator.MoveNextAsync().ConfigureAwait(false));
                 }
-                while (await firstEnumerator.MoveNextAsync());
+                finally
+                {
+                    await firstEnumerator.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
     }

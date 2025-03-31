@@ -31,7 +31,7 @@ namespace System.Linq
             {
                 yield return element;
 
-                await foreach (TSource item in source.WithCancellation(cancellationToken))
+                await foreach (TSource item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return item;
                 }

@@ -22,7 +22,7 @@ namespace System.Linq
         {
             ThrowHelper.ThrowIfNull(source);
 
-            return Impl(source.WithCancellation(cancellationToken));
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false));
 
             static async ValueTask<List<TSource>> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source)

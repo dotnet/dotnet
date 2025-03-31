@@ -5,6 +5,9 @@ parameters:
   # Optional: Include PublishBuildArtifacts task
   enablePublishBuildArtifacts: false
 
+  # Optional: Enable publishing using release pipelines
+  enablePublishUsingPipelines: false
+
   # Optional: Enable running the source-build jobs to build repo from source
   enableSourceBuild: false
 
@@ -109,6 +112,7 @@ jobs:
           - Source_Build_Complete
 
         runAsPublic: ${{ parameters.runAsPublic }}
+        publishUsingPipelines: ${{ parameters.enablePublishUsingPipelines }}
         publishAssetsImmediately: ${{ parameters.publishAssetsImmediately }}
         enablePublishBuildArtifacts: ${{ parameters.enablePublishBuildArtifacts }}
         artifactsPublishingAdditionalParameters: ${{ parameters.artifactsPublishingAdditionalParameters }}

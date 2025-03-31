@@ -4678,7 +4678,7 @@ void CodeGen::genRangeCheck(GenTree* oper)
 #endif // DEBUG
 
     GetEmitter()->emitInsBinary(cmpKind, emitTypeSize(bndsChkType), src1, src2);
-    genJumpToThrowHlpBlk(jmpKind, bndsChk->gtThrowKind);
+    genJumpToThrowHlpBlk(jmpKind, bndsChk->gtThrowKind, bndsChk->gtIndRngFailBB);
 }
 
 //---------------------------------------------------------------------
@@ -5414,7 +5414,7 @@ void CodeGen::genCodeForIndexAddr(GenTreeIndexAddr* node)
             GetEmitter()->emitIns_R_AR(INS_cmp, EA_4BYTE, indexReg, baseReg, static_cast<int>(node->gtLenOffset));
         }
 
-        genJumpToThrowHlpBlk(EJ_jae, SCK_RNGCHK_FAIL);
+        genJumpToThrowHlpBlk(EJ_jae, SCK_RNGCHK_FAIL, node->gtIndRngFailBB);
     }
 
 #ifdef TARGET_64BIT

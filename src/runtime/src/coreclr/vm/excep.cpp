@@ -4808,9 +4808,9 @@ DefaultCatchHandlerExceptionMessageWorker(Thread* pThread,
 
                 if (IsException(throwable->GetMethodTable()))
                 {
-                    if (!exceptionMessage.IsEmpty())
+                    if (!message.IsEmpty())
                     {
-                        reporter.AddDescription(exceptionMessage);
+                        reporter.AddDescription(message);
                     }
                     reporter.Report();
                 }
@@ -5874,10 +5874,9 @@ bool IsGcMarker(CONTEXT* pContext, EXCEPTION_RECORD *pExceptionRecord)
         {
             // GCStress processing can disturb last error, so preserve it.
             BOOL res;
-            {
-                PreserveLastErrorHolder preserveLastError;
-                res = OnGcCoverageInterrupt(pContext);
-            }
+            BEGIN_PRESERVE_LAST_ERROR;
+            res = OnGcCoverageInterrupt(pContext);
+            END_PRESERVE_LAST_ERROR;
             if (res)
             {
                 return true;
