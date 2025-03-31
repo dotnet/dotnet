@@ -13,6 +13,7 @@
     <!-- arcade -->
     <MicrosoftDotNetBuildTasksArchivesVersion>10.0.0-beta.25178.2</MicrosoftDotNetBuildTasksArchivesVersion>
     <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.25178.2</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.25178.2</MicrosoftDotNetBuildTasksTemplatingVersion>
     <!-- corefx -->
     <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
     <!-- The SQL team had deprecated System.Data.SqlClient package and replaced it with Microsoft.Data.SqlClient.

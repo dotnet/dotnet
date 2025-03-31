@@ -164,6 +164,10 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>7d1967403f5b12406763c666f41e3358bb542ced</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="10.0.0-beta.25178.2">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>7d1967403f5b12406763c666f41e3358bb542ced</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.Build.Tasks.Archives" Version="10.0.0-beta.25178.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>7d1967403f5b12406763c666f41e3358bb542ced</Sha>
