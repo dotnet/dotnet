@@ -14,6 +14,8 @@ variables:
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - name: TeamName
   value: dotnet-core-acquisition
+- name: 1esWindowsImage
+  value: 1es-windows-2022
 - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
   - name: SignType
     value: test
@@ -32,8 +34,19 @@ extends:
   parameters:
     pool:
       name: $(DncEngInternalBuildPool)
-      image: 1es-windows-2022
+      image: $(1esWindowsImage)
       os: windows
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: $(1esWindowsImage)
+        os: windows
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+      binskim:
+        enabled: true
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
