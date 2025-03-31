@@ -8,11 +8,10 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.Razor.LanguageClient.DynamicFiles;
+namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 
 public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {

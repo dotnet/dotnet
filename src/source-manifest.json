@@ -85,11 +85,11 @@
       "commitSha": "8f6362aea4972acab1454de411cfe835619e4e41"
     },
     {
-      "packageVersion": "9.0.0-preview.25180.2",
+      "packageVersion": "9.0.0-preview.25181.5",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "e5def2a1df7caabd21d69bc0aa840ad023c79990"
+      "commitSha": "616caa5a5b34ccdff2ab31219940d2d4cc0c59ad"
     },
     {
       "packageVersion": "4.14.0-3.25179.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a892e1804f299742d4e578fa16d331db26717bf0"
+      "commitSha": "1f893e826c341ecc10d9726c84474d2d69395ca5"
     },
     {
       "packageVersion": "10.0.616001",

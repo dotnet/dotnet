@@ -8,17 +8,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
-
+using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
@@ -102,6 +101,86 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
         // Assert
         Assert.True(calledOutOfProcess);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetTagHelpersAsync_WithSuccessOutOfProc_SkipsInProc()
+    {
+        // Arrange
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(s_hostProject_For_2_0);
+        });
+
+        var projectSnapshot = _projectManager.GetRequiredProject(s_hostProject_For_2_0.Key);
+
+        var calledOutOfProcess = false;
+        var calledInProcess = false;
+
+        var resolver = new TestResolver(_remoteServiceInvoker, LoggerFactory, NoOpTelemetryReporter.Instance)
+        {
+            OnResolveOutOfProcess = (p) =>
+            {
+                calledOutOfProcess = true;
+
+                Assert.Same(projectSnapshot, p);
+                return new([]);
+            },
+            OnResolveInProcess = (p) =>
+            {
+                calledInProcess = true;
+
+                Assert.Same(projectSnapshot, p);
+                return new([]);
+            },
+        };
+
+        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, DisposalToken);
+
+        // Assert
+        Assert.True(calledOutOfProcess);
+        Assert.False(calledInProcess);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetTagHelpersAsync_WithFailOutOfProc_RunsInProc()
+    {
+        // Arrange
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(s_hostProject_For_2_0);
+        });
+
+        var projectSnapshot = _projectManager.GetRequiredProject(s_hostProject_For_2_0.Key);
+
+        var calledOutOfProcess = false;
+        var calledInProcess = false;
+
+        var resolver = new TestResolver(_remoteServiceInvoker, LoggerFactory, NoOpTelemetryReporter.Instance)
+        {
+            OnResolveOutOfProcess = (p) =>
+            {
+                calledOutOfProcess = true;
+
+                Assert.Same(projectSnapshot, p);
+                throw new ApplicationException("Test exception");
+            },
+            OnResolveInProcess = (p) =>
+            {
+                calledInProcess = true;
+
+                Assert.Same(projectSnapshot, p);
+                return new([]);
+            },
+        };
+
+        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, DisposalToken);
+
+        // Assert
+        Assert.True(calledOutOfProcess);
+        Assert.True(calledInProcess);
         Assert.Empty(result);
     }
 

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using System;
 using System.Buffers;
 using System.Diagnostics;
@@ -9,8 +8,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.AspNetCore.Razor.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 internal static class StreamExtensions
 {
@@ -24,7 +25,7 @@ internal static class StreamExtensions
 
         var usedBytes = encoding.GetBytes(text, byteArray);
 
-        WriteSize(stream, usedBytes);
+        stream.WriteSize(usedBytes);
         return stream.WriteAsync(byteArray, 0, usedBytes, cancellationToken);
     }
 
@@ -33,7 +34,7 @@ internal static class StreamExtensions
         Debug.Assert(stream.CanRead);
         encoding ??= Encoding.UTF8;
 
-        var length = ReadSize(stream);
+        var length = stream.ReadSize();
 
         using var _ = ArrayPool<byte>.Shared.GetPooledArray(length, out var encodedBytes);
 
@@ -41,30 +42,30 @@ internal static class StreamExtensions
         return encoding.GetString(encodedBytes, 0, length);
     }
 
-    public static ProjectInfoAction ReadProjectInfoAction(this Stream stream)
+    public static RazorProjectInfoAction ReadProjectInfoAction(this Stream stream)
     {
         var action = stream.ReadByte();
         return action switch
         {
-            0 => ProjectInfoAction.Update,
-            1 => ProjectInfoAction.Remove,
+            0 => RazorProjectInfoAction.Update,
+            1 => RazorProjectInfoAction.Remove,
             _ => throw Assumes.NotReachable()
         };
     }
 
-    public static void WriteProjectInfoAction(this Stream stream, ProjectInfoAction projectInfoAction)
+    public static void WriteProjectInfoAction(this Stream stream, RazorProjectInfoAction projectInfoAction)
     {
         stream.WriteByte(projectInfoAction switch
         {
-            ProjectInfoAction.Update => 0,
-            ProjectInfoAction.Remove => 1,
+            RazorProjectInfoAction.Update => 0,
+            RazorProjectInfoAction.Remove => 1,
             _ => throw Assumes.NotReachable()
         });
     }
 
     public static Task WriteProjectInfoRemovalAsync(this Stream stream, string intermediateOutputPath, CancellationToken cancellationToken)
     {
-        WriteProjectInfoAction(stream, ProjectInfoAction.Remove);
+        stream.WriteProjectInfoAction(RazorProjectInfoAction.Remove);
         return stream.WriteStringAsync(intermediateOutputPath, encoding: null, cancellationToken);
     }
 
@@ -76,13 +77,13 @@ internal static class StreamExtensions
     public static async Task WriteProjectInfoAsync(this Stream stream, RazorProjectInfo projectInfo, CancellationToken cancellationToken)
     {
         var bytes = projectInfo.Serialize();
-        WriteSize(stream, bytes.Length);
+        stream.WriteSize(bytes.Length);
         await stream.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
     }
 
     public static async Task<RazorProjectInfo?> ReadProjectInfoAsync(this Stream stream, CancellationToken cancellationToken)
     {
-        var sizeToRead = ReadSize(stream);
+        var sizeToRead = stream.ReadSize();
 
         using var _ = ArrayPool<byte>.Shared.GetPooledArray(sizeToRead, out var projectInfoBytes);
         await stream.ReadExactlyAsync(projectInfoBytes, 0, sizeToRead, cancellationToken).ConfigureAwait(false);

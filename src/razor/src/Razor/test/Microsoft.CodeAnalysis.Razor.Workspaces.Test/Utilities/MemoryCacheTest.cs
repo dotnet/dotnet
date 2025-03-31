@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,19 +8,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.Test;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
-public class MemoryCacheTest : ToolingTestBase
+public class MemoryCacheTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public MemoryCacheTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task ConcurrentSets_DoesNotThrow()
     {
@@ -110,7 +103,7 @@ public class MemoryCacheTest : ToolingTestBase
     {
         var cache = new TestMemoryCache();
 
-        Assert.Throws<ArgumentNullException>(() => cache.TryGetValue(key: null, out var result));
+        Assert.Throws<ArgumentNullException>(() => cache.TryGetValue(key: null!, out var result));
     }
 
     private static string GetKey()

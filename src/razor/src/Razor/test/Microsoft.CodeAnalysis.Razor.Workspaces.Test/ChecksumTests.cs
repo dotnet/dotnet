@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost.Test;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 
 public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

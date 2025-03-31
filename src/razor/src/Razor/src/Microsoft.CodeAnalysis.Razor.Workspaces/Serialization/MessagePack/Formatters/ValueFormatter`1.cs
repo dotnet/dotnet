@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using MessagePack;
 using MessagePack.Formatters;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 /// <summary>
 ///  A message package formatter that cannot be serialized at the top-level. It expects a

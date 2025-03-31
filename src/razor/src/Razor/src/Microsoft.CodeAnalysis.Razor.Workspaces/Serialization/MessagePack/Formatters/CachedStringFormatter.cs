@@ -3,7 +3,7 @@
 
 using MessagePack;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal sealed class CachedStringFormatter : ValueFormatter<string?>
 {

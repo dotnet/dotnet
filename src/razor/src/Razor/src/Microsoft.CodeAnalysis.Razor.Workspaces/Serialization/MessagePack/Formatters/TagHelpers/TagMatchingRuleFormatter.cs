@@ -3,9 +3,10 @@
 
 using System.Collections.Immutable;
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class TagMatchingRuleFormatter : ValueFormatter<TagMatchingRuleDescriptor>
 {

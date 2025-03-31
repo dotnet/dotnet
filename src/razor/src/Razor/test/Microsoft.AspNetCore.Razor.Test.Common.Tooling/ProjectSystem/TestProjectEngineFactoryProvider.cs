@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 

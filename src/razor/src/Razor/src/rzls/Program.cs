@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Logging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Composition;
 

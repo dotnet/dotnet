@@ -4,7 +4,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.TextDifferencing;
+namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
 internal partial class SourceTextDiffer
 {

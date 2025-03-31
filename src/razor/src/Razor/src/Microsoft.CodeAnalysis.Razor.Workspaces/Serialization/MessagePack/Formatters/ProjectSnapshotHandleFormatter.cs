@@ -4,9 +4,8 @@
 using MessagePack;
 using MessagePack.Formatters;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal sealed class ProjectSnapshotHandleFormatter : TopLevelFormatter<ProjectSnapshotHandle>
 {

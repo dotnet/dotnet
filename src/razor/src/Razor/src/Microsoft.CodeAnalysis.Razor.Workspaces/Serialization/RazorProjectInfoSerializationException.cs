@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.AspNetCore.Razor.Serialization;
+namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal class RazorProjectInfoSerializationException(string? message) : Exception(message)
 {

@@ -4,8 +4,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.VisualStudioCode.RazorExtension;
@@ -287,7 +287,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
             return;
         }
 
-        stream.WriteProjectInfoAction(ProjectInfoAction.Update);
+        stream.WriteProjectInfoAction(RazorProjectInfoAction.Update);
         await stream.WriteProjectInfoAsync(result.ProjectInfo, cancellationToken).ConfigureAwait(false);
     }
 

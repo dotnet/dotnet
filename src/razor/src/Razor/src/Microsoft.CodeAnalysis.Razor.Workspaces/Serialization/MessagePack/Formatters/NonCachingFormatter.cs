@@ -5,7 +5,7 @@ using System;
 using MessagePack;
 using MessagePack.Formatters;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal abstract partial class NonCachingFormatter<T> : IMessagePackFormatter<T>
 {

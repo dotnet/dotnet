@@ -5,7 +5,7 @@ using System;
 using MessagePack;
 using MessagePack.Formatters;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 /// <summary>
 ///  A message pack formatter that can be serialized at the top-level.
