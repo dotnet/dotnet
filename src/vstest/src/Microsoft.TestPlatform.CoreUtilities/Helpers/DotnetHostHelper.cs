@@ -409,10 +409,9 @@ public class DotnetHostHelper : IDotnetHostHelper
             using var headerReader = _fileHelper.GetStream(path, FileMode.Open, FileAccess.Read);
             var magicBytes = new byte[4];
             var cpuInfoBytes = new byte[4];
-#pragma warning disable CA2022 // Avoid inexact read with 'Stream.Read'
-            headerReader.Read(magicBytes, 0, magicBytes.Length);
-            headerReader.Read(cpuInfoBytes, 0, cpuInfoBytes.Length);
-#pragma warning restore CA2022 // Avoid inexact read with 'Stream.Read'
+
+            ReadExactly(headerReader, magicBytes, 0, magicBytes.Length);
+            ReadExactly(headerReader, cpuInfoBytes, 0, cpuInfoBytes.Length);
 
             var magic = BitConverter.ToUInt32(magicBytes, 0);
             var cpuInfo = BitConverter.ToUInt32(cpuInfoBytes, 0);
@@ -434,6 +433,27 @@ public class DotnetHostHelper : IDotnetHostHelper
 
         return null;
     }
+
+#if NET
+    private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+    {
+        stream.ReadExactly(buffer, offset, count);
+    }
+#else
+    private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+    {
+        while (count > 0)
+        {
+            int read = stream.Read(buffer, offset, count);
+            if (read <= 0)
+            {
+                throw new EndOfStreamException();
+            }
+            offset += read;
+            count -= read;
+        }
+    }
+#endif
 
     internal enum MacOsCpuType : uint
     {

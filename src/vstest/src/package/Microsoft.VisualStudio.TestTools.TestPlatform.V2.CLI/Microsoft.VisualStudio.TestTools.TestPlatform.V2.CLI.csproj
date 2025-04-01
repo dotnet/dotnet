@@ -224,8 +224,13 @@
 
     <!-- Microsoft.TestPlatform -->
     <ItemGroup>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Reflection.Metadata.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Collections.Immutable.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)System.Memory.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)System.Text.Json.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Runtime.CompilerServices.Unsafe.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Numerics.Vectors.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Buffers.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
