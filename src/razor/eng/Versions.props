@@ -13,7 +13,7 @@
   </PropertyGroup>
   <!-- Versioning for assemblies/packages -->
   <PropertyGroup>
-    <MajorVersion>9</MajorVersion>
+    <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
@@ -30,8 +30,8 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.14.3</VsixVersionPrefix>
-    <AddinMajorVersion>17.14</AddinMajorVersion>
+    <VsixVersionPrefix>17.15.1</VsixVersionPrefix>
+    <AddinMajorVersion>17.15</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' == ''">$(AddinVersion).42424242.42</AddinVersion>

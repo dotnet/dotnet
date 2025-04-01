@@ -50,7 +50,7 @@
     <DotNetPrivateAssetRootUrl Condition="'$(DotNetPrivateAssetRootUrl)'==''">https://dotnetclimsrc.blob.core.windows.net/dotnet/</DotNetPrivateAssetRootUrl>
   </PropertyGroup>
   <PropertyGroup Label="Production dependencies">
-    <MicrosoftWebXdtPackageVersion>10.0.0-preview.25181.1</MicrosoftWebXdtPackageVersion>
+    <MicrosoftWebXdtPackageVersion>10.0.0-preview.25201.1</MicrosoftWebXdtPackageVersion>
     <MicrosoftCssParserVersion>1.0.0-20230414.1</MicrosoftCssParserVersion>
     <MicrosoftApplicationInsightsPackageVersion>2.22.0</MicrosoftApplicationInsightsPackageVersion>
     <NETStandardLibraryNETFrameworkVersion>2.0.1-servicing-26011-01</NETStandardLibraryNETFrameworkVersion>
@@ -84,7 +84,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependency from https://github.com/dotnet/arcade-services -->
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25175.1</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25201.1</MicrosoftDotNetDarcLibVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependency from https://github.com/dotnet/aspire -->
@@ -252,9 +252,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/razor -->
-    <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>9.0.0-preview.25181.5</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
-    <MicrosoftCodeAnalysisRazorToolingInternalVersion>9.0.0-preview.25181.5</MicrosoftCodeAnalysisRazorToolingInternalVersion>
-    <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>9.0.0-preview.25181.5</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
+    <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>10.0.0-preview.25201.2</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
+    <MicrosoftCodeAnalysisRazorToolingInternalVersion>10.0.0-preview.25201.2</MicrosoftCodeAnalysisRazorToolingInternalVersion>
+    <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>10.0.0-preview.25201.2</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/wpf -->

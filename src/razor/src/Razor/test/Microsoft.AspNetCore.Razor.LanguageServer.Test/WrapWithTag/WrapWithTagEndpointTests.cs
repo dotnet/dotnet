@@ -147,6 +147,114 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
     }
 
     [Fact]
+    public async Task Handle_HtmlInCSharp()
+    {
+        // Arrange
+        var input = new TestCode("""
+            @if (true)
+            {
+                [|<p></p>|]
+            }
+            """);
+        var codeDocument = CreateCodeDocument(input.Text);
+        var uri = new Uri("file://path/test.razor");
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var response = new WrapWithTagResponse();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, response: new(), verifiable: true);
+        });
+
+        var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
+
+        var range = codeDocument.Source.Text.GetRange(input.Span);
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        {
+            Range = range
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(wrapWithDivParams, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Mock.Get(clientConnection).Verify();
+    }
+
+    [Fact]
+    public async Task Handle_HtmlInCSharp_WithWhitespace()
+    {
+        // Arrange
+        var input = new TestCode("""
+            @if (true)
+            {
+               [| <p></p>|]
+            }
+            """);
+        var codeDocument = CreateCodeDocument(input.Text);
+        var uri = new Uri("file://path/test.razor");
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var response = new WrapWithTagResponse();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, response: new(), verifiable: true);
+        });
+
+        var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
+
+        var range = codeDocument.Source.Text.GetRange(input.Span);
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        {
+            Range = range
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(wrapWithDivParams, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Mock.Get(clientConnection).Verify();
+    }
+
+    [Fact]
+    public async Task Handle_HtmlInCSharp_WithNewline()
+    {
+        // Arrange
+        var input = new TestCode("""
+            @if (true)
+            {[|
+                <p></p>|]
+            }
+            """);
+        var codeDocument = CreateCodeDocument(input.Text);
+        var uri = new Uri("file://path/test.razor");
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var response = new WrapWithTagResponse();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder => { });
+
+        var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
+
+        var range = codeDocument.Source.Text.GetRange(input.Span);
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        {
+            Range = range
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(wrapWithDivParams, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Null(result);
+        Mock.Get(clientConnection).Verify();
+    }
+
+    [Fact]
     public async Task Handle_CSharp_PartOfImplicitStatement_ReturnsNull()
     {
         // Arrange
