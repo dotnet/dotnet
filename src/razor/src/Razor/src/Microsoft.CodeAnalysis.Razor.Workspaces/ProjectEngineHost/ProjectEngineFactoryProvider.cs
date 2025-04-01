@@ -4,7 +4,7 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.ProjectSystem;
+namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
 internal class ProjectEngineFactoryProvider(ImmutableArray<IProjectEngineFactory> factories) : IProjectEngineFactoryProvider
 {

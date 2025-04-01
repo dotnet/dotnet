@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 internal static class Extensions
 {

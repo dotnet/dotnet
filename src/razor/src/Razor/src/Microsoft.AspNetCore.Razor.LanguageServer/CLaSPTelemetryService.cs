@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;

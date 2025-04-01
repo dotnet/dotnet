@@ -4,7 +4,7 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.Serialization;
+namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal sealed record FetchTagHelpersResult(ImmutableArray<TagHelperDescriptor> TagHelpers)
 {

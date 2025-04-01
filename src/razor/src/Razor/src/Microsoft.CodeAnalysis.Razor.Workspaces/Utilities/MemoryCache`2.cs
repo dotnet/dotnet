@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Microsoft.AspNetCore.Razor.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 // We've created our own MemoryCache here, ideally we would use the one in Microsoft.Extensions.Caching.Memory,
 // but until we update O# that causes an Assembly load problem.

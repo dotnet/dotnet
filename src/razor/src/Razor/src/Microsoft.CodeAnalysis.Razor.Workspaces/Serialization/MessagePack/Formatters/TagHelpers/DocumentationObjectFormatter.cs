@@ -5,10 +5,11 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class DocumentationObjectFormatter : ValueFormatter<DocumentationObject>
 {

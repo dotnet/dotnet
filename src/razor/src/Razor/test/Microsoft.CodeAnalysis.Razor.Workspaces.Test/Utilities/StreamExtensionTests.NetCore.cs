@@ -9,14 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost.Test;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 public class StreamExtensionTests(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
@@ -111,7 +110,7 @@ public class StreamExtensionTests(ITestOutputHelper testOutputHelper) : ToolingT
 
     [Theory]
     [CombinatorialData]
-    internal void ProjectInfoActionFunctions(ProjectInfoAction infoAction)
+    internal void ProjectInfoActionFunctions(RazorProjectInfoAction infoAction)
     {
         using var stream = new MemoryStream();
         stream.WriteProjectInfoAction(infoAction);

@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.Extensions.Internal;
 
-namespace Microsoft.AspNetCore.Razor.ProjectSystem;
+namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed record class RazorProjectInfo
 {

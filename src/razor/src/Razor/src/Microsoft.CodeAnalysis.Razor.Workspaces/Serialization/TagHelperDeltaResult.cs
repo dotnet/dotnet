@@ -6,12 +6,13 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.Extensions.Internal;
+using Microsoft.AspNetCore.Razor;
 
 #if DEBUG
 using System.Diagnostics;
 #endif
 
-namespace Microsoft.AspNetCore.Razor.Serialization;
+namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal sealed record TagHelperDeltaResult(
     bool IsDelta,

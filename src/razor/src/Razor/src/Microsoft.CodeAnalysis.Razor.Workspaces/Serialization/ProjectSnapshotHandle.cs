@@ -3,9 +3,8 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
 
-namespace Microsoft.AspNetCore.Razor.Serialization;
+namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal record ProjectSnapshotHandle
 {

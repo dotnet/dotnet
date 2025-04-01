@@ -9,8 +9,8 @@ using System.IO.Pipelines;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -236,7 +236,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         listener.NotifyDynamicFile(project.Id);
 
         var action = readerStream.ReadProjectInfoAction();
-        Assert.Equal(ProjectInfoAction.Update, action);
+        Assert.Equal(RazorProjectInfoAction.Update, action);
 
         var deserializedProjectInfo = await readerStream.ReadProjectInfoAsync(DisposalToken);
         Assert.NotNull(deserializedProjectInfo);
@@ -251,7 +251,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.True(workspace.TryApplyChanges(newSolution));
 
         action = readerStream.ReadProjectInfoAction();
-        Assert.Equal(ProjectInfoAction.Remove, action);
+        Assert.Equal(RazorProjectInfoAction.Remove, action);
 
         Assert.Equal(intermediateDirectory, await readerStream.ReadProjectInfoRemovalAsync(DisposalToken));
     }

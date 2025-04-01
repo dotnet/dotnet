@@ -2,16 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Test;
 
-public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
+public class RazorProjectInfoFactoryTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
     [Fact]
     public void GeneratedDocument()

@@ -3,10 +3,11 @@
 
 using System.Collections.Immutable;
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class RequiredAttributeFormatter : ValueFormatter<RequiredAttributeDescriptor>
 {

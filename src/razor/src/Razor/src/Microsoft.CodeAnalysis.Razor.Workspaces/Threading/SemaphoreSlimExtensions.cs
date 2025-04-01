@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Utilities;
 
-namespace Microsoft.AspNetCore.Razor.Threading;
+namespace Microsoft.CodeAnalysis.Razor.Threading;
 
 internal static class SemaphoreSlimExtensions
 {

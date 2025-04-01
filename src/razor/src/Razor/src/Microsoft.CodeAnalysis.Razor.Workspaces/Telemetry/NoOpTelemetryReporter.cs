@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Microsoft.AspNetCore.Razor.Telemetry;
+namespace Microsoft.CodeAnalysis.Razor.Telemetry;
 
-internal class NoOpTelemetryReporter : ITelemetryReporter
+internal sealed class NoOpTelemetryReporter : ITelemetryReporter
 {
     public static readonly NoOpTelemetryReporter Instance = new();
 

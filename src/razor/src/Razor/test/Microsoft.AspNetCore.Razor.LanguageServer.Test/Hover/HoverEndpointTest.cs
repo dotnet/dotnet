@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -34,8 +33,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
     {
         // Arrange
         var languageServerFeatureOptions = StrictMock.Of<LanguageServerFeatureOptions>(options =>
-            options.SingleServerSupport == true &&
-            options.UseRazorCohostServer == false);
+            options.SingleServerSupport == true);
 
         var delegatedHover = new LspHover();
 
@@ -195,8 +193,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
             options.SupportsFileManipulation == true &&
             options.SingleServerSupport == true &&
             options.CSharpVirtualDocumentSuffix == ".g.cs" &&
-            options.HtmlVirtualDocumentSuffix == ".g.html" &&
-            options.UseRazorCohostServer == false);
+            options.HtmlVirtualDocumentSuffix == ".g.html");
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
         var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
@@ -315,21 +312,14 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         return endpoint;
     }
 
-    private class HoverLanguageServer : IClientConnection
+    private class HoverLanguageServer(
+        CSharpTestLspServer csharpServer,
+        Uri csharpDocumentUri,
+        CancellationToken cancellationToken) : IClientConnection
     {
-        private readonly CSharpTestLspServer _csharpServer;
-        private readonly Uri _csharpDocumentUri;
-        private readonly CancellationToken _cancellationToken;
-
-        public HoverLanguageServer(
-            CSharpTestLspServer csharpServer,
-            Uri csharpDocumentUri,
-            CancellationToken cancellationToken)
-        {
-            _csharpServer = csharpServer;
-            _csharpDocumentUri = csharpDocumentUri;
-            _cancellationToken = cancellationToken;
-        }
+        private readonly CSharpTestLspServer _csharpServer = csharpServer;
+        private readonly Uri _csharpDocumentUri = csharpDocumentUri;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
 
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {

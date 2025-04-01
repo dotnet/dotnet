@@ -6,11 +6,12 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost.Test;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

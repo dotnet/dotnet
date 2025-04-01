@@ -3,9 +3,10 @@
 
 using System.Globalization;
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal sealed class RazorDiagnosticFormatter : ValueFormatter<RazorDiagnostic>
 {
