@@ -80,6 +80,15 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
+        /// True if this file was marked as IGNORE-STRONG-NAME. This result can be used with IsStrongNameSigned
+        /// </summary>
+        public bool IsIgnoreStrongName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// True if the file was excluded from verification, false otherwise.
         /// </summary>
         public bool IsExcluded

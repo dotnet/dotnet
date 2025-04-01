@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.IO;
 using Microsoft.SignCheck.Interop.PortableExecutable;
 using Microsoft.SignCheck.Logging;
 using Microsoft.DotNet.StrongName;
@@ -40,9 +42,15 @@ namespace Microsoft.SignCheck.Verification
             if (VerifyStrongNameSignature)
             {
                 VerifyStrongName(svr);
+
+                svr.IsIgnoreStrongName = Exclusions.IsIgnoreStrongName(Path.GetFileName(svr.VirtualPath), parent, svr.VirtualPath, null);
+                if (svr.IsIgnoreStrongName)
+                {
+                    svr.AddDetail(DetailKeys.StrongName, $"Ignoring strong-name result because file is IGNORE-STRONG-NAME.");
+                }
             }
 
-            svr.IsSigned = svr.IsAuthentiCodeSigned & ((svr.IsStrongNameSigned) || (!VerifyStrongNameSignature) || svr.IsNativeImage);
+            svr.IsSigned = svr.IsAuthentiCodeSigned & (svr.IsStrongNameSigned || !VerifyStrongNameSignature || svr.IsNativeImage || svr.IsIgnoreStrongName);
             svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, svr.IsSigned);
 
             return svr;

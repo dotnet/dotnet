@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25178.2",
+      "packageVersion": "10.0.0-beta.25181.7",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7d1967403f5b12406763c666f41e3358bb542ced"
+      "commitSha": "25ac07fc888f6608dd4c26dd1adacb49b4868e42"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -71,11 +71,11 @@
       "commitSha": "e165bbea9e27ceb4c8b91c22bd0c564ff1dc8b25"
     },
     {
-      "packageVersion": "17.15.0-preview-25178-16",
+      "packageVersion": "17.15.0-preview-25181-20",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "42e4cc71aebaf6cf01461b4b1d07aea4ed747dad"
+      "commitSha": "06d1cb4401fa6a7e948e582c708987cb91238414"
     },
     {
       "packageVersion": "6.14.0-preview.1.97",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9482f3b42aca18edb8217a7bc5cdeea62ee8c554"
+      "commitSha": "0fe098ba945384096fd5f47278070de1dda2f8d6"
     },
     {
       "packageVersion": "10.0.618101",
@@ -134,18 +134,18 @@
       "commitSha": "e862af6a41a678bcec164c751c2a3f7a648776cd"
     },
     {
-      "packageVersion": "10.0.617601",
+      "packageVersion": "10.0.618101",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1556b6c639edcaee959013681afcf2e66b118537"
+      "commitSha": "f216638d3d6324b6ec140f826b92a7f853dbdfb7"
     },
     {
-      "packageVersion": "10.0.0-beta.25176.1",
+      "packageVersion": "10.0.0-beta.25181.2",
       "barId": null,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "0fceecba03c89b34ca7d9fb1a36b7415a2325f7d"
+      "commitSha": "ac7ae1e61b102c3978ef69890c48494fddbc2b2a"
     },
     {
       "packageVersion": "2.2.0-beta.25177.1",
@@ -169,11 +169,11 @@
       "commitSha": "c9a26cb2dd73ecfd1be3cf8f90fb43172646fcb3"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25181.2",
+      "packageVersion": "10.0.0-preview.4.25181.3",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "4788eed8178ec43e4360ef4424310ec934922833"
+      "commitSha": "dcc8ad5b01b840ea254e0717453234a5beccbad0"
     },
     {
       "packageVersion": "10.0.0-preview.4.25179.1",
@@ -183,11 +183,11 @@
       "commitSha": "a3ece863faf99059663a526b3af04c1eb638d123"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25181.1",
+      "packageVersion": "10.0.0-preview.4.25181.3",
       "barId": null,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "4aff730d0aed8d28668f591ca85dd6289b5f23f1"
+      "commitSha": "5f736908d28c09c43f167583f93c13dbc6521f61"
     },
     {
       "packageVersion": "10.0.0-preview.25067.1",
