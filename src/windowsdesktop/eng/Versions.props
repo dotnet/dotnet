@@ -70,6 +70,6 @@
     <MicrosoftPrivateWinformsVersion>10.0.0-preview.4.25179.1</MicrosoftPrivateWinformsVersion>
     <SystemDrawingCommonVersion>10.0.0-preview.4.25179.1</SystemDrawingCommonVersion>
     <!-- WPF -->
-    <MicrosoftDotNetWpfGitHubVersion>10.0.0-preview.4.25181.3</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>10.0.0-preview.4.25201.2</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
