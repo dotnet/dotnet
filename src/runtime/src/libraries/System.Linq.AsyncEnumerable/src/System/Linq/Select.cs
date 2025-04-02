@@ -37,7 +37,7 @@ namespace System.Linq
                 Func<TSource, TResult> selector,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return selector(element);
                 }
@@ -71,9 +71,9 @@ namespace System.Linq
                 Func<TSource, CancellationToken, ValueTask<TResult>> selector,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    yield return await selector(element, cancellationToken);
+                    yield return await selector(element, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace System.Linq
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
                 int index = -1;
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return selector(element, checked(++index));
                 }
@@ -147,9 +147,9 @@ namespace System.Linq
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
                 int index = -1;
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    yield return await selector(element, checked(++index), cancellationToken);
+                    yield return await selector(element, checked(++index), cancellationToken).ConfigureAwait(false);
                 }
             }
         }

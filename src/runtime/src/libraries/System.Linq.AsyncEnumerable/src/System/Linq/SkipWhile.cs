@@ -40,21 +40,27 @@ namespace System.Linq
                 Func<TSource, bool> predicate,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (!predicate(element))
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return element;
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (!predicate(element))
                         {
-                            yield return e.Current;
-                        }
+                            yield return element;
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                yield return e.Current;
+                            }
 
-                        yield break;
+                            yield break;
+                        }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -89,21 +95,27 @@ namespace System.Linq
                 Func<TSource, CancellationToken, ValueTask<bool>> predicate,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (!await predicate(element, cancellationToken))
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return element;
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (!await predicate(element, cancellationToken).ConfigureAwait(false))
                         {
-                            yield return e.Current;
-                        }
+                            yield return element;
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                yield return e.Current;
+                            }
 
-                        yield break;
+                            yield break;
+                        }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -142,22 +154,28 @@ namespace System.Linq
                 Func<TSource, int, bool> predicate,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                int index = -1;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (!predicate(element, checked(++index)))
+                    int index = -1;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return element;
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (!predicate(element, checked(++index)))
                         {
-                            yield return e.Current;
-                        }
+                            yield return element;
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                yield return e.Current;
+                            }
 
-                        yield break;
+                            yield break;
+                        }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -196,22 +214,28 @@ namespace System.Linq
                 Func<TSource, int, CancellationToken, ValueTask<bool>> predicate,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                int index = -1;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (!await predicate(element, checked(++index), cancellationToken))
+                    int index = -1;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return element;
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (!await predicate(element, checked(++index), cancellationToken).ConfigureAwait(false))
                         {
-                            yield return e.Current;
-                        }
+                            yield return element;
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
+                            {
+                                yield return e.Current;
+                            }
 
-                        yield break;
+                            yield break;
+                        }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

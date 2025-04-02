@@ -6,9 +6,9 @@
       <Sha>839cdfb0ecca5e0be3dbccd926e7651ef50fdf10</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.617002">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.617601">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>cf30e8fd726730aa4b142275fb2fc0503528b7dd</Sha>
+      <Sha>1556b6c639edcaee959013681afcf2e66b118537</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.14.0-3.25176.5">

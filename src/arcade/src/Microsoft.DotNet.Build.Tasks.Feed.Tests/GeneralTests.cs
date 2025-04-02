@@ -8,11 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.DotNet.Arcade.Test.Common;
+using Microsoft.Arcade.Test.Common;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
+using Microsoft.DotNet.Build.Manifest.Tests;
 using Xunit;
-using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests

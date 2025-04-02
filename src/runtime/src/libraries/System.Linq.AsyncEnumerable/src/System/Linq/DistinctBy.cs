@@ -42,20 +42,26 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    HashSet<TKey> set = new(comparer);
-                    do
+                    if (await enumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource element = e.Current;
-                        if (set.Add(keySelector(element)))
+                        HashSet<TKey> set = new(comparer);
+                        do
                         {
-                            yield return element;
+                            TSource element = enumerator.Current;
+                            if (set.Add(keySelector(element)))
+                            {
+                                yield return element;
+                            }
                         }
+                        while (await enumerator.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
+                }
+                finally
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -92,20 +98,26 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    HashSet<TKey> set = new(comparer);
-                    do
+                    if (await enumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource element = e.Current;
-                        if (set.Add(await keySelector(element, cancellationToken)))
+                        HashSet<TKey> set = new(comparer);
+                        do
                         {
-                            yield return element;
+                            TSource element = enumerator.Current;
+                            if (set.Add(await keySelector(element, cancellationToken).ConfigureAwait(false)))
+                            {
+                                yield return element;
+                            }
                         }
+                        while (await enumerator.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
+                }
+                finally
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

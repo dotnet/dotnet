@@ -44,29 +44,35 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
-
-                if (!await firstEnumerator.MoveNextAsync())
+                IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
-                }
-
-                HashSet<TKey> set = new(comparer);
-
-                await foreach (TKey key in second.WithCancellation(cancellationToken))
-                {
-                    set.Add(key);
-                }
-
-                do
-                {
-                    TSource firstElement = firstEnumerator.Current;
-                    if (set.Add(keySelector(firstElement)))
+                    if (!await firstEnumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return firstElement;
+                        yield break;
                     }
+
+                    HashSet<TKey> set = new(comparer);
+
+                    await foreach (TKey key in second.WithCancellation(cancellationToken).ConfigureAwait(false))
+                    {
+                        set.Add(key);
+                    }
+
+                    do
+                    {
+                        TSource firstElement = firstEnumerator.Current;
+                        if (set.Add(keySelector(firstElement)))
+                        {
+                            yield return firstElement;
+                        }
+                    }
+                    while (await firstEnumerator.MoveNextAsync().ConfigureAwait(false));
                 }
-                while (await firstEnumerator.MoveNextAsync());
+                finally
+                {
+                    await firstEnumerator.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -104,29 +110,35 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
-
-                if (!await firstEnumerator.MoveNextAsync())
+                IAsyncEnumerator<TSource> firstEnumerator = first.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
-                }
-
-                HashSet<TKey> set = new(comparer);
-
-                await foreach (TKey key in second.WithCancellation(cancellationToken))
-                {
-                    set.Add(key);
-                }
-
-                do
-                {
-                    TSource firstElement = firstEnumerator.Current;
-                    if (set.Add(await keySelector(firstElement, cancellationToken)))
+                    if (!await firstEnumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        yield return firstElement;
+                        yield break;
                     }
+
+                    HashSet<TKey> set = new(comparer);
+
+                    await foreach (TKey key in second.WithCancellation(cancellationToken).ConfigureAwait(false))
+                    {
+                        set.Add(key);
+                    }
+
+                    do
+                    {
+                        TSource firstElement = firstEnumerator.Current;
+                        if (set.Add(await keySelector(firstElement, cancellationToken).ConfigureAwait(false)))
+                        {
+                            yield return firstElement;
+                        }
+                    }
+                    while (await firstEnumerator.MoveNextAsync().ConfigureAwait(false));
                 }
-                while (await firstEnumerator.MoveNextAsync());
+                finally
+                {
+                    await firstEnumerator.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
     }

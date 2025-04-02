@@ -29,15 +29,21 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> source,
                 CancellationToken cancellationToken = default)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                int count = 0;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    checked { count++; }
-                }
+                    int count = 0;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        checked { count++; }
+                    }
 
-                return count;
+                    return count;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -57,7 +63,7 @@ namespace System.Linq
             ThrowHelper.ThrowIfNull(source);
             ThrowHelper.ThrowIfNull(predicate);
 
-            return Impl(source.WithCancellation(cancellationToken), predicate);
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false), predicate);
 
             static async ValueTask<int> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source,
@@ -100,9 +106,9 @@ namespace System.Linq
                 CancellationToken cancellationToken = default)
             {
                 int count = 0;
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    if (await predicate(element, cancellationToken))
+                    if (await predicate(element, cancellationToken).ConfigureAwait(false))
                     {
                         checked { count++; }
                     }
@@ -130,15 +136,21 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> source,
                 CancellationToken cancellationToken = default)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                long count = 0;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    count++;
-                }
+                    long count = 0;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        count++;
+                    }
 
-                return count;
+                    return count;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -157,7 +169,7 @@ namespace System.Linq
             ThrowHelper.ThrowIfNull(source);
             ThrowHelper.ThrowIfNull(predicate);
 
-            return Impl(source.WithCancellation(cancellationToken), predicate);
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false), predicate);
 
             static async ValueTask<long> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source,
@@ -199,9 +211,9 @@ namespace System.Linq
                 CancellationToken cancellationToken = default)
             {
                 long count = 0;
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    if (await predicate(element, cancellationToken))
+                    if (await predicate(element, cancellationToken).ConfigureAwait(false))
                     {
                         count++;
                     }

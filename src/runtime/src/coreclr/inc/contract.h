@@ -1160,6 +1160,7 @@ typedef __SafeToUsePostCondition __PostConditionOK;
     Contract::RanPostconditions ___ran(__FUNCTION__);                   \
     Contract::Operation ___op = Contract::Setup;                        \
     BOOL ___contract_enabled = FALSE;                                   \
+    DEBUG_ASSURE_NO_RETURN_BEGIN(CONTRACT)                              \
     ___contract_enabled = Contract::EnforceContract();                  \
     enum {___disabled = 0};                                             \
     if (!___contract_enabled)                                           \
@@ -1180,8 +1181,10 @@ typedef __SafeToUsePostCondition __PostConditionOK;
             }                                                           \
             else                                                        \
             {                                                           \
+                DEBUG_OK_TO_RETURN_BEGIN(CONTRACT)                      \
               ___run_return:                                            \
                 return _returnexp;                                      \
+                DEBUG_OK_TO_RETURN_END(CONTRACT)                        \
             }                                                           \
         }                                                               \
         if (0)                                                          \
@@ -1223,6 +1226,7 @@ typedef __SafeToUsePostCondition __PostConditionOK;
         Contract::Returner<_returntype> ___returner(RETVAL);                \
         Contract::RanPostconditions ___ran(__FUNCTION__);                   \
         Contract::Operation ___op = Contract::Setup;                        \
+        DEBUG_ASSURE_NO_RETURN_BEGIN(CONTRACT)                              \
         BOOL ___contract_enabled = Contract::EnforceContract();             \
         enum {___disabled = 0};                                             \
         {                                                                   \
@@ -1240,8 +1244,10 @@ typedef __SafeToUsePostCondition __PostConditionOK;
                 }                                                           \
                 else                                                        \
                 {                                                           \
+                    DEBUG_OK_TO_RETURN_BEGIN(CONTRACT)                      \
                   ___run_return:                                            \
                     return _returnexp;                                      \
+                    DEBUG_OK_TO_RETURN_END(CONTRACT)                        \
                 }                                                           \
             }                                                               \
             if (0)                                                          \
@@ -1454,7 +1460,8 @@ typedef __SafeToUsePostCondition __PostConditionOK;
 
 #endif // __FORCE_NORUNTIME_CONTRACTS__
 
-#define CONTRACT_END   CONTRACTL_END
+#define CONTRACT_END   CONTRACTL_END                                                        \
+   DEBUG_ASSURE_NO_RETURN_END(CONTRACT)                                                     \
 
 
 // The final expression in the RETURN macro deserves special explanation (or something.)
@@ -1672,6 +1679,7 @@ public:
     {                                                                       \
         ContractViolationHolder<violationmask> __violationHolder_onlyOneAllowedPerScope;   \
         __violationHolder_onlyOneAllowedPerScope.Enter();                   \
+        DEBUG_ASSURE_NO_RETURN_BEGIN(CONTRACT)                              \
 
 // Use this to jump out prematurely from a violation.  Used for EH
 // when the function might not return
@@ -1679,6 +1687,7 @@ public:
         __violationHolder_onlyOneAllowedPerScope.Leave();                   \
 
 #define END_CONTRACT_VIOLATION                                              \
+        DEBUG_ASSURE_NO_RETURN_END(CONTRACT)                                \
         __violationHolder_onlyOneAllowedPerScope.Leave();                   \
     }                                                                       \
 

@@ -38,8 +38,8 @@ public class TagHelperBinderTest
         Assert.Equal("th:div", bindingResult.TagName);
         Assert.Equal("body", bindingResult.ParentTagName);
         Assert.Equal<KeyValuePair<string, string>>(expectedAttributes, bindingResult.Attributes);
-        Assert.Equal("th:", bindingResult.TagHelperPrefix);
-        Assert.Equal<TagMatchingRuleDescriptor>(divTagHelper.TagMatchingRules, bindingResult.Mappings[divTagHelper]);
+        Assert.Equal("th:", bindingResult.TagNamePrefix);
+        Assert.Equal<TagMatchingRuleDescriptor>(divTagHelper.TagMatchingRules, bindingResult.GetBoundRules(divTagHelper));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class TagHelperBinderTest
                 Assert.Equal<TagHelperDescriptor>(expectedDescriptors, bindingResult.Descriptors);
 
                 Assert.Equal(tagName, bindingResult.TagName);
-                var mapping = Assert.Single(bindingResult.Mappings[multiTagHelper]);
+                var mapping = Assert.Single(bindingResult.GetBoundRules(multiTagHelper));
                 Assert.Equal(expectedBindingResult, mapping);
             }
         }
@@ -136,7 +136,7 @@ public class TagHelperBinderTest
 
                 for (int i = 0; i < expectedDescriptors.Length; i++)
                 {
-                    var mapping = Assert.Single(bindingResult.Mappings[expectedDescriptors[i]]);
+                    var mapping = Assert.Single(bindingResult.GetBoundRules(expectedDescriptors[i]));
                     Assert.Equal(expectedBindingResults[i], mapping);
                 }
             }
@@ -598,7 +598,7 @@ public class TagHelperBinderTest
         // Assert
         var boundDescriptor = Assert.Single(binding.Descriptors);
         Assert.Same(multiRuleDescriptor, boundDescriptor);
-        var boundRules = binding.Mappings[boundDescriptor];
+        var boundRules = binding.GetBoundRules(boundDescriptor);
         var boundRule = Assert.Single(boundRules);
         Assert.Equal("div", boundRule.TagName);
     }
@@ -626,7 +626,7 @@ public class TagHelperBinderTest
         // Assert
         var boundDescriptor = Assert.Single(bindingResult.Descriptors);
         Assert.Same(divDescriptor, boundDescriptor);
-        var boundRules = bindingResult.Mappings[boundDescriptor];
+        var boundRules = bindingResult.GetBoundRules(boundDescriptor);
         var boundRule = Assert.Single(boundRules);
         Assert.Equal("div", boundRule.TagName);
         Assert.Equal("p", boundRule.ParentTag);

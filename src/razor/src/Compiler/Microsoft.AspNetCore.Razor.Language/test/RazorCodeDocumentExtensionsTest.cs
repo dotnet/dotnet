@@ -137,34 +137,19 @@ public class RazorCodeDocumentExtensionsTest
     }
 
     [Fact]
-    public void GetTagHelperContext_ReturnsTagHelperContext()
+    public void GetAndSetTagHelperContext_ReturnsTagHelperContext()
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
         var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
-        codeDocument.Items[typeof(TagHelperDocumentContext)] = expected;
+        codeDocument.SetTagHelperContext(expected);
 
         // Act
         var actual = codeDocument.GetTagHelperContext();
 
         // Assert
         Assert.Same(expected, actual);
-    }
-
-    [Fact]
-    public void SetTagHelperContext_SetsTagHelperContext()
-    {
-        // Arrange
-        var codeDocument = TestRazorCodeDocument.CreateEmpty();
-
-        var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
-
-        // Act
-        codeDocument.SetTagHelperContext(expected);
-
-        // Assert
-        Assert.Same(expected, codeDocument.Items[typeof(TagHelperDocumentContext)]);
     }
 
     [Fact]

@@ -28,7 +28,7 @@ namespace System.Linq
         {
             ThrowHelper.ThrowIfNull(source);
 
-            return Impl(source.WithCancellation(cancellationToken), comparer);
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false), comparer);
 
             static async ValueTask<Dictionary<TKey, TValue>> Impl(
                 ConfiguredCancelableAsyncEnumerable<KeyValuePair<TKey, TValue>> source,
@@ -82,7 +82,7 @@ namespace System.Linq
             ThrowHelper.ThrowIfNull(source);
             ThrowHelper.ThrowIfNull(keySelector);
 
-            return Impl(source.WithCancellation(cancellationToken), keySelector, comparer);
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false), keySelector, comparer);
 
             static async ValueTask<Dictionary<TKey, TSource>> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source,
@@ -130,9 +130,9 @@ namespace System.Linq
                 CancellationToken cancellationToken)
             {
                 Dictionary<TKey, TSource> d = new(comparer);
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    d.Add(await keySelector(element, cancellationToken), element);
+                    d.Add(await keySelector(element, cancellationToken).ConfigureAwait(false), element);
                 }
                 return d;
             }
@@ -166,7 +166,7 @@ namespace System.Linq
             ThrowHelper.ThrowIfNull(keySelector);
             ThrowHelper.ThrowIfNull(elementSelector);
 
-            return Impl(source.WithCancellation(cancellationToken), keySelector, elementSelector, comparer);
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false), keySelector, elementSelector, comparer);
 
             static async ValueTask<Dictionary<TKey, TElement>> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source,
@@ -222,11 +222,11 @@ namespace System.Linq
                 CancellationToken cancellationToken)
             {
                 Dictionary<TKey, TElement> d = new(comparer);
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     d.Add(
-                        await keySelector(element, cancellationToken),
-                        await elementSelector(element, cancellationToken));
+                        await keySelector(element, cancellationToken).ConfigureAwait(false),
+                        await elementSelector(element, cancellationToken).ConfigureAwait(false));
                 }
 
                 return d;

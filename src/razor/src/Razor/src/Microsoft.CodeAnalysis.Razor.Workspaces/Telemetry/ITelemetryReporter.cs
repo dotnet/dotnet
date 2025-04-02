@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.AspNetCore.Razor.Telemetry;
+namespace Microsoft.CodeAnalysis.Razor.Telemetry;
 
 internal interface ITelemetryReporter
 {

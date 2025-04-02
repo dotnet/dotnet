@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.ProjectSystem;
+namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
 internal interface IProjectEngineFactoryProvider
 {

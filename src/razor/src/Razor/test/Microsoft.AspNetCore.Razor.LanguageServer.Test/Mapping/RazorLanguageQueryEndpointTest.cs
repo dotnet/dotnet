@@ -107,37 +107,6 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         Assert.Equal(1, response.Position.Character);
     }
 
-    // This is more of an integration test to validate that all the pieces work together
-    [Fact]
-    public async Task Handle_Unsupported_ResolvesLanguageRequest_Html()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocumentWithCSharpProjection(
-            razorSource: "@",
-            projectedCSharpSource: "/* CSharp */",
-            sourceMappings: [new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 12))]);
-        codeDocument.SetUnsupported();
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var languageEndpoint = new RazorLanguageQueryEndpoint(_documentMappingService, LoggerFactory);
-        var request = new RazorLanguageQueryParams()
-        {
-            Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(0, 1),
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.NotNull(response);
-        Assert.Equal(RazorLanguageKind.Html, response.Kind);
-        Assert.Equal(0, response.Position.Line);
-        Assert.Equal(1, response.Position.Character);
-    }
-
     [Fact]
     public async Task Handle_AfterLastLineCharacterZero()
     {
@@ -147,7 +116,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
             razorSource: "@",
             projectedCSharpSource: "/* CSharp */",
             sourceMappings: [new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 12))]);
-        codeDocument.SetUnsupported();
+
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var languageEndpoint = new RazorLanguageQueryEndpoint(_documentMappingService, LoggerFactory);
         var request = new RazorLanguageQueryParams()
@@ -163,9 +132,9 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(RazorLanguageKind.Html, response.Kind);
-        Assert.Equal(1, response.Position.Line);
-        Assert.Equal(0, response.Position.Character);
+        Assert.Equal(RazorLanguageKind.CSharp, response.Kind);
+        Assert.Equal(0, response.Position.Line);
+        Assert.Equal(1, response.Position.Character);
     }
 
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)

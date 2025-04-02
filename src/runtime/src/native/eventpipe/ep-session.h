@@ -67,8 +67,6 @@ struct _EventPipeSession_Internal {
 	bool enable_stackwalk;
 	// Indicate that session is fully running (streaming thread started).
 	volatile uint32_t started;
-	// Reference count for the session. This is used to track the number of references to the session.
-	volatile uint32_t ref_count;
 };
 
 #if !defined(EP_INLINE_GETTER_SETTER) && !defined(EP_IMPL_SESSION_GETTER_SETTER)
@@ -103,10 +101,7 @@ ep_session_alloc (
 	void *callback_additional_data);
 
 void
-ep_session_inc_ref (EventPipeSession *session);
-
-void
-ep_session_dec_ref (EventPipeSession *session);
+ep_session_free (EventPipeSession *session);
 
 // _Requires_lock_held (ep)
 EventPipeSessionProvider *

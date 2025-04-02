@@ -44,7 +44,12 @@ namespace
             // if we haven't found a matching token, it must be a static field with layout -- ignore it
             if (pfwalk->m_MD != fd) continue;
 
-            if (fExplicitOffsets)
+            if (!fExplicitOffsets)
+            {
+                // ulOffset is the sequence
+                pfwalk->m_sequence = ulOffset;
+            }
+            else
             {
                 // ulOffset is the explicit offset
                 pfwalk->m_placement.m_offset = ulOffset;

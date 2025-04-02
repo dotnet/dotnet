@@ -32,7 +32,7 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> source,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                TSource[] array = await source.ToArrayAsync(cancellationToken);
+                TSource[] array = await source.ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
 #if NET
                 Random.Shared.Shuffle(array);

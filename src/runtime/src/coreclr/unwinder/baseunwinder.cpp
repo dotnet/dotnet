@@ -60,12 +60,10 @@ HRESULT OOPStackUnwinder::GetFunctionEntry(                       DWORD64 addres
                                            _Out_writes_(cbBuffer) PVOID   pBuffer,
                                                                   DWORD   cbBuffer)
 {
-#ifndef FEATURE_CDAC_UNWINDER
     if (cbBuffer < sizeof(T_RUNTIME_FUNCTION))
     {
         return E_INVALIDARG;
     }
-#endif // FEATURE_CDAC_UNWINDER
 
     PVOID pFuncEntry = NULL;
 #ifndef FEATURE_CDAC_UNWINDER

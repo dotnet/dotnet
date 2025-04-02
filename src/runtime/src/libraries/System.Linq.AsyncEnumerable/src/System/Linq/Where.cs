@@ -68,7 +68,7 @@ namespace System.Linq
             {
                 await foreach (TSource element in source.WithCancellation(cancellationToken))
                 {
-                    if (await predicate(element, cancellationToken))
+                    if (await predicate(element, cancellationToken).ConfigureAwait(false))
                     {
                         yield return element;
                     }
@@ -148,7 +148,7 @@ namespace System.Linq
                 int index = -1;
                 await foreach (TSource element in source.WithCancellation(cancellationToken))
                 {
-                    if (await predicate(element, checked(++index), cancellationToken))
+                    if (await predicate(element, checked(++index), cancellationToken).ConfigureAwait(false))
                     {
                         yield return element;
                     }

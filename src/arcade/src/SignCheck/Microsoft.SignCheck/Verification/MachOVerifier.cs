@@ -59,12 +59,22 @@ namespace Microsoft.SignCheck.Verification
         /// <returns></returns>
         private bool IsSigned(SignatureVerificationResult svr)
         {
-            (int exitCode, string output, string error) = Utils.RunBashCommand($"codesign --verify --verbose {svr.FullPath}");
-            string verifyOutput = output + error;
+            // Check if the file is signed properly using codesign
+            (int signExitCode, string signOutput, string signError) = Utils.RunBashCommand($"codesign --verify --verbose {svr.FullPath}");
+            string signedOutput = signOutput + signError;
 
             Regex validityRegex = new Regex(@"valid on disk");
             Regex requirementRegex = new Regex(@"satisfies its Designated Requirement");
-            if (exitCode != 0 || !validityRegex.IsMatch(verifyOutput) || !requirementRegex.IsMatch(verifyOutput))
+            if (signExitCode != 0 || !validityRegex.IsMatch(signedOutput) || !requirementRegex.IsMatch(signedOutput))
+            {
+                return false;
+            }
+
+            // Check that one of the authorities is Microsoft
+            (int authExitCode, string authOutput, string authError) = Utils.RunBashCommand($"codesign -dvvv {svr.FullPath}");
+            string authorityOutput = authOutput + authError;
+            Regex authorityRegex = new Regex(@"Authority=Developer ID Application: Microsoft Corporation");
+            if (authExitCode != 0 || !authorityRegex.IsMatch(authorityOutput))
             {
                 return false;
             }

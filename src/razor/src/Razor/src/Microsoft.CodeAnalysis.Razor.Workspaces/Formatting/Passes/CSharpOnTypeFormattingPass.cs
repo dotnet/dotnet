@@ -193,11 +193,6 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
-        if (codeDocument.IsUnsupported())
-        {
-            return [];
-        }
-
         var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextChanges);
 
         return changes.ToImmutableArray();

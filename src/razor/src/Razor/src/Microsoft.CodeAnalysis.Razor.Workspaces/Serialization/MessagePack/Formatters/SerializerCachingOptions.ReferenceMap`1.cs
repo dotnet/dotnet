@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal partial class SerializerCachingOptions
 {

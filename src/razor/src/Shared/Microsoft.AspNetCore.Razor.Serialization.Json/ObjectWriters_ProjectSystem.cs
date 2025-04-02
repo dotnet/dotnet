@@ -2,7 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 #if JSONSERIALIZATION_PROJECTSYSTEM
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 

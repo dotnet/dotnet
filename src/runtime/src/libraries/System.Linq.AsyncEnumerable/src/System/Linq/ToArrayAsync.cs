@@ -22,26 +22,32 @@ namespace System.Linq
         {
             ThrowHelper.ThrowIfNull(source);
 
-            return Impl(source.WithCancellation(cancellationToken));
+            return Impl(source.WithCancellation(cancellationToken).ConfigureAwait(false));
 
             static async ValueTask<TSource[]> Impl(
                 ConfiguredCancelableAsyncEnumerable<TSource> source)
             {
-                await using ConfiguredCancelableAsyncEnumerable<TSource>.Enumerator e = source.GetAsyncEnumerator();
-
-                if (await e.MoveNextAsync())
+                ConfiguredCancelableAsyncEnumerable<TSource>.Enumerator e = source.GetAsyncEnumerator();
+                try
                 {
-                    List<TSource> list = [];
-                    do
+                    if (await e.MoveNextAsync())
                     {
-                        list.Add(e.Current);
+                        List<TSource> list = [];
+                        do
+                        {
+                            list.Add(e.Current);
+                        }
+                        while (await e.MoveNextAsync());
+
+                        return list.ToArray();
                     }
-                    while (await e.MoveNextAsync());
 
-                    return list.ToArray();
+                    return [];
                 }
-
-                return [];
+                finally
+                {
+                    await e.DisposeAsync();
+                }
             }
         }
     }

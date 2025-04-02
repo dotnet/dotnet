@@ -48,4 +48,24 @@
 
   <Target Name="ReturnProductVersion" Returns="$(Version)" />
 
+  <Target Name="CreatePackageOverrides">
+    <PropertyGroup>
+      <PackageOverridesInputPath>$(MSBuildThisFileDirectory)PackageOverrides.txt</PackageOverridesInputPath>
+      <PackageOverridesOutputPath>$(BaseOutputPath)PackageOverrides.txt</PackageOverridesOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <CreatePackageOverridesTemplateProperty Include="ProductVersion=$(Version)" />
+    </ItemGroup>
+
+    <GenerateFileFromTemplate
+      TemplateFile="$(PackageOverridesInputPath)"
+      Properties="@(CreatePackageOverridesTemplateProperty)"
+      OutputPath="$(PackageOverridesOutputPath)" />
+
+    <ItemGroup>
+      <PackageOverridesFile Include="$(PackageOverridesOutputPath)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

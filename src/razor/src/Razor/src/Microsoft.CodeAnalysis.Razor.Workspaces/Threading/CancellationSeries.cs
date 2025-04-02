@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 
-namespace Microsoft.AspNetCore.Razor.Threading;
+namespace Microsoft.CodeAnalysis.Razor.Threading;
 
 // NOTE: This code is copied from dotnet/roslyn:
 // https://github.com/dotnet/roslyn/blob/98cd097bf122677378692ebe952b71ab6e5bb013/src/Workspaces/Core/Portable/Utilities/CancellationSeries.cs

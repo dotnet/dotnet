@@ -62,29 +62,6 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     }
 
     [Fact]
-    public async Task Handle_Unsupported()
-    {
-        // Arrange
-        var documentPath = new Uri("c:/Test.razor");
-        var contents = "@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetUnsupported();
-
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var resolver = new AddUsingsCodeActionResolver();
-        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
-        {
-            Namespace = "System",
-        });
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
     public async Task Handle_AddOneUsingToEmpty()
     {
         // Arrange

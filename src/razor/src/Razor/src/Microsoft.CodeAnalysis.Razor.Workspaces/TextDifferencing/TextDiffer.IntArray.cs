@@ -5,7 +5,7 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace Microsoft.AspNetCore.Razor.TextDifferencing;
+namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
 internal abstract partial class TextDiffer
 {

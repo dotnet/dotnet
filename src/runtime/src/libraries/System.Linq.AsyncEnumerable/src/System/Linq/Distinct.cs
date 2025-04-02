@@ -30,20 +30,26 @@ namespace System.Linq
                 IEqualityComparer<TSource>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    HashSet<TSource> set = new(comparer);
-                    do
+                    if (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource element = e.Current;
-                        if (set.Add(element))
+                        HashSet<TSource> set = new(comparer);
+                        do
                         {
-                            yield return element;
+                            TSource element = e.Current;
+                            if (set.Add(element))
+                            {
+                                yield return element;
+                            }
                         }
+                        while (await e.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

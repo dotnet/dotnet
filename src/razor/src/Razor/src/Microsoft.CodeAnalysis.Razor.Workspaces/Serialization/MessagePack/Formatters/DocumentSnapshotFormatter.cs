@@ -2,8 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal sealed class DocumentSnapshotHandleFormatter : ValueFormatter<DocumentSnapshotHandle>
 {

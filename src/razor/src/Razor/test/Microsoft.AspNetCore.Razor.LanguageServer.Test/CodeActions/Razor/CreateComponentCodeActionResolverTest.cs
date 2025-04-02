@@ -21,29 +21,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
-    public async Task Handle_Unsupported()
-    {
-        // Arrange
-        var documentPath = new Uri("c:/Test.razor");
-        var contents = $"@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetUnsupported();
-
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var resolver = new CreateComponentCodeActionResolver(TestLanguageServerFeatureOptions.Instance);
-        var data = JsonSerializer.SerializeToElement(new CreateComponentCodeActionParams()
-        {
-            Path = "c:/Another.razor",
-        });
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
     public async Task Handle_InvalidFileKind()
     {
         // Arrange

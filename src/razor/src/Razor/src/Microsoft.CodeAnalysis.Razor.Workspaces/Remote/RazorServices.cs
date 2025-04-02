@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 

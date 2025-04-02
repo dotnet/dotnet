@@ -54,32 +54,38 @@ namespace System.Linq
                 IEqualityComparer<TKey>? keyComparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (!await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
-                }
+                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        yield break;
+                    }
 
-                Dictionary<TKey, TAccumulate> dict = new(keyComparer);
+                    Dictionary<TKey, TAccumulate> dict = new(keyComparer);
 
-                do
-                {
-                    TSource value = e.Current;
-                    TKey key = keySelector(value);
+                    do
+                    {
+                        TSource value = enumerator.Current;
+                        TKey key = keySelector(value);
 
 #if NET
-                    ref TAccumulate? acc = ref CollectionsMarshal.GetValueRefOrAddDefault(dict, key, out bool exists);
-                    acc = func(exists ? acc! : seed, value);
+                        ref TAccumulate? acc = ref CollectionsMarshal.GetValueRefOrAddDefault(dict, key, out bool exists);
+                        acc = func(exists ? acc! : seed, value);
 #else
-                    dict[key] = func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seed, value);
+                        dict[key] = func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seed, value);
 #endif
-                }
-                while (await e.MoveNextAsync());
+                    }
+                    while (await enumerator.MoveNextAsync().ConfigureAwait(false));
 
-                foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                    foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                    {
+                        yield return countBy;
+                    }
+                }
+                finally
                 {
-                    yield return countBy;
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -125,27 +131,33 @@ namespace System.Linq
                 IEqualityComparer<TKey>? keyComparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (!await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
+                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        yield break;
+                    }
+
+                    Dictionary<TKey, TAccumulate> dict = new(keyComparer);
+
+                    do
+                    {
+                        TSource value = enumerator.Current;
+                        TKey key = await keySelector(value, cancellationToken).ConfigureAwait(false);
+
+                        dict[key] = await func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seed, value, cancellationToken).ConfigureAwait(false);
+                    }
+                    while (await enumerator.MoveNextAsync().ConfigureAwait(false));
+
+                    foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                    {
+                        yield return countBy;
+                    }
                 }
-
-                Dictionary<TKey, TAccumulate> dict = new(keyComparer);
-
-                do
+                finally
                 {
-                    TSource value = e.Current;
-                    TKey key = await keySelector(value, cancellationToken);
-
-                    dict[key] = await func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seed, value, cancellationToken);
-                }
-                while (await e.MoveNextAsync());
-
-                foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
-                {
-                    yield return countBy;
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -192,32 +204,38 @@ namespace System.Linq
                 IEqualityComparer<TKey>? keyComparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (!await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    yield break;
-                }
+                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        yield break;
+                    }
 
-                Dictionary<TKey, TAccumulate> dict = new(keyComparer);
+                    Dictionary<TKey, TAccumulate> dict = new(keyComparer);
 
-                do
-                {
-                    TSource value = e.Current;
-                    TKey key = keySelector(value);
+                    do
+                    {
+                        TSource value = enumerator.Current;
+                        TKey key = keySelector(value);
 
 #if NET
-                    ref TAccumulate? acc = ref CollectionsMarshal.GetValueRefOrAddDefault(dict, key, out bool exists);
-                    acc = func(exists ? acc! : seedSelector(key), value);
+                        ref TAccumulate? acc = ref CollectionsMarshal.GetValueRefOrAddDefault(dict, key, out bool exists);
+                        acc = func(exists ? acc! : seedSelector(key), value);
 #else
-                    dict[key] = func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seedSelector(key), value);
+                        dict[key] = func(dict.TryGetValue(key, out TAccumulate? acc) ? acc : seedSelector(key), value);
 #endif
-                }
-                while (await e.MoveNextAsync());
+                    }
+                    while (await enumerator.MoveNextAsync().ConfigureAwait(false));
 
-                foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                    foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                    {
+                        yield return countBy;
+                    }
+                }
+                finally
                 {
-                    yield return countBy;
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -264,28 +282,34 @@ namespace System.Linq
                 IEqualityComparer<TKey>? keyComparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> enumerator = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    Dictionary<TKey, TAccumulate> dict = new(keyComparer);
-
-                    do
+                    if (await enumerator.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource value = e.Current;
-                        TKey key = await keySelector(value, cancellationToken);
+                        Dictionary<TKey, TAccumulate> dict = new(keyComparer);
 
-                        dict[key] = await func(
-                            dict.TryGetValue(key, out TAccumulate? acc) ? acc : await seedSelector(key, cancellationToken),
-                            value,
-                            cancellationToken);
-                    }
-                    while (await e.MoveNextAsync());
+                        do
+                        {
+                            TSource value = enumerator.Current;
+                            TKey key = await keySelector(value, cancellationToken).ConfigureAwait(false);
 
-                    foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
-                    {
-                        yield return countBy;
+                            dict[key] = await func(
+                                dict.TryGetValue(key, out TAccumulate? acc) ? acc : await seedSelector(key, cancellationToken).ConfigureAwait(false),
+                                value,
+                                cancellationToken).ConfigureAwait(false);
+                        }
+                        while (await enumerator.MoveNextAsync().ConfigureAwait(false));
+
+                        foreach (KeyValuePair<TKey, TAccumulate> countBy in dict)
+                        {
+                            yield return countBy;
+                        }
                     }
+                }
+                finally
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

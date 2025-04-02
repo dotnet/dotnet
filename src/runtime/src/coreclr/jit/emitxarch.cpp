@@ -141,38 +141,6 @@ bool emitter::IsPermuteVar2xInstruction(instruction ins)
     }
 }
 
-//------------------------------------------------------------------------
-// IsKMOVInstruction: Is this an Avx512 KMOV instruction?
-//
-// Arguments:
-//    ins - The instruction to check.
-//
-// Returns:
-//    `true` if it is a KMOV instruction.
-//
-bool emitter::IsKMOVInstruction(instruction ins)
-{
-    switch (ins)
-    {
-        case INS_kmovb_gpr:
-        case INS_kmovw_gpr:
-        case INS_kmovd_gpr:
-        case INS_kmovq_gpr:
-        case INS_kmovb_msk:
-        case INS_kmovw_msk:
-        case INS_kmovd_msk:
-        case INS_kmovq_msk:
-        {
-            return true;
-        }
-
-        default:
-        {
-            return false;
-        }
-    }
-}
-
 regNumber emitter::getBmiRegNumber(instruction ins)
 {
     switch (ins)
@@ -397,14 +365,8 @@ bool emitter::IsApxExtendedEvexInstruction(instruction ins) const
         return false;
     }
 
-    if (HasApxNdd(ins) || HasApxNf(ins))
+    if (HasApxNdd(ins) || HasApxNf(ins) || (ins == INS_crc32_apx))
     {
-        return true;
-    }
-
-    if (ins == INS_crc32_apx)
-    {
-        // With the new opcode, CRC32 is promoted to EVEX with APX.
         return true;
     }
 
@@ -1755,7 +1717,8 @@ bool emitter::TakesEvexPrefix(const instrDesc* id) const
         // Requires the EVEX encoding due to used registers
         // A special case here is KMOV, the original KMOV introduced in Avx512 can only be encoded in VEX, APX promoted
         // them to EVEX, so only return true when APX is available.
-        if (IsKMOVInstruction(ins))
+        if ((ins == INS_kmovb_msk) || (ins == INS_kmovw_msk) || (ins == INS_kmovd_msk) || (ins == INS_kmovq_msk) ||
+            (ins == INS_kmovb_gpr) || (ins == INS_kmovw_gpr) || (ins == INS_kmovd_gpr) || (ins == INS_kmovq_gpr))
         {
             // Use EVEX only when needed.
             return HasExtendedGPReg(id);
@@ -1794,13 +1757,6 @@ bool emitter::TakesEvexPrefix(const instrDesc* id) const
             return false;
         }
 
-        if (IsKMOVInstruction(ins))
-        {
-            // KMOV should not be encoded in EVEX when stressing EVEX, as they are supposed to encded in EVEX only
-            // when APX is available, only stressing EVEX is not enough making the encoding valid.
-            return false;
-        }
-
         // Requires the EVEX encoding due to STRESS mode and no change in semantics
         //
         // Some instructions, like VCMPEQW return the value in a SIMD register for
@@ -1813,17 +1769,7 @@ bool emitter::TakesEvexPrefix(const instrDesc* id) const
     if (IsApxExtendedEvexInstruction(ins) && emitComp->DoJitStressPromotedEvexEncoding())
     {
         // This path will be hit when we stress APX-EVEX and encode VEX with Extended EVEX.
-        if (IsKMOVInstruction(ins))
-        {
-            return true;
-        }
-
-        if (IsBMIInstruction(ins))
-        {
-            return HasApxNf(ins);
-        }
-
-        return false;
+        return (IsBMIInstruction(ins) && HasApxNf(ins));
     }
 #endif // DEBUG
 
@@ -18025,7 +17971,10 @@ ssize_t emitter::TryEvexCompressDisp8Byte(instrDesc* id, ssize_t dsp, bool* dspI
         // path, but for those instructions with no tuple information,
         // APX-EVEX treat the scaling factor to be 1 constantly.
         instruction ins = id->idIns();
-        assert(IsApxExtendedEvexInstruction(ins) || IsBMIInstruction(ins));
+        // TODO-XArch-APX:
+        // This assert may need tweak if BMI1 instructions are promoted
+        // into EVEX for multiple features, currently only EVEX.NF.
+        assert(IsApxExtendedEvexInstruction(id->idIns()));
         *dspInByte = ((signed char)dsp == (ssize_t)dsp);
         return dsp;
     }

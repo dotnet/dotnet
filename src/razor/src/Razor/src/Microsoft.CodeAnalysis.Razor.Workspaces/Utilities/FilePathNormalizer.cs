@@ -5,10 +5,11 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.Extensions.Internal;
 
-namespace Microsoft.AspNetCore.Razor.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 internal static class FilePathNormalizer
 {

@@ -35,7 +35,7 @@ namespace System.Linq
                 int count,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (TSource element in source.WithCancellation(cancellationToken))
+                await foreach (TSource element in source.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return element;
 
@@ -97,23 +97,29 @@ namespace System.Linq
                 Debug.Assert(source is not null);
                 Debug.Assert(startIndex >= 0 && startIndex < endIndex);
 
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                int index = 0;
-                while (index < startIndex && await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    ++index;
+                    int index = 0;
+                    while (index < startIndex && await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        ++index;
+                    }
+
+                    if (index < startIndex)
+                    {
+                        yield break;
+                    }
+
+                    while (index < endIndex && await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        yield return e.Current;
+                        ++index;
+                    }
                 }
-
-                if (index < startIndex)
+                finally
                 {
-                    yield break;
-                }
-
-                while (index < endIndex && await e.MoveNextAsync())
-                {
-                    yield return e.Current;
-                    ++index;
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -138,9 +144,10 @@ namespace System.Linq
             if (isStartIndexFromEnd)
             {
                 // TakeLast compat: enumerator should be disposed before yielding the first element.
-                await using (IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken))
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    if (!await e.MoveNextAsync())
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
                     {
                         yield break;
                     }
@@ -149,7 +156,7 @@ namespace System.Linq
                     queue.Enqueue(e.Current);
                     count = 1;
 
-                    while (await e.MoveNextAsync())
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
                         if (count < startIndex)
                         {
@@ -164,13 +171,17 @@ namespace System.Linq
                                 queue.Enqueue(e.Current);
                                 checked { ++count; }
                             }
-                            while (await e.MoveNextAsync());
+                            while (await e.MoveNextAsync().ConfigureAwait(false));
 
                             break;
                         }
                     }
 
                     Debug.Assert(queue.Count == Math.Min(count, startIndex));
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
 
                 startIndex = CalculateStartIndexFromEnd(startIndex, count);
@@ -187,35 +198,41 @@ namespace System.Linq
                 Debug.Assert(!isStartIndexFromEnd && isEndIndexFromEnd);
 
                 // SkipLast compat: the enumerator should be disposed at the end of the enumeration.
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                count = 0;
-                while (count < startIndex && await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    ++count;
-                }
-
-                if (count == startIndex)
-                {
-                    queue = new Queue<TSource>();
-                    while (await e.MoveNextAsync())
+                    count = 0;
+                    while (count < startIndex && await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        if (queue.Count == endIndex)
+                        ++count;
+                    }
+
+                    if (count == startIndex)
+                    {
+                        queue = new Queue<TSource>();
+                        while (await e.MoveNextAsync().ConfigureAwait(false))
                         {
-                            do
+                            if (queue.Count == endIndex)
+                            {
+                                do
+                                {
+                                    queue.Enqueue(e.Current);
+                                    yield return queue.Dequeue();
+                                }
+                                while (await e.MoveNextAsync().ConfigureAwait(false));
+
+                                break;
+                            }
+                            else
                             {
                                 queue.Enqueue(e.Current);
-                                yield return queue.Dequeue();
                             }
-                            while (await e.MoveNextAsync());
-
-                            break;
-                        }
-                        else
-                        {
-                            queue.Enqueue(e.Current);
                         }
                     }
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
 

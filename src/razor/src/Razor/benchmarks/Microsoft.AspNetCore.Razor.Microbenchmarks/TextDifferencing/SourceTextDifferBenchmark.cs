@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.TextDifferencing;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.TextDifferencing;

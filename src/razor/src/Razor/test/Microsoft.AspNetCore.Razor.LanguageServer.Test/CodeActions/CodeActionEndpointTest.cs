@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
@@ -19,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -47,32 +47,6 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         };
 
         var requestContext = CreateRazorRequestContext(documentContext: null);
-
-        // Act
-        var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(commandOrCodeActionContainer);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedDocument()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/Page.razor");
-        var codeDocument = CreateCodeDocument("@code {}");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        codeDocument.SetUnsupported();
-        var codeActionEndpoint = CreateEndpoint();
-
-        var request = new VSCodeActionParams()
-        {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
-            Context = new VSInternalCodeActionContext()
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
         var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);

@@ -17,6 +17,7 @@ namespace System.Net.Http.WinHttpHandlerUnitTests
 
         public static int LastWin32Error { get; set; }
 
+        public static bool WinHttpAutomaticProxySupport { get; set; }
         public static bool WinHttpDecompressionSupport { get; set; }
 
         public static bool PACFileNotDetectedOnNetwork { get; set; }
@@ -31,6 +32,7 @@ namespace System.Net.Http.WinHttpHandlerUnitTests
             WinHttpReceiveResponse = new ApiControl();
             WinHttpWriteData = new ApiControl();
 
+            WinHttpAutomaticProxySupport = true;
             WinHttpDecompressionSupport = true;
 
             LastWin32Error = 0;

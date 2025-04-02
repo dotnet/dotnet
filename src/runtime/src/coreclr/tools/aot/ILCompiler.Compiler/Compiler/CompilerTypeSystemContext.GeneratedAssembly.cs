@@ -153,6 +153,7 @@ namespace ILCompiler
             {
                 return new ClassLayoutMetadata
                 {
+                    Offsets = null,
                     PackingSize = 0,
                     Size = 0,
                 };

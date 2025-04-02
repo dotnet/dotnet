@@ -35,10 +35,6 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
 
         if (!FileKinds.IsComponent(codeDocument.FileKind))
         {

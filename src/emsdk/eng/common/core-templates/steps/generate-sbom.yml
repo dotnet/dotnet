@@ -38,7 +38,7 @@ steps:
       PackageName: ${{ parameters.packageName }}
       BuildDropPath: ${{ parameters.buildDropPath }}
       PackageVersion: ${{ parameters.packageVersion }}
-      ManifestDirPath: ${{ parameters.manifestDirPath }}/$(ARTIFACT_NAME)
+      ManifestDirPath: ${{ parameters.manifestDirPath }}
       ${{ if ne(parameters.IgnoreDirectories, '') }}:
         AdditionalComponentDetectorArgs: '--IgnoreDirectories ${{ parameters.IgnoreDirectories }}'
 

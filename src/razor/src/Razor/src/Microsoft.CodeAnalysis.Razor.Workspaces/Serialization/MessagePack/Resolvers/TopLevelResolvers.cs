@@ -4,7 +4,7 @@
 using System.Collections.Immutable;
 using MessagePack;
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 internal static class TopLevelResolvers
 {

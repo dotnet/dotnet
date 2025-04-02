@@ -4,7 +4,7 @@
 using System;
 using System.Buffers;
 using MessagePack;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 

@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -43,10 +44,6 @@ internal class ExtractToComponentCodeActionResolver(
         }
 
         var componentDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (componentDocument.IsUnsupported())
-        {
-            return null;
-        }
 
         var text = componentDocument.Source.Text;
         var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());

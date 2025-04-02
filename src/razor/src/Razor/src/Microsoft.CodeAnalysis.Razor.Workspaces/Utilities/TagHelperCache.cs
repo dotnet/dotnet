@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
 
-namespace Microsoft.AspNetCore.Razor.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 internal sealed class TagHelperCache
 {

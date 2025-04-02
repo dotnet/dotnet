@@ -4,7 +4,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;

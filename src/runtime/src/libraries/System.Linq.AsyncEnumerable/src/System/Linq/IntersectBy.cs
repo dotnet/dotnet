@@ -50,9 +50,10 @@ namespace System.Linq
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
                 HashSet<TKey> set;
-                await using (IAsyncEnumerator<TKey> e = second.GetAsyncEnumerator(cancellationToken))
+                IAsyncEnumerator<TKey> e = second.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    if (!await e.MoveNextAsync())
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
                     {
                         yield break;
                     }
@@ -62,10 +63,14 @@ namespace System.Linq
                     {
                         set.Add(e.Current);
                     }
-                    while (await e.MoveNextAsync());
+                    while (await e.MoveNextAsync().ConfigureAwait(false));
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
 
-                await foreach (TSource element in first.WithCancellation(cancellationToken))
+                await foreach (TSource element in first.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     if (set.Remove(keySelector(element)))
                     {
@@ -115,9 +120,10 @@ namespace System.Linq
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
                 HashSet<TKey> set;
-                await using (IAsyncEnumerator<TKey> e = second.GetAsyncEnumerator(cancellationToken))
+                IAsyncEnumerator<TKey> e = second.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    if (!await e.MoveNextAsync())
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
                     {
                         yield break;
                     }
@@ -127,12 +133,16 @@ namespace System.Linq
                     {
                         set.Add(e.Current);
                     }
-                    while (await e.MoveNextAsync());
+                    while (await e.MoveNextAsync().ConfigureAwait(false));
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
 
-                await foreach (TSource element in first.WithCancellation(cancellationToken))
+                await foreach (TSource element in first.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    if (set.Remove(await keySelector(element, cancellationToken)))
+                    if (set.Remove(await keySelector(element, cancellationToken).ConfigureAwait(false)))
                     {
                         yield return element;
                     }

@@ -524,7 +524,8 @@ namespace System.IO.Compression
                     ReadOnlySpan<byte> sizedFileBuffer = fileBufferSpan.Slice(0, currBytesRead);
 
                     // the buffer read must always be large enough to fit the constant section size of at least one header
-                    continueReadingCentralDirectory = sizedFileBuffer.Length >= ZipCentralDirectoryFileHeader.BlockConstantSectionSize;
+                    continueReadingCentralDirectory = continueReadingCentralDirectory
+                        && sizedFileBuffer.Length >= ZipCentralDirectoryFileHeader.BlockConstantSectionSize;
 
                     while (continueReadingCentralDirectory
                         && currPosition + ZipCentralDirectoryFileHeader.BlockConstantSectionSize < sizedFileBuffer.Length)

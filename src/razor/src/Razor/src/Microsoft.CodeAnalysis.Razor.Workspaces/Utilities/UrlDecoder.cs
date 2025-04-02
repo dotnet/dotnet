@@ -10,8 +10,9 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.AspNetCore.Razor;
 
-namespace Microsoft.AspNetCore.Razor.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 internal static class UrlDecoder
 {
@@ -126,7 +127,7 @@ internal static class UrlDecoder
                 if ((h1 | h2) != 0xff)
                 {
                     // Valid 2 hex character
-                    var b = (byte)((h1 << 4) | h2);
+                    var b = (byte)(h1 << 4 | h2);
                     i += 2;
 
                     // Add to our byte buffer.

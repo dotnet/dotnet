@@ -17,6 +17,8 @@
 
 #include "dbginterface.h"
 
+//#define STUB_LOGGING
+
 #pragma pack(push, 1)
 // since we are placing code, we want byte packing of the structs
 

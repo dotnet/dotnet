@@ -2,13 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using MessagePack;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
 #if !NET
 using System.Collections.Generic;
 #endif
 
-namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
+namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class MetadataCollectionFormatter : ValueFormatter<MetadataCollection>
 {

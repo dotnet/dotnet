@@ -53,30 +53,36 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TOuter> e = outer.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TOuter> e = outer.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    AsyncLookup<TKey, TInner> innerLookup = await AsyncLookup<TKey, TInner>.CreateForJoinAsync(inner, innerKeySelector, comparer, cancellationToken);
-                    do
+                    if (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TOuter item = e.Current;
-                        Grouping<TKey, TInner>? g = innerLookup.GetGrouping(outerKeySelector(item), create: false);
-                        if (g is null)
+                        AsyncLookup<TKey, TInner> innerLookup = await AsyncLookup<TKey, TInner>.CreateForJoinAsync(inner, innerKeySelector, comparer, cancellationToken).ConfigureAwait(false);
+                        do
                         {
-                            yield return resultSelector(item, default);
-                        }
-                        else
-                        {
-                            int count = g._count;
-                            TInner[] elements = g._elements;
-                            for (int i = 0; i != count; ++i)
+                            TOuter item = e.Current;
+                            Grouping<TKey, TInner>? g = innerLookup.GetGrouping(outerKeySelector(item), create: false);
+                            if (g is null)
                             {
-                                yield return resultSelector(item, elements[i]);
+                                yield return resultSelector(item, default);
+                            }
+                            else
+                            {
+                                int count = g._count;
+                                TInner[] elements = g._elements;
+                                for (int i = 0; i != count; ++i)
+                                {
+                                    yield return resultSelector(item, elements[i]);
+                                }
                             }
                         }
+                        while (await e.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -125,30 +131,36 @@ namespace System.Linq
                 IEqualityComparer<TKey>? comparer,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TOuter> e = outer.GetAsyncEnumerator(cancellationToken);
-
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TOuter> e = outer.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    AsyncLookup<TKey, TInner> innerLookup = await AsyncLookup<TKey, TInner>.CreateForJoinAsync(inner, innerKeySelector, comparer, cancellationToken);
-                    do
+                    if (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TOuter item = e.Current;
-                        Grouping<TKey, TInner>? g = innerLookup.GetGrouping(await outerKeySelector(item, cancellationToken), create: false);
-                        if (g is null)
+                        AsyncLookup<TKey, TInner> innerLookup = await AsyncLookup<TKey, TInner>.CreateForJoinAsync(inner, innerKeySelector, comparer, cancellationToken).ConfigureAwait(false);
+                        do
                         {
-                            yield return await resultSelector(item, default, cancellationToken);
-                        }
-                        else
-                        {
-                            int count = g._count;
-                            TInner[] elements = g._elements;
-                            for (int i = 0; i != count; ++i)
+                            TOuter item = e.Current;
+                            Grouping<TKey, TInner>? g = innerLookup.GetGrouping(await outerKeySelector(item, cancellationToken).ConfigureAwait(false), create: false);
+                            if (g is null)
                             {
-                                yield return await resultSelector(item, elements[i], cancellationToken);
+                                yield return await resultSelector(item, default, cancellationToken).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                int count = g._count;
+                                TInner[] elements = g._elements;
+                                for (int i = 0; i != count; ++i)
+                                {
+                                    yield return await resultSelector(item, elements[i], cancellationToken).ConfigureAwait(false);
+                                }
                             }
                         }
+                        while (await e.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }

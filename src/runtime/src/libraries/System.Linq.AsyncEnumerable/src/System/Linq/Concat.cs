@@ -33,12 +33,12 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> second,
                 [EnumeratorCancellation] CancellationToken cancellationToken)
             {
-                await foreach (TSource item in first.WithCancellation(cancellationToken))
+                await foreach (TSource item in first.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return item;
                 }
 
-                await foreach (TSource item in second.WithCancellation(cancellationToken))
+                await foreach (TSource item in second.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
                     yield return item;
                 }

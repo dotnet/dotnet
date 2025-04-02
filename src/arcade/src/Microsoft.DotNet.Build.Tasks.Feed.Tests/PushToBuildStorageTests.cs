@@ -1,22 +1,18 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FluentAssertions;
-using Microsoft.Arcade.Common;
-using Microsoft.Arcade.Test.Common;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Internal.DependencyInjection.Testing;
-using Microsoft.DotNet.VersionTools.Automation;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moq;
-using NuGet.Versioning;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using FluentAssertions;
+using Microsoft.Arcade.Common;
+using Microsoft.Arcade.Test.Common;
+using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Manifest;
+using Microsoft.DotNet.Internal.DependencyInjection.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests

@@ -69,7 +69,7 @@ namespace Microsoft.SignCheck.Verification
             return _exclusions.Contains(exclusion);
         }
 
-        public bool IsExcluded(string path, string parent, string virtualPath, string containerPath, IEnumerable<Exclusion> exclusions)
+        private bool IsExcluded(string path, string parent, string virtualPath, string containerPath, IEnumerable<Exclusion> exclusions)
         {
             foreach (Exclusion e in exclusions)
             {
@@ -77,9 +77,14 @@ namespace Microsoft.SignCheck.Verification
                 //    Example: bar.dll;*.zip --> Exclude any occurence of bar.dll that is in a zip file
                 //             bar.dll;foo.zip --> Exclude bar.dll only if it is contained inside foo.zip
                 //             foo.exe;; --> Exclude any occurance of foo.exe and ignore the parent
-                if (IsMatch(e.FilePatterns, Path.GetFileName(containerPath)) || IsMatch(e.FilePatterns, containerPath) || IsMatch(e.FilePatterns, path) || IsMatch(e.FilePatterns, Path.GetFileName(path)) || IsMatch(e.FilePatterns, virtualPath))
+                if (IsMatch(e.FilePatterns, Path.GetFileName(containerPath)) ||
+                    IsMatch(e.FilePatterns, containerPath) ||
+                    IsMatch(e.FilePatterns, Path.GetFileName(path)) ||
+                    IsMatch(e.FilePatterns, path) ||
+                    IsMatch(e.FilePatterns, Path.GetFileName(virtualPath)) ||
+                    IsMatch(e.FilePatterns, virtualPath))
                 {
-                    if ((e.ParentFiles.Length == 0) || (e.ParentFiles.All(pf => String.IsNullOrEmpty(pf))) || IsMatch(e.ParentFiles, parent))
+                    if ((e.ParentFiles.Length == 0) || (e.ParentFiles.All(pf => String.IsNullOrEmpty(pf))) || IsParentExcluded(parent))
                     {
                         return true;
                     }
@@ -95,7 +100,7 @@ namespace Microsoft.SignCheck.Verification
 
             // 3. There is no file exclusion, but a parent exclusion matches.
             //    Example: ;foo.zip; --> Exclude any file in foo.zip. This is similar to using *;foo.zip;
-            return exclusions.Any(e => (e.FilePatterns.All(fp => String.IsNullOrEmpty(fp)) && IsMatch(e.ParentFiles, parent)));
+            return exclusions.Any(e => (e.FilePatterns.All(fp => String.IsNullOrEmpty(fp)) && IsParentExcluded(parent)));
         }
 
         /// <summary>
@@ -108,7 +113,8 @@ namespace Microsoft.SignCheck.Verification
         /// <returns></returns>
         public bool IsExcluded(string path, string parent, string virtualPath, string containerPath)
         {
-            return IsExcluded(path, parent, virtualPath, containerPath, _exclusions);
+            IEnumerable<Exclusion> exclusions = _exclusions.Where(e => !e.Comment.Contains("IGNORE-STRONG-NAME"));
+            return IsExcluded(path, parent, virtualPath, containerPath, exclusions);
         }
 
         /// <summary>
@@ -122,6 +128,14 @@ namespace Microsoft.SignCheck.Verification
             IEnumerable<Exclusion> doNotSignExclusions = _exclusions.Where(e => e.Comment.Contains("DO-NOT-SIGN")).ToArray();
 
             return (doNotSignExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, doNotSignExclusions));
+        }
+
+        public bool IsIgnoreStrongName(string path, string parent, string virtualPath, string containerPath)
+        {
+            // Get all the exclusions with NO-STRONG-NAME markers and check only against those
+            IEnumerable<Exclusion> noStrongNameExclusions = _exclusions.Where(e => e.Comment.Contains("IGNORE-STRONG-NAME"));
+
+            return (noStrongNameExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, noStrongNameExclusions));
         }
 
         /// <summary>
@@ -141,7 +155,7 @@ namespace Microsoft.SignCheck.Verification
         /// <returns></returns>
         public bool IsParentExcluded(string parent)
         {
-            return _exclusions.Any(e => IsMatch(e.ParentFiles, parent));
+            return _exclusions.Any(e => IsMatch(e.ParentFiles.Select(pattern => !string.IsNullOrEmpty(pattern) ? $"*{pattern}*" : pattern).ToArray(), parent));
         }
 
         private bool IsMatch(string[] patterns, string value)

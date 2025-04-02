@@ -13,10 +13,10 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -133,7 +133,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         var haveAddedNonQualifiedFix = false;
 
         // First see if there are any components that match in name, but not case, without qualification
-        foreach (var t in context.CodeDocument.GetTagHelperContext().TagHelpers)
+        foreach (var t in context.CodeDocument.GetRequiredTagHelperContext().TagHelpers)
         {
             if (t.TagMatchingRules is [{ CaseSensitive: true } rule] &&
                 rule.TagName.Equals(startTag.Name.Content, StringComparison.OrdinalIgnoreCase) &&

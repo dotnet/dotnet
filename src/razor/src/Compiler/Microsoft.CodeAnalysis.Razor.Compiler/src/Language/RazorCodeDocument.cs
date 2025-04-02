@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -16,6 +18,8 @@ public sealed class RazorCodeDocument
     public RazorCodeGenerationOptions CodeGenerationOptions { get; }
 
     public string FileKind => ParserOptions.FileKind;
+
+    private TagHelperDocumentContext? _tagHelperContext;
 
     private RazorCodeDocument(
         RazorSourceDocument source,
@@ -51,5 +55,24 @@ public sealed class RazorCodeDocument
         ArgHelper.ThrowIfNull(source);
 
         return new RazorCodeDocument(source, imports, parserOptions, codeGenerationOptions);
+    }
+
+    internal bool TryGetTagHelperContext([NotNullWhen(true)] out TagHelperDocumentContext? result)
+    {
+        result = _tagHelperContext;
+        return result is not null;
+    }
+
+    internal TagHelperDocumentContext? GetTagHelperContext()
+        => _tagHelperContext;
+
+    internal TagHelperDocumentContext GetRequiredTagHelperContext()
+        => _tagHelperContext.AssumeNotNull();
+
+    internal void SetTagHelperContext(TagHelperDocumentContext context)
+    {
+        ArgHelper.ThrowIfNull(context);
+
+        _tagHelperContext = context;
     }
 }

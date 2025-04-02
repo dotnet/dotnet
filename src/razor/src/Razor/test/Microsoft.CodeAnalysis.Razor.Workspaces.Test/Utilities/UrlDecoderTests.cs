@@ -3,11 +3,10 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test.Utilities;
+namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
 public class UrlDecoderTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

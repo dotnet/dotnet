@@ -7,19 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Text;
@@ -65,8 +63,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
         var request = new UpdateBufferRequest()
         {
@@ -110,8 +106,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
         var request = new UpdateBufferRequest()
         {
@@ -166,8 +160,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true),
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
         var request = new UpdateBufferRequest()
         {
@@ -210,8 +202,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
         var request = new DelegatedCodeActionParams()
         {
@@ -292,8 +282,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var request = new DelegatedCodeActionParams()
@@ -379,8 +367,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var codeAction = new VSInternalCodeAction()
@@ -421,8 +407,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var request = new ProvideSemanticTokensRangesParams(
@@ -470,8 +454,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var request = new ProvideSemanticTokensRangesParams(
@@ -552,8 +534,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var request = new ProvideSemanticTokensRangesParams(
@@ -635,8 +615,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
-            StrictMock.Of<IWorkspaceProvider>(),
-            StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
 
         var request = new ProvideSemanticTokensRangesParams(

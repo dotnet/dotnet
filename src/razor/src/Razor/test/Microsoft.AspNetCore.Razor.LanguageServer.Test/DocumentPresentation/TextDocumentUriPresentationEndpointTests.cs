@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -407,35 +407,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var clientConnection = CreateClientConnection(response: null);
-        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
-
-        var parameters = new UriPresentationParams()
-        {
-            TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = CreateCodeDocument("<div></div>");
-        codeDocument.SetUnsupported();
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-
-        var clientConnection = CreateClientConnection(response: new WorkspaceEdit());
         var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()

@@ -8,8 +8,7 @@ using System.Security;
 using System.Xml.Linq;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.VersionTools.Automation;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
+using Microsoft.DotNet.Build.Manifest;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

@@ -88,6 +88,11 @@ namespace Microsoft.SignCheck
         /// <returns>The parsed DateTime value or the default value.</returns>
         public static DateTime DateTimeOrDefault(this string timestamp, DateTime defaultValue)
         {
+            if (string.IsNullOrEmpty(timestamp))
+            {
+                return defaultValue;
+            }
+
             timestamp = Regex.Replace(timestamp, @"\s{2,}", " ").Trim();
 
             // Try to parse the timestamp as a Unix timestamp (seconds since epoch)

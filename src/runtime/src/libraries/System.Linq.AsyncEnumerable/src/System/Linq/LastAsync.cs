@@ -28,21 +28,27 @@ namespace System.Linq
                 IAsyncEnumerable<TSource> source,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                if (!await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    ThrowHelper.ThrowNoElementsException();
-                }
+                    if (!await e.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        ThrowHelper.ThrowNoElementsException();
+                    }
 
-                TSource result;
-                do
+                    TSource result;
+                    do
+                    {
+                        result = e.Current;
+                    }
+                    while (await e.MoveNextAsync().ConfigureAwait(false));
+
+                    return result;
+                }
+                finally
                 {
-                    result = e.Current;
+                    await e.DisposeAsync().ConfigureAwait(false);
                 }
-                while (await e.MoveNextAsync());
-
-                return result;
             }
         }
 
@@ -73,30 +79,36 @@ namespace System.Linq
                 Func<TSource, bool> predicate,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (predicate(element))
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource result = element;
-
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (predicate(element))
                         {
-                            element = e.Current;
-                            if (predicate(element))
+                            TSource result = element;
+
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
                             {
-                                result = element;
+                                element = e.Current;
+                                if (predicate(element))
+                                {
+                                    result = element;
+                                }
                             }
+
+                            return result;
                         }
-
-                        return result;
                     }
-                }
 
-                ThrowHelper.ThrowNoMatchException();
-                return default!;
+                    ThrowHelper.ThrowNoMatchException();
+                    return default!;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -127,30 +139,36 @@ namespace System.Linq
                 Func<TSource, CancellationToken, ValueTask<bool>> predicate,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (await predicate(element, cancellationToken))
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        TSource result = element;
-
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (await predicate(element, cancellationToken).ConfigureAwait(false))
                         {
-                            element = e.Current;
-                            if (await predicate(element, cancellationToken))
+                            TSource result = element;
+
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
                             {
-                                result = element;
+                                element = e.Current;
+                                if (await predicate(element, cancellationToken).ConfigureAwait(false))
+                                {
+                                    result = element;
+                                }
                             }
+
+                            return result;
                         }
-
-                        return result;
                     }
-                }
 
-                ThrowHelper.ThrowNoMatchException();
-                return default!;
+                    ThrowHelper.ThrowNoMatchException();
+                    return default!;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -187,19 +205,25 @@ namespace System.Linq
             static async ValueTask<TSource> Impl(
                 IAsyncEnumerable<TSource> source, TSource defaultValue, CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                TSource result = defaultValue;
-                if (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    do
+                    TSource result = defaultValue;
+                    if (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        result = e.Current;
+                        do
+                        {
+                            result = e.Current;
+                        }
+                        while (await e.MoveNextAsync().ConfigureAwait(false));
                     }
-                    while (await e.MoveNextAsync());
-                }
 
-                return result;
+                    return result;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -257,30 +281,36 @@ namespace System.Linq
                 TSource defaultValue,
                 CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                TSource result = defaultValue;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (predicate(element))
+                    TSource result = defaultValue;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        result = element;
-
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (predicate(element))
                         {
-                            element = e.Current;
-                            if (predicate(element))
+                            result = element;
+
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
                             {
-                                result = element;
+                                element = e.Current;
+                                if (predicate(element))
+                                {
+                                    result = element;
+                                }
                             }
+
+                            break;
                         }
-
-                        break;
                     }
-                }
 
-                return result;
+                    return result;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -307,30 +337,36 @@ namespace System.Linq
             static async ValueTask<TSource> Impl(
                 IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, TSource defaultValue, CancellationToken cancellationToken)
             {
-                await using IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
-
-                TSource result = defaultValue;
-                while (await e.MoveNextAsync())
+                IAsyncEnumerator<TSource> e = source.GetAsyncEnumerator(cancellationToken);
+                try
                 {
-                    TSource element = e.Current;
-                    if (await predicate(element, cancellationToken))
+                    TSource result = defaultValue;
+                    while (await e.MoveNextAsync().ConfigureAwait(false))
                     {
-                        result = element;
-
-                        while (await e.MoveNextAsync())
+                        TSource element = e.Current;
+                        if (await predicate(element, cancellationToken).ConfigureAwait(false))
                         {
-                            element = e.Current;
-                            if (await predicate(element, cancellationToken))
+                            result = element;
+
+                            while (await e.MoveNextAsync().ConfigureAwait(false))
                             {
-                                result = element;
+                                element = e.Current;
+                                if (await predicate(element, cancellationToken).ConfigureAwait(false))
+                                {
+                                    result = element;
+                                }
                             }
+
+                            break;
                         }
-
-                        break;
                     }
-                }
 
-                return result;
+                    return result;
+                }
+                finally
+                {
+                    await e.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
     }

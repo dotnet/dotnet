@@ -3,7 +3,7 @@
 
 using System;
 using System.CommandLine;
-using Microsoft.DotNet.VersionTools.Automation;
+using Microsoft.Arcade.Common;
 
 namespace Microsoft.DotNet.VersionTools.Cli;
 
