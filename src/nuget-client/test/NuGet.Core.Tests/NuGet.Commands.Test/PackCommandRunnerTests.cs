@@ -81,7 +81,31 @@ namespace NuGet.Commands.Test
                     Exclude = Enumerable.Empty<string>(),
                     Logger = NullLogger.Instance,
                     Path = test.NuspecFile.FullName,
-                    Version = "3.1.2"
+                    Version = "3.1.2",
+                };
+                var runner = new PackCommandRunner(args, createProjectFactory: null);
+
+                var result = runner.RunPackageBuild();
+                Assert.True(result);
+
+                var nupkgPath = Path.Combine(test.CurrentDirectory.FullName, $"DefaultExclusions.3.1.2.nupkg");
+                File.Exists(nupkgPath).Should().BeTrue();
+            }
+        }
+
+        [Fact]
+        public void RunPackageBuild_WithVersionAndPropertiesAsArgument_NuspecVersionOverriddenByVersionArgument()
+        {
+            using (var test = DefaultExclusionsTest.Create())
+            {
+                var args = new PackArgs()
+                {
+                    CurrentDirectory = test.CurrentDirectory.FullName,
+                    Exclude = Enumerable.Empty<string>(),
+                    Logger = NullLogger.Instance,
+                    Path = test.NuspecFile.FullName,
+                    Version = "3.1.2",
+                    Properties = { { "version", "2.0.0" }, { "prerelease", "-preview" } }
                 };
                 var runner = new PackCommandRunner(args, createProjectFactory: null);
 

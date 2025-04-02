@@ -78,11 +78,11 @@
       "commitSha": "06d1cb4401fa6a7e948e582c708987cb91238414"
     },
     {
-      "packageVersion": "6.14.0-preview.1.97",
+      "packageVersion": "6.14.0-preview.1.99",
       "barId": null,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "8f6362aea4972acab1454de411cfe835619e4e41"
+      "commitSha": "ccb6097e8ffda05b7629cb2cbd7a5b6482e6e91e"
     },
     {
       "packageVersion": "10.0.0-preview.25201.5",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "34908d497a508cbdf1dc4416a3bfc0a7495c0987"
+      "commitSha": "abcecd9504d671c8dcfaf852b38f6473706bd8a2"
     },
     {
       "packageVersion": "10.0.618101",
@@ -169,11 +169,11 @@
       "commitSha": "72fcaec0a118c15b702c68b859c238eed6b1cd17"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25201.1",
+      "packageVersion": "10.0.0-preview.4.25201.2",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "cdba89742e7af267e0587220894196a43f76c537"
+      "commitSha": "bbbf31922f9654cf1ecb12f0bf2b80af4345d02a"
     },
     {
       "packageVersion": "10.0.0-preview.4.25179.1",

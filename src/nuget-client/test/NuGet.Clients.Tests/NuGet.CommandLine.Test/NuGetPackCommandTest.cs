@@ -342,6 +342,50 @@ namespace NuGet.CommandLine.Test
         }
 
         [Fact]
+        public void PackCommand_PackageFromNuspecWithTokenReplacement()
+        {
+            var nugetexe = Util.GetNuGetExePath();
+
+            using (var workingDirectory = TestDirectory.Create())
+            {
+                // Arrange
+                Util.CreateFile(
+                    Path.Combine(workingDirectory, "contentFiles"),
+                    "image.jpg",
+                    "");
+
+                // Arrange
+                Util.CreateFile(
+                    workingDirectory,
+                    "packageA.nuspec",
+@"<package xmlns=""http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"">
+  <metadata>
+    <id>$package$</id>    
+    <version>$version$$prerelease$</version>
+    <description>Package description</description>
+    <authors>Author</authors>
+  </metadata>
+</package>");
+
+                // Act
+                var r = CommandRunner.Run(
+                    nugetexe,
+                    workingDirectory,
+                    "pack packageA.nuspec -Properties version=2.0.0;prerelease=-preview;package=test",
+                    testOutputHelper: _testOutputHelper);
+                Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
+
+                // Assert
+                var path = Path.Combine(workingDirectory, "test.2.0.0-preview.nupkg");
+                var package = new PackageArchiveReader(File.OpenRead(path));
+
+                var files = package.GetNonPackageDefiningFiles();
+                Assert.Equal(1, files.Count());
+            }
+        }
+
+
+        [Fact]
         public void PackCommand_PackRuntimesRefNativeNoWarnings()
         {
             var nugetexe = Util.GetNuGetExePath();
