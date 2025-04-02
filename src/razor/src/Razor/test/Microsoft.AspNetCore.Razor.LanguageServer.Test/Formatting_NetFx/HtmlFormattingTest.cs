@@ -435,8 +435,8 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
             var selectItemComponent = CompileToCSharp("SelectItem.razor", selectItem, throwOnFailure: true, fileKind: FileKinds.Component);
 
             using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var tagHelpers);
-            tagHelpers.AddRange(selectComponent.CodeDocument.GetTagHelperContext().TagHelpers);
-            tagHelpers.AddRange(selectItemComponent.CodeDocument.GetTagHelperContext().TagHelpers);
+            tagHelpers.AddRange(selectComponent.CodeDocument.GetRequiredTagHelperContext().TagHelpers);
+            tagHelpers.AddRange(selectItemComponent.CodeDocument.GetRequiredTagHelperContext().TagHelpers);
 
             return tagHelpers.ToImmutable();
         }
@@ -540,6 +540,6 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
 
         var generated = CompileToCSharp("Test.razor", string.Empty, throwOnFailure: false, fileKind: FileKinds.Component);
 
-        return generated.CodeDocument.GetTagHelperContext().TagHelpers.ToImmutableArray();
+        return generated.CodeDocument.GetRequiredTagHelperContext().TagHelpers;
     }
 }

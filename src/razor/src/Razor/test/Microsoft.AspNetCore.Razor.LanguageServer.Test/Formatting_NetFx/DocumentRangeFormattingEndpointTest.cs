@@ -67,32 +67,6 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
     }
 
     [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        codeDocument.SetUnsupported();
-        var uri = new Uri("file://path/test.razor");
-
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var formattingService = new DummyRazorFormattingService();
-        var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
-        var htmlFormatter = new TestHtmlFormatter();
-        var endpoint = new DocumentRangeFormattingEndpoint(formattingService, htmlFormatter, optionsMonitor);
-        var @params = new DocumentRangeFormattingParams()
-        {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
-        };
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(@params, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
     public async Task Handle_FormattingDisabled_ReturnsNull()
     {
         // Arrange

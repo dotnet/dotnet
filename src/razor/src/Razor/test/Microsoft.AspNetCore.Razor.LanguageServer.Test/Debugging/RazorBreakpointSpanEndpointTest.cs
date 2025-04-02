@@ -27,32 +27,6 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task Handle_UnsupportedDocument_ReturnsNull()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocument(@"
-<p>@DateTime.Now</p>");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-
-        var diagnosticsEndpoint = new RazorBreakpointSpanEndpoint(_mappingService, LoggerFactory);
-        var request = new RazorBreakpointSpanParams()
-        {
-            Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
-        };
-        codeDocument.SetUnsupported();
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(response);
-    }
-
-    [Fact]
     public async Task Handle_StartsInHtml_BreakpointMoved()
     {
         // Arrange

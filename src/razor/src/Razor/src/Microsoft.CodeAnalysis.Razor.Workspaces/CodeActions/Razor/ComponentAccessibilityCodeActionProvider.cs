@@ -133,7 +133,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         var haveAddedNonQualifiedFix = false;
 
         // First see if there are any components that match in name, but not case, without qualification
-        foreach (var t in context.CodeDocument.GetTagHelperContext().TagHelpers)
+        foreach (var t in context.CodeDocument.GetRequiredTagHelperContext().TagHelpers)
         {
             if (t.TagMatchingRules is [{ CaseSensitive: true } rule] &&
                 rule.TagName.Equals(startTag.Name.Content, StringComparison.OrdinalIgnoreCase) &&

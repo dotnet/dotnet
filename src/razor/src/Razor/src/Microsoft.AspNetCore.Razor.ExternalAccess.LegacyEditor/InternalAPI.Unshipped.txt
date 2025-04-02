@@ -1,6 +1,7 @@
 ﻿#nullable enable
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan BlockSpan, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind SpanKind, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind BlockKind, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters AcceptedCharacters) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan other) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetTagHelperContext() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext?
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext.Prefix.get -> string?
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.<Clone>$() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange!
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, out string! NewText) -> void

@@ -13,7 +13,7 @@ internal interface IRazorCodeDocument
 
     ImmutableArray<RazorSourceMapping> GetSourceMappings();
     ImmutableArray<IRazorDiagnostic> GetDiagnostics();
-    IRazorTagHelperDocumentContext GetTagHelperContext();
+    IRazorTagHelperDocumentContext? GetTagHelperContext();
 
     int? GetDesiredIndentation(ITextSnapshot snapshot, ITextSnapshotLine line, int indentSize, int tabSize);
 

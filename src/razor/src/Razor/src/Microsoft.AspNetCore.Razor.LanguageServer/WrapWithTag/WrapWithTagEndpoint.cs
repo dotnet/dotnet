@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading;
@@ -41,13 +41,8 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
-            return null;
-        }
-
         var sourceText = codeDocument.Source.Text;
+
         if (request.Range?.Start is not { } start ||
             !sourceText.TryGetAbsoluteIndex(start, out var hostDocumentIndex))
         {

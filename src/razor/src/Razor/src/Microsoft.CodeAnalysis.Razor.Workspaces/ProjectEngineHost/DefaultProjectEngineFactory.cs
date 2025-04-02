@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
-internal class DefaultProjectEngineFactory : IProjectEngineFactory
+internal sealed class DefaultProjectEngineFactory : IProjectEngineFactory
 {
     public string ConfigurationName => "Default";
 

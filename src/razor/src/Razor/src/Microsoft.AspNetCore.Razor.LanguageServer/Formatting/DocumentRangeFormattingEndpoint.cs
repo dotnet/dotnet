@@ -51,10 +51,6 @@ internal class DocumentRangeFormattingEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
 
         if (request.Options.OtherOptions is not null &&
             request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) &&

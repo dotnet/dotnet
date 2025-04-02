@@ -66,8 +66,10 @@ internal static partial class RazorWrapperFactory
             return WrapAll(diagnostics, Wrap);
         }
 
-        public IRazorTagHelperDocumentContext GetTagHelperContext()
-            => WrapTagHelperDocumentContext(Object.GetTagHelperContext());
+        public IRazorTagHelperDocumentContext? GetTagHelperContext()
+            => Object.TryGetTagHelperContext(out var tagHelperContext)
+                ? WrapTagHelperDocumentContext(tagHelperContext)
+                : null;
 
         public int? GetDesiredIndentation(ITextSnapshot snapshot, ITextSnapshotLine line, int indentSize, int tabSize)
             => RazorIndentationFacts.GetDesiredIndentation(Object.GetSyntaxTree(), snapshot, line, indentSize, tabSize);

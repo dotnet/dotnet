@@ -182,7 +182,7 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
 
         var generated = CompileToCSharp("TestGeneric.razor", input, throwOnFailure: true, fileKind: FileKinds.Component);
 
-        return generated.CodeDocument.GetTagHelperContext().TagHelpers.ToImmutableArray();
+        return generated.CodeDocument.GetRequiredTagHelperContext().TagHelpers;
     }
 
     private ImmutableArray<TagHelperDescriptor> GetComponentWithTwoCascadingTypeParameter()
@@ -207,6 +207,6 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
 
         var generated = CompileToCSharp("TestGenericTwo.razor", input, throwOnFailure: true, fileKind: FileKinds.Component);
 
-        return generated.CodeDocument.GetTagHelperContext().TagHelpers.ToImmutableArray();
+        return generated.CodeDocument.GetRequiredTagHelperContext().TagHelpers;
     }
 }

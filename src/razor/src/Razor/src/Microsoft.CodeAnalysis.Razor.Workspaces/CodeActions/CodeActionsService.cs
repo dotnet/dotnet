@@ -102,11 +102,6 @@ internal class CodeActionsService(
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
-
         var sourceText = codeDocument.Source.Text;
 
         if (!sourceText.TryGetAbsoluteIndex(request.Range.Start, out var startLocation))

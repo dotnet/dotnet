@@ -100,48 +100,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
     }
 
     [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = CreateCodeDocument();
-        codeDocument.SetUnsupported();
-        var razorFilePath = "file://path/test.razor";
-        var uri = new Uri(razorFilePath);
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var optionsMonitor = GetOptionsMonitor();
-        var insertProvider = new TestOnAutoInsertProvider(">", canResolve: true);
-        var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
-            DocumentMappingService,
-            languageServer,
-            new AutoInsertService([insertProvider]),
-            optionsMonitor,
-            razorFormattingService: null!,
-            LoggerFactory);
-        var @params = new VSInternalDocumentOnAutoInsertParams()
-        {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = VsLspFactory.DefaultPosition,
-            Character = ">",
-            Options = new FormattingOptions
-            {
-                TabSize = 4,
-                InsertSpaces = true
-            },
-        };
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(@params, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-        Assert.False(insertProvider.Called);
-        Assert.Equal(0, languageServer.RequestCount);
-    }
-
-    [Fact]
     public async Task Handle_OnTypeFormattingOff_CSharp_ReturnsNull()
     {
         // Arrange

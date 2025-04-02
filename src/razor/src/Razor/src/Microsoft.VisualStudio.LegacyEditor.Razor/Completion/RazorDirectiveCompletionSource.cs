@@ -74,13 +74,13 @@ internal class RazorDirectiveCompletionSource : IAsyncCompletionSource
 
             var location = new SourceSpan(triggerLocation.Position, 0);
             var syntaxTree = codeDocument.GetSyntaxTree();
-            var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
+            var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
             var absoluteIndex = triggerLocation.Position;
             var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
 #pragma warning disable CS0618 // Type or member is obsolete, will be removed in an upcoming change
             var owner = syntaxTree.Root.LocateOwner(queryableChange);
 #pragma warning restore CS0618 // Type or member is obsolete
-            var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
+            var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperContext);
             var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
             using var _ = ArrayBuilderPool<CompletionItem>.GetPooledObject(out var completionItems);

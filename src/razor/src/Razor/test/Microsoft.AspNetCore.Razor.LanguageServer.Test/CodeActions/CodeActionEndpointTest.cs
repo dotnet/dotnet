@@ -56,32 +56,6 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
     }
 
     [Fact]
-    public async Task Handle_UnsupportedDocument()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/Page.razor");
-        var codeDocument = CreateCodeDocument("@code {}");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        codeDocument.SetUnsupported();
-        var codeActionEndpoint = CreateEndpoint();
-
-        var request = new VSCodeActionParams()
-        {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
-            Context = new VSInternalCodeActionContext()
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(commandOrCodeActionContainer);
-    }
-
-    [Fact]
     public async Task Handle_NoProviders()
     {
         // Arrange

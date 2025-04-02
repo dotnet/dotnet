@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
-internal class ProjectEngineFactoryProvider(ImmutableArray<IProjectEngineFactory> factories) : IProjectEngineFactoryProvider
+internal sealed class ProjectEngineFactoryProvider(ImmutableArray<IProjectEngineFactory> factories) : IProjectEngineFactoryProvider
 {
     public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
     {

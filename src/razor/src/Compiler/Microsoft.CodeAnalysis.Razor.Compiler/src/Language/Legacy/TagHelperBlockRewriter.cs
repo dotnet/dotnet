@@ -27,10 +27,9 @@ internal static class TagHelperBlockRewriter
         }
 
         var hasDirectiveAttribute = false;
-        foreach (var descriptor in bindingResult.Descriptors)
+        foreach (var boundRulesInfo in bindingResult.AllBoundRules)
         {
-            var boundRules = bindingResult.Mappings[descriptor];
-            var nonDefaultRule = boundRules.FirstOrDefault(static rule => rule.TagStructure != TagStructure.Unspecified);
+            var nonDefaultRule = boundRulesInfo.Rules.FirstOrDefault(static rule => rule.TagStructure != TagStructure.Unspecified);
 
             if (nonDefaultRule?.TagStructure == TagStructure.WithoutEndTag)
             {
@@ -42,6 +41,7 @@ internal static class TagHelperBlockRewriter
             // <input @onclick="..."> vs <input onclick="..." />
             //
             // We don't want this to become an error just because you added a directive attribute.
+            var descriptor = boundRulesInfo.Descriptor;
             if (descriptor.IsAnyComponentDocumentTagHelper() && !descriptor.IsComponentOrChildContentTagHelper)
             {
                 hasDirectiveAttribute = true;

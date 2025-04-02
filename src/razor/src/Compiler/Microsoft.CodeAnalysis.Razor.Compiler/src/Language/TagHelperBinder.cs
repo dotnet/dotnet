@@ -2,9 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -14,30 +15,75 @@ namespace Microsoft.AspNetCore.Razor.Language;
 /// </summary>
 internal sealed class TagHelperBinder
 {
-    private readonly Dictionary<string, HashSet<TagHelperDescriptor>> _registrations;
+    private readonly ImmutableArray<TagHelperDescriptor> _catchAllDescriptors;
+    private readonly ReadOnlyDictionary<string, ImmutableArray<TagHelperDescriptor>> _tagNameToDescriptorsMap;
 
-    public string? TagHelperPrefix { get; }
-    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
+    public string? TagNamePrefix { get; }
+    public ImmutableArray<TagHelperDescriptor> Descriptors { get; }
 
     /// <summary>
     /// Instantiates a new instance of the <see cref="TagHelperBinder"/>.
     /// </summary>
-    /// <param name="tagHelperPrefix">The tag helper prefix being used by the document.</param>
-    /// <param name="tagHelpers">The <see cref="TagHelperDescriptor"/>s that the <see cref="TagHelperBinder"/>
+    /// <param name="tagNamePrefix">The tag helper prefix being used by the document.</param>
+    /// <param name="descriptors">The <see cref="TagHelperDescriptor"/>s that the <see cref="TagHelperBinder"/>
     /// will pull from.</param>
-    public TagHelperBinder(string? tagHelperPrefix, ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public TagHelperBinder(string? tagNamePrefix, ImmutableArray<TagHelperDescriptor> descriptors)
     {
-        TagHelperPrefix = tagHelperPrefix;
-        TagHelpers = tagHelpers;
+        TagNamePrefix = tagNamePrefix;
+        Descriptors = descriptors.NullToEmpty();
 
-        // To reduce the frequency of dictionary resizes we use the incoming number of descriptors as a heuristic
-        _registrations = new Dictionary<string, HashSet<TagHelperDescriptor>>(tagHelpers.Length, StringComparer.OrdinalIgnoreCase);
+        ProcessDescriptors(descriptors, tagNamePrefix, out _tagNameToDescriptorsMap, out _catchAllDescriptors);
+    }
 
-        // Populate our registrations
-        foreach (var descriptor in tagHelpers)
+    private static void ProcessDescriptors(
+        ImmutableArray<TagHelperDescriptor> descriptors,
+        string? tagNamePrefix,
+        out ReadOnlyDictionary<string, ImmutableArray<TagHelperDescriptor>> tagNameToDescriptorsMap,
+        out ImmutableArray<TagHelperDescriptor> catchAllDescriptors)
+    {
+        using var catchAllBuilder = new PooledArrayBuilder<TagHelperDescriptor>();
+        using var pooledMap = StringDictionaryPool<ImmutableArray<TagHelperDescriptor>.Builder>.OrdinalIgnoreCase.GetPooledObject(out var mapBuilder);
+        using var pooledSet = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var distinctSet);
+
+        // Build a map of tag name -> tag helpers.
+        foreach (var descriptor in descriptors)
         {
-            Register(descriptor);
+            if (!distinctSet.Add(descriptor))
+            {
+                // We're already seen this descriptor, skip it.
+                continue;
+            }
+
+            foreach (var rule in descriptor.TagMatchingRules)
+            {
+                if (rule.TagName == TagHelperMatchingConventions.ElementCatchAllName)
+                {
+                    // This is a catch-all descriptor, we can keep track of it separately.
+                    catchAllBuilder.Add(descriptor);
+                }
+                else
+                {
+                    // This is a specific tag name, we need to add it to the map.
+                    var tagName = tagNamePrefix + rule.TagName;
+                    var builder = mapBuilder.GetOrAdd(tagName, _ => ImmutableArray.CreateBuilder<TagHelperDescriptor>());
+
+                    builder.Add(descriptor);
+                }
+            }
         }
+
+        // Build the final dictionary with immutable arrays.
+        var map = new Dictionary<string, ImmutableArray<TagHelperDescriptor>>(capacity: mapBuilder.Count, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, value) in mapBuilder)
+        {
+            map.Add(key, value.DrainToImmutable());
+        }
+
+        tagNameToDescriptorsMap = new ReadOnlyDictionary<string, ImmutableArray<TagHelperDescriptor>>(map);
+
+        // Build the catch all descriptors array.
+        catchAllDescriptors = catchAllBuilder.DrainToImmutable();
     }
 
     /// <summary>
@@ -49,105 +95,94 @@ internal sealed class TagHelperBinder
     /// <param name="parentTagName">The parent tag name of the given <paramref name="tagName"/> tag.</param>
     /// <param name="parentIsTagHelper">Is the parent tag of the given <paramref name="tagName"/> tag a tag helper.</param>
     /// <returns><see cref="TagHelperDescriptor"/>s that apply to the given HTML tag criteria.
-    /// Will return <c>null</c> if no <see cref="TagHelperDescriptor"/>s are a match.</returns>
+    /// Will return <see langword="null"/> if no <see cref="TagHelperDescriptor"/>s are a match.</returns>
     public TagHelperBinding? GetBinding(
         string tagName,
         ImmutableArray<KeyValuePair<string, string>> attributes,
         string? parentTagName,
         bool parentIsTagHelper)
     {
-        if (!TagHelperPrefix.IsNullOrEmpty() &&
-            (tagName.Length <= TagHelperPrefix.Length ||
-             !tagName.StartsWith(TagHelperPrefix, StringComparison.OrdinalIgnoreCase)))
-        {
-            // The tagName doesn't have the tag helper prefix, we can short circuit.
-            return null;
-        }
+        var tagNameSpan = tagName.AsSpan();
+        var parentTagNameSpan = parentTagName.AsSpan();
+        var tagNamePrefixSpan = TagNamePrefix.AsSpan();
 
-        var tagNameWithoutPrefix = tagName.AsSpanOrDefault();
-        var parentTagNameWithoutPrefix = parentTagName.AsSpanOrDefault();
-
-        if (TagHelperPrefix is { Length: var length and > 0 })
+        if (!tagNamePrefixSpan.IsEmpty)
         {
-            tagNameWithoutPrefix = tagNameWithoutPrefix[length..];
+            if (!tagNameSpan.StartsWith(tagNamePrefixSpan, StringComparison.OrdinalIgnoreCase))
+            {
+                // The tag name doesn't start with the prefix. So, we're done.
+                return null;
+            }
+
+            tagNameSpan = tagNameSpan[tagNamePrefixSpan.Length..];
 
             if (parentIsTagHelper)
             {
-                parentTagNameWithoutPrefix = parentTagNameWithoutPrefix[length..];
+                Debug.Assert(
+                    parentTagNameSpan.StartsWith(tagNamePrefixSpan, StringComparison.OrdinalIgnoreCase),
+                    "If the parent is a tag helper, it must start with the tag name prefix.");
+
+                parentTagNameSpan = parentTagNameSpan[tagNamePrefixSpan.Length..];
             }
         }
 
-        using var _ = DictionaryPool<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>>.GetPooledObject(out var applicableDescriptors);
+        using var resultsBuilder = new PooledArrayBuilder<TagHelperBoundRulesInfo>();
+        using var tempRulesBuilder = new PooledArrayBuilder<TagMatchingRuleDescriptor>();
+        using var pooledSet = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var distinctSet);
 
         // First, try any tag helpers with this tag name.
-        if (_registrations.TryGetValue(tagName, out var matchingDescriptors))
+        if (_tagNameToDescriptorsMap.TryGetValue(tagName, out var matchingDescriptors))
         {
-            FindApplicableDescriptors(matchingDescriptors, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes, applicableDescriptors);
+            CollectBoundRulesInfo(
+                matchingDescriptors,
+                tagNameSpan, parentTagNameSpan, attributes,
+                ref resultsBuilder.AsRef(), ref tempRulesBuilder.AsRef(), distinctSet);
         }
 
         // Next, try any "catch all" descriptors.
-        if (_registrations.TryGetValue(TagHelperMatchingConventions.ElementCatchAllName, out var catchAllDescriptors))
-        {
-            FindApplicableDescriptors(catchAllDescriptors, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes, applicableDescriptors);
-        }
+        CollectBoundRulesInfo(
+            _catchAllDescriptors,
+            tagNameSpan, parentTagNameSpan, attributes,
+            ref resultsBuilder.AsRef(), ref tempRulesBuilder.AsRef(), distinctSet);
 
-        if (applicableDescriptors.Count == 0)
-        {
-            return null;
-        }
+        return resultsBuilder.Count > 0
+            ? new(resultsBuilder.DrainToImmutable(), tagName, parentTagName, attributes, TagNamePrefix)
+            : null;
 
-        return new TagHelperBinding(
-            tagName,
-            attributes,
-            parentTagName,
-            applicableDescriptors.ToFrozenDictionary(),
-            TagHelperPrefix);
-
-        static void FindApplicableDescriptors(
-            HashSet<TagHelperDescriptor> descriptors,
-            ReadOnlySpan<char> tagNameWithoutPrefix,
-            ReadOnlySpan<char> parentTagNameWithoutPrefix,
+        static void CollectBoundRulesInfo(
+            ImmutableArray<TagHelperDescriptor> descriptors,
+            ReadOnlySpan<char> tagName,
+            ReadOnlySpan<char> parentTagName,
             ImmutableArray<KeyValuePair<string, string>> attributes,
-            Dictionary<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>> applicableDescriptors)
+            ref PooledArrayBuilder<TagHelperBoundRulesInfo> resultsBuilder,
+            ref PooledArrayBuilder<TagMatchingRuleDescriptor> tempRulesBuilder,
+            HashSet<TagHelperDescriptor> distinctSet)
         {
-            using var applicableRules = new PooledArrayBuilder<TagMatchingRuleDescriptor>();
-
             foreach (var descriptor in descriptors)
             {
+                if (!distinctSet.Add(descriptor))
+                {
+                    // We're already seen this descriptor, skip it.
+                    continue;
+                }
+
+                Debug.Assert(tempRulesBuilder.Count == 0);
+
                 foreach (var rule in descriptor.TagMatchingRules)
                 {
-                    if (TagHelperMatchingConventions.SatisfiesRule(rule, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes))
+                    if (TagHelperMatchingConventions.SatisfiesRule(rule, tagName, parentTagName, attributes))
                     {
-                        applicableRules.Add(rule);
+                        tempRulesBuilder.Add(rule);
                     }
                 }
 
-                if (applicableRules.Count > 0)
+                if (tempRulesBuilder.Count > 0)
                 {
-                    applicableDescriptors[descriptor] = applicableRules.DrainToImmutable();
+                    resultsBuilder.Add(new(descriptor, tempRulesBuilder.ToImmutable()));
                 }
 
-                applicableRules.Clear();
+                tempRulesBuilder.Clear();
             }
-        }
-    }
-
-    private void Register(TagHelperDescriptor descriptor)
-    {
-        foreach (var rule in descriptor.TagMatchingRules)
-        {
-            var registrationKey = rule.TagName == TagHelperMatchingConventions.ElementCatchAllName
-                ? TagHelperMatchingConventions.ElementCatchAllName
-                : TagHelperPrefix + rule.TagName;
-
-            // Ensure there's a HashSet to add the descriptor to.
-            if (!_registrations.TryGetValue(registrationKey, out var descriptorSet))
-            {
-                descriptorSet = [];
-                _registrations[registrationKey] = descriptorSet;
-            }
-
-            descriptorSet.Add(descriptor);
         }
     }
 }

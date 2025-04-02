@@ -109,37 +109,6 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         Assert.Null(result);
     }
 
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        TestCode code = "<[|d|]iv></div>";
-
-        var codeDocument = CreateCodeDocument(code.Text);
-        codeDocument.SetUnsupported();
-
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-
-        var clientConnection = CreateClientConnection(response: new WorkspaceEdit());
-        var endpoint = CreateEndpoint(clientConnection);
-
-        var parameters = new TextPresentationParams()
-        {
-            TextDocument = new() { Uri = uri },
-            Range = codeDocument.Source.Text.GetRange(code.Span),
-            Text = "Hi there"
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
     private TextDocumentTextPresentationEndpoint CreateEndpoint(IClientConnection clientConnection)
         => new(StrictMock.Of<IDocumentMappingService>(), clientConnection, FilePathService, LoggerFactory);
 

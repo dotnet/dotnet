@@ -192,35 +192,6 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
         Assert.Equal(request.ProjectedRanges[0], response!.Ranges[0]);
     }
 
-    [Fact]
-    public async Task Handle_MapToDocumentRanges_Unsupported()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocumentWithCSharpProjection(
-            razorSource: "<p>@DateTime.Now</p>",
-            projectedCSharpSource: "var __o = DateTime.Now",
-            sourceMappings: [new SourceMapping(new SourceSpan(4, 12), new SourceSpan(10, 12))]);
-        codeDocument.SetUnsupported();
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var languageEndpoint = new RazorMapToDocumentRangesEndpoint(_documentMappingService);
-        var request = new RazorMapToDocumentRangesParams()
-        {
-            Kind = RazorLanguageKind.CSharp,
-            ProjectedRanges = [VsLspFactory.CreateSingleLineRange(line: 0, character: 10, length: 12)],
-            RazorDocumentUri = documentPath,
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.NotNull(response);
-        Assert.Equal(VsLspFactory.UndefinedRange, response!.Ranges[0]);
-    }
-
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)
     {
         var codeDocument = CreateCodeDocument(razorSource, tagHelpers: []);

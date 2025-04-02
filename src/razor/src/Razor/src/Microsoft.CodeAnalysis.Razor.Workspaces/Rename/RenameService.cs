@@ -170,10 +170,6 @@ internal class RenameService(
         }
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return;
-        }
 
         // VS Code in Windows expects path to start with '/'
         var uri = BuildUri(documentSnapshot.FilePath);

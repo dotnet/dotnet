@@ -41,10 +41,6 @@ internal class ExtractToCodeBehindCodeActionResolver(
         var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
 
         if (!FileKinds.IsComponent(codeDocument.FileKind))
         {

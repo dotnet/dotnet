@@ -67,11 +67,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported() != false)
-        {
-            _logger.LogInformation($"Unsupported code document.");
-            return [];
-        }
 
         var filteredDiagnostics = diagnosticKind == RazorLanguageKind.CSharp
             ? FilterCSharpDiagnostics(diagnostics, codeDocument)

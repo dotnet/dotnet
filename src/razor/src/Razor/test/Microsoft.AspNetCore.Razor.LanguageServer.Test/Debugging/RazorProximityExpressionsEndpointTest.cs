@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
@@ -24,32 +23,6 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
             FilePathService,
             new TestDocumentContextFactory(),
             LoggerFactory);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedDocument_ReturnsNull()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocument(@"
-<p>@DateTime.Now</p>");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-
-        var diagnosticsEndpoint = new RazorProximityExpressionsEndpoint(_mappingService, LoggerFactory);
-        var request = new RazorProximityExpressionsParams()
-        {
-            Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 0),
-            HostDocumentSyncVersion = 0,
-        };
-        codeDocument.SetUnsupported();
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(response);
     }
 
     [Fact]

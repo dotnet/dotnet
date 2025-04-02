@@ -57,10 +57,6 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
         }
 
         var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return codeAction;
-        }
 
         if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), textEdit.Range, MappingBehavior.Inclusive, out var originalRange))
         {
