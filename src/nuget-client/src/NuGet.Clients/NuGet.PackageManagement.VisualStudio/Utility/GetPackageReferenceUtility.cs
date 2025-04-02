@@ -52,7 +52,7 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
             }
             else
             {
-                ProjectInstalledPackage newInstalledPackage = new ProjectInstalledPackage(projectLibrary.LibraryRange.VersionRange, new PackageIdentity(projectLibrary.Name, resolvedVersion));
+                ProjectInstalledPackage newInstalledPackage = new ProjectInstalledPackage(projectLibrary.LibraryRange.VersionRange ?? VersionRange.All, new PackageIdentity(projectLibrary.Name, resolvedVersion));
                 installedPackages.Add(projectLibrary.Name, newInstalledPackage);
             }
 
