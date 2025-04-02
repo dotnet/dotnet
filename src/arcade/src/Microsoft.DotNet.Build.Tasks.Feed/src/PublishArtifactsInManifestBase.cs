@@ -29,7 +29,7 @@ using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
 using Microsoft.DotNet.ArcadeAzureIntegration;
 #endif
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
+using Microsoft.DotNet.Build.Manifest;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;

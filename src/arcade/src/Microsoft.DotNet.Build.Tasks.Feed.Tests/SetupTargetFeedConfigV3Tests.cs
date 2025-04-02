@@ -2,17 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using FluentAssertions;
-using Microsoft.Arcade.Test.Common;
-using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using FluentAssertions;
+using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Xunit;
 using Xunit.Abstractions;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {

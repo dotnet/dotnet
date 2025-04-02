@@ -26,21 +26,21 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>2cbd93ac6b6f9f6b206f5d1bbc4973e36b1824da</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25171.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25181.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>235443a5c1136571cacdfd40576f263f26bf5b9b</Sha>
+      <Sha>25ac07fc888f6608dd4c26dd1adacb49b4868e42</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25171.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25181.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>235443a5c1136571cacdfd40576f263f26bf5b9b</Sha>
+      <Sha>25ac07fc888f6608dd4c26dd1adacb49b4868e42</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25169.2">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25178.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>03973d3d745b45e2b09e1cc9926a7c22581f278b</Sha>
+      <Sha>4b90ce1bd1019769b17ab5df787a5184dc66dee2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25169.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25178.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>03973d3d745b45e2b09e1cc9926a7c22581f278b</Sha>
+      <Sha>4b90ce1bd1019769b17ab5df787a5184dc66dee2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25152.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -132,9 +132,9 @@
       <Sha>ef4c24166691977558e5312758df4313ab310dc0</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25171.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25181.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>235443a5c1136571cacdfd40576f263f26bf5b9b</Sha>
+      <Sha>25ac07fc888f6608dd4c26dd1adacb49b4868e42</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -162,15 +162,15 @@
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.616801">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.617501">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>b0d22926bbbcbb12ac5264341ac218f0c9f01511</Sha>
+      <Sha>195acd39568d33ef6e1021c391ed3c3130f0c791</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.617002">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.618101">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>cf30e8fd726730aa4b142275fb2fc0503528b7dd</Sha>
+      <Sha>f216638d3d6324b6ec140f826b92a7f853dbdfb7</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Transitive dependency needed for source build. -->
@@ -199,9 +199,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25164.2">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25175.1">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>38d68c8b3c1545bc29019dd2cfb5475058504ed3</Sha>
+      <Sha>78d663be2b297a6ce9718243b4f4540af3d60db8</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

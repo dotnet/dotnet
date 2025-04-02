@@ -1,24 +1,24 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FluentAssertions;
-using Microsoft.Arcade.Common;
-using Microsoft.Arcade.Test.Common;
-using Microsoft.DotNet.Build.Tasks.Feed.Model;
-using Microsoft.DotNet.Internal.DependencyInjection.Testing;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Arcade.Common;
+using Microsoft.Arcade.Test.Common;
+using Microsoft.DotNet.Build.Manifest;
+using Microsoft.DotNet.Build.Manifest.Tests;
+using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Microsoft.DotNet.Internal.DependencyInjection.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
+using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using MsBuildUtils = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
