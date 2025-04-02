@@ -60,14 +60,6 @@
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
-  
-  <ItemDefinitionGroup>
-    <Artifact>
-      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
-      <SkipPublish Condition="$([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
-    </Artifact>
-  </ItemDefinitionGroup>
-
   <PropertyGroup>
     <!-- Default publishing target is 3. -->
     <PublishingVersion>3</PublishingVersion>
@@ -287,8 +279,13 @@
       <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
     </ItemGroup>
 
-    <!-- Add non-package Artifact items (repo extension point) as package already got added in the BeforePublish target. -->
     <ItemGroup>
+      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
+      <Artifact>
+        <SkipPublish Condition="'%(Artifact.SkipPublish)' == '' and $([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
+      </Artifact>
+
+      <!-- Add non-package Artifact items (repo extension point) as package already got added in the BeforePublish target. -->
       <ItemsToPushToBlobFeed Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' != '.nupkg'" />
     </ItemGroup>
 
