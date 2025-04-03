@@ -1,4 +1,4 @@
-﻿#
+#
 # See https://docs.microsoft.com/azure/devops/pipelines/yaml-schema for reference.
 #
 
@@ -78,6 +78,8 @@ extends:
         name: NetCore1ESPool-Svc-Internal
         image: 1es-windows-2022
         os: windows
+      policheck:
+        enabled: true
       tsa:
         enabled: true
         configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
