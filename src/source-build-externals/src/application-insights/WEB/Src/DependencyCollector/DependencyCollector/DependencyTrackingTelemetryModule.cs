@@ -81,7 +81,7 @@
         public ICollection<string> ExcludeComponentCorrelationHttpHeadersOnDomains { get; } = new SanitizedHostList();
 
         /// <summary>
-        /// Gets the list of diagnostic sources and activities to exclude from collection.
+        /// Gets the list of diagnostic sources and activities to include from collection.
         /// </summary>
         public ICollection<string> IncludeDiagnosticSourceActivities { get; } = new List<string>();
 

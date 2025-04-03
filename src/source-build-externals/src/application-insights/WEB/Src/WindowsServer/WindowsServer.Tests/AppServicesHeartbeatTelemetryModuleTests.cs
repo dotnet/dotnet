@@ -143,7 +143,7 @@
         {
             foreach (var kvp in appServicesHbeatModule.WebHeartbeatPropertyNameEnvVarMap)
             {
-                Environment.SetEnvironmentVariable(kvp.Value, string.Empty);
+                Environment.SetEnvironmentVariable(kvp.Value, null);
             }
         }
     }

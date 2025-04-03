@@ -24,19 +24,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        framework: [net452, net462, net472, net480, net481, netcoreapp3.1, net6.0, net7.0, net8.0]
+        framework: [net452, net462, net472, net480, net481, netcoreapp3.1, net6.0, net7.0, net8.0, net9.0]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v3.1.0
+      uses: actions/setup-dotnet@v4.3.0
       with:
         dotnet-version: |
             3.1.x
             6.0.x
             7.0.x
             8.0.x
+            9.0.x
 
     - name: Restore
       run: dotnet restore ${{ env.SOLUTION }} 

@@ -124,14 +124,14 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "33343859a1a9a1fa171a92af62634fa7d0851638"
+      "commitSha": "581b46209159ff89c89ac4a9f2a70c6f28b6f0cd"
     },
     {
-      "packageVersion": "10.0.618101",
+      "packageVersion": "10.0.620205",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "e862af6a41a678bcec164c751c2a3f7a648776cd"
+      "commitSha": "b22cfa235a532fd7e371251830f37ca024dc2112"
     },
     {
       "packageVersion": "10.0.620202",
@@ -228,7 +228,7 @@
     {
       "path": "source-build-externals/src/application-insights",
       "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
-      "commitSha": "43825e06a22cdfb702fc199a7ba99a7d541d48c6"
+      "commitSha": "2faa7e8b157a431daa2e71785d68abd5fa817b53"
     },
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
@@ -259,11 +259,6 @@
       "path": "source-build-externals/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
-    },
-    {
-      "path": "source-build-externals/src/spectre-console",
-      "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "7397169a2757dc3657598bdea4ac222c0f283425"
     },
     {
       "path": "source-build-externals/src/vs-solutionpersistence",

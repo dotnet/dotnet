@@ -53,6 +53,20 @@
         }
 
         /// <summary>
+        /// Validates the string and if null or empty populates it with '$parameterName is a required field for $telemetryType' value.
+        /// </summary>
+        public static string PopulateRequiredNonWhitespaceStringValue(string value, string parameterName, string telemetryType)
+        {
+            if (value.IsNullOrWhiteSpace())
+            {
+                CoreEventSource.Log.PopulateRequiredStringWithValue(parameterName, telemetryType);
+                return "n/a";
+            }
+
+            return value;
+        }
+
+        /// <summary>
         /// Returns default Timespan value if not a valid Timespan.
         /// </summary>
         public static TimeSpan ValidateDuration(string value)
