@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+
+    <!-- To generate baselines, run tests with /p:GenerateJsonFiles=true -->
+    <DefineConstants Condition="'$(GenerateJsonFiles)'=='true'">$(DefineConstants);GENERATE_JSON_FILES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

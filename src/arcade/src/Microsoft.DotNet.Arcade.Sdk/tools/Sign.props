@@ -94,6 +94,11 @@
     <FileExtensionSignInfo Include=".app" CertificateName="MacDeveloper" />
     <!-- Runtime hardening is required for notarization. -->
     <FileExtensionSignInfo Include=".dylib" CertificateName="MacDeveloperHarden" />
+
+    <!-- Explicitly use the azure linux cert for azl binaries -->
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
+    <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400
