@@ -71,11 +71,11 @@
       "commitSha": "e165bbea9e27ceb4c8b91c22bd0c564ff1dc8b25"
     },
     {
-      "packageVersion": "17.15.0-preview-25181-20",
+      "packageVersion": "17.15.0-preview-25202-06",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "06d1cb4401fa6a7e948e582c708987cb91238414"
+      "commitSha": "495fc56723d0d71536fd2c59343d518ed7b4b4d4"
     },
     {
       "packageVersion": "6.14.0-preview.1.102",
@@ -124,21 +124,21 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "59642770a300871cd9f8c157f79ac0273ee54091"
+      "commitSha": "d02c58fc2afa535412adc3e9f83eb2127c16f675"
     },
     {
-      "packageVersion": "10.0.618101",
+      "packageVersion": "10.0.620205",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "e862af6a41a678bcec164c751c2a3f7a648776cd"
+      "commitSha": "b22cfa235a532fd7e371251830f37ca024dc2112"
     },
     {
-      "packageVersion": "10.0.618101",
+      "packageVersion": "10.0.620202",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "f216638d3d6324b6ec140f826b92a7f853dbdfb7"
+      "commitSha": "8066d7d7a0829b2c7f7de93fef003d9ce50f7fba"
     },
     {
       "packageVersion": "10.0.0-beta.25201.1",
@@ -155,11 +155,11 @@
       "commitSha": "6a1f83490ef989d99de47019f8201d51a6526889"
     },
     {
-      "packageVersion": "10.0.100-preview.4.25170.1",
+      "packageVersion": "10.0.100-preview.4.25203.6",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "2cbd93ac6b6f9f6b206f5d1bbc4973e36b1824da"
+      "commitSha": "5fb484f5f4822bb3388c99a73a50bf7d14fd24a3"
     },
     {
       "packageVersion": "17.14.0-preview-25202-02",
@@ -169,25 +169,25 @@
       "commitSha": "d45df4b7119f16b31c3d0adcd3adbf3ec0842d02"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25202.1",
+      "packageVersion": "10.0.0-preview.4.25202.9",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "2985b2b805a311f142ae51b74ad31802a869bc50"
+      "commitSha": "c06cb4ca97b67442832d4c3df42f15ffeb07ebd8"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25201.5",
+      "packageVersion": "10.0.0-preview.4.25201.6",
       "barId": null,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "4370cc0bf0c07ff2e37dcec7b0e8738fad07d732"
+      "commitSha": "d739bc97295e50c6a1f7ded13c6326323b9d2d0f"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25202.2",
+      "packageVersion": "10.0.0-preview.4.25202.6",
       "barId": null,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "5c36d75ccc48334780a77028e778c1d3f5aa5c45"
+      "commitSha": "9cfcf9e5f3ab5d69c7311979e5327d7af30fc854"
     },
     {
       "packageVersion": "10.0.0-preview.25201.1",
@@ -228,7 +228,7 @@
     {
       "path": "source-build-externals/src/application-insights",
       "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
-      "commitSha": "43825e06a22cdfb702fc199a7ba99a7d541d48c6"
+      "commitSha": "2faa7e8b157a431daa2e71785d68abd5fa817b53"
     },
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
@@ -259,11 +259,6 @@
       "path": "source-build-externals/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
-    },
-    {
-      "path": "source-build-externals/src/spectre-console",
-      "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "7397169a2757dc3657598bdea4ac222c0f283425"
     },
     {
       "path": "source-build-externals/src/vs-solutionpersistence",
