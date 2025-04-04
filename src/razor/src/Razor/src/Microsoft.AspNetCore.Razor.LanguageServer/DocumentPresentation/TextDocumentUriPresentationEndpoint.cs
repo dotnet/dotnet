@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
@@ -77,7 +76,7 @@ internal class TextDocumentUriPresentationEndpoint(
                     {
                         Uri = request.TextDocument.Uri
                     },
-                    Edits = [VsLspFactory.CreateTextEdit(request.Range, componentTagText)]
+                    Edits = [LspFactory.CreateTextEdit(request.Range, componentTagText)]
                 }
             }
         };

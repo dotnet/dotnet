@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;

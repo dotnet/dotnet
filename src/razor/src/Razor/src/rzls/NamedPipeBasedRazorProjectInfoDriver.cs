@@ -68,7 +68,11 @@ internal sealed class NamedPipeBasedRazorProjectInfoDriver : AbstractRazorProjec
                 continue;
             }
 
-            Logger.LogInformation($"Failed {failedActionReads} times but things may be back on track");
+            if (failedActionReads > 0)
+            {
+                Logger.LogInformation($"Failed {failedActionReads} times but things may be back on track");
+            }
+
             failedActionReads = 0;
 
             try

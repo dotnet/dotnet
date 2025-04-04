@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -262,9 +261,9 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
                 });
 
         var actual = new StringBuilder(inputText.ToString());
-        foreach (var marker in markerPositions.OrderByDescending(p => p.index))
+        foreach (var (index, isStart) in markerPositions.OrderByDescending(p => p.index))
         {
-            actual.Insert(marker.index, GetMarker(marker.index, marker.isStart, htmlSpans));
+            actual.Insert(index, GetMarker(index, isStart, htmlSpans));
         }
 
         static string GetMarker(int index, bool isStart, ImmutableArray<TextSpan> htmlSpans)

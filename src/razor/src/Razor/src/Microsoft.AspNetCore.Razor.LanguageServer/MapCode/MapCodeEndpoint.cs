@@ -23,8 +23,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Location = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
@@ -129,7 +127,7 @@ internal sealed class MapCodeEndpoint(
 
     private async Task<bool> TryMapCodeAsync(
         RazorCodeDocument codeToMap,
-        Location[][] locations,
+        LspLocation[][] locations,
         List<TextDocumentEdit> changes,
         Guid mapCodeCorrelationId,
         DocumentContext documentContext,
@@ -159,7 +157,7 @@ internal sealed class MapCodeEndpoint(
     }
 
     private async Task<bool> TryMapCodeAsync(
-        Location[][] focusLocations,
+        LspLocation[][] focusLocations,
         ImmutableArray<SyntaxNode> nodesToMap,
         Guid mapCodeCorrelationId,
         List<TextDocumentEdit> changes,
@@ -167,7 +165,7 @@ internal sealed class MapCodeEndpoint(
         CancellationToken cancellationToken)
     {
         var didCalculateCSharpFocusLocations = false;
-        var csharpFocusLocations = new Location[focusLocations.Length][];
+        var csharpFocusLocations = new LspLocation[focusLocations.Length][];
 
         // We attempt to map the code using each focus location in order of priority.
         // The outer array is an ordered priority list (from highest to lowest priority),
@@ -237,7 +235,7 @@ internal sealed class MapCodeEndpoint(
                     if (insertionSpan is not null)
                     {
                         var textSpan = new TextSpan(insertionSpan.Value, 0);
-                        var edit = VsLspFactory.CreateTextEdit(sourceText.GetRange(textSpan), nodeToMap.ToFullString());
+                        var edit = LspFactory.CreateTextEdit(sourceText.GetRange(textSpan), nodeToMap.ToFullString());
 
                         var textDocumentEdit = new TextDocumentEdit
                         {
@@ -305,7 +303,7 @@ internal sealed class MapCodeEndpoint(
     private async Task<bool> TrySendCSharpDelegatedMappingRequestAsync(
         TextDocumentIdentifierAndVersion textDocumentIdentifier,
         SyntaxNode nodeToMap,
-        Location[][] focusLocations,
+        LspLocation[][] focusLocations,
         Guid mapCodeCorrelationId,
         List<TextDocumentEdit> changes,
         CancellationToken cancellationToken)
@@ -341,11 +339,11 @@ internal sealed class MapCodeEndpoint(
         return success;
     }
 
-    private async Task<Location[][]> GetCSharpFocusLocationsAsync(Location[][] focusLocations, CancellationToken cancellationToken)
+    private async Task<LspLocation[][]> GetCSharpFocusLocationsAsync(LspLocation[][] focusLocations, CancellationToken cancellationToken)
     {
         // If the focus locations are in a C# context, map them to the C# document.
-        var csharpFocusLocations = new Location[focusLocations.Length][];
-        using var csharpLocations = new PooledArrayBuilder<Location>();
+        var csharpFocusLocations = new LspLocation[focusLocations.Length][];
+        using var csharpLocations = new PooledArrayBuilder<LspLocation>();
         for (var i = 0; i < focusLocations.Length; i++)
         {
             csharpLocations.Clear();
@@ -370,7 +368,7 @@ internal sealed class MapCodeEndpoint(
 
                 if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
-                    var csharpLocation = new Location
+                    var csharpLocation = new LspLocation
                     {
                         // We convert the URI to the C# generated document URI later on in
                         // LanguageServer.Client since we're unable to retrieve it here.
@@ -414,7 +412,7 @@ internal sealed class MapCodeEndpoint(
             foreach (var edit in edits.Changes)
             {
                 var generatedUri = new Uri(edit.Key);
-                var success = await TryProcessEditAsync(generatedUri, edit.Value, csharpChanges, cancellationToken).ConfigureAwait(false);
+                var success = await TryProcessEditAsync(generatedUri, edit.Value.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e), csharpChanges, cancellationToken).ConfigureAwait(false);
                 if (!success)
                 {
                     return false;
@@ -427,11 +425,11 @@ internal sealed class MapCodeEndpoint(
 
         async Task<bool> TryProcessEditAsync(
             Uri generatedUri,
-            TextEdit[] textEdits,
+            IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> textEdits,
             List<TextDocumentEdit> csharpChanges,
             CancellationToken cancellationToken)
         {
-            foreach (var documentEdit in textEdits)
+            foreach (var documentEdit in textEdits.Select(e => (TextEdit)e))
             {
                 var (hostDocumentUri, hostDocumentRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(
                     generatedUri, documentEdit.Range, cancellationToken).ConfigureAwait(false);
@@ -441,7 +439,7 @@ internal sealed class MapCodeEndpoint(
                     return false;
                 }
 
-                var textEdit = VsLspFactory.CreateTextEdit(hostDocumentRange, documentEdit.NewText);
+                var textEdit = LspFactory.CreateTextEdit(hostDocumentRange, documentEdit.NewText);
 
                 var textDocumentEdit = new TextDocumentEdit
                 {
@@ -464,12 +462,12 @@ internal sealed class MapCodeEndpoint(
         foreach (var documentChanges in groupedChanges)
         {
             var edits = documentChanges.ToList();
-            edits.Sort((x, y) => x.Edits.Single().Range.Start.CompareTo(y.Edits.Single().Range.Start));
+            edits.Sort((x, y) => ((TextEdit)x.Edits.Single()).Range.Start.CompareTo(((TextEdit)y.Edits.Single()).Range.Start));
 
             for (var i = edits.Count - 1; i < edits.Count && i > 0; i--)
             {
-                var previousEdit = edits[i - 1].Edits.Single();
-                var currentEdit = edits[i].Edits.Single();
+                var previousEdit = (TextEdit)edits[i - 1].Edits.Single();
+                var currentEdit = (TextEdit)edits[i].Edits.Single();
                 if (currentEdit.Range.Start == previousEdit.Range.Start)
                 {
                     // Append the text of the current edit to the previous edit

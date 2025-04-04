@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,7 +37,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 8),
+            Position = LspFactory.CreatePosition(1, 8),
             HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -64,7 +63,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
             HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -90,7 +89,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
             HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -118,7 +117,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.DefaultPosition,
+            Position = LspFactory.DefaultPosition,
             HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);

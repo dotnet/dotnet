@@ -18,7 +18,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 

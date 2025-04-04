@@ -1,5 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
+extern alias RLSP;
 
 using System;
 using System.Collections.Immutable;
@@ -11,8 +12,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Text.Adornments;
+using RLSP::Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -89,9 +89,9 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         Assert.Equal(expectedSpans.Length, result.Length);
 
         var i = 0;
-        foreach (var referenceItem in result.OrderBy(l => l.Location.Range.Start.Line))
+        foreach (var referenceItem in result.OrderBy(l => l.Location.AssumeNotNull().Range.Start.Line))
         {
-            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.Uri);
+            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.AssumeNotNull().Uri);
 
             var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[i]);
             Assert.Equal(expectedRange, referenceItem.Location.Range);

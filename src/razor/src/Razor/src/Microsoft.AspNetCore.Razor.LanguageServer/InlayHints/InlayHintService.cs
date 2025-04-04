@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
@@ -22,7 +21,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
-    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, DocumentContext documentContext, Range range, CancellationToken cancellationToken)
+    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, DocumentContext documentContext, LspRange range, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetCSharpDocument();

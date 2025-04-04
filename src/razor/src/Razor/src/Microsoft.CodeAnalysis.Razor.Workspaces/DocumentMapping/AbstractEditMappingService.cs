@@ -4,13 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
@@ -100,7 +100,7 @@ internal abstract class AbstractEditMappingService(
                 continue;
             }
 
-            var remappedEdit = VsLspFactory.CreateTextEdit(hostDocumentRange, edit.NewText);
+            var remappedEdit = LspFactory.CreateTextEdit(hostDocumentRange, edit.NewText);
             remappedEdits.Add(remappedEdit);
         }
 
@@ -132,7 +132,8 @@ internal abstract class AbstractEditMappingService(
 
             var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-            var remappedEdits = RemapTextEditsCore(generatedDocumentUri, codeDocument, entry.Edits);
+            // entry.Edits is SumType<TextEdit, AnnotatedTextEdit> but AnnotatedTextEdit inherits from TextEdit, so we can just cast
+            var remappedEdits = RemapTextEditsCore(generatedDocumentUri, codeDocument, entry.Edits.Select(e => (TextEdit)e).ToArray());
             if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
@@ -145,7 +146,7 @@ internal abstract class AbstractEditMappingService(
                 {
                     Uri = razorDocumentUri,
                 },
-                Edits = remappedEdits
+                Edits = remappedEdits.Select(e => new SumType<TextEdit, AnnotatedTextEdit>(e)).ToArray()
             });
         }
 

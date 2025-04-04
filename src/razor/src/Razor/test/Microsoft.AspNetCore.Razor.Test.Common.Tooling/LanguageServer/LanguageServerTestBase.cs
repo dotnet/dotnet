@@ -33,7 +33,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 {
     private protected IRazorMappingService SpanMappingService { get; } = new ThrowingRazorMappingService();
     private protected IFilePathService FilePathService { get; } = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
-    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.VsLspJsonSerializerOptions;
+    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.JsonSerializerOptions;
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider, LanguageServerFeatureOptions languageServerFeatureOptions)

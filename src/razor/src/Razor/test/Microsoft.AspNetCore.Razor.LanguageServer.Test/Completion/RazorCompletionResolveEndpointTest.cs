@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -73,7 +72,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
+        var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
         completionList.SetResultId(1337, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -90,7 +89,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
+        var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
         var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
         completionList.SetResultId(resultId, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
@@ -111,7 +110,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         await InitializeAsync();
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList = new VSInternalCompletionList() { Items = [completionItem] };
+        var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
         completionList.SetResultId(/* Invalid */ 1337, completionSetting: null);
         var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
         completionList.SetResultId(resultId, completionSetting: null);
@@ -133,13 +132,13 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         await InitializeAsync();
         var completionSetting = new VSInternalCompletionSetting() { CompletionList = new VSInternalCompletionListSetting() { Data = true } };
-        var completionList1 = new VSInternalCompletionList() { Items = [] };
+        var completionList1 = new RazorVSInternalCompletionList() { Items = [] };
         var completion1Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId1 = _completionListCache.Add(completionList1, completion1Context);
         completionList1.SetResultId(resultId1, completionSetting);
 
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
-        var completionList2 = new VSInternalCompletionList() { Items = [completionItem] };
+        var completionList2 = new RazorVSInternalCompletionList() { Items = [completionItem] };
         var completion2Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId2 = _completionListCache.Add(completionList2, completion2Context);
         completionList2.SetResultId(resultId2, completionSetting);

@@ -4,9 +4,9 @@
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class VsLspExtensions
+internal static partial class LspExtensions
 {
     public static RazorTextChange ToRazorTextChange(this TextChange textChange)
     {

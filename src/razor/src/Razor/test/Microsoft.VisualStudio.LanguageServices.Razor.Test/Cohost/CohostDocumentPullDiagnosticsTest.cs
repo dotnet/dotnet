@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;

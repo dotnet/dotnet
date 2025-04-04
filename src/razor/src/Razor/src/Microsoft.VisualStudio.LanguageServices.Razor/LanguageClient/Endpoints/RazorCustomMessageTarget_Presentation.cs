@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;

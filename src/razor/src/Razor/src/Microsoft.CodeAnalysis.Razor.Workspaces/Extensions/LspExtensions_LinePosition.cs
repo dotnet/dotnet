@@ -5,8 +5,11 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class RoslynLspExtensions
+internal static partial class LspExtensions
 {
     public static Position ToPosition(this LinePosition linePosition)
-        => RoslynLspFactory.CreatePosition(linePosition.Line, linePosition.Character);
+        => LspFactory.CreatePosition(linePosition.Line, linePosition.Character);
+
+    public static LspRange ToZeroWidthRange(this LinePosition position)
+        => LspFactory.CreateZeroWidthRange(position);
 }

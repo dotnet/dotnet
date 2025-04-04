@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
@@ -21,7 +20,7 @@ internal class RazorCompletionEndpoint(
     CompletionTriggerAndCommitCharacters triggerAndCommitCharacters,
     ITelemetryReporter telemetryReporter,
     RazorLSPOptionsMonitor optionsMonitor)
-    : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
+    : IRazorRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = triggerAndCommitCharacters;
@@ -49,7 +48,7 @@ internal class RazorCompletionEndpoint(
         return request.TextDocument;
     }
 
-    public async Task<VSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<RazorVSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         if (request.Context is not VSInternalCompletionContext completionContext ||
             requestContext.DocumentContext is not { } documentContext)

@@ -5,8 +5,8 @@ using System;
 
 namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class RoslynLspExtensions
+internal static partial class LspExtensions
 {
-    public static void Deconstruct(this Location position, out Uri uri, out Range range)
+    public static void Deconstruct(this LspLocation position, out Uri uri, out LspRange range)
         => (uri, range) = (position.Uri, position.Range);
 }

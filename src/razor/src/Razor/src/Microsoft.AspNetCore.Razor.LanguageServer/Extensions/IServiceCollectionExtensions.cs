@@ -34,7 +34,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+extern alias RLSP;
+
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -12,11 +14,8 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
-using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.SumType<Roslyn.LanguageServer.Protocol.VSInternalReferenceItem, Roslyn.LanguageServer.Protocol.Location>[]?>;
+using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<RLSP::Roslyn.LanguageServer.Protocol.SumType<RLSP::Roslyn.LanguageServer.Protocol.VSInternalReferenceItem, RLSP::Roslyn.LanguageServer.Protocol.Location>[]?>;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
-using LspLocation = Roslyn.LanguageServer.Protocol.Location;
-using VsLspExtensions = Microsoft.VisualStudio.LanguageServer.Protocol.VsLspExtensions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -71,7 +70,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
             .FindReferencesAsync(
                 RemoteWorkspaceAccessor.GetWorkspace(),
                 generatedDocument,
-                VsLspExtensions.ToLinePosition(positionInfo.Position),
+                positionInfo.Position.ToLinePosition(),
                 _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions,
                 cancellationToken)
             .ConfigureAwait(false);

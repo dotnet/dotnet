@@ -8,7 +8,6 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.AutoInsert;
 

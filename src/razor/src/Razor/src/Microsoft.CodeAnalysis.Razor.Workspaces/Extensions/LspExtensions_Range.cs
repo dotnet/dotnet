@@ -3,20 +3,20 @@
 
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class VsLspExtensions
+internal static partial class LspExtensions
 {
-    public static void Deconstruct(this Range range, out Position start, out Position end)
+    public static void Deconstruct(this LspRange range, out Position start, out Position end)
         => (start, end) = (range.Start, range.End);
 
-    public static void Deconstruct(this Range range, out int startLine, out int startCharacter, out int endLine, out int endCharacter)
+    public static void Deconstruct(this LspRange range, out int startLine, out int startCharacter, out int endLine, out int endCharacter)
         => (startLine, startCharacter, endLine, endCharacter) = (range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
 
-    public static LinePositionSpan ToLinePositionSpan(this Range range)
+    public static LinePositionSpan ToLinePositionSpan(this LspRange range)
         => new(range.Start.ToLinePosition(), range.End.ToLinePosition());
 
-    public static bool IntersectsOrTouches(this Range range, Range other)
+    public static bool IntersectsOrTouches(this LspRange range, LspRange other)
     {
         if (range.IsBefore(other))
         {
@@ -31,18 +31,18 @@ internal static partial class VsLspExtensions
         return true;
     }
 
-    private static bool IsBefore(this Range range, Range other) =>
+    private static bool IsBefore(this LspRange range, LspRange other) =>
         range.End.Line < other.Start.Line || (range.End.Line == other.Start.Line && range.End.Character < other.Start.Character);
 
-    private static bool IsAfter(this Range range, Range other) =>
+    private static bool IsAfter(this LspRange range, LspRange other) =>
         other.End.Line < range.Start.Line || (other.End.Line == range.Start.Line && other.End.Character < range.Start.Character);
 
-    public static bool OverlapsWith(this Range range, Range other)
+    public static bool OverlapsWith(this LspRange range, LspRange other)
     {
         return range.ToLinePositionSpan().OverlapsWith(other.ToLinePositionSpan());
     }
 
-    public static bool LineOverlapsWith(this Range range, Range other)
+    public static bool LineOverlapsWith(this LspRange range, LspRange other)
     {
         var overlapStart = range.Start.Line;
         if (range.Start.Line.CompareTo(other.Start.Line) < 0)
@@ -59,32 +59,32 @@ internal static partial class VsLspExtensions
         return overlapStart.CompareTo(overlapEnd) <= 0;
     }
 
-    public static bool Contains(this Range range, Range other)
+    public static bool Contains(this LspRange range, LspRange other)
     {
         return range.Start.CompareTo(other.Start) <= 0 && range.End.CompareTo(other.End) >= 0;
     }
 
-    public static bool SpansMultipleLines(this Range range)
+    public static bool SpansMultipleLines(this LspRange range)
     {
         return range.Start.Line != range.End.Line;
     }
 
-    public static bool IsSingleLine(this Range range)
+    public static bool IsSingleLine(this LspRange range)
     {
         return range.Start.Line == range.End.Line;
     }
 
-    public static bool IsUndefined(this Range range)
+    public static bool IsUndefined(this LspRange range)
     {
-        return range == VsLspFactory.UndefinedRange;
+        return range == LspFactory.UndefinedRange;
     }
 
-    public static bool IsZeroWidth(this Range range)
+    public static bool IsZeroWidth(this LspRange range)
     {
         return range.Start == range.End;
     }
 
-    public static int CompareTo(this Range range1, Range range2)
+    public static int CompareTo(this LspRange range1, LspRange range2)
     {
         var result = range1.Start.CompareTo(range2.Start);
 
@@ -96,7 +96,7 @@ internal static partial class VsLspExtensions
         return result;
     }
 
-    public static Range? Overlap(this Range range, Range other)
+    public static LspRange? Overlap(this LspRange range, LspRange other)
     {
         var overlapStart = range.Start;
         if (range.Start.CompareTo(other.Start) < 0)
@@ -113,12 +113,12 @@ internal static partial class VsLspExtensions
         // Empty ranges do not overlap with any range.
         if (overlapStart.CompareTo(overlapEnd) < 0)
         {
-            return VsLspFactory.CreateRange(overlapStart, overlapEnd);
+            return LspFactory.CreateRange(overlapStart, overlapEnd);
         }
 
         return null;
     }
 
-    public static string ToDisplayString(this Range range)
+    public static string ToDisplayString(this LspRange range)
         => $"{range.Start.ToDisplayString()}-{range.End.ToDisplayString()}";
 }

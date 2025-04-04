@@ -4,9 +4,9 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class VsLspExtensions
+internal static partial class LspExtensions
 {
     public static int GetPosition(this SourceText text, Position position)
         => text.GetPosition(position.ToLinePosition());
@@ -14,16 +14,16 @@ internal static partial class VsLspExtensions
     public static Position GetPosition(this SourceText text, int position)
         => text.GetLinePosition(position).ToPosition();
 
-    public static Range GetRange(this SourceText text, TextSpan span)
+    public static LspRange GetRange(this SourceText text, TextSpan span)
         => text.GetLinePositionSpan(span).ToRange();
 
-    public static Range GetRange(this SourceText text, SourceSpan span)
+    public static LspRange GetRange(this SourceText text, SourceSpan span)
         => text.GetLinePositionSpan(span).ToRange();
 
-    public static Range GetRange(this SourceText text, int start, int end)
+    public static LspRange GetRange(this SourceText text, int start, int end)
         => text.GetLinePositionSpan(start, end).ToRange();
 
-    public static Range GetZeroWidthRange(this SourceText text, int position)
+    public static LspRange GetZeroWidthRange(this SourceText text, int position)
         => text.GetLinePosition(position).ToZeroWidthRange();
 
     public static bool IsValidPosition(this SourceText text, Position position)
@@ -35,7 +35,7 @@ internal static partial class VsLspExtensions
     public static int GetRequiredAbsoluteIndex(this SourceText text, Position position)
         => text.GetRequiredAbsoluteIndex(position.Line, position.Character);
 
-    public static TextSpan GetTextSpan(this SourceText text, Range range)
+    public static TextSpan GetTextSpan(this SourceText text, LspRange range)
         => text.GetTextSpan(range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
 
     public static bool TryGetSourceLocation(this SourceText text, Position position, out SourceLocation location)
@@ -45,5 +45,5 @@ internal static partial class VsLspExtensions
         => new(text.GetTextSpan(edit.Range), edit.NewText);
 
     public static TextEdit GetTextEdit(this SourceText text, TextChange change)
-        => VsLspFactory.CreateTextEdit(text.GetRange(change.Span), change.NewText ?? "");
+        => LspFactory.CreateTextEdit(text.GetRange(change.Span), change.NewText ?? "");
 }

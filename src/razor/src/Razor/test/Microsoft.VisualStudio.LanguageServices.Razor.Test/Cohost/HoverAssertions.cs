@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Text.Adornments;
 using Xunit;
 
@@ -79,7 +78,7 @@ internal static class HoverAssertions
             Assert.Equal(text, run.Text);
         };
 
-    public static Action<ClassifiedTextRun> ClassName (string text)
+    public static Action<ClassifiedTextRun> ClassName(string text)
         => Run(text, ClassificationTypeNames.ClassName);
 
     public static Action<ClassifiedTextRun> Keyword(string text)

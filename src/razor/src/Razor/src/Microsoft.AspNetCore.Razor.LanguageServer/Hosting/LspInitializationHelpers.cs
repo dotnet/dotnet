@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 

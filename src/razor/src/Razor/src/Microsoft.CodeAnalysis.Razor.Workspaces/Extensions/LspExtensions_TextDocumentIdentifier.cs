@@ -6,8 +6,13 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 
 namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class RoslynLspExtensions
+internal static partial class LspExtensions
 {
+    public static VSProjectContext? GetProjectContext(this TextDocumentIdentifier textDocumentIdentifier)
+        => textDocumentIdentifier is VSTextDocumentIdentifier vsIdentifier
+            ? vsIdentifier.ProjectContext
+            : null;
+
     /// <summary>
     /// Returns a copy of the passed in <see cref="TextDocumentIdentifier"/> with the passed in <see cref="Uri"/>.
     /// </summary>

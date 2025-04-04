@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.InlayHints;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 

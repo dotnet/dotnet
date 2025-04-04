@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 

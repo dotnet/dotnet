@@ -16,8 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -28,9 +26,9 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     private CodeActionEndpoint? CodeActionEndpoint { get; set; }
     private IDocumentSnapshot? DocumentSnapshot { get; set; }
     private SourceText? DocumentText { get; set; }
-    private Range? RazorCodeActionRange { get; set; }
-    private Range? CSharpCodeActionRange { get; set; }
-    private Range? HtmlCodeActionRange { get; set; }
+    private LspRange? RazorCodeActionRange { get; set; }
+    private LspRange? CSharpCodeActionRange { get; set; }
+    private LspRange? HtmlCodeActionRange { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
 
     public enum FileTypes

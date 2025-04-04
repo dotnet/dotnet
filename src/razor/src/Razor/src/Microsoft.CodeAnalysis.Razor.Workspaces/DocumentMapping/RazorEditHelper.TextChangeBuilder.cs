@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.ObjectPool;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 

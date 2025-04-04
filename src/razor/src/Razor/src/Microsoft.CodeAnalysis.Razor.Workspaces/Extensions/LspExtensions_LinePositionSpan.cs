@@ -5,8 +5,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class RoslynLspExtensions
+internal static partial class LspExtensions
 {
-    public static Range ToRange(this LinePositionSpan linePositionSpan)
-        => RoslynLspFactory.CreateRange(linePositionSpan);
+    public static LspRange ToRange(this LinePositionSpan linePositionSpan)
+        => LspFactory.CreateRange(linePositionSpan);
 }

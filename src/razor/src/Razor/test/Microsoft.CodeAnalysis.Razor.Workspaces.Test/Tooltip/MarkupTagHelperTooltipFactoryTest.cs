@@ -5,8 +5,9 @@
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 

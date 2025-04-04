@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,7 +18,7 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "<";
-        var textEditRange = VsLspFactory.CreateSingleLineRange(start: (0, 0), length: 1);
+        var textEditRange = LspFactory.CreateSingleLineRange(start: (0, 0), length: 1);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
 
         // Act
@@ -37,9 +36,9 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
         // Line 19: __o = DateTime
-        var textEditRange = VsLspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
+        var textEditRange = LspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
-        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
 
         // Act
         var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
@@ -56,13 +55,13 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
         // Line 19: __o = DateTime
-        var textEditRange = VsLspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
+        var textEditRange = LspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
         delegatedCompletionList.ItemDefaults = new CompletionListItemDefaults()
         {
             EditRange = textEditRange,
         };
-        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
 
         // Act
         var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
@@ -72,17 +71,15 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         Assert.Equal(expectedRange, rewrittenCompletionList.ItemDefaults.EditRange);
     }
 
-    private static VSInternalCompletionList GenerateCompletionList(Range textEditRange)
-    {
-        return new VSInternalCompletionList()
+    private static RazorVSInternalCompletionList GenerateCompletionList(LspRange textEditRange)
+        => new()
         {
             Items = [
                 new VSInternalCompletionItem()
                 {
                     Label = string.Empty, // label string is non-nullable
-                    TextEdit = VsLspFactory.CreateTextEdit(textEditRange, "Hello")
+                    TextEdit = LspFactory.CreateTextEdit(textEditRange, "Hello")
                 }
             ]
         };
-    }
 }

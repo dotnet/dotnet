@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 

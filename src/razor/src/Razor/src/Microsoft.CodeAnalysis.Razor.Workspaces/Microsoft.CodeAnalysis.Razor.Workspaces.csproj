@@ -14,9 +14,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" />
   </ItemGroup>
 
   <ItemGroup>

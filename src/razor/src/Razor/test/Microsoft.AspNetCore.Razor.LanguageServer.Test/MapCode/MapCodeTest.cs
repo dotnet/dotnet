@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -275,7 +274,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         string[] codeToMap,
         string expectedCode,
         string razorFilePath = RazorFilePath,
-        Location[][]? locations = null)
+        LspLocation[][]? locations = null)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(originalCode, out var output, out int cursorPosition, out ImmutableArray<TextSpan> spans);
@@ -311,7 +310,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 FocusLocations = locations ??
                 [
                     [
-                        new Location
+                        new LspLocation
                         {
                             Range = sourceText.GetZeroWidthRange(cursorPosition),
                             Uri = new Uri(razorFilePath)
@@ -394,7 +393,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
             foreach (var currentEdit in edit.Edits)
             {
-                sourceText = sourceText.WithChanges(sourceText.GetTextChange(currentEdit));
+                sourceText = sourceText.WithChanges(sourceText.GetTextChange(((TextEdit)currentEdit)));
             }
         }
 

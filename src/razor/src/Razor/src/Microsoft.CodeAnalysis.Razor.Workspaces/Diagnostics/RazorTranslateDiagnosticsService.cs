@@ -17,10 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
-using LspDiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
-using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
@@ -570,7 +566,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 var diagnosticEndWhitespaceOffset = diagnosticEndCharacter + 1;
                 var endLinePosition = (endLineIndex, diagnosticEndWhitespaceOffset);
 
-                remappedRange = VsLspFactory.CreateRange(startLinePosition, endLinePosition);
+                remappedRange = LspFactory.CreateRange(startLinePosition, endLinePosition);
                 return true;
         }
     }

@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class VsLspExtensions
+internal static partial class LspExtensions
 {
-    public static Range GetRange(this SyntaxNode node, RazorSourceDocument source)
+    public static LspRange GetRange(this SyntaxNode node, RazorSourceDocument source)
     {
         var linePositionSpan = node.GetLinePositionSpan(source);
 
-        return VsLspFactory.CreateRange(linePositionSpan);
+        return LspFactory.CreateRange(linePositionSpan);
     }
 }

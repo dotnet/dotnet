@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+extern alias RLSP;
+
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
@@ -10,11 +12,10 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 
-using SignatureHelp = VisualStudio.LanguageServer.Protocol.SignatureHelp;
+using SignatureHelp = RLSP::Roslyn.LanguageServer.Protocol.SignatureHelp;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentSignatureHelpName)]
 internal sealed class SignatureHelpEndpoint(

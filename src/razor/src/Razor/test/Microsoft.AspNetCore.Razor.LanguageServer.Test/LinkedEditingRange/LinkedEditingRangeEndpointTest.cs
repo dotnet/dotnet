@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +24,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -51,13 +50,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -84,13 +83,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 6) // <test1[||]></test1>
+            Position = LspFactory.CreatePosition(1, 6) // <test1[||]></test1>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -117,13 +116,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 9) // <test1></[||]test1>
+            Position = LspFactory.CreatePosition(1, 9) // <test1></[||]test1>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -150,7 +149,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(0, 1) // @[||]addTagHelper *
+            Position = LspFactory.CreatePosition(0, 1) // @[||]addTagHelper *
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -176,7 +175,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3) // <te[||]st1 />
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1 />
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -202,13 +201,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 1) // <[||]test1><test1></test1></test1>
+            Position = LspFactory.CreatePosition(1, 1) // <[||]test1><test1></test1></test1>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 24, length: 5)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 24, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -235,13 +234,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3) // <bo[||]dy></body>
+            Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy></body>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
+            LspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -268,13 +267,13 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 8) // <body></[||]body>
+            Position = LspFactory.CreatePosition(1, 8) // <body></[||]body>
         };
 
         var expectedRanges = new[]
         {
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
-            VsLspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
+            LspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -301,7 +300,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var request = new LinkedEditingRangeParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3) // <bo[||]dy />
+            Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy />
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

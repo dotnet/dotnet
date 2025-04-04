@@ -4,7 +4,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 

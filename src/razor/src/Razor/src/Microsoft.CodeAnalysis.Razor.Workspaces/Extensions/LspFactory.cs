@@ -5,13 +5,13 @@ using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static class VsLspFactory
+internal static class LspFactory
 {
     private static readonly Position s_defaultPosition = new(0, 0);
 
-    private static readonly Range s_defaultRange = new()
+    private static readonly LspRange s_defaultRange = new()
     {
         Start = s_defaultPosition,
         End = s_defaultPosition
@@ -19,7 +19,7 @@ internal static class VsLspFactory
 
     private static readonly Position s_undefinedPosition = new(-1, -1);
 
-    private static readonly Range s_undefinedRange = new()
+    private static readonly LspRange s_undefinedRange = new()
     {
         Start = s_undefinedPosition,
         End = s_undefinedPosition
@@ -38,7 +38,7 @@ internal static class VsLspFactory
             Debug.Assert(
                 defaultPosition.Line == 0 &&
                 defaultPosition.Character == 0,
-                $"{nameof(VsLspFactory)}.{nameof(DefaultPosition)} has been corrupted. Current value: {defaultPosition.ToDisplayString()}");
+                $"{nameof(LspFactory)}.{nameof(DefaultPosition)} has been corrupted. Current value: {defaultPosition.ToDisplayString()}");
 
             return defaultPosition;
         }
@@ -48,7 +48,7 @@ internal static class VsLspFactory
     ///  Returns a <see cref="Position"/> for starting line 0 and character 0,
     ///  and ending line 0 and character 0.
     /// </summary>
-    public static Range DefaultRange
+    public static LspRange DefaultRange
     {
         get
         {
@@ -60,7 +60,7 @@ internal static class VsLspFactory
                 defaultRange.Start.Character == 0 &&
                 defaultRange.End.Line == 0 &&
                 defaultRange.End.Character == 0,
-                $"{nameof(VsLspFactory)}.{nameof(DefaultRange)} has been corrupted. Current value: {defaultRange.ToDisplayString()}");
+                $"{nameof(LspFactory)}.{nameof(DefaultRange)} has been corrupted. Current value: {defaultRange.ToDisplayString()}");
 
             return defaultRange;
         }
@@ -76,13 +76,13 @@ internal static class VsLspFactory
             Debug.Assert(
                 undefinedPosition.Line == -1 &&
                 undefinedPosition.Character == -1,
-                $"{nameof(VsLspFactory)}.{nameof(UndefinedPosition)} has been corrupted. Current value: {undefinedPosition.ToDisplayString()}");
+                $"{nameof(LspFactory)}.{nameof(UndefinedPosition)} has been corrupted. Current value: {undefinedPosition.ToDisplayString()}");
 
             return undefinedPosition;
         }
     }
 
-    public static Range UndefinedRange
+    public static LspRange UndefinedRange
     {
         get
         {
@@ -94,7 +94,7 @@ internal static class VsLspFactory
                 undefinedRange.Start.Character == -1 &&
                 undefinedRange.End.Line == -1 &&
                 undefinedRange.End.Character == -1,
-                $"{nameof(VsLspFactory)}.{nameof(UndefinedRange)} has been corrupted. Current value: {undefinedRange.ToDisplayString()}");
+                $"{nameof(LspFactory)}.{nameof(UndefinedRange)} has been corrupted. Current value: {undefinedRange.ToDisplayString()}");
 
             return undefinedRange;
         }
@@ -114,24 +114,24 @@ internal static class VsLspFactory
     public static Position CreatePosition((int line, int character) position)
         => CreatePosition(position.line, position.character);
 
-    public static Range CreateRange(int startLine, int startCharacter, int endLine, int endCharacter)
+    public static LspRange CreateRange(int startLine, int startCharacter, int endLine, int endCharacter)
         => startLine == endLine && startCharacter == endCharacter
             ? CreateZeroWidthRange(startLine, startCharacter)
             : CreateRange(CreatePosition(startLine, startCharacter), CreatePosition(endLine, endCharacter));
 
-    public static Range CreateRange(Position start, Position end)
+    public static LspRange CreateRange(Position start, Position end)
         => new() { Start = start, End = end };
 
-    public static Range CreateRange(LinePosition start, LinePosition end)
+    public static LspRange CreateRange(LinePosition start, LinePosition end)
         => CreateRange(start.Line, start.Character, end.Line, end.Character);
 
-    public static Range CreateRange((int line, int character) start, (int line, int character) end)
+    public static LspRange CreateRange((int line, int character) start, (int line, int character) end)
         => CreateRange(start.line, start.character, end.line, end.character);
 
-    public static Range CreateRange(LinePositionSpan span)
+    public static LspRange CreateRange(LinePositionSpan span)
         => CreateRange(span.Start, span.End);
 
-    public static Range CreateZeroWidthRange(int line, int character)
+    public static LspRange CreateZeroWidthRange(int line, int character)
         => (line, character) switch
         {
             (0, 0) => DefaultRange,
@@ -139,38 +139,44 @@ internal static class VsLspFactory
             _ => CreateZeroWidthRange(CreatePosition(line, character))
         };
 
-    public static Range CreateZeroWidthRange(Position position)
+    public static LspRange CreateZeroWidthRange(Position position)
         => CreateRange(position, position);
 
-    public static Range CreateZeroWidthRange(LinePosition position)
+    public static LspRange CreateZeroWidthRange(LinePosition position)
         => CreateRange(position, position);
 
-    public static Range CreateZeroWidthRange((int line, int character) position)
+    public static LspRange CreateZeroWidthRange((int line, int character) position)
         => CreateRange(position, position);
 
-    public static Range CreateSingleLineRange(int line, int character, int length)
+    public static LspRange CreateSingleLineRange(int line, int character, int length)
         => CreateRange(line, character, line, character + length);
 
-    public static Range CreateSingleLineRange(Position start, int length)
+    public static LspRange CreateSingleLineRange(Position start, int length)
         => CreateRange(start, CreatePosition(start.Line, start.Character + length));
 
-    public static Range CreateSingleLineRange(LinePosition start, int length)
+    public static LspRange CreateSingleLineRange(LinePosition start, int length)
         => CreateSingleLineRange(start.Line, start.Character, length);
 
-    public static Range CreateSingleLineRange((int line, int character) start, int length)
+    public static LspRange CreateSingleLineRange((int line, int character) start, int length)
         => CreateRange(CreatePosition(start), CreatePosition(start.line, start.character + length));
 
-    public static Location CreateLocation(string filePath, LinePositionSpan span)
+    public static LspLocation CreateLocation(string filePath, LinePositionSpan span)
         => CreateLocation(CreateFilePathUri(filePath), CreateRange(span));
 
-    public static Location CreateLocation(Uri uri, LinePositionSpan span)
+    public static LspLocation CreateLocation(Uri uri, LinePositionSpan span)
         => CreateLocation(uri, CreateRange(span));
 
-    public static Location CreateLocation(string filePath, Range range)
+    public static LspLocation CreateLocation(string filePath, LspRange range)
         => CreateLocation(CreateFilePathUri(filePath), range);
 
-    public static Location CreateLocation(Uri uri, Range range)
+    public static LspLocation CreateLocation(Uri uri, LspRange range)
         => new() { Uri = uri, Range = range };
+
+    public static DocumentLink CreateDocumentLink(Uri target, LspRange range)
+        => new() { Target = target, Range = range };
+
+    public static DocumentLink CreateDocumentLink(Uri target, LinePositionSpan span)
+        => new() { Target = target, Range = CreateRange(span) };
 
     public static TextEdit CreateTextEdit(Range range, string newText)
         => new() { Range = range, NewText = newText };

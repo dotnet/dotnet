@@ -3,7 +3,6 @@
 
 using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 

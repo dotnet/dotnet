@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -54,7 +53,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
             ? '/' + codeBehindPath
             : codeBehindPath;
 
-        var codeBehindUri = VsLspFactory.CreateFilePathUri(updatedCodeBehindPath);
+        var codeBehindUri = LspFactory.CreateFilePathUri(updatedCodeBehindPath);
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
@@ -75,12 +74,12 @@ internal class ExtractToCodeBehindCodeActionResolver(
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,
-                Edits = [VsLspFactory.CreateTextEdit(removeRange, string.Empty)]
+                Edits = [LspFactory.CreateTextEdit(removeRange, string.Empty)]
             },
             new TextDocumentEdit
             {
                 TextDocument = codeBehindDocumentIdentifier,
-                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), codeBehindContent)]
+                Edits = [LspFactory.CreateTextEdit(position: (0, 0), codeBehindContent)]
             }
         };
 

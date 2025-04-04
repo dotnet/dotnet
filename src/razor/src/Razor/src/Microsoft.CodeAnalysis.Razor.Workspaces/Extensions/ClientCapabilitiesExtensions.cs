@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
 internal static class ClientCapabilitiesExtensions
 {

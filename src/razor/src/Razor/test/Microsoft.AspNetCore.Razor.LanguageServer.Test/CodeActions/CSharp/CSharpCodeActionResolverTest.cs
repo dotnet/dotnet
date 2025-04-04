@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -32,13 +31,13 @@ public class CSharpCodeActionResolverTest(ITestOutputHelper testOutput) : Langua
             DocumentChanges = new TextDocumentEdit[] {
                 new()
                 {
-                    Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Generated C# Based Edit")]
+                    Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Generated C# Based Edit")]
                 }
             }
         }
     };
 
-    private static readonly TextEdit s_defaultFormattedEdit = VsLspFactory.CreateTextEdit(position: (0, 0), "Remapped & Formatted Edit");
+    private static readonly TextEdit s_defaultFormattedEdit = LspFactory.CreateTextEdit(position: (0, 0), "Remapped & Formatted Edit");
     private static readonly TextChange s_defaultFormattedChange = new TextChange(new TextSpan(0, 0), s_defaultFormattedEdit.NewText);
 
     [Fact]
@@ -57,7 +56,7 @@ public class CSharpCodeActionResolverTest(ITestOutputHelper testOutput) : Langua
         Assert.Equal(1, returnedCodeAction.Edit.DocumentChanges.Value.Count());
         var returnedEdits = returnedCodeAction.Edit.DocumentChanges.Value;
         Assert.True(returnedEdits.TryGetFirst(out var textDocumentEdits));
-        var returnedTextDocumentEdit = Assert.Single(textDocumentEdits[0].Edits);
+        var returnedTextDocumentEdit = (TextEdit)Assert.Single(textDocumentEdits[0].Edits);
         Assert.Equal(s_defaultFormattedEdit.NewText, returnedTextDocumentEdit.NewText);
         Assert.Equal(s_defaultFormattedEdit.Range, returnedTextDocumentEdit.Range);
     }
@@ -99,11 +98,11 @@ public class CSharpCodeActionResolverTest(ITestOutputHelper testOutput) : Langua
                 {
                     new TextDocumentEdit()
                     {
-                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "1. Generated C# Based Edit")]
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), "1. Generated C# Based Edit")]
                     },
                     new TextDocumentEdit()
                     {
-                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "2. Generated C# Based Edit")]
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), "2. Generated C# Based Edit")]
                     }
                 }
             }

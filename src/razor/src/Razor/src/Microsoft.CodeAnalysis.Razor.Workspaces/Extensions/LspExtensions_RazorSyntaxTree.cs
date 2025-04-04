@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static partial class VsLspExtensions
+internal static partial class LspExtensions
 {
     public static SyntaxNode? FindInnermostNode(
         this RazorSyntaxTree syntaxTree,

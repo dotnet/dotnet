@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;

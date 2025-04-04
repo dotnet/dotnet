@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -109,12 +108,8 @@ internal sealed class CohostCodeActionsResolveEndpoint(
             }
 
             var resourceOptions = _clientCapabilitiesService.ClientCapabilities.Workspace?.WorkspaceEdit?.ResourceOperations ?? [];
-            var roslynCodeAction = JsonHelpers.ToRoslynLSP<Roslyn.LanguageServer.Protocol.VSInternalCodeAction, CodeAction>(codeAction).AssumeNotNull();
-            var roslynResourceOptions = JsonHelpers.ToRoslynLSP<Roslyn.LanguageServer.Protocol.ResourceOperationKind[], ResourceOperationKind[]>(resourceOptions).AssumeNotNull();
 
-            var resolvedCodeAction = await CodeActions.ResolveCodeActionAsync(generatedDocument, roslynCodeAction, roslynResourceOptions, cancellationToken).ConfigureAwait(false);
-
-            return JsonHelpers.ToVsLSP<RazorVSInternalCodeAction, Roslyn.LanguageServer.Protocol.CodeAction>(resolvedCodeAction).AssumeNotNull();
+            return await CodeActions.ResolveCodeActionAsync(generatedDocument, codeAction, resourceOptions, cancellationToken).ConfigureAwait(false);
         }
         finally
         {

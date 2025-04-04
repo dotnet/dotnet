@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 

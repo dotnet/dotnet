@@ -37,12 +37,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
   </ItemGroup>
 
   <Target Name="PackPublishContent" DependsOnTargets="Publish">
     <ItemGroup>
-      <Content Include="$(PkgMicrosoft_VisualStudio_LanguageServer_Protocol)\lib\netstandard2.0\Microsoft.VisualStudio.LanguageServer.Protocol.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
       <Content Include="$(TargetPath)" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
 
       <Content Include="$(PublishDir)\Microsoft.AspNetCore.Razor.Utilities.Shared.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />

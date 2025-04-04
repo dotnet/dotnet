@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 

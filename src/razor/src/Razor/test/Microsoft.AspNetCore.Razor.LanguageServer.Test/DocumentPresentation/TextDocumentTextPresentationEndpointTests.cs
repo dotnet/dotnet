@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
