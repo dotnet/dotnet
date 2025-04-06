@@ -44,8 +44,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Remote.ServiceHub" />
     <PackageReference Include="Nerdbank.Streams" />
     <PackageReference Include="Microsoft.VisualStudio.RpcContracts" />
-
-    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <ItemGroup>

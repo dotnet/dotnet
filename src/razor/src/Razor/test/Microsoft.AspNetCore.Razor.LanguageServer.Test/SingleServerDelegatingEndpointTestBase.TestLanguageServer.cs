@@ -3,12 +3,9 @@
 
 #nullable disable
 
-extern alias RLSP;
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
@@ -17,14 +14,14 @@ using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Protocol.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Xunit;
-using DefinitionResult = RLSP::Roslyn.LanguageServer.Protocol.SumType<
-    RLSP::Roslyn.LanguageServer.Protocol.Location,
-    RLSP::Roslyn.LanguageServer.Protocol.VSInternalLocation,
-    RLSP::Roslyn.LanguageServer.Protocol.VSInternalLocation[],
-    RLSP::Roslyn.LanguageServer.Protocol.DocumentLink[]>;
-using ImplementationResult = RLSP::Roslyn.LanguageServer.Protocol.SumType<
-    RLSP::Roslyn.LanguageServer.Protocol.Location[],
-    RLSP::Roslyn.LanguageServer.Protocol.VSInternalReferenceItem[]>;
+using DefinitionResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation[],
+    Roslyn.LanguageServer.Protocol.DocumentLink[]>;
+using ImplementationResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location[],
+    Roslyn.LanguageServer.Protocol.VSInternalReferenceItem[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 

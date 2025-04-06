@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-extern alias RLSP;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +18,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using RLSP::Roslyn.Text.Adornments;
+using Roslyn.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 

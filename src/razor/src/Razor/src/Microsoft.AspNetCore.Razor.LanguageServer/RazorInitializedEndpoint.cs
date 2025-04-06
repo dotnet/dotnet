@@ -21,7 +21,7 @@ internal class RazorInitializedEndpoint : INotificationHandler<InitializedParams
 
         foreach (var onStartedItem in onStartedItems)
         {
-            await onStartedItem.OnInitializedAsync(requestContext.LspServices, cancellationToken).ConfigureAwait(false);
+            await onStartedItem.OnInitializedAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -6,6 +6,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -211,9 +213,59 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
             foreach(var pragma in pragmasInDocument)
             {
-               Assert.NotNull(pragma.EndCharacterIndex);
+                Assert.NotNull(pragma.EndCharacterIndex);
             }
             Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
+        }
+    }
+
+    protected void AssertSequencePointsMatchBaseline(CompileToAssemblyResult result, RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
+    {
+        using var peReader = new PEReader(result.ExecutableStream);
+        var metadataReader = peReader.GetMetadataReader();
+
+        var debugDirectory = peReader.ReadDebugDirectory().First(d => d.Type == DebugDirectoryEntryType.EmbeddedPortablePdb);
+        var debugReader = peReader.ReadEmbeddedPortablePdbDebugDirectoryData(debugDirectory).GetMetadataReader();
+
+        var builder = new StringBuilder();
+        foreach (var methodHandle in debugReader.MethodDebugInformation)
+        {
+            var methodDebugInfo = debugReader.GetMethodDebugInformation(methodHandle);
+            var sequencePoints = methodDebugInfo.GetSequencePoints();
+            if (!sequencePoints.Any())
+                continue;
+
+            var methodDefinition = metadataReader.GetMethodDefinition(methodHandle.ToDefinitionHandle());
+            builder.AppendLine($"{metadataReader.GetString(methodDefinition.Name)}: ");
+
+            foreach (var sequencePoint in sequencePoints)
+            {
+                if (!sequencePoint.IsHidden)
+                {
+                    var documentName = debugReader.GetString(debugReader.GetDocument(sequencePoint.Document).Name);
+                    builder.AppendLine($"\tIL_{sequencePoint.Offset:x4}: ({sequencePoint.StartLine},{sequencePoint.StartColumn})-({sequencePoint.EndLine},{sequencePoint.EndColumn}) \"{documentName}\"");
+                }
+            }
+        }
+        var actualSequencePoints = builder.ToString().ReplaceLineEndings();
+
+        var baselineFilePath = GetBaselineFilePath(codeDocument, ".sp.txt", testName);
+        if (GenerateBaselines.ShouldGenerate)
+        {
+            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
+            WriteBaseline(actualSequencePoints, baselineFullPath);
+        }
+        else
+        {
+            var baselineSequencePoints = string.Empty;
+            var spFile = TestFile.Create(baselineFilePath, GetType().Assembly);
+            if (spFile.Exists())
+            {
+                baselineSequencePoints = spFile.ReadAllText().ReplaceLineEndings();
+            }
+
+            AssertEx.Equal(baselineSequencePoints, actualSequencePoints);
         }
     }
 

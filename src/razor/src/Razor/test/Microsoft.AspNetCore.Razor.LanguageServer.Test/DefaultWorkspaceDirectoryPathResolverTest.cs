@@ -1,10 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,7 +22,7 @@ public class DefaultWorkspaceDirectoryPathResolverTest(ITestOutputHelper testOut
         };
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
+        var capabilitiesManager = new CapabilitiesManager(LspServices.Empty);
         capabilitiesManager.SetInitializeParams(initializeParams);
 
         // Act
@@ -48,7 +46,7 @@ public class DefaultWorkspaceDirectoryPathResolverTest(ITestOutputHelper testOut
         };
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
+        var capabilitiesManager = new CapabilitiesManager(LspServices.Empty);
         capabilitiesManager.SetInitializeParams(initializeParams);
 
         // Act

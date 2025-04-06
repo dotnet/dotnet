@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
@@ -76,7 +75,11 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             start: (0, 0),
             end: (text.Lines.Count - 1, text.Lines[^1].Span.Length - 1));
 
-        RequestContext = new RazorRequestContext(DocumentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
+        RequestContext = new RazorRequestContext(
+            DocumentContext,
+            RazorLanguageServerHost.GetRequiredService<LspServices>(),
+            "lsp/method",
+            uri: null);
 
         var random = new Random();
         var codeDocument = await DocumentContext.GetCodeDocumentAsync(CancellationToken);

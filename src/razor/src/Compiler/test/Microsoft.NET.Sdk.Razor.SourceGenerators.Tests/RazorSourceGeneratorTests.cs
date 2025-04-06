@@ -802,10 +802,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -972,10 +971,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -3311,10 +3309,9 @@ namespace MyApp
                         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
                         {
                             __builder.OpenElement(0, "div");
-                            __builder.AddContent(1, 
                 #nullable restore
-                #line (1,8)-(3,8) "Pages/Index.razor"
-                """
+                #line (1,8)-(3,8) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
                     nested "
                     """
 
@@ -3400,10 +3397,9 @@ namespace MyApp
                         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
                         {
                             __builder.OpenElement(0, "div");
-                            __builder.AddContent(1, 
                 #nullable restore
-                #line (1,8)-(3,15) "Pages/Index.razor"
-                """
+                #line (1,8)-(3,15) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
                     nested "
                     """)</div>
                 #line default

@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -157,12 +155,8 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(DocumentContext documentContext)
+    private static RazorRequestContext CreateValidateBreakpointRangeRequestContext(DocumentContext documentContext)
     {
-        var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
-
-        var requestContext = CreateRazorRequestContext(documentContext, lspServices: lspServices.Object);
-
-        return requestContext;
+        return CreateRazorRequestContext(documentContext, LspServices.Empty);
     }
 }

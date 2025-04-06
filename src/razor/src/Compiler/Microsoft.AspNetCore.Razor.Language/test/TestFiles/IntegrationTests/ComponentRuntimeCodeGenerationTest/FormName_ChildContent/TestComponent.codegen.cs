@@ -28,10 +28,9 @@ using Microsoft.AspNetCore.Components.Web
             __builder.AddAttribute(1, "class", "nice");
             __builder.AddNamedEvent("onsubmit", __formName);
             __builder.OpenElement(2, "p");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,9)-(3,21) "x:\dir\subdir\Test\TestComponent.cshtml"
-DateTime.Now
+#line (3,9)-(3,21) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(3, DateTime.Now
 
 #line default
 #line hidden

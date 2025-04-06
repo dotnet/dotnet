@@ -6,18 +6,16 @@
 
 // The <Using> item doesn't support aliases so we need to define aliased global usings in a .cs file not in the .csproj
 // https://github.com/dotnet/sdk/issues/37814
-extern alias RLSP;
-global using RLSP::Roslyn.LanguageServer.Protocol;
 
 // Avoid extern alias in every file that needs to disambiguate common LSP type names
-global using LspColorPresentation = RLSP::Roslyn.LanguageServer.Protocol.ColorPresentation;
-global using LspDiagnostic = RLSP::Roslyn.LanguageServer.Protocol.Diagnostic;
-global using LspDiagnosticSeverity = RLSP::Roslyn.LanguageServer.Protocol.DiagnosticSeverity;
-global using LspDocumentHighlight = RLSP::Roslyn.LanguageServer.Protocol.DocumentHighlight;
-global using LspHover = RLSP::Roslyn.LanguageServer.Protocol.Hover;
-global using LspLocation = RLSP::Roslyn.LanguageServer.Protocol.Location;
-global using LspRange = RLSP::Roslyn.LanguageServer.Protocol.Range;
-global using LspSignatureHelp = RLSP::Roslyn.LanguageServer.Protocol.SignatureHelp;
+global using LspColorPresentation = Roslyn.LanguageServer.Protocol.ColorPresentation;
+global using LspDiagnostic = Roslyn.LanguageServer.Protocol.Diagnostic;
+global using LspDiagnosticSeverity = Roslyn.LanguageServer.Protocol.DiagnosticSeverity;
+global using LspDocumentHighlight = Roslyn.LanguageServer.Protocol.DocumentHighlight;
+global using LspHover = Roslyn.LanguageServer.Protocol.Hover;
+global using LspLocation = Roslyn.LanguageServer.Protocol.Location;
+global using LspRange = Roslyn.LanguageServer.Protocol.Range;
+global using LspSignatureHelp = Roslyn.LanguageServer.Protocol.SignatureHelp;
 
 // Avoid ambiguity errors because of our global using above
 global using Range = System.Range;

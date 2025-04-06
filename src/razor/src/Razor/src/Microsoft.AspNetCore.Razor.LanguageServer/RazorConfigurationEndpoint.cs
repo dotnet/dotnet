@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorConfigurationEndpoint(RazorLSPOptionsMonitor optionsMonitor, ILoggerFactory loggerFactory)
+internal sealed class RazorConfigurationEndpoint(
+    LspServices services,
+    RazorLSPOptionsMonitor optionsMonitor,
+    ILoggerFactory loggerFactory)
     : IDidChangeConfigurationEndpoint, IOnInitialized
 {
-    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
+    private readonly LspServices _services = services;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorConfigurationEndpoint>();
 
     public bool MutatesSolutionState => true;
@@ -26,9 +29,9 @@ internal class RazorConfigurationEndpoint(RazorLSPOptionsMonitor optionsMonitor,
         await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
+    public async Task OnInitializedAsync(CancellationToken cancellationToken)
     {
-        var capabilitiesService = services.GetRequiredService<IClientCapabilitiesService>();
+        var capabilitiesService = _services.GetRequiredService<IClientCapabilitiesService>();
         var clientCapabilities = capabilitiesService.ClientCapabilities;
 
         if (clientCapabilities.Workspace?.Configuration == true)

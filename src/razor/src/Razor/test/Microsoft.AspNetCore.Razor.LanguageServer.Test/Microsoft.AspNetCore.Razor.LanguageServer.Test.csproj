@@ -21,14 +21,4 @@
     <EmbeddedResource Include="Semantic\TestFiles\**\*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!--
-      Razor and Roslyn both use CLaSP as the basis for their language servers, but CLaSP is a source package
-      which means when we reference Roslyn's server to get the LSP protocol types (which we have a restricted
-      IVT to) we get ambiguous type errors for everything in CLaSP. To fix this we reference Roslyn with an
-      alias, and then have a global using for the LSP protocol types only.
-    -->
-    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
-  </ItemGroup>
-
 </Project>

@@ -14,13 +14,13 @@ Generated Location: (917:30,0 [55] )
 
 Source Location: (122:6,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |item|
-Generated Location: (1189:41,0 [4] )
+Generated Location: (1178:40,24 [4] )
 |item|
 
 Source Location: (143:8,0 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |    }
 |
-Generated Location: (1381:50,0 [7] )
+Generated Location: (1370:49,0 [7] )
 |    }
 |
 

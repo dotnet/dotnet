@@ -31,7 +31,7 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService);
-        var endpoint = new RazorConfigurationEndpoint(optionsMonitor, LoggerFactory);
+        var endpoint = new RazorConfigurationEndpoint(LspServices.Empty, optionsMonitor, LoggerFactory);
         var request = new DidChangeConfigurationParams();
         var requestContext = CreateRazorRequestContext(documentContext: null);
 

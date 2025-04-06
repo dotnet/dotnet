@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using FileSystemWatcher = System.IO.FileSystemWatcher;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -161,7 +160,7 @@ internal partial class WorkspaceRootPathWatcher : IOnInitialized, IDisposable
         }
     }
 
-    public async Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
+    public async Task OnInitializedAsync(CancellationToken cancellationToken)
     {
         // Initialized request, this occurs once the server and client have agreed on what sort of features they both support. It only happens once.
 

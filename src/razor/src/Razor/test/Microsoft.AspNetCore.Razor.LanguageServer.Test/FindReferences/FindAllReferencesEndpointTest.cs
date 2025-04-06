@@ -1,6 +1,5 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
-extern alias RLSP;
 
 using System;
 using System.Collections.Immutable;
@@ -12,7 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using RLSP::Roslyn.Text.Adornments;
+using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 

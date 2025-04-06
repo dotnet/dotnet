@@ -15,27 +15,27 @@ Generated Location: (711:28,0 [6] )
 
 Source Location: (102:6,4 [19] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildContent(Item1)|
-Generated Location: (1271:44,0 [19] )
+Generated Location: (1260:43,24 [19] )
 |ChildContent(Item1)|
 
 Source Location: (130:8,1 [33] x:\dir\subdir\Test\TestComponent.cshtml)
 |foreach (var item in Items2)
 {
 |
-Generated Location: (1478:53,0 [33] )
+Generated Location: (1467:52,0 [33] )
 |foreach (var item in Items2)
 {
 |
 
 Source Location: (171:10,8 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildContent(item)|
-Generated Location: (1728:64,0 [18] )
+Generated Location: (1706:62,24 [18] )
 |ChildContent(item)|
 
 Source Location: (195:11,0 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |}
 |
-Generated Location: (1935:73,0 [3] )
+Generated Location: (1913:71,0 [3] )
 |}
 |
 
@@ -45,7 +45,7 @@ Source Location: (207:13,7 [215] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter] public List<(TItem1, TItem2)> Items2 { get; set; }
     [Parameter] public RenderFragment<(TItem1, TItem2)> ChildContent { get; set; }
 |
-Generated Location: (2121:83,0 [215] )
+Generated Location: (2099:81,0 [215] )
 |
     [Parameter] public (TItem1, TItem2) Item1 { get; set; }
     [Parameter] public List<(TItem1, TItem2)> Items2 { get; set; }

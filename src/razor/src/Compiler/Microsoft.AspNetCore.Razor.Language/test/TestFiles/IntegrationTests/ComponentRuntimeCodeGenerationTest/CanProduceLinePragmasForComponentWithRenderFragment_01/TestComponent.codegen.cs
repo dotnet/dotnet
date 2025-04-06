@@ -23,10 +23,9 @@ namespace Test
             __builder.AddAttribute(3, "href", "#");
             __builder.AddAttribute(4, "@onclick", "Toggle");
             __builder.AddAttribute(5, "class", "col-12");
-            __builder.AddContent(6, 
 #nullable restore
-#line (2,47)-(2,57) "x:\dir\subdir\Test\TestComponent.cshtml"
-ActionText
+#line (2,47)-(2,57) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(6, ActionText
 
 #line default
 #line hidden
@@ -52,10 +51,9 @@ if (!Collapsed)
 
             __builder.OpenElement(7, "div");
             __builder.AddAttribute(8, "class", "col-12 card card-body");
-            __builder.AddContent(9, 
 #nullable restore
-#line (6,8)-(6,20) "x:\dir\subdir\Test\TestComponent.cshtml"
-ChildContent
+#line (6,8)-(6,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(9, ChildContent
 
 #line default
 #line hidden
