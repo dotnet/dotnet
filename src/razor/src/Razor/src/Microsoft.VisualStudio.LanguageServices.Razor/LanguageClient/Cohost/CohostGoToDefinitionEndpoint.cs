@@ -13,12 +13,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using static Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
-using RoslynDocumentLink = Roslyn.LanguageServer.Protocol.DocumentLink;
-using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
-using RoslynLspFactory = Roslyn.LanguageServer.Protocol.RoslynLspFactory;
-using VsLspLocation = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -34,7 +28,7 @@ internal sealed class CohostGoToDefinitionEndpoint(
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     LSPRequestInvoker requestInvoker,
     IFilePathService filePathService)
-    : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?>, IDynamicRegistrationProvider
+    : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, SumType<LspLocation, LspLocation[], DocumentLink[]>?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
@@ -62,25 +56,25 @@ internal sealed class CohostGoToDefinitionEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(TextDocumentPositionParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> HandleRequestAsync(TextDocumentPositionParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> HandleRequestAsync(TextDocumentPositionParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
         => HandleRequestAsync(
             request,
             context.TextDocument.AssumeNotNull(),
             cancellationToken);
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> HandleRequestAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> HandleRequestAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var position = RoslynLspFactory.CreatePosition(request.Position.ToLinePosition());
+        var position = LspFactory.CreatePosition(request.Position.ToLinePosition());
 
         var response = await _remoteServiceInvoker
-            .TryInvokeAsync<IRemoteGoToDefinitionService, RemoteResponse<RoslynLocation[]?>>(
+            .TryInvokeAsync<IRemoteGoToDefinitionService, RemoteResponse<LspLocation[]?>>(
                 razorDocument.Project.Solution,
                 (service, solutionInfo, cancellationToken) =>
                     service.GetDefinitionAsync(solutionInfo, razorDocument.Id, position, cancellationToken),
                 cancellationToken)
             .ConfigureAwait(false);
 
-        if (response.Result is RoslynLocation[] locations)
+        if (response.Result is LspLocation[] locations)
         {
             return locations;
         }
@@ -93,7 +87,7 @@ internal sealed class CohostGoToDefinitionEndpoint(
         return await GetHtmlDefinitionsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetHtmlDefinitionsAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetHtmlDefinitionsAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (htmlDocument is null)
@@ -104,7 +98,7 @@ internal sealed class CohostGoToDefinitionEndpoint(
         request.TextDocument.Uri = htmlDocument.Uri;
 
         var result = await _requestInvoker
-            .ReinvokeRequestOnServerAsync<TextDocumentPositionParams, SumType<VsLspLocation, VsLspLocation[], DocumentLink[]>?>(
+            .ReinvokeRequestOnServerAsync<TextDocumentPositionParams, SumType<LspLocation, LspLocation[], DocumentLink[]>?>(
                 htmlDocument.Buffer,
                 Methods.TextDocumentDefinitionName,
                 RazorLSPConstants.HtmlLanguageServerName,
@@ -119,21 +113,21 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
         if (response.TryGetFirst(out var singleLocation))
         {
-            return RoslynLspFactory.CreateLocation(RemapVirtualHtmlUri(singleLocation.Uri), singleLocation.Range.ToLinePositionSpan());
+            return LspFactory.CreateLocation(RemapVirtualHtmlUri(singleLocation.Uri), singleLocation.Range.ToLinePositionSpan());
         }
         else if (response.TryGetSecond(out var multipleLocations))
         {
-            return Array.ConvertAll(multipleLocations, l => RoslynLspFactory.CreateLocation(RemapVirtualHtmlUri(l.Uri), l.Range.ToLinePositionSpan()));
+            return Array.ConvertAll(multipleLocations, l => LspFactory.CreateLocation(RemapVirtualHtmlUri(l.Uri), l.Range.ToLinePositionSpan()));
         }
         else if (response.TryGetThird(out var documentLinks))
         {
-            using var builder = new PooledArrayBuilder<RoslynDocumentLink>(capacity: documentLinks.Length);
+            using var builder = new PooledArrayBuilder<DocumentLink>(capacity: documentLinks.Length);
 
             foreach (var documentLink in documentLinks)
             {
                 if (documentLink.Target is Uri target)
                 {
-                    builder.Add(RoslynLspFactory.CreateDocumentLink(RemapVirtualHtmlUri(target), documentLink.Range.ToLinePositionSpan()));
+                    builder.Add(LspFactory.CreateDocumentLink(RemapVirtualHtmlUri(target), documentLink.Range.ToLinePositionSpan()));
                 }
             }
 
@@ -157,7 +151,7 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
     internal readonly struct TestAccessor(CohostGoToDefinitionEndpoint instance)
     {
-        public Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> HandleRequestAsync(
+        public Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> HandleRequestAsync(
             TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
             => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }

@@ -11,11 +11,9 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
@@ -138,7 +136,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         Assert.Equal(expectedRange, result);
     }
 
-    private async Task<Range?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
+    private async Task<LspRange?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
     {
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 

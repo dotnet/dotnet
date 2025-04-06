@@ -1,13 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -110,18 +108,14 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
         );
     }
 
-    private static VSInternalCompletionList GenerateCompletionList(params (string? Label, CompletionItemKind Kind)[] itemsData)
-    {
-        var items = itemsData.Select(itemData => new VSInternalCompletionItem()
+    private static RazorVSInternalCompletionList GenerateCompletionList(params (string? Label, CompletionItemKind Kind)[] itemsData)
+        => new RazorVSInternalCompletionList()
+        {
+            Items = [.. itemsData.Select(itemData => new VSInternalCompletionItem()
             {
                 Label = itemData.Label!,
                 SortText = itemData.Label,
-                Kind = itemData.Kind})
-        .ToArray();
-
-        return new VSInternalCompletionList()
-        {
-            Items = items
+                Kind = itemData.Kind
+            })]
         };
-    }
 }

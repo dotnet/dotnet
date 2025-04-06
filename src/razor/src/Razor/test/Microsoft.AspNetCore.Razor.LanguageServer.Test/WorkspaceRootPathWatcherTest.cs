@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,10 +26,12 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
         // Arrange
         var initialWorkspaceDirectory = "testpath";
 
+#pragma warning disable CS0618 // Type or member is obsolete
         var initializeParams = new InitializeParams()
         {
-            RootUri = VsLspFactory.CreateFilePathUri(initialWorkspaceDirectory),
+            RootUri = LspFactory.CreateFilePathUri(initialWorkspaceDirectory),
         };
+#pragma warning restore CS0618 // Type or member is obsolete
 
         var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
         capabilitiesManager.SetInitializeParams(initializeParams);

@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -143,7 +142,7 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
         var request = new InlayHintParams()
         {
             TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
-            Range = RoslynLspFactory.CreateRange(startLine, starChar, endLine, endChar)
+            Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
 
         var hints = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, displayAllOverride: false, DisposalToken);

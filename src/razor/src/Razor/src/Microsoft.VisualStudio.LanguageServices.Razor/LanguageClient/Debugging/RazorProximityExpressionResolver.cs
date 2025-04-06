@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
 using Microsoft.VisualStudio.Text;
 
@@ -118,7 +117,7 @@ internal class RazorProximityExpressionResolver(
             return cachedExpressions;
         }
 
-        var position = VsLspFactory.CreatePosition(lineIndex, characterIndex);
+        var position = LspFactory.CreatePosition(lineIndex, characterIndex);
         var proximityExpressions = await _proximityExpressionsProvider.GetProximityExpressionsAsync(documentSnapshot, hostDocumentSyncVersion, position, cancellationToken).ConfigureAwait(false);
 
         // Cache range so if we're asked again for this document/line/character we don't have to go async.

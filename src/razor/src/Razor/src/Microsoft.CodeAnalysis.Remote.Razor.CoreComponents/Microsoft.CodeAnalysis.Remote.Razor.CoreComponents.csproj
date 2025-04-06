@@ -30,8 +30,6 @@
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.AspNetCore.*" />
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.ObjectPool.dll" />
 
-      <_PublishedFiles Include="$(PublishDir)**\Microsoft.VisualStudio.LanguageServer.Protocol.*" />
-
       <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.pdb'" />
       <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.xml'" />
 

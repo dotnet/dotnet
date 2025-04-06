@@ -5,7 +5,6 @@
 
 using System.Linq;
 using System.Text.Json;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Serialization;

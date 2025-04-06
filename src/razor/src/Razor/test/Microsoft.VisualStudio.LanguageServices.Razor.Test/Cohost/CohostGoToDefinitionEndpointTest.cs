@@ -9,12 +9,8 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using RoslynDocumentLink = Roslyn.LanguageServer.Protocol.DocumentLink;
-using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
-using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 using TextDocument = Microsoft.CodeAnalysis.TextDocument;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -153,7 +149,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var location = Assert.Single(locations);
 
         var text = SourceText.From(surveyPrompt.Text);
-        var range = RoslynLspExtensions.GetRange(text, surveyPrompt.Span);
+        var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
     }
 
@@ -199,7 +195,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var location = Assert.Single(locations);
 
         var text = SourceText.From(surveyPrompt.Text);
-        var range = RoslynLspExtensions.GetRange(text, surveyPrompt.Span);
+        var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
     }
 
@@ -221,10 +217,9 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
-        var htmlResponse = new SumType<Location, Location[], DocumentLink[]>?(new Location[]
+        var htmlResponse = new SumType<LspLocation, LspLocation[], DocumentLink[]>?(new LspLocation[]
         {
-            new Location
-            {
+            new() {
                 Uri = new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix),
                 Range = inputText.GetRange(input.Span),
             },
@@ -236,7 +231,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     private static string FileName(string projectRelativeFileName)
         => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
 
-    private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, SumType<Location, Location[], DocumentLink[]>? htmlResponse = null)
+    private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind);
         var result = await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
@@ -248,21 +243,21 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var location = Assert.Single(locations);
 
         var text = SourceText.From(input.Text);
-        var range = RoslynLspExtensions.GetRange(text, input.Span);
+        var range = text.GetRange(input.Span);
         Assert.Equal(range, location.Range);
 
         Assert.Equal(document.CreateUri(), location.Uri);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultAsync(
         TestCode input, string? fileKind = null, params (string fileName, string contents)[]? additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
         return await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse: null);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultCoreAsync(
-        TextDocument document, TestCode input, SumType<Location, Location[], DocumentLink[]>? htmlResponse)
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultCoreAsync(
+        TextDocument document, TestCode input, SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);

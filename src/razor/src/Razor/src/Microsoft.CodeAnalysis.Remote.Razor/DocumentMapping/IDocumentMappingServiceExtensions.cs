@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
-using RoslynRange = Roslyn.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 
@@ -40,11 +38,11 @@ internal static class IDocumentMappingServiceExtensions
     /// generated document. If the uri passed in is not for a generated document, or the range cannot be mapped
     /// for some other reason, the original passed in range is returned unchanged.
     /// </summary>
-    public static async Task<(Uri MappedDocumentUri, RoslynRange MappedRange)> MapToHostDocumentUriAndRangeAsync(
+    public static async Task<(Uri MappedDocumentUri, LspRange MappedRange)> MapToHostDocumentUriAndRangeAsync(
         this IDocumentMappingService service,
         RemoteDocumentSnapshot originSnapshot,
         Uri generatedDocumentUri,
-        RoslynRange generatedDocumentRange,
+        LspRange generatedDocumentRange,
         CancellationToken cancellationToken)
     {
         var (mappedDocumentUri, mappedRange) = await service

@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using FileSystemWatcher = System.IO.FileSystemWatcher;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 

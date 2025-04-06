@@ -3,7 +3,6 @@
 
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.WrapWithTag;
 
@@ -14,7 +13,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.WrapWithTag;
 [DataContract]
 internal class VSInternalWrapWithTagParams
 {
-    public VSInternalWrapWithTagParams(Range range,
+    public VSInternalWrapWithTagParams(LspRange range,
                                        string tagName,
                                        FormattingOptions options,
                                        VersionedTextDocumentIdentifier textDocument)
@@ -41,7 +40,7 @@ internal class VSInternalWrapWithTagParams
     /// </summary>
     [DataMember(Name = "_vs_range")]
     [JsonPropertyName("_vs_range")]
-    public Range Range
+    public LspRange Range
     {
         get;
         set;

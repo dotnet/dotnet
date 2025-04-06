@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel;
-using System.IO;
+using FileSystemWatcher = System.IO.FileSystemWatcher;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 

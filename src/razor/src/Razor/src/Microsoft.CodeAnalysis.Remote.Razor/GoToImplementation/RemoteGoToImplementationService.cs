@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+extern alias RLSP;
+
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -11,12 +13,8 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Roslyn.LanguageServer.Protocol;
-using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.Location[]?>;
+using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<RLSP::Roslyn.LanguageServer.Protocol.Location[]?>;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
-using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
-using RoslynPosition = Roslyn.LanguageServer.Protocol.Position;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -30,10 +28,10 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    public ValueTask<RemoteResponse<RoslynLocation[]?>> GetImplementationAsync(
+    public ValueTask<RemoteResponse<LspLocation[]?>> GetImplementationAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
-        RoslynPosition position,
+        Position position,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -41,9 +39,9 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
             context => GetImplementationAsync(context, position, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<RemoteResponse<RoslynLocation[]?>> GetImplementationAsync(
+    private async ValueTask<RemoteResponse<LspLocation[]?>> GetImplementationAsync(
         RemoteDocumentContext context,
-        RoslynPosition position,
+        Position position,
         CancellationToken cancellationToken)
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
@@ -85,7 +83,7 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
         }
 
         // Map the C# locations back to the Razor file.
-        using var mappedLocations = new PooledArrayBuilder<RoslynLocation>(locations.Length);
+        using var mappedLocations = new PooledArrayBuilder<LspLocation>(locations.Length);
 
         foreach (var location in locations)
         {
@@ -95,7 +93,7 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
                 .MapToHostDocumentUriAndRangeAsync(context.Snapshot, uri, range.ToLinePositionSpan(), cancellationToken)
                 .ConfigureAwait(false);
 
-            var mappedLocation = RoslynLspFactory.CreateLocation(mappedDocumentUri, mappedRange);
+            var mappedLocation = LspFactory.CreateLocation(mappedDocumentUri, mappedRange);
 
             mappedLocations.Add(mappedLocation);
         }

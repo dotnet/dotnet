@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -54,9 +53,8 @@ internal class DocumentRangeFormattingEndpoint(
 
         if (request.Options.OtherOptions is not null &&
             request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) &&
-            fromPasteObj is JsonElement fromPasteElement)
+            fromPasteObj.TryGetFirst(out var fromPaste))
         {
-            var fromPaste = fromPasteElement.Deserialize<bool>();
             if (fromPaste && !_optionsMonitor.CurrentValue.Formatting.IsOnPasteEnabled())
             {
                 return null;

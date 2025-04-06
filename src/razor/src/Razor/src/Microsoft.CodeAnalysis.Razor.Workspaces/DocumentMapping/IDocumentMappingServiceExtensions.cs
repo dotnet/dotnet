@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
@@ -29,7 +27,7 @@ internal static class IDocumentMappingServiceExtensions
     public static bool TryMapToHostDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, LinePositionSpan projectedRange, out LinePositionSpan originalRange)
         => service.TryMapToHostDocumentRange(generatedDocument, projectedRange, MappingBehavior.Strict, out originalRange);
 
-    public static bool TryMapToHostDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, Range projectedRange, [NotNullWhen(true)] out Range? originalRange)
+    public static bool TryMapToHostDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, LspRange projectedRange, [NotNullWhen(true)] out LspRange? originalRange)
         => service.TryMapToHostDocumentRange(generatedDocument, projectedRange, MappingBehavior.Strict, out originalRange);
 
     public static DocumentPositionInfo GetPositionInfo(
@@ -75,14 +73,14 @@ internal static class IDocumentMappingServiceExtensions
         return new DocumentPositionInfo(languageKind, position, hostDocumentIndex);
     }
 
-    public static bool TryMapToHostDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, Range generatedDocumentRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out Range? hostDocumentRange)
+    public static bool TryMapToHostDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, LspRange generatedDocumentRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out LspRange? hostDocumentRange)
     {
         var result = service.TryMapToHostDocumentRange(generatedDocument, generatedDocumentRange.ToLinePositionSpan(), mappingBehavior, out var hostDocumentLinePositionSpan);
         hostDocumentRange = result ? hostDocumentLinePositionSpan.ToRange() : null;
         return result;
     }
 
-    public static bool TryMapToGeneratedDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, Range hostDocumentRange, [NotNullWhen(true)] out Range? generatedDocumentRange)
+    public static bool TryMapToGeneratedDocumentRange(this IDocumentMappingService service, IRazorGeneratedDocument generatedDocument, LspRange hostDocumentRange, [NotNullWhen(true)] out LspRange? generatedDocumentRange)
     {
         var result = service.TryMapToGeneratedDocumentRange(generatedDocument, hostDocumentRange.ToLinePositionSpan(), out var generatedDocumentLinePositionSpan);
         generatedDocumentRange = result ? generatedDocumentLinePositionSpan.ToRange() : null;

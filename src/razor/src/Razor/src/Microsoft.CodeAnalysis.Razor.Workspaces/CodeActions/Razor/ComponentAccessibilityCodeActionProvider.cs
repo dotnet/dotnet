@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -280,17 +279,17 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
 
     private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, IStartTagSyntaxNode startTag, string newTagName)
     {
-        using var textEdits = new PooledArrayBuilder<TextEdit>();
+        using var textEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
 
-        var startTagTextEdit = VsLspFactory.CreateTextEdit(startTag.Name.GetRange(context.CodeDocument.Source), newTagName);
+        var startTagTextEdit = LspFactory.CreateTextEdit(startTag.Name.GetRange(context.CodeDocument.Source), newTagName);
 
         textEdits.Add(startTagTextEdit);
 
         var endTag = (startTag.Parent as MarkupElementSyntax)?.EndTag;
         if (endTag != null)
         {
-            var endTagTextEdit = VsLspFactory.CreateTextEdit(endTag.Name.GetRange(context.CodeDocument.Source), newTagName);
+            var endTagTextEdit = LspFactory.CreateTextEdit(endTag.Name.GetRange(context.CodeDocument.Source), newTagName);
             textEdits.Add(endTagTextEdit);
         }
 

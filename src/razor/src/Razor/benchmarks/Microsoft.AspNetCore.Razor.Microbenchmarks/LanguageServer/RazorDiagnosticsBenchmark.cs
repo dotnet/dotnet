@@ -21,9 +21,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -120,27 +118,27 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
     {
         var razorDocumentMappingService = new Mock<IDocumentMappingService>(MockBehavior.Strict);
 
-        Range? hostDocumentRange;
+        LspRange? hostDocumentRange;
         razorDocumentMappingService.Setup(
             r => r.TryMapToHostDocumentRange(
                 It.IsAny<IRazorGeneratedDocument>(),
                 InRange,
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = OutRange;
                 return true;
             });
 
-        Range? hostDocumentRange2;
+        LspRange? hostDocumentRange2;
         razorDocumentMappingService.Setup(
             r => r.TryMapToHostDocumentRange(
                 It.IsAny<IRazorGeneratedDocument>(),
                 It.IsNotIn(InRange),
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange2))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = null;
                 return false;
@@ -208,8 +206,8 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         }
     }
 
-    private Range InRange { get; set; } = VsLspFactory.CreateSingleLineRange(line: 85, character: 8, length: 8);
-    private Range OutRange { get; set; } = VsLspFactory.CreateSingleLineRange(line: 6, character: 8, length: 8);
+    private LspRange InRange { get; set; } = LspFactory.CreateSingleLineRange(line: 85, character: 8, length: 8);
+    private LspRange OutRange { get; set; } = LspFactory.CreateSingleLineRange(line: 6, character: 8, length: 8);
 
     private Diagnostic[] GetDiagnostics(int n) => Enumerable.Range(1, n).Select(_ => new Diagnostic()
     {

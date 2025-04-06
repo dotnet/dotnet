@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+extern alias RLSP;
+
 using System;
 using System.Linq;
 using System.Threading;
@@ -17,12 +19,10 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Text.Adornments;
 using Moq;
+using RLSP::Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
-using LspHover = Microsoft.VisualStudio.LanguageServer.Protocol.Hover;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Hover;
 
@@ -93,7 +93,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         // Assert
         Assert.NotNull(result);
         var range = result.Range;
-        var expected = VsLspFactory.CreateSingleLineRange(line: 3, character: 8, length: 10);
+        var expected = LspFactory.CreateSingleLineRange(line: 3, character: 8, length: 10);
 
         Assert.Equal(expected, range);
 
@@ -125,7 +125,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         // Assert
         Assert.NotNull(result);
         var range = result.Range;
-        var expected = VsLspFactory.CreateSingleLineRange(line: 2, character: 1, length: 5);
+        var expected = LspFactory.CreateSingleLineRange(line: 2, character: 1, length: 5);
 
         Assert.Equal(expected, range);
 

@@ -13,10 +13,8 @@ using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
 using Microsoft.VisualStudio.Text;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 
@@ -42,14 +40,14 @@ internal class RazorBreakpointResolver(
     // 4 is a magic number that was determined based on the functionality of VisualStudio. Currently when you set or edit a breakpoint
     // we get called with two different locations for the same breakpoint. Because of this 2 time call our size must be at least 2,
     // we grow it to 4 just to be safe for lesser known scenarios.
-    private readonly MemoryCache<CacheKey, Range> _cache = new(sizeLimit: 4);
+    private readonly MemoryCache<CacheKey, LspRange> _cache = new(sizeLimit: 4);
 
-    public Task<Range?> TryResolveBreakpointRangeAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
+    public Task<LspRange?> TryResolveBreakpointRangeAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
         => _languageServerFeatureOptions.UseRazorCohostServer
             ? TryResolveBreakpointRangeViaCohostingAsync(textBuffer, lineIndex, characterIndex, cancellationToken)
             : TryResolveBreakpointRangeViaLspAsync(textBuffer, lineIndex, characterIndex, cancellationToken);
 
-    private async Task<Range?> TryResolveBreakpointRangeViaCohostingAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
+    private async Task<LspRange?> TryResolveBreakpointRangeViaCohostingAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
     {
         if (!textBuffer.TryGetTextDocument(out var razorDocument))
         {
@@ -93,7 +91,7 @@ internal class RazorBreakpointResolver(
         return hostDocumentRange;
     }
 
-    private async Task<Range?> TryResolveBreakpointRangeViaLspAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
+    private async Task<LspRange?> TryResolveBreakpointRangeViaLspAsync(ITextBuffer textBuffer, int lineIndex, int characterIndex, CancellationToken cancellationToken)
     {
         if (!_fileUriProvider.TryGet(textBuffer, out var documentUri))
         {
@@ -122,7 +120,7 @@ internal class RazorBreakpointResolver(
             return cachedRange;
         }
 
-        var position = VsLspFactory.CreatePosition(lineIndex, characterIndex);
+        var position = LspFactory.CreatePosition(lineIndex, characterIndex);
         var hostDocumentRange = await _breakpointSpanProvider.GetBreakpointSpanAsync(documentSnapshot, hostDocumentSyncVersion, position, cancellationToken).ConfigureAwait(false);
         if (hostDocumentRange is null)
         {

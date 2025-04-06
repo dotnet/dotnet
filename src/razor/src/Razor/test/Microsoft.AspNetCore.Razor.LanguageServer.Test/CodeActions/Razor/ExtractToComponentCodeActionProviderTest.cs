@@ -20,7 +20,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -61,7 +60,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = VsLspFactory.DefaultRange,
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -668,14 +667,14 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = VsLspFactory.DefaultRange,
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
         var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents);
 
         var lineSpan = context.SourceText.GetLinePositionSpan(selectionSpan);
-        request.Range = VsLspFactory.CreateRange(lineSpan);
+        request.Range = LspFactory.CreateRange(lineSpan);
 
         var provider = new ExtractToComponentCodeActionProvider();
 

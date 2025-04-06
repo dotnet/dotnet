@@ -3,12 +3,10 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
@@ -117,7 +115,7 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
             Context = signatureHelpContext
         };
 
-        var result = await endpoint.GetTestAccessor().HandleRequestAndGetLabelsAsync(request, document, DisposalToken);
+        var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
 
         // Assert
         if (expected.Length == 0)
@@ -126,7 +124,7 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
             return;
         }
 
-        var actual = Assert.Single(result.AssumeNotNull());
-        Assert.Equal(expected, actual);
+        var actual = Assert.Single(result.AssumeNotNull().Signatures);
+        Assert.Equal(expected, actual.Label);
     }
 }

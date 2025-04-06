@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -94,7 +93,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
             TabSize = tabSize
         };
 
-        var list = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, options.ToRoslynFormattingOptions(), DisposalToken);
+        var list = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, options.ToLspFormattingOptions(), DisposalToken);
 
         if (output is null)
         {

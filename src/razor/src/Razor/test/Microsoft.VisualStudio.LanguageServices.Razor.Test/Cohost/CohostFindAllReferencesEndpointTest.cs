@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
@@ -98,7 +97,7 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             return c;
         });
 
-        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: additionalFiles.Select(f => (f.fileName, f.testCode.Text)).ToArray());
+        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
@@ -151,10 +150,10 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             }
             else
             {
-                var additionalFile = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
-                var text = SourceText.From(additionalFile.testCode.Text);
+                var (fileName, testCode) = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
+                var text = SourceText.From(testCode.Text);
                 matchedText = text.Lines[location.Range.Start.Line].ToString();
-                Assert.Single(additionalFile.testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));
+                Assert.Single(testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));
             }
 
             if (result.TryGetFirst(out var referenceItem))
@@ -174,10 +173,10 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
         return referenceItem.Text.AssumeNotNull().ToString();
     }
 
-    private static Location GetLocation(SumType<VSInternalReferenceItem, Location> r)
+    private static LspLocation GetLocation(SumType<VSInternalReferenceItem, LspLocation> r)
     {
         return r.TryGetFirst(out var refItem)
-            ? refItem.Location ?? Assumed.Unreachable<Location>()
+            ? refItem.Location ?? Assumed.Unreachable<LspLocation>()
             : r.Second;
     }
 }
