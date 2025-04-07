@@ -106,7 +106,7 @@ namespace System.Windows.Documents
                     _drawDebugVisual++;
                 }
 
-                _drawDebugVisual = _drawDebugVisual % (int)DrawDebugVisual.LastOne;
+                _drawDebugVisual %= (int)DrawDebugVisual.LastOne;
 
                 if (_drawDebugVisual < 0)
                 {
@@ -621,7 +621,7 @@ namespace System.Windows.Documents
                 // not tell betweeen myFile.xaml and myFile.xaml#
                 //
                 Uri workuri = inputUri;
-                if (inputUri.IsAbsoluteUri == false)
+                if (!inputUri.IsAbsoluteUri)
                 {
                     // this is a relative uri, and Fragement() doesn't work with relative uris.  The base uri is completley irrelevant
                     // here and will never affect the returned fragment, but the method requires something to be there.  Therefore,
@@ -641,7 +641,7 @@ namespace System.Windows.Documents
                     inputUri = new Uri(inputUriStringWithoutFragment, UriKind.RelativeOrAbsolute);
 
                     //Only Check for the startpart uri if the hyperlink is relative, else it's not part of the package
-                    if (inputUri.IsAbsoluteUri == false)
+                    if (!inputUri.IsAbsoluteUri)
                     {
                         String startPartUriString = GetStartPartUriString(dpo);
                         if (startPartUriString != null)
