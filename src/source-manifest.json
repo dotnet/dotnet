@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3306791bf1aafe0934cb924fcb39c8f1b5534478"
+      "commitSha": "611c6559fd353cf1bb43f942edca22668a3e9249"
     },
     {
       "packageVersion": "10.0.620205",
@@ -155,11 +155,11 @@
       "commitSha": "6a1f83490ef989d99de47019f8201d51a6526889"
     },
     {
-      "packageVersion": "10.0.100-preview.4.25206.8",
+      "packageVersion": "10.0.100-preview.4.25207.6",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "17f437b534cbf32061f898f9b4af36e9a543cdb5"
+      "commitSha": "317a798efb739d6d117c56105a7716e9556b46eb"
     },
     {
       "packageVersion": "17.14.0-preview-25202-02",
