@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "58010639147a5e7ce057bc26af3ae14116bc8fdf"
+      "commitSha": "1d7d78fe5bcecf0aabbbeceae4fe13c8b6fe6270"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.106-servicing.25203.3",
+      "packageVersion": "9.0.106-servicing.25206.6",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "9cdca9cccdde4b3c2a8ad75b01e43f94bcfae0f2"
+      "commitSha": "901ed23f2262090bfb30d0441ea03632e17f8f40"
     },
     {
       "packageVersion": "1.1.0-rtm.25168.1",
