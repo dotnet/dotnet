@@ -36,11 +36,11 @@
       "commitSha": "3bbb940ceeb3254790899d751a8d418348563d40"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25177.1",
+      "packageVersion": "9.0.0-preview.1.25181.1",
       "barId": null,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "d6809d150ec5ff46e3e492bc6cd3ca2b0e615e18"
+      "commitSha": "f3fbe1adbd890adc4709b033d5bd965ddbcee55f"
     },
     {
       "packageVersion": "9.0.0-preview.25173.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9b0d725c8bbe7b98027e22c02583c86d1acef189"
+      "commitSha": "b1df628b51edc04b3ff571f7e6fe9e2331f34106"
     },
     {
       "packageVersion": "10.0.620205",
