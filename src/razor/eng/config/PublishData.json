@@ -28,7 +28,7 @@
         "NonShipping"
       ],
       "vsBranch": "main",
-      "insertionCreateDraftPR": true,
+      "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.15 P1]"
     },
     "release/dev17.6": {
@@ -104,7 +104,7 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
+      "vsBranch": "rel/d17.14",
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.14 P3]"
     }
