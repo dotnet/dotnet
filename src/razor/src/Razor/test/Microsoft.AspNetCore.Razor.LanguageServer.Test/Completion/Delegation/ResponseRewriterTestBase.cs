@@ -7,7 +7,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
@@ -23,7 +22,7 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
     private protected Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
         int absoluteIndex,
         string documentContent,
-        VSInternalCompletionList initialCompletionList)
+        RazorVSInternalCompletionList initialCompletionList)
     {
         var razorCompletionOptions = new RazorCompletionOptions(
                 SnippetsSupported: true,
@@ -36,7 +35,7 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
     private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
         int absoluteIndex,
         string documentContent,
-        VSInternalCompletionList initialCompletionList,
+        RazorVSInternalCompletionList initialCompletionList,
         RazorCompletionOptions razorCompletionOptions)
     {
         const string FilePath = "C:/path/to/file.cshtml";

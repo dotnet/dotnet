@@ -21,10 +21,9 @@ namespace Test
             __builder.AddMarkupContent(1, "\r\n    ");
             __builder.OpenElement(2, "child");
             __builder.AddContent(3, " ");
-            __builder.AddContent(4, 
 #nullable restore
-#line (2,14)-(2,26) "x:\dir\subdir\Test\TestComponent.cshtml"
-DateTime.Now
+#line (2,14)-(2,26) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(4, DateTime.Now
 
 #line default
 #line hidden

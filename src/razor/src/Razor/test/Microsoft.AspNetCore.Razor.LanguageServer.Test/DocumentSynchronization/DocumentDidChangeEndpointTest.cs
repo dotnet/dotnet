@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,7 +26,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var sourceText = SourceText.From("Hello World");
         var change = new TextDocumentContentChangeEvent()
         {
-            Range = VsLspFactory.CreateZeroWidthRange(0, 5),
+            Range = LspFactory.CreateZeroWidthRange(0, 5),
             RangeLength = 0,
             Text = "!"
         };
@@ -48,7 +47,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var changes = new[] {
             new TextDocumentContentChangeEvent()
             {
-                Range = VsLspFactory.CreateZeroWidthRange(0, 5),
+                Range = LspFactory.CreateZeroWidthRange(0, 5),
                 RangeLength = 0,
                 Text = Environment.NewLine
             },
@@ -57,7 +56,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
 
             new TextDocumentContentChangeEvent()
             {
-                Range = VsLspFactory.CreateZeroWidthRange(1, 0),
+                Range = LspFactory.CreateZeroWidthRange(1, 0),
                 RangeLength = 0,
                 Text = "!"
             },
@@ -66,7 +65,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
 
             new TextDocumentContentChangeEvent()
             {
-                Range = VsLspFactory.CreateZeroWidthRange(0, 1),
+                Range = LspFactory.CreateZeroWidthRange(0, 1),
                 RangeLength = 4,
                 Text = """
                     i!
@@ -108,7 +107,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var endpoint = new DocumentDidChangeEndpoint(projectService.Object, LoggerFactory);
         var change = new TextDocumentContentChangeEvent()
         {
-            Range = VsLspFactory.CreateZeroWidthRange(0, 3),
+            Range = LspFactory.CreateZeroWidthRange(0, 3),
             RangeLength = 0,
             Text = "</p>"
         };

@@ -23,7 +23,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -115,7 +114,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(2, 1),
+            Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
 
@@ -138,7 +137,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(2, 1),
+            Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
 
@@ -179,7 +178,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 14),
+            Position = LspFactory.CreatePosition(1, 14),
             NewName = "Test2"
         };
 
@@ -202,7 +201,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
             NewName = "Test2"
         };
 
@@ -225,7 +224,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 1),
+            Position = LspFactory.CreatePosition(1, 1),
             NewName = "Test2"
         };
 
@@ -248,7 +247,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 3),
+            Position = LspFactory.CreatePosition(1, 3),
             NewName = "Test2"
         };
 
@@ -271,7 +270,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 36),
+            Position = LspFactory.CreatePosition(1, 36),
             NewName = "Test2"
         };
 
@@ -294,7 +293,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 10),
+            Position = LspFactory.CreatePosition(1, 10),
             NewName = "Test2"
         };
 
@@ -317,7 +316,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 1),
+            Position = LspFactory.CreatePosition(1, 1),
             NewName = "Component5"
         };
 
@@ -389,8 +388,8 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             return builder
                 .ToArray()
                 .OrderBy(x => x.TextDocument.Uri.ToString())
-                .ThenBy(x => x.Edits.First().Range.Start.Line)
-                .ThenBy(x => x.Edits.First().Range.Start.Character);
+                .ThenBy(x => ((TextEdit)x.Edits.First()).Range.Start.Line)
+                .ThenBy(x => ((TextEdit)x.Edits.First()).Range.Start.Character);
         }
     }
 
@@ -403,7 +402,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(2, 1),
+            Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
 
@@ -449,7 +448,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 1),
+            Position = LspFactory.CreatePosition(1, 1),
             NewName = "Component5"
         };
 
@@ -502,7 +501,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 1),
+            Position = LspFactory.CreatePosition(1, 1),
             NewName = "TestComponent"
         };
 
@@ -570,7 +569,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = uri },
-            Position = VsLspFactory.CreatePosition(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
             NewName = "Test2"
         };
 
@@ -600,7 +599,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var request = new RenameParams
         {
             TextDocument = new() { Uri = TestPathUtilities.GetUri(s_componentWithParamFilePath) },
-            Position = VsLspFactory.CreatePosition(0, 1), // This is right after the '@' in '@namespace'
+            Position = LspFactory.CreatePosition(0, 1), // This is right after the '@' in '@namespace'
             NewName = "Test2"
         };
 
@@ -749,12 +748,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         yield return fullyQualifiedBuilder.Build();
     }
 
-    private static Action<TextEdit> AssertTextEdit(string fileName, int startLine, int startCharacter, int endLine, int endCharacter)
+    private static Action<SumType<TextEdit, AnnotatedTextEdit>> AssertTextEdit(string fileName, int startLine, int startCharacter, int endLine, int endCharacter)
         => edit =>
         {
-            Assert.Equal(fileName, edit.NewText);
+            Assert.Equal(fileName, ((TextEdit)edit).NewText);
 
-            var range = edit.Range;
+            var range = ((TextEdit)edit).Range;
             Assert.Equal(startLine, range.Start.Line);
             Assert.Equal(startCharacter, range.Start.Character);
             Assert.Equal(endLine, range.End.Line);

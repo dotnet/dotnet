@@ -11,22 +11,55 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class LspServices : ILspServices
+internal sealed class LspServices : ILspServices
 {
+    private sealed class EmptyServiceProvider : IServiceProvider
+    {
+        public object? GetService(Type serviceType) => null;
+    }
+
+    public static LspServices Empty { get; } = new(new EmptyServiceProvider());
+
     private readonly IServiceProvider _serviceProvider;
-    public bool IsDisposed = false;
+
+    private readonly object _disposeLock = new();
+    private bool _isDisposed = false;
+
+    public bool IsDisposed => _isDisposed;
 
     public LspServices(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<ILspServices>(this);
+        serviceCollection.AddSingleton<LspServices>(this);
+
         _serviceProvider = serviceCollection.BuildServiceProvider();
-        // Create all startup services
-        _serviceProvider.GetServices<IRazorStartupService>();
+
+        // By requesting the startup services, we ensure that they are created.
+        // This gives them an opportunity to set up any necessary state or perform.
+        _ = _serviceProvider.GetServices<IRazorStartupService>();
     }
 
-    public ImmutableArray<Type> GetRegisteredServices()
+    private LspServices(IServiceProvider serviceProvider)
     {
-        throw new NotImplementedException();
+        _serviceProvider = serviceProvider;
+    }
+
+    public void Dispose()
+    {
+        lock (_disposeLock)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _isDisposed = true;
+        }
+
+        if (_serviceProvider is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 
     public T GetRequiredService<T>() where T : notnull
@@ -43,20 +76,6 @@ internal class LspServices : ILspServices
         }
 
         return services;
-    }
-
-    public bool SupportsGetRegisteredServices()
-    {
-        return false;
-    }
-
-    public void Dispose()
-    {
-        if (_serviceProvider is IDisposable disposable)
-        {
-            disposable.Dispose();
-            IsDisposed = true;
-        }
     }
 
     public T? GetService<T>() where T : notnull

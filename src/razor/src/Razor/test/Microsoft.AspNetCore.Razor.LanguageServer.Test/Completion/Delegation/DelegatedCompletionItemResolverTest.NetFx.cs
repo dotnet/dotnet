@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
@@ -57,7 +56,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml");
         _csharpCompletionParams = new DelegatedCompletionParams(
             documentContext.GetTextDocumentIdentifierAndVersion(),
-            VsLspFactory.CreatePosition(10, 6),
+            LspFactory.CreatePosition(10, 6),
             RazorLanguageKind.CSharp,
             new VSInternalCompletionContext(),
             ProvisionalTextEdit: null,
@@ -66,7 +65,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         _htmlCompletionParams = new DelegatedCompletionParams(
             documentContext.GetTextDocumentIdentifierAndVersion(),
-            VsLspFactory.DefaultPosition,
+            LspFactory.DefaultPosition,
             RazorLanguageKind.Html,
             new VSInternalCompletionContext(),
             ProvisionalTextEdit: null,
@@ -92,7 +91,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
-        var notContainingCompletionList = new VSInternalCompletionList();
+        var notContainingCompletionList = new RazorVSInternalCompletionList() { Items = [] };
         var originalRequestContext = StrictMock.Of<ICompletionResolveContext>();
 
         // Act
@@ -111,7 +110,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
-        var containingCompletionList = new VSInternalCompletionList() { Items = [item] };
+        var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item] };
         var originalRequestContext = StrictMock.Of<ICompletionResolveContext>();
 
         // Act
@@ -134,7 +133,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         {
             Data = expectedData,
         };
-        var containingCompletionList = new VSInternalCompletionList() { Items = [item], Data = new object() };
+        var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item], Data = new object() };
         var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams, new object());
 
         // Act
@@ -153,7 +152,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
-        var containingCompletionList = new VSInternalCompletionList() { Items = [item], Data = new object() };
+        var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item], Data = new object() };
         var expectedData = new object();
         var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams, expectedData);
 
@@ -217,7 +216,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
-        var containingCompletionList = new VSInternalCompletionList() { Items = [item] };
+        var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item] };
         var originalRequestContext = new DelegatedCompletionResolutionContext(_htmlCompletionParams, new object());
 
         // Act
@@ -244,7 +243,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
             cursorPosition, codeDocument, csharpServer);
 
         var originalRequestContext = new DelegatedCompletionResolutionContext(csharpCompletionParams, containingCompletionList.Data);
-        var item = (VSInternalCompletionItem)containingCompletionList.Items.FirstOrDefault(item => item.Label == itemToResolve);
+        var item = containingCompletionList.Items.FirstOrDefault(item => item.Label == itemToResolve);
 
         if (item is null)
         {
@@ -278,7 +277,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         return csharpServer;
     }
 
-    private async Task<(VSInternalCompletionList, DelegatedCompletionParams)> GetCompletionListAndOriginalParamsAsync(
+    private async Task<(RazorVSInternalCompletionList, DelegatedCompletionParams)> GetCompletionListAndOriginalParamsAsync(
         int cursorPosition,
         RazorCodeDocument codeDocument,
         CSharpTestLspServer csharpServer)

@@ -3,7 +3,6 @@
 
 using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
 

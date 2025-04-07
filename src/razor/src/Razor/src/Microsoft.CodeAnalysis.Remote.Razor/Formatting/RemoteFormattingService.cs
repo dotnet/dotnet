@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.IRemoteFormattingService.TriggerKind;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;

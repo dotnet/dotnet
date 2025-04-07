@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
@@ -13,11 +15,11 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using DefinitionResult = System.Nullable<Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location,
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
-    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>>;
+using DefinitionResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation[],
+    Roslyn.LanguageServer.Protocol.DocumentLink[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
@@ -29,7 +31,7 @@ internal sealed class DefinitionEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
-    : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult>(
+    : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(
         languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
@@ -50,7 +52,7 @@ internal sealed class DefinitionEndpoint(
         serverCapabilities.DefinitionProvider = new DefinitionOptions();
     }
 
-    protected async override Task<DefinitionResult> TryHandleAsync(
+    protected async override Task<DefinitionResult?> TryHandleAsync(
         TextDocumentPositionParams request,
         RazorRequestContext requestContext,
         DocumentPositionInfo positionInfo,
@@ -88,21 +90,26 @@ internal sealed class DefinitionEndpoint(
             positionInfo.LanguageKind));
     }
 
-    protected async override Task<DefinitionResult> HandleDelegatedResponseAsync(
-        DefinitionResult response,
+    protected async override Task<DefinitionResult?> HandleDelegatedResponseAsync(
+        DefinitionResult? response,
         TextDocumentPositionParams originalRequest,
         RazorRequestContext requestContext,
         DocumentPositionInfo positionInfo,
         CancellationToken cancellationToken)
     {
+        if (response is null)
+        {
+            return null;
+        }
+
         var result = response.GetValueOrDefault().Value;
 
         // Not using .TryGetXXX because this does the null check for us too
-        if (result is Location location)
+        if (result is LspLocation location)
         {
             (location.Uri, location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(location.Uri, location.Range, cancellationToken).ConfigureAwait(false);
         }
-        else if (result is Location[] locations)
+        else if (result is LspLocation[] locations)
         {
             foreach (var loc in locations)
             {

@@ -22,9 +22,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -33,7 +31,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 {
     private protected IRazorMappingService SpanMappingService { get; } = new ThrowingRazorMappingService();
     private protected IFilePathService FilePathService { get; } = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
-    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.VsLspJsonSerializerOptions;
+    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.JsonSerializerOptions;
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider, LanguageServerFeatureOptions languageServerFeatureOptions)
@@ -46,8 +44,8 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 
     private protected static RazorRequestContext CreateRazorRequestContext(
         DocumentContext? documentContext,
-        ILspServices? lspServices = null)
-        => new(documentContext, lspServices ?? StrictMock.Of<ILspServices>(), "lsp/method", uri: null);
+        LspServices? lspServices = null)
+        => new(documentContext, lspServices ?? LspServices.Empty, "lsp/method", uri: null);
 
     protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null, string? rootNamespace = null)
     {

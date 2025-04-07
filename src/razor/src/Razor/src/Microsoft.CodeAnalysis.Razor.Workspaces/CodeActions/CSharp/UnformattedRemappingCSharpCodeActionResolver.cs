@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -49,7 +48,7 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
             return codeAction;
         }
 
-        var textEdit = textDocumentEdit.Edits.FirstOrDefault();
+        var textEdit = (TextEdit)textDocumentEdit.Edits.FirstOrDefault();
         if (textEdit is null)
         {
             // No text edit available

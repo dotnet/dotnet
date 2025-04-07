@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -22,7 +21,7 @@ internal class RazorInitializedEndpoint : INotificationHandler<InitializedParams
 
         foreach (var onStartedItem in onStartedItems)
         {
-            await onStartedItem.OnInitializedAsync(requestContext.LspServices, cancellationToken).ConfigureAwait(false);
+            await onStartedItem.OnInitializedAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -27,10 +27,9 @@ namespace Test
 
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
-                __builder2.AddContent(1, 
 #nullable restore
-#line (1,56)-(1,82) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLowerInvariant()
+#line (1,56)-(1,82) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(1, context.ToLowerInvariant()
 
 #line default
 #line hidden

@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Nerdbank.Streams;
 
@@ -83,7 +82,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private sealed class NoOpClientNotifierService : IClientConnection, IOnInitialized
     {
-        public Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
+        public Task OnInitializedAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

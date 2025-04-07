@@ -27,10 +27,9 @@ namespace Test
 #line hidden
 #nullable disable
 
-            __builder.AddContent(0, 
 #nullable restore
-#line (3,6)-(3,7) "x:\dir\subdir\Test\TestComponent.cshtml"
-x
+#line (3,6)-(3,7) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(0, x
 
 #line default
 #line hidden
@@ -44,10 +43,9 @@ x
 #line hidden
 #nullable disable
 
-            __builder.AddContent(1, 
 #nullable restore
-#line (3,22)-(3,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-x
+#line (3,22)-(3,23) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(1, x
 
 #line default
 #line hidden

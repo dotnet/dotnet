@@ -17,6 +17,7 @@
   <ItemGroup>
     <Compile Remove="Resources\**\*.*" />
     <None Remove="Resources\**\*.*" />
+    <Compile Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\GlobalUsings.cs" Link="GlobalUsings.cs" />
 
     <EmbeddedResource Include="Resources\**\*.*" />
     <EmbeddedResource Include="$(SharedFilesRoot)\Tooling\**\*.*" Link="Resources\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -48,6 +49,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />
     <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" />
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" />
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
     <PackageReference Include="Microsoft.VisualStudio.Copilot" />
@@ -61,8 +63,6 @@
     <PackageReference Include="xunit.extensibility.execution" />
     <PackageReference Include="Xunit.Combinatorial" />
     <PackageReference Include="Xunit.StaFact" />
-
-    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetFxVS)'">

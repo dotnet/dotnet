@@ -103,7 +103,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         });
 
         // Act
-        Assert.True(factory.TryCreate(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id }, out var documentContext));
+        Assert.True(factory.TryCreate(uri, new VSProjectContext { Id = hostProject.Key.Id }, out var documentContext));
 
         // Assert
         Assert.Equal(uri, documentContext.Uri);

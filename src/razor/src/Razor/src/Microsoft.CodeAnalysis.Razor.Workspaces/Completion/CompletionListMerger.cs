@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -20,7 +19,7 @@ internal static class CompletionListMerger
 
     [return: NotNullIfNotNull(nameof(razorCompletionList))]
     [return: NotNullIfNotNull(nameof(delegatedCompletionList))]
-    public static VSInternalCompletionList? Merge(VSInternalCompletionList? razorCompletionList, VSInternalCompletionList? delegatedCompletionList)
+    public static RazorVSInternalCompletionList? Merge(RazorVSInternalCompletionList? razorCompletionList, RazorVSInternalCompletionList? delegatedCompletionList)
     {
         if (razorCompletionList is null)
         {
@@ -47,7 +46,7 @@ internal static class CompletionListMerger
         // We don't fully support merging edit ranges currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedItemDefaultsEditRange = razorCompletionList.ItemDefaults?.EditRange ?? delegatedCompletionList.ItemDefaults?.EditRange;
 
-        var mergedCompletionList = new VSInternalCompletionList()
+        var mergedCompletionList = new RazorVSInternalCompletionList()
         {
             CommitCharacters = mergedCommitCharacters,
             Data = mergedData,
@@ -142,7 +141,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static void EnsureMergeableData(VSInternalCompletionList completionListA, VSInternalCompletionList completionListB)
+    private static void EnsureMergeableData(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
     {
         if (completionListA.Data != completionListB.Data &&
             (completionListA.Data is null || completionListB.Data is null))
@@ -160,7 +159,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static void EnsureMergeableCommitCharacters(VSInternalCompletionList completionListA, VSInternalCompletionList completionListB)
+    private static void EnsureMergeableCommitCharacters(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
     {
         var aInheritsCommitCharacters = completionListA.CommitCharacters is not null || completionListA.ItemDefaults?.CommitCharacters is not null;
         var bInheritsCommitCharacters = completionListB.CommitCharacters is not null || completionListB.ItemDefaults?.CommitCharacters is not null;
@@ -171,7 +170,7 @@ internal static class CompletionListMerger
             var inheritableCommitCharacterCompletionsA = GetCompletionsThatDoNotSpecifyCommitCharacters(completionListA);
             var inheritableCommitCharacterCompletionsB = GetCompletionsThatDoNotSpecifyCommitCharacters(completionListB);
             IReadOnlyList<VSInternalCompletionItem>? completionItemsToStopInheriting;
-            VSInternalCompletionList? completionListToStopInheriting;
+            RazorVSInternalCompletionList? completionListToStopInheriting;
 
             // Decide which completion list has more items that benefit from "inheriting" commit characters.
             if (inheritableCommitCharacterCompletionsA.Length >= inheritableCommitCharacterCompletionsB.Length)
@@ -206,7 +205,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static ImmutableArray<VSInternalCompletionItem> GetCompletionsThatDoNotSpecifyCommitCharacters(VSInternalCompletionList completionList)
+    private static ImmutableArray<VSInternalCompletionItem> GetCompletionsThatDoNotSpecifyCommitCharacters(RazorVSInternalCompletionList completionList)
     {
         using var inheritableCompletions = new PooledArrayBuilder<VSInternalCompletionItem>();
         for (var i = 0; i < completionList.Items.Length; i++)

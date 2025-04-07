@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
@@ -30,8 +29,8 @@ internal class DesignTimeHelperResponseRewriter : IDelegatedCSharpCompletionResp
         "BuildRenderTree"
     }.ToFrozenSet();
 
-    public VSInternalCompletionList Rewrite(
-        VSInternalCompletionList completionList,
+    public RazorVSInternalCompletionList Rewrite(
+        RazorVSInternalCompletionList completionList,
         RazorCodeDocument codeDocument,
         int hostDocumentIndex,
         Position projectedPosition,
@@ -54,7 +53,7 @@ internal class DesignTimeHelperResponseRewriter : IDelegatedCSharpCompletionResp
         // from the completion list. If the current identifier does start with a double underscore (e.g. "__ab[||]"),
         // we only trim out common design time helpers from the completion list.
 
-        using var _ = ListPool<CompletionItem>.GetPooledObject(out var filteredItems);
+        using var _ = ListPool<VSInternalCompletionItem>.GetPooledObject(out var filteredItems);
 
         var items = completionList.Items;
         filteredItems.SetCapacityIfLarger(items.Length);

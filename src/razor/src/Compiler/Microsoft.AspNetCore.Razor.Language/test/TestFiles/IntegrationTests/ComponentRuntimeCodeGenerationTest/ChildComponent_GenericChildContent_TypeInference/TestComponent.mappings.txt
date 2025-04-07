@@ -5,11 +5,11 @@ Generated Location: (837:22,0 [4] )
 
 Source Location: (38:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.ToLower()|
-Generated Location: (1117:32,0 [17] )
+Generated Location: (1102:31,25 [17] )
 |context.ToLower()|
 
 Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1953:56,0 [4] )
+Generated Location: (1938:55,0 [4] )
 |Item|
 

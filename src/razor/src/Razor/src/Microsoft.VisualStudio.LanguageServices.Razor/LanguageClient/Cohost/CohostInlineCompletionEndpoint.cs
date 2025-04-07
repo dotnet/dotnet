@@ -14,8 +14,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
-using Roslyn.LanguageServer.Protocol;
-using VSLSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -38,14 +36,14 @@ internal sealed class CohostInlineCompletionEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public ImmutableArray<VSLSP.Registration> GetRegistrations(VSLSP.VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.CodeAction?.DynamicRegistration == true)
         {
-            return [new VSLSP.Registration
+            return [new Registration
             {
                 Method = VSInternalMethods.TextDocumentInlineCompletionName,
-                RegisterOptions = new VSLSP.VSInternalInlineCompletionRegistrationOptions().EnableInlineCompletion()
+                RegisterOptions = new VSInternalInlineCompletionRegistrationOptions().EnableInlineCompletion()
             }];
         }
 

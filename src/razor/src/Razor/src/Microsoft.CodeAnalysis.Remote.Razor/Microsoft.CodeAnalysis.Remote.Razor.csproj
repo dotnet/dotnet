@@ -31,6 +31,8 @@
     <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\TelemetryReporter.cs" Link="Telemetry\TelemetryReporter.cs" />
     <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\AggregatingTelemetryLog.cs" Link="Telemetry\AggregatingTelemetryLog.cs" />
     <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\AggregatingTelemetryLogManager.cs" Link="Telemetry\AggregatingTelemetryLogManager.cs" />
+
+    <Compile Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\GlobalUsings.cs" Link="GlobalUsings.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,9 +44,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Remote.ServiceHub" />
     <PackageReference Include="Nerdbank.Streams" />
     <PackageReference Include="Microsoft.VisualStudio.RpcContracts" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" />
   </ItemGroup>
 
   <ItemGroup>

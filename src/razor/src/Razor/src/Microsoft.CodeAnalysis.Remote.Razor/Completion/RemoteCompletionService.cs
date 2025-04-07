@@ -15,11 +15,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalCompletionList?>;
-using RoslynCompletionContext = Roslyn.LanguageServer.Protocol.CompletionContext;
-using RoslynCompletionList = Roslyn.LanguageServer.Protocol.CompletionList;
-using RoslynCompletionSetting = Roslyn.LanguageServer.Protocol.CompletionSetting;
+using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.RazorVSInternalCompletionList?>;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -121,7 +117,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        VSInternalCompletionList? csharpCompletionList = null;
+        RazorVSInternalCompletionList? csharpCompletionList = null;
         if (isCSharpTrigger)
         {
             var mappedPosition = documentPositionInfo.Position;
@@ -146,7 +142,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             }
         }
 
-        VSInternalCompletionList? razorCompletionList = null;
+        RazorVSInternalCompletionList? razorCompletionList = null;
 
         if (isRazorTrigger)
         {
@@ -169,7 +165,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         return Response.Results(mergedCompletionList);
     }
 
-    private async ValueTask<VSInternalCompletionList?> GetCSharpCompletionAsync(
+    private async ValueTask<RazorVSInternalCompletionList?> GetCSharpCompletionAsync(
         SourceGeneratedDocument generatedDocument,
         RazorCodeDocument codeDocument,
         int documentIndex,
@@ -178,47 +174,38 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         RazorCompletionOptions razorCompletionOptions,
         CancellationToken cancellationToken)
     {
-        // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.
-        if (JsonHelpers.ToRoslynLSP<RoslynCompletionContext, CompletionContext>(completionContext) is not { } roslynCompletionContext)
-        {
-            Debug.Fail("Unable to convert VS to Roslyn LSP completion context");
-            return null;
-        }
-
         var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
-        if (JsonHelpers.ToRoslynLSP<RoslynCompletionSetting, CompletionSetting>(clientCapabilities.TextDocument?.Completion) is not { } roslynCompletionSetting)
+        if (clientCapabilities.TextDocument?.Completion is not { } completionSetting)
         {
             Debug.Fail("Unable to convert VS to Roslyn LSP completion setting");
             return null;
         }
 
         var mappedLinePosition = mappedPosition.ToLinePosition();
-        var roslynCompletionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
+        var completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
             generatedDocument,
             mappedLinePosition,
-            roslynCompletionContext,
+            completionContext,
             clientCapabilities.SupportsVisualStudioExtensions,
-            roslynCompletionSetting,
+            completionSetting,
             cancellationToken)
             .ConfigureAwait(false);
 
-        if (roslynCompletionList is null)
+        if (completionList is null)
         {
             // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
             // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
             // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
             // so we'd only ever return Razor completion items.
-            return new VSInternalCompletionList()
+            return new RazorVSInternalCompletionList()
             {
                 Items = [],
                 IsIncomplete = true
             };
         }
 
-        var vsPlatformCompletionList = JsonHelpers.ToVsLSP<VSInternalCompletionList, RoslynCompletionList>(roslynCompletionList);
-
         var rewrittenResponse = DelegatedCompletionHelper.RewriteCSharpResponse(
-            vsPlatformCompletionList,
+            new(completionList),
             documentIndex,
             codeDocument,
             mappedPosition,

@@ -1,13 +1,13 @@
 ﻿Source Location: (36:2,1 [0] x:\dir\subdir\Test\TestComponent.cshtml)
 ||
-Generated Location: (1005:26,0 [0] )
+Generated Location: (994:25,24 [0] )
 ||
 
 Source Location: (47:4,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     [Parameter] public int Param { get; set; }
 |
-Generated Location: (1200:35,0 [50] )
+Generated Location: (1191:35,0 [50] )
 |
     [Parameter] public int Param { get; set; }
 |

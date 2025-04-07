@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -224,7 +223,7 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
             {
                 foreach (var edit in textDocumentEdit.Edits)
                 {
-                    inputText = inputText.WithChanges(inputText.GetTextChange(edit));
+                    inputText = inputText.WithChanges(inputText.GetTextChange((TextEdit)edit));
                 }
             }
         }

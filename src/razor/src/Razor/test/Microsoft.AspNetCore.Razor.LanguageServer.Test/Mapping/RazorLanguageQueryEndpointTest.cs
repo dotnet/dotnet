@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,7 +37,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(0, 1),
+            Position = LspFactory.CreatePosition(0, 1),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -64,7 +63,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(0, 2),
+            Position = LspFactory.CreatePosition(0, 2),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -93,7 +92,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(0, 1),
+            Position = LspFactory.CreatePosition(0, 1),
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -122,7 +121,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = VsLspFactory.CreatePosition(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);

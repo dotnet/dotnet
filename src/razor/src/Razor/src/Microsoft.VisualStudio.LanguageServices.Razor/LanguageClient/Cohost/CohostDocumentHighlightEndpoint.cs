@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol.DocumentHighlight;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -68,7 +67,7 @@ internal class CohostDocumentHighlightEndpoint(
         // If we got a response back, then either Razor or C# wants to do something with this, so we're good to go
         if (csharpResult.Result is { } highlights)
         {
-            return highlights.Select(RemoteDocumentHighlight.ToVsDocumentHighlight).ToArray();
+            return highlights.Select(RemoteDocumentHighlight.ToLspDocumentHighlight).ToArray();
         }
 
         if (csharpResult.StopHandling)

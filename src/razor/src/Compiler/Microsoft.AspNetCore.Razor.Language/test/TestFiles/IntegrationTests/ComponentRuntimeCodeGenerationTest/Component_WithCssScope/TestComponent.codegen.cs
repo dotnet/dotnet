@@ -142,10 +142,9 @@ i
         );
         __builder.AddAttribute(25, "TestCssScope");
         __builder.AddContent(26, "Something ");
-        __builder.AddContent(27, 
 #nullable restore
-#line (26,42)-(26,43) "x:\dir\subdir\Test\TestComponent.cshtml"
-i
+#line (26,42)-(26,43) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(27, i
 
 #line default
 #line hidden

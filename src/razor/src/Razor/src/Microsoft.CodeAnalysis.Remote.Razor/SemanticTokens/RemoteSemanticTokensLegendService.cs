@@ -3,6 +3,8 @@
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using SemanticTokenModifiers = Microsoft.CodeAnalysis.Razor.SemanticTokens.SemanticTokenModifiers;
+using SemanticTokenTypes = Microsoft.CodeAnalysis.Razor.SemanticTokens.SemanticTokenTypes;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 

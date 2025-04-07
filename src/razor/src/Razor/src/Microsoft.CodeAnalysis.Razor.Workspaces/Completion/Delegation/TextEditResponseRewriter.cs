@@ -2,14 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 
 internal class TextEditResponseRewriter : IDelegatedCSharpCompletionResponseRewriter
 {
-    public VSInternalCompletionList Rewrite(
-        VSInternalCompletionList completionList,
+    public RazorVSInternalCompletionList Rewrite(
+        RazorVSInternalCompletionList completionList,
         RazorCodeDocument codeDocument,
         int hostDocumentIndex,
         Position projectedPosition,
@@ -36,10 +35,10 @@ internal class TextEditResponseRewriter : IDelegatedCSharpCompletionResponseRewr
         return completionList;
     }
 
-    private static VSInternalCompletionList TranslateTextEdits(
+    private static RazorVSInternalCompletionList TranslateTextEdits(
         Position hostDocumentPosition,
         Position projectedPosition,
-        VSInternalCompletionList completionList)
+        RazorVSInternalCompletionList completionList)
     {
         // The TextEdit positions returned to us from the C#/HTML language servers are positions correlating to the virtual document.
         // We need to translate these positions to apply to the Razor document instead. Performance is a big concern here, so we want to
@@ -73,14 +72,14 @@ internal class TextEditResponseRewriter : IDelegatedCSharpCompletionResponseRewr
         return completionList;
     }
 
-    private static Range TranslateRange(Position hostDocumentPosition, Position projectedPosition, Range textEditRange)
+    private static LspRange TranslateRange(Position hostDocumentPosition, Position projectedPosition, LspRange textEditRange)
     {
         var offset = projectedPosition.Character - hostDocumentPosition.Character;
 
         var translatedStartPosition = TranslatePosition(offset, hostDocumentPosition, textEditRange.Start);
         var translatedEndPosition = TranslatePosition(offset, hostDocumentPosition, textEditRange.End);
 
-        return VsLspFactory.CreateRange(translatedStartPosition, translatedEndPosition);
+        return LspFactory.CreateRange(translatedStartPosition, translatedEndPosition);
 
         static Position TranslatePosition(int offset, Position hostDocumentPosition, Position editPosition)
         {
@@ -88,7 +87,7 @@ internal class TextEditResponseRewriter : IDelegatedCSharpCompletionResponseRewr
 
             // Note: If this completion handler ever expands to deal with multi-line TextEdits, this logic will likely need to change since
             // it assumes we're only dealing with single-line TextEdits.
-            return VsLspFactory.CreatePosition(hostDocumentPosition.Line, translatedCharacter);
+            return LspFactory.CreatePosition(hostDocumentPosition.Line, translatedCharacter);
         }
     }
 }
