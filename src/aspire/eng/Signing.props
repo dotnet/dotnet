@@ -3,9 +3,7 @@
   <ItemGroup>
     <FileExtensionSignInfo Update=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Update=".zip" CertificateName="None" />
-
-    <!-- add missing entry for .msi, this can be removed once aspire uses arcade 10.0 -->
-    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" Condition="!@(FileExtensionSignInfo->AnyHaveMetadataValue('Identity', '.msi'))" />
+    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" />
   </ItemGroup>
 
   <ItemGroup>
