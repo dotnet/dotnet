@@ -27,7 +27,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public class PublishBuildToMaestro : MSBuildTaskBase, ICancelableTask
     {
-        [Required]
         public string ManifestsPath { get; set; }
 
         public string BuildAssetRegistryToken { get; set; }
@@ -36,6 +35,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string MaestroApiEndpoint { get; set; }
 
         private bool IsStableBuild { get; set; } = false;
+
+        public bool IsAssetlessBuild { get; set; } = false;
 
         public bool AllowInteractive { get; set; } = false;
 
@@ -103,46 +104,49 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 Log.LogMessage(MessageImportance.High, "Starting build metadata push to the Build Asset Registry...");
 
-                if (!Directory.Exists(ManifestsPath))
+                if (!Directory.Exists(ManifestsPath) && !IsAssetlessBuild)
                 {
                     Log.LogError($"Required folder '{ManifestsPath}' does not exist.");
                 }
                 else
                 {
-                    //get the list of manifests
-                    List<BuildModel> parsedManifests = LoadBuildModels(ManifestsPath, cancellationToken);
+                    BuildModel buildModel;
+                    BlobArtifactModel mergedManifestAsset;
 
-                    if (parsedManifests.Count == 0)
+                    if (IsAssetlessBuild)
                     {
-                        Log.LogError(
-                            $"No manifests found matching the search pattern {SearchPattern} in {ManifestsPath}");
-                        return !Log.HasLoggedErrors;
+                        buildModel = new(FillInMissingBuildIdentityProperties(new BuildIdentity()));
+                        mergedManifestAsset = null;
                     }
+                    else
+                    {
+                        //get the list of manifests
+                        List<BuildModel> parsedManifests = LoadBuildModels(ManifestsPath, cancellationToken);
 
-                    var mergedManifest = _buildModelFactory.CreateMergedModel(parsedManifests, ArtifactVisibility.All);
+                        if (parsedManifests.Count == 0)
+                        {
+                            Log.LogError(
+                                $"No manifests found matching the search pattern {SearchPattern} in {ManifestsPath}");
+                            return !Log.HasLoggedErrors;
+                        }
 
-                    // Update the merged manifest with any missing manifest build data based on the environment.
-                    mergedManifest.Identity.AzureDevOpsAccount = mergedManifest.Identity.AzureDevOpsAccount ?? GetAzDevAccount();
-                    mergedManifest.Identity.AzureDevOpsProject = mergedManifest.Identity.AzureDevOpsProject ?? GetAzDevProject();
-                    mergedManifest.Identity.AzureDevOpsBuildNumber = mergedManifest.Identity.AzureDevOpsBuildNumber ?? GetAzDevBuildNumber();
-                    mergedManifest.Identity.AzureDevOpsBuildId = mergedManifest.Identity.AzureDevOpsBuildId ?? GetAzDevBuildId();
-                    mergedManifest.Identity.AzureDevOpsRepository = mergedManifest.Identity.AzureDevOpsRepository ?? GetAzDevRepository();
-                    mergedManifest.Identity.AzureDevOpsBranch = mergedManifest.Identity.AzureDevOpsBranch ?? GetAzDevBranch();
-                    mergedManifest.Identity.AzureDevOpsBuildDefinitionId = mergedManifest.Identity.AzureDevOpsBuildDefinitionId ?? GetAzDevBuildDefinitionId();
+                        buildModel = _buildModelFactory.CreateMergedModel(parsedManifests, ArtifactVisibility.All);
 
-                    string mergedManifestPath = Path.Combine(GetAzDevStagingDirectory(), MergedManifestFileName);
+                        FillInMissingBuildIdentityProperties(buildModel.Identity);
 
-                    //add manifest as an asset to the buildModel
-                    var mergedManifestAsset = AddManifestAsAsset(mergedManifest, mergedManifestPath);
+                        string mergedManifestPath = Path.Combine(GetAzDevStagingDirectory(), MergedManifestFileName);
 
-                    // Write the merged manifest
-                    _fileSystem.WriteToFile(mergedManifestPath, mergedManifest.ToXml().ToString());
+                        //add manifest as an asset to the buildModel
+                        mergedManifestAsset = AddManifestAsAsset(buildModel, mergedManifestPath);
 
-                    Log.LogMessage(MessageImportance.High,
-                                $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{mergedManifestPath}");
+                        // Write the merged manifest
+                        _fileSystem.WriteToFile(mergedManifestPath, buildModel.ToXml().ToString());
 
+                        Log.LogMessage(MessageImportance.High,
+                                    $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{mergedManifestPath}");
+                    }
                     // populate buildData and assetData using merged manifest data 
-                    BuildData buildData = GetMaestroBuildDataFromMergedManifest(mergedManifest, mergedManifestAsset, cancellationToken);
+                    BuildData buildData = GetMaestroBuildDataFromMergedManifest(buildModel, mergedManifestAsset, cancellationToken);
 
                     IProductConstructionServiceApi client = PcsApiFactory.GetAuthenticated(
                         MaestroApiEndpoint,
@@ -158,7 +162,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
 
                     buildData.Dependencies = deps;
-                    LookupForMatchingGitHubRepository(mergedManifest.Identity);
+                    LookupForMatchingGitHubRepository(buildModel.Identity);
                     buildData.GitHubBranch = _gitHubBranch;
                     buildData.GitHubRepository = _gitHubRepository;
 
@@ -193,6 +197,27 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             return !Log.HasLoggedErrors;
+        }
+
+        private BuildIdentity FillInMissingBuildIdentityProperties(BuildIdentity buildIdentity)
+        {
+            if (buildIdentity == null)
+            {
+                throw new ArgumentNullException(nameof(buildIdentity));
+            }
+            string azDevAccount = GetAzDevAccount();
+            string azDevProject = GetAzDevProject();
+
+            buildIdentity.Commit = buildIdentity.Commit ?? GetAzDevCommit();
+            buildIdentity.AzureDevOpsAccount = buildIdentity.AzureDevOpsAccount ?? azDevAccount;
+            buildIdentity.AzureDevOpsProject = buildIdentity.AzureDevOpsProject ?? azDevProject;
+            buildIdentity.AzureDevOpsBuildNumber = buildIdentity.AzureDevOpsBuildNumber ?? GetAzDevBuildNumber();
+            buildIdentity.AzureDevOpsBuildId = buildIdentity.AzureDevOpsBuildId ?? GetAzDevBuildId();
+            buildIdentity.AzureDevOpsRepository = buildIdentity.AzureDevOpsRepository 
+                ?? $"https://dev.azure.com/{azDevAccount}/{azDevProject}/_git/{GetAzDevRepositoryName()}";
+            buildIdentity.AzureDevOpsBranch = buildIdentity.AzureDevOpsBranch ?? GetAzDevBranch();
+
+            return buildIdentity;
         }
 
         private async Task<IEnumerable<DefaultChannel>> GetBuildDefaultChannelsAsync(IProductConstructionServiceApi client,

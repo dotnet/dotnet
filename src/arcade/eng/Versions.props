@@ -23,8 +23,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25204.2</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25204.2</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25208.1</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25208.1</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta4.24126.1</SystemCommandLineVersion>
     <!-- corefx -->

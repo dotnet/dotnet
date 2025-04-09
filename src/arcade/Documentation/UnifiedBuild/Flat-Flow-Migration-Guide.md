@@ -60,7 +60,7 @@ graph TD
     deployment-tools --> sdk
     diagnostics --> vstest
     efcore --> aspnetcore
-    emsdk --> runtime
+    emsdk --> sdk
     fsharp --> sdk
     msbuild --> sdk
     nuget-client --> sdk
