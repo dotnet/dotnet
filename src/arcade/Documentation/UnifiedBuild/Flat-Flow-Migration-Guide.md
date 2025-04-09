@@ -1,7 +1,7 @@
 # Flat dependency flow migration FAQ
 
 > [!NOTE]
-> This is part of the [Unified Build](https://github.com/dotnet/arcade/tree/main/Documentation/UnifiedBuild) effort.
+> This is part of the [Unified Build](https://github.com/dotnet/arcade/tree/main/Documentation/UnifiedBuild) effort. If you're looking for an intro, a good source of information (though not public) are the .NET Platform Talks about [🎬 UB in general](https://microsoft-my.sharepoint.com/personal/tarekms_ntdev_microsoft_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Ftarekms%5Fntdev%5Fmicrosoft%5Fcom%2FDocuments%2FRecordings%2F%2ENET%20platform%20talks%2D20250226%5F200258%2DMeeting%20Recording%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E0f6357b7%2Db525%2D4eb3%2D9cb7%2D67297d6eaa23&mode=Edit) or a [🎬 more codeflow specific one](https://microsofteur-my.sharepoint.com/:v:/g/personal/prvysoky_microsoft_com/EdlGj6nIOWFFvMyF6izBAR8BkJI0ua_4rqgxQbcRrv2zRg?e=YXedHu).
 
 This document describes the migration of [.NET repositories](https://github.com/dotnet/dotnet/tree/main/src) from their current Maestro dependency flow to the new VMR-based flat flow which **will happen on the week of April 24th**.
 
