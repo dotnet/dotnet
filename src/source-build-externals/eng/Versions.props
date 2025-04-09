@@ -8,7 +8,6 @@
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
   </PropertyGroup>
-
   <PropertyGroup>
     <MicrosoftBuildVersion>17.8.5</MicrosoftBuildVersion>
   </PropertyGroup>
