@@ -4,7 +4,6 @@ trigger:
     include:
     - main
     - release/6.0
-    - release/7.0
     - release/8.0
     exclude:
     - .github/*
@@ -21,7 +20,6 @@ pr:
     include:
     - main
     - release/6.0
-    - release/7.0
     - release/8.0
     - templates
   paths:
@@ -47,7 +45,7 @@ variables:
 resources:
   containers:
   - container: LinuxContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-fpm-amd64
 
 stages:
 - stage: build
