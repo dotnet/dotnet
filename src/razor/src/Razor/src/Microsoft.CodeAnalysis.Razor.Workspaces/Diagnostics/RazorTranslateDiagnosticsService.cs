@@ -405,10 +405,10 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         if (markupAttributeNode is not null)
         {
-            if (!processedAttributes.TryGetValue(markupAttributeNode.FullSpan, out var doesAttributeContainNonMarkup))
+            if (!processedAttributes.TryGetValue(markupAttributeNode.Span, out var doesAttributeContainNonMarkup))
             {
                 doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeNode);
-                processedAttributes.Add(markupAttributeNode.FullSpan, doesAttributeContainNonMarkup);
+                processedAttributes.Add(markupAttributeNode.Span, doesAttributeContainNonMarkup);
             }
 
             return doesAttributeContainNonMarkup;

@@ -108,7 +108,7 @@ internal static class TagHelperBlockRewriter
                         // TODO: Accept more than just Markup attributes: https://github.com/aspnet/Razor/issues/96.
                         // Something like:
                         // <input @checked />
-                        var location = new SourceSpan(codeBlock.GetSourceLocation(source), codeBlock.FullWidth);
+                        var location = new SourceSpan(codeBlock.GetSourceLocation(source), codeBlock.Width);
                         var diagnostic = RazorDiagnosticFactory.CreateParsing_TagHelpersCannotHaveCSharpInTagDeclaration(location, tagName);
                         errorSink.OnError(diagnostic);
                         break;

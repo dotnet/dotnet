@@ -1783,7 +1783,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             return false;
         }
 
-        var trimmedStartContent = attributeBlock.Name.ToFullString().TrimStart();
+        var trimmedStartContent = attributeBlock.Name.ToString().TrimStart();
         if (trimmedStartContent.StartsWith("type", StringComparison.OrdinalIgnoreCase) &&
             (trimmedStartContent.Length == 4 ||
             ValidAfterTypeAttributeNameCharacters.Contains(trimmedStartContent[4])))

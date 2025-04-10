@@ -289,7 +289,7 @@ internal class RenameService(
         // Ensure the rename action was invoked on the component name instead of a component parameter. This serves as an issue
         // mitigation till `textDocument/prepareRename` is supported and we can ensure renames aren't triggered in unsupported
         // contexts. (https://github.com/dotnet/razor/issues/4285)
-        if (!tagHelperStartTag.Name.FullSpan.IntersectsWith(absoluteIndex))
+        if (!tagHelperStartTag.Name.Span.IntersectsWith(absoluteIndex))
         {
             binding = null;
             return false;

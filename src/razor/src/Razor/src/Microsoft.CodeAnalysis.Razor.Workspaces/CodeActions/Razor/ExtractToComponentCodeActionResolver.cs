@@ -67,7 +67,7 @@ internal class ExtractToComponentCodeActionResolver(
         var usingDirectives = syntaxTree.GetUsingDirectives();
         foreach (var usingDirective in usingDirectives)
         {
-            builder.AppendLine(usingDirective.ToFullString());
+            builder.AppendLine(usingDirective.ToString());
         }
 
         // If any using directives were added, add a newline before the extracted content.
