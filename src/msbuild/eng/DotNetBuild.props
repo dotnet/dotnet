@@ -1,21 +1,12 @@
 <!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
-
 <Project>
 
-  <PropertyGroup>
-    <GitHubRepositoryName>msbuild</GitHubRepositoryName>
-    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- Filter down projects aggressively in source-only modes. -->
+    <BuildArgs>$(BuildArgs) /p:Projects="$(ProjectDirectory)MSBuild.SourceBuild.slnf"</BuildArgs>
+
+    <!-- Disable package validation as source build filters out target frameworks. -->
+    <BuildArgs>$(BuildArgs) /p:EnablePackageValidation=false</BuildArgs>
   </PropertyGroup>
-
-  <Target Name="ConfigureInnerBuildArgs" BeforeTargets="GetSourceBuildCommandConfiguration"
-          Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <PropertyGroup>
-      <!-- Filter down projects aggressively in source-only modes. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:Projects="$(InnerSourceBuildRepoRoot)MSBuild.SourceBuild.slnf"</InnerBuildArgs>
-
-      <!-- Disable package validation as source build filters out target frameworks. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:EnablePackageValidation=false</InnerBuildArgs>
-    </PropertyGroup>
-  </Target>
 
 </Project>

@@ -1,35 +1,20 @@
 <!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
-
 <Project>
 
   <PropertyGroup>
-    <GitHubRepositoryName>fsharp</GitHubRepositoryName>
-    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <BuildArgs>$(BuildArgs) /p:Projects="$(ProjectDirectory)Microsoft.FSharp.Compiler.sln"</BuildArgs>
   </PropertyGroup>
-
-  <!--
-    The build script passes in the full path of the sln to build.  This must be overridden in order to build
-    the cloned source in the inner build.
-  -->
-  <Target Name="ConfigureInnerBuildArg"
-          BeforeTargets="GetSourceBuildCommandConfiguration">
-    <PropertyGroup>
-      <InnerBuildArgs>$(InnerBuildArgs) /p:Projects="$(InnerSourceBuildRepoRoot)\Microsoft.FSharp.Compiler.sln"</InnerBuildArgs>
-    </PropertyGroup>
-  </Target>
 
   <!--
     The build script bootstraps some tooling for the build.  Since the inner build is triggerred via msbuild,
     trigger the bootstrapping for the inner build.
   -->
   <Target Name="BuildBootstrap"
-          DependsOnTargets="PrepareInnerSourceBuildRepoRoot"
-          BeforeTargets="RunInnerSourceBuildCommand"
+          BeforeTargets="RepoBuild"
           Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-          
     <PropertyGroup>
       <SourceBuildBootstrapTfmArg Condition="$(SourceBuildBootstrapTfm) != ''">--tfm $(SourceBuildBootstrapTfm)</SourceBuildBootstrapTfmArg>
-      <DotNetBuildUseMonoRuntime Condition="'$(DotNetBuildUseMonoRuntime)' == ''">false</DotNetBuildUseMonoRuntime>
+      <DotNetBuildUseMonoRuntimeArg Condition="'$(DotNetBuildUseMonoRuntime)' != ''">/p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime)</DotNetBuildUseMonoRuntimeArg>
       <SourceBuildBootstrapRestoreConfigFileArg Condition="'$(RestoreConfigFile)' != ''" >/p:RestoreConfigFile=$(RestoreConfigFile)</SourceBuildBootstrapRestoreConfigFileArg>
     </PropertyGroup>
 
@@ -41,9 +26,9 @@
          -bl enables the binlogs for the tools and Proto builds, which make debugging failures here easier
     -->
     <Exec
-      Command="./build.sh --bootstrap --skipBuild -bl $(SourceBuildBootstrapTfmArg) $(SourceBuildBootstrapRestoreConfigFileArg) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime) /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:DotNetBuildRepo=true /p:DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)"
-      WorkingDirectory="$(InnerSourceBuildRepoRoot)"
-      EnvironmentVariables="@(InnerBuildEnv)" />
+      Command="./build.sh --bootstrap --skipBuild -bl $(SourceBuildBootstrapTfmArg) $(SourceBuildBootstrapRestoreConfigFileArg) $(DotNetBuildUseMonoRuntimeArg) /p:DotNetBuildSourceOnly=true /p:DotNetBuildRepo=true /p:DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)"
+      WorkingDirectory="$(ProjectDirectory)"
+      EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)" />
   </Target>
 
 </Project>

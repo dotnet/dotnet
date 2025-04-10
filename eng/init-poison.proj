@@ -15,7 +15,7 @@
           Outputs="$(BaseIntermediateOutputPath)PoisonPrebuiltPackages.complete">
     <PropertyGroup>
       <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
-      <SourceBuiltPoisonReportDataFile>$(PackageReportDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
+      <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
     </PropertyGroup>
 
     <ItemGroup>
