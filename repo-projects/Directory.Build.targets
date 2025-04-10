@@ -2,13 +2,43 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
-  <PropertyGroup Condition="'$(UseInnerClone)' == 'true'">
-    <CommonArgs>$(CommonArgs) /p:UseInnerClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopySrcInsteadOfClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</CommonArgs>
+  <PropertyGroup>
+    <CurrentRepoSourceBuildArtifactsDir>$([MSBuild]::NormalizeDirectory('$(CurrentRepoSourceBuildSourceDir)', 'artifacts'))</CurrentRepoSourceBuildArtifactsDir>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(UseInnerClone)' == 'true'">
+    <!-- Update the ProjectDirectory property to point to the inner clone folder. Save the original path as a property
+         so that the RepoClean target deletes the outer artifacts folder. -->
+    <OriginalProjectDirectory>$(ProjectDirectory)</OriginalProjectDirectory>
+    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'inner-clone'))</ProjectDirectory>
+
+    <_DirSeparatorEscapedCharForExecArg Condition="'$(BuildOS)' == 'windows'">\</_DirSeparatorEscapedCharForExecArg>
+    <_DirSeparatorEscapedCharForExecArg Condition="'$(BuildOS)' != 'windows'" />
+
+    <!-- Use a fresh clone of the repo so that source-build modifications are isolated. -->
+    <CommonArgs>$(CommonArgs) /p:RepoRoot="$(ProjectDirectory)$(_DirSeparatorEscapedCharForExecArg)"</CommonArgs>
+    <!-- Override the artifacts dir to cleanly separate the inner build from outer build. -->
+    <CommonArgs>$(CommonArgs) /p:ArtifactsDir="$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))$(_DirSeparatorEscapedCharForExecArg)"</CommonArgs>
+  </PropertyGroup>
+
+  <!-- Repo extensibility point. -->
+  <Import Project="$(ProjectDirectory)eng\DotNetBuild.props" Condition="Exists('$(ProjectDirectory)eng\DotNetBuild.props')" />
+
   <PropertyGroup>
+    <GlobalJsonFile Condition="'$(GlobalJsonFile)' == '' and Exists('$(ProjectDirectory)global.json')">$(ProjectDirectory)global.json</GlobalJsonFile>
+
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
+    <OriginalNuGetConfigFile>$(NuGetConfigFile)</OriginalNuGetConfigFile>
+    <!-- Update nuget.config property to point to modified file that will be created/updated during build. -->
+    <NuGetConfigFile Condition="'$(OriginalNuGetConfigFile)' != ''">$(BaseIntermediateOutputPath)$([System.IO.Path]::GetFileName('$(OriginalNuGetConfigFile)'))</NuGetConfigFile>
+
+    <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
+    <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', '.packages'))</RepoArtifactsPackageCache>
+
+    <!-- By default, use the eng/common/build.cmd/sh script -->
+    <BuildScript Condition="'$(BuildScript)' == ''">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
+
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
 
@@ -32,6 +62,7 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltPdbArtifactsDir=$(RepoArtifactsPdbArtifactsDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$([MSBuild]::ValueOrDefault('$(GitHubRepositoryName)', '$(RepositoryName)'))</CommonArgs>
 
     <!-- Pass RID and Portable/non-portable information -->
     <_platformIndex>$(NETCoreSdkRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
@@ -57,10 +88,20 @@
          Enable it by default as with prallel repository builds the log becomes non-readable. -->
     <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
-
-    <PackageReportDataFile>$(PackageReportDir)prebuilt-usage.xml</PackageReportDataFile>
-    <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
   </PropertyGroup>
+
+  <Target Name="PrepareInnerRepoRoot" Condition="'$(UseInnerClone)' == 'true'">
+    <ItemGroup>
+      <InnerRepoFile
+        Include="$(OriginalProjectDirectory)**/*;
+                 $(OriginalProjectDirectory)**/.*"
+        Exclude="$(OriginalProjectDirectory)artifacts/**/*;
+                 $(OriginalProjectDirectory)artifacts/**/.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(InnerRepoFile)"
+          DestinationFolder="$(ProjectDirectory)%(RecursiveDir)" />
+  </Target>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReplaceTextInFile" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="AddNoWarns"
@@ -503,6 +544,7 @@
           Outputs="$(BaseIntermediateOutputPath)Build.complete"
           Condition="'$(BuildCommand)' != ''"
           DependsOnTargets="BuildRepoReferences;
+                            PrepareInnerRepoRoot;
                             AddNoWarns;
                             UpdateNuGetConfig;
                             UpdateGlobalJsonVersions;
@@ -675,24 +717,76 @@
           Condition="'@(_InnerPackageCacheFiles)' != ''" />
   </Target>
 
+  <Target Name="CopyRepoSymbols" Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsUtilityProject)' != 'true'">
+    <PropertyGroup>
+      <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
+
+      <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-externals'">$(ProjectDirectory)</SymbolsRoot>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AbsoluteSymbolPath Include="$(SymbolsRoot)**\obj\**\*.pdb" />
+      <AbsoluteSymbolPath Condition="'@(AbsoluteSymbolPath)' != ''">
+        <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
+      </AbsoluteSymbolPath>
+    </ItemGroup>
+
+    <MakeDir Directories="$(IntermediateSymbolsRepoDir)" />
+
+    <Copy
+      SourceFiles="@(AbsoluteSymbolPath)"
+      DestinationFolder="$(IntermediateSymbolsRepoDir)%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+      UseHardlinksIfPossible="true" />
+  </Target>
+
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageReports" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="WritePrebuiltUsageData"
+          Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsUtilityProject)' != 'true'"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(PackageReportDataFile);$(UsageReportFile)">
+    <ItemGroup>
+      <AllRestoredPackageFiles Include="$(RepoArtifactsPackageCache)**/*.nupkg" />
+      <SourceBuiltPackageFiles Include="$(ReferencePackagesDir)**/*.nupkg" />
+      <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltPackagesPath)**/*.nupkg" />
+
+      <!-- Add some other potential top-level project directories for a more specific report. -->
+      <ProjectDirectories Include="$(ProjectDirectory)" />
+    </ItemGroup>
+
+    <WritePackageUsageData
+      RestoredPackageFiles="@(AllRestoredPackageFiles)"
+      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFiles)"
+      SourceBuiltPackageFiles="@(SourceBuiltPackageFiles)"
+      ReferencePackageFiles="@(ReferencePackageFiles)"
+      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
+      TargetRid="$(TargetRid)"
+      ProjectDirectories="@(ProjectDirectories)"
+      RootDir="$(ProjectDirectory)"
+      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
+      DataFile="$(PackageReportDataFile)" />
+
+    <WriteUsageReports
+      DataFile="$(PackageReportDataFile)"
+      OutputDirectory="$(ArtifactsLogRepoDir)" />
+  </Target>
+
+  <!-- Move additional log files that might get emitted by the repo build (i.e. Signing logs). -->
   <Target Name="MoveDotNetBuildLogs"
         Condition="'$(IsUtilityProject)' != 'true' and
                     Exists('$(RepoArtifactsDir)')">
     <ItemGroup>
-      <LogFilesToMove Include="$(RepoArtifactsDir)**/*.log" />
-      <LogFilesToMove Include="$(RepoArtifactsDir)**/*.binlog" />
-      <PrebuiltReportsToMove Include="$(RepoArtifactsDir)sb/prebuilt-report/*" />
+      <LogFilesToMove Include="$(RepoArtifactsDir)log/**/*.log" />
+      <LogFilesToMove Include="$(RepoArtifactsDir)log/**/*.binlog" />
     </ItemGroup>
 
     <!-- Move the build logs -->
     <Move SourceFiles="@(LogFilesToMove)"
           DestinationFolder="$(ArtifactsLogRepoDir)"
           Condition="'@(LogFilesToMove)' != ''" />
-
-    <!-- Move the prebuilt reports -->
-    <Move SourceFiles="@(PrebuiltReportsToMove)"
-          DestinationFolder="$(PackageReportRepoDir)"
-          Condition="'@(PrebuiltReportsToMove)' != ''" />
   </Target>
 
   <!-- Make a copy of project.assets.json files for prebuilt report generation. -->
@@ -741,8 +835,11 @@
     <!-- Cleanup the entire repo artifacts dir. Ignore failures as this is best effort.
          Don't use Removedir as ContinueOnError on it doesn't work when using warnaserror/TreatWarningsAsErrors. -->
     <PropertyGroup>
-      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">rmdir "$(RepoArtifactsDir.TrimEnd('\'))" /s /q</RepoCleanCommand>
-      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">rm -rf "$(RepoArtifactsDir)"</RepoCleanCommand>
+      <RepoArtifactsDirToClean Condition="'$(UseInnerClone)' == 'true'">$(OriginalProjectDirectory)artifacts</RepoArtifactsDirToClean>
+      <RepoArtifactsDirToClean Condition="'$(UseInnerClone)' != 'true'">$(RepoArtifactsDir)</RepoArtifactsDirToClean>
+
+      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">rmdir "$(RepoArtifactsDirToClean.TrimEnd('\'))" /s /q</RepoCleanCommand>
+      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">rm -rf "$(RepoArtifactsDirToClean)"</RepoCleanCommand>
     </PropertyGroup>
 
     <Exec Command="$(RepoCleanCommand)" IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" />
@@ -820,6 +917,8 @@
     MoveDotNetBuildLogs;
     LogRepoArtifacts;
     CopyInnerBuildRestoredPackages;
+    CopyRepoSymbols;
+    WritePrebuiltUsageData;
     ExtractToolPackage;
     CleanupRepo" />
 
@@ -849,139 +948,11 @@
     </Exec>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Testing $(RepositoryName)...done" />
-
-    <OnError ExecuteTargets="MoveDotNetBuildLogs" />
   </Target>
 
   <Target Name="Test"
-          DependsOnTargets="RepoTest;
-                            MoveDotNetBuildLogs;
-                            CleanupRepo" />
+          DependsOnTargets="RepoTest;CleanupRepo" />
   <Target Name="VSTest" DependsOnTargets="Test" />
-
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="WritePrebuiltUsageData"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)WritePrebuiltUsageData.complete">
-    <!-- Save the PVP snapshot of each build step to be evaluated while building the report. -->
-    <ItemGroup>
-      <PackageVersionPropsSnapshotFiles Include="$(PackageVersionsDir)PackageVersions.*.Snapshot.props" />
-    </ItemGroup>
-    <Copy SourceFiles="@(PackageVersionPropsSnapshotFiles)" DestinationFolder="$(PackageReportDir)snapshots/" />
-
-    <ItemGroup>
-      <!--
-        Note the usage of */*/*.nupkg and not **/*.nupkg. The latter would include nupkgs
-        carried as content, i.e. in Microsoft.FSharp.Compiler nupkg, and cause false positives.
-        Content nupkgs were not restored and should not be used in prebuit detection.
-
-        Example of a restored package:
-        $(NuGetPackageRoot)microsoft.fsharp.compiler/12.8.300-beta.24203.1/microsoft.fsharp.compiler.12.8.300-beta.24203.1.nupkg
-
-        Example of a content package:
-        $(NuGetPackageRoot)microsoft.fsharp.compiler/12.8.300-beta.24203.1/contentFiles/Release/FSharp.Core.8.0.300.nupkg
-      -->
-      <RestoredPackageFile Include="$(NuGetPackageRoot)*/*/*.nupkg"
-                           Exclude="$(NuGetPackageRoot)tests/**/*.nupkg" />
-
-      <!-- Only contains packages when building. -->
-      <TarballPrebuiltPackageFile Include="$(PrebuiltPackagesPath)*.nupkg" />
-
-      <SourceBuiltPackageFile Include="$(ArtifactsPackagesDir)**/*.nupkg" />
-      <SourceBuiltPackageFile Include="$(PreviouslySourceBuiltPackagesPath)*.nupkg" />
-      <ReferencePackageFile Include="$(ReferencePackagesDir)**/*.nupkg" />
-
-      <!-- Check all RIDs from all restored Microsoft.NETCore.Platforms packages. -->
-      <PlatformsRuntimeJsonFile Include="$(NuGetPackageRoot)microsoft.netcore.platforms/*/PortableRuntimeIdentifierGraph.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <RepoProject Include="$(RepoProjectsDir)*.proj" />
-      <RepoProjectDirectory Include="@(RepoProject->'$(SrcDir)%(Filename)')" />
-
-      <!-- Add some other potential top-level project directories for a more specific report. -->
-      <RepoProjectDirectory Include="$(SourceBuiltSdksDir);$(TasksDir);$(ArtifactsObjDir)" />
-      <!-- Finally, scan entire source-build, in case project.assets.json ends up in an unexpected place. -->
-      <RepoProjectDirectory Include="$(RepoRoot)" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <!-- This file is a resource tracked by Git, not generated by restore. Ignore false positive. -->
-      <IgnoredProjectAssetsJsonFile Include="$(SrcDir)*nuget-client*/**/test/NuGet.Core.Tests/NuGet.Build.Tasks.Pack.Test/compiler/resources/project.assets.json"/>
-    </ItemGroup>
-
-    <WritePackageUsageData
-      RestoredPackageFiles="@(RestoredPackageFile)"
-      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFile)"
-      SourceBuiltPackageFiles="@(SourceBuiltPackageFile)"
-      ReferencePackageFiles="@(ReferencePackageFile)"
-      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFile)"
-      TargetRid="$(TargetRid)"
-      ProjectDirectories="@(RepoProjectDirectory)"
-      RootDir="$(RepoRoot)"
-      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFile)"
-      DataFile="$(PackageReportDataFile)"
-      ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
-
-    <!-- Copy packages detected as prebuilts to the artifacts prebuilt folder -->
-    <ItemGroup>
-      <AllowedPackageFile Include="@(TarballPrebuiltPackageFile)" />
-      <AllowedPackageFile Include="@(SourceBuiltPackageFile)" />
-      <AllowedPackageFile Include="@(ReferencePackageFile)" />
-      <AllowedPackageFile>
-        <LCFilename>$([System.String]::Copy(%(Filename)).ToLowerInvariant())</LCFilename>
-      </AllowedPackageFile>
-
-      <PrebuiltPackageFile Include="@(RestoredPackageFile)" >
-        <LCFilename>$([System.String]::Copy(%(Filename)).ToLowerInvariant())</LCFilename>
-      </PrebuiltPackageFile>
-      <PrebuiltPackageFile Remove="@(AllowedPackageFile)" MatchOnMetadata="LCFilename" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(PrebuiltPackageFile)" DestinationFolder="$(ResultingPrebuiltPackagesDir)" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)WritePrebuiltUsageData.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-  </Target>
-
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.ValidateUsageAgainstBaseline" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageReports" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="ReportPrebuiltUsage"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete">
-    <PropertyGroup>
-      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">false</FailOnPrebuiltBaselineError>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <PackageVersionPropsSavedSnapshotFile Include="$(PackageReportDir)snapshots/PackageVersions.*.Snapshot.props" />
-    </ItemGroup>
-
-    <WriteUsageReports DataFile="$(PackageReportDataFile)"
-                       PackageVersionPropsSnapshots="@(PackageVersionPropsSavedSnapshotFile)"
-                       PoisonedReportFile="$(PoisonedReportFile)"
-                       OutputDirectory="$(PackageReportDir)" />
-
-    <PropertyGroup Condition="'$(ContinueOnPrebuiltBaselineError)' == ''">
-      <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
-      <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
-    </PropertyGroup>
-
-    <ValidateUsageAgainstBaseline
-      DataFile="$(PackageReportDataFile)"
-      BaselineDataFile="$(BaselineDataFile)"
-      OutputBaselineFile="$(PackageReportDir)generated-new-baseline.xml"
-      OutputReportFile="$(PackageReportDir)baseline-comparison.xml"
-      AllowTestProjectUsage="$(AllowTestProjectUsage)"
-      ContinueOnError="$(ContinueOnPrebuiltBaselineError)" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-  </Target>
 
   <!-- Outputs a dependency graph of the repos, in YAML form, to the console. -->
   <Target Name="ShowDependencyGraph">

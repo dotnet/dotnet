@@ -87,7 +87,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         public override bool Execute()
         {
             DateTime startTime = DateTime.Now;
-            Log.LogMessage(MessageImportance.High, "Writing package usage data...");
+            Log.LogMessage(MessageImportance.Normal, "Writing package usage data...");
 
             string[] projectDirectoriesOutsideRoot = ProjectDirectories.NullAsEmpty()
                 .Where(dir => !dir.StartsWith(RootDir, StringComparison.Ordinal))
@@ -257,9 +257,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
             Directory.CreateDirectory(Path.GetDirectoryName(DataFile));
             File.WriteAllText(DataFile, data.ToXml().ToString());
 
-            Log.LogMessage(
-                MessageImportance.High,
-                $"Writing package usage data... done. Took {DateTime.Now - startTime}");
+            Log.LogMessage(MessageImportance.Normal, $"Writing package usage data... done. Took {DateTime.Now - startTime}");
 
             return !Log.HasLoggedErrors;
         }

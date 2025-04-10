@@ -4,7 +4,7 @@
   <PropertyGroup>
     <!-- TFM filtering is enabled by default and can be disabled, at repo level, by setting NoTargetFrameworkFiltering propert
          to true, in repo's root Directory.Build.props file. -->
-    <DotNetTargetFrameworkFilter Condition="'$(DotNetTargetFrameworkFilter)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and ('$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false')">netstandard2.0%3bnetstandard2.1%3bnetcoreapp2.1%3bnetcoreapp3.1%3bnet5.0%3bnet6.0%3bnet7.0%3bnet8.0%3bnet9.0%3bnet10.0</DotNetTargetFrameworkFilter>
+    <DotNetTargetFrameworkFilter Condition="'$(DotNetTargetFrameworkFilter)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">netstandard2.0%3bnetstandard2.1%3bnetcoreapp2.1%3bnetcoreapp3.1%3bnet5.0%3bnet6.0%3bnet7.0%3bnet8.0%3bnet9.0%3bnet10.0</DotNetTargetFrameworkFilter>
 
     <_EnableTargetFrameworkFiltering>false</_EnableTargetFrameworkFiltering>
     <_EnableTargetFrameworkFiltering Condition="'$(NoTargetFrameworkFiltering)' != 'true' and '$(DotNetTargetFrameworkFilter)' != ''">true</_EnableTargetFrameworkFiltering>

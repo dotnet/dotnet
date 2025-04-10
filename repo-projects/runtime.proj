@@ -10,7 +10,7 @@
 
     <!-- Pass TargetOS in as a CLI switch, instead of an msbuild property. -->
     <SkipSetTargetOS>true</SkipSetTargetOS>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
+    <!-- <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs> -->
 
     <IsSpecialFlavorBuild Condition="'$(PgoInstrument)' == 'true'">true</IsSpecialFlavorBuild>
     <!--
