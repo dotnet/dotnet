@@ -159,7 +159,7 @@ namespace MS.Internal.Ink
                         break;
                     }
                 default:
-                    Debug.Assert(false, "Unknown InkCanvasEditingMode!");
+                    Debug.Fail("Unknown InkCanvasEditingMode!");
                     break;
             }
         }
@@ -204,7 +204,7 @@ namespace MS.Internal.Ink
         /// <returns></returns>
         protected override Cursor GetCurrentCursor()
         {
-            if ( EditingCoordinator.UserIsEditing == true )
+            if ( EditingCoordinator.UserIsEditing)
             {
                 return Cursors.None;
             }

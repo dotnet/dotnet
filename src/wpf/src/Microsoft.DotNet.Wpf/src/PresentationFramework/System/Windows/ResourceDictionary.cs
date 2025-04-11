@@ -342,7 +342,7 @@ namespace System.Windows
             {
                 WritePrivateFlag(PrivateFlags.IsReadOnly, value);
 
-                if (value == true)
+                if (value)
                 {
                     // Seal all the styles and templates in this dictionary
                     SealValues();
@@ -949,7 +949,7 @@ namespace System.Windows
             {
                 throw new InvalidOperationException(SR.EndInitWithoutBeginInitNotSupported);
             }
-            Debug.Assert(IsInitialized == false, "Dictionary should not be initialized when EndInit is called");
+            Debug.Assert(!IsInitialized, "Dictionary should not be initialized when EndInit is called");
 
             IsInitializePending = false;
             IsInitialized = true;
@@ -1287,7 +1287,7 @@ namespace System.Windows
                     }
                     else
                     {
-                        Debug.Assert(false, "StaticResources[] entry is not a StaticResource not OptimizedStaticResource");
+                        Debug.Fail("StaticResources[] entry is not a StaticResource not OptimizedStaticResource");
                         continue;  // other types of entries are not processed.
                     }
                 }

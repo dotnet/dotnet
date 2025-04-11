@@ -768,7 +768,7 @@ namespace Microsoft.DotNet.Build.Manifest.Tests
         [InlineData("IsReleaseOnlyPackageVersion", "true", "false")]
         [InlineData("IsStable", "true", "false")]
         [InlineData("ProductVersion", "1", "2")]
-        [InlineData("PublishingVersion", "3", "4")]
+        [InlineData("PublishingVersion", "V3", "V4")]
         [InlineData("VersionStamp", "3", "4")]
         public void CreateMergedModel_MultipleModelsWithDifferentIdentities_LogsErrorAndReturnsNull(string propertyName, string valueA, string valueB)
         {
@@ -784,7 +784,7 @@ namespace Microsoft.DotNet.Build.Manifest.Tests
             var result = _buildModelFactory.CreateMergedModel(new List<BuildModel> { buildModel1, buildModel2 }, ArtifactVisibility.All);
 
             // Assert
-            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains("Build identity properties are not identical across manifests."));
+            _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Contains($"Build identity properties mismatch in manifest '': {propertyName}: expected '{valueA}', found '{valueB}'", StringComparison.OrdinalIgnoreCase));
             result.Should().BeNull();
         }
 

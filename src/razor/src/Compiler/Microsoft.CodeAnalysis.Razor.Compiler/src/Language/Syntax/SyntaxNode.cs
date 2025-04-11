@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis.Text;
 
@@ -19,38 +18,15 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     public SyntaxNode Parent { get; } = parent;
     public int Position { get; } = position;
 
-    public int EndPosition => Position + FullWidth;
+    public int EndPosition => Position + Width;
 
     public SyntaxKind Kind => Green.Kind;
 
     public int Width => Green.Width;
 
-    public int FullWidth => Green.FullWidth;
+    public int SpanStart => Position;
 
-    public int SpanStart => Position + Green.GetLeadingTriviaWidth();
-
-    public TextSpan FullSpan => new(Position, Green.FullWidth);
-
-    public TextSpan Span
-    {
-        get
-        {
-            // Start with the full span.
-            var start = Position;
-            var width = Green.FullWidth;
-
-            // adjust for preceding trivia (avoid calling this twice, do not call Green.Width)
-            var precedingWidth = Green.GetLeadingTriviaWidth();
-            start += precedingWidth;
-            width -= precedingWidth;
-
-            // adjust for following trivia width
-            width -= Green.GetTrailingTriviaWidth();
-
-            Debug.Assert(width >= 0);
-            return new TextSpan(start, width);
-        }
-    }
+    public TextSpan Span => new(Position, Green.Width);
 
     internal int SlotCount => Green.SlotCount;
 
@@ -59,12 +35,6 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     public bool IsMissing => Green.IsMissing;
 
     public bool IsToken => Green.IsToken;
-
-    public bool IsTrivia => Green.IsTrivia;
-
-    public bool HasLeadingTrivia => GetLeadingTrivia().Count > 0;
-
-    public bool HasTrailingTrivia => GetTrailingTrivia().Count > 0;
 
     public bool ContainsDiagnostics => Green.ContainsDiagnostics;
 
@@ -184,23 +154,11 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
             var greenChild = green.GetSlot(index);
             if (greenChild != null)
             {
-                offset += greenChild.FullWidth;
+                offset += greenChild.Width;
             }
         }
 
         return Position + offset;
-    }
-
-    public virtual SyntaxTriviaList GetLeadingTrivia()
-    {
-        var firstToken = GetFirstToken();
-        return firstToken != null ? firstToken.GetLeadingTrivia() : default;
-    }
-
-    public virtual SyntaxTriviaList GetTrailingTrivia()
-    {
-        var lastToken = GetLastToken();
-        return lastToken != null ? lastToken.GetTrailingTrivia() : default;
     }
 
     internal SyntaxList<SyntaxToken> GetTokens()
@@ -300,7 +258,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
     public IEnumerable<SyntaxNode> DescendantNodes(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
-        return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: false);
+        return DescendantNodesImpl(Span, descendIntoChildren, includeSelf: false);
     }
 
     /// <summary>
@@ -309,7 +267,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
     public IEnumerable<SyntaxNode> DescendantNodesAndSelf(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
-        return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: true);
+        return DescendantNodesImpl(Span, descendIntoChildren, includeSelf: true);
     }
 
     protected internal SyntaxNode ReplaceCore<TNode>(
@@ -384,7 +342,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
             return document.EndOfFile;
         }
 
-        if (!FullSpan.Contains(position))
+        if (!Span.Contains(position))
         {
             throw new ArgumentOutOfRangeException(nameof(position));
         }
@@ -394,7 +352,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
         while (true)
         {
             Debug.Assert(curNode.Kind is < SyntaxKind.FirstAvailableTokenKind and >= 0);
-            Debug.Assert(curNode.FullSpan.Contains(position));
+            Debug.Assert(curNode.Span.Contains(position));
 
             if (!curNode.IsToken)
             {
@@ -477,23 +435,14 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
     public override string ToString()
     {
-        var builder = new StringBuilder();
-        builder.Append(Green.ToString());
-        builder.AppendFormat(CultureInfo.InvariantCulture, " at {0}::{1}", Position, FullWidth);
-
-        return builder.ToString();
-    }
-
-    public virtual string ToFullString()
-    {
-        return Green.ToFullString();
+        return Green.ToString();
     }
 
     protected virtual string GetDebuggerDisplay()
     {
         if (IsToken)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0};[{1}]", Kind, ToFullString());
+            return string.Format(CultureInfo.InvariantCulture, "{0};[{1}]", Kind, ToString());
         }
 
         return string.Format(CultureInfo.InvariantCulture, "{0} [{1}..{2})", Kind, Position, EndPosition);

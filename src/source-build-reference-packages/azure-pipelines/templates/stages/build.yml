@@ -14,7 +14,7 @@ stages:
         name: $(DncEngInternalBuildPool)
         image: 1es-ubuntu-2204
         os: linux
-    container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+    container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-build-amd64
     steps:
     - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
 
@@ -41,7 +41,6 @@ stages:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-    container: mcr.microsoft.com/windows/servercore:ltsc2022
     steps:
     - checkout: self
       clean: true

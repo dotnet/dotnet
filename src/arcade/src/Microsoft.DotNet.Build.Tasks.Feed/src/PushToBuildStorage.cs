@@ -191,9 +191,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         ManifestBranch,
                         ManifestCommit,
                         ManifestRepoOrigin,
-                        IsStableBuild,
+                        targetPublishingVersion <= PublishingInfraVersion.V3 ? IsStableBuild : false,
                         targetPublishingVersion,
-                        IsReleaseOnlyPackageVersion);
+                        targetPublishingVersion <= PublishingInfraVersion.V3 ? IsReleaseOnlyPackageVersion : false);
 
                     if (buildModel == null)
                     {

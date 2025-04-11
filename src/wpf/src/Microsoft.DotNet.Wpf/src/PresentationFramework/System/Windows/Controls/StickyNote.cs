@@ -557,7 +557,7 @@ namespace System.Windows.Controls
             ApplyTemplate();
 
             // We are interested in the expanded note.
-            if ( IsExpanded == true )
+            if (IsExpanded)
             {
                 Invariant.Assert(Content != null);
 
@@ -569,7 +569,7 @@ namespace System.Windows.Controls
                     Invariant.Assert(innerControl != null, "InnerControl is null or not a UIElement.");
 
                     // Don't mess with focus if its already on our inner control
-                    if ( innerControl.IsKeyboardFocused == false )
+                    if (!innerControl.IsKeyboardFocused)
                     {
                         // We should set the focus to the inner control after it is added the visual tree.
                         innerControl.Focus();
@@ -916,13 +916,13 @@ namespace System.Windows.Controls
                 if (newRectangle.X < 0)
                 {
                     //newRect.X is negative, simply add it to width to subtract it
-                    newRectangle.Width = newRectangle.Width + newRectangle.X;
+                    newRectangle.Width += newRectangle.X;
                     newRectangle.X = 0d;
                 }
                 if (newRectangle.Y < 0)
                 {
                     //newRect.Y is negative, simply add it to height to subtract it
-                    newRectangle.Height = newRectangle.Height + newRectangle.Y;
+                    newRectangle.Height += newRectangle.Y;
                     newRectangle.Y = 0d;
                 }
                 e.NewRectangle = newRectangle;
@@ -1052,7 +1052,7 @@ namespace System.Windows.Controls
         /// </summary>
         private void OnDragDelta(object sender, DragDeltaEventArgs args)
         {
-            Invariant.Assert(IsExpanded == true, "Dragging occurred when the StickyNoteControl was not expanded.");
+            Invariant.Assert(IsExpanded, "Dragging occurred when the StickyNoteControl was not expanded.");
 
             Thumb source = args.Source as Thumb;
             double horizontalChange = args.HorizontalChange;
@@ -1085,7 +1085,7 @@ namespace System.Windows.Controls
         /// </summary>
         private void OnTitleDragDelta(double horizontalChange, double verticalChange)
         {
-            Invariant.Assert(IsExpanded != false);
+            Invariant.Assert(IsExpanded);
 
             Rect rectNote = StickyNoteBounds;
             Rect rectPage = PageBounds;
@@ -1126,7 +1126,7 @@ namespace System.Windows.Controls
         /// </summary>
         private void OnResizeDragDelta(double horizontalChange, double verticalChange)
         {
-            Invariant.Assert(IsExpanded != false);
+            Invariant.Assert(IsExpanded);
 
             Rect rectNote = StickyNoteBounds;
 
@@ -1214,7 +1214,7 @@ namespace System.Windows.Controls
                     Focus();
                 }
 
-                if (eatEvent == true)
+                if (eatEvent)
                 {
                     args.Handled = true;
                 }

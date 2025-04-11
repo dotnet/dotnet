@@ -1251,7 +1251,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     node.Source.Value.AbsoluteIndex,
                     node.Source.Value.LineIndex,
                     node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.FullWidth,
+                    node.Source.Value.Length + item.Width,
                     node.Source.Value.LineCount,
                     node.Source.Value.EndCharacterIndex);
             }
@@ -2223,7 +2223,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     node.Source.Value.AbsoluteIndex,
                     node.Source.Value.LineIndex,
                     node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.FullWidth,
+                    node.Source.Value.Length + item.Width,
                     node.Source.Value.LineCount,
                     node.Source.Value.EndCharacterIndex);
             }

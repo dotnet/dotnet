@@ -51,7 +51,7 @@ internal static class SyntaxReplacer
         {
             _computeReplacementNode = computeReplacementNode;
             _nodeSet = nodes != null ? new HashSet<SyntaxNode>(nodes) : new HashSet<SyntaxNode>();
-            _spanSet = new HashSet<TextSpan>(_nodeSet.Select(n => n.FullSpan));
+            _spanSet = new HashSet<TextSpan>(_nodeSet.Select(n => n.Span));
             _totalSpan = ComputeTotalSpan(_spanSet);
         }
 
@@ -63,7 +63,7 @@ internal static class SyntaxReplacer
 
             if (node != null)
             {
-                if (ShouldVisit(node.FullSpan))
+                if (ShouldVisit(node.Span))
                 {
                     rewritten = base.Visit(node);
                 }
@@ -166,7 +166,7 @@ internal static class SyntaxReplacer
 
             if (node != null)
             {
-                if (ShouldVisit(node.FullSpan))
+                if (ShouldVisit(node.Span))
                 {
                     rewritten = base.Visit(node);
                 }

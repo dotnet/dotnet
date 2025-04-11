@@ -22,6 +22,11 @@ For more details on code flow and the VMR, see [VMR Code and Build Workflow](htt
 - **Flat flow** - A new structure of subscriptions between product repositories and the VMR.
 
 
+## General Information
+
+This is part of the [Unified Build](https://github.com/dotnet/arcade/tree/main/Documentation/UnifiedBuild) - an effort that changes how .NET is built and shipped.
+If you're looking for an intro, a good source of information (though not public) are the .NET Platform Talks about [🎬 UB in general](https://microsoft-my.sharepoint.com/personal/tarekms_ntdev_microsoft_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Ftarekms%5Fntdev%5Fmicrosoft%5Fcom%2FDocuments%2FRecordings%2F%2ENET%20platform%20talks%2D20250226%5F200258%2DMeeting%20Recording%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E0f6357b7%2Db525%2D4eb3%2D9cb7%2D67297d6eaa23&mode=Edit) or a [🎬 more codeflow specific one](https://microsofteur-my.sharepoint.com/:v:/g/personal/prvysoky_microsoft_com/EdlGj6nIOWFFvMyF6izBAR8BkJI0ua_4rqgxQbcRrv2zRg?e=YXedHu).
+
 ## Codeflow PR Metadata
 
 The code flow mechanism relies on metadata files similarly to the existing Maestro dependency flow.
@@ -32,21 +37,18 @@ The code flow mechanism relies on metadata files similarly to the existing Maest
 
 ## FAQ
 
-- **Where do packages get built? Where can I find the official build of the VMR?**
-  - Packages are built in [Unified Build pipelines](https://dev.azure.com/dnceng/internal/_build?definitionId=1330).
-
-- **How do I find the new codeflow subscriptions?**
-  - A full list of subscriptions can be found at on the [maestro.dot.net](https://maestro.dot.net/subscriptions) webpage. Subscriptions can be managed with DARC commands in the same way they always were.
-
-- **What should I do in case of conflicts?**
-  - If you have an ongoing dependency PR in your repository with additional changes/work: Finish the PR as you would normally. If there are conflicts with the newly merged backflow PRs, you may tag **@dotnet/product-construction** in your PR and we will help you resolve those.
-  
 - **How can I see dependency subscriptions for my repository**?
   - Either use the [Maestro website](https://maestro.dot.net/subscriptions) or use the [`darc get-subscriptions`](../Darc.md) command.
 
-- **Where can I find the new dependency PRs**?
+- **Where can I find the new dependency PRs?**
   - The dependency PRs look almost the same as the old ones and are still [authored by the `dotnet-maestro` bot](https://github.com/pulls?q=sort%3Aupdated-desc+is%3Apr+author%3Aapp%2Fdotnet-maestro+archived%3Afalse+).  
 The forward flow PRs will be opened [against the VMR](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) while the backflow PRs will be opened in your repository and named something like `[branch] Source code changes from dotnet/dotnet`.
+
+- **Where can I find the official build of the VMR?**
+  - The official build of the VMR is [dotnet-unified-build](https://dev.azure.com/dnceng/internal/_build?definitionId=1330).
+
+- **What should I do in case of conflicts?**
+  - Whenever there will be a conflict in a codeflow PR, Maestro bot will drop a comment in the PR guiding you through the process. If you're still unsure, you can always tag **@dotnet/product-construction** and we will help you resolve those.
 
 - **My repo X depends on repo Y's packages. How will I get the new packages**?
   - If repo Y is part of the VMR, you will depend on the VMR instead of repo Y.
@@ -54,6 +56,11 @@ The forward flow PRs will be opened [against the VMR](https://github.com/dotnet/
     The target feed for some packages might change from `dotnet-eng` to [`dotnet10-transport`](https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet10-transport/nuget/v3/index.json).
 
     Furthermore, if you depend on multiple VMR repositories, you will get all the packages in a single backflow subscription (PR).
+
+- **What if I cannot accept a specific package update?**
+  - If your product repo is in the VMR but needs to stay on an older version of a certain package built in the VMR, the backflow PRs will keep updating it. You can specify this package in `Excluded assets` on the subscription settings (use `darc update-subscription`) for it to be ignored during backflow PRs.  
+    
+    *Note: Excluding `Microsoft.DotNet.Arcade.Sdk` will also turn off udpates of the SDK, `eng/common` and other related toolset files.*
 
 ## Contacts & Support
 

@@ -353,12 +353,12 @@ extends:
                 SourceFolder: $(Build.SourcesDirectory)/artifacts/workloadPackages
                 Contents: '*.wixpdb'
             # Upload artifacts to be used for generating VS components
-            - task: 1ES.PublishPipelineArtifact@1
-              displayName: Publish workload artifacts
-              inputs:
-                targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
-                artifactName: 'Workloads'
-              continueOnError: true
+            #- task: 1ES.PublishPipelineArtifact@1
+            #  displayName: Publish workload artifacts
+            #  inputs:
+            #    targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
+            #    artifactName: 'Workloads'
+            #  continueOnError: true
             - powershell: $(CheckNuGetSizesScript)
               displayName: Check NuGet sizes
 

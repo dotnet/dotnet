@@ -2234,7 +2234,7 @@ namespace System.Windows.Controls
                     // Compute deltas
                     for (int i = 0; i < definitions.Length; ++i)
                     {
-                        roundingErrors[i] = roundingErrors[i] - definitions[i].SizeCache;
+                        roundingErrors[i] -= definitions[i].SizeCache;
                         definitionIndices[i] = i;
                     }
 
@@ -3983,7 +3983,7 @@ namespace System.Windows.Controls
                 {
                     Grid grid = VisualTreeHelper.GetParent(this) as Grid;
                     if (    grid == null
-                        ||  grid.ShowGridLines == false )
+                        || !grid.ShowGridLines)
                     {
                         return;
                     }

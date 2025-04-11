@@ -28,13 +28,14 @@
   </ItemGroup>
 
   <Target Name="Execute">
-    <Error Text="The ManifestsPath property must be set on the command line." Condition="'$(ManifestsPath)' == ''" />
+    <Error Text="The ManifestsPath property must be set on the command line." Condition="'$(ManifestsPath)' == '' and '$(IsAssetlessBuild)' == 'false'" />
     <Error Text="The MaestroApiEndpoint property must be set on the command line." Condition="'$(MaestroApiEndpoint)' == ''" />
 
     <PublishBuildToMaestro ManifestsPath="$(ManifestsPath)"
                            MaestroApiEndpoint="$(MaestroApiEndpoint)"
                            RepoRoot="$(RepoRoot)"
-                           AssetVersion="$(Version)"/>
+                           AssetVersion="$(Version)"
+                           IsAssetlessBuild="$(IsAssetlessBuild)"/>
   </Target>
 
 </Project>

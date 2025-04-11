@@ -548,7 +548,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
         if (expectedCode != null)
         {
             // Verify if the syntax tree represents the expected input.
-            var syntaxTreeContent = manager.PartialParsingSyntaxTreeRoot.ToFullString();
+            var syntaxTreeContent = manager.PartialParsingSyntaxTreeRoot.ToString();
             Assert.Contains(expectedCode, syntaxTreeContent, StringComparison.Ordinal);
         }
 

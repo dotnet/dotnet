@@ -156,13 +156,13 @@ internal static class HoverFactory
             {
                 case SyntaxKind.MarkupTagHelperDirectiveAttribute:
                     var directiveAttribute = (MarkupTagHelperDirectiveAttributeSyntax)attribute.Parent;
-                    span = span.WithStart(start => start.WithCharacter(ch => ch - directiveAttribute.Transition.FullWidth));
+                    span = span.WithStart(start => start.WithCharacter(ch => ch - directiveAttribute.Transition.Width));
                     attributeName = "@" + attributeName;
                     break;
 
                 case SyntaxKind.MarkupMinimizedTagHelperDirectiveAttribute:
                     var minimizedAttribute = (MarkupMinimizedTagHelperDirectiveAttributeSyntax)containingTag;
-                    span = span.WithStart(start => start.WithCharacter(ch => ch - minimizedAttribute.Transition.FullWidth));
+                    span = span.WithStart(start => start.WithCharacter(ch => ch - minimizedAttribute.Transition.Width));
                     attributeName = "@" + attributeName;
                     break;
             }

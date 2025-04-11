@@ -830,7 +830,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
-                symbolTargetType: SymbolPublishVisibility.Public),
+                symbolTargetType: SymbolPublishVisibility.Public,
+                // Temporarily work around https://github.com/dotnet/source-build/issues/5004
+                flatten: false),
 
             // .NET 10 Preview 1,
             new TargetChannelConfig(

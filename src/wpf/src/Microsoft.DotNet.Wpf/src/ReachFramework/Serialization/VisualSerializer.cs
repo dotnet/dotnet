@@ -660,7 +660,7 @@ namespace System.Windows.Xps.Serialization
                             bitmapUri = bitmapUri + " " + destinationProfile;
                         }
 
-                        bitmapUri = bitmapUri + "}";
+                        bitmapUri += "}";
                     }
                 }
 
@@ -817,7 +817,7 @@ namespace System.Windows.Xps.Serialization
                 }
 
                 {
-                    Debug.Assert(false, "Brush not supported");
+                    Debug.Fail("Brush not supported");
                     WriteBrushHeader(brush.GetType().ToString(), brush);
                 }
 

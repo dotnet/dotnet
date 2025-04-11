@@ -1682,7 +1682,7 @@ namespace System.Windows.Data
                     if (args.Action != NotifyCollectionChangedAction.Remove && args.NewStartingIndex < 0
                         || args.Action != NotifyCollectionChangedAction.Add && args.OldStartingIndex < 0)
                     {
-                        Debug.Assert(false, "Cannot update collection view from outside UIContext without index in event args");
+                        Debug.Fail("Cannot update collection view from outside UIContext without index in event args");
                         return;     // support cross-thread changes from all collections
                     }
                     else
@@ -3070,11 +3070,11 @@ namespace System.Windows.Data
             LiveShapingFlags result = 0;
 
             if (IsLiveSorting == true)
-                result = result | LiveShapingFlags.Sorting;
+                result |= LiveShapingFlags.Sorting;
             if (IsLiveFiltering == true)
-                result = result | LiveShapingFlags.Filtering;
+                result |= LiveShapingFlags.Filtering;
             if (IsLiveGrouping == true)
-                result = result | LiveShapingFlags.Grouping;
+                result |= LiveShapingFlags.Grouping;
 
             return result;
         }

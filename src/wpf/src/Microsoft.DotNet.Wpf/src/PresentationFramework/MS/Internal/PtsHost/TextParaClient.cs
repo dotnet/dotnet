@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 
@@ -128,7 +128,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             // Mirror lines around the page.
@@ -226,7 +226,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             // If nothing is hit, return the owner of the paragraph.
@@ -315,7 +315,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             Invariant.Assert(rectangles != null);
@@ -368,7 +368,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             return lines;
@@ -710,7 +710,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             // Mirror back to page flow direction
@@ -791,7 +791,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaCache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             //  at this point geometry contains only the text content related geometry
@@ -854,7 +854,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             return isAtCaretUnitBoundary;
@@ -904,7 +904,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             return nextCaretPosition;
@@ -1061,7 +1061,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
 
             // Recreate text line
@@ -1363,7 +1363,7 @@ namespace MS.Internal.PtsHost
             {
                 // (c) cached - when using ParaChache
                 Debug.Assert(textDetails.fsktd == PTS.FSKTEXTDETAILS.fsktdCached);
-                Debug.Assert(false, "Should not get here. ParaCache is not currently used.");
+                Debug.Fail("Should not get here. ParaCache is not currently used.");
             }
         }
 
@@ -2077,9 +2077,9 @@ namespace MS.Internal.PtsHost
                 lineRect.Width = Math.Max(lineVisual.WidthIncludingTrailingWhitespace, 0);
             }
 
-            lineRect.Y = lineRect.Y - lineTopSpace;
-            lineRect.Height = lineRect.Height + lineTopSpace;
-            lineRect.Width = lineRect.Width + lineRightSpace;
+            lineRect.Y -= lineTopSpace;
+            lineRect.Height += lineTopSpace;
+            lineRect.Width += lineRightSpace;
 
             // Ignore horizontal offset because TextBox page width != extent width.
             // It's ok to include content that doesn't strictly intersect -- this
@@ -2118,8 +2118,8 @@ namespace MS.Internal.PtsHost
                         for (int i = 0, count = rectangles.Count; i < count; ++i)
                         {
                             Rect r = rectangles[i];
-                            r.Y = r.Y - lineTopSpace;
-                            r.Height = r.Height + lineTopSpace;
+                            r.Y -= lineTopSpace;
+                            r.Height += lineTopSpace;
                             rectangles[i] = r;
                         }
                     }
@@ -2188,9 +2188,9 @@ namespace MS.Internal.PtsHost
                 elementRect.Width = Math.Max(lineVisual.WidthIncludingTrailingWhitespace, 0);
             }
 
-            elementRect.Y = elementRect.Y - lineTopSpace;
-            elementRect.Height = elementRect.Height + lineTopSpace;
-            elementRect.Width = elementRect.Width + lineRightSpace;
+            elementRect.Y -= lineTopSpace;
+            elementRect.Height += lineTopSpace;
+            elementRect.Width += lineRightSpace;
 
             // Ignore horizontal offset because TextBox page width != extent width.
             // It's ok to include content that doesn't strictly intersect -- this
@@ -2228,8 +2228,8 @@ namespace MS.Internal.PtsHost
                         for (int i = 0, count = rectangles.Count; i < count; ++i)
                         {
                             Rect r = rectangles[i];
-                            r.Y = r.Y - lineTopSpace;
-                            r.Height = r.Height + lineTopSpace;
+                            r.Y -= lineTopSpace;
+                            r.Height += lineTopSpace;
                             rectangles[i] = r;
                         }
                     }
