@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25209.3",
+      "packageVersion": "10.0.0-beta.25210.1",
       "barId": null,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "03b4b258fc72e5663f2ad701df5d70129aa2df8a"
+      "commitSha": "490307dc9bb09caf016b2fa96005ac8aaa89c4e7"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25209.3",
+      "packageVersion": "10.0.0-preview.4.25210.6",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "b3399b82c5f13e3f4ad164656083d37b5c04ea85"
+      "commitSha": "c31f60c086518f4682bf94feee8b483c501b9188"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -71,11 +71,11 @@
       "commitSha": "4ba36db1f42f33a66d9677f0b9d589d39b204a9c"
     },
     {
-      "packageVersion": "17.15.0-preview-25209-03",
+      "packageVersion": "17.15.0-preview-25211-01",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "014f3faab9cc9a5c3387d04190fbca51abac34e7"
+      "commitSha": "b96560aa033132c61c19d7c6b16d17c26fe3dbaf"
     },
     {
       "packageVersion": "6.14.0-preview.1.102",
@@ -106,11 +106,11 @@
       "commitSha": "d98c60c0da655de406d3c45d0c82bfd82cc15a66"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25209.13",
+      "packageVersion": "10.0.0-preview.4.25210.5",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "00b00500cc997a55f17ab50bd6104d50f3f4401c"
+      "commitSha": "7618121e0f64098e2b81ed7c8cdf7024a1b87795"
     },
     {
       "packageVersion": "10.0.0-preview.25168.2",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "613a3f2f73b91195c75044d4d756bb5c484a31f3"
+      "commitSha": "ee09bc74392b73c27a353d6778bebf4042ab8c26"
     },
     {
       "packageVersion": "10.0.620701",
@@ -134,11 +134,11 @@
       "commitSha": "ebe6fe9cc5b8b9c87cb218b35514bf9d04475047"
     },
     {
-      "packageVersion": "10.0.620702",
+      "packageVersion": "10.0.621001",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "8a21184a27103ca3e365b21553e32f2a1c0661d3"
+      "commitSha": "1df7df81ac783e63aa7fbccb0232ad20fb128b15"
     },
     {
       "packageVersion": "10.0.0-beta.25201.1",
