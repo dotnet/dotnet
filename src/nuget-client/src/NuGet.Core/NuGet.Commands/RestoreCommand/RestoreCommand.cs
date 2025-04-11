@@ -270,6 +270,7 @@ namespace NuGet.Commands
                             {
                                 await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1302,
                                 string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
+                                _success = false;
                             }
                             else
                             {
