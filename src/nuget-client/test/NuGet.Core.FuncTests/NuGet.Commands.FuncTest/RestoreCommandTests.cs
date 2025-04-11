@@ -4126,8 +4126,6 @@ namespace NuGet.Commands.FuncTest
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
-            var packageA = new SimpleTestPackageContext("a", "1.0.0");
-            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
             string httpSourceUrl = "http://unit.test/index.json";
             string httpsSourceUrl = "https://unit.test/index.json";
             pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
@@ -4137,6 +4135,8 @@ namespace NuGet.Commands.FuncTest
             ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
             var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
             project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion("9.0.400");
+            AddDependency(project1Spec, "SomePackage", "1.0.0");
+
             var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
             var command = new RestoreCommand(request);
 

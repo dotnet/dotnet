@@ -23,8 +23,8 @@
     <fsharpOutputPackageVersion>9.0.101-beta.25070.7</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>762d7c2e9441e84a22b0dea75418c40c9cd397b3</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.12.34-preview-25210-04</msbuildOutputPackageVersion>
-    <nugetclientGitCommitHash>c097388782da305f47c395f90bea2d7c83909b6d</nugetclientGitCommitHash>
-    <nugetclientOutputPackageVersion>6.12.2-rc.1</nugetclientOutputPackageVersion>
+    <nugetclientGitCommitHash>95a470a557091cdbdc9f68a178b60bd19329942c</nugetclientGitCommitHash>
+    <nugetclientOutputPackageVersion>6.12.4-rc.1</nugetclientOutputPackageVersion>
     <razorGitCommitHash>44568f7817cd7c6daf90c9340c64c3b69277b7f6</razorGitCommitHash>
     <razorOutputPackageVersion>9.0.0-preview.25175.6</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>16865ea61910500f1022ad2b96c499e5df02c228</roslynanalyzersGitCommitHash>
