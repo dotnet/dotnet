@@ -14,6 +14,8 @@
 
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:PublishWindowsPdb=false</BuildArgs>
+    <!-- TODO: Re-enable when roslyn fixed all NU1510 errors. -->
+    <BuildArgs>$(BuildArgs) /p:RestoreEnablePackagePruning=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">

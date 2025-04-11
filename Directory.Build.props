@@ -174,14 +174,13 @@
     <PrebuiltSourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built'))</PrebuiltSourceBuiltPackagesPath>
     <PrebuiltSourceBuiltPackagesPath Condition="'$(CustomPrebuiltSourceBuiltPackagesPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomPrebuiltSourceBuiltPackagesPath)'))</PrebuiltSourceBuiltPackagesPath>
 
-    <PackageReportDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'prebuilt-report'))</PackageReportDir>
-    <ResultingPrebuiltPackagesDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', 'prebuilt-packages'))</ResultingPrebuiltPackagesDir>
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
 
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
+    <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
   </PropertyGroup>
 
   <!-- Build task assembly paths -->
@@ -192,9 +191,9 @@
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
     <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
-    <PoisonReportDataFile>$(PackageReportDir)poison-catalog.xml</PoisonReportDataFile>
-    <PoisonedReportFile>$(PackageReportDir)poisoned.txt</PoisonedReportFile>
-    <PoisonUsageReportFile>$(PackageReportDir)poison-usage.xml</PoisonUsageReportFile>
+    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
+    <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
+    <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
 
   <PropertyGroup>

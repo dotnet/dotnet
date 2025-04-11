@@ -1,14 +1,8 @@
 <!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
-
 <Project>
 
   <PropertyGroup>
-    <GitHubRepositoryName>diagnostics</GitHubRepositoryName>
-    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <BuildArgs>$(BuildArgs) /p:Projects="$(ProjectDirectory)src/Microsoft.Diagnostics.NETCore.Client/Microsoft.Diagnostics.NETCore.Client.csproj"</BuildArgs>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)src/Microsoft.Diagnostics.NETCore.Client/Microsoft.Diagnostics.NETCore.Client.csproj" />
-  </ItemGroup>
 
 </Project>

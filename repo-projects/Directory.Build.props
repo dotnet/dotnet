@@ -27,27 +27,13 @@
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SrcDir)', '$(RepositoryName)'))</ProjectDirectory>
 
     <!-- Paths to the version props files -->
-    <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
     <PackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <CurrentSourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
     <SnapshotPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
     <PackageVersionPropsFlowType>DependenciesOnly</PackageVersionPropsFlowType>
 
-    <GlobalJsonFile Condition="'$(GlobalJsonFile)' == '' and Exists('$(ProjectDirectory)global.json')">$(ProjectDirectory)global.json</GlobalJsonFile>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
-
-    <OriginalNuGetConfigFile>$(NuGetConfigFile)</OriginalNuGetConfigFile>
-    <!-- Update nuget.config property to point to modified file that will be created/updated during build. -->
-    <NuGetConfigFile Condition="'$(OriginalNuGetConfigFile)' != ''">$(BaseIntermediateOutputPath)$([System.IO.Path]::GetFileName('$(OriginalNuGetConfigFile)'))</NuGetConfigFile>
-
     <RepoAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(AssetManifestsIntermediateDir)', '$(RepositoryName)'))</RepoAssetManifestsDir>
-    <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
-
-    <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
-    <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', 'sb', 'package-cache'))</RepoArtifactsPackageCache>
-
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
 
     <SbrpCacheNuGetSourceName>source-build-reference-package-cache</SbrpCacheNuGetSourceName>
@@ -58,7 +44,6 @@
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
-    <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
 
     <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
 
@@ -71,6 +56,13 @@
       Condition="('$(VerticalName)' != '' and '$(VerticalName)' != '$(RidAgnosticVerticalName)')
                   and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')
                   and '$(DotNetBuildSourceOnly)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
+
+    <!-- prebuilt settings -->
+    <PackageReportDataFile>$(ArtifactsLogRepoDir)prebuilt-usage.xml</PackageReportDataFile>
+    <UsageReportFile>$(ArtifactsLogRepoDir)annotated-usage.xml</UsageReportFile>
+    <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
+    <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
+    <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
@@ -90,9 +82,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- By default, use the eng/common/build.cmd/sh script -->
-    <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
-
     <BuildActions>$(FlagParameterPrefix)restore</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
@@ -120,10 +109,20 @@
     <CommonArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(CommonArgs) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(CommonArgs) /p:DotNetBuildSourceOnly=true</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
+    <!-- TODO: Remove when the bootstrap Arcade SDK removed the ArPow build infra. -->
+    <CommonArgs>$(CommonArgs) /p:UseArPowBuildInfra=false</CommonArgs>
 
     <!-- Pass locations for assets -->
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
+
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildRepo=true</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
+    <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
+    <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
+    <CommonArgs>$(CommonArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</CommonArgs>
 
     <!-- PGO assets by default are "Vertical" visibilty. Each repo will enable the specific artifacts it must publish externally -->
     <DefaultArtifactVisibility Condition="'$(PgoInstrument)' == 'true'">Vertical</DefaultArtifactVisibility>
@@ -134,18 +133,6 @@
   <!-- Build specific args -->
   <PropertyGroup>
     <BuildArgs>$(BuildArgs) -bl</BuildArgs>
-    <!-- Don't flow these control properties during testing to avoid the outer/inner complexity. -->
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildRepo=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildOrchestrator=true</BuildArgs>
-    <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
-    <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
-    <BuildArgs>$(BuildArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</BuildArgs>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:SourceBuiltSymbolsDir=$(IntermediateSymbolsRepoDir)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->
