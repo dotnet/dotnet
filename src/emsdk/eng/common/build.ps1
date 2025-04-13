@@ -132,7 +132,6 @@ function Build {
     /p:PerformanceTest=$performanceTest `
     /p:Sign=$sign `
     /p:Publish=$publish `
-    /p:RestoreStaticGraphEnableBinaryLogger=$binaryLog `
     @properties
 }
 
