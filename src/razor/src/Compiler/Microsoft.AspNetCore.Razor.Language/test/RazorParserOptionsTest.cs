@@ -11,7 +11,7 @@ public class RazorParserOptionsTest
     public void Create_LatestVersion_AllowsLatestFeatures()
     {
         // Arrange & Act
-        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Latest, FileKinds.Legacy);
+        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Latest, RazorFileKind.Legacy);
         var options = builder.ToOptions();
 
         // Assert
@@ -25,7 +25,7 @@ public class RazorParserOptionsTest
     public void Create_21Version_Allows21Features()
     {
         // Arrange & Act
-        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Version_2_1, FileKinds.Legacy);
+        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Version_2_1, RazorFileKind.Legacy);
         var options = builder.ToOptions();
 
         // Assert
@@ -37,7 +37,7 @@ public class RazorParserOptionsTest
     public void Create_OldestVersion_DoesNotAllowLatestFeatures()
     {
         // Arrange & Act
-        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Version_1_0, FileKinds.Legacy);
+        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Version_1_0, RazorFileKind.Legacy);
         var options = builder.ToOptions();
 
         // Assert

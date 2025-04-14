@@ -10,11 +10,11 @@ Generated Location: (1155:31,0 [4] )
 
 Source Location: (77:1,22 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.ToLower()|
-Generated Location: (1555:42,0 [17] )
+Generated Location: (1540:41,25 [17] )
 |context.ToLower()|
 
 Source Location: (158:3,3 [29] x:\dir\subdir\Test\TestComponent.cshtml)
 |System.Math.Max(0, item.Item)|
-Generated Location: (2030:55,0 [29] )
+Generated Location: (2000:53,25 [29] )
 |System.Math.Max(0, item.Item)|
 

@@ -39,7 +39,7 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
         string documentContent,
         string tagHelperPrefix = null,
         RazorLanguageVersion languageVersion = null,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
         var syntaxTree = ParseDocument(languageVersion, documentContent, directives: null, fileKind: fileKind, configureParserOptions: configureParserOptions);
@@ -47,7 +47,7 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
         var binder = new TagHelperBinder(tagHelperPrefix, descriptors);
         var rewrittenTree = TagHelperParseTreeRewriter.Rewrite(syntaxTree, binder, out _);
 
-        Assert.Equal(syntaxTree.Root.FullWidth, rewrittenTree.Root.FullWidth);
+        Assert.Equal(syntaxTree.Root.Width, rewrittenTree.Root.Width);
 
         BaselineTest(rewrittenTree);
     }

@@ -5,13 +5,18 @@ using System.CommandLine;
 using Microsoft.DotNet.Cli.Commands.Tool.Common;
 using Microsoft.DotNet.Cli.Commands.Tool.Install;
 using Microsoft.DotNet.Cli.Extensions;
-using LocalizableStrings = Microsoft.DotNet.Tools.Tool.Uninstall.LocalizableStrings;
+using NuGet.Packaging.Core;
 
 namespace Microsoft.DotNet.Cli.Commands.Tool.Uninstall;
 
 internal static class ToolUninstallCommandParser
 {
-    public static readonly CliArgument<string> PackageIdArgument = ToolInstallCommandParser.PackageIdArgument;
+    public static readonly CliArgument<string> PackageIdArgument = new("packageId")
+    {
+        HelpName = "PACKAGE_ID",
+        Description = CliStrings.PackageReference,
+        Arity = ArgumentArity.ExactlyOne
+    };
 
     public static readonly CliOption<bool> GlobalOption = ToolAppliedOption.GlobalOption;
 
@@ -30,13 +35,13 @@ internal static class ToolUninstallCommandParser
 
     private static CliCommand ConstructCommand()
     {
-        CliCommand command = new("uninstall", LocalizableStrings.CommandDescription);
+        CliCommand command = new("uninstall", CliCommandStrings.ToolUninstallCommandDescription);
 
         command.Arguments.Add(PackageIdArgument);
-        command.Options.Add(GlobalOption.WithHelpDescription(command, LocalizableStrings.GlobalOptionDescription));
-        command.Options.Add(LocalOption.WithHelpDescription(command, LocalizableStrings.LocalOptionDescription));
-        command.Options.Add(ToolPathOption.WithHelpDescription(command, LocalizableStrings.ToolPathOptionDescription));
-        command.Options.Add(ToolManifestOption.WithHelpDescription(command, LocalizableStrings.ManifestPathOptionDescription));
+        command.Options.Add(GlobalOption.WithHelpDescription(command, CliCommandStrings.ToolUninstallGlobalOptionDescription));
+        command.Options.Add(LocalOption.WithHelpDescription(command, CliCommandStrings.ToolUninstallLocalOptionDescription));
+        command.Options.Add(ToolPathOption.WithHelpDescription(command, CliCommandStrings.ToolUninstallToolPathOptionDescription));
+        command.Options.Add(ToolManifestOption.WithHelpDescription(command, CliCommandStrings.ToolUninstallManifestPathOptionDescription));
 
         command.SetAction((parseResult) => new ToolUninstallCommand(parseResult).Execute());
 

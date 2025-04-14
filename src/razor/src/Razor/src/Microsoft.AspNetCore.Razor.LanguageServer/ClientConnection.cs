@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -47,7 +46,7 @@ internal sealed class ClientConnection(JsonRpc jsonRpc) : IClientConnection, IOn
     /// <summary>
     /// Fires when the language server is set to "Started".
     /// </summary>
-    public Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
+    public Task OnInitializedAsync(CancellationToken cancellationToken)
     {
         _initializedCompletionSource.TrySetResult(true);
         return Task.CompletedTask;

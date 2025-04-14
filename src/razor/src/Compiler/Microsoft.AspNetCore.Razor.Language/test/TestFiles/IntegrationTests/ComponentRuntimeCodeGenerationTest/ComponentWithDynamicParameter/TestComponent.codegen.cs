@@ -18,10 +18,9 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenElement(0, "strong");
-            __builder.AddContent(1, 
 #nullable restore
-#line (1,10)-(1,21) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestDynamic
+#line (1,10)-(1,21) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(1, TestDynamic
 
 #line default
 #line hidden

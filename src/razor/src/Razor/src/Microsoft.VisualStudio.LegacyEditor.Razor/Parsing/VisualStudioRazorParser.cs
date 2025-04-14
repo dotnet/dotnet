@@ -230,7 +230,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
 
         // We might not have a document snapshot in the case of an ephemeral project.
         // If we don't have a document then infer the FileKind from the FilePath.
-        var fileKind = projectSnapshot.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromFilePath(_documentTracker.FilePath);
+        var fileKind = projectSnapshot.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromPath(_documentTracker.FilePath);
 
         var projectDirectory = Path.GetDirectoryName(_documentTracker.ProjectPath);
         _parser = new BackgroundParser(_projectEngine, FilePath, projectDirectory, fileKind);

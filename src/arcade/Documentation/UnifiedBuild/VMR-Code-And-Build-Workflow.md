@@ -22,7 +22,7 @@ flowchart TD
         tradNuGet[nuget]
         tradFSharp[fsharp]
 
-        tradEmsdk-->|Build Outputs|tradRuntime
+        tradEmsdk-->|Build Outputs|tradSDK
         tradRuntime-->|Build Outputs|tradWinforms
         tradRuntime-->|Build Outputs|tradTemplating
         tradRuntime-->|Build Outputs|tradSDK

@@ -92,9 +92,6 @@ dotnet_diagnostic.CA1822.severity = suggestion
 # CA1823: Avoid unused private fields
 dotnet_diagnostic.CA1823.severity = suggestion
 
-# CA1825: Avoid zero-length array allocations
-dotnet_diagnostic.CA1825.severity = suggestion
-
 # CA1834: Use StringBuilder.Append(char) for single character strings
 dotnet_diagnostic.CA1834.severity = suggestion
 
@@ -209,9 +206,6 @@ dotnet_diagnostic.IDE0077.severity = suggestion
 # IDE0078: Use pattern matching
 dotnet_diagnostic.IDE0078.severity = suggestion
 
-# IDE0100: Remove redundant equality
-dotnet_diagnostic.IDE0100.severity = suggestion
-
 # IDE0180: Use tuple to swap values
 dotnet_diagnostic.IDE0180.severity = suggestion
 
@@ -229,9 +223,6 @@ dotnet_diagnostic.IDE0300.severity = suggestion
 
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = suggestion
-
-# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
-dotnet_diagnostic.SYSLIB1045.severity = suggestion
 
 # ---------------------
 # Ref specific C# files

@@ -9,5 +9,5 @@ internal static class SerializationFormat
     // or any of the types that compose it changes. This includes: RazorConfiguration,
     // ProjectWorkspaceState, TagHelperDescriptor, and DocumentSnapshotHandle.
     // NOTE: If this version is changed, a coordinated insertion is required between Roslyn and Razor for the C# extension.
-    public const int Version = 7;
+    public const int Version = 8;
 }

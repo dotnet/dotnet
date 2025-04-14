@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.VisualStudio.LanguageServices" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.SDK" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" />
 
     <PackageReference Include="Microsoft.VisualStudio.LiveShare" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />

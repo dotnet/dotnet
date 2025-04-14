@@ -47,7 +47,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return FileKinds.IsComponent(codeDocument.FileKind);
+        return codeDocument.FileKind.IsComponent();
     }
 
     protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
@@ -95,7 +95,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         @class.Modifiers.Add("public");
         @class.Modifiers.Add("partial");
 
-        if (FileKinds.IsComponentImport(codeDocument.FileKind))
+        if (codeDocument.FileKind.IsComponentImport())
         {
             // We don't want component imports to be considered as real component.
             // But we still want to generate code for it so we can get diagnostics.

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
@@ -26,7 +25,7 @@ internal sealed class RemoteRazorProjectFileSystem : RazorProjectFileSystem
     public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
         => throw new NotSupportedException();
 
-    public override RazorProjectItem GetItem(string path, string? fileKind)
+    public override RazorProjectItem GetItem(string path, RazorFileKind? fileKind)
     {
         ArgHelper.ThrowIfNull(path);
 

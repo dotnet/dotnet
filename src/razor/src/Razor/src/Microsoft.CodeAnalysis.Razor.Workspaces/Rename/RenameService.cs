@@ -38,7 +38,7 @@ internal class RenameService(
         CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
-        if (!FileKinds.IsComponent(documentContext.FileKind))
+        if (!documentContext.FileKind.IsComponent())
         {
             return null;
         }
@@ -163,7 +163,7 @@ internal class RenameService(
         IDocumentSnapshot documentSnapshot,
         CancellationToken cancellationToken)
     {
-        if (!FileKinds.IsComponent(documentSnapshot.FileKind))
+        if (!documentSnapshot.FileKind.IsComponent())
         {
             return;
         }
@@ -289,7 +289,7 @@ internal class RenameService(
         // Ensure the rename action was invoked on the component name instead of a component parameter. This serves as an issue
         // mitigation till `textDocument/prepareRename` is supported and we can ensure renames aren't triggered in unsupported
         // contexts. (https://github.com/dotnet/razor/issues/4285)
-        if (!tagHelperStartTag.Name.FullSpan.IntersectsWith(absoluteIndex))
+        if (!tagHelperStartTag.Name.Span.IntersectsWith(absoluteIndex))
         {
             binding = null;
             return false;

@@ -89,8 +89,8 @@ public class JsonSerializationTest(ITestOutputHelper testOutput) : ToolingTestBa
     public void RazorProjectInfo_CanRoundTrip()
     {
         // Arrange
-        var legacyDocument = new DocumentSnapshotHandle("/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
-        var componentDocument = new DocumentSnapshotHandle("/path/to/otherfile.razor", "otherfile.razor", FileKinds.Component);
+        var legacyDocument = new DocumentSnapshotHandle("/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
+        var componentDocument = new DocumentSnapshotHandle("/path/to/otherfile.razor", "otherfile.razor", RazorFileKind.Component);
         var projectInfo = new RazorProjectInfo(
             new ProjectKey("/path/to/obj/"),
             "/path/to/project.csproj",

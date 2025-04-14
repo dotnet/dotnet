@@ -3147,7 +3147,7 @@ namespace System.Windows.Markup
                 if (_xmlnsCache == null)
                 {
 #if PBTCOMPILER
-                    Debug.Assert(false, "Should initialize cache prior to compiling");
+                    Debug.Fail("Should initialize cache prior to compiling");
 #else
                     _xmlnsCache = new XmlnsCache();
 #endif
@@ -3418,7 +3418,7 @@ namespace System.Windows.Markup
             if (_xmlnsCache == null)
             {
 #if PBTCOMPILER
-                Debug.Assert(false, "Should initialize cache prior to compiling");
+                Debug.Fail("Should initialize cache prior to compiling");
 #else
                 _xmlnsCache = new XmlnsCache();
 #endif
@@ -4432,7 +4432,7 @@ namespace System.Windows.Markup
         /// </summary>
         internal static NamespaceMapEntry[] GetDefaultNamespaceMaps()
         {
-            return (NamespaceMapEntry[])_defaultNamespaceMapTable.Clone();
+            return Array.Empty<NamespaceMapEntry>();
         }
 
 #endregion Properties
@@ -4440,12 +4440,7 @@ namespace System.Windows.Markup
 #region Data
 
         // array of our defaultAssemblies.
-        private static readonly string[] _defaultAssemblies = {"WindowsBase", "PresentationCore", "PresentationFramework"};
-
-        // array of namespaceMaps the map an xmlns namespaceURI
-        // to the assembly and urtNamespace to search in when resolving the xml
-
-        private static readonly NamespaceMapEntry[] _defaultNamespaceMapTable = { };
+        private static readonly string[] _defaultAssemblies = { "WindowsBase", "PresentationCore", "PresentationFramework" };
 
 #endregion Data
     }

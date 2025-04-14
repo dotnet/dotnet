@@ -1244,7 +1244,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
             // Accept the directive name
             var keywordToken = EatCurrentToken();
-            var keywordLength = keywordToken.FullWidth + 1 /* @ */;
+            var keywordLength = keywordToken.Width + 1 /* @ */;
 
             var foundWhitespace = At(SyntaxKind.Whitespace);
 

@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Nerdbank.Streams;
 
@@ -64,7 +63,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace);
         using var fileStream = new FileStream(filePath, FileMode.Open);
         var text = SourceText.From(fileStream);
-        var hostDocument = new HostDocument(filePath, targetPath, FileKinds.Component);
+        var hostDocument = new HostDocument(filePath, targetPath, RazorFileKind.Component);
 
         var projectManager = CreateProjectSnapshotManager();
 
@@ -83,7 +82,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private sealed class NoOpClientNotifierService : IClientConnection, IOnInitialized
     {
-        public Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
+        public Task OnInitializedAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

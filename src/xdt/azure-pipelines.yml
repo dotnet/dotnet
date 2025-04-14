@@ -39,7 +39,6 @@ extends:
         enabled: true
       tsa:
         enabled: true
-        configFile: '$(Build.SourcesDirectory)\.config\tsaoptions.json'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:

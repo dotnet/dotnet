@@ -76,7 +76,6 @@
     <ItemGroup>
       <!-- Override package cache to separate source-built packages from upstream. -->
       <InnerBuildEnv Include="NUGET_PACKAGES=$(CurrentRepoSourceBuildPackageCache)" />
-      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     </ItemGroup>
   </Target>
 

@@ -375,7 +375,7 @@ namespace System.Windows.Markup
             if (bufferArray.Count <= bufferIndex)
             {
                 Debug.Assert(bufferArray.Count == bufferIndex,"Need to allocate more than one buffer");
-                Debug.Assert(false == reader,"Allocating a buffer on Read");
+                Debug.Assert(!reader, "Allocating a buffer on Read");
 
                 buffer = new byte[BufferSize];
 
@@ -780,7 +780,7 @@ namespace System.Windows.Markup
         /// </summary>
         public override void Close()
         {
-            Debug.Assert(false,"Close called on ReaderStream");
+            Debug.Fail("Close called on ReaderStream");
         }
 
         /// <summary>
@@ -788,7 +788,7 @@ namespace System.Windows.Markup
         /// </summary>
         public override void Flush()
         {
-            Debug.Assert(false,"Flush called on ReaderStream");
+            Debug.Fail("Flush called on ReaderStream");
         }
 
         /// <summary>

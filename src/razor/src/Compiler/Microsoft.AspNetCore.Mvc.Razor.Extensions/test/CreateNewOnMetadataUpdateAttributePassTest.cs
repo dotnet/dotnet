@@ -57,7 +57,7 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("Hello world", filePath: "ignored", relativePath: "Test.razor");
-        var codeDocument = ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act

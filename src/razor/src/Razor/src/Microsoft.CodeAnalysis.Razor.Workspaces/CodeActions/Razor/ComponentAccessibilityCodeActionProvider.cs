@@ -81,7 +81,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
 
     private static bool IsApplicableTag(IStartTagSyntaxNode startTag)
     {
-        if (startTag.Name.FullWidth == 0)
+        if (startTag.Name.Width == 0)
         {
             // Empty tag name, we shouldn't show a light bulb just to create an empty file.
             return false;

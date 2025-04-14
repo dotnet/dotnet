@@ -12,16 +12,13 @@
   </ItemGroup>
 
   <!-- Because the condition here is rather complex, it should read as the following:
-      - Don't collect intermediates if running the product build
-      - Otherwise, collect if we're forcing it using SetUpSourceBuildIntermediateNupkgCache
-      - Otherwise, collect if:
-        - Building from source and we're in the inner build OR
-        - Building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
+      - Don't collect intermediates if running the product build or the intermediate nupkg cache feature is explicitly disabled
+      - Otherwise, collect if Building from source and we're in the inner build -->
   <Target Name="CollectSourceBuildIntermediateNupkgDependencies"
           Condition="
             '$(DotNetBuildOrchestrator)' != 'true' and
-            ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
-            ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
+            '$(SetUpSourceBuildIntermediateNupkgCache)' != 'false' and
+            ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true')"
           DependsOnTargets="GetSourceBuildIntermediateNupkgNameConvention"
           BeforeTargets="CollectPackageReferences">
     <ReadSourceBuildIntermediateNupkgDependencies
@@ -37,16 +34,13 @@
   </Target>
 
   <!-- Because the condition here i rather complex, it should read as the following:
-       - Don't set up the intermediate cache if running the product build
-       - Otherwise, set it up if we're forcing it to be set up using SetUpSourceBuildIntermediateNupkgCache
-       - Otherwise, set it up if there are intermediate nupkg referencs AND
-         - If building from source and we're in the inner build OR
-         - If building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
+      - Don't collect intermediates if running the product build or the intermediate nupkg cache feature is explicitly disabled
+      - Otherwise, collect if Building from source and we're in the inner build -->
   <Target Name="SetUpSourceBuildIntermediateNupkgCache"
           Condition="
             '$(DotNetBuildOrchestrator)' != 'true' and
-            ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
-              ('@(SourceBuildIntermediateNupkgReference)' != '' and '$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
+            '$(SetUpSourceBuildIntermediateNupkgCache)' != 'false' and
+            ('@(SourceBuildIntermediateNupkgReference)' != '' and '$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true')"
           AfterTargets="Restore">
     <ItemGroup>
       <IntermediateNupkgSourceDir Include="$([MSBuild]::NormalizeDirectory(

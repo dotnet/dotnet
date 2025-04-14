@@ -13,7 +13,6 @@
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.187-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
-    <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.12.0-beta1.25201.17</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
@@ -33,8 +32,7 @@
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.4.1" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(_MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="1.1.3-beta1.24423.1" />
-    <!-- Temporarily force analyzers to match compiler version https://github.com/dotnet/razor-tooling/issues/6758 -->
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(_MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer" Version="$(MicrosoftCodeAnalysisCSharpAnalyzerTestingPackageVersion)" />
@@ -46,16 +44,16 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Common" Version="$(MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Text" Version="$(MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessFSharpVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" Version="$(MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" Version="$(MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Remote.ServiceHub" Version="$(MicrosoftCodeAnalysisRemoteServiceHubPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces" Version="$(MicrosoftCodeAnalysisWorkspacesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.CommonLanguageServerProtocol.Framework" Version="$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)" PrivateAssets="all" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Version="$(MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion)" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Css.Parser" Version="1.0.0-20230414.1" />
     <PackageVersion Include="Microsoft.DiaSymReader" Version="2.0.0" />

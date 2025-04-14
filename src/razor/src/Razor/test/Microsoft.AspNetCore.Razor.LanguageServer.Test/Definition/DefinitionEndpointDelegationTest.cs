@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-extern alias RLSP;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,11 +13,11 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
-using DefinitionResult = RLSP::Roslyn.LanguageServer.Protocol.SumType<
-    RLSP::Roslyn.LanguageServer.Protocol.Location,
-    RLSP::Roslyn.LanguageServer.Protocol.VSInternalLocation,
-    RLSP::Roslyn.LanguageServer.Protocol.VSInternalLocation[],
-    RLSP::Roslyn.LanguageServer.Protocol.DocumentLink[]>;
+using DefinitionResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation[],
+    Roslyn.LanguageServer.Protocol.DocumentLink[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 

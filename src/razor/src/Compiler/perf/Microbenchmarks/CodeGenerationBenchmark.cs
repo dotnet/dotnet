@@ -26,7 +26,7 @@ public class CodeGenerationBenchmark
 
         ProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, fileSystem, b => RazorExtensions.Register(b)); ;
 
-        MSN = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), FileKinds.Legacy);
+        MSN = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), RazorFileKind.Legacy);
     }
 
     public RazorProjectEngine ProjectEngine { get; }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -15,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -75,7 +75,11 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
 
         var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        RazorRequestContext = new RazorRequestContext(documentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
+        RazorRequestContext = new RazorRequestContext(
+            documentContext,
+            RazorLanguageServerHost.GetRequiredService<LspServices>(),
+            "lsp/method",
+            uri: null);
     }
 
     private string GetFileContents(FileTypes fileType)

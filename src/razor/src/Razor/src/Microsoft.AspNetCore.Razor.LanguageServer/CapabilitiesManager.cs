@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class CapabilitiesManager : IInitializeManager<InitializeParams, InitializeResult>, IClientCapabilitiesService, IWorkspaceRootPathProvider
 {
-    private readonly ILspServices _lspServices;
+    private readonly LspServices _lspServices;
     private readonly TaskCompletionSource<InitializeParams> _initializeParamsTaskSource;
     private readonly VisualStudio.Threading.AsyncLazy<string> _lazyRootPath;
 
@@ -26,7 +26,7 @@ internal sealed class CapabilitiesManager : IInitializeManager<InitializeParams,
 
     public VSInternalClientCapabilities ClientCapabilities => GetInitializeParams().Capabilities.ToVSInternalClientCapabilities();
 
-    public CapabilitiesManager(ILspServices lspServices)
+    public CapabilitiesManager(LspServices lspServices)
     {
         _lspServices = lspServices;
 

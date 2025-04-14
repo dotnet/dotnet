@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-extern alias RLSP;
-
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -13,7 +11,7 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<RLSP::Roslyn.LanguageServer.Protocol.Location[]?>;
+using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.Location[]?>;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.Text;
@@ -81,7 +82,7 @@ public class RazorIntegrationTestBase
     /// Gets a hardcoded document kind to be added to each code document that's created. This can
     /// be used to generate components.
     /// </summary>
-    internal virtual string? FileKind { get; }
+    internal virtual RazorFileKind? FileKind { get; }
 
     internal virtual VirtualRazorProjectFileSystem FileSystem { get; }
 
@@ -146,7 +147,11 @@ public class RazorIntegrationTestBase
         });
     }
 
-    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, string? fileKind = null, string? cssScope = null)
+    internal RazorProjectItem CreateProjectItem(
+        string cshtmlRelativePath,
+        string cshtmlContent,
+        RazorFileKind? fileKind = null,
+        string? cssScope = null)
     {
         var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
 
@@ -207,7 +212,7 @@ public class RazorIntegrationTestBase
     protected CompileToCSharpResult CompileToCSharp(
         string cshtmlRelativePath,
         string cshtmlContent,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         string? cssScope = null,
         bool supportLocalizedComponentNames = false,
         bool nullableEnable = false,
@@ -335,12 +340,12 @@ public class RazorIntegrationTestBase
         return CompileToAssembly(cSharpResult);
     }
 
-    protected CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, params DiagnosticDescription[] expectedDiagnostics)
+    protected static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, params DiagnosticDescription[] expectedDiagnostics)
     {
         return CompileToAssembly(cSharpResult, diagnostics => diagnostics.Verify(expectedDiagnostics));
     }
 
-    protected CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, Action<IEnumerable<Diagnostic>> verifyDiagnostics)
+    protected static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, Action<IEnumerable<Diagnostic>> verifyDiagnostics)
     {
         var syntaxTrees = new[]
         {
@@ -355,29 +360,27 @@ public class RazorIntegrationTestBase
 
         verifyDiagnostics(diagnostics);
 
-        if (diagnostics.Any())
-        {
-            return new CompileToAssemblyResult
-            {
-                Compilation = compilation,
-                CSharpDiagnostics = diagnostics,
-            };
-        }
+        var peStream = !diagnostics.Any() ? EmitCompilation(compilation) : null;
 
-        using (var peStream = new MemoryStream())
+        return new CompileToAssemblyResult
         {
-            var emitResult = compilation.Emit(peStream);
-            if (!emitResult.Success)
-            {
-                throw new CompilationFailedException(compilation, emitResult.Diagnostics);
-            }
+            Compilation = compilation,
+            CSharpDiagnostics = diagnostics,
+            ExecutableStream = peStream
+        };
+    }
 
-            return new CompileToAssemblyResult
-            {
-                Compilation = compilation,
-                CSharpDiagnostics = diagnostics,
-            };
+    private static MemoryStream EmitCompilation(Compilation compilation)
+    {
+        var peStream = new MemoryStream();
+        var options = new EmitOptions(debugInformationFormat: DebugInformationFormat.Embedded);
+        var emitResult = compilation.Emit(peStream, options: options);
+        if (!emitResult.Success)
+        {
+            throw new CompilationFailedException(compilation, emitResult.Diagnostics);
         }
+        peStream.Position = 0;
+        return peStream;
     }
 
     protected INamedTypeSymbol CompileToComponent(string cshtmlSource)
@@ -442,6 +445,7 @@ public class RazorIntegrationTestBase
         public required Compilation Compilation { get; set; }
         public string? VerboseLog { get; set; }
         public required IEnumerable<Diagnostic> CSharpDiagnostics { get; set; }
+        public required MemoryStream? ExecutableStream { get; set; }
     }
 
     private class CompilationFailedException : XunitException

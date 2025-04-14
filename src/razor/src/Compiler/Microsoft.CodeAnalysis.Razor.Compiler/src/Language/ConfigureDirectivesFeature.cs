@@ -9,16 +9,16 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal sealed class ConfigureDirectivesFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
 {
-    private readonly Dictionary<string, ImmutableArray<DirectiveDescriptor>.Builder> _fileKindToDirectivesMap = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<RazorFileKind, ImmutableArray<DirectiveDescriptor>.Builder> _fileKindToDirectivesMap = [];
 
-    public void AddDirective(DirectiveDescriptor directive, params ReadOnlySpan<string> fileKinds)
+    public void AddDirective(DirectiveDescriptor directive, params ReadOnlySpan<RazorFileKind> fileKinds)
     {
         lock (_fileKindToDirectivesMap)
         {
             // To maintain backwards compatibility, FileKinds.Legacy is assumed when a file kind is not specified.
             if (fileKinds.IsEmpty)
             {
-                fileKinds = [FileKinds.Legacy];
+                fileKinds = [RazorFileKind.Legacy];
             }
 
             foreach (var fileKind in fileKinds)
@@ -29,14 +29,14 @@ internal sealed class ConfigureDirectivesFeature : RazorEngineFeatureBase, IConf
         }
     }
 
-    public ImmutableArray<DirectiveDescriptor> GetDirectives(string? fileKind = null)
+    public ImmutableArray<DirectiveDescriptor> GetDirectives(RazorFileKind? fileKind = null)
     {
         // To maintain backwards compatibility, FileKinds.Legacy is assumed when a file kind is not specified.
-        fileKind ??= FileKinds.Legacy;
+        var fileKindValue = fileKind ?? RazorFileKind.Legacy;
 
         lock (_fileKindToDirectivesMap)
         {
-            return _fileKindToDirectivesMap.TryGetValue(fileKind, out var directives)
+            return _fileKindToDirectivesMap.TryGetValue(fileKindValue, out var directives)
                 ? directives.ToImmutable()
                 : [];
         }

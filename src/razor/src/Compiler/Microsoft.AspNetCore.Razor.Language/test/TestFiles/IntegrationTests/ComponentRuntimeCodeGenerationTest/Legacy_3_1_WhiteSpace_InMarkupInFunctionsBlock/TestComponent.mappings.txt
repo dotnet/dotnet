@@ -30,20 +30,20 @@ Generated Location: (1413:50,0 [46] )
 
 Source Location: (230:8,21 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (1790:63,0 [1] )
+Generated Location: (1783:62,24 [1] )
 |i|
 
 Source Location: (256:10,0 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |            }
 |
-Generated Location: (2084:74,0 [15] )
+Generated Location: (2077:73,0 [15] )
 |            }
 |
 
 Source Location: (286:12,0 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |    }
 |
-Generated Location: (2363:85,0 [7] )
+Generated Location: (2356:84,0 [7] )
 |    }
 |
 

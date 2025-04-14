@@ -237,7 +237,7 @@ namespace MS.Internal.Automation
                         }
                         else
                         {
-                            Debug.Assert(false, "unsupported property should not have made it this far");
+                            Debug.Fail("unsupported property should not have made it this far");
                         }
                     }
 
@@ -449,7 +449,7 @@ namespace MS.Internal.Automation
             if (requestedData == null)
             {
                 Debug.Assert(offsets == null && treeStructures == null, "if nothin found, all out params shoud be null");
-                return new UiaCacheResponse[] {}; // Return empty cacheresponse, not null.
+                return Array.Empty<UiaCacheResponse>(); // Return empty cacheresponse, not null.
             }
 
             Debug.Assert(offsets.Length == treeStructures.Length);
@@ -640,7 +640,7 @@ namespace MS.Internal.Automation
             AutomationEvent eventId = AutomationEvent.LookupById(args._eventId);
             if (eventId == null)
             {
-                Debug.Assert(false, "Got unknown eventId from core: " + args._eventId);
+                Debug.Fail("Got unknown eventId from core: " + args._eventId);
                 return null;
             }
 
@@ -658,7 +658,7 @@ namespace MS.Internal.Automation
                         AutomationProperty propertyId = AutomationProperty.LookupById(pcargs._propertyId);
                         if (propertyId == null)
                         {
-                            Debug.Assert(false, "Got unknown propertyId from core: " + pcargs._propertyId);
+                            Debug.Fail("Got unknown propertyId from core: " + pcargs._propertyId);
                             return null;
                         }
 
@@ -699,7 +699,7 @@ namespace MS.Internal.Automation
                     }
             }
 
-            Debug.Assert(false, "Unknown event type from core:" + args._type);
+            Debug.Fail("Unknown event type from core:" + args._type);
             return null;
         }
         #endregion EventArgs translation
@@ -868,7 +868,7 @@ namespace MS.Internal.Automation
             CheckError(RawTextPattern_GetSelection(hobj, out arr));
             if (arr == null)
             {
-                return new SafeTextRangeHandle[] { };
+                return Array.Empty<SafeTextRangeHandle>();
             }
             SafeTextRangeHandle[] result = new SafeTextRangeHandle[arr.Length];
             for (int i = 0; i < arr.Length; i++)
@@ -884,7 +884,7 @@ namespace MS.Internal.Automation
             CheckError(RawTextPattern_GetVisibleRanges(hobj, out arr));
             if (arr == null)
             {
-                return new SafeTextRangeHandle[] { };
+                return Array.Empty<SafeTextRangeHandle>();
             }
             SafeTextRangeHandle[] result = new SafeTextRangeHandle[arr.Length];
             for (int i = 0; i < arr.Length; i++)

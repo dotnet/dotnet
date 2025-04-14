@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-extern alias RLSP;
-
 using System;
 using System.Linq;
 using System.Threading;
@@ -20,7 +18,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
-using RLSP::Roslyn.Text.Adornments;
+using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -263,7 +261,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
             .Returns(path);
         documentSnapshotMock
             .SetupGet(x => x.FileKind)
-            .Returns(FileKinds.Component);
+            .Returns(RazorFileKind.Component);
         documentSnapshotMock
             .SetupGet(x => x.Version)
             .Returns(0);

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -82,6 +83,7 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
     /// use when creating <see cref="ProjectState"/>.</param>
     /// <param name="compilerOptions">Options used to control Razor compilation.</param>
+    /// <param name="featureOptions">The <see cref="LanguageServerFeatureOptions"/> to use.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
     /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
     /// Note that this is called during construction, so it does not run on the dispatcher and notifications
@@ -89,12 +91,13 @@ internal partial class ProjectSnapshotManager : IDisposable
     public ProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         RazorCompilerOptions compilerOptions,
+        LanguageServerFeatureOptions featureOptions,
         ILoggerFactory loggerFactory,
         Action<Updater>? initializer = null)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
         _compilerOptions = compilerOptions;
-        _dispatcher = new(loggerFactory);
+        _dispatcher = new(featureOptions, loggerFactory);
         _logger = loggerFactory.GetOrCreateLogger(GetType());
 
         initializer?.Invoke(new(this));

@@ -37,15 +37,14 @@ internal class ExtractToCodeBehindCodeActionResolver(
             return null;
         }
 
-        var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
-
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        if (!FileKinds.IsComponent(codeDocument.FileKind))
+        if (!documentContext.FileKind.IsComponent())
         {
             return null;
         }
 
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+        var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var codeBehindPath = FileUtilities.GenerateUniquePath(path, $"{Path.GetExtension(path)}.cs");
 
         // VS Code in Windows expects path to start with '/'

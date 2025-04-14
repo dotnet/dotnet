@@ -474,7 +474,7 @@ internal static class TagHelperParseTreeRewriter
                         {
                             _errorSink.OnError(
                                 RazorDiagnosticFactory.CreateTagHelper_InconsistentTagStructure(
-                                    new SourceSpan(tagBlock.GetSourceLocation(_source), tagBlock.FullWidth),
+                                    new SourceSpan(tagBlock.GetSourceLocation(_source), tagBlock.Width),
                                     baseDescriptor!.DisplayName,
                                     descriptor.DisplayName,
                                     tagName));

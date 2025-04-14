@@ -36,20 +36,32 @@ internal sealed partial class LspDynamicFileProvider
 
         public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         {
-            if (_document is null)
+            try
             {
-                var text = ApplyChanges(_emptySourceText.Value, _changes);
-                return TextAndVersion.Create(text, VersionStamp.Default.GetNewerVersion());
+                if (_document is null)
+                {
+                    var text = ApplyChanges(_emptySourceText.Value, _changes);
+                    return TextAndVersion.Create(text, VersionStamp.Default.GetNewerVersion());
+                }
+
+                var sourceText = await _document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+
+                // Validate the checksum information so the edits are known to be correct
+
+                if (IsSourceTextMatching(sourceText))
+                {
+                    var version = await _document.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
+                    var newText = ApplyChanges(sourceText, _changes);
+                    return TextAndVersion.Create(newText, version.GetNewerVersion());
+                }
             }
-
-            var sourceText = await _document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-            // Validate the checksum information so the edits are known to be correct
-            if (IsSourceTextMatching(sourceText))
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                var version = await _document.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
-                var newText = ApplyChanges(sourceText, _changes);
-                return TextAndVersion.Create(newText, version.GetNewerVersion());
+                // This happens if ApplyChanges tries to apply an invalid TextChange.
+                // This is recoverable but incurs a perf hit for getting the full text below.
+
+                // TODO: Add ability to capture a fault here in EA. There's something wrong if
+                // the Checksum matches but the text changes can't be applied.
             }
 
             return await GetFullDocumentFromServerAsync(cancellationToken).ConfigureAwait(false);

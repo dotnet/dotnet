@@ -718,7 +718,7 @@ namespace MS.Internal.Controls.StickyNote
             if ((token == XmlToken.Ink && contentControl.Type != StickyNoteType.Ink)
                 || (token == XmlToken.Text && contentControl.Type != StickyNoteType.Text))
             {
-                Debug.Assert(false, "The annotation data does match with the current content control in StickyNote");
+                Debug.Fail("The annotation data does match with the current content control in StickyNote");
                 return;
             }
 
@@ -1026,7 +1026,7 @@ namespace System.Windows.Controls
                 transformations.Children.Add(new TranslateTransform(anchor.X, anchor.Y));
 
                 TranslateTransform offsetTransform = new TranslateTransform(0, 0);
-                if (IsExpanded == true)
+                if (IsExpanded)
                 {
                     offsetTransform = PositionTransform.Clone();
 

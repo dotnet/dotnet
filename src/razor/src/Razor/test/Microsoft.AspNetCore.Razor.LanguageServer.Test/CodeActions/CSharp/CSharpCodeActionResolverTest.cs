@@ -178,7 +178,7 @@ public class CSharpCodeActionResolverTest(ITestOutputHelper testOutput) : Langua
     {
         var projectItem = new TestRazorProjectItem(
             filePath: documentPath,
-            fileKind: FileKinds.Component)
+            fileKind: RazorFileKind.Component)
         {
             Content = text
         };

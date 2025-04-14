@@ -26,7 +26,7 @@ public static class SectionDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Legacy, FileKinds.Component);
+        builder.AddDirective(Directive, RazorFileKind.Legacy, RazorFileKind.Component);
         builder.Features.Add(new SectionDirectivePass());
         builder.AddTargetExtension(new SectionTargetExtension());
     }

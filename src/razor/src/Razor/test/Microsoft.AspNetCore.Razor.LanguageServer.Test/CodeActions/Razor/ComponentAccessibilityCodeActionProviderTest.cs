@@ -74,7 +74,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             documentPath,
             contents,
             new SourceSpan(0, 0),
-            fileKind: FileKinds.Legacy);
+            fileKind: RazorFileKind.Legacy);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new FileSystem());
 
@@ -432,7 +432,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         string filePath,
         string text,
         SourceSpan componentSourceSpan,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         bool supportsFileCreation = true)
     {
         var shortComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
@@ -466,9 +466,9 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             });
         });
 
-        fileKind ??= FileKinds.Component;
+        var fileKindValue = fileKind ?? RazorFileKind.Component;
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

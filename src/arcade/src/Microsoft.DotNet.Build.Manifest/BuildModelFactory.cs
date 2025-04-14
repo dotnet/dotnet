@@ -265,27 +265,75 @@ namespace Microsoft.DotNet.Build.Manifest
             var refIdentity = reference.Identity;
 
             // Validate that all manifests have identical build identity properties.
-            foreach (BuildModel manifest in models)
+            for (int i = 0; i < models.Count; i++)
             {
-                // Compare the identities of the manifests.
-                var identity = manifest.Identity;
-                if (!string.Equals(refIdentity.AzureDevOpsAccount, identity.AzureDevOpsAccount, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.AzureDevOpsBranch, identity.AzureDevOpsBranch, StringComparison.OrdinalIgnoreCase) ||
-                    refIdentity.AzureDevOpsBuildDefinitionId != identity.AzureDevOpsBuildDefinitionId ||
-                    refIdentity.AzureDevOpsBuildId != identity.AzureDevOpsBuildId ||
-                    !string.Equals(refIdentity.AzureDevOpsBuildNumber, identity.AzureDevOpsBuildNumber, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.AzureDevOpsProject, identity.AzureDevOpsProject, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.AzureDevOpsRepository, identity.AzureDevOpsRepository, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.Branch, identity.Branch, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.BuildId, identity.BuildId, StringComparison.OrdinalIgnoreCase) ||
-                    !string.Equals(refIdentity.InitialAssetsLocation, identity.InitialAssetsLocation, StringComparison.OrdinalIgnoreCase) ||
-                    refIdentity.IsReleaseOnlyPackageVersion != identity.IsReleaseOnlyPackageVersion ||
-                    refIdentity.IsStable != identity.IsStable ||
-                    !string.Equals(refIdentity.ProductVersion, identity.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
-                    refIdentity.PublishingVersion != identity.PublishingVersion ||
-                    !string.Equals(refIdentity.VersionStamp, identity.VersionStamp, StringComparison.OrdinalIgnoreCase))
+                var identity = models[i].Identity;
+                List<string> differences = new List<string>();
+
+                if (!string.Equals(refIdentity.AzureDevOpsAccount, identity.AzureDevOpsAccount, StringComparison.OrdinalIgnoreCase))
                 {
-                    _log.LogError("Build identity properties are not identical across manifests.");
+                    differences.Add($"AzureDevOpsAccount: expected '{refIdentity.AzureDevOpsAccount}', found '{identity.AzureDevOpsAccount}'");
+                }
+                if (!string.Equals(refIdentity.AzureDevOpsBranch, identity.AzureDevOpsBranch, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"AzureDevOpsBranch: expected '{refIdentity.AzureDevOpsBranch}', found '{identity.AzureDevOpsBranch}'");
+                }
+                if (refIdentity.AzureDevOpsBuildDefinitionId != identity.AzureDevOpsBuildDefinitionId)
+                {
+                    differences.Add($"AzureDevOpsBuildDefinitionId: expected '{refIdentity.AzureDevOpsBuildDefinitionId}', found '{identity.AzureDevOpsBuildDefinitionId}'");
+                }
+                if (refIdentity.AzureDevOpsBuildId != identity.AzureDevOpsBuildId)
+                {
+                    differences.Add($"AzureDevOpsBuildId: expected '{refIdentity.AzureDevOpsBuildId}', found '{identity.AzureDevOpsBuildId}'");
+                }
+                if (!string.Equals(refIdentity.AzureDevOpsBuildNumber, identity.AzureDevOpsBuildNumber, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"AzureDevOpsBuildNumber: expected '{refIdentity.AzureDevOpsBuildNumber}', found '{identity.AzureDevOpsBuildNumber}'");
+                }
+                if (!string.Equals(refIdentity.AzureDevOpsProject, identity.AzureDevOpsProject, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"AzureDevOpsProject: expected '{refIdentity.AzureDevOpsProject}', found '{identity.AzureDevOpsProject}'");
+                }
+                if (!string.Equals(refIdentity.AzureDevOpsRepository, identity.AzureDevOpsRepository, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"AzureDevOpsRepository: expected '{refIdentity.AzureDevOpsRepository}', found '{identity.AzureDevOpsRepository}'");
+                }
+                if (!string.Equals(refIdentity.Branch, identity.Branch, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"Branch: expected '{refIdentity.Branch}', found '{identity.Branch}'");
+                }
+                if (!string.Equals(refIdentity.BuildId, identity.BuildId, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"BuildId: expected '{refIdentity.BuildId}', found '{identity.BuildId}'");
+                }
+                if (!string.Equals(refIdentity.InitialAssetsLocation, identity.InitialAssetsLocation, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"InitialAssetsLocation: expected '{refIdentity.InitialAssetsLocation}', found '{identity.InitialAssetsLocation}'");
+                }
+                if (refIdentity.IsReleaseOnlyPackageVersion != identity.IsReleaseOnlyPackageVersion)
+                {
+                    differences.Add($"IsReleaseOnlyPackageVersion: expected '{refIdentity.IsReleaseOnlyPackageVersion}', found '{identity.IsReleaseOnlyPackageVersion}'");
+                }
+                if (refIdentity.IsStable != identity.IsStable)
+                {
+                    differences.Add($"IsStable: expected '{refIdentity.IsStable}', found '{identity.IsStable}'");
+                }
+                if (!string.Equals(refIdentity.ProductVersion, identity.ProductVersion, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"ProductVersion: expected '{refIdentity.ProductVersion}', found '{identity.ProductVersion}'");
+                }
+                if (refIdentity.PublishingVersion != identity.PublishingVersion)
+                {
+                    differences.Add($"PublishingVersion: expected '{refIdentity.PublishingVersion}', found '{identity.PublishingVersion}'");
+                }
+                if (!string.Equals(refIdentity.VersionStamp, identity.VersionStamp, StringComparison.OrdinalIgnoreCase))
+                {
+                    differences.Add($"VersionStamp: expected '{refIdentity.VersionStamp}', found '{identity.VersionStamp}'");
+                }
+
+                if (differences.Count > 0)
+                {
+                    _log.LogError($"Build identity properties mismatch in manifest '{identity.Name}': {string.Join("; ", differences)}");
                     return null;
                 }
             }

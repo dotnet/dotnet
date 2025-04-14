@@ -10,7 +10,7 @@ For .NET Core 3, the engineering system must be able to support a number of core
 - Builds involving stabilized assets (that are only published after validation).
 - Internal only builds.
 - Non-validated builds (only requirement for producing a new product is that "it builds").
-- Speculative builds (see https://github.com/dotnet/arcade/blob/master/Documentation/Maestro.md#speculative-version-flow).
+- Speculative builds (see [Maestro.md](Maestro.md#speculative-version-flow)).
 - Upstack builds on PRs.
 
 In Prodcon v2, there are a number of central principals that shape how the product is constructed:
@@ -145,38 +145,38 @@ There are a variety of scenarios that require changes in channels, branches and 
 
 Onboarding of new repositories adds new nodes to the product dependency graph. Initially the number of nodes in the dependency graph is 0. There are no branches of any repos producing assets for any channel, and thus there are no subscriptions consuming those assets (because there would be no place to move them). Onboarding the initial repository involves the following:
 
-1. Define potential content - The dotnet/coreclr repo's master branch should be onboarded.
-2. Onboard dotnet/coreclr to Arcade style publishing.  Arcade publishing will push build assets to shared storage locations and notify the [Build Asset Registry (BAR)](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) of new builds.
-3. Create content - Build dotnet/coreclr's master branch (let's say its ID is 'dotnet/coreclr#1')  Through arcade publishing a new entry for this build will be created in the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md).  'dotnet/coreclr#1' will not initially have a channel..
-4. Create a new channel for content - Create '.NET Core 3.0.0' channel in the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md)
+1. Define potential content - The dotnet/runtime repo's main branch should be onboarded.
+2. Onboard dotnet/runtime to Arcade style publishing.  Arcade publishing will push build assets to shared storage locations and notify the Build Asset Registry (BAR) of new builds.
+3. Create content - Build dotnet/runtime's main branch (let's say its ID is 'dotnet/runtime#1')  Through arcade publishing a new entry for this build will be created in the BAR. 'dotnet/runtime#1' will not initially have a channel..
+4. Create a new channel for content - Create '.NET Core 3.0.0' channel in the BAR
     ```
-    darc channel new '.NET Core 3.0.0'
+    darc add-channel --name '.NET Core 3.0.0'
     ```
-5. Assign existing dotnet/coreclr builds to the channel if desired - dotnet/coreclr's master branch creates content for '.NET Core 3.0.0' channel, so use the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) to assign 'dotnet/coreclr#1' to '.NET Core 3.0.0'
+5. Assign existing dotnet/runtime builds to the channel if desired - dotnet/runtime's main branch creates content for '.NET Core 3.0.0' channel, so use the BAR to assign 'dotnet/runtime#1' to '.NET Core 3.0.0'
     ```
-    darc channel assign 'dotnet/coreclr#1' '.NET Core 3.0.0'
+    darc add-build-to-channel --id '<barId>' --channel '.NET Core 3.0.0'
     ```
-6. Assign future builds of a specific branch a default channel (if desired) - Use the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) to map dotnet/coreclr master onto '.NET Core 3.0.0'.
+6. Assign future builds of a specific branch a default channel (if desired) - Use the BAR to map dotnet/runtime main onto '.NET Core 3.0.0'.
 
     ```
-    darc channel edit '.NET Core 3.0.0'
+    darc add-default-channel --repo https://github.com/dotnet/runtime --branch main --channel '.NET Core 3.0.0'
     ```
 
 Once the repository graph has more than one node (or if there is a circular dependency, like in the case of dotnet/arcade), it becomes possible to create subscriptions.  Onboarding new repositories after the initial node involves the steps above with the following alterations/additions:
 
 1. No new channel is necessary if repository/branch being onboarded is producing assets for an existing channel
-2. Repository should be onboarded onto the formal [dependency description format](https://github.com/dotnet/arcade/blob/master/Documentation/DependencyDescriptionFormat.md), enabling automated update of dependencies via Darc.
+2. Repository should be onboarded onto the formal [dependency description format](DependencyDescriptionFormat.md), enabling automated update of dependencies via Darc.
 
-Let's say dotnet/corefx's master branch is the second branch to be onboarded.  dotnet/corefx has a dependency on dotnet/coreclr's output assets.
+Let's say dotnet/corefx's main branch is the second branch to be onboarded.  dotnet/corefx has a dependency on dotnet/runtime's output assets.
 
-1. Define potential content - The dotnet/corefx repo's master branch should be onboarded.
-2. Onboard dotnet/corefx to Arcade style publishing.  Arcade publishing will push build assets to shared storage locations and notify the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) of new builds.
-3. Onboard dotnet/corefx to Arcade style dependency management - Create a Dependency.Versions.xml and associated dependency props files in the master branch.  Use Darc to add dependencies for specific dotnet/coreclr dependencies (e.g. Microsoft.NETCore.Runtime.Coreclr). These dependencies were produced by dotnet/coreclr builds and assigned to the '.NET Core 3.0.0' channel.
-4. Create content - Build dotnet/corefx's master branch (let's say its ID is 'dotnet/corefx#3')  Through arcade publishing a new entry for this build will be created in the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md).  'dotnet/corefx#3' will not initially have a channel..
-6. Assign new dotnet/corefx build to the channel - dotnet/corefx's master branch creates content for '.NET Core 3.0.0' channel, so use the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) to assign 'dotnet/corefx#3' to '.NET Core 3.0.0'
-7. Assign future builds of a specific branch a default channel (if desired) - Use the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) to map dotnet/corefx master onto '.NET Core 3.0.0'.
-8. Add a subscription to automatically pull new dotnet/coreclr dependencies into dotnet/corefx's master branch. Subscription info
-   - Mapping - Any dotnet/coreclr .NET Core 3.0.0 asset -> dotnet/corefx's master branch
+1. Define potential content - The dotnet/corefx repo's main branch should be onboarded.
+2. Onboard dotnet/corefx to Arcade style publishing.  Arcade publishing will push build assets to shared storage locations and notify the BAR of new builds.
+3. Onboard dotnet/corefx to Arcade style dependency management - Create a Dependency.Versions.xml and associated dependency props files in the main branch. Use Darc to add dependencies for specific dotnet/runtime dependencies (e.g. Microsoft.NETCore.Runtime.Coreclr). These dependencies were produced by dotnet/runtime builds and assigned to the '.NET Core 3.0.0' channel.
+4. Create content - Build dotnet/corefx's main branch (let's say its ID is 'dotnet/corefx#3')  Through arcade publishing a new entry for this build will be created in the BAR.  'dotnet/corefx#3' will not initially have a channel..
+6. Assign new dotnet/corefx build to the channel - dotnet/corefx's main branch creates content for '.NET Core 3.0.0' channel, so use the BAR to assign 'dotnet/corefx#3' to '.NET Core 3.0.0'
+7. Assign future builds of a specific branch a default channel (if desired) - Use the BAR to map dotnet/corefx main onto '.NET Core 3.0.0'.
+8. Add a subscription to automatically pull new dotnet/runtime dependencies into dotnet/corefx's main branch. Subscription info
+   - Mapping - Any dotnet/runtime .NET Core 3.0.0 asset -> dotnet/corefx's main branch
    - Quality metric - No quality metric (implies build passes)
    - Trigger - Nightly at 2am
 
@@ -194,7 +194,7 @@ Let's look at a simple example of branching for stabilization and release.  This
 
 ```
 dotnet/core-sdk
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
         - aspnet/universe
@@ -205,21 +205,21 @@ dotnet/core-sdk
         - aspnet/universe .NET Core 3.0 Dev
         - dotnet/roslyn Dev16.0
 dotnet/core-setup
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - none
 aspnet/universe
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Dev
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -244,7 +244,7 @@ dotnet/core-sdk
         - aspnet/universe
         - dotnet/roslyn
     - automerge
-        - release/3.0.1xx -> master
+        - release/3.0.1xx -> main
     - output channels: .NET Core 3.0, .NET Core SDK 3.0.1xx
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
@@ -255,7 +255,7 @@ dotnet/core-setup
     - depends on
         - none
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - none
@@ -264,12 +264,12 @@ aspnet/universe
     - depends on
         - dotnet/core-setup
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -281,7 +281,7 @@ And the newly created .NET Core 3.1.0 Dev graph looks like:
 
 ```
 dotnet/core-sdk
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
         - aspnet/universe
@@ -292,21 +292,21 @@ dotnet/core-sdk
         - aspnet/universe .NET Core 3.1 Dev
         - dotnet/roslyn Dev16.0
 dotnet/core-setup
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: .NET Core 3.1 Dev
     - subscriptions
         - none
 aspnet/universe
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
     - output channel: .NET Core 3.1 Dev
     - subscriptions
         - dotnet/core-setup .NET Core 3.1 Dev
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -331,7 +331,7 @@ Let's start with the same input graph as before:
 
 ```
 dotnet/core-sdk
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
         - aspnet/universe
@@ -342,21 +342,21 @@ dotnet/core-sdk
         - aspnet/universe .NET Core 3.0 Dev
         - dotnet/roslyn Dev16.0
 dotnet/core-setup
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - none
 aspnet/universe
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Dev
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -366,7 +366,7 @@ dotnet/roslyn
 
 Let's say a user wants to do work in core-setup and aspnet/universe on previously created branches for feature/foo.  Basically that means that they probably want to have the output of those branches appear in the SDK.  Remember the Product Construction v2 rules:
 - Since all changes involve commits, that means that there must be a new branch of core-sdk that can take the output aspnet/universe and core-setup branches.
-- No more than one channel per input repo may flow input a repo+branch combo (e.g. cannot have dotnet/core-setup's .NET Core 3.0 and dotnet/core-setup's .NET Core 3.1 assets flow to dotnet/core-sdk master as there will be collisions)
+- No more than one channel per input repo may flow input a repo+branch combo (e.g. cannot have dotnet/core-setup's .NET Core 3.0 and dotnet/core-setup's .NET Core 3.1 assets flow to dotnet/core-sdk main as there will be collisions)
 - A single channel may not receive input from two different branches in the same repo.
 
 This means that we need:
@@ -378,14 +378,14 @@ If we want to create a channel called ".NET Core 3.0 Feature/Foo"
 
 ```
 dotnet/core-sdk
-    - branch: feature/foo (forked from master)
+    - branch: feature/foo (forked from main)
     - depends on
         - dotnet/core-setup
         - aspnet/universe
         - dotnet/roslyn
     - automerge
-        - master -> feature/foo
-    - output channels: .NET Core 3.0 Feature/Foo (.NET Core 3.0.1xx eliminated because master already produces this)
+        - main -> feature/foo
+    - output channels: .NET Core 3.0 Feature/Foo (.NET Core 3.0.1xx eliminated because main already produces this)
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Feature/Foo
         - aspnet/universe .NET Core 3.0 Feature/Foo
@@ -395,7 +395,7 @@ dotnet/core-setup
     - depends on
         - none
     - automerge
-        - master -> feature/foo
+        - main -> feature/foo
     - output channel: .NET Core 3.0 Feature/Foo
     - subscriptions
         - none
@@ -404,12 +404,12 @@ aspnet/universe
     - depends on
         - dotnet/core-setup
     - automerge
-        - master -> feature/foo
+        - main -> feature/foo
     - output channel: .NET Core 3.0 Feature/Foo
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Feature/Foo
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -433,7 +433,7 @@ Starting from the original graph again:
 
 ```
 dotnet/core-sdk
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
         - aspnet/universe
@@ -444,21 +444,21 @@ dotnet/core-sdk
         - aspnet/universe .NET Core 3.0 Dev
         - dotnet/roslyn Dev16.0
 dotnet/core-setup
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - none
 aspnet/universe
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
     - output channel: .NET Core 3.0 Dev
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Dev
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -470,36 +470,36 @@ We want to branch into '.NET Core 3.0 Unstable', producing a graph that looks th
 
 ```
 dotnet/core-sdk
-    - branch: master-unstable
+    - branch: main-unstable
     - depends on
         - dotnet/core-setup
         - aspnet/universe
         - dotnet/roslyn
     - output channels: .NET Core 3.0 Unstable
     - automerge
-        - master -> master-unstable
+        - main -> main-unstable
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Unstable, no validation
         - aspnet/universe .NET Core 3.0 Unstable, no validation
         - dotnet/roslyn Dev16.0, no validation
 dotnet/core-setup
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: .NET Core 3.0 Dev, .NET Core 3.0 Unstable
     - subscriptions
         - none
 aspnet/universe
-    - branch: master
+    - branch: main
     - depends on
         - dotnet/core-setup
     - automerge
-        - master -> master-unstable
+        - main -> main-unstable
     - output channel: .NET Core 3.0 Unstable
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Unstable
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -529,7 +529,7 @@ dotnet/core-sdk
         - aspnet/universe
         - dotnet/roslyn
     - automerge
-        - release/3.0.1xx -> master
+        - release/3.0.1xx -> main
     - output channels: .NET Core 3.0, .NET Core SDK 3.0.1xx
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
@@ -540,7 +540,7 @@ dotnet/core-setup
     - depends on
         - none
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - none
@@ -549,12 +549,12 @@ aspnet/universe
     - depends on
         - dotnet/core-setup
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -599,7 +599,7 @@ aspnet/universe
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Stabilized
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -631,7 +631,7 @@ dotnet/core-sdk
         - aspnet/universe
         - dotnet/roslyn
     - automerge
-        - release/3.0.1xx -> master
+        - release/3.0.1xx -> main
     - output channels: .NET Core 3.0, .NET Core SDK 3.0.1xx
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
@@ -642,7 +642,7 @@ dotnet/core-setup
     - depends on
         - none
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - none
@@ -651,12 +651,12 @@ aspnet/universe
     - depends on
         - dotnet/core-setup
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0
     - subscriptions
         - dotnet/core-setup .NET Core 3.0
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -679,7 +679,7 @@ dotnet/core-sdk
         - aspnet/universe
         - dotnet/roslyn
     - automerge
-        - release/3.0.1xx -> master
+        - release/3.0.1xx -> main
     - output channels: .NET Core 3.0 Internal
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Internal
@@ -690,7 +690,7 @@ dotnet/core-setup
     - depends on
         - none
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0 Internal
     - subscriptions
         - none
@@ -699,12 +699,12 @@ aspnet/universe
     - depends on
         - dotnet/core-setup
     - automerge
-        - release/3.0 -> master
+        - release/3.0 -> main
     - output channel: .NET Core 3.0 Internal
     - subscriptions
         - dotnet/core-setup .NET Core 3.0 Internal
 dotnet/roslyn
-    - branch: master
+    - branch: main
     - depends on
         - none
     - output channel: Dev16.0
@@ -733,194 +733,13 @@ An upstack build on a PR is a typical channel branch with the following modifica
 - Builds of upstack components are not signed
 - Subscriptions flow outputs on build completion, not gated by quality gates, though quality is reported.
 
+### Unified Build
+
+Unified Build is a new way of constructing .NET used for .NET 10 onwards. Documentation on this topic can be found at [UnifiedBuild](UnifiedBuild)
+
 ## Tooling
 
-This section describes the tooling and the expected behavior of each operation.
-
-### General Tooling UX
-
-Because of the complexities of the ecosystem, the goal of the tooling is not to automatically and immediately perform actions to get the desired result.  The goal is to infer as much of the required changes as is possible, present the user with a description of the actions to be taken, and allow them to alter as necessary. These actions and "before/after" view should be presented in a textual format similar to the way that git handles complex operations like rebase, commit, etc.
-
-The operations listed below should be implemented in darc.
-
-### Channel Branch
-
-This operation is called a channel branch.  An original channel is branched off into a new channel, creating or reusing N new branches (N >= 0).  Optionally takes a set of new root repositories that should be branched.  Specifying a root repository is primary targeted at the speculative build/dev scenarios, where it's not desired that all repos are branched.
-
-```
-darc channel branch <existing channel> <new channel> [root repos] [additional options]
-
-Additional options:
---merges <none|to-new|to-old (default)>   Determines auto-merge behavior.
-                                              none = no merges
-                                              to-new = merge from to new channel's branches from
-                                                existing channel's branches
-                                              to-old = merge from new channel's branches to
-                                                existing channel's branches
---movement-only                           Channel branch is for code movement only.
-                                            Don't branch where unnecessary, instead adding new channel to
-                                            existing mappings (see Unstable builds)
---internal                                New channel is internal-only
-```
-
-This operation is in two stages.  A confirmation/modification stage (present user with configuration that will be applied), and application of this new configuration.  To determine the predicted new configuration:
-
-**Determine input repo+branch list**
-
-1. In the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md), find the latest build of each repo that has produced assets in the last N days for the existing channel.  N defaults to 7.
-2. Add each build's repo+branch to input repo+branch list
-3. For this set of builds:
-    1. Determine unique set of input builds to that build.
-    2. For each of those builds, if build produced assets for the existing channel add to repo+branch list if not already in there.
-
-If a set of input repos has been presented, we need to filter from this list, any repo+branch combination that does not transitively depend on the input repos.  The analysis ends on back-edges (e.g. arcade depends on core-sdk).  For example:
-
-```
-REPO+BRANCH LIST:
-
-dotnet/core-sdk master depends on
-  aspnet/universe master depends on
-    dotnet/core-setup master depends on
-      dotnet/corefx master depends on
-        dotnet/coreclr master depends on
-          dotnet/arcade master depends on
-            dotnet/core-sdk master <- graph backedge
-
-INPUT REPOS (what the dev wants to work on):
-
-dotnet/corefx
-aspnet/universe
-
-FILTERED REPO LIST:
-
-dotnet/core-sdk master depends on <- reachable from aspnet/universe
-  aspnet/universe master depends on <- root
-    dotnet/core-setup master depends on <- reachable from dotnet/core-setup
-      dotnet/corefx master depends on <- root
-```
-
-**Determine subscriptions, branches, channels**
-
-1. Find all subscriptions that target the repo+branch combination list
-2. Find all default branch->channel mappings for the repo+branch combination list
-
-**Present the user with the suggested configuration**
-
-1. Newly created channel called <new channel>
-2. For each branch+repo combination.
-    1. Create a new branch based on the existing branch.  Stub out the branch names as required input fields?
-    2. Create a default branch->channel mapping of the new branch+repo onto <new channel>
-    3. Duplicate all subscriptions targeting the branch+repo combination, replacing those with input <existing channel> with <new channel>
-    4. Add an auto-merge from existing branch -> new branch.
-
-**Wait for user input**
-
-Allow user to modify configuration (branch names, remove subscriptions, add repos, etc.)
-
-**Validate and apply configuration**
-
-Validate the configuration and then apply the configuration using the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) REST API.
-
-#### Channel Rename
-
-Renames one channel to another.  In the process of renaming A to B, the following should change:
-- Subscriptions referencing A should reference B.
-- Default build branch->channel mappings referencing A should reference B.
-
-The following should **not** change
-- Existing builds assigned to channel A should not change to B.
-
-`darc channel rename <existing channel name> <new channel name>`
-
-This is just a simple rename and need not involve user interaction.
-
-#### Channel Create
-
-Creates a new channel
-
-```
-darc channel new <new channel name> [-internal]
-```
-
-If -internal is specific, channel is internal only.
-
-#### Channel Assign Build
-
-Assigns a build to a specific channel.
-
-```
-darc channel assign <build name> <channel name>
-```
-
-#### Channel Configuration Edit
-
-Edits the set of subscriptions/merges/default channel branch mappings related to a channel
-
-```
-darc channel edit <existing channel>
-```
-
-**Determine input repo+branch list**
-
-1. In the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md), find the latest build of each repo that has produced assets in the last N days for the existing channel.  N defaults to 7.
-2. Add each build's repo+branch to input repo+branch list
-3. For this set of builds:
-    1. Determine unique set of input builds to that build.
-    2. For each of those builds, if build produced assets for the existing channel add to repo+branch list if not already in there.
-
-**Determine subscriptions, branches, channels**
-
-1. Find all subscriptions that target the repo+branch combination list
-2. Find all default branch->channel mappings for the repo+branch combination list
-3. Find all auto-merges for the repo+branch combination list
-
-**Present user with existing configuration to edit**
-
-Without making suggested alterations, present the user with the existing configuration.
-
-**Wait for user input**
-
-Allow user to modify configuration (branch names, remove subscriptions, add repos, etc.)
-
-**Validate and apply configuration**
-
-Validate the configuration and then apply the configuration using the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) REST API.
-
-#### Multi-Channel Edit
-
-```
-darc channel edit-all <existing channel> [repo]
-```
-
-For all elements (potentially filtered by repo, present the user with a way to edit the configuration.  
-
-**Determine input repo+branch list**
-
-1. In the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md), find the latest build of each repo that has produced assets in the last N days for any channel.  N defaults to 7.
-2. Add each build's repo+branch to input repo+branch list
-3. For this set of builds:
-    1. Determine unique set of input builds to that build.
-    2. For each of those builds, add to repo+branch list if not already in there.
-
-If a set of input repos has been presented, we need to filter from this list, any repo+branch combination that does not transitively depend on the input repo.  The analysis ends on back-edges (e.g. arcade depends on core-sdk).
-
-**Determine subscriptions, branches, channels**
-
-1. Find all subscriptions that target the repo+branch combination list
-2. Find all default branch->channel mappings for the repo+branch combination list
-
-**Present user with existing configuration to edit**
-
-Without making suggested alterations, present the user with the existing configuration.
-
-**Wait for user input**
-
-Allow user to modify configuration (branch names, remove subscriptions, add repos, etc.)
-
-**Validate and apply configuration**
-
-Validate the configuration and then apply the configuration using the [BAR](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro/BuildAssetRegistry.md) REST API.
-
+Documentation on the tooling used to create and manipulate channels and subscriptions can be found at [Darc.md](Darc.md)
 
 <!-- Begin Generated Content: Doc Feedback -->
 <sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md)](https://helix.dot.net/f/p/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md)</sub>

@@ -760,7 +760,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
             descriptors,
             document,
             languageVersion: RazorLanguageVersion.Version_2_0,
-            fileKind: FileKinds.Legacy);
+            fileKind: RazorFileKind.Legacy);
     }
 
     [Fact]

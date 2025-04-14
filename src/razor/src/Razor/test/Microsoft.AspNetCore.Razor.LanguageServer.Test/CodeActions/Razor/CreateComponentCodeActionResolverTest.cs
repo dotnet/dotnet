@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,7 +25,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
         var contents = $"@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents, fileKind: FileKinds.Legacy);
+        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var resolver = new CreateComponentCodeActionResolver(TestLanguageServerFeatureOptions.Instance);
@@ -105,15 +104,13 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         Assert.Contains("@namespace Another.Namespace", ((TextEdit)editNewComponentEdit).NewText, StringComparison.Ordinal);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
+    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
     {
-        fileKind ??= FileKinds.Component;
-
         var projectItem = new TestRazorProjectItem(
             filePath: "c:/Test.razor",
             physicalPath: "c:/Test.razor",
             relativePhysicalPath: "Test.razor",
-            fileKind: fileKind)
+            fileKind: fileKind ?? RazorFileKind.Component)
         {
             Content = text
         };

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +20,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
@@ -88,10 +86,6 @@ internal sealed class MapCodeEndpoint(
             {
                 continue;
             }
-
-            var tagHelperContext = await documentContext.GetTagHelperContextAsync(cancellationToken).ConfigureAwait(false);
-            var fileKind = FileKinds.GetFileKindFromFilePath(documentContext.FilePath);
-            var extension = Path.GetExtension(documentContext.FilePath);
 
             var snapshot = documentContext.Snapshot;
 
@@ -235,7 +229,7 @@ internal sealed class MapCodeEndpoint(
                     if (insertionSpan is not null)
                     {
                         var textSpan = new TextSpan(insertionSpan.Value, 0);
-                        var edit = LspFactory.CreateTextEdit(sourceText.GetRange(textSpan), nodeToMap.ToFullString());
+                        var edit = LspFactory.CreateTextEdit(sourceText.GetRange(textSpan), nodeToMap.ToString());
 
                         var textDocumentEdit = new TextDocumentEdit
                         {
@@ -312,7 +306,7 @@ internal sealed class MapCodeEndpoint(
             textDocumentIdentifier,
             RazorLanguageKind.CSharp,
             mapCodeCorrelationId,
-            [nodeToMap.ToFullString()],
+            [nodeToMap.ToString()],
             FocusLocations: focusLocations);
 
         WorkspaceEdit? edits;

@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation. All rights reserved.
+﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading;
@@ -102,10 +102,10 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
             var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
             var node = tree.Root.FindNode(requestSpan, includeWhitespace: false, getInnermostNodeForTie: true);
             if (node?.FirstAncestorOrSelf<CSharpImplicitExpressionSyntax>() is { Parent: CSharpCodeBlockSyntax codeBlock } &&
-                (requestSpan == codeBlock.FullSpan || requestSpan.Length == 0))
+                (requestSpan == codeBlock.Span || requestSpan.Length == 0))
             {
                 // Pretend we're in Html so the rest of the logic can continue
-                request.Range = sourceText.GetRange(codeBlock.FullSpan);
+                request.Range = sourceText.GetRange(codeBlock.Span);
                 languageKind = RazorLanguageKind.Html;
             }
         }

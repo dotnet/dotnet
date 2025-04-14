@@ -490,8 +490,8 @@ internal class FormattingVisitor : RazorSyntaxWalker
 
         Assumes.NotNull(_currentBlock);
 
-        var spanSource = new TextSpan(node.Position, node.FullWidth);
-        var blockSource = new TextSpan(_currentBlock.Position, _currentBlock.FullWidth);
+        var spanSource = new TextSpan(node.Position, node.Width);
+        var blockSource = new TextSpan(_currentBlock.Position, _currentBlock.Width);
 
         var span = new FormattingSpan(
             spanSource,

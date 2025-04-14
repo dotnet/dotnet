@@ -38,7 +38,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             @page "/test"
             @code { private int x = 1; }
             """;
-        var codeDocument = CreateCodeDocument(contents, fileKind: FileKinds.Legacy);
+        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
@@ -686,15 +686,13 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             ((TextEdit)editCodeBehindEdit).NewText);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
+    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
     {
-        fileKind ??= FileKinds.Component;
-
         var projectItem = new TestRazorProjectItem(
             filePath: "c:/Test.razor",
             physicalPath: "c:/Test.razor",
             relativePhysicalPath: "Test.razor",
-            fileKind: fileKind)
+            fileKind: fileKind ?? RazorFileKind.Component)
         {
             Content = text
         };

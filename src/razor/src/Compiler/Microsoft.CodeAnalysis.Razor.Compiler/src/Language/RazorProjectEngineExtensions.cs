@@ -8,12 +8,12 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class RazorProjectEngineExtensions
 {
-    private static string DefaultFileKind => FileKinds.Legacy;
+    private static RazorFileKind DefaultFileKind => RazorFileKind.Legacy;
 
     public static RazorCodeDocument CreateCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source)
         => projectEngine.CreateCodeDocumentCore(source);
 
-    public static RazorCodeDocument CreateCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source, string fileKind)
+    public static RazorCodeDocument CreateCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source, RazorFileKind fileKind)
         => projectEngine.CreateCodeDocumentCore(source, fileKind);
 
     public static RazorCodeDocument CreateCodeDocument(
@@ -25,7 +25,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources)
         => projectEngine.CreateCodeDocumentCore(source, fileKind, importSources);
 
@@ -38,7 +38,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         IReadOnlyList<TagHelperDescriptor> tagHelpers)
         => projectEngine.CreateCodeDocumentCore(source, fileKind, tagHelpers: tagHelpers);
 
@@ -52,7 +52,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor> tagHelpers)
         => projectEngine.CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers);
@@ -60,21 +60,21 @@ public static class RazorProjectEngineExtensions
     private static RazorCodeDocument CreateCodeDocumentCore(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
     {
-        fileKind ??= source.FilePath is string filePath
-            ? FileKinds.GetFileKindFromFilePath(filePath)
-            : DefaultFileKind;
+        var fileKindValue = fileKind ?? (source.FilePath is string filePath
+            ? FileKinds.GetFileKindFromPath(filePath)
+            : DefaultFileKind);
 
-        return projectEngine.CreateCodeDocument(source, fileKind, importSources, tagHelpers, cssScope: null);
+        return projectEngine.CreateCodeDocument(source, fileKindValue, importSources, tagHelpers, cssScope: null);
     }
 
     public static RazorCodeDocument CreateDesignTimeCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source)
         => projectEngine.CreateDesignTimeCodeDocumentCore(source);
 
-    public static RazorCodeDocument CreateDesignTimeCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source, string fileKind)
+    public static RazorCodeDocument CreateDesignTimeCodeDocument(this RazorProjectEngine projectEngine, RazorSourceDocument source, RazorFileKind fileKind)
         => projectEngine.CreateDesignTimeCodeDocumentCore(source, fileKind);
 
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
@@ -86,7 +86,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources)
         => projectEngine.CreateDesignTimeCodeDocumentCore(source, fileKind, importSources);
 
@@ -99,7 +99,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         IReadOnlyList<TagHelperDescriptor> tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(source, fileKind, tagHelpers: tagHelpers);
 
@@ -113,7 +113,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor> tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(source, fileKind, importSources, tagHelpers);
@@ -121,14 +121,14 @@ public static class RazorProjectEngineExtensions
     private static RazorCodeDocument CreateDesignTimeCodeDocumentCore(
         this RazorProjectEngine projectEngine,
         RazorSourceDocument source,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
     {
-        fileKind ??= source.FilePath is string filePath
-            ? FileKinds.GetFileKindFromFilePath(filePath)
-            : DefaultFileKind;
+        var fileKindValue = fileKind ?? (source.FilePath is string filePath
+            ? FileKinds.GetFileKindFromPath(filePath)
+            : DefaultFileKind);
 
-        return projectEngine.CreateDesignTimeCodeDocument(source, fileKind, importSources, tagHelpers);
+        return projectEngine.CreateDesignTimeCodeDocument(source, fileKindValue, importSources, tagHelpers);
     }
 }

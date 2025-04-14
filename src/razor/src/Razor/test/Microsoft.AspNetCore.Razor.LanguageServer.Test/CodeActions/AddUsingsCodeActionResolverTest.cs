@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -147,7 +146,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             filePath: "c:/Test.cshtml",
             physicalPath: "c:/Test.cshtml",
             relativePhysicalPath: "Test.cshtml",
-            fileKind: FileKinds.Legacy)
+            fileKind: RazorFileKind.Legacy)
         {
             Content = contents
         };
@@ -380,7 +379,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             filePath,
             physicalPath: filePath,
             relativePhysicalPath: fileName,
-            fileKind: FileKinds.Component)
+            fileKind: RazorFileKind.Component)
         {
             Content = text
         };

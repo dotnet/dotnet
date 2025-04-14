@@ -59,10 +59,9 @@ person.Name
 
             __builder.OpenComponent<global::Test.MyComponent>(3);
             __builder.AddAttribute(4, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                __builder2.AddContent(5, 
 #nullable restore
-#line (5,3)-(5,18) "x:\dir\subdir\Test\TestComponent.cshtml"
-"hello, world!"
+#line (5,3)-(5,18) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(5, "hello, world!"
 
 #line default
 #line hidden

@@ -115,7 +115,7 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
                 }
 
                 idx -= currentOccupancy;
-                position += greenChild.FullWidth;
+                position += greenChild.Width;
             }
 
             slotIndex++;
@@ -158,7 +158,7 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
     internal static SyntaxNode ChildThatContainsPosition(SyntaxNode node, int targetPosition, out int index)
     {
         // The targetPosition must already be within this node
-        Debug.Assert(node.FullSpan.Contains(targetPosition));
+        Debug.Assert(node.Span.Contains(targetPosition));
 
         var green = node.Green;
         var position = node.Position;
@@ -174,7 +174,7 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
             var greenChild = green.GetSlot(slot);
             if (greenChild != null)
             {
-                var endPosition = position + greenChild.FullWidth;
+                var endPosition = position + greenChild.Width;
                 if (targetPosition < endPosition)
                 {
                     // Descend into the child element

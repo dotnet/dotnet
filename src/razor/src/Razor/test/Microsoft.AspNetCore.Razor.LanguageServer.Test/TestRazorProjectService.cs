@@ -40,7 +40,7 @@ internal class TestRazorProjectService(
     public async Task AddDocumentToPotentialProjectsAsync(string textDocumentPath, CancellationToken cancellationToken)
     {
         var document = new DocumentSnapshotHandle(
-            textDocumentPath, textDocumentPath, FileKinds.GetFileKindFromFilePath(textDocumentPath));
+            textDocumentPath, textDocumentPath, FileKinds.GetFileKindFromPath(textDocumentPath));
 
         foreach (var projectSnapshot in _projectManager.FindPotentialProjects(textDocumentPath))
         {

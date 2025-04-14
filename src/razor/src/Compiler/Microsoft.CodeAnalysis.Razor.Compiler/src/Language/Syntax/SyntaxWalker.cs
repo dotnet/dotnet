@@ -49,41 +49,4 @@ internal abstract class SyntaxWalker : SyntaxVisitor
             }
         }
     }
-
-    public override void VisitToken(SyntaxToken token)
-    {
-        if (_range is null || _range.Value.OverlapsWith(token.Span))
-        {
-            VisitLeadingTrivia(token);
-            VisitTrailingTrivia(token);
-        }
-    }
-
-    public virtual void VisitLeadingTrivia(SyntaxToken token)
-    {
-        if (token.HasLeadingTrivia)
-        {
-            foreach (var trivia in token.GetLeadingTrivia())
-            {
-                if (_range is null || _range.Value.OverlapsWith(token.Span))
-                {
-                    VisitTrivia(trivia);
-                }
-            }
-        }
-    }
-
-    public virtual void VisitTrailingTrivia(SyntaxToken token)
-    {
-        if (token.HasTrailingTrivia)
-        {
-            foreach (var trivia in token.GetTrailingTrivia())
-            {
-                if (_range is null || _range.Value.OverlapsWith(token.Span))
-                {
-                    VisitTrivia(trivia);
-                }
-            }
-        }
-    }
 }

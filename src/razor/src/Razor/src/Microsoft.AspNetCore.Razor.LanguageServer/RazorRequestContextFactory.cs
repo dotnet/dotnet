@@ -13,46 +13,47 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorRequestContextFactory(ILspServices lspServices) : AbstractRequestContextFactory<RazorRequestContext>
+internal sealed class RazorRequestContextFactory(
+    LspServices lspServices,
+    IDocumentContextFactory documentContextFactory,
+    ILoggerFactory loggerFactory) : AbstractRequestContextFactory<RazorRequestContext>
 {
-    private readonly ILspServices _lspServices = lspServices;
+    private readonly LspServices _lspServices = lspServices;
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorRequestContextFactory>();
 
     public override Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, IMethodHandler methodHandler, TRequestParams @params, CancellationToken cancellationToken)
     {
-        var logger = _lspServices.GetRequiredService<ILoggerFactory>().GetOrCreateLogger<RazorRequestContextFactory>();
-
         DocumentContext? documentContext = null;
-        var textDocumentHandler = methodHandler as ITextDocumentIdentifierHandler;
-
         Uri? uri = null;
-        var documentContextFactory = _lspServices.GetRequiredService<IDocumentContextFactory>();
-        if (textDocumentHandler is not null)
+
+        if (methodHandler is ITextDocumentIdentifierHandler textDocumentHandler)
         {
             if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, TextDocumentIdentifier> tdiHandler)
             {
                 var textDocumentIdentifier = tdiHandler.GetTextDocumentIdentifier(@params);
                 uri = textDocumentIdentifier.Uri;
 
-                logger.LogDebug($"Trying to create DocumentContext for {queueItem.MethodName} for {textDocumentIdentifier.GetProjectContext()?.Id ?? "(no project context)"} for {uri}");
+                _logger.LogDebug($"Trying to create DocumentContext for {queueItem.MethodName} for {textDocumentIdentifier.GetProjectContext()?.Id ?? "(no project context)"} for {uri}");
 
-                documentContextFactory.TryCreate(textDocumentIdentifier, out documentContext);
+                _documentContextFactory.TryCreate(textDocumentIdentifier, out documentContext);
             }
             else if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, Uri> uriHandler)
             {
                 uri = uriHandler.GetTextDocumentIdentifier(@params);
 
-                logger.LogDebug($"Trying to create DocumentContext for {queueItem.MethodName}, with no project context, for {uri}");
+                _logger.LogDebug($"Trying to create DocumentContext for {queueItem.MethodName}, with no project context, for {uri}");
 
-                documentContextFactory.TryCreate(uri, out documentContext);
+                _documentContextFactory.TryCreate(uri, out documentContext);
             }
             else
             {
-                throw new NotImplementedException();
+                return Assumed.Unreachable<Task<RazorRequestContext>>();
             }
 
             if (documentContext is null)
             {
-                logger.LogWarning($"Could not create a document context for {queueItem.MethodName} for {uri}. Endpoint may crash later if it calls GetRequiredDocumentContext.");
+                _logger.LogWarning($"Could not create a document context for {queueItem.MethodName} for {uri}. Endpoint may crash later if it calls GetRequiredDocumentContext.");
             }
         }
 
