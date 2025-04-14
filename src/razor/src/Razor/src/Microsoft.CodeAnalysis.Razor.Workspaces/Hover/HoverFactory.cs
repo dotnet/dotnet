@@ -92,8 +92,10 @@ internal static class HoverFactory
 
             var span = containingTagNameToken.GetLinePositionSpan(codeDocument.Source);
 
+            var filePath = codeDocument.Source.FilePath.AssumeNotNull();
+
             return ElementInfoToHoverAsync(
-                codeDocument.Source.FilePath, binding.Descriptors, span, options, componentAvailabilityService, cancellationToken);
+                filePath, binding.Descriptors, span, options, componentAvailabilityService, cancellationToken);
         }
 
         if (HtmlFacts.TryGetAttributeInfo(owner, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
@@ -215,7 +217,7 @@ internal static class HoverFactory
     }
 
     private static async Task<LspHover?> ElementInfoToHoverAsync(
-        string? documentFilePath,
+        string documentFilePath,
         ImmutableArray<TagHelperDescriptor> descriptors,
         LinePositionSpan span,
         HoverDisplayOptions options,
@@ -223,7 +225,7 @@ internal static class HoverFactory
         CancellationToken cancellationToken)
     {
         // Filter out attribute descriptors since we're creating an element hover
-        var keepAttributeInfo = FileKinds.GetFileKindFromFilePath(documentFilePath) == FileKinds.Legacy;
+        var keepAttributeInfo = FileKinds.GetFileKindFromPath(documentFilePath) == RazorFileKind.Legacy;
         var descriptionInfos = descriptors
             .Where(d => keepAttributeInfo || !d.IsAttributeDescriptor())
             .SelectAsArray(BoundElementDescriptionInfo.From);

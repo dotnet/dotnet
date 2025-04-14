@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Yes, all MEF is banned here -->
     <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv1.txt" />
     <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv2.txt" />

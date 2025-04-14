@@ -193,7 +193,7 @@ public abstract class ParserTestBase : IParserTest
         string document,
         bool designTime = false,
         IEnumerable<DirectiveDescriptor> directives = null,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         CSharpParseOptions csharpParseOptions = null,
         Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
@@ -205,7 +205,7 @@ public abstract class ParserTestBase : IParserTest
         string document,
         IEnumerable<DirectiveDescriptor> directives,
         bool designTime = false,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         CSharpParseOptions csharpParseOptions = null,
         Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
@@ -237,22 +237,22 @@ public abstract class ParserTestBase : IParserTest
 
     internal virtual void ParseDocumentTest(string document)
     {
-        ParseDocumentTest(document, null, false);
+        ParseDocumentTest(document, directives: null, designTime: false);
     }
 
-    internal virtual void ParseDocumentTest(string document, string fileKind)
+    internal virtual void ParseDocumentTest(string document, RazorFileKind fileKind)
     {
-        ParseDocumentTest(document, null, false, fileKind);
+        ParseDocumentTest(document, directives: null, designTime: false, fileKind);
     }
 
     internal virtual void ParseDocumentTest(string document, IEnumerable<DirectiveDescriptor> directives)
     {
-        ParseDocumentTest(document, directives, false);
+        ParseDocumentTest(document, directives, designTime: false);
     }
 
     internal virtual void ParseDocumentTest(string document, bool designTime)
     {
-        ParseDocumentTest(document, null, designTime);
+        ParseDocumentTest(document, directives: null, designTime);
     }
 
     internal void ParseDocumentTest(string document, CSharpParseOptions options)
@@ -264,7 +264,7 @@ public abstract class ParserTestBase : IParserTest
         string document,
         IEnumerable<DirectiveDescriptor> directives,
         bool designTime,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         CSharpParseOptions csharpParseOptions = null)
     {
         ParseDocumentTest(RazorLanguageVersion.Latest, document, directives, designTime, fileKind, csharpParseOptions);
@@ -275,7 +275,7 @@ public abstract class ParserTestBase : IParserTest
         string document,
         IEnumerable<DirectiveDescriptor> directives,
         bool designTime,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         CSharpParseOptions csharpParseOptions = null)
     {
         var result = ParseDocument(version, document, directives, designTime, fileKind: fileKind, csharpParseOptions: csharpParseOptions);
@@ -285,15 +285,13 @@ public abstract class ParserTestBase : IParserTest
 
     private RazorParserOptions CreateParserOptions(
         RazorLanguageVersion version,
-        string fileKind,
+        RazorFileKind? fileKind,
         bool designTime,
         IEnumerable<DirectiveDescriptor> directives,
         CSharpParseOptions csharpParseOptions,
         Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
-        fileKind ??= FileKinds.Legacy;
-
-        var builder = new RazorParserOptions.Builder(version, fileKind)
+        var builder = new RazorParserOptions.Builder(version, fileKind ?? RazorFileKind.Legacy)
         {
             DesignTime = designTime,
             Directives = [.. directives],

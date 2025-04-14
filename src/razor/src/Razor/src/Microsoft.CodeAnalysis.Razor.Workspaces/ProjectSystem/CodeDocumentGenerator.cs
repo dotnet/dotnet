@@ -12,7 +12,7 @@ internal readonly struct CodeDocumentGenerator(RazorProjectEngine projectEngine,
 {
     public RazorCodeDocument Generate(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         ImmutableArray<TagHelperDescriptor> tagHelpers,
         CancellationToken cancellationToken)
@@ -26,7 +26,7 @@ internal readonly struct CodeDocumentGenerator(RazorProjectEngine projectEngine,
 
     public RazorCodeDocument GenerateDesignTime(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         ImmutableArray<TagHelperDescriptor> tagHelpers,
         CancellationToken cancellationToken)

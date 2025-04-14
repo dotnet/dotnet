@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
@@ -28,7 +29,14 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    private protected async Task VerifyCodeActionAsync(TestCode input, string? expected, string codeActionName, int childActionIndex = 0, string? fileKind = null, (string filePath, string contents)[]? additionalFiles = null, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
+    private protected async Task VerifyCodeActionAsync(
+        TestCode input,
+        string? expected,
+        string codeActionName,
+        int childActionIndex = 0,
+        RazorFileKind? fileKind = null,
+        (string filePath, string contents)[]? additionalFiles = null,
+        (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
         var document = CreateRazorDocument(input, fileKind, additionalFiles);
 
@@ -47,7 +55,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         await VerifyCodeActionResultAsync(document, workspaceEdit, expected, additionalExpectedFiles);
     }
 
-    private protected TextDocument CreateRazorDocument(TestCode input, string? fileKind = null, (string filePath, string contents)[]? additionalFiles = null)
+    private protected TextDocument CreateRazorDocument(TestCode input, RazorFileKind? fileKind = null, (string filePath, string contents)[]? additionalFiles = null)
     {
         var fileSystem = (RemoteFileSystem)OOPExportProvider.GetExportedValue<IFileSystem>();
         fileSystem.GetTestAccessor().SetFileSystem(new TestFileSystem(additionalFiles));
@@ -65,8 +73,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return options;
         });
 
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
-        return document;
+        return CreateProjectAndRazorDocument(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
     }
 
     private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)

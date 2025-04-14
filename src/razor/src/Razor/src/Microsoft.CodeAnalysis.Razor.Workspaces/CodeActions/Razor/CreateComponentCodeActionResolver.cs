@@ -33,12 +33,12 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        if (!FileKinds.IsComponent(codeDocument.FileKind))
+        if (!documentContext.FileKind.IsComponent())
         {
             return null;
         }
+
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         // VS Code in Windows expects path to start with '/'
         var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")

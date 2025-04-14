@@ -129,7 +129,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.Single(
             project.DocumentFilePaths,
             filePath => filePath == s_documents[0].FilePath &&
-                        project.GetRequiredDocument(filePath).FileKind == FileKinds.Legacy);
+                        project.GetRequiredDocument(filePath).FileKind == RazorFileKind.Legacy);
 
         listener.AssertNotifications(
             x => x.DocumentAdded());
@@ -157,7 +157,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.Single(
             project.DocumentFilePaths,
             filePath => filePath == s_documents[3].FilePath &&
-                        project.GetRequiredDocument(filePath).FileKind == FileKinds.Component);
+                        project.GetRequiredDocument(filePath).FileKind == RazorFileKind.Component);
 
         listener.AssertNotifications(
             x => x.DocumentAdded());

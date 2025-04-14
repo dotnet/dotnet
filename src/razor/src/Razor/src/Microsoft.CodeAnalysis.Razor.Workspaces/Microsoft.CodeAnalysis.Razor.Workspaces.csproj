@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
   </ItemGroup>
 

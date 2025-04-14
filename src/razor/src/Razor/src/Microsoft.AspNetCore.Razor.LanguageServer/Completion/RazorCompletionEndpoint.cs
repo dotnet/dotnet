@@ -77,7 +77,7 @@ internal class RazorCompletionEndpoint(
                 AutoInsertAttributeQuotes: options.AutoInsertAttributeQuotes,
                 CommitElementsWithSpace: options.CommitElementsWithSpace);
 
-            return await _completionListProvider
+            var result = await _completionListProvider
                 .GetCompletionListAsync(
                     hostDocumentIndex,
                     completionContext,
@@ -87,6 +87,17 @@ internal class RazorCompletionEndpoint(
                     correlationId,
                     cancellationToken)
                 .ConfigureAwait(false);
+
+            if (result is null)
+            {
+                return null;
+            }
+
+            var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
+            var supportsCompletionListData = completionCapability?.CompletionList?.Data ?? false;
+
+            RazorCompletionResolveData.Wrap(result, request.TextDocument, supportsCompletionListData: supportsCompletionListData);
+            return result;
         }
     }
 }

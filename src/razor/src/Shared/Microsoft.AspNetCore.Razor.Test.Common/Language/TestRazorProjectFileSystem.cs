@@ -16,7 +16,7 @@ internal sealed class TestRazorProjectFileSystem(params IEnumerable<RazorProject
     public override IEnumerable<RazorProjectItem> EnumerateItems(string basePath)
         => throw new NotImplementedException();
 
-    public override RazorProjectItem GetItem(string path, string? fileKind)
+    public override RazorProjectItem GetItem(string path, RazorFileKind? fileKind)
         => _lookup.TryGetValue(path, out var value)
             ? value
             : new NotFoundProjectItem(path, fileKind);

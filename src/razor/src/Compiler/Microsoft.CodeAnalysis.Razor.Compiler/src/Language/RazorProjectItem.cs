@@ -45,13 +45,10 @@ public abstract class RazorProjectItem
     /// <summary>
     /// Gets the document kind that should be used for the generated document. If possible this will be inferred from the file path. May be null.
     /// </summary>
-    public virtual string FileKind
-    {
-        get
-        {
-            return FilePath == null ? null : FileKinds.GetFileKindFromFilePath(FilePath);
-        }
-    }
+    public virtual RazorFileKind FileKind
+        => FilePath == null
+            ? RazorFileKind.None
+            : FileKinds.GetFileKindFromPath(FilePath);
 
     /// <summary>
     /// Gets the file contents as readonly <see cref="Stream"/>.

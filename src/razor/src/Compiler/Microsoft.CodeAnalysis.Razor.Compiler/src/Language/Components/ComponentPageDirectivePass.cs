@@ -38,7 +38,7 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
         for (var i = 0; i < directives.Count; i++)
         {
             var directive = directives[i];
-            if (FileKinds.IsComponentImport(codeDocument.FileKind) || directive.Node.IsImported())
+            if (codeDocument.FileKind.IsComponentImport() || directive.Node.IsImported())
             {
                 directive.Node.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_CannotBeImported(directive.Node.Source.GetValueOrDefault()));
             }

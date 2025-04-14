@@ -2430,7 +2430,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         ];
 
         // Act & Assert
-        EvaluateData(descriptors, document, languageVersion: RazorLanguageVersion.Version_2_0, fileKind: FileKinds.Legacy);
+        EvaluateData(descriptors, document, languageVersion: RazorLanguageVersion.Version_2_0, fileKind: RazorFileKind.Legacy);
     }
 
     [Fact]

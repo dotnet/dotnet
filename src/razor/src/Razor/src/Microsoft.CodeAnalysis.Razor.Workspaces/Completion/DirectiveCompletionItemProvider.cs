@@ -124,7 +124,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     // Internal for testing
     internal static ImmutableArray<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
     {
-        var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind)
+        var defaultDirectives = syntaxTree.Options.FileKind.IsComponent()
             ? ComponentDefaultDirectives
             : MvcDefaultDirectives;
 

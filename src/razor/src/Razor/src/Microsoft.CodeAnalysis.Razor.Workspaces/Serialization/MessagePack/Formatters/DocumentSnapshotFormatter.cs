@@ -3,6 +3,7 @@
 
 using MessagePack;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
@@ -20,7 +21,7 @@ internal sealed class DocumentSnapshotHandleFormatter : ValueFormatter<DocumentS
 
         var filePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var targetPath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
-        var fileKind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var fileKind = (RazorFileKind)reader.ReadByte();
 
         return new DocumentSnapshotHandle(filePath, targetPath, fileKind);
     }
@@ -31,6 +32,6 @@ internal sealed class DocumentSnapshotHandleFormatter : ValueFormatter<DocumentS
 
         CachedStringFormatter.Instance.Serialize(ref writer, value.FilePath, options);
         CachedStringFormatter.Instance.Serialize(ref writer, value.TargetPath, options);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.FileKind, options);
+        writer.Write((byte)value.FileKind);
     }
 }

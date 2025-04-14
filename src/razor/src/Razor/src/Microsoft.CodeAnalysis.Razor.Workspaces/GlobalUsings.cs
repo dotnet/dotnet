@@ -4,7 +4,7 @@
 // This file is shared, but not all of the usings are needed for all files, so Roslyn seems keen to flag them as unused in this file
 #pragma warning disable IDE0005 // Using directive is unnecessary.
 
-// Strictly speaking we don't need these aliases in this project, but keeping things consistent with other projects
+// Strictly speaking we don't need these aliases in all projects, but keeping things consistent with other projects
 // makes for a more pleasant development experience.
 
 // Avoid extern alias in every file that needs to use Range

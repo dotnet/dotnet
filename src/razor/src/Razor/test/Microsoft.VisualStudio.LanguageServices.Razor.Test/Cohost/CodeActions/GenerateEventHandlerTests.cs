@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task NoCodeBlock()
     {
         var input = """
@@ -30,7 +30,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task CodeBlock()
     {
         var input = """
@@ -56,7 +56,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "@bind- attribute tag helper is not being found")]
     public async Task BindSet()
     {
         var input = """
@@ -84,7 +84,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "@bind- attribute tag helper is not being found")]
     public async Task BindAfter()
     {
         var input = """
@@ -112,7 +112,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task Callback()
     {
         var input = """
@@ -138,7 +138,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task AsyncCallback()
     {
         var input = """
@@ -164,7 +164,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task BadCodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -192,7 +192,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task CodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -231,7 +231,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task EmptyCodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -264,7 +264,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task GenerateAsyncEventHandler_NoCodeBlock()
     {
         var input = """
@@ -284,7 +284,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task GenerateAsyncEventHandler_CodeBlock()
     {
         var input = """

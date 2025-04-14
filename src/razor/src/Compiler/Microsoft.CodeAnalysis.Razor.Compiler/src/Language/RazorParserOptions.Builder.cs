@@ -12,17 +12,17 @@ public sealed partial class RazorParserOptions
     public sealed class Builder
     {
         public RazorLanguageVersion LanguageVersion { get; }
-        public string FileKind { get; }
+        public RazorFileKind FileKind { get; }
 
         private Flags _flags;
 
         public ImmutableArray<DirectiveDescriptor> Directives { get; set => field = value.NullToEmpty(); }
         public CSharpParseOptions CSharpParseOptions { get; set => field = value ?? CSharpParseOptions.Default; }
 
-        internal Builder(RazorLanguageVersion languageVersion, string fileKind)
+        internal Builder(RazorLanguageVersion languageVersion, RazorFileKind fileKind)
         {
             LanguageVersion = languageVersion ?? DefaultLanguageVersion;
-            FileKind = fileKind ?? DefaultFileKind;
+            FileKind = fileKind;
             Directives = [];
             CSharpParseOptions = CSharpParseOptions.Default;
             _flags = GetDefaultFlags(LanguageVersion, FileKind);

@@ -28,7 +28,7 @@ public class SyntaxTreeGenerationBenchmark
 
         ProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, fileSystem, b => RazorExtensions.Register(b)); ;
 
-        var projectItem = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), FileKinds.Legacy);
+        var projectItem = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), RazorFileKind.Legacy);
         MSN = RazorSourceDocument.ReadFrom(projectItem);
 
         var directiveFeature = ProjectEngine.Engine.GetFeatures<ConfigureDirectivesFeature>().FirstOrDefault();

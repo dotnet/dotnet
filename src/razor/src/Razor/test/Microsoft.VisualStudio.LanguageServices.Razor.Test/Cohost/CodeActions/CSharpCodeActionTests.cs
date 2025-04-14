@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task GenerateConstructor()
     {
         var input = """
@@ -45,7 +45,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task UseExpressionBodiedMember()
     {
         var input = """
@@ -78,7 +78,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.UseExpressionBody);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
     public async Task IntroduceLocal()
     {
         var input = """
@@ -125,7 +125,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
     public async Task IntroduceLocal_All()
     {
         var input = """
@@ -172,7 +172,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable, childActionIndex: 1);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_CSharpStatement()
     {
         var input = """
@@ -190,7 +190,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_ExplicitExpression()
     {
         var input = """
@@ -204,7 +204,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -224,7 +224,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock()
     {
         var input = """
@@ -244,7 +244,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock2()
     {
         var input = """
@@ -264,7 +264,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimString_CodeBlock()
     {
         var input = """
@@ -284,7 +284,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimString_CodeBlock2()
     {
         var input = """
@@ -304,7 +304,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertPlaceholderToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -324,7 +324,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertPlaceholderToInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task ConvertToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -344,7 +344,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertToInterpolatedString);
     }
 
-    [Fact(Skip = "Need to map uri back to source generated document")]
+    [Fact]
     public async Task AddDebuggerDisplay()
     {
         var input = """

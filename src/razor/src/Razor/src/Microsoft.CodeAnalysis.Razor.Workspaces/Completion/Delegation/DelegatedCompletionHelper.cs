@@ -1,10 +1,17 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 
@@ -233,5 +240,81 @@ internal static class DelegatedCompletionHelper
         }
 
         return !startOrEndTag.Span.Contains(absoluteIndex);
+    }
+
+    public static object? GetOriginalCompletionItemData(
+        VSInternalCompletionItem requestCompletionItem,
+        VSInternalCompletionList containingCompletionList,
+        object? originalCompletionListData)
+    {
+        var requestLabel = requestCompletionItem.Label;
+        var requestKind = requestCompletionItem.Kind;
+        var originalDelegatedCompletionItem = containingCompletionList.Items.FirstOrDefault(
+            completionItem => string.Equals(requestLabel, completionItem.Label, StringComparison.Ordinal)
+                && requestKind == completionItem.Kind);
+
+        if (originalDelegatedCompletionItem is null)
+        {
+            return null;
+        }
+
+        object? originalData;
+
+        // If the data was merged to combine resultId with original data, undo that merge and set the data back
+        // to what it originally was for the delegated request
+        if (CompletionListMerger.TrySplit(originalDelegatedCompletionItem.Data, out var splitData) && splitData.Length == 2)
+        {
+            originalData = splitData[1];
+        }
+        else
+        {
+            originalData = originalDelegatedCompletionItem.Data ?? originalCompletionListData;
+        }
+
+        return originalData;
+    }
+
+    public static async Task<VSInternalCompletionItem> FormatCSharpCompletionItemAsync(VSInternalCompletionItem resolvedCompletionItem, DocumentContext documentContext, RazorFormattingOptions options, IRazorFormattingService formattingService, CancellationToken cancellationToken)
+    {
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+
+        if (resolvedCompletionItem.TextEdit is not null)
+        {
+            if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
+            {
+                var textChange = csharpSourceText.GetTextChange(textEdit);
+                var formattedTextChange = await formattingService.TryGetCSharpSnippetFormattingEditAsync(
+                    documentContext,
+                    [textChange],
+                    options,
+                    cancellationToken).ConfigureAwait(false);
+
+                if (formattedTextChange is { } change)
+                {
+                    resolvedCompletionItem.TextEdit = sourceText.GetTextEdit(change);
+                }
+            }
+            else
+            {
+                // TODO: Handle InsertReplaceEdit type
+                // https://github.com/dotnet/razor/issues/8829
+                Debug.Fail("Unsupported edit type.");
+            }
+        }
+
+        if (resolvedCompletionItem.AdditionalTextEdits is not null)
+        {
+            var additionalChanges = resolvedCompletionItem.AdditionalTextEdits.SelectAsArray(csharpSourceText.GetTextChange);
+            var formattedTextChange = await formattingService.TryGetCSharpSnippetFormattingEditAsync(
+                documentContext,
+                additionalChanges,
+                options,
+                cancellationToken).ConfigureAwait(false);
+
+            resolvedCompletionItem.AdditionalTextEdits = formattedTextChange is { } change ? [sourceText.GetTextEdit(change)] : null;
+        }
+
+        return resolvedCompletionItem;
     }
 }

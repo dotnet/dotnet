@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper testOutput) : RazorToolingIntegrationTestBase(testOutput)
 {
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
     internal override bool UseTwoPhaseCompilation => true;
 
     [Fact]

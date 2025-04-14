@@ -160,6 +160,9 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
 
     private VSInternalCompletionItem ConvertToBridgedItem(CompletionItem completionItem)
     {
+        var list = new VSInternalCompletionList { Items = [completionItem] };
+        RazorCompletionResolveData.Wrap(list, textDocument: new(), supportsCompletionListData: false);
+
         var serialized = JsonSerializer.Serialize(completionItem, SerializerOptions);
         var bridgedItem = JsonSerializer.Deserialize<VSInternalCompletionItem>(serialized, SerializerOptions);
         return bridgedItem.AssumeNotNull();
