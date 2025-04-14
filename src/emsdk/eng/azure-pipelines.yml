@@ -52,7 +52,6 @@ extends:
           enablePublishBuildAssets: true
           enablePublishUsingPipelines: true
           enableMicrobuild: true
-          enableSourceBuild: true
 
           jobs:
           ############ macOS BUILD ############

@@ -66,12 +66,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return [.. generatorResult.TagHelpers];
     }
 
-    public RemoteDocumentSnapshot GetDocument(DocumentId documentId)
-    {
-        var document = _project.GetRequiredDocument(documentId);
-        return GetDocument(document);
-    }
-
     public RemoteDocumentSnapshot GetDocument(TextDocument document)
     {
         if (document.Project != _project)

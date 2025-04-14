@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
@@ -17,7 +16,7 @@ public sealed class RazorCodeDocument
     public RazorParserOptions ParserOptions { get; }
     public RazorCodeGenerationOptions CodeGenerationOptions { get; }
 
-    public string FileKind => ParserOptions.FileKind;
+    public RazorFileKind FileKind => ParserOptions.FileKind;
 
     private TagHelperDocumentContext? _tagHelperContext;
 

@@ -16,11 +16,11 @@ using Xunit;
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public class ComponentCodeGenerationTestBase(bool designTime = false)
-        : RazorBaselineIntegrationTestBase(layer: TestProject.Layer.Compiler)
+    : RazorBaselineIntegrationTestBase(layer: TestProject.Layer.Compiler)
 {
     private RazorConfiguration _configuration;
 
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     internal override bool UseTwoPhaseCompilation => true;
 
@@ -10540,7 +10540,7 @@ namespace Test
 @using System.Reflection
 @attribute [Serializable]
 ";
-        var importItem = CreateProjectItem("_Imports.razor", importContent, FileKinds.ComponentImport);
+        var importItem = CreateProjectItem("_Imports.razor", importContent, RazorFileKind.ComponentImport);
         ImportItems.Add(importItem);
         AdditionalSyntaxTrees.Add(Parse(@"
 using Microsoft.AspNetCore.Components;
@@ -10587,7 +10587,7 @@ namespace Test
 @layout MainLayout
 @Foo
 <div>Hello</div>
-", fileKind: FileKinds.ComponentImport, expectedCSharpDiagnostics: [
+", fileKind: RazorFileKind.ComponentImport, expectedCSharpDiagnostics: [
             // (4,31): error CS0246: The type or namespace name 'ComponentBase' could not be found (are you missing a using directive or an assembly reference?)
             //     public class MainLayout : ComponentBase, ILayoutComponent
             Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "ComponentBase").WithArguments("ComponentBase").WithLocation(4, 31),
@@ -10668,7 +10668,7 @@ namespace Test
 @using System.Reflection
 @namespace New.Test
 ";
-        var importItem = CreateProjectItem("_Imports.razor", importContent, FileKinds.ComponentImport);
+        var importItem = CreateProjectItem("_Imports.razor", importContent, RazorFileKind.ComponentImport);
         ImportItems.Add(importItem);
         AdditionalSyntaxTrees.Add(Parse(@"
 using Microsoft.AspNetCore.Components;
@@ -10702,7 +10702,7 @@ namespace New.Test
 @using System.Reflection
 @namespace Import.Test
 ";
-        var importItem = CreateProjectItem("_Imports.razor", importContent, FileKinds.ComponentImport);
+        var importItem = CreateProjectItem("_Imports.razor", importContent, RazorFileKind.ComponentImport);
         ImportItems.Add(importItem);
         AdditionalSyntaxTrees.Add(Parse(@"
 using Microsoft.AspNetCore.Components;
@@ -10747,7 +10747,7 @@ namespace New.Test
         var importContent = @"
 @preservewhitespace true
 ";
-        var importItem = CreateProjectItem("_Imports.razor", importContent, FileKinds.ComponentImport);
+        var importItem = CreateProjectItem("_Imports.razor", importContent, RazorFileKind.ComponentImport);
         ImportItems.Add(importItem);
 
         // Act
@@ -10772,7 +10772,7 @@ namespace New.Test
         var importContent = @"
 @preservewhitespace true
 ";
-        var importItem = CreateProjectItem("_Imports.razor", importContent, FileKinds.ComponentImport);
+        var importItem = CreateProjectItem("_Imports.razor", importContent, RazorFileKind.ComponentImport);
         ImportItems.Add(importItem);
 
         // Act

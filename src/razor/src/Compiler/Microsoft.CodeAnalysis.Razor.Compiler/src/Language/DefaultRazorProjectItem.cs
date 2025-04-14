@@ -11,7 +11,7 @@ internal class DefaultRazorProjectItem : RazorProjectItem
 {
     private FileInfo _fileInfo;
     private readonly string _physicalFilePath;
-    private readonly string _fileKind;
+    private readonly RazorFileKind? _fileKind;
 
     /// <summary>
     /// Initializes a new instance of <see cref="DefaultRazorProjectItem"/>.
@@ -22,7 +22,7 @@ internal class DefaultRazorProjectItem : RazorProjectItem
     /// <param name="fileKind">The file kind. If null, the document kind will be inferred from the file extension.</param>
     /// <param name="file">The <see cref="FileInfo"/>.</param>
     /// <param name="cssScope">A scope identifier that will be used on elements in the generated class, or null.</param>
-    public DefaultRazorProjectItem(string basePath, string filePath, string relativePhysicalPath, string fileKind, FileInfo file, string cssScope)
+    public DefaultRazorProjectItem(string basePath, string filePath, string relativePhysicalPath, RazorFileKind? fileKind, FileInfo file, string cssScope)
     {
         BasePath = basePath;
         FilePath = filePath;
@@ -42,7 +42,7 @@ internal class DefaultRazorProjectItem : RazorProjectItem
     /// <param name="relativePhysicalPath">The physical path of the base path.</param>
     /// <param name="fileKind">The file kind. If null, the document kind will be inferred from the file extension.</param>
     /// <param name="cssScope">A scope identifier that will be used on elements in the generated class, or null.</param>
-    public DefaultRazorProjectItem(string basePath, string filePath, string physicalPath, string relativePhysicalPath, string fileKind, string cssScope)
+    public DefaultRazorProjectItem(string basePath, string filePath, string physicalPath, string relativePhysicalPath, RazorFileKind? fileKind, string cssScope)
     {
         BasePath = basePath;
         FilePath = filePath;
@@ -64,7 +64,7 @@ internal class DefaultRazorProjectItem : RazorProjectItem
 
     public override string RelativePhysicalPath { get; }
 
-    public override string FileKind => _fileKind ?? base.FileKind;
+    public override RazorFileKind FileKind => _fileKind ?? base.FileKind;
 
     public override string CssScope { get; }
 

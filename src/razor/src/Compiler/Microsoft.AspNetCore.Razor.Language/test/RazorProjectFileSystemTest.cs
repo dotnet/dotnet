@@ -322,7 +322,7 @@ public class RazorProjectFileSystemTest
             throw new NotImplementedException();
         }
 
-        public override RazorProjectItem GetItem(string path, string? fileKind)
+        public override RazorProjectItem GetItem(string path, RazorFileKind? fileKind)
         {
             if (!_lookup.TryGetValue(path, out var value))
             {

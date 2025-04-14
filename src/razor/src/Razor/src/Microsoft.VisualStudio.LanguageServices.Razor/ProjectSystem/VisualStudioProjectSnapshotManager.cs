@@ -15,6 +15,6 @@ internal sealed class VisualStudioProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     ILoggerFactory loggerFactory)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions.ToCompilerOptions(), loggerFactory)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions.ToCompilerOptions(), languageServerFeatureOptions, loggerFactory)
 {
 }

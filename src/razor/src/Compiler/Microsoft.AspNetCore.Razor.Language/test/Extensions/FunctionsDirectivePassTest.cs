@@ -79,7 +79,7 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
         });
 
         var source = TestRazorSourceDocument.Create("@code { var value = true; }");
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
@@ -120,7 +120,7 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
 @functions { var value1 = true; }
 @code { var value2 = true; }
 @functions { var value3 = true; }");
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act

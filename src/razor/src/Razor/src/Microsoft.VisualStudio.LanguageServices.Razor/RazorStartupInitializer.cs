@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
@@ -11,12 +12,21 @@ using Microsoft.VisualStudio.ComponentModelHost;
 namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(RazorStartupInitializer))]
-[method: ImportingConstructor]
-internal sealed class RazorStartupInitializer([ImportMany] IEnumerable<IRazorStartupService> services)
+internal sealed class RazorStartupInitializer
 {
     private static RazorStartupInitializer? s_initializer;
 
-    public IEnumerable<IRazorStartupService> Services { get; } = services;
+    [ImportingConstructor]
+    public RazorStartupInitializer(
+        LanguageServerFeatureOptions options,
+        [ImportMany] IEnumerable<IRazorStartupService> services)
+    {
+        Debug.Assert(!options.UseRazorCohostServer, "If cohosting is on we should never initialize Razor startup services.");
+
+        Services = services;
+    }
+
+    public IEnumerable<IRazorStartupService> Services { get; }
 
     public static void Initialize(IServiceProvider serviceProvider)
     {

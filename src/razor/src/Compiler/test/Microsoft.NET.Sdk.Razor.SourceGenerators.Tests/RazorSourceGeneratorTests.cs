@@ -1204,6 +1204,38 @@ public class SurveyPrompt : ComponentBase
         }
 
         [Fact]
+        public async Task IncrementalCompilation_RazorFiles_CssScopeRemoved()
+        {
+            // Compile with CssScope set.
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, _, options) = await GetDriverWithAdditionalTextAndProviderAsync(project, static options =>
+            {
+                options.AdditionalTextOptions["Pages/Index.razor"]["build_metadata.AdditionalFiles.CssScope"] = "test-css-scope";
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is enabled.
+            Assert.Contains("<h1 test-css-scope>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
+
+            // Unset CssScope.
+            options = options.Clone();
+            options.AdditionalTextOptions["Pages/Index.razor"].Options.Remove("build_metadata.AdditionalFiles.CssScope");
+            driver = driver.WithUpdatedAnalyzerConfigOptions(options);
+
+            result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is disabled.
+            Assert.Contains("<h1>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
+        }
+
+        [Fact]
         public async Task SourceGenerator_CshtmlFiles_Works()
         {
             // Arrange

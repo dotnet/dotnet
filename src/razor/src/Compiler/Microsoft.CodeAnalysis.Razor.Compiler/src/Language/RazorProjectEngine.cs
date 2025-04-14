@@ -68,7 +68,7 @@ public sealed class RazorProjectEngine
 
     public RazorCodeDocument Process(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         CancellationToken cancellationToken = default)
@@ -96,7 +96,7 @@ public sealed class RazorProjectEngine
 
     public RazorCodeDocument ProcessDeclarationOnly(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         CancellationToken cancellationToken = default)
@@ -124,7 +124,7 @@ public sealed class RazorProjectEngine
 
     public RazorCodeDocument ProcessDesignTime(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         CancellationToken cancellationToken = default)
@@ -148,7 +148,7 @@ public sealed class RazorProjectEngine
 
     internal RazorCodeDocument CreateCodeDocument(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         string? cssScope)
@@ -160,7 +160,7 @@ public sealed class RazorProjectEngine
 
     internal RazorCodeDocument CreateDesignTimeCodeDocument(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers)
     {
@@ -183,7 +183,7 @@ public sealed class RazorProjectEngine
 
     private RazorCodeDocument CreateCodeDocumentCore(
         RazorSourceDocument source,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         string? cssScope,
@@ -218,7 +218,7 @@ public sealed class RazorProjectEngine
 
     private RazorCodeDocument CreateCodeDocumentDesignTimeCore(
         RazorSourceDocument sourceDocument,
-        string fileKind,
+        RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers,
         Action<RazorParserOptions.Builder>? configureParser,
@@ -249,7 +249,7 @@ public sealed class RazorProjectEngine
         return codeDocument;
     }
 
-    private RazorParserOptions ComputeParserOptions(string fileKind, Action<RazorParserOptions.Builder>? configure)
+    private RazorParserOptions ComputeParserOptions(RazorFileKind fileKind, Action<RazorParserOptions.Builder>? configure)
     {
         var builder = new RazorParserOptions.Builder(Configuration.LanguageVersion, fileKind);
 

@@ -1,10 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Xunit;
-using Moq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
+using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
@@ -20,7 +18,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: emptyBasePath,
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -41,7 +39,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/views",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -63,7 +61,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/views",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -84,7 +82,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -107,7 +105,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 

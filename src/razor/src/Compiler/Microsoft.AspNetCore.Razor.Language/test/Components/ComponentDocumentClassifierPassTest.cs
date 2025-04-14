@@ -20,7 +20,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("some-content", filePath: "Test.razor");
-        var codeDocument = ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
@@ -42,7 +42,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var source = TestRazorSourceDocument.Create("some-content", filePath: "/MyApp/Test.razor", relativePath: "Test.razor");
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
@@ -65,7 +65,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var source = TestRazorSourceDocument.Create("some-content", filePath: "/MyApp/Test.razor", relativePath: "Test.razor");
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
@@ -91,7 +91,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
 
         var relativePath = "/Pages/Announcements/Banner.razor";
         var source = TestRazorSourceDocument.Create("some-content", filePath: $"/MyApp{relativePath}", relativePath: relativePath);
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
@@ -116,7 +116,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var source = TestRazorSourceDocument.Create("some-content", filePath: @"x:\My.+App\path.with+invalid-chars.razor", relativePath: "path.with+invalid-chars.razor");
-        var codeDocument = projectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = projectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
@@ -136,7 +136,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("some-content", filePath: "Test.razor");
-        var codeDocument = ProjectEngine.CreateCodeDocument(source, FileKinds.Component);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source, RazorFileKind.Component);
         var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act

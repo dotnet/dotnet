@@ -9,6 +9,12 @@ pr:
     - README.md
     - docs/*
 
+trigger:
+  branches:
+    include:
+    - main
+    - release/*
+
 variables:
   - template: /eng/common/templates/variables/pool-providers.yml
   - name: _TeamName

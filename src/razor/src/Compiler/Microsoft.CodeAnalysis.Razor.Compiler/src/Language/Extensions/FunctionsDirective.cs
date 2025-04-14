@@ -25,7 +25,7 @@ public static class FunctionsDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Legacy, FileKinds.Component);
+        builder.AddDirective(Directive, RazorFileKind.Legacy, RazorFileKind.Component);
         builder.Features.Add(new FunctionsDirectivePass());
     }
 }

@@ -39,7 +39,7 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
         string documentContent,
         string tagHelperPrefix = null,
         RazorLanguageVersion languageVersion = null,
-        string fileKind = null,
+        RazorFileKind? fileKind = null,
         Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
         var syntaxTree = ParseDocument(languageVersion, documentContent, directives: null, fileKind: fileKind, configureParserOptions: configureParserOptions);

@@ -102,7 +102,8 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
             var uri = resolveParams.DelegatedDocumentUri.AssumeNotNull();
 
-            if (!razorDocument.Project.TryGetCSharpDocument(uri, out var generatedDocument))
+            var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(uri, cancellationToken).ConfigureAwait(false);
+            if (generatedDocument is null)
             {
                 return codeAction;
             }

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.IO;
 using Xunit;
 
@@ -11,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 // Integration tests focused on file path handling for class/namespace names
 public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
 {
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     [Fact]
     public void FileNameIsInvalidClassName_SanitizesInvalidClassName()

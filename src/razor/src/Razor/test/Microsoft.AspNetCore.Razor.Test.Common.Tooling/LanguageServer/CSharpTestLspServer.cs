@@ -5,16 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.Composition;
 using Nerdbank.Streams;
 using StreamJsonRpc;
+using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -25,6 +26,8 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
     private readonly JsonRpc _clientRpc;
     private readonly JsonRpc _serverRpc;
+
+    private readonly object _roslynLanguageServer;
 
     private readonly SystemTextJsonFormatter _clientMessageFormatter;
     private readonly SystemTextJsonFormatter _serverMessageFormatter;
@@ -67,7 +70,17 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
         _clientRpc.StartListening();
 
-        _ = CreateLanguageServer(_serverRpc, _serverMessageFormatter.JsonSerializerOptions, testWorkspace, languageServerFactory, exportProvider, serverCapabilities);
+        var languageServerTarget = CreateLanguageServer(_serverRpc, _serverMessageFormatter.JsonSerializerOptions, testWorkspace, languageServerFactory, exportProvider, serverCapabilities);
+
+        // This isn't ideal, but we need to pull the actual RoslynLanguageServer out of languageServerTarget
+        // so that we can call ShutdownAsync and ExitAsync on it when dispos
+        var languageServerField = languageServerTarget.GetType().GetField("_languageServer", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(languageServerField);
+
+        var roslynLanguageServer = languageServerField.GetValue(languageServerTarget);
+        Assert.NotNull(roslynLanguageServer);
+
+        _roslynLanguageServer = roslynLanguageServer;
 
         static SystemTextJsonFormatter CreateSystemTextJsonMessageFormatter(AbstractRazorLanguageServerFactoryWrapper languageServerFactory)
         {
@@ -142,6 +155,21 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        // This is a bit of a hack, but we need to call ShutdownAsync and ExitAsync on the RoslynLanguageServer
+        // so that it disconnects gracefully from _serverRpc. Otherwise, it'll fail if we dispose _serverRpc
+        // which forcibly disconnects the JsonRpc from the RoslynLanguageServer.
+        var shutdownAsyncMethod = _roslynLanguageServer.GetType()
+            .GetMethod("ShutdownAsync", BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(shutdownAsyncMethod);
+
+        await (Task)shutdownAsyncMethod.Invoke(_roslynLanguageServer, parameters: [$"{nameof(CSharpTestLspServer)} shutting down"]).AssumeNotNull();
+
+        var exitAsyncMethod = _roslynLanguageServer.GetType()
+            .GetMethod("ExitAsync", BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(exitAsyncMethod);
+
+        await (Task)exitAsyncMethod.Invoke(_roslynLanguageServer, parameters: null).AssumeNotNull();
+
         _testWorkspace.Dispose();
         _exportProvider.Dispose();
 

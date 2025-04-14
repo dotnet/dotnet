@@ -13,13 +13,12 @@ internal sealed class TextSnapshotProjectItem : RazorProjectItem
 {
     private readonly ITextSnapshot _snapshot;
 
-    public TextSnapshotProjectItem(ITextSnapshot snapshot, string projectDirectory, string relativeFilePath, string filePath, string fileKind)
+    public TextSnapshotProjectItem(ITextSnapshot snapshot, string projectDirectory, string relativeFilePath, string filePath, RazorFileKind fileKind)
     {
         ArgHelper.ThrowIfNull(snapshot);
         ArgHelper.ThrowIfNullOrEmpty(projectDirectory);
         ArgHelper.ThrowIfNullOrEmpty(relativeFilePath);
         ArgHelper.ThrowIfNullOrEmpty(filePath);
-        ArgHelper.ThrowIfNull(fileKind);
 
         _snapshot = snapshot;
         BasePath = projectDirectory;
@@ -29,7 +28,7 @@ internal sealed class TextSnapshotProjectItem : RazorProjectItem
     }
 
     public override string BasePath { get; }
-    public override string FileKind { get; }
+    public override RazorFileKind FileKind { get; }
     public override string FilePath { get; }
     public override string PhysicalPath { get; }
 

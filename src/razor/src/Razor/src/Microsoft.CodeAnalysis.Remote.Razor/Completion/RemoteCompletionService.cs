@@ -6,10 +6,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
+using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -28,8 +31,10 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
     }
 
     private readonly RazorCompletionListProvider _razorCompletionListProvider = args.ExportProvider.GetExportedValue<RazorCompletionListProvider>();
+    private readonly CompletionListCache _completionListCache = args.ExportProvider.GetExportedValue<CompletionListCache>();
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = args.ExportProvider.GetExportedValue<CompletionTriggerAndCommitCharacters>();
+    private readonly IRazorFormattingService _formattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
 
     public ValueTask<CompletionPositionInfo?> GetPositionInfoAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
@@ -126,6 +131,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 documentSnapshot, positionInfo.ProvisionalTextEdit, cancellationToken).ConfigureAwait(false);
 
             csharpCompletionList = await GetCSharpCompletionAsync(
+                remoteDocumentContext.GetTextDocumentIdentifierAndVersion(),
                 csharpGeneratedDocument,
                 codeDocument,
                 documentPositionInfo.HostDocumentIndex,
@@ -166,6 +172,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
     }
 
     private async ValueTask<RazorVSInternalCompletionList?> GetCSharpCompletionAsync(
+        TextDocumentIdentifierAndVersion identifier,
         SourceGeneratedDocument generatedDocument,
         RazorCodeDocument codeDocument,
         int documentIndex,
@@ -211,6 +218,12 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             mappedPosition,
             razorCompletionOptions);
 
+        var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
+
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, RazorLanguageKind.CSharp, rewrittenResponse.Data);
+        var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
+        rewrittenResponse.SetResultId(resultId, completionCapability);
+
         return rewrittenResponse;
     }
 
@@ -227,5 +240,98 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         }
 
         return generatedDocument;
+    }
+
+    public ValueTask<VSInternalCompletionItem> ResolveCompletionItemAsync(
+        JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
+        JsonSerializableDocumentId documentId,
+        VSInternalCompletionItem request,
+        RazorFormattingOptions formattingOptions,
+        CancellationToken cancellationToken)
+        => RunServiceAsync(
+            solutionInfo,
+            documentId,
+            context => ResolveCompletionItemAsync(context, request, formattingOptions, cancellationToken),
+            cancellationToken);
+
+    private ValueTask<VSInternalCompletionItem> ResolveCompletionItemAsync(
+        RemoteDocumentContext context,
+        VSInternalCompletionItem request,
+        RazorFormattingOptions formattingOptions,
+        CancellationToken cancellationToken)
+    {
+        if (!_completionListCache.TryGetOriginalRequestData(request, out var containingCompletionList, out var originalRequestContext))
+        {
+            // Couldn't find an associated completion list
+            return new(request);
+        }
+
+        if (originalRequestContext is DelegatedCompletionResolutionContext resolutionContext)
+        {
+            return ResolveCSharpCompletionItemAsync(context, request, containingCompletionList, resolutionContext, formattingOptions, cancellationToken);
+        }
+        else if (originalRequestContext is RazorCompletionResolveContext razorResolutionContext)
+        {
+            return ResolveRazorCompletionItemAsync(context, request, razorResolutionContext, cancellationToken);
+        }
+
+        // We don't know how to resolve this completion item, so just return it as-is.
+        Logger.LogWarning("Did not recognize completion item, so unable to resolve.");
+        return new(request);
+    }
+
+    private async ValueTask<VSInternalCompletionItem> ResolveRazorCompletionItemAsync(RemoteDocumentContext context, VSInternalCompletionItem request, RazorCompletionResolveContext razorResolutionContext, CancellationToken cancellationToken)
+    {
+        var componentAvailabilityService = new ComponentAvailabilityService(context.Snapshot.ProjectSnapshot.SolutionSnapshot);
+
+        var result = await RazorCompletionItemResolver.ResolveAsync(
+            request,
+            _clientCapabilitiesService.ClientCapabilities,
+            componentAvailabilityService,
+            razorResolutionContext,
+            cancellationToken).ConfigureAwait(false);
+
+        // If we couldn't resolve, fall back to what we were passed in
+        return result ?? request;
+    }
+
+    private async ValueTask<VSInternalCompletionItem> ResolveCSharpCompletionItemAsync(RemoteDocumentContext context, VSInternalCompletionItem request, VSInternalCompletionList containingCompletionList, DelegatedCompletionResolutionContext resolutionContext, RazorFormattingOptions formattingOptions, CancellationToken cancellationToken)
+    {
+        request.Data = DelegatedCompletionHelper.GetOriginalCompletionItemData(request, containingCompletionList, resolutionContext.OriginalCompletionListData);
+
+        var documentSnapshot = context.Snapshot;
+        var generatedDocument = await documentSnapshot.GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+        var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
+        var completionListSetting = clientCapabilities.TextDocument?.Completion;
+        var result = await ExternalAccess.Razor.Cohost.Handlers.Completion.ResolveCompletionItemAsync(
+            request,
+            generatedDocument,
+            clientCapabilities.SupportsVisualStudioExtensions,
+            completionListSetting ?? new(),
+            cancellationToken).ConfigureAwait(false);
+
+        var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
+
+        if (!item.VsResolveTextEditOnCommit)
+        {
+            // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
+            return item;
+        }
+
+        if (item.TextEdit is null && item.AdditionalTextEdits is null)
+        {
+            // Only post-processing work we have to do is formatting text edits on resolution.
+            return item;
+        }
+
+        item = await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
+            item,
+            context,
+            formattingOptions,
+            _formattingService,
+            cancellationToken).ConfigureAwait(false);
+
+        return item;
     }
 }

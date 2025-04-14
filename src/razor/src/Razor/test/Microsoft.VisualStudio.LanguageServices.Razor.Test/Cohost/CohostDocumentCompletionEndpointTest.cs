@@ -4,15 +4,22 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
+using Roslyn.Test.Utilities;
+using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -58,10 +65,12 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = "@",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["char", "DateTime", "Exception"]);
+            expectedItemLabels: ["char", "DateTime", "Exception"],
+            itemToResolve: "DateTime",
+            expectedResolvedItemDescription: "readonly struct System.DateTime");
     }
 
-    [Fact(Skip = "Can't modify a generated document to apply '.' character")]
+    [Fact]
     public async Task CSharpClassMembersAtProvisionalCompletion()
     {
         await VerifyCompletionListAsync(
@@ -81,7 +90,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
-    [Fact(Skip = "Can't modify a generated document to apply '.' character")]
+    [Fact]
     public async Task CSharpClassesInCodeBlock()
     {
         await VerifyCompletionListAsync(
@@ -139,8 +148,24 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
                 <div></div>
 
-                @code{ public override $$ }
+                @code {
+                    public override $$
+                }
 
+                The end.
+                """,
+            expected: """
+                This is a Razor document.
+            
+                <div></div>
+            
+                @code {
+                    public override Task SetParametersAsync(ParameterView parameters)
+                    {
+                        return base.SetParametersAsync(parameters);
+                    }
+                }
+            
                 The end.
                 """,
             completionContext: new VSInternalCompletionContext()
@@ -149,7 +174,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = null,
                 TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"]);
+            expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"],
+            itemToResolve: "SetParametersAsync(ParameterView parameters)",
+            expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)");
     }
 
     // Tests MarkupTransitionCompletionItemProvider
@@ -178,7 +205,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["text", "EditForm", "InputDate", "div"],
-            delegatedItemLabels: ["div"]);
+            htmlItemLabels: ["div"]);
     }
 
     [Fact]
@@ -218,7 +245,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = "@",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: expectedLabels);
+            expectedItemLabels: expectedLabels,
+            itemToResolve: "page",
+            expectedResolvedItemDescription: "Mark the page as a routable component.");
     }
 
     [Fact]
@@ -232,6 +261,14 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
                 The end.
                 """,
+            expected:
+                """
+                This is a Razor document.
+
+                <EditForm 
+
+                The end.
+                """,
             completionContext: new VSInternalCompletionContext()
             {
                 InvokeKind = VSInternalCompletionInvokeKind.Typing,
@@ -239,7 +276,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["LayoutView", "EditForm", "ValidationMessage", "div"],
-            delegatedItemLabels: ["div"]);
+            htmlItemLabels: ["div"],
+            itemToResolve: "EditForm",
+            expectedResolvedItemDescription: "Microsoft.AspNetCore.Components.Forms.EditForm");
     }
 
     [Fact]
@@ -260,7 +299,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"]);
+            htmlItemLabels: ["div", "h1"]);
     }
 
     [Fact]
@@ -279,7 +318,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"],
+            htmlItemLabels: ["div", "h1"],
             unexpectedItemLabels: ["snippet1", "snippet2"]);
     }
 
@@ -301,8 +340,8 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"],
-            delegatedItemCommitCharacters: [" ", ">"],
+            htmlItemLabels: ["div", "h1"],
+            htmlItemCommitCharacters: [" ", ">"],
             commitElementsWithSpace: false);
     }
 
@@ -324,7 +363,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
@@ -342,7 +381,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
@@ -361,7 +400,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
@@ -380,7 +419,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
@@ -403,7 +442,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: ["style", "dir"],
             unexpectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: ["style", "dir"],
+            htmlItemLabels: ["style", "dir"],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
@@ -426,7 +465,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
     // Tests HTML attributes and DirectiveAttributeCompletionItemProvider
@@ -448,7 +487,12 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "@rendermode", "@bind-..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "@rendermode",
+            expectedResolvedItemDescription: """
+                IComponentRenderMode Microsoft.AspNetCore.Components.RenderMode.RenderMode
+                Specifies the render mode for a component.
+                """);
     }
 
     // Tests HTML attributes and DirectiveAttributeParameterCompletionItemProvider
@@ -470,7 +514,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "culture", "event", "format", "get", "set", "after"],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
     [Fact]
@@ -491,7 +535,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "FormName",
+            expectedResolvedItemDescription: "string Microsoft.AspNetCore.Components.Forms.EditForm.FormName");
     }
 
     [Fact]
@@ -510,7 +556,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
     [Fact]
@@ -531,7 +577,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["FormName", "OnValidSubmit", "@...", "style"],
-            delegatedItemLabels: ["style"],
+            htmlItemLabels: ["style"],
             autoInsertAttributeQuotes: false);
     }
 
@@ -540,9 +586,12 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         VSInternalCompletionContext completionContext,
         string[] expectedItemLabels,
         string[]? unexpectedItemLabels = null,
-        string[]? delegatedItemLabels = null,
-        string[]? delegatedItemCommitCharacters = null,
+        string[]? htmlItemLabels = null,
+        string[]? htmlItemCommitCharacters = null,
         string[]? snippetLabels = null,
+        string? itemToResolve = null,
+        string? expected = null,
+        string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true)
     {
@@ -555,13 +604,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         const string InvalidLabel = "_INVALID_";
 
         // If delegatedItemLabels wasn't supplied, supply our own to ensure delegation isn't happening and causing a false positive result
-        delegatedItemLabels ??= [InvalidLabel];
+        htmlItemLabels ??= [InvalidLabel];
         var response = new RazorVSInternalCompletionList()
         {
-            Items = [.. delegatedItemLabels.Select((label) => new VSInternalCompletionItem()
+            Items = [.. htmlItemLabels.Select((label) => new VSInternalCompletionItem()
             {
                 Label = label,
-                CommitCharacters = delegatedItemCommitCharacters,
+                CommitCharacters = htmlItemCommitCharacters,
                 // If test specifies not to commit with space, set kind to element since we remove space
                 // commit from elements only. Otherwise test doesn't care, so set to None
                 Kind = !commitElementsWithSpace ? CompletionItemKind.Element : CompletionItemKind.None,
@@ -577,13 +626,16 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         var snippetInfos = snippetLabels.Select(label => new SnippetInfo(label, label, label, string.Empty, SnippetLanguage.Html)).ToImmutableArray();
         snippetCompletionItemProvider.SnippetCache.Update(SnippetLanguage.Html, snippetInfos);
 
+        var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             RemoteServiceInvoker,
             clientSettingsManager,
+            ClientCapabilitiesService,
             TestHtmlDocumentSynchronizer.Instance,
             snippetCompletionItemProvider,
             TestLanguageServerFeatureOptions.Instance,
             requestInvoker,
+            completionListCache,
             LoggerFactory);
 
         var request = new CompletionParams()
@@ -631,5 +683,78 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             // to false
             Assert.False(result.Items.Any(item => item.InsertText?.Contains("\"$0\"") ?? false));
         }
+
+        if (itemToResolve is null)
+        {
+            return;
+        }
+
+        Assert.NotNull(expectedResolvedItemDescription);
+
+        var item = Assert.Single(result.Items.Where(i => i.Label == itemToResolve));
+
+        await VerifyCompletionResolveAsync(document, completionListCache, item, expected, expectedResolvedItemDescription);
+    }
+
+    private async Task VerifyCompletionResolveAsync(CodeAnalysis.TextDocument document, CompletionListCache completionListCache, VSInternalCompletionItem item, string? expected, string expectedResolvedItemDescription)
+    {
+        // We expect data to be a JsonElement, so for tests we have to _not_ strongly type
+        item.Data = JsonSerializer.SerializeToElement(item.Data, JsonHelpers.JsonSerializerOptions);
+
+        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
+        var endpoint = new CohostDocumentCompletionResolveEndpoint(
+            completionListCache,
+            RemoteServiceInvoker,
+            clientSettingsManager,
+            TestHtmlDocumentSynchronizer.Instance,
+            new TestLSPRequestInvoker(),
+            LoggerFactory);
+
+        var tdi = endpoint.GetTestAccessor().GetRazorTextDocumentIdentifier(item);
+        Assert.NotNull(tdi);
+        Assert.Equal(document.CreateUri(), tdi.Value.Uri);
+
+        var result = await endpoint.GetTestAccessor().HandleRequestAsync(item, document, DisposalToken);
+
+        Assert.NotNull(result);
+
+        if (result.Description is not null)
+        {
+            AssertEx.EqualOrDiff(expectedResolvedItemDescription, FlattenDescription(result.Description));
+        }
+        else if (result.Documentation is { Value: string description })
+        {
+            AssertEx.EqualOrDiff(expectedResolvedItemDescription, description);
+        }
+        else
+        {
+            Assert.Fail("Unhandled description type: " + JsonSerializer.SerializeToElement(result).ToString());
+        }
+
+        if (result.TextEdit is { Value: TextEdit edit })
+        {
+            Assert.NotNull(expected);
+
+            var text = await document.GetTextAsync(DisposalToken).ConfigureAwait(false);
+            var changedText = text.WithChanges(text.GetTextChange(edit));
+
+            AssertEx.EqualOrDiff(expected, changedText.ToString());
+        }
+    }
+
+    private string? FlattenDescription(ClassifiedTextElement? description)
+    {
+        if (description is null)
+        {
+            return null;
+        }
+
+        var sb = new StringBuilder();
+        foreach (var run in description.Runs)
+        {
+            sb.Append(run.Text);
+        }
+
+        return sb.ToString();
     }
 }

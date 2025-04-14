@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -14,7 +16,10 @@ namespace Microsoft.CodeAnalysis;
 internal static class SolutionExtensions
 {
     public static ImmutableArray<DocumentId> GetDocumentIdsWithUri(this Solution solution, Uri uri)
-        => solution.GetDocumentIdsWithFilePath(uri.GetDocumentFilePath());
+    {
+        Debug.Assert(RazorUri.IsGeneratedDocumentUri(uri) == false, "This won't work with source generated Uris");
+        return solution.GetDocumentIdsWithFilePath(uri.GetDocumentFilePath());
+    }
 
     public static bool TryGetRazorDocument(this Solution solution, Uri razorDocumentUri, [NotNullWhen(true)] out TextDocument? razorDocument)
     {

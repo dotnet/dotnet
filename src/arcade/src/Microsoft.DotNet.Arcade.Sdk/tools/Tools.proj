@@ -97,8 +97,7 @@
         Condition="'$(Restore)' == 'true'"/>
   </Target>
 
-  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(DotNetBuildRepo)' == 'true' or
-                                                                          '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
 
   <!-- Repository extensibility point -->
   <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />

@@ -704,13 +704,15 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
                 builder.UseRoslynTokenizer = true;
             });
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, "mvc", importSources: default, tagHelpers: []);
+
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers: []);
 
         var csharpDocument = TestRazorCSharpDocument.Create(
             codeDocument,
             projectedCSharpSource,
             sourceMappings);
         codeDocument.SetCSharpDocument(csharpDocument);
+
         return codeDocument;
     }
 }

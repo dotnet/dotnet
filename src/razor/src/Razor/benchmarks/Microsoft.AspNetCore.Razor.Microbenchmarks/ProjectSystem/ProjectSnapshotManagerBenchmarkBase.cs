@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -43,7 +44,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         {
             var filePath = Path.Combine(projectRoot, "Views", "Home", $"View00{i % 4}.cshtml");
             documents.Add(
-                new HostDocument(filePath, $"/Views/Home/View00{i}.cshtml", FileKinds.Legacy));
+                new HostDocument(filePath, $"/Views/Home/View00{i}.cshtml", RazorFileKind.Legacy));
         }
 
         Documents = documents.ToImmutable();
@@ -53,5 +54,6 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         => new(
             projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
             compilerOptions: RazorCompilerOptions.None,
+            featureOptions: new DefaultLanguageServerFeatureOptions(),
             loggerFactory: EmptyLoggerFactory.Instance);
 }

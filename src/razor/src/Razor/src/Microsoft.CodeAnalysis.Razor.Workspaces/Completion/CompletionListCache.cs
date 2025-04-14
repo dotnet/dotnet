@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -42,7 +43,7 @@ internal class CompletionListCache
         }
     }
 
-    public bool TryGet(int id, [NotNullWhen(true)] out VSInternalCompletionList? completionList, [NotNullWhen(true)] out ICompletionResolveContext? context)
+    private bool TryGet(int id, [NotNullWhen(true)] out VSInternalCompletionList? completionList, [NotNullWhen(true)] out ICompletionResolveContext? context)
     {
         lock (_accessLock)
         {
@@ -87,5 +88,35 @@ internal class CompletionListCache
             context = null;
             return false;
         }
+    }
+
+    public bool TryGetOriginalRequestData(VSInternalCompletionItem completionItem, [NotNullWhen(true)] out VSInternalCompletionList? completionList, [NotNullWhen(true)] out ICompletionResolveContext? context)
+    {
+        context = null;
+        completionList = null;
+
+        if (!completionItem.TryGetCompletionListResultIds(out var resultIds))
+        {
+            // Unable to lookup completion item result info
+            return false;
+        }
+
+        foreach (var resultId in resultIds)
+        {
+            if (TryGet(resultId, out completionList, out context) &&
+                    // See if this is the right completion list for this corresponding completion item. We cross-check this based on label only given that
+                    // is what users interact with.
+                    completionList.Items.Any(
+                        completion =>
+                            completionItem.Label == completion.Label &&
+                            // Check the Kind as well, e.g. we may have a Razor snippet and a C# keyword with the same label, etc.
+                            completionItem.Kind == completion.Kind))
+            {
+                return true;
+            }
+        }
+
+        // Unable to lookup completion item result info
+        return false;
     }
 }

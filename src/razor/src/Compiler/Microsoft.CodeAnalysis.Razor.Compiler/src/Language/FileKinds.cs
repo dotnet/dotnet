@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,66 +9,67 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class FileKinds
 {
-    public static readonly string Component = "component";
+    private const string ComponentFileExtension = ".razor";
+    private const string LegacyFileExtension = ".cshtml";
 
-    public static readonly string ComponentImport = "componentImport";
+    /// <summary>
+    ///  Returns <see langword="true"/> if the specified value represents a component or component import.
+    /// </summary>
+    public static bool IsComponent(this RazorFileKind fileKind)
+        => fileKind is RazorFileKind.Component or RazorFileKind.ComponentImport;
 
-    public static readonly string Legacy = "mvc";
+    /// <summary>
+    ///  Returns <see langword="true"/> if the specified value represents a component import.
+    /// </summary>
+    public static bool IsComponentImport(this RazorFileKind fileKind)
+        => fileKind is RazorFileKind.ComponentImport;
 
-    public static bool IsComponent(string fileKind)
+    /// <summary>
+    ///  Returns <see langword="true"/> if the specified value represents a legacy file kind.
+    /// </summary>
+    public static bool IsLegacy(this RazorFileKind fileKind)
+        => fileKind is RazorFileKind.Legacy;
+
+    /// <summary>
+    ///  Compares the given file path to known Razor file extensions and names to determine the <see cref="RazorFileKind"/>.
+    ///  Returns <see langword="true"/> if a file kind can be determined; otherwise, <see langword="false"/>.
+    /// </summary>
+    public static bool TryGetFileKindFromPath(string filePath, out RazorFileKind fileKind)
     {
-        // fileKind might be null.
-        return string.Equals(fileKind, FileKinds.Component, StringComparison.OrdinalIgnoreCase) || IsComponentImport(fileKind);
+        ArgHelper.ThrowIfNull(filePath);
+
+        var fileName = Path.GetFileName(filePath);
+
+        if (string.Equals(ComponentMetadata.ImportsFileName, fileName, StringComparison.Ordinal))
+        {
+            fileKind = RazorFileKind.ComponentImport;
+            return true;
+        }
+
+        var extension = Path.GetExtension(filePath);
+
+        if (string.Equals(ComponentFileExtension, extension, StringComparison.OrdinalIgnoreCase))
+        {
+            fileKind = RazorFileKind.Component;
+            return true;
+        }
+
+        if (string.Equals(LegacyFileExtension, extension, StringComparison.OrdinalIgnoreCase))
+        {
+            fileKind = RazorFileKind.Legacy;
+            return true;
+        }
+
+        fileKind = default;
+        return false;
     }
 
-    public static bool IsComponentImport(string fileKind)
-    {
-        // fileKind might be null.
-        return string.Equals(fileKind, FileKinds.ComponentImport, StringComparison.OrdinalIgnoreCase);
-    }
-
-#nullable enable
-    internal static bool IsLegacy(string? fileKind)
-    {
-        return string.Equals(fileKind, FileKinds.Legacy, StringComparison.OrdinalIgnoreCase);
-    }
-#nullable disable
-
-    public static string GetComponentFileKindFromFilePath(string filePath)
-    {
-        if (filePath == null)
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        if (string.Equals(ComponentMetadata.ImportsFileName, Path.GetFileName(filePath), StringComparison.Ordinal))
-        {
-            return FileKinds.ComponentImport;
-        }
-        else
-        {
-            return FileKinds.Component;
-        }
-    }
-
-    public static string GetFileKindFromFilePath(string filePath)
-    {
-        if (filePath == null)
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        if (string.Equals(ComponentMetadata.ImportsFileName, Path.GetFileName(filePath), StringComparison.Ordinal))
-        {
-            return FileKinds.ComponentImport;
-        }
-        else if (string.Equals(".razor", Path.GetExtension(filePath), StringComparison.OrdinalIgnoreCase))
-        {
-            return FileKinds.Component;
-        }
-        else
-        {
-            return FileKinds.Legacy;
-        }
-    }
+    /// <summary>
+    ///  Compares the given file path to known Razor file extensions and names to determine the <see cref="RazorFileKind"/>.
+    ///  If a file kind can't be determined, the result is <see cref="RazorFileKind.Legacy"/>.
+    /// </summary>
+    public static RazorFileKind GetFileKindFromPath(string filePath)
+        => TryGetFileKindFromPath(filePath, out var fileKind)
+            ? fileKind
+            : RazorFileKind.Legacy;
 }

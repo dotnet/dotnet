@@ -68,13 +68,13 @@ internal sealed class CohostInlineCompletionEndpoint(
             return null;
         }
 
-        if (!razorDocument.Project.TryGetCSharpDocument(generatedDocumentUri, out var generatedDocument))
+        var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        if (generatedDocument is null)
         {
             return null;
         }
 
         var result = await Completion.GetInlineCompletionItemsAsync(context, generatedDocument, position, formattingOptions, cancellationToken).ConfigureAwait(false);
-
         if (result is null)
         {
             return null;
