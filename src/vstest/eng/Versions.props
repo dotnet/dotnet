@@ -13,7 +13,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>17.14.0</VersionPrefix>
+    <VersionPrefix>17.15.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
