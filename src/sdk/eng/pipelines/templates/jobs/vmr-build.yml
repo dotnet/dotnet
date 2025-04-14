@@ -509,7 +509,7 @@ jobs:
         customEnvVars=""
         customPreBuildArgs=""
         customBuildArgs="$(baseArguments) $(signArguments) $(_SignDiagnosticFilesArgs)"
-        extraBuildProperties="$(baseProperties) $(targetProperties) $(signProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+        extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(signProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
 
         if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
           customBuildArgs="$customBuildArgs --online"
@@ -586,7 +586,7 @@ jobs:
 
           customPreBuildArgs=''
           customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
-          extraBuildProperties="$(baseProperties) $(targetProperties) ${{ parameters.extraProperties }}"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
             customPreBuildArgs="$customPreBuildArgs sudo"
