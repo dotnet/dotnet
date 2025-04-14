@@ -219,7 +219,7 @@ jobs:
     value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }}
 
   - name: baseProperties
-    value: $(officialBuildParameter) /p:VerticalName=$(Agent.JobName) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory)
+    value: $(officialBuildParameter) /p:VerticalName=$(Agent.JobName)
 
   - name: targetProperties
     ${{ if and(ne(parameters.targetOS, ''), ne(parameters.targetArchitecture, '')) }}:
@@ -433,6 +433,7 @@ jobs:
         $(baseArguments)
         $(signArguments)
         $(baseProperties)
+        /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory)
         $(targetProperties)
         $(signProperties)
         $(buildPassProperties)
