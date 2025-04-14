@@ -96,18 +96,18 @@
       <Sha>d7c8e08245f0e5c6c14eb5e6d7c5ab461e471048</Sha>
        <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25211-01">
+    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25211-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>b96560aa033132c61c19d7c6b16d17c26fe3dbaf</Sha>
+      <Sha>46b5fa75b0f9a5525846981359daa6850d21ea0f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.15.0-preview-25211-01">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.15.0-preview-25211-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>b96560aa033132c61c19d7c6b16d17c26fe3dbaf</Sha>
+      <Sha>46b5fa75b0f9a5525846981359daa6850d21ea0f</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.15.0-preview-25211-01">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.15.0-preview-25211-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>b96560aa033132c61c19d7c6b16d17c26fe3dbaf</Sha>
+      <Sha>46b5fa75b0f9a5525846981359daa6850d21ea0f</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.300-beta.25207.2">
@@ -704,13 +704,13 @@
       <Sha>5fa9337a84a52e9bd185d04d156eccbdcf592f74</Sha>
       <SourceBuild RepoName="aspire" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="1.7.0-preview.25210.9">
+    <Dependency Name="Microsoft.Testing.Platform" Version="1.7.0-preview.25211.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>35fc2e38b23affdd1dbde364beb32dea42329abd</Sha>
+      <Sha>b993be6114886799a9064a33175b37f2a1f2604b</Sha>
     </Dependency>
-    <Dependency Name="MSTest" Version="3.9.0-preview.25210.9">
+    <Dependency Name="MSTest" Version="3.9.0-preview.25211.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>35fc2e38b23affdd1dbde364beb32dea42329abd</Sha>
+      <Sha>b993be6114886799a9064a33175b37f2a1f2604b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.0-preview.4.25211.19">
       <Uri>https://github.com/dotnet/runtime</Uri>
