@@ -85,11 +85,11 @@
       "commitSha": "7f50923823cb8fe4dab9b6565ece9516407de498"
     },
     {
-      "packageVersion": "10.0.0-preview.25213.1",
+      "packageVersion": "10.0.0-preview.25214.1",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f50cc83551d1458a73206ac8f08bf117d0b32d5a"
+      "commitSha": "6ba945a8415f59d1bf8d686c21f25a3661e8bd02"
     },
     {
       "packageVersion": "5.0.0-1.25213.1",
@@ -124,21 +124,21 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "80fc5299fce0ac15c918f7d7c48b4416edcd6048"
+      "commitSha": "06d1103f188d426497c7344ebf507b170ae1ce3b"
     },
     {
-      "packageVersion": "10.0.620701",
+      "packageVersion": "10.0.621401",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ebe6fe9cc5b8b9c87cb218b35514bf9d04475047"
+      "commitSha": "d64d8da45618323a39fb77860d1140bdbcd506ad"
     },
     {
-      "packageVersion": "10.0.621001",
+      "packageVersion": "10.0.621401",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1df7df81ac783e63aa7fbccb0232ad20fb128b15"
+      "commitSha": "0fb2d0d836dffe32b32e362e86f0dccd6f40bee8"
     },
     {
       "packageVersion": "10.0.0-beta.25214.2",
