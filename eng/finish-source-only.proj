@@ -124,6 +124,7 @@
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
   <Target Name="ReportPoisonUsage"
           BeforeTargets="Build"
+          DependsOnTargets="CopySdkArchive"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ReportPoisonUsage.complete" >
