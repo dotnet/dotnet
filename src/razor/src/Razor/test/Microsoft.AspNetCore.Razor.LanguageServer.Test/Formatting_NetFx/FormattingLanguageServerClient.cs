@@ -7,14 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -37,7 +35,7 @@ internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormatti
     {
         var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
 
-        var edits =  await _htmlFormattingService.GetOnTypeFormattingEditsAsync(_loggerFactory, @params.TextDocument.Uri, generatedHtml, @params.Position, @params.Options.InsertSpaces, @params.Options.TabSize);
+        var edits = await _htmlFormattingService.GetOnTypeFormattingEditsAsync(_loggerFactory, @params.TextDocument.Uri, generatedHtml, @params.Position, @params.Options.InsertSpaces, @params.Options.TabSize);
 
         return new()
         {
@@ -89,16 +87,6 @@ internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormatti
                 ? typedResponse
                 : throw new InvalidOperationException();
         }
-    }
-
-    public object GetService(Type serviceType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryGetRequest(long id, out string method, out TaskCompletionSource<JToken> pendingTask)
-    {
-        throw new NotImplementedException();
     }
 
     public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)

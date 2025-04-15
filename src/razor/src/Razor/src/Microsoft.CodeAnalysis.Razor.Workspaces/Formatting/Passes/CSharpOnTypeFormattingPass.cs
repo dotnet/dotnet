@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -193,11 +192,6 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
-        if (codeDocument.IsUnsupported())
-        {
-            return [];
-        }
-
         var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextChanges);
 
         return changes.ToImmutableArray();

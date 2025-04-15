@@ -10,10 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -21,16 +21,14 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
 [ShortRunJob]
 public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 {
-    private DocumentPullDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
+    private VSDocumentDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
     private RazorCodeDocument? RazorCodeDocument { get; set; }
     private SourceText? SourceText { get; set; }
@@ -91,8 +89,9 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var languageServer = new ClientNotifierService(Diagnostics!);
         var documentMappingService = BuildRazorDocumentMappingService();
 
+        var optionsMonitor = Mock.Of<RazorLSPOptionsMonitor>(MockBehavior.Strict);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, loggerFactory);
-        DocumentPullDiagnosticsEndpoint = new DocumentPullDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, languageServer, telemetryReporter: null);
+        DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
     }
 
     private object BuildDiagnostics()
@@ -119,27 +118,27 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
     {
         var razorDocumentMappingService = new Mock<IDocumentMappingService>(MockBehavior.Strict);
 
-        Range? hostDocumentRange;
+        LspRange? hostDocumentRange;
         razorDocumentMappingService.Setup(
             r => r.TryMapToHostDocumentRange(
                 It.IsAny<IRazorGeneratedDocument>(),
                 InRange,
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = OutRange;
                 return true;
             });
 
-        Range? hostDocumentRange2;
+        LspRange? hostDocumentRange2;
         razorDocumentMappingService.Setup(
             r => r.TryMapToHostDocumentRange(
                 It.IsAny<IRazorGeneratedDocument>(),
                 It.IsNotIn(InRange),
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange2))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = null;
                 return false;
@@ -207,8 +206,8 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         }
     }
 
-    private Range InRange { get; set; } = VsLspFactory.CreateSingleLineRange(line: 85, character: 8, length: 8);
-    private Range OutRange { get; set; } = VsLspFactory.CreateSingleLineRange(line: 6, character: 8, length: 8);
+    private LspRange InRange { get; set; } = LspFactory.CreateSingleLineRange(line: 85, character: 8, length: 8);
+    private LspRange OutRange { get; set; } = LspFactory.CreateSingleLineRange(line: 6, character: 8, length: 8);
 
     private Diagnostic[] GetDiagnostics(int n) => Enumerable.Range(1, n).Select(_ => new Diagnostic()
     {

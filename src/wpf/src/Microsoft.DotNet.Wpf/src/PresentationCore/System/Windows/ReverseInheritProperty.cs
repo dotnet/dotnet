@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 
@@ -71,21 +70,21 @@ namespace System.Windows
             for (int i = 0; i < otherCount; i++)
             {
                 // setOriginCacheFlag is false, because these flags should not be affected by other origins
-                SetCacheFlagInAncestry(otherOrigins[i], true, null, false, /*setOriginCacheFlag*/ false);
+                SetCacheFlagInAncestry(otherOrigins[i], true, null, false, setOriginCacheFlag: false);
             }
 
             // Step #3
             // Fire value changed on elements in the ancestry of the element that got turned off.
             if (oldOrigin != null)
             {
-                FirePropertyChangeInAncestry(oldOrigin, true /* oldValue */, treeStateLocalCopy, originChangedAction);
+                FirePropertyChangeInAncestry(oldOrigin, oldValue: true, treeStateLocalCopy, originChangedAction);
             }
 
             // Step #4
             // Fire value changed on elements in the ancestry of the element that got turned on.
             if (newOrigin != null)
             {
-                FirePropertyChangeInAncestry(newOrigin, false /* oldValue */, null, originChangedAction);
+                FirePropertyChangeInAncestry(newOrigin, oldValue: false, null, originChangedAction);
             }
 
             if (oldTreeState == null && treeStateLocalCopy != null)

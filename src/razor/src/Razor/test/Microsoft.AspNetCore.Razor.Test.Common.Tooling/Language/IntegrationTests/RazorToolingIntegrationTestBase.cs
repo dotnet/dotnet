@@ -17,10 +17,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using Diagnostic = Microsoft.CodeAnalysis.Diagnostic;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -85,7 +85,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     /// Gets a hardcoded document kind to be added to each code document that's created. This can
     /// be used to generate components.
     /// </summary>
-    internal virtual string FileKind { get; }
+    internal virtual RazorFileKind? FileKind { get; }
 
     internal virtual VirtualRazorProjectFileSystem FileSystem { get; }
 
@@ -110,15 +110,18 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         {
             b.SetRootNamespace(DefaultRootNamespace);
 
-            // Turn off checksums, we're testing code generation.
-            b.Features.Add(new SuppressChecksum());
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
+                // Turn off checksums, we're testing code generation.
+                builder.SuppressChecksum = true;
+
+                if (LineEnding != null)
+                {
+                    builder.NewLine = LineEnding;
+                }
+            });
 
             b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
-
-            if (LineEnding != null)
-            {
-                b.Features.Add(new SetNewLineOptionFeature(LineEnding));
-            }
 
             b.Features.Add(new DefaultTypeNameFeature());
 
@@ -129,13 +132,18 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             });
 
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
-            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions));
+
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions;
+            });
 
             CompilerFeatures.Register(b);
         });
     }
 
-    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, string fileKind = null)
+    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, RazorFileKind? fileKind = null)
     {
         var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
 
@@ -167,7 +175,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         return CompileToCSharp(DefaultFileName, cshtmlContent, throwOnFailure);
     }
 
-    protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, string fileKind = null)
+    protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, RazorFileKind? fileKind = null)
     {
         if (DeclarationOnly && DesignTime)
         {
@@ -281,7 +289,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
         var diagnostics = compilation
             .GetDiagnostics()
-            .Where(d => d.Severity != DiagnosticSeverity.Hidden);
+            .Where(d => d.Severity != CodeAnalysis.DiagnosticSeverity.Hidden);
 
         if (diagnostics.Any() && throwOnFailure)
         {
@@ -395,26 +403,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
                 return builder.ToString();
             }
-        }
-    }
-
-    private class SuppressChecksum : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    private sealed class SetNewLineOptionFeature(string newLine) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.NewLine = newLine;
         }
     }
 }

@@ -90,9 +90,22 @@ namespace Microsoft.Web.XmlTransform
             Encoding encoding = null;
             if (stream.CanSeek) {
                 byte[] buffer = new byte[3];
-#pragma warning disable CA2022 // Avoid inexact read
-                stream.Read(buffer, 0, buffer.Length);
-#pragma warning restore CA2022
+#if NET
+                stream.ReadExactly(buffer, 0, buffer.Length);
+#else
+                int offset = 0;
+                int count = buffer.Length;
+                while (count > 0)
+                {
+                    int read = stream.Read(buffer, offset, count);
+                    if (read <= 0)
+                    {
+                        throw new EndOfStreamException();
+                    }
+                    offset += read;
+                    count -= read;
+                }
+#endif
 
                 if (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF)
                     encoding = Encoding.UTF8;

@@ -3,8 +3,6 @@
 
 using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using RoslynFormattingOptions = Roslyn.LanguageServer.Protocol.FormattingOptions;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -30,21 +28,13 @@ internal readonly record struct RazorFormattingOptions
             CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
         };
 
-    public static RazorFormattingOptions From(RoslynFormattingOptions options, bool codeBlockBraceOnNextLine)
-        => new()
-        {
-            InsertSpaces = options.InsertSpaces,
-            TabSize = options.TabSize,
-            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
-        };
-
     public RazorIndentationOptions ToIndentationOptions()
         => new(
             UseTabs: !InsertSpaces,
             TabSize: TabSize,
             IndentationSize: TabSize);
 
-    public RoslynFormattingOptions ToRoslynFormattingOptions()
+    public FormattingOptions ToLspFormattingOptions()
         => new()
         {
             InsertSpaces = InsertSpaces,

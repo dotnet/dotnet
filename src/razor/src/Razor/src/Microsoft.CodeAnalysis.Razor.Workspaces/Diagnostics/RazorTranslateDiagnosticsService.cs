@@ -11,16 +11,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
-using LspDiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
-using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
@@ -67,11 +63,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported() != false)
-        {
-            _logger.LogInformation($"Unsupported code document.");
-            return [];
-        }
 
         var filteredDiagnostics = diagnosticKind == RazorLanguageKind.CSharp
             ? FilterCSharpDiagnostics(diagnostics, codeDocument)
@@ -125,7 +116,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         IDocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument)
     {
-        var projects = RazorDiagnosticConverter.GetProjectInformation(documentSnapshot);
+        var projects = RazorDiagnosticHelper.GetProjectInformation(documentSnapshot);
         using var mappedDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
 
         foreach (var diagnostic in diagnostics)
@@ -240,7 +231,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             CSSErrorCodes.MissingSelectorBeforeCombinatorCode => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.UnexpectedEndTagErrorCode => IsHtmlWithBangAndMatchingTags(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.InvalidNestingErrorCode => IsAnyFilteredInvalidNestingError(diagnostic, sourceText, syntaxTree),
-            HtmlErrorCodes.MissingEndTagErrorCode => FileKinds.IsComponent(syntaxTree.Options.FileKind), // Redundant with RZ9980 in Components
+            HtmlErrorCodes.MissingEndTagErrorCode => syntaxTree.Options.FileKind.IsComponent(), // Redundant with RZ9980 in Components
             HtmlErrorCodes.TooFewElementsErrorCode => IsAnyFilteredTooFewElementsError(diagnostic, sourceText, syntaxTree),
             _ => false,
         };
@@ -414,10 +405,10 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         if (markupAttributeNode is not null)
         {
-            if (!processedAttributes.TryGetValue(markupAttributeNode.FullSpan, out var doesAttributeContainNonMarkup))
+            if (!processedAttributes.TryGetValue(markupAttributeNode.Span, out var doesAttributeContainNonMarkup))
             {
                 doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeNode);
-                processedAttributes.Add(markupAttributeNode.FullSpan, doesAttributeContainNonMarkup);
+                processedAttributes.Add(markupAttributeNode.Span, doesAttributeContainNonMarkup);
             }
 
             return doesAttributeContainNonMarkup;
@@ -497,16 +488,14 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             out originalRange))
         {
             // Couldn't remap the range correctly.
-            // If this isn't an `Error` Severity Diagnostic we can discard it.
-            if (diagnostic.Severity != LspDiagnosticSeverity.Error)
+            // If this is error it's worth at least logging so we know if there's an issue
+            // for mapping when a user reports not seeing an error they thought they should
+            if (diagnostic.Severity == LspDiagnosticSeverity.Error)
             {
-                return false;
+                this._logger.LogWarning($"Dropping diagnostic {diagnostic.Code}:{diagnostic.Message} at csharp range {diagnostic.Range}");
             }
 
-            // For `Error` Severity diagnostics we still show the diagnostics to
-            // the user, however we set the range to an undefined range to ensure
-            // clicking on the diagnostic doesn't cause errors.
-            originalRange = VsLspFactory.UndefinedRange;
+            return false;
         }
 
         return true;
@@ -577,7 +566,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 var diagnosticEndWhitespaceOffset = diagnosticEndCharacter + 1;
                 var endLinePosition = (endLineIndex, diagnosticEndWhitespaceOffset);
 
-                remappedRange = VsLspFactory.CreateRange(startLinePosition, endLinePosition);
+                remappedRange = LspFactory.CreateRange(startLinePosition, endLinePosition);
                 return true;
         }
     }

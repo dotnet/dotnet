@@ -23,8 +23,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
 public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private static readonly string s_project1BasePath = PathUtilities.CreateRootedPath("First");
-    private static readonly string s_project2BasePath = PathUtilities.CreateRootedPath("Second");
+    private static readonly string s_project1BasePath = TestPathUtilities.CreateRootedPath("First");
+    private static readonly string s_project2BasePath = TestPathUtilities.CreateRootedPath("Second");
 
     private static readonly string s_projectFilePath1 = Path.Combine(s_project1BasePath, "First.csproj");
     private static readonly string s_projectFilePath2 = Path.Combine(s_project2BasePath, "Second.csproj");
@@ -106,9 +106,9 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
 
         // Assert
         Assert.NotNull(documentSnapshot1);
-        PathUtilities.AssertEquivalent(s_componentFilePath1, documentSnapshot1.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath1, documentSnapshot1.FilePath);
         Assert.NotNull(documentSnapshot2);
-        PathUtilities.AssertEquivalent(s_componentFilePath3, documentSnapshot2.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath3, documentSnapshot2.FilePath);
     }
 
     [Fact]
@@ -125,9 +125,9 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
 
         // Assert
         Assert.NotNull(documentSnapshot1);
-        PathUtilities.AssertEquivalent(s_componentFilePath1, documentSnapshot1.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath1, documentSnapshot1.FilePath);
         Assert.NotNull(documentSnapshot2);
-        PathUtilities.AssertEquivalent(s_componentFilePath3, documentSnapshot2.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath3, documentSnapshot2.FilePath);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
 
         // Assert
         Assert.NotNull(documentSnapshot);
-        PathUtilities.AssertEquivalent(s_componentFilePath2, documentSnapshot.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath2, documentSnapshot.FilePath);
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
 
         // Assert
         Assert.NotNull(documentSnapshot);
-        PathUtilities.AssertEquivalent(s_componentFilePath2, documentSnapshot.FilePath);
+        TestPathUtilities.AssertEquivalent(s_componentFilePath2, documentSnapshot.FilePath);
     }
 
     internal static TagHelperDescriptor CreateRazorComponentTagHelperDescriptor(string assemblyName, string namespaceName, string tagName, string? typeName = null)

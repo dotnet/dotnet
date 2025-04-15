@@ -21,9 +21,9 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly bool? _updateBuffersForClosedDocuments;
     private readonly bool? _includeProjectKeyInGeneratedFilePath;
     private readonly bool? _useRazorCohostServer;
-    private readonly bool? _disableRazorLanguageServer;
     private readonly bool? _forceRuntimeCodeGeneration;
     private readonly bool? _useNewFormattingEngine;
+    private readonly bool? _doNotInitializeMiscFilesProjectFromWorkspace;
 
     public override bool SupportsFileManipulation => _supportsFileManipulation ?? _defaults.SupportsFileManipulation;
     public override string CSharpVirtualDocumentSuffix => _csharpVirtualDocumentSuffix ?? DefaultLanguageServerFeatureOptions.DefaultCSharpVirtualDocumentSuffix;
@@ -36,11 +36,16 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool UpdateBuffersForClosedDocuments => _updateBuffersForClosedDocuments ?? _defaults.UpdateBuffersForClosedDocuments;
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath ?? _defaults.IncludeProjectKeyInGeneratedFilePath;
     public override bool UseRazorCohostServer => _useRazorCohostServer ?? _defaults.UseRazorCohostServer;
-    public override bool DisableRazorLanguageServer => _disableRazorLanguageServer ?? _defaults.DisableRazorLanguageServer;
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration ?? _defaults.ForceRuntimeCodeGeneration;
     public override bool UseNewFormattingEngine => _useNewFormattingEngine ?? _defaults.UseNewFormattingEngine;
     public override bool SupportsSoftSelectionInCompletion => false;
     public override bool UseVsCodeCompletionTriggerCharacters => true;
+
+    // Note: This option is defined in the negative because the default behavior should be to add documents to misc files project
+    // when the language server is initialized. Adding the option at the command-line should disable that behavior.
+    //
+    // This is a temporary option and should be removed as part of https://github.com/dotnet/razor/issues/11594.
+    public override bool DoNotInitializeMiscFilesProjectFromWorkspace => _doNotInitializeMiscFilesProjectFromWorkspace ?? _defaults.DoNotInitializeMiscFilesProjectFromWorkspace;
 
     public ConfigurableLanguageServerFeatureOptions(string[] args)
     {
@@ -62,9 +67,9 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             TryProcessBoolOption(nameof(UpdateBuffersForClosedDocuments), ref _updateBuffersForClosedDocuments, option, args, i);
             TryProcessBoolOption(nameof(IncludeProjectKeyInGeneratedFilePath), ref _includeProjectKeyInGeneratedFilePath, option, args, i);
             TryProcessBoolOption(nameof(UseRazorCohostServer), ref _useRazorCohostServer, option, args, i);
-            TryProcessBoolOption(nameof(DisableRazorLanguageServer), ref _disableRazorLanguageServer, option, args, i);
             TryProcessBoolOption(nameof(ForceRuntimeCodeGeneration), ref _forceRuntimeCodeGeneration, option, args, i);
             TryProcessBoolOption(nameof(UseNewFormattingEngine), ref _useNewFormattingEngine, option, args, i);
+            TryProcessBoolOption(nameof(DoNotInitializeMiscFilesProjectFromWorkspace), ref _doNotInitializeMiscFilesProjectFromWorkspace, option, args, i);
         }
     }
 

@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -11,15 +10,10 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
-using static Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
-using RoslynLspFactory = Roslyn.LanguageServer.Protocol.RoslynLspFactory;
-using RoslynSignatureHelp = Roslyn.LanguageServer.Protocol.SignatureHelp;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 
@@ -35,7 +29,7 @@ internal class CohostSignatureHelpEndpoint(
     IClientSettingsManager clientSettingsManager,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     LSPRequestInvoker requestInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<SignatureHelpParams, SumType<SignatureHelp, RoslynSignatureHelp>?>, IDynamicRegistrationProvider
+    : AbstractRazorCohostDocumentRequestHandler<SignatureHelpParams, SignatureHelp?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
@@ -67,10 +61,10 @@ internal class CohostSignatureHelpEndpoint(
     // NOTE: The use of SumType here is a little odd, but it allows us to return Roslyn LSP types from the Roslyn call, and VS LSP types from the Html
     //       call. It works because both sets of types are attributed the right way, so the Json ends up looking the same and the client doesn't
     //       care. Ideally eventually we will be able to move all of this to just Roslyn LSP types, but we might have to wait for Web Tools
-    protected override Task<SumType<SignatureHelp, RoslynSignatureHelp>?> HandleRequestAsync(SignatureHelpParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
         => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
 
-    private async Task<SumType<SignatureHelp, RoslynSignatureHelp>?> HandleRequestAsync(SignatureHelpParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         // Return nothing if "Parameter Information" option is disabled unless signature help is invoked explicitly via command as opposed to typing or content change
         if (request.Context is { TriggerKind: not SignatureHelpTriggerKind.Invoked } &&
@@ -79,10 +73,10 @@ internal class CohostSignatureHelpEndpoint(
             return null;
         }
 
-        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteSignatureHelpService, RoslynSignatureHelp?>(
+        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteSignatureHelpService, SignatureHelp?>(
             razorDocument.Project.Solution,
             (service, solutionInfo, cancellationToken) =>
-                service.GetSignatureHelpAsync(solutionInfo, razorDocument.Id, RoslynLspFactory.CreatePosition(request.Position.ToLinePosition()), cancellationToken),
+                service.GetSignatureHelpAsync(solutionInfo, razorDocument.Id, request.Position, cancellationToken),
             cancellationToken)
             .ConfigureAwait(false);
 
@@ -116,28 +110,7 @@ internal class CohostSignatureHelpEndpoint(
 
     internal readonly struct TestAccessor(CohostSignatureHelpEndpoint instance)
     {
-        internal async Task<string[]?> HandleRequestAndGetLabelsAsync(SignatureHelpParams request, TextDocument document, CancellationToken cancellationToken)
-        {
-            // Our tests don't have IVT to Roslyn.LanguageServer.Protocol (yet!?) so we can't expose the return from HandleRequestAsync directly,
-            // but rather need to do a little test code here.
-            var result = await instance.HandleRequestAsync(request, document, cancellationToken);
-
-            if (result is not { } signatureHelp)
-            {
-                return null;
-            }
-
-            if (signatureHelp.TryGetFirst(out var sigHelp1))
-            {
-                return sigHelp1.Signatures.Select(s => s.Label).ToArray();
-            }
-            else if (signatureHelp.TryGetSecond(out var sigHelp2))
-            {
-                return sigHelp2.Signatures.Select(s => s.Label).ToArray();
-            }
-
-            Assumed.Unreachable();
-            return null;
-        }
+        internal Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, TextDocument document, CancellationToken cancellationToken)
+            => instance.HandleRequestAsync(request, document, cancellationToken);
     }
 }

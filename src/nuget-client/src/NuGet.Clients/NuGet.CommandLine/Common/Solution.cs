@@ -11,7 +11,7 @@ namespace NuGet.Common
     /// Represents the solution loaded from a sln file. We use the internal class
     /// Microsoft.Build.Construction.SolutionParser to parse sln files.
     /// </summary>
-    internal class Solution : MSBuildUser
+    internal class Solution
     {
         public List<ProjectInSolution> Projects { get; private set; }
 
@@ -22,36 +22,27 @@ namespace NuGet.Common
                 throw new ArgumentNullException(nameof(msbuildPath));
             }
 
-            _msbuildDirectory = msbuildPath;
+            using var msbuildAssemblyResolver = new MSBuildAssemblyResolver(msbuildPath);
 
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
+            Assembly microsoftBuildAssembly = msbuildAssemblyResolver.MicrosoftBuildAssembly;
 
-            try
+            switch (microsoftBuildAssembly.GetName().Version.Major)
             {
-                var msbuildAssembly = Assembly.LoadFrom(
-                    Path.Combine(msbuildPath, "Microsoft.Build.dll"));
-                switch (msbuildAssembly.GetName().Version.Major)
-                {
-                    case 4:
-                    case 12:
-                        LoadSolutionWithMsbuild4or12(msbuildAssembly, solutionFileName);
-                        break;
+                case 4:
+                case 12:
+                    LoadSolutionWithMsbuild4or12(microsoftBuildAssembly, solutionFileName);
+                    break;
 
-                    case 14:
-                    case 15:
-                        LoadSolutionWithMsbuild14(msbuildAssembly, solutionFileName);
-                        break;
+                case 14:
+                case 15:
+                    LoadSolutionWithMsbuild14(microsoftBuildAssembly, solutionFileName);
+                    break;
 
-                    default:
-                        throw new InvalidOperationException(string.Format(
-                            CultureInfo.InvariantCulture,
-                            LocalizedResourceManager.GetString(nameof(NuGet.CommandLine.NuGetResources.Error_UnsupportedMsbuild)),
-                            msbuildAssembly.FullName));
-                }
-            }
-            finally
-            {
-                AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(AssemblyResolve);
+                default:
+                    throw new InvalidOperationException(string.Format(
+                        CultureInfo.InvariantCulture,
+                        LocalizedResourceManager.GetString(nameof(NuGet.CommandLine.NuGetResources.Error_UnsupportedMsbuild)),
+                        microsoftBuildAssembly.FullName));
             }
         }
 

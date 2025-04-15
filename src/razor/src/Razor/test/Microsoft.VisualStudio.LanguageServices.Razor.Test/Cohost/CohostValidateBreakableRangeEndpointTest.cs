@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostValidateBreakableRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task Handle_CSharpInHtml_ValidBreakpoint()
     {
         var input = """
@@ -31,7 +30,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
         await VerifyBreakableRangeAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Handle_CSharpInAttribute_ValidBreakpoint()
     {
         var input = """
@@ -47,7 +46,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
         await VerifyBreakableRangeAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Handle_CSharp_ValidBreakpoint()
     {
         var input = """
@@ -61,7 +60,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
         await VerifyBreakableRangeAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Handle_CSharp_InvalidBreakpointRemoved()
     {
         var input = """
@@ -75,7 +74,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
         await VerifyBreakableRangeAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Handle_CSharp_ValidBreakpointMoved()
     {
         var input = """
@@ -90,7 +89,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
         await VerifyBreakableRangeAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Handle_Html_BreakpointRemoved()
     {
         var input = """
@@ -106,9 +105,7 @@ public class CohostValidateBreakableRangeEndpointTest(FuseTestContext context, I
 
     private async Task VerifyBreakableRangeAsync(TestCode input)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         Assert.True(input.TryGetNamedSpans("breakpoint", out var breakpointSpans), "Test authoring failure: Expected at least one span named 'breakpoint'.");

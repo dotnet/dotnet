@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Dynamic;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 
 // ReSharper disable InconsistentNaming
 namespace Microsoft.EntityFrameworkCore.ModelBuilding;
@@ -37,7 +38,7 @@ public abstract partial class ModelBuilderTest
             Assert.Equal("bar2", complexProperty["foo2"]);
             Assert.Equal(typeof(Customer).Name, complexProperty.Name);
             Assert.Equal(
-                @"Customer (Customer) Required
+                @"Customer (Customer)
   ComplexType: ComplexProperties.Customer#Customer
     Properties: "
                 + @"
@@ -1637,18 +1638,22 @@ public abstract partial class ModelBuilderTest
         }
 
         [ConditionalFact]
-        public virtual void Throws_for_optional_complex_property()
+        public virtual void Complex_properties_can_be_configured_as_optional()
         {
             var modelBuilder = CreateModelBuilder();
 
             modelBuilder
+                .Ignore<Product>()
+                .Ignore<CustomerDetails>()
+                .Ignore<Order>()
+                .Ignore<IndexedClass>()
                 .Entity<ComplexProperties>()
                 .ComplexProperty(e => e.Customer).IsRequired(false);
 
-            Assert.Equal(
-                CoreStrings.ComplexPropertyOptional(
-                    nameof(ComplexProperties), nameof(ComplexProperties.Customer)),
-                Assert.Throws<InvalidOperationException>(modelBuilder.FinalizeModel).Message);
+            var model = modelBuilder.FinalizeModel();
+
+            var complexProperty = model.FindEntityType(typeof(ComplexProperties)).GetComplexProperties().Single();
+            Assert.True(complexProperty.IsNullable);
         }
 
         [ConditionalFact]
@@ -2218,6 +2223,52 @@ public abstract partial class ModelBuilderTest
             var property = complexType.FindProperty(nameof(EntityWithFields.CollectionId))!;
             Assert.Null(property.PropertyInfo);
             Assert.NotNull(property.FieldInfo);
+        }
+
+        [ConditionalFact]
+        public virtual void Can_specify_discriminator_without_explicit_value()
+        {
+            var modelBuilder = CreateModelBuilder();
+
+            modelBuilder
+                .Ignore<Order>()
+                .Ignore<IndexedClass>()
+                .Entity<ComplexProperties>()
+                .ComplexProperty(
+                    e => e.Quarks,
+                    b => b.HasDiscriminator<string>("Discriminator"));
+
+            var model = modelBuilder.FinalizeModel();
+
+            var complexType = model.FindEntityType(typeof(ComplexProperties)).GetComplexProperties().Single().ComplexType;
+            Assert.Equal(nameof(Quarks), complexType.GetDiscriminatorValue());
+
+            var discriminator = complexType.FindDiscriminatorProperty()!;
+            Assert.False(discriminator.IsNullable);
+            Assert.Equal(PropertySaveBehavior.Throw, discriminator.GetAfterSaveBehavior());
+            Assert.NotNull(discriminator.GetValueGeneratorFactory());
+        }
+
+        [ConditionalFact]
+        public virtual void Can_specify_discriminator_value()
+        {
+            var modelBuilder = CreateModelBuilder();
+
+            modelBuilder
+                .Ignore<Order>()
+                .Ignore<IndexedClass>()
+                .Entity<ComplexProperties>()
+                .ComplexProperty(
+                    e => e.Quarks,
+                    b =>
+                    {
+                        b.HasDiscriminator<BasicEnum>("EnumType").HasValue(BasicEnum.Two);
+                    });
+
+            var model = modelBuilder.FinalizeModel();
+
+            var complexType = model.FindEntityType(typeof(ComplexProperties)).GetComplexProperties().Single().ComplexType;
+            Assert.Equal(BasicEnum.Two, complexType.GetDiscriminatorValue());
         }
     }
 }

@@ -5,9 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Numerics;
 using System.Text.RegularExpressions;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
+using Microsoft.DotNet.Build.Manifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 {

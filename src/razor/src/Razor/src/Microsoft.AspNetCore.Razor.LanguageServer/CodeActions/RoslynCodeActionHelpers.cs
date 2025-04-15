@@ -11,9 +11,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 

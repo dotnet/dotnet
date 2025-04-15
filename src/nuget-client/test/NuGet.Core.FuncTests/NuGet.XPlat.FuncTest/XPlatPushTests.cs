@@ -194,6 +194,155 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
+        [Fact]
+        public async Task PushCommand_ConfigFile_Succeeds()
+        {
+            using (var packageDirectory = TestDirectory.Create())
+            using (var source = TestDirectory.Create())
+            {
+                // Arrange
+                var log = new TestCommandOutputLogger(_testOutputHelper);
+                FileInfo testPackageInfo = await TestPackagesCore.GetRuntimePackageAsync(packageDirectory, "testPackageA", "1.1.0");
+                var configPath = Path.Combine(packageDirectory, Settings.DefaultSettingsFileName);
+
+                string nugetConfigContent =
+                    $@"<?xml version=""1.0"" encoding=""utf-8""?>
+                        <configuration>
+                            <config>
+                                <add key=""defaultPushSource"" value=""{source}"" />
+                            </config>
+                        </configuration>";
+                File.WriteAllText(configPath, nugetConfigContent);
+
+                var pushArgs = new List<string>
+                {
+                    "push",
+                    testPackageInfo.FullName,
+                    "--configfile",
+                    configPath
+                };
+
+                // Act
+                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
+
+                // Assert
+                Assert.Equal(string.Empty, log.ShowErrors());
+                Assert.Equal(0, exitCode);
+
+                Assert.Contains($"Pushing {testPackageInfo.Name}", log.ShowMessages());
+                Assert.True(File.Exists(Path.Combine(source, testPackageInfo.Name)));
+            }
+        }
+
+        [Fact]
+        public async Task PushCommand_ConfigFile_DifferentDirectory_Succeeds()
+        {
+            using (var configDirectory = TestDirectory.Create())
+            using (var packageDirectory = TestDirectory.Create())
+            using (var source = TestDirectory.Create())
+            {
+                // Arrange
+                var log = new TestCommandOutputLogger(_testOutputHelper);
+                FileInfo testPackageInfo = await TestPackagesCore.GetRuntimePackageAsync(packageDirectory, "testPackageA", "1.1.0");
+                var configPath = Path.Combine(configDirectory, Settings.DefaultSettingsFileName);
+
+                string nugetConfigContent =
+                    $@"<?xml version=""1.0"" encoding=""utf-8""?>
+                        <configuration>
+                            <config>
+                                <add key=""defaultPushSource"" value=""{source}"" />
+                            </config>
+                        </configuration>";
+                File.WriteAllText(configPath, nugetConfigContent);
+
+                var pushArgs = new List<string>
+                {
+                    "push",
+                    testPackageInfo.FullName,
+                    "--configfile",
+                    configPath
+                };
+
+                // Act
+                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
+
+                // Assert
+                Assert.Equal(string.Empty, log.ShowErrors());
+                Assert.Equal(0, exitCode);
+
+                Assert.Contains($"Pushing {testPackageInfo.Name}", log.ShowMessages());
+                Assert.True(File.Exists(Path.Combine(source, testPackageInfo.Name)));
+            }
+        }
+
+
+        [Fact]
+        public async Task PushCommand_ConfigFile_InvalidXML_Errors()
+        {
+            using (var configDirectory = TestDirectory.Create())
+            using (var packageDirectory = TestDirectory.Create())
+            using (var source = TestDirectory.Create())
+            {
+                // Arrange
+                var log = new TestCommandOutputLogger(_testOutputHelper);
+                FileInfo testPackageInfo = await TestPackagesCore.GetRuntimePackageAsync(packageDirectory, "testPackageA", "1.1.0");
+                var configPath = Path.Combine(configDirectory, Settings.DefaultSettingsFileName);
+
+                string nugetConfigContent =
+                    $@"<?xml version=""1.0"" encoding=""utf-8""?>
+                        <configuratio> // wrong XML
+                            <config>
+                                <add key=""defaultPushSource"" value=""{source}"" />
+                            </config>
+                        </configuration>";
+                File.WriteAllText(configPath, nugetConfigContent);
+
+                var pushArgs = new List<string>
+                {
+                    "push",
+                    testPackageInfo.FullName,
+                    "--configfile",
+                    configPath
+                };
+
+                // Act
+                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
+
+                // Assert
+                Assert.Contains("NuGet.Config is not valid XML", log.ShowErrors());
+                Assert.Equal(1, exitCode);
+            }
+        }
+
+        [Fact]
+        public async Task PushCommand_NotFound_ConfigFile_Errors()
+        {
+
+            using (var packageDirectory = TestDirectory.Create())
+            using (var source = TestDirectory.Create())
+            {
+                // Arrange
+                var log = new TestCommandOutputLogger(_testOutputHelper);
+                FileInfo testPackageInfo = await TestPackagesCore.GetRuntimePackageAsync(packageDirectory, "testPackageA", "1.1.0");
+                var configPath = Path.Combine(source, "config", Settings.DefaultSettingsFileName);
+
+                var pushArgs = new List<string>
+                {
+                    "push",
+                    testPackageInfo.FullName,
+                    "--configfile",
+                    configPath
+                };
+
+                // Act
+                var exitCode = CommandLine.XPlat.Program.MainInternal(pushArgs.ToArray(), log, TestEnvironmentVariableReader.EmptyInstance);
+
+                // Assert
+                Assert.Equal(1, exitCode);
+                Assert.Contains($"File '{configPath}' does not exist", log.ShowErrors());
+            }
+        }
+
         /// <summary>
         /// This is called when the package must be deleted before being pushed. It's ok if this
         /// fails, maybe the package was never pushed.

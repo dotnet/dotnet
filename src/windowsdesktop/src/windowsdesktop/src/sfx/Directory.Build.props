@@ -88,4 +88,8 @@
     <FrameworkListFileClass Include="WindowsBase.dll" Profile="WPF" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Templating" />
+  </ItemGroup>
+
 </Project>

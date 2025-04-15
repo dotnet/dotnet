@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using MS.Win32.Pointer;
@@ -619,7 +618,7 @@ namespace System.Windows.Input.StylusPointer
                 if (_stylusOver == stylusOver)
                 {
                     Point ptOffset = GetPosition(stylusOver);
-                    fOffsetChanged = MS.Internal.DoubleUtil.AreClose(ptOffset.X, _rawElementRelativePosition.X) == false || MS.Internal.DoubleUtil.AreClose(ptOffset.Y, _rawElementRelativePosition.Y) == false;
+                    fOffsetChanged = !MS.Internal.DoubleUtil.AreClose(ptOffset.X, _rawElementRelativePosition.X) || !MS.Internal.DoubleUtil.AreClose(ptOffset.Y, _rawElementRelativePosition.Y);
                 }
 
                 if (fOffsetChanged || _stylusOver != stylusOver)

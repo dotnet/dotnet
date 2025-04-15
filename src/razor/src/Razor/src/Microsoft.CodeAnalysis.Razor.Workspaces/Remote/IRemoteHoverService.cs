@@ -4,16 +4,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using RoslynHover = Roslyn.LanguageServer.Protocol.Hover;
-using RoslynPosition = Roslyn.LanguageServer.Protocol.Position;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal interface IRemoteHoverService : IRemoteJsonService
 {
-    ValueTask<RemoteResponse<RoslynHover?>> GetHoverAsync(
+    ValueTask<RemoteResponse<LspHover?>> GetHoverAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
-        RoslynPosition position,
+        Position position,
         CancellationToken cancellationToken);
 }

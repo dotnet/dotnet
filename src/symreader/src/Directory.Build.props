@@ -5,6 +5,7 @@
   <PropertyGroup>
     <LangVersion>Latest</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dotnet/symreader</PackageProjectUrl>
     <PublishWindowsPdb>false</PublishWindowsPdb>
 
     <!-- Any code that allows overflows intentionally should be explicitly in an unchecked region. -->

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>3.7.0</PackageVersion>
     <AssemblyName>Microsoft.Build.NoTargets</AssemblyName>
   </PropertyGroup>
 

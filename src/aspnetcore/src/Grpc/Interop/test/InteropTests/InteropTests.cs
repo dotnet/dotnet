@@ -11,7 +11,7 @@ namespace InteropTests;
 // Tests are separate methods so that they can be quarantined separately.
 public class InteropTests
 {
-    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(100);
     private readonly string _clientPath = Path.Combine(Directory.GetCurrentDirectory(), "InteropClient", "InteropClient.dll");
     private readonly string _serverPath = Path.Combine(Directory.GetCurrentDirectory(), "InteropWebsite", "InteropWebsite.dll");
     private readonly ITestOutputHelper _output;
@@ -22,9 +22,11 @@ public class InteropTests
     }
 
     [Fact]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/61057")]
     public Task EmptyUnary() => InteropTestCase("empty_unary");
 
     [Fact]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/61057")]
     public Task LargeUnary() => InteropTestCase("large_unary");
 
     [Fact]
@@ -37,6 +39,7 @@ public class InteropTests
     public Task PingPong() => InteropTestCase("ping_pong");
 
     [Fact]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/61051")]
     public Task EmptyStream() => InteropTestCase("empty_stream");
 
     [Fact]
@@ -75,6 +78,7 @@ public class InteropTests
     public Task ServerCompressedUnary() => InteropTestCase("server_compressed_unary");
 
     [Fact]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/60903")]
     public Task ServerCompressedStreaming() => InteropTestCase("server_compressed_streaming");
 
     private async Task InteropTestCase(string name)

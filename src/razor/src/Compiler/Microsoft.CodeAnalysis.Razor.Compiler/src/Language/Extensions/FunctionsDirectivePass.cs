@@ -23,7 +23,7 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
         var directiveNodes = new List<IntermediateNodeReference>();
         directiveNodes.AddRange(documentNode.FindDirectiveReferences(FunctionsDirective.Directive));
 
-        if (FileKinds.IsComponent(codeDocument.GetFileKind()))
+        if (codeDocument.FileKind.IsComponent())
         {
             directiveNodes.AddRange(documentNode.FindDirectiveReferences(ComponentCodeDirective.Directive));
         }

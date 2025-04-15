@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.Windows.Media;
@@ -266,12 +265,12 @@ namespace System.Windows.Ink
                 //prevent boxing / unboxing if possible
                 if (!_extendedProperties.Contains(KnownIds.IsHighlighter))
                 {
-                    Debug.Assert(false == (bool)GetDefaultDrawingAttributeValue(KnownIds.IsHighlighter));
+                    Debug.Assert(!(bool)GetDefaultDrawingAttributeValue(KnownIds.IsHighlighter));
                     return false;
                 }
                 else
                 {
-                    Debug.Assert(true == (bool)GetExtendedPropertyBackedProperty(KnownIds.IsHighlighter));
+                    Debug.Assert((bool)GetExtendedPropertyBackedProperty(KnownIds.IsHighlighter));
                     return true;
                 }
             }

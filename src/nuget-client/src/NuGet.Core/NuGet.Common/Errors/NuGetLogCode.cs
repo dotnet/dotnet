@@ -998,7 +998,7 @@ namespace NuGet.Common
         NU5126 = 5126,
 
         /// <summary>
-        /// No ref or lib folder in the package
+        /// TFM specific build files, but no ref or lib folder in the package
         /// </summary>
         NU5127 = 5127,
 

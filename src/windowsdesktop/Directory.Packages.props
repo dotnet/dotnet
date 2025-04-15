@@ -11,6 +11,7 @@
     <!-- Arcade dependencies -->
     <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Archives" Version="$(MicrosoftDotNetBuildTasksArchivesVersion)" />
     <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)" />
+    <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Templating" Version="$(MicrosoftDotNetBuildTasksTemplatingVersion)" />
 
     <!-- CoreFx dependencies -->
     <PackageVersion Include="System.Data.DataSetExtensions" Version="$(SystemDataDataSetExtensionsVersion)" />

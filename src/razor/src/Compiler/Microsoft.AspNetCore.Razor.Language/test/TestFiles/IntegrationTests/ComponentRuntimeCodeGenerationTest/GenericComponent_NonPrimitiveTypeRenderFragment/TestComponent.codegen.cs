@@ -26,10 +26,9 @@ new CustomType()
 #line hidden
 #nullable disable
             , 2, (context) => (__builder2) => {
-                __builder2.AddContent(3, 
 #nullable restore
-#line (1,39)-(1,57) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToString()
+#line (1,39)-(1,57) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(3, context.ToString()
 
 #line default
 #line hidden

@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.5.1</PackageVersion>
     <AssemblyName>System.Text.Encoding.CodePages</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/4.5.2/System.Runtime.CompilerServices.Unsafe.4.5.2.csproj" />
   </ItemGroup>
 
 </Project>

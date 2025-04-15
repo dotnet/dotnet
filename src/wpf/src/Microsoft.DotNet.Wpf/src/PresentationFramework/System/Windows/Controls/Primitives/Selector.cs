@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.ComponentModel;
@@ -1199,7 +1198,7 @@ namespace System.Windows.Controls.Primitives
 
                     // This is to support the MasterDetail scenario.
                     // When the Items is refreshed, Items.Current could be the old selection for this view.
-                    if (Items.CurrentItem != null && IsSynchronizedWithCurrentItemPrivate == true)
+                    if (Items.CurrentItem != null && IsSynchronizedWithCurrentItemPrivate)
                     {
                         // This won't work if the items are the containers and they have IsSelected=true.
 
@@ -1253,7 +1252,7 @@ namespace System.Windows.Controls.Primitives
             base.AdjustItemInfoOverride(e);
         }
 
-        void RemoveFromSelection(NotifyCollectionChangedEventArgs e)
+        private void RemoveFromSelection(NotifyCollectionChangedEventArgs e)
         {
             SelectionChange.Begin();
             try
@@ -1426,7 +1425,7 @@ namespace System.Windows.Controls.Primitives
 
             selectable = ItemGetIsSelectable(item);
 
-            if (selectable == false && selected)
+            if (!selectable && selected)
             {
                 throw new InvalidOperationException(SR.CannotSelectNotSelectableItem);
             }
@@ -1942,7 +1941,7 @@ namespace System.Windows.Controls.Primitives
 
         // use the first item to decide whether items support hashing correctly.
         // Reset the algorithm used by _selectedItems accordingly.
-        void ResetSelectedItemsAlgorithm()
+        private void ResetSelectedItemsAlgorithm()
         {
             if (!Items.IsEmpty)
             {
@@ -2847,7 +2846,7 @@ namespace System.Windows.Controls.Primitives
                 get { return _set != null; }
                 set
                 {
-                    if (value == true && _set == null)
+                    if (value && _set == null)
                     {
                         _set = new Dictionary<ItemInfo, ItemInfo>(_list.Count);
                         for (int i=0; i<_list.Count; ++i)
@@ -2855,7 +2854,7 @@ namespace System.Windows.Controls.Primitives
                             _set.Add(_list[i], _list[i]);
                         }
                     }
-                    else if (value == false)
+                    else if (!value)
                     {
                         _set = null;
                     }
@@ -2932,8 +2931,8 @@ namespace System.Windows.Controls.Primitives
                     Leave();
                 }
 
-                InternalSelectedItemsStorage _owner;
-                int _level;
+                private InternalSelectedItemsStorage _owner;
+                private int _level;
             }
         }
 
@@ -2960,7 +2959,7 @@ namespace System.Windows.Controls.Primitives
                 return x.GetHashCode();
             }
 
-            bool _matchUnresolved;
+            private bool _matchUnresolved;
         }
 
         private static readonly ItemInfoEqualityComparer MatchExplicitEqualityComparer = new ItemInfoEqualityComparer(false);

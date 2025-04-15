@@ -555,6 +555,11 @@ public class SOSRunner : IDisposable
 
                     // Turn on source/line numbers
                     initialCommands.Add(".lines");
+
+                    bool shouldVerifyDacSignature = !config.IsPrivateBuildTesting()
+                                                    && !config.IsNightlyBuild()
+                                                    && !"-none".Equals(config.SetHostRuntime(), StringComparison.OrdinalIgnoreCase);
+                    initialCommands.Add($"dx @Debugger.Settings.EngineInitialization.SecureLoadDotNetExtensions={(shouldVerifyDacSignature ? "true" : "false")}");
                     break;
 
                 case NativeDebugger.Lldb:
@@ -668,6 +673,10 @@ public class SOSRunner : IDisposable
                         }
                     }
                     initialCommands.Add("setsymbolserver -directory %DEBUG_ROOT%");
+                    shouldVerifyDacSignature = OS.Kind == OSKind.Windows
+                        && !config.IsPrivateBuildTesting()
+                        && !config.IsNightlyBuild();
+                    initialCommands.Add($"runtimes --DacSignatureVerification:{(shouldVerifyDacSignature ? "true" : "false")}");
                     arguments.Append(debuggerPath);
                     arguments.Append(@" analyze %DUMP_NAME%");
                     debuggerPath = config.DotNetDumpHost();
@@ -681,6 +690,11 @@ public class SOSRunner : IDisposable
                 WithEnvironmentVariable("DOTNET_ROOT", config.DotNetRoot).
                 WithLog(scriptLogger).
                 WithTimeout(TimeSpan.FromMinutes(10));
+
+            if (config.TestCDAC)
+            {
+                processRunner.WithEnvironmentVariable("DOTNET_ENABLE_CDAC", "1");
+            }
 
             // Exit codes on Windows should always be 0, but not on Linux/OSX for the faulting debuggees.
             if (OS.Kind == OSKind.Windows)
@@ -699,7 +713,7 @@ public class SOSRunner : IDisposable
 
             // Setup the extension environment variable
             string extensions = config.DotNetDiagnosticExtensions();
-            if (!string.IsNullOrEmpty(extensions)) 
+            if (!string.IsNullOrEmpty(extensions))
             {
                 processRunner.WithEnvironmentVariable("DOTNET_DIAGNOSTIC_EXTENSIONS", extensions);
             }
@@ -1778,4 +1792,8 @@ public static class TestConfigurationExtensions
     {
         return TestConfiguration.MakeCanonicalPath(config.GetValue("DebuggeeDumpOutputRootDir"));
     }
+
+    public static bool IsPrivateBuildTesting(this TestConfiguration config) => "true".Equals(config.GetValue("PrivateBuildTesting"), StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsNightlyBuild(this TestConfiguration config) => "nightly".Equals(config.GetValue("BuildType"), StringComparison.OrdinalIgnoreCase);
 }

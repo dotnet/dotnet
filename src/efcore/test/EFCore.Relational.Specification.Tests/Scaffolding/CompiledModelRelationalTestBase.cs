@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Microsoft.EntityFrameworkCore.Scaffolding;
 
-public abstract class CompiledModelRelationalTestBase : CompiledModelTestBase
+public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) : CompiledModelTestBase(fixture)
 {
     [ConditionalFact]
     public virtual Task BigModel_with_JSON_columns()
@@ -426,7 +426,7 @@ public abstract class CompiledModelRelationalTestBase : CompiledModelTestBase
             AssertComplexTypes,
             c =>
             {
-                // Sprocs not supported with complex types
+                // Sprocs not supported with complex types, see #31235
                 //c.Set<PrincipalDerived<DependentBase<byte?>>>().Add(
                 //    new PrincipalDerived<DependentBase<byte?>>
                 //    {
@@ -480,9 +480,12 @@ public abstract class CompiledModelRelationalTestBase : CompiledModelTestBase
             CoreStrings.RuntimeModelMissingData,
             Assert.Throws<InvalidOperationException>(() => detailsProperty.GetColumnOrder()).Message);
 
-        var principalTable = StoreObjectIdentifier.Create(complexType, StoreObjectType.Table)!.Value;
+        var principalTableId = StoreObjectIdentifier.Create(complexType, StoreObjectType.Table)!.Value;
 
-        Assert.Equal("Deets", detailsProperty.GetColumnName(principalTable));
+        Assert.Equal("Deets", detailsProperty.GetColumnName(principalTableId));
+
+        var principalTable = principalBase.GetTableMappings().Single().Table;
+        Assert.False(principalTable.IsOptional(complexType));
 
         var dbFunction = model.FindDbFunction("PrincipalBaseTvf")!;
         Assert.False(dbFunction.IsNullable);

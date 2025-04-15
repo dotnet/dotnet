@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Windows;
@@ -173,15 +172,14 @@ namespace Microsoft.Internal.DeploymentUI
 
         private void ShowLogFileButton()
         {
-            if (File.Exists(LogFilePath) && ErrorFlag == true)
+            if (File.Exists(LogFilePath) && ErrorFlag)
             {
                 LogFileButton.Visibility = Visibility.Visible;
                 FocusManager.SetFocusedElement(this, LogFileButton);
             }
         }
 
-
-        static void OnCommandRefresh(object sender, RoutedEventArgs e)
+        private static void OnCommandRefresh(object sender, RoutedEventArgs e)
         {
             InstallationErrorPage page = sender as InstallationErrorPage;
             if (page != null && page.RefreshCallback != null)
@@ -190,7 +188,7 @@ namespace Microsoft.Internal.DeploymentUI
             }
         }
 
-        static void OnCanRefresh(object sender, CanExecuteRoutedEventArgs e)
+        private static void OnCanRefresh(object sender, CanExecuteRoutedEventArgs e)
         {
             InstallationErrorPage page = sender as InstallationErrorPage;
             if (page != null)

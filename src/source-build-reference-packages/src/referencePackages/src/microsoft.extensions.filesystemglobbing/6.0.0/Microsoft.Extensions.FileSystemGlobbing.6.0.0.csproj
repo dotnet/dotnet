@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>Microsoft.Extensions.FileSystemGlobbing</AssemblyName>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>

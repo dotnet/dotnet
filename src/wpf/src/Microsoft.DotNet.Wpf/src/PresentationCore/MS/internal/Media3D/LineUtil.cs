@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 // GLOSSARY
@@ -76,8 +75,8 @@ namespace MS.Internal.Media3D
     internal static class LineUtil
     {
         // Coordinates of elements above the diagonal.
-        readonly static int[,] s_pairs = new int[,]{ {0,1}, {0,2}, {0,3}, {1,2}, {1,3}, {2,3} };
-        const int s_pairsCount = 6;
+        private static readonly int[,] s_pairs = new int[,]{ {0,1}, {0,2}, {0,3}, {1,2}, {1,3}, {2,3} };
+        private const int s_pairsCount = 6;
 
         public static void Transform(Matrix3D modelMatrix,
                                      ref Point3D origin, ref Vector3D direction, out bool isRay)
@@ -459,9 +458,9 @@ namespace MS.Internal.Media3D
             double t = Vector3D.DotProduct(ref e2, ref q);
             double f = 1 / a;
             
-            t = t * f;
-            u = u * f;
-            v = v * f;
+            t *= f;
+            u *= f;
+            v *= f;
   
             hitCoord = new Point(u, v);
             dist = t;

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 

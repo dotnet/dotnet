@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -356,16 +355,22 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
             """,
             directives: [ComponentCodeDirective.Directive]);
 
-        var codeBlock = tree1.Root.ChildNodes()[0].ChildNodes()[1];
-        Assert.Equal("CSharpCodeBlockSyntax<CSharpCodeBlock> at 0::11", codeBlock.ToString());
+        var codeBlock = Assert.IsType<CSharpCodeBlockSyntax>(tree1.Root.ChildNodes()[0].ChildNodes()[1]);
+        Assert.Equal(SyntaxKind.CSharpCodeBlock, codeBlock.Kind);
+        Assert.Equal(0, codeBlock.Position);
+        Assert.Equal(11, codeBlock.Width);
 
         var children = codeBlock.ChildNodes();
         Assert.Equal(2, children.Count);
 
-        var directive = children[0];
-        Assert.Equal("RazorDirectiveSyntax<RazorDirective> at 0::9", directive.ToString());
+        var directive = Assert.IsType<RazorDirectiveSyntax>(children[0]);
+        Assert.Equal(SyntaxKind.RazorDirective, directive.Kind);
+        Assert.Equal(0, directive.Position);
+        Assert.Equal(9, directive.Width);
 
-        var whitespace = children[1];
-        Assert.Equal("RazorMetaCodeSyntax<RazorMetaCode> at 9::2", whitespace.ToString());
+        var whitespace = Assert.IsType<RazorMetaCodeSyntax>(children[1]);
+        Assert.Equal(SyntaxKind.RazorMetaCode, whitespace.Kind);
+        Assert.Equal(9, whitespace.Position);
+        Assert.Equal(2, whitespace.Width);
     }
 }

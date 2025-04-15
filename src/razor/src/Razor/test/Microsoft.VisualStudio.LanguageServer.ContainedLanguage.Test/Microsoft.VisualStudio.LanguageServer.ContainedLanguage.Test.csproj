@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetFxVS)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

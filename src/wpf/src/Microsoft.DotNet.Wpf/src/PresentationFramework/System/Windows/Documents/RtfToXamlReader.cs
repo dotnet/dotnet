@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Rtf reader to convert the rtf content into Xaml content.
@@ -520,7 +519,7 @@ namespace System.Windows.Documents
                 case 0:
                     break;
             }
-            nCount = nCount % 100;
+            nCount %= 100;
 
             // 10's
             switch (nCount / 10)
@@ -546,7 +545,7 @@ namespace System.Windows.Documents
                 case 0:
                     break;
             }
-            nCount = nCount % 10;
+            nCount %= 10;
 
             // 1's
             switch (nCount)
@@ -933,7 +932,7 @@ namespace System.Windows.Documents
                 && UnicodeSkip == formatState.UnicodeSkip;
         }
 
-        static internal FormatState EmptyFormatState
+        internal static FormatState EmptyFormatState
         {
             get
             {
@@ -1961,7 +1960,7 @@ namespace System.Windows.Documents
             CF < 0 ? string.Create(CultureInfo.InvariantCulture, stackalloc char[128], $"\\brdrs\\brdrw{EffectiveWidth}") :
             string.Create(CultureInfo.InvariantCulture, stackalloc char[128], $"\\brdrs\\brdrw{EffectiveWidth}\\brdrcf{CF}");
 
-        static internal BorderFormat EmptyBorderFormat
+        internal static BorderFormat EmptyBorderFormat
         {
             get
             {
@@ -1995,7 +1994,7 @@ namespace System.Windows.Documents
         private long _cf;
         private long _width;
         private BorderType _type;
-        static private BorderFormat _emptyBorderFormat = null;
+        private static BorderFormat _emptyBorderFormat = null;
     }
 
     internal class ParaBorder
@@ -3795,7 +3794,7 @@ namespace System.Windows.Documents
 
         #region Private Fields
 
-        Hashtable _fontMappings;
+        private Hashtable _fontMappings;
 
         #endregion Private Fields
     }
@@ -7146,7 +7145,7 @@ namespace System.Windows.Documents
                     if (!dnPa.IsPending)
                     {
                         Debug.Assert(dnPa.LastChildIndex >= nAt + nExcise - 1);
-                        dnPa.ChildCount = dnPa.ChildCount - nExcise;
+                        dnPa.ChildCount -= nExcise;
                     }
                 }
 
@@ -7231,7 +7230,7 @@ namespace System.Windows.Documents
 
                 if (ddn.Type == DocumentNodeType.dnParagraph)
                 {
-                    ddn.NearMargin = ddn.NearMargin - nMargin;
+                    ddn.NearMargin -= nMargin;
                 }
             }
         }
@@ -7321,7 +7320,7 @@ namespace System.Windows.Documents
                 dnNewTable.Parent = dn.ClosedParent;
                 for (DocumentNode dnPa = dnNewTable.ClosedParent; dnPa != null; dnPa = dnPa.ClosedParent)
                 {
-                    dnPa.ChildCount = dnPa.ChildCount + 2;
+                    dnPa.ChildCount += 2;
                 }
 
                 // Adjust the loop end to account for the newly inserted elements
@@ -7470,7 +7469,7 @@ namespace System.Windows.Documents
                             DocumentNode dnSpanningCell = dnaSpanCells.EntryAt(kCSA);
                             if (dnSpanningCell != null)
                             {
-                                dnSpanningCell.RowSpan = dnSpanningCell.RowSpan + 1;
+                                dnSpanningCell.RowSpan += 1;
                             }
                             kCSA += dnCell.ColSpan;
                             dnCell.ColSpan = 0;
@@ -8720,7 +8719,7 @@ namespace System.Windows.Documents
                 imageStringBuilder.Append('"');
 
                 // Add the xaml image baseline offset property
-                if (formatState.IncludeImageBaselineOffset == true)
+                if (formatState.IncludeImageBaselineOffset)
                 {
                     double baselineOffset = height - formatState.ImageBaselineOffset;
                     imageStringBuilder.Append(" TextBlock.BaselineOffset=\"");

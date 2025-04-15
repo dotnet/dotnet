@@ -8,7 +8,6 @@ using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
@@ -17,9 +16,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseTheory]
+    [Theory]
     [InlineData("PageTitle")]
     [InlineData("div")]
     [InlineData("text")]
@@ -43,7 +42,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             triggerCharacter: ">");
     }
 
-    [FuseTheory]
+    [Theory]
     [InlineData("PageTitle")]
     [InlineData("div")]
     [InlineData("text")]
@@ -62,7 +61,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             autoClosingTags: false);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AttributeQuotes()
     {
         await VerifyOnAutoInsertAsync(
@@ -84,7 +83,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             delegatedResponseText: "\"$0\"");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_OnForwardSlash()
     {
         await VerifyOnAutoInsertAsync(
@@ -105,7 +104,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             triggerCharacter: "/");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task DoNotAutoInsertCSharp_OnForwardSlashWithFormatOnTypeDisabled()
     {
         await VerifyOnAutoInsertAsync(
@@ -120,7 +119,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             formatOnType: false);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_OnEnter()
     {
         await VerifyOnAutoInsertAsync(
@@ -159,7 +158,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             triggerCharacter: "\n");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_OnEnter_TwoSpaceIndent()
     {
         await VerifyOnAutoInsertAsync(
@@ -181,7 +180,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
             tabSize: 2);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_OnEnter_UseTabs()
     {
         const char tab = '\t';
@@ -214,9 +213,7 @@ public class CohostOnAutoInsertEndpointTest(FuseTestContext context, ITestOutput
         bool formatOnType = true,
         bool autoClosingTags = true)
     {
-        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);

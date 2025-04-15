@@ -85,7 +85,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
 
         // Get the edit context
         char? lastChar = null;
-        if (changeRelativePosition > 0 && target.FullWidth > 0)
+        if (changeRelativePosition > 0 && target.Width > 0)
         {
             lastChar = target.GetContent()[changeRelativePosition - 1];
         }

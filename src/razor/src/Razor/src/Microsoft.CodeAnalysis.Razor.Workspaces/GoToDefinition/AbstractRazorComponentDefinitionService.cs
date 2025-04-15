@@ -4,15 +4,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using LspLocation = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
-using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 
@@ -38,7 +34,7 @@ internal abstract class AbstractRazorComponentDefinitionService(
             return null;
         }
 
-        if (!FileKinds.IsComponent(documentSnapshot.FileKind))
+        if (!documentSnapshot.FileKind.IsComponent())
         {
             _logger.LogInformation($"'{documentSnapshot.FileKind}' is not a component type.");
             return null;
@@ -68,7 +64,7 @@ internal abstract class AbstractRazorComponentDefinitionService(
 
         var range = await GetNavigateRangeAsync(componentDocument, boundAttribute, cancellationToken).ConfigureAwait(false);
 
-        return VsLspFactory.CreateLocation(componentFilePath, range);
+        return LspFactory.CreateLocation(componentFilePath, range);
     }
 
     private async Task<LspRange> GetNavigateRangeAsync(IDocumentSnapshot documentSnapshot, BoundAttributeDescriptor? attributeDescriptor, CancellationToken cancellationToken)
@@ -91,6 +87,6 @@ internal abstract class AbstractRazorComponentDefinitionService(
         // If we were trying to navigate to a property, and we couldn't find it, we can at least take
         // them to the file for the component. If the property was defined in a partial class they can
         // at least then press F7 to go there.
-        return VsLspFactory.DefaultRange;
+        return LspFactory.DefaultRange;
     }
 }

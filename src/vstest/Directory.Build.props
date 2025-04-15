@@ -124,6 +124,7 @@
   <PropertyGroup>
     <Copyright>$(CopyrightMicrosoft)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/microsoft/vstest</PackageProjectUrl>
     <!-- Prevent warning about deprecated target frameworks -->
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <DefineConstants Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">$(DefineConstants);DOTNET_BUILD_FROM_SOURCE</DefineConstants>

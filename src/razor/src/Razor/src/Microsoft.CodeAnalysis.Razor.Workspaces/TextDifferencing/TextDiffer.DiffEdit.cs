@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
-namespace Microsoft.AspNetCore.Razor.TextDifferencing;
+namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
 internal abstract partial class TextDiffer
 {

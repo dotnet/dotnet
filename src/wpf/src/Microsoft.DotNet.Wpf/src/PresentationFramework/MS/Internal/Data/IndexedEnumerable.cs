@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: offers optimistic indexer, i.e. this[int index] { get; }
@@ -391,7 +390,7 @@ namespace MS.Internal.Data
                 }
                 catch (InvalidOperationException)
                 {
-                    Debug.Assert(false, "EnsureCacheCurrent: _enumerator.Current failed with InvalidOperationException");
+                    Debug.Fail("EnsureCacheCurrent: _enumerator.Current failed with InvalidOperationException");
                 }
                 Debug.Assert(System.Windows.Controls.ItemsControl.EqualsEx(_cachedItem, current), "EnsureCacheCurrent: _cachedItem out of sync with _enumerator.Current");
             }
@@ -670,7 +669,7 @@ namespace MS.Internal.Data
             return false;   // this method is no longer used (but must remain, for compat)
         }
 
-        void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             InvalidateEnumerator();
         }
@@ -760,10 +759,10 @@ namespace MS.Internal.Data
                 _enumerator = null;
             }
 
-            IEnumerable _enumerable;
-            IEnumerator _enumerator;
-            IndexedEnumerable _indexedEnumerable;
-            Predicate<object> _filterCallback;
+            private IEnumerable _enumerable;
+            private IEnumerator _enumerator;
+            private IndexedEnumerable _indexedEnumerable;
+            private Predicate<object> _filterCallback;
         }
     }
 }

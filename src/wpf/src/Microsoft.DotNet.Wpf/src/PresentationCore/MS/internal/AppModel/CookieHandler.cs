@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //+-----------------------------------------------------------------------
 //
@@ -23,7 +22,7 @@ using MS.Internal.PresentationCore;
 
 namespace MS.Internal.AppModel
 {
-    static class CookieHandler
+    internal static class CookieHandler
 {
     internal static void HandleWebRequest(WebRequest request)
     {
@@ -32,7 +31,7 @@ namespace MS.Internal.AppModel
         {
             try
             {
-                string cookies = GetCookie(httpRequest.RequestUri, false/*throwIfNoCookie*/);
+                string cookies = GetCookie(httpRequest.RequestUri, throwIfNoCookie: false);
                 if(!string.IsNullOrEmpty(cookies))
                 {
                     if (httpRequest.CookieContainer == null)

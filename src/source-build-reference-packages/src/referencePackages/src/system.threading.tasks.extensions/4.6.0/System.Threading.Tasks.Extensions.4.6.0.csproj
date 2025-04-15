@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.6.0</PackageVersion>
     <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.1.0/System.Runtime.CompilerServices.Unsafe.6.1.0.csproj" />
   </ItemGroup>
 
 </Project>

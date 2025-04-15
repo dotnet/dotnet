@@ -13,20 +13,11 @@ internal struct RemoteClientInitializationOptions
     [JsonPropertyName("usePreciseSemanticTokenRanges")]
     public required bool UsePreciseSemanticTokenRanges { get; set; }
 
-    [JsonPropertyName("csharpVirtualDocumentSuffix")]
-    public required string CSharpVirtualDocumentSuffix { get; set; }
-
     [JsonPropertyName("htmlVirtualDocumentSuffix")]
     public required string HtmlVirtualDocumentSuffix { get; set; }
 
-    [JsonPropertyName("includeProjectKeyInGeneratedFilePath")]
-    public required bool IncludeProjectKeyInGeneratedFilePath { get; set; }
-
     [JsonPropertyName("returnCodeActionAndRenamePathsWithPrefixedSlash")]
     public required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash { get; set; }
-
-    [JsonPropertyName("forceRuntimeCodeGeneration")]
-    public required bool ForceRuntimeCodeGeneration { get; set; }
 
     [JsonPropertyName("supportsFileManipulation")]
     public required bool SupportsFileManipulation { get; set; }
@@ -34,12 +25,9 @@ internal struct RemoteClientInitializationOptions
     [JsonPropertyName("showAllCSharpCodeActions")]
     public required bool ShowAllCSharpCodeActions { get; set; }
 
-    [JsonPropertyName("useNewFormattingEngine")]
-    public required bool UseNewFormattingEngine { get; set; }
-
     [JsonPropertyName("supportsSoftSelectionInCompletion")]
     public required bool SupportsSoftSelectionInCompletion { get; set; }
 
     [JsonPropertyName("useVSCodeCompletionTriggerCharacters")]
-    public bool UseVsCodeCompletionTriggerCharacters { get; set; }
+    public required bool UseVsCodeCompletionTriggerCharacters { get; set; }
 }

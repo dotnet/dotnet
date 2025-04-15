@@ -81,7 +81,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             return false;
         }
 
-        if (implicitExpression.FullWidth > 2 && context.Reason != CompletionReason.Invoked)
+        if (implicitExpression.Width > 2 && context.Reason != CompletionReason.Invoked)
         {
             // We only want to provide directive completions if the implicit expression is empty "@|" or at the beginning of a word "@i|", this ensures
             // we're consistent with how C# typically provides completion items.
@@ -124,7 +124,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     // Internal for testing
     internal static ImmutableArray<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
     {
-        var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind)
+        var defaultDirectives = syntaxTree.Options.FileKind.IsComponent()
             ? ComponentDefaultDirectives
             : MvcDefaultDirectives;
 

@@ -9,19 +9,15 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using RoslynDocumentLink = Roslyn.LanguageServer.Protocol.DocumentLink;
-using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
-using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 using TextDocument = Microsoft.CodeAnalysis.TextDocument;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task CSharp_Method()
     {
         var input = """
@@ -40,7 +36,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         await VerifyGoToDefinitionAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_Local()
     {
         var input = """
@@ -61,7 +57,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         await VerifyGoToDefinitionAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_MetadataReference()
     {
         var input = """
@@ -87,7 +83,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         Assert.Contains("public sealed class String", line);
     }
 
-    [FuseTheory]
+    [Theory]
     [InlineData("$$IncrementCount")]
     [InlineData("In$$crementCount")]
     [InlineData("IncrementCount$$")]
@@ -104,10 +100,10 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
             }
             """;
 
-        await VerifyGoToDefinitionAsync(input, FileKinds.Component);
+        await VerifyGoToDefinitionAsync(input, RazorFileKind.Component);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AttributeValue_BindAfter()
     {
         var input = """
@@ -123,10 +119,10 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
             }
             """;
 
-        await VerifyGoToDefinitionAsync(input, FileKinds.Component);
+        await VerifyGoToDefinitionAsync(input, RazorFileKind.Component);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component()
     {
         TestCode input = """
@@ -145,7 +141,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
             }
             """;
 
-        var result = await GetGoToDefinitionResultAsync(input, FileKinds.Component,
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
 
         Assert.NotNull(result.Value.Second);
@@ -153,11 +149,11 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         var location = Assert.Single(locations);
 
         var text = SourceText.From(surveyPrompt.Text);
-        var range = RoslynLspExtensions.GetRange(text, surveyPrompt.Span);
+        var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
     }
 
-    [FuseTheory]
+    [Theory]
     [InlineData("Ti$$tle")]
     [InlineData("$$@bind-Title")]
     [InlineData("@$$bind-Title")]
@@ -191,7 +187,7 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
             }
             """;
 
-        var result = await GetGoToDefinitionResultAsync(input, FileKinds.Component,
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
 
         Assert.NotNull(result.Value.Second);
@@ -199,11 +195,11 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         var location = Assert.Single(locations);
 
         var text = SourceText.From(surveyPrompt.Text);
-        var range = RoslynLspExtensions.GetRange(text, surveyPrompt.Span);
+        var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html()
     {
         // This really just validates Uri remapping, the actual response is largely arbitrary
@@ -218,13 +214,12 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
             </script>
             """;
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
-        var htmlResponse = new SumType<Location, Location[], DocumentLink[]>?(new Location[]
+        var htmlResponse = new SumType<LspLocation, LspLocation[], DocumentLink[]>?(new LspLocation[]
         {
-            new Location
-            {
+            new() {
                 Uri = new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix),
                 Range = inputText.GetRange(input.Span),
             },
@@ -236,11 +231,12 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
     private static string FileName(string projectRelativeFileName)
         => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
 
-    private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, SumType<Location, Location[], DocumentLink[]>? htmlResponse = null)
+    private async Task VerifyGoToDefinitionAsync(
+        TestCode input,
+        RazorFileKind? fileKind = null,
+        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
         var result = await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
 
         Assumes.NotNull(result);
@@ -250,23 +246,23 @@ public class CohostGoToDefinitionEndpointTest(FuseTestContext context, ITestOutp
         var location = Assert.Single(locations);
 
         var text = SourceText.From(input.Text);
-        var range = RoslynLspExtensions.GetRange(text, input.Span);
+        var range = text.GetRange(input.Span);
         Assert.Equal(range, location.Range);
 
         Assert.Equal(document.CreateUri(), location.Uri);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
-        TestCode input, string? fileKind = null, params (string fileName, string contents)[]? additionalFiles)
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultAsync(
+        TestCode input,
+        RazorFileKind? fileKind = null,
+        params (string fileName, string contents)[]? additionalFiles)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
         return await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse: null);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultCoreAsync(
-        TextDocument document, TestCode input, SumType<Location, Location[], DocumentLink[]>? htmlResponse)
+    private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultCoreAsync(
+        TextDocument document, TestCode input, SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);

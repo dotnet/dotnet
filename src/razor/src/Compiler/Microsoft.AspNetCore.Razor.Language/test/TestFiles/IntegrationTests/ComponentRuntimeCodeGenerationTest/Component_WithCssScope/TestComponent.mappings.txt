@@ -74,7 +74,7 @@ Generated Location: (4718:136,0 [1] )
 
 Source Location: (925:25,41 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (5004:147,0 [1] )
+Generated Location: (4997:146,25 [1] )
 |i|
 
 Source Location: (933:26,0 [164] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -85,7 +85,7 @@ Source Location: (933:26,0 [164] x:\dir\subdir\Test\TestComponent.cshtml)
         System.GC.KeepAlive(myVariable);
     }
 |
-Generated Location: (5186:156,0 [164] )
+Generated Location: (5179:155,0 [164] )
 |        }
 
         System.GC.KeepAlive(myElementReference);

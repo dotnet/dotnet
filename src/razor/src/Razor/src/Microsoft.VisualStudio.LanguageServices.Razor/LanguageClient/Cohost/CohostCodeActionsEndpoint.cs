@@ -8,17 +8,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -72,27 +71,14 @@ internal sealed class CohostCodeActionsEndpoint(
         var correlationId = Guid.NewGuid();
         using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CodeActionRazorTelemetryThreshold, correlationId);
 
-        // VS Provides `CodeActionParams.Context.SelectionRange` in addition to
-        // `CodeActionParams.Range`. The `SelectionRange` is relative to where the
-        // code action was invoked (ex. line 14, char 3) whereas the `Range` is
-        // always at the start of the line (ex. line 14, char 0). We want to utilize
-        // the relative positioning to ensure we provide code actions for the appropriate
-        // context.
-        //
-        // Note: VS Code doesn't provide a `SelectionRange`.
-        var vsCodeActionContext = request.Context;
-        if (vsCodeActionContext.SelectionRange != null)
-        {
-            request.Range = vsCodeActionContext.SelectionRange;
-        }
+        CodeActionsService.AdjustRequestRangeIfNecessary(request);
 
         var requestInfo = await _remoteServiceInvoker.TryInvokeAsync<IRemoteCodeActionsService, CodeActionRequestInfo>(
             razorDocument.Project.Solution,
             (service, solutionInfo, cancellationToken) => service.GetCodeActionRequestInfoAsync(solutionInfo, razorDocument.Id, request, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-        if (requestInfo is null ||
-            requestInfo.LanguageKind == RazorLanguageKind.CSharp && requestInfo.CSharpRequest is null)
+        if (requestInfo is null or { LanguageKind: RazorLanguageKind.CSharp, CSharpRequest: null })
         {
             return null;
         }
@@ -112,17 +98,19 @@ internal sealed class CohostCodeActionsEndpoint(
 
     private async Task<RazorVSInternalCodeAction[]> GetCSharpCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
-        if (!razorDocument.Project.TryGetCSharpDocument(request.TextDocument.Uri, out var generatedDocument))
+        var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(request.TextDocument.Uri, cancellationToken).ConfigureAwait(false);
+        if (generatedDocument is null)
         {
             return [];
         }
 
-        var csharpRequest = JsonHelpers.ToRoslynLSP<Roslyn.LanguageServer.Protocol.CodeActionParams, VSCodeActionParams>(request).AssumeNotNull();
+        // We have to use our own type, which doesn't inherit from CodeActionParams, so we have to use Json to convert
+        var csharpRequest = JsonHelpers.Convert<VSCodeActionParams, CodeActionParams>(request).AssumeNotNull();
 
         using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, "Razor.ExternalAccess", TelemetryThresholds.CodeActionSubLSPTelemetryThreshold, correlationId);
         var csharpCodeActions = await CodeActions.GetCodeActionsAsync(generatedDocument, csharpRequest, _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions, cancellationToken).ConfigureAwait(false);
 
-        return JsonHelpers.ToVsLSP<RazorVSInternalCodeAction[], Roslyn.LanguageServer.Protocol.CodeAction[]>(csharpCodeActions).AssumeNotNull();
+        return JsonHelpers.ConvertAll<CodeAction, RazorVSInternalCodeAction>(csharpCodeActions);
     }
 
     private async Task<RazorVSInternalCodeAction[]> GetHtmlCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
@@ -151,12 +139,6 @@ internal sealed class CohostCodeActionsEndpoint(
             if (result?.Response is null)
             {
                 return [];
-            }
-
-            // WebTools is still using Newtonsoft, so we have to convert to STJ
-            foreach (var codeAction in result.Response)
-            {
-                codeAction.Data = JsonHelpers.TryConvertFromJObject(codeAction.Data);
             }
 
             return result.Response;

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Collections;              // for ArrayList
@@ -1854,7 +1853,7 @@ namespace Microsoft.Internal.AlphaFlattener
 
         public override BrushProxy BlendBrush(BrushProxy brush)
         {
-            Debug.Assert(false, "Image over Brush?");
+            Debug.Fail("Image over Brush?");
             
             return brush;
         }
@@ -2025,25 +2024,25 @@ namespace Microsoft.Internal.AlphaFlattener
 
         public override Geometry GetShapeGeometry()
         {
-            Debug.Assert(false, "GetShapeGeometry on Canvas");
+            Debug.Fail("GetShapeGeometry on Canvas");
             return null;
         }
 
         public override void Exclude(Geometry g)
         {
-            Debug.Assert(false, "Exclude on Canvas");
+            Debug.Fail("Exclude on Canvas");
         }
 
         public override BrushProxy BlendBrush(BrushProxy brush)
         {
-            Debug.Assert(false, "BlendBrush on Canvas");
+            Debug.Fail("BlendBrush on Canvas");
 
             return brush;
         }
 
         public override void BlendOverImage(ImageProxy image, Matrix trans)
         {
-            Debug.Assert(false, "BlendOverImage on Canvas");
+            Debug.Fail("BlendOverImage on Canvas");
         }
 
         public override Primitive BlendOpacityMaskWithColor(BrushProxy color)

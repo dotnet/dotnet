@@ -39,10 +39,9 @@ using Microsoft.AspNetCore.Components.Rendering;
 
         __builder.OpenElement(0, "p");
         __builder.AddContent(1, "Output: ");
-        __builder.AddContent(2, 
 #nullable restore
-#line (9,21)-(9,27) "x:\dir\subdir\Test\TestComponent.cshtml"
-output
+#line (9,21)-(9,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(2, output
 
 #line default
 #line hidden

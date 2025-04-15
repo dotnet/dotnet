@@ -41,10 +41,9 @@ items2
 #nullable disable
             , 3, (context) => (__builder2) => {
                 __builder2.OpenElement(4, "p");
-                __builder2.AddContent(5, 
 #nullable restore
-#line (3,9)-(3,16) "x:\dir\subdir\Test\UseTestComponent.cshtml"
-context
+#line (3,9)-(3,16) 25 "x:\dir\subdir\Test\UseTestComponent.cshtml"
+__builder2.AddContent(5, context
 
 #line default
 #line hidden

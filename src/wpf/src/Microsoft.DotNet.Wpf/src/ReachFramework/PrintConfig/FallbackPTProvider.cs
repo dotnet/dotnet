@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.Globalization;
@@ -53,7 +52,7 @@ namespace MS.Internal.Printing.Configuration
             // indicate right away if there was an error in binding the provider
             // to the device.  Doing late binding would mean that any instance
             // method could throw a no such printer exception.
-            if (false == UnsafeNativeMethods.OpenPrinterW(deviceName, out this._deviceHandle, new HandleRef(this, IntPtr.Zero)))
+            if (!UnsafeNativeMethods.OpenPrinterW(deviceName, out this._deviceHandle, new HandleRef(this, IntPtr.Zero)))
             {
                 throw new PrintQueueException(Marshal.GetLastWin32Error(), "PrintConfig.Provider.BindFail", deviceName);
             }

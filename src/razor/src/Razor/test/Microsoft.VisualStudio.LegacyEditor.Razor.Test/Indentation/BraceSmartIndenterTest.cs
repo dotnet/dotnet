@@ -24,7 +24,7 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor.Indentation;
 
 public class BraceSmartIndenterTest(ITestOutputHelper testOutput) : BraceSmartIndenterTestBase(testOutput)
 {
-    private static readonly RazorParserOptions s_defaultOptions = RazorParserOptions.Create(builder => builder.EnableSpanEditHandlers = true);
+    private static readonly RazorParserOptions s_defaultOptions = RazorParserOptions.Default.WithFlags(enableSpanEditHandlers: true);
 
     [Fact]
     public void AtApplicableRazorBlock_NestedIfBlock_ReturnsFalse()
@@ -250,11 +250,10 @@ public class BraceSmartIndenterTest(ITestOutputHelper testOutput) : BraceSmartIn
     public void AtApplicableRazorBlock_AtMetacode_ReturnsTrue()
     {
         // Arrange
-        var parseOptions = RazorParserOptions.Create(options =>
-        {
-            options.Directives.Add(FunctionsDirective.Directive);
-            options.EnableSpanEditHandlers = true;
-        });
+        var parseOptions = RazorParserOptions.Default
+            .WithDirectives(FunctionsDirective.Directive)
+            .WithFlags(enableSpanEditHandlers: true);
+
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("@functions {}"), parseOptions);
         var changePosition = 12;
 
@@ -562,12 +561,9 @@ public class BraceSmartIndenterTest(ITestOutputHelper testOutput) : BraceSmartIn
     {
         var syntaxTree = RazorSyntaxTree.Parse(
             TestRazorSourceDocument.Create(content),
-            RazorParserOptions.Create(options =>
-            {
-                options.Directives.Add(FunctionsDirective.Directive);
-                options.Directives.Add(SectionDirective.Directive);
-                options.EnableSpanEditHandlers = true;
-            }));
+            RazorParserOptions.Default
+                .WithDirectives(FunctionsDirective.Directive, SectionDirective.Directive)
+                .WithFlags(enableSpanEditHandlers: true));
 
         return syntaxTree;
     }

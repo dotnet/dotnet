@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.6.1</PackageVersion>
+    <AssemblyName>System.Numerics.Vectors</AssemblyName>
+  </PropertyGroup>
+
+</Project>

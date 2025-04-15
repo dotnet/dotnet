@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>Microsoft.Bcl.AsyncInterfaces</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <ProjectReference Include="../../system.threading.tasks.extensions/4.5.4/System.Threading.Tasks.Extensions.4.5.4.csproj" />
   </ItemGroup>
 
 </Project>

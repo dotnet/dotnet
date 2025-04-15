@@ -8,9 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 
@@ -76,7 +75,6 @@ internal partial class RazorCustomMessageTarget
             {
                 foreach (var codeAction in response.Response)
                 {
-                    codeAction.Data = JsonHelpers.TryConvertFromJObject(codeAction.Data);
                     codeActions.Add(codeAction);
                 }
             }
@@ -124,7 +122,6 @@ internal partial class RazorCustomMessageTarget
 
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var codeAction = resolveCodeActionParams.CodeAction;
-        codeAction.Data = JsonHelpers.TryConvertBackToJObject(codeAction.Data);
 
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<CodeAction, VSInternalCodeAction?>(
             textBuffer,
@@ -137,10 +134,7 @@ internal partial class RazorCustomMessageTarget
             if (response.Response is not null)
             {
                 // Only take the first response from a resolution
-                var resolved = response.Response;
-                resolved.Data = JsonHelpers.TryConvertFromJObject(resolved.Data);
-
-                return resolved;
+                return response.Response;
             }
         }
 

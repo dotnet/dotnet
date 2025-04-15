@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Windows.Controls.Primitives;
@@ -129,7 +128,7 @@ namespace System.Windows.Controls
                 }
                 else
                 {
-                    width = width - GetVisualCanvasMarginX();
+                    width -= GetVisualCanvasMarginX();
                 }
 
                 double height = Height;
@@ -139,7 +138,7 @@ namespace System.Windows.Controls
                 }
                 else
                 {
-                    height = height - GetVisualCanvasMarginY();
+                    height -= GetVisualCanvasMarginY();
                 }
 
                 Vector offset = VisualTreeHelper.GetOffset(_referenceHeader);

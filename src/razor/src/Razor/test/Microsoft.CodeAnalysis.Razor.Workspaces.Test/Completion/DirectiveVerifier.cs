@@ -3,7 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using System.Linq;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;

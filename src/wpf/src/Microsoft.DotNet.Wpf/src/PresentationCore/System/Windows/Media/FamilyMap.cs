@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Globalization;
 using System.Windows.Markup;
@@ -242,7 +241,7 @@ namespace System.Windows.Media
                     {
                         do
                         {
-                            firstNum = firstNum * 16;
+                            firstNum *= 16;
                             lastNum = lastNum * 16 + 0x0F;
                             index++;
                         } while (

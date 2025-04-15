@@ -5,9 +5,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;

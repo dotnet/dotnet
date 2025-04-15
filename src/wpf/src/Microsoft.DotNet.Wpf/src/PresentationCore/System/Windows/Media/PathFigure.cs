@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Media.Animation;
 using System.Windows.Markup;
@@ -148,7 +147,7 @@ namespace System.Windows.Media
         {
             ReadPreamble();
             // Delegate to the internal method which implements all ToString calls.
-            return ConvertToString(null /* format string */, null /* format provider */);
+            return ConvertToString(format: null, provider: null);
         }
 
         /// <summary>
@@ -162,7 +161,7 @@ namespace System.Windows.Media
         {
             ReadPreamble();
             // Delegate to the internal method which implements all ToString calls.
-            return ConvertToString(null /* format string */, provider);
+            return ConvertToString(format: null, provider);
         }
 
         /// <summary>

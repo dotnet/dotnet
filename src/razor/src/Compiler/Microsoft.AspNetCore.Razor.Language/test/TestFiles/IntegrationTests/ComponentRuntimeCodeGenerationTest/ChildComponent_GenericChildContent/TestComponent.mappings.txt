@@ -10,6 +10,6 @@ Generated Location: (1145:31,0 [4] )
 
 Source Location: (51:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.ToLower()|
-Generated Location: (1544:42,0 [17] )
+Generated Location: (1529:41,25 [17] )
 |context.ToLower()|
 

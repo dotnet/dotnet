@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -51,16 +50,11 @@ internal class DocumentRangeFormattingEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
 
         if (request.Options.OtherOptions is not null &&
             request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) &&
-            fromPasteObj is JsonElement fromPasteElement)
+            fromPasteObj.TryGetFirst(out var fromPaste))
         {
-            var fromPaste = fromPasteElement.Deserialize<bool>();
             if (fromPaste && !_optionsMonitor.CurrentValue.Formatting.IsOnPasteEnabled())
             {
                 return null;
@@ -69,7 +63,15 @@ internal class DocumentRangeFormattingEndpoint(
 
         var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        var htmlChanges = await _htmlFormatter.GetDocumentFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Options, cancellationToken).ConfigureAwait(false);
+        if (await _htmlFormatter.GetDocumentFormattingEditsAsync(
+            documentContext.Snapshot,
+            documentContext.Uri,
+            request.Options,
+            cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
+        {
+            return null;
+        }
+
         var changes = await _razorFormattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges, request.Range.ToLinePositionSpan(), options, cancellationToken).ConfigureAwait(false);
 
         return [.. changes.Select(codeDocument.Source.Text.GetTextEdit)];

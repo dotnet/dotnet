@@ -96,6 +96,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 function);
 
         /// <summary>
+        ///     The optional complex property '{type}.{property}' is mapped using table sharing, but only contains optional properties. Add a required property or discriminator or map this complex property to a JSON column.
+        /// </summary>
+        public static string ComplexPropertyOptionalTableSharing(object? type, object? property)
+            => string.Format(
+                GetString("ComplexPropertyOptionalTableSharing", nameof(type), nameof(property)),
+                type, property);
+
+        /// <summary>
         ///     The computed column SQL has not been specified for the column '{table}.{column}'. Specify the SQL before using Entity Framework to create the database schema.
         /// </summary>
         public static string ComputedColumnSqlUnspecified(object? table, object? column)
@@ -466,14 +474,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType1, property1, entityType2, property2, columnName, table, maxLength1, maxLength2);
 
         /// <summary>
-        ///     '{entityType1}.{property1}' and '{entityType2}.{property2}' are both mapped to column '{columnName}' in '{table}', but are configured with different column nullability settings.
-        /// </summary>
-        public static string DuplicateColumnNameNullabilityMismatch(object? entityType1, object? property1, object? entityType2, object? property2, object? columnName, object? table)
-            => string.Format(
-                GetString("DuplicateColumnNameNullabilityMismatch", nameof(entityType1), nameof(property1), nameof(entityType2), nameof(property2), nameof(columnName), nameof(table)),
-                entityType1, property1, entityType2, property2, columnName, table);
-
-        /// <summary>
         ///     '{entityType1}.{property1}' and '{entityType2}.{property2}' are both mapped to column '{columnName}' in '{table}', but are configured to use different column orders ('{columnOrder1}' and '{columnOrder2}').
         /// </summary>
         public static string DuplicateColumnNameOrderMismatch(object? entityType1, object? property1, object? entityType2, object? property2, object? columnName, object? table, object? columnOrder1, object? columnOrder2)
@@ -498,7 +498,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType1, property1, entityType2, property2, columnName, table, type1, type2);
 
         /// <summary>
-        ///     '{entityType1}.{property1}' and '{entityType2}.{property2}' are both mapped to column '{columnName}' in '{table}', but the properties are contained within the same hierarchy. All properties on an entity type must be mapped to unique different columns.
+        ///     '{entityType1}.{property1}' and '{entityType2}.{property2}' are both mapped to column '{columnName}' in '{table}', but the properties are contained within the same hierarchy. All properties on an entity type must be mapped to different columns.
         /// </summary>
         public static string DuplicateColumnNameSameHierarchy(object? entityType1, object? property1, object? entityType2, object? property2, object? columnName, object? table)
             => string.Format(
@@ -2146,7 +2146,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 nodeType, expressionType);
 
         /// <summary>
-        ///     No relational type mapping can be found for property '{entity}.{property}' and the current provider doesn't specify a default store type for the properties of type '{clrType}'. 
+        ///     No relational type mapping can be found for property '{entity}.{property}' and the current provider doesn't specify a default store type for the properties of type '{clrType}'.
         /// </summary>
         public static string UnsupportedPropertyType(object? entity, object? property, object? clrType)
             => string.Format(
@@ -2966,6 +2966,31 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
                             level,
                             RelationalEventId.ConnectionError,
                             _resourceManager.GetString("LogConnectionErrorAsDebug")!)));
+            }
+
+            return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     A connection open was canceled to database '{database}' on server '{server}'.
+        /// </summary>
+        public static EventDefinition<string, string> LogConnectionCanceled(IDiagnosticsLogger logger)
+        {
+            var definition = ((RelationalLoggingDefinitions)logger.Definitions).LogConnectionCanceled;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((RelationalLoggingDefinitions)logger.Definitions).LogConnectionCanceled,
+                    logger,
+                    static logger => new EventDefinition<string, string>(
+                        logger.Options,
+                        RelationalEventId.ConnectionCanceled,
+                        LogLevel.Debug,
+                        "RelationalEventId.ConnectionCanceled",
+                        level => LoggerMessage.Define<string, string>(
+                            level,
+                            RelationalEventId.ConnectionCanceled,
+                            _resourceManager.GetString("LogConnectionCanceled")!)));
             }
 
             return (EventDefinition<string, string>)definition;

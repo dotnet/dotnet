@@ -905,8 +905,9 @@ namespace NuGet.PackageManagement.UI
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Use ShutdownToken to ensure the operation is canceled if it's still running when VS shuts down.
             IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfoList =
-                        await _vulnerabilityService.GetVulnerabilityInfoAsync(packageIdentity, cancellationToken);
+                        await _vulnerabilityService.GetVulnerabilityInfoAsync(packageIdentity, VsShellUtilities.ShutdownToken);
 
             SetVulnerabilityMaxSeverity(packageIdentity.Version, vulnerabilityInfoList?.FirstOrDefault()?.Severity ?? -1);
         }
@@ -947,9 +948,6 @@ namespace NuGet.PackageManagement.UI
             {
                 _searchService.ClearFromCache(Id, Sources, IncludePrerelease);
             }
-
-            // Set auto referenced to true any reference for the given id contains the flag.
-            AutoReferenced = installedPackages.IsAutoReferenced(Id);
 
             NuGetUIThreadHelper.JoinableTaskFactory
                 .RunAsync(ReloadPackageVersionsAsync)

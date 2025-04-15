@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.8.1</PackageVersion>
     <AssemblyName>NuGet.Common</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.Frameworks" Version="6.8.1" />
+    <ProjectReference Include="../../nuget.frameworks/6.8.1/NuGet.Frameworks.6.8.1.csproj" />
   </ItemGroup>
 
 </Project>

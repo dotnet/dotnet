@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.IO;
 using System.IO.Packaging;
@@ -1102,7 +1101,7 @@ namespace System.Windows.Media.Imaging
                 System.IO.FileStream filestream = stream as System.IO.FileStream;
                 try
                 {
-                    if (filestream.IsAsync is false)
+                    if (!filestream.IsAsync)
                     {
                         safeFilehandle = filestream.SafeFileHandle;
                     }

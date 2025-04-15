@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: This is the partial class of the StickyNoteControl.
@@ -719,7 +718,7 @@ namespace MS.Internal.Controls.StickyNote
             if ((token == XmlToken.Ink && contentControl.Type != StickyNoteType.Ink)
                 || (token == XmlToken.Text && contentControl.Type != StickyNoteType.Text))
             {
-                Debug.Assert(false, "The annotation data does match with the current content control in StickyNote");
+                Debug.Fail("The annotation data does match with the current content control in StickyNote");
                 return;
             }
 
@@ -1027,7 +1026,7 @@ namespace System.Windows.Controls
                 transformations.Children.Add(new TranslateTransform(anchor.X, anchor.Y));
 
                 TranslateTransform offsetTransform = new TranslateTransform(0, 0);
-                if (IsExpanded == true)
+                if (IsExpanded)
                 {
                     offsetTransform = PositionTransform.Clone();
 
@@ -1615,12 +1614,12 @@ namespace System.Windows.Controls
         /// <summary>
         /// the presentation context this sticky note is in
         /// </summary>
-        PresentationContext _presentationContext;
+        private PresentationContext _presentationContext;
 
         /// <summary>
         /// Offset from anchor point to sticky note icon
         /// </summary>
-        TranslateTransform _positionTransform = new TranslateTransform(0, 0);
+        private TranslateTransform _positionTransform = new TranslateTransform(0, 0);
 
         // A reference of the current attached annotation instance.
         private IAttachedAnnotation _attachedAnnotation;

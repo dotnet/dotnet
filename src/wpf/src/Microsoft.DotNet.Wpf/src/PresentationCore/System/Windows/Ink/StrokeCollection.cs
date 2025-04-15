@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.Collections;
@@ -222,7 +221,7 @@ namespace System.Windows.Ink
         public void Transform(Matrix transformMatrix, bool applyToStylusTip)
         {
             // Ensure that the transformMatrix is invertible.
-            if ( false == transformMatrix.HasInverse )
+            if (!transformMatrix.HasInverse)
                 throw new ArgumentException(SR.MatrixNotInvertible, nameof(transformMatrix));
 
             // if transformMatrix is identity or the StrokeCollection is empty
@@ -270,7 +269,7 @@ namespace System.Windows.Ink
         /// called by base class Collection&lt;T&gt; when the list is being cleared;
         /// raises a CollectionChanged event to any listeners
         /// </summary>
-        protected override sealed void ClearItems()
+        protected sealed override void ClearItems()
         {
             if ( this.Count > 0 )
             {
@@ -282,27 +281,27 @@ namespace System.Windows.Ink
 
                 base.ClearItems();
 
-                RaiseStrokesChanged(null /*added*/, removed, -1);
+                RaiseStrokesChanged(addedStrokes: null, removed, -1);
             }
         }
 
         /// <summary>
         /// called by base class RemoveAt or Remove methods
         /// </summary>
-        protected override sealed void RemoveItem(int index)
+        protected sealed override void RemoveItem(int index)
         {
             Stroke removedStroke = this[index];
             base.RemoveItem(index);
 
             StrokeCollection removed = new StrokeCollection();
             ( (List<Stroke>)removed.Items ).Add(removedStroke);
-            RaiseStrokesChanged(null /*added*/, removed, index);
+            RaiseStrokesChanged(addedStrokes: null, removed, index);
         }
 
         /// <summary>
         /// called by base class Insert, Add methods
         /// </summary>
-        protected override sealed void InsertItem(int index, Stroke stroke)
+        protected sealed override void InsertItem(int index, Stroke stroke)
         {
             ArgumentNullException.ThrowIfNull(stroke);
             if ( this.IndexOf(stroke) != -1 )
@@ -314,13 +313,13 @@ namespace System.Windows.Ink
 
             StrokeCollection addedStrokes = new StrokeCollection();
             ( (List<Stroke>)addedStrokes.Items ).Add(stroke);
-            RaiseStrokesChanged(addedStrokes, null /*removed*/, index);
+            RaiseStrokesChanged(addedStrokes, removedStrokes: null, index);
         }
 
         /// <summary>
         /// called by base class set_Item method
         /// </summary>
-        protected override sealed void SetItem(int index, Stroke stroke)
+        protected sealed override void SetItem(int index, Stroke stroke)
         {
             ArgumentNullException.ThrowIfNull(stroke);
             if ( IndexOf(stroke) != -1 )
@@ -398,7 +397,7 @@ namespace System.Windows.Ink
                 ( (List<Stroke>)this.Items ).RemoveAt(indexes[x]);
             }
 
-            RaiseStrokesChanged(null /*added*/, strokes, indexes[0]);
+            RaiseStrokesChanged(addedStrokes: null, strokes, indexes[0]);
         }
 
         /// <summary>
@@ -434,7 +433,7 @@ namespace System.Windows.Ink
             //and call our protected List<Stroke> directly
             ( (List<Stroke>)this.Items ).AddRange(strokes);
 
-            RaiseStrokesChanged(strokes, null /*removed*/, index);
+            RaiseStrokesChanged(strokes, removedStrokes: null, index);
         }
 
         /// <summary>

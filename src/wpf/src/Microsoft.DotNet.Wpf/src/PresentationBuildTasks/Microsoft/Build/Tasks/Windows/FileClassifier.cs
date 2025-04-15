@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //---------------------------------------------------------------------------
 //
@@ -78,7 +77,7 @@ namespace Microsoft.Build.Tasks.Windows
 
                 ret = VerifyTaskInputs();
 
-                if (ret != false)
+                if (ret)
                 {
                     // Do the real work to classify input files.
                     Classify(SourceFiles, mainEmbeddedList, satelliteEmbeddedList);
@@ -277,7 +276,7 @@ namespace Microsoft.Build.Tasks.Windows
             // MSBUILD Engine should have checked the setting for this property
             // so don't need to recheck here.
 
-            if (TaskHelper.IsValidCultureName(Culture) == false)
+            if (!TaskHelper.IsValidCultureName(Culture))
             {
                 Log.LogErrorWithCodeFromResources(nameof(SR.InvalidCulture), Culture);
                 bValidInput = false;

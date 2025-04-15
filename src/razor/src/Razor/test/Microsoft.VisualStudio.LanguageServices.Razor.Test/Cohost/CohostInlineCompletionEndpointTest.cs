@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,9 +23,9 @@ using RoslynSnippets = Microsoft.CodeAnalysis.Snippets;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public Task Constructor()
         => VerifyInlineCompletionAsync(
             input: """
@@ -49,7 +48,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
                 }
                 """);
 
-    [FuseFact]
+    [Fact]
     public Task Constructor_SmallIndent()
         => VerifyInlineCompletionAsync(
             input: """
@@ -73,7 +72,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
                 """,
             tabSize: 2);
 
-    [FuseFact]
+    [Fact]
     public Task InHtml_DoesNothing()
         => VerifyInlineCompletionAsync(
             input: """
@@ -82,9 +81,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
 
     private async Task VerifyInlineCompletionAsync(TestCode input, string? output = null, int tabSize = 4)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
+        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetLinePosition(input.Position);
 
@@ -96,7 +93,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
             TabSize = tabSize
         };
 
-        var list = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, options.ToRoslynFormattingOptions(), DisposalToken);
+        var list = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, options.ToLspFormattingOptions(), DisposalToken);
 
         if (output is null)
         {
@@ -145,7 +142,7 @@ public class CohostInlineCompletionEndpointTest(FuseTestContext context, ITestOu
             throw new System.NotImplementedException();
         }
 
-        public bool SnippetShortcutExists_NonBlocking(string shortcut)
+        public bool SnippetShortcutExists_NonBlocking(string? shortcut)
         {
             throw new System.NotImplementedException();
         }

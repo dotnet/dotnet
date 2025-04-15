@@ -12,6 +12,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.Versioning;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.StrongName;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -562,7 +563,7 @@ namespace Microsoft.DotNet.SignTool
 
             bool IsStrongNameSigned(PathWithHash file)
             {
-                bool isAlreadyStrongNamed = StrongName.IsSigned(file.FullPath, snPath: _snPath, log: _log);
+                bool isAlreadyStrongNamed = StrongNameHelper.IsSigned(file.FullPath, snPath: _snPath);
                 if (!isAlreadyStrongNamed)
                 {
                     _log.LogMessage(MessageImportance.Low, $"PE file {file.FullPath} does not have a valid strong name signature.");

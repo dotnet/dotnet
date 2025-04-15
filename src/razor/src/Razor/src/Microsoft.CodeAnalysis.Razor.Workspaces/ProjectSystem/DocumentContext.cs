@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -25,7 +23,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
     public Uri Uri { get; } = uri;
     public IDocumentSnapshot Snapshot { get; } = snapshot;
     public string FilePath => Snapshot.FilePath;
-    public string FileKind => Snapshot.FileKind;
+    public RazorFileKind FileKind => Snapshot.FileKind;
     public IProjectSnapshot Project => Snapshot.Project;
 
     public TextDocumentIdentifier GetTextDocumentIdentifier()
@@ -106,7 +104,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static TagHelperDocumentContext GetTagHelperContextCore(RazorCodeDocument codeDocument)
         {
-            return codeDocument.GetTagHelperContext().AssumeNotNull();
+            return codeDocument.GetRequiredTagHelperContext();
         }
 
         async ValueTask<TagHelperDocumentContext> GetTagHelperContextCoreAsync(CancellationToken cancellationToken)

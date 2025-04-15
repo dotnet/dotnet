@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -42,6 +41,21 @@ internal static class ProjectSnapshotManagerExtensions
     public static DocumentSnapshot GetRequiredDocument(this ProjectSnapshotManager projectManager, ProjectKey projectKey, string documentFilePath)
         => projectManager.GetDocument(projectKey, documentFilePath).AssumeNotNull();
 
+    public static bool ContainsDocument(this ProjectSnapshotManager projectManager, DocumentKey documentKey)
+        => projectManager.ContainsDocument(documentKey.ProjectKey, documentKey.FilePath);
+
+    public static bool TryGetDocument(
+        this ProjectSnapshotManager projectManager,
+        DocumentKey documentKey,
+        [NotNullWhen(true)] out DocumentSnapshot? document)
+        => projectManager.TryGetDocument(documentKey.ProjectKey, documentKey.FilePath, out document);
+
+    public static DocumentSnapshot? GetDocument(this ProjectSnapshotManager projectManager, DocumentKey documentKey)
+        => projectManager.GetDocument(documentKey.ProjectKey, documentKey.FilePath);
+
+    public static DocumentSnapshot GetRequiredDocument(this ProjectSnapshotManager projectManager, DocumentKey documentKey)
+        => projectManager.GetRequiredDocument(documentKey.ProjectKey, documentKey.FilePath);
+
     public static ProjectSnapshot? GetProject(this ProjectSnapshotManager.Updater updater, ProjectKey projectKey)
         => updater.TryGetProject(projectKey, out var result)
             ? result
@@ -74,4 +88,19 @@ internal static class ProjectSnapshotManagerExtensions
 
     public static DocumentSnapshot GetRequiredDocument(this ProjectSnapshotManager.Updater updater, ProjectKey projectKey, string documentFilePath)
         => updater.GetDocument(projectKey, documentFilePath).AssumeNotNull();
+
+    public static bool ContainsDocument(this ProjectSnapshotManager.Updater updater, DocumentKey documentKey)
+        => updater.ContainsDocument(documentKey.ProjectKey, documentKey.FilePath);
+
+    public static bool TryGetDocument(
+        this ProjectSnapshotManager.Updater updater,
+        DocumentKey documentKey,
+        [NotNullWhen(true)] out DocumentSnapshot? document)
+        => updater.TryGetDocument(documentKey.ProjectKey, documentKey.FilePath, out document);
+
+    public static DocumentSnapshot? GetDocument(this ProjectSnapshotManager.Updater updater, DocumentKey documentKey)
+        => updater.GetDocument(documentKey.ProjectKey, documentKey.FilePath);
+
+    public static DocumentSnapshot GetRequiredDocument(this ProjectSnapshotManager.Updater updater, DocumentKey documentKey)
+        => updater.GetRequiredDocument(documentKey.ProjectKey, documentKey.FilePath);
 }

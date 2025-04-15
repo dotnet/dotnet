@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //#define OLD_ISF
 
@@ -118,7 +117,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                         DecodeRawISF(ms);
                     }
                 }
-                else if (true == isGif)
+                else if (isGif)
                 {
                     DecodeRawISF(SystemDrawingHelper.GetCommentFromGifStream(inkData));
                 }
@@ -1468,7 +1467,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                 }
             }
 
-            if (false == fSetDefault)
+            if (!fSetDefault)
             {
                 // We will come here if the property is not found in the Optional List
                 // All other cases, we will have only default values
@@ -2550,7 +2549,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                         break;
                     }
                 }
-                if (false == fMatch)
+                if (!fMatch)
                 {
                     _strokeDescriptorTable.Add(strokeDescriptor);
                     _strokeLookupTable[stroke].StrokeDescriptorTableIndex = (uint)_strokeDescriptorTable.Count - 1;
@@ -2579,7 +2578,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                     }
                 }
 
-                if (false == fMatch)
+                if (!fMatch)
                 {
                     _metricTable.Add(metricBlock);
                     _strokeLookupTable[stroke].MetricDescriptorTableIndex = (uint)(_metricTable.Count - 1);
@@ -2596,7 +2595,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                 // First check to see if this matches with any existing Transform Blocks
                 for (int i = 0; i < _transformTable.Count; i++)
                 {
-                    if (true == xform.Compare(_transformTable[i]))
+                    if (xform.Compare(_transformTable[i]))
                     {
                         fMatch = true;
                         _strokeLookupTable[stroke].TransformTableIndex = (uint)i;
@@ -2604,7 +2603,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                     }
                 }
 
-                if (false == fMatch)
+                if (!fMatch)
                 {
                     _transformTable.Add(xform);
                     _strokeLookupTable[stroke].TransformTableIndex = (uint)(_transformTable.Count - 1);
@@ -2618,7 +2617,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                 // First check to see if this matches with any existing transform blocks
                 for (int i = 0; i < _drawingAttributesTable.Count; i++)
                 {
-                    if (true == drattrs.Equals(_drawingAttributesTable[i]))
+                    if (drattrs.Equals(_drawingAttributesTable[i]))
                     {
                         fMatch = true;
                         _strokeLookupTable[stroke].DrawingAttributesTableIndex = (uint)i;
@@ -2626,7 +2625,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                     }
                 }
 
-                if (false == fMatch)
+                if (!fMatch)
                 {
                     _drawingAttributesTable.Add(drattrs);
                     _strokeLookupTable[stroke].DrawingAttributesTableIndex = (uint)_drawingAttributesTable.Count - 1;
@@ -2655,7 +2654,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
         #region Debugging Methods
 
         [System.Diagnostics.Conditional("DEBUG_ISF")]
-        static void ISFDebugTrace(string message)
+        private static void ISFDebugTrace(string message)
         {
             System.Diagnostics.Debug.WriteLine(message);
         }
@@ -2673,7 +2672,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
 
         #region Private Fields
 
-        StrokeCollection _coreStrokes;
+        private StrokeCollection _coreStrokes;
         private System.Collections.Generic.List<StrokeDescriptor> _strokeDescriptorTable = null;
         private System.Collections.Generic.List<TransformDescriptor> _transformTable = null;
         private System.Collections.Generic.List<DrawingAttributes> _drawingAttributesTable = null;
@@ -2685,8 +2684,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
             //      with the serialization info so that load/save roundtrip the
             //      rectangle
         private Rect _inkSpaceRectangle = new Rect();
-
-        System.Collections.Generic.Dictionary<Stroke, StrokeLookupEntry> _strokeLookupTable = null;
+        private System.Collections.Generic.Dictionary<Stroke, StrokeLookupEntry> _strokeLookupTable = null;
 
         #endregion
     }

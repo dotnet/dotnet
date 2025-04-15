@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -28,7 +27,7 @@ internal class AggregateCompletionItemResolver
     public async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem item,
         VSInternalCompletionList containingCompletionList,
-        object? originalRequestContext,
+        ICompletionResolveContext originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)

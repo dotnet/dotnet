@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #if DEBUG
 #define TRACE
@@ -607,7 +606,7 @@ namespace System.Windows.Media.Animation
                 if (!_resolvedDuration.HasTimeSpan || _resolvedDuration.TimeSpan > TimeSpan.Zero)
                 {
                     // Verify that we only use SlipBehavior in supported scenarios
-                    if ((_timeline.AutoReverse == true) ||
+                    if ((_timeline.AutoReverse) ||
                         (_timeline.AccelerationRatio > 0) ||
                         (_timeline.DecelerationRatio > 0))
                     {
@@ -2130,7 +2129,7 @@ namespace System.Windows.Media.Animation
                             IsBackwardsProgressingGlobal = !IsBackwardsProgressingGlobal;
                             parentSpeed = -parentSpeed;  // Negate parent speed here for tick logic, since we negated localProgress
                         }
-                        newIteration = newIteration / 2;  // Definition of iteration with AutoReverse is a front and back segment, divide by 2
+                        newIteration /= 2;  // Definition of iteration with AutoReverse is a front and back segment, divide by 2
                     }
 
                     _currentIteration = 1 + newIteration;  // Officially, iterations are numbered from 1
@@ -3170,7 +3169,7 @@ namespace System.Windows.Media.Animation
             Debug.Assert(!_syncData.IsInSyncPeriod);
 
             // Verify our limitations on slip functionality, but don't throw here for perf
-            Debug.Assert(_timeline.AutoReverse == false);
+            Debug.Assert(!_timeline.AutoReverse);
             Debug.Assert(_timeline.AccelerationRatio == 0);
             Debug.Assert(_timeline.DecelerationRatio == 0);
 
@@ -4474,7 +4473,7 @@ namespace System.Windows.Media.Animation
         internal int                _childIndex;
         internal int                _depth;
 
-        static Int64                 s_TimeSpanTicksPerSecond = TimeSpan.FromSeconds(1).Ticks;
+        private static Int64        s_TimeSpanTicksPerSecond = TimeSpan.FromSeconds(1).Ticks;
 
         #endregion // Linking data
 

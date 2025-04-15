@@ -976,7 +976,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
             input: """
                     <div>
                         @{
-                          if(true) { }
+                            if(true) { }
                         }
                     </div>
 
@@ -1096,7 +1096,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
                     </html>
                     """,
             triggerCharacter: ';',
-            fileKind: FileKinds.Legacy);
+            fileKind: RazorFileKind.Legacy);
     }
 
     [FormattingTestFact(SkipFlipLineEnding = true)]

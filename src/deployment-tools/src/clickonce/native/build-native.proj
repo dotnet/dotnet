@@ -40,10 +40,12 @@
         !Exists('$(IntermediateOutputRootPath)nativeResourceFiles\%(NativeFiles.Identity)\version_info.h')"/>
 
     <PropertyGroup>
+      <AppHostLibDir>$(NuGetPackageRoot)microsoft.netcore.app.host.win-$(TargetArchitecture)\$(BundledNETCoreAppPackageVersion)\runtimes\win-$(TargetArchitecture)\native</AppHostLibDir>
       <BuildArgs>$(Configuration) $(TargetArchitecture) nativever $(NativeVersion) netcorepkgver $(BundledNETCoreAppPackageVersion) commit $(LatestCommit) rid $(TargetRid)</BuildArgs>
       <BuildArgs Condition="'$(PortableBuild)' == 'true'">$(BuildArgs) portable</BuildArgs>
       <BuildArgs Condition="'$(IncrementalNativeBuild)' == 'true'">$(BuildArgs) incremental-native-build</BuildArgs>
       <BuildArgs>$(BuildArgs) dotnetInstallDir "$(DOTNET_INSTALL_DIR)" rootdir $(RepoRoot)</BuildArgs>
+      <BuildArgs>$(BuildArgs) appHostLibDir "$(AppHostLibDir)"</BuildArgs>
     </PropertyGroup>
 
     <!--

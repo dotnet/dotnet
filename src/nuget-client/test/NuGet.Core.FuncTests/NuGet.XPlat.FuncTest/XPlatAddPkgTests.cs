@@ -1369,5 +1369,36 @@ namespace NuGet.XPlat.FuncTest
                 Assert.True(XPlatTestUtils.ValidateReference(projectXmlRoot, packageX.Id, "1.0.0", developmentDependency: true));
             }
         }
+
+        [Fact]
+        public async Task AddPkg_PackageIdArgumentAndDifferentNuspecCasing_WritesNuspecCasing()
+        {
+            // Arrange
+
+            using var pathContext = new SimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+            var packageX = XPlatTestUtils.CreatePackage(packageId: "PackageX");
+
+            // Generate Package
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            // Since user is not inputing a version, it is converted to a "*"
+            var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, "packagex", "*", projectA, noVersion: true);
+            var commandRunner = new AddPackageReferenceCommandRunner();
+
+            // Act
+            var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
+            var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
+
+            // Assert
+            Assert.Equal(0, result);
+
+            // Since user did not specify a version, the package reference will contain the resolved version
+            Assert.True(XPlatTestUtils.ValidateReference(projectXmlRoot, packageX.Id, "1.0.0", stringComparison: StringComparison.Ordinal));
+        }
     }
 }

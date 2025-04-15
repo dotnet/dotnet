@@ -5,6 +5,7 @@
   <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dotnet/arcade</PackageProjectUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>

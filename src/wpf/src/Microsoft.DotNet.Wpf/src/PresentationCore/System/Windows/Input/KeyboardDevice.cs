@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Threading;
 using MS.Internal;
@@ -641,7 +640,7 @@ namespace System.Windows.Input
                     moveFocusTo = _activeSource.RootVisual;
                 }
 
-                Focus(moveFocusTo, /*askOld=*/ false, /*askNew=*/ true, /*forceToNullIfFailed=*/ true);
+                Focus(moveFocusTo, askOld: false, askNew: true, forceToNullIfFailed: true);
             }
             else
             {

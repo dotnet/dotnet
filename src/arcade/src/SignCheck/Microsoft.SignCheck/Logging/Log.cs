@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.SignCheck.Verification;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -24,10 +25,10 @@ namespace Microsoft.SignCheck.Logging
             private set;
         }
 
-        public Log(string logFile, string errorFile, LogVerbosity verbosity)
+        public Log(string logFile, string errorFile, string resultsFile, LogVerbosity verbosity)
         {
             _loggers = new List<ILogger>();
-            Add(new FileLogger(verbosity, logFile, errorFile));
+            Add(new FileLogger(verbosity, logFile, errorFile, resultsFile));
             Add(new ConsoleLogger(verbosity));
             Verbosity = verbosity;
         }
@@ -70,6 +71,16 @@ namespace Microsoft.SignCheck.Logging
         public void WriteLine()
         {
             _loggers.ForEach(p => p.WriteLine());
+        }
+
+        public void WriteStartResult(SignatureVerificationResult result, string outcome)
+        {
+            _loggers.OfType<FileLogger>().FirstOrDefault().WriteStartResult(result, outcome);
+        }
+
+        public void WriteEndResult()
+        {
+            _loggers.OfType<FileLogger>().FirstOrDefault().WriteEndResult();
         }
 
         public void Close()

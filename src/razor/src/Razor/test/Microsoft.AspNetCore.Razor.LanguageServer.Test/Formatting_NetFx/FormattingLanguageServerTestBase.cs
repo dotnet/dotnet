@@ -20,9 +20,9 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
 {
     internal static RazorCodeDocument CreateCodeDocument(string content, ImmutableArray<SourceMapping> sourceMappings)
     {
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.CreateDefault());
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = RazorCodeDocument.Create(source);
+        var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
         var razorCSharpDocument = TestRazorCSharpDocument.Create(codeDocument, content, sourceMappings);
         codeDocument.SetSyntaxTree(syntaxTree);
         codeDocument.SetCSharpDocument(razorCSharpDocument);

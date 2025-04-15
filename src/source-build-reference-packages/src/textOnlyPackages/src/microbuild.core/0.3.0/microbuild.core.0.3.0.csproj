@@ -1,1 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>0.3.0</PackageVersion>
+    <AssemblyName>MicroBuild.Core</AssemblyName>
+  </PropertyGroup>
+
+</Project>

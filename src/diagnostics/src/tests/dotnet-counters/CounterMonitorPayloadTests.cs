@@ -45,6 +45,11 @@ namespace DotnetCounters.UnitTests
         [SkippableTheory, MemberData(nameof(Configurations))]
         public async Task TestCounterMonitorCustomMetricsJSON(TestConfiguration configuration)
         {
+            if (configuration.RuntimeFrameworkVersionMajor == 10)
+            {
+                throw new SkipTestException("MetricsEventSource currently has a bug wrt metertelemetryschemaurl. Reenable after https://github.com/dotnet/runtime/pull/113524 is in the runtime payload.");
+            }
+
             CheckRuntimeOS();
             CheckFramework(configuration);
 
@@ -56,6 +61,11 @@ namespace DotnetCounters.UnitTests
         [SkippableTheory, MemberData(nameof(Configurations))]
         public async Task TestCounterMonitorCustomMetricsCSV(TestConfiguration configuration)
         {
+            if (configuration.RuntimeFrameworkVersionMajor == 10)
+            {
+                throw new SkipTestException("MetricsEventSource currently has a bug wrt metertelemetryschemaurl. Reenable after https://github.com/dotnet/runtime/pull/113524 is in the runtime payload.");
+            }
+
             CheckRuntimeOS();
             CheckFramework(configuration);
 
@@ -206,8 +216,7 @@ namespace DotnetCounters.UnitTests
                     return Task.Run(async () =>
                         await monitor.Collect(
                             ct: ct,
-                            counter_list: counterList,
-                            counters: null,
+                            counters: string.Join(',', counterList),
                             processId: testRunner.Pid,
                             refreshInterval: 1,
                             format: exportFormat,
@@ -217,7 +226,8 @@ namespace DotnetCounters.UnitTests
                             resumeRuntime: false,
                             maxHistograms: 10,
                             maxTimeSeries: 1000,
-                            duration: TimeSpan.FromSeconds(10)));
+                            duration: TimeSpan.FromSeconds(10),
+                            dsrouter: null));
                 }, testRunner, source.Token);
 
                 return CreateMetricComponents();

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
@@ -329,17 +328,17 @@ namespace System.Windows.Forms.Integration
             UpdateBackground();
         }
 
-        void CallUpdateBackground(object sender, EventArgs e)
+        private void CallUpdateBackground(object sender, EventArgs e)
         {
             UpdateBackground();
         }
 
-        void UpdateBackground()
+        private void UpdateBackground()
         {
             OnPropertyChanged("BackgroundImage", BackgroundImage); //Update the background
         }
 
-        void childFrameworkElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void childFrameworkElement_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (AutoSize)
             {
@@ -427,7 +426,7 @@ namespace System.Windows.Forms.Integration
         /// </summary>
         protected override void Select(bool directed, bool forward)
         {
-            if (directed == true)
+            if (directed)
             {
                 SWI.TraversalRequest request = new SWI.TraversalRequest(forward
                                                         ? SWI.FocusNavigationDirection.First
@@ -1603,7 +1602,7 @@ namespace System.Windows.Forms.Integration
                     case System.Windows.Input.FocusNavigationDirection.Last:
                         break;
                     default:
-                        Debug.Assert(false, "Unknown FocusNavigationDirection");
+                        Debug.Fail("Unknown FocusNavigationDirection");
                         break;
                 }
             }

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.IO;
 using System.Collections.ObjectModel;
@@ -288,7 +287,7 @@ namespace System.Windows.Media.Imaging
             Stream newStream = (Stream)arg;
 
             // Assert that we are able to seek the new stream
-            Debug.Assert(newStream.CanSeek == true);
+            Debug.Assert(newStream.CanSeek);
 
             _stream = newStream;
 

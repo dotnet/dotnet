@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.Windows.Media;
@@ -475,7 +474,7 @@ namespace System.Windows.Ink
                 // If the drawing attributes change involves Width, Height, StylusTipTransform, IgnorePressure, or FitToCurve,
                 // we need to force a recaculation of the cached path geometry right after the
                 // DrawingAttributes changed, beforet the events are raised.
-                if (false == DrawingAttributes.GeometricallyEqual(previousDa, _drawingAttributes))
+                if (!DrawingAttributes.GeometricallyEqual(previousDa, _drawingAttributes))
                 {
                     _cachedGeometry = null;
                     // Set the cached bounds to empty, which will force a re-calculation of the _cachedBounds upon next GetBounds call.
@@ -744,8 +743,8 @@ namespace System.Windows.Ink
             //
             // Assert the findices are NOT out of range with the packets
             //
-            System.Diagnostics.Debug.Assert(false == ((!DoubleUtil.AreClose(cutAt[cutAt.Length - 1].EndFIndex, StrokeFIndices.AfterLast)) &&
-                                        Math.Ceiling(cutAt[cutAt.Length - 1].EndFIndex) > sourceStylusPoints.Count - 1));
+            System.Diagnostics.Debug.Assert(DoubleUtil.AreClose(cutAt[cutAt.Length - 1].EndFIndex, StrokeFIndices.AfterLast) ||
+                                        Math.Ceiling(cutAt[cutAt.Length - 1].EndFIndex) <= sourceStylusPoints.Count - 1);
 
             for (int i = 0; i < cutAt.Length; i++)
             {
@@ -800,8 +799,8 @@ namespace System.Windows.Ink
             //
             // Assert the findices are NOT out of range with the packets
             //
-            System.Diagnostics.Debug.Assert(false == ((!DoubleUtil.AreClose(cutAt[cutAt.Length - 1].EndFIndex, StrokeFIndices.AfterLast)) &&
-                                        Math.Ceiling(cutAt[cutAt.Length - 1].EndFIndex) > sourceStylusPoints.Count - 1));
+            System.Diagnostics.Debug.Assert(DoubleUtil.AreClose(cutAt[cutAt.Length - 1].EndFIndex, StrokeFIndices.AfterLast) ||
+                                        Math.Ceiling(cutAt[cutAt.Length - 1].EndFIndex) <= sourceStylusPoints.Count - 1);
 
 
             int i = 0;
@@ -891,11 +890,11 @@ namespace System.Windows.Ink
             //
             if (!DoubleUtil.AreClose(beginFIndex, StrokeFIndices.BeforeFirst))
             {
-                beginFIndex = beginFIndex - beginIndex;
+                beginFIndex -= beginIndex;
             }
             if (!DoubleUtil.AreClose(endFIndex, StrokeFIndices.AfterLast))
             {
-                endFIndex = endFIndex - beginIndex;
+                endFIndex -= beginIndex;
             }
 
             if (stylusPoints.Count > 1)
@@ -1037,7 +1036,7 @@ namespace System.Windows.Ink
         private void DrawingAttributes_Changed(object sender, PropertyDataChangedEventArgs e)
         {
             // set Geometry flag to be dirty if the DA change will cause change in geometry
-            if (DrawingAttributes.IsGeometricalDaGuid(e.PropertyGuid) == true)
+            if (DrawingAttributes.IsGeometricalDaGuid(e.PropertyGuid))
             {
                 _cachedGeometry = null;
                 // Set the cached bounds to empty, which will force a re-calculation of the _cachedBounds upon next GetBounds call.

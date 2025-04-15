@@ -14,7 +14,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    private static readonly TimeSpan SnippetTimeout = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan s_snippetTimeout = TimeSpan.FromSeconds(10);
 
     [IdeFact]
     public async Task SnippetCompletion_Html()
@@ -260,31 +260,38 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             expectedSelectedItemLabel: "myCurrentCount");
     }
 
-    private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)
+    [IdeFact]
+    public async Task CompletionCommit_CSharp_Override()
     {
-        await TestServices.SolutionExplorer.AddFileAsync(
-            RazorProjectConstants.BlazorProjectName,
-            "Test.razor",
-            input,
-            open: true,
-            ControlledHangMitigatingCancellationToken);
+        await VerifyTypeAndCommitCompletionAsync(
+            input: """
+                @page "Test"
 
-        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+                <PageTitle>Test</PageTitle>
 
-        await TestServices.Editor.PlaceCaretAsync(search, charsOffset: 1, ControlledHangMitigatingCancellationToken);
-        foreach (var stringToType in stringsToType)
-        {
-            TestServices.Input.Send(stringToType);
-        }
+                @code {
+                    private int myCurrentCount = 0;
 
-        if (expectedSelectedItemLabel is not null)
-        {
-            await CommitCompletionAndVerifyAsync(output, expectedSelectedItemLabel, commitChar);
-        }
-        else
-        {
-            await CommitCompletionAndVerifyAsync(output, commitChar);
-        }
+                    override
+                }
+                """,
+            output: """
+                @page "Test"
+
+                <PageTitle>Test</PageTitle>
+
+                @code {
+                    private int myCurrentCount = 0;
+
+                    protected override void OnAfterRender(bool firstRender)
+                    {
+                        base.OnAfterRender(firstRender);
+                    }
+                }
+                """,
+            search: "override",
+            stringsToType: [" ", "O", "n", "A"],
+            commitChar: '\t');
     }
 
     [IdeFact]
@@ -349,14 +356,13 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             open: true,
             ControlledHangMitigatingCancellationToken);
 
-        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("Hel", charsOffset: 1, ControlledHangMitigatingCancellationToken);
         TestServices.Input.Send("{DELETE}");
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(SnippetTimeout, HangMitigatingCancellationToken);
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
         Assert.Null(completionSession);
     }
 
@@ -389,7 +395,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         TestServices.Input.Send("dd");
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(SnippetTimeout, HangMitigatingCancellationToken);
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
         var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
 
         if (items is null)
@@ -442,6 +448,78 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 }
             }
             """);
+    }
+
+    [IdeFact, WorkItem("https://github.com/dotnet/razor/issues/11385")]
+    public async Task ProvisionalCompletion_DoesntBreakSemanticTokens()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "/counter"
+
+            <PageTitle>Counter</PageTitle>
+
+            <h1>Counter</h1>
+
+            <p role="status">Current count: @currentCount</p>
+
+            @DateTime
+
+            <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+            @code {
+                private int currentCount = 0;
+
+                public void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("@DateTime", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+
+        await Task.Delay(500, HangMitigatingCancellationToken);
+
+        TestServices.Input.Send(".");
+        TestServices.Input.Send("n");
+
+        await Task.Delay(500, HangMitigatingCancellationToken);
+
+        await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
+    }
+
+    private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            input,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync(search, charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        foreach (var stringToType in stringsToType)
+        {
+            TestServices.Input.Send(stringToType);
+        }
+
+        if (expectedSelectedItemLabel is not null)
+        {
+            await CommitCompletionAndVerifyAsync(output, expectedSelectedItemLabel, commitChar);
+        }
+        else
+        {
+            await CommitCompletionAndVerifyAsync(output, commitChar);
+        }
     }
 
     private async Task CommitCompletionAndVerifyAsync(string expected, char? commitChar = null)
@@ -507,5 +585,4 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         // tests allow for it as long as the content is correct
         Assert.Equal(expected, text);
     }
-
 }

@@ -5,8 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 

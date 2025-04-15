@@ -8,11 +8,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -21,7 +20,7 @@ internal sealed class HtmlFormatter(
 {
     private readonly IClientConnection _clientConnection = clientConnection;
 
-    public async Task<ImmutableArray<TextChange>> GetDocumentFormattingEditsAsync(
+    public async Task<ImmutableArray<TextChange>?> GetDocumentFormattingEditsAsync(
         IDocumentSnapshot documentSnapshot,
         Uri uri,
         FormattingOptions options,
@@ -44,14 +43,14 @@ internal sealed class HtmlFormatter(
 
         if (result?.Edits is null)
         {
-            return [];
+            return null;
         }
 
         var sourceText = await documentSnapshot.GetTextAsync(cancellationToken).ConfigureAwait(false);
         return result.Edits.SelectAsArray(sourceText.GetTextChange);
     }
 
-    public async Task<ImmutableArray<TextChange>> GetOnTypeFormattingEditsAsync(
+    public async Task<ImmutableArray<TextChange>?> GetOnTypeFormattingEditsAsync(
         IDocumentSnapshot documentSnapshot,
         Uri uri,
         Position position,
@@ -75,7 +74,7 @@ internal sealed class HtmlFormatter(
 
         if (result?.Edits is null)
         {
-            return [];
+            return null;
         }
 
         var sourceText = await documentSnapshot.GetTextAsync(cancellationToken).ConfigureAwait(false);

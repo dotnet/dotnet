@@ -2,15 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task FullyQualify()
     {
         var input = """
@@ -27,10 +28,10 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, "System.Text.StringBuilder");
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.FullyQualify);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task FullyQualify_Multiple()
     {
         await VerifyCodeActionAsync(
@@ -54,11 +55,11 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
                     {
                     }
                     """)],
-            codeActionName: "Fully qualify 'StringBuilder'",
+            codeActionName: LanguageServerConstants.CodeActions.FullyQualify,
             childActionIndex: 0);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing()
     {
         var input = """
@@ -79,7 +80,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing_Typo()
     {
         var input = """
@@ -100,7 +101,7 @@ public class AddUsingTests(FuseTestContext context, ITestOutputHelper testOutput
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing_WithExisting()
     {
         var input = """

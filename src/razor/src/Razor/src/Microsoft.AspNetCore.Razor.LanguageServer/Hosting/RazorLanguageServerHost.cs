@@ -6,13 +6,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -76,9 +75,10 @@ internal sealed partial class RazorLanguageServerHost : IDisposable
 
     private static (JsonRpc, JsonSerializerOptions) CreateJsonRpc(Stream input, Stream output)
     {
-        var messageFormatter = new SystemTextJsonFormatter();
-
-        JsonHelpers.AddVSInternalExtensionConverters(messageFormatter.JsonSerializerOptions);
+        var messageFormatter = new SystemTextJsonFormatter()
+        {
+            JsonSerializerOptions = JsonHelpers.JsonSerializerOptions
+        };
 
         var jsonRpc = new JsonRpc(new HeaderDelimitedMessageHandler(output, input, messageFormatter));
 

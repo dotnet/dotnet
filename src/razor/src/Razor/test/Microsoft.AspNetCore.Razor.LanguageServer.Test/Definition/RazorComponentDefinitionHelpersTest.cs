@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 

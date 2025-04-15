@@ -6,7 +6,6 @@
       - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Publishing.md
   
     Optional variables:
-      DotNetPublishUsingPipelines       Whether publishing to BAR should be performed or not.
       DotNetFinalVersionKind            Global property that stores the type of the current build: https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#build-kind
       DotNetSymbolServerTokenMsdl       Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
@@ -42,7 +41,7 @@
     Inner-repo builds outside of VMR do not use arcade publishing.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -53,21 +52,13 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <ItemGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
   <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
   <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
-
-  
-  <ItemDefinitionGroup>
-    <Artifact>
-      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
-      <SkipPublish Condition="$([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
-    </Artifact>
-  </ItemDefinitionGroup>
 
   <PropertyGroup>
     <!-- Default publishing target is 3. -->
@@ -85,9 +76,12 @@
          Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates.
          Also do not generate symbol packages if in inner source build, in product build. -->
     <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
-      ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
+      ('$(DotNetBuildSourceOnly)' != 'true' or (('$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
 
-    <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts and PublishSymbols. We can't rename this
+    <PreserveRepoOrigin Condition="'$(PreserveRepoOrigin)' == ''">false</PreserveRepoOrigin>
+    <PublishManifestOnly Condition="'$(PublishManifestOnly)' == ''">false</PublishManifestOnly>
+
+    <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts. We can't rename this
          property as it is used by other repositories already. -->
     <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
 
@@ -112,12 +106,12 @@
       Integration with Microsoft.DotNet.Build.Tasks.Installers: Publish packages of the following formats as well.
       These are arch-specific Visual Studio insertion packages. As they're Windows-only, they only include architecture in the name:
       - VS.Redist.Common.*.$(TargetArchitecture).*.nupkg
-      - VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg
+      - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
       
       These packages are always non-shipping, so only look there.
     -->
     <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg" IsShipping="false" Kind="Package" />
+    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
 
     <!--
       In the VMR, don't publish packages that didn't match the above conditions externally.
@@ -136,9 +130,8 @@
   <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
-  <Import Project="$(NuGetPackageRoot)microsoft.symboluploader.build.task\$(MicrosoftSymbolUploaderBuildTaskVersion)\build\PublishSymbols.targets" Condition="$(PublishToSymbolServer)"/>
 
-  <Target Name="Publish" DependsOnTargets="PublishSymbols;PublishToAzureDevOpsArtifacts" />
+  <Target Name="Publish" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
 
   <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
     <ItemGroup>
@@ -242,7 +235,6 @@
   </Target>
 
   <Target Name="PublishToAzureDevOpsArtifacts"
-          Condition="'$(DotNetPublishUsingPipelines)' == 'true'"
           DependsOnTargets="$(PublishDependsOnTargets);GenerateChecksumsFromArtifacts">
     <!-- 
       Sadly AzDO doesn't have a variable to tell the account name. Also
@@ -287,8 +279,13 @@
       <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
     </ItemGroup>
 
-    <!-- Add non-package Artifact items (repo extension point) as package already got added in the BeforePublish target. -->
     <ItemGroup>
+      <!-- By default, don't publish wixpacks. They're only needed for signing and can be dropped from the publish phase. -->
+      <Artifact>
+        <SkipPublish Condition="'%(Artifact.SkipPublish)' == '' and $([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
+      </Artifact>
+
+      <!-- Add non-package Artifact items (repo extension point) as package already got added in the BeforePublish target. -->
       <ItemsToPushToBlobFeed Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' != '.nupkg'" />
     </ItemGroup>
 
@@ -322,22 +319,22 @@
     </ItemGroup>
 
     <!-- Propagate stability data to the asset level for packages. We do this so that VMR builds which have some repo builds that are not stable, and others that are, do not end up having to use the default logic
-          where ALL assets that are shipping in a stable build go to isolated feeds. Instead, we can just choose CouldBeStable==true, CouldBeStable==false.
-          This only applies currently to Packages. Blobs are required to provide paths that are always non-stable. Pdbs don't have a stability concept.
+         where ALL assets that are shipping in a stable build go to isolated feeds. Instead, we can just choose CouldBeStable==true, CouldBeStable==false.
+         This only applies currently to Packages. Blobs are required to provide paths that are always non-stable. Pdbs don't have a stability concept.
 
-          NOTE: This flag doesn't strictly mean that the package is stable versioned. A repo might suppress a stable version for a given package. -->
+         NOTE: This flag doesn't strictly mean that the package is stable versioned. A repo might suppress a stable version for a given package. -->
     <ItemGroup>
       <ItemsToPushToBlobFeed>
-			  <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
+			  <ManifestArtifactData Condition="'$(PublishingVersion)' == '4' and
+                                         '%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
 																			   '$(IsStableBuild)' == 'true' and
 																			   '$(IsReleaseOnlyPackageVersion)' != 'true' and
 																			   '%(ItemsToPushToBlobFeed.IsShipping)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=true</ManifestArtifactData>
-				<ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
-																				 (
-                                          '$(IsStableBuild)' != 'true' or
-																				  '$(IsReleaseOnlyPackageVersion)' == 'true' or
-																				  '%(ItemsToPushToBlobFeed.IsShipping)' != 'true'
-                                         )">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=false</ManifestArtifactData>
+        <!-- We narrowly set CouldBeStable=false only for packages we know won't generate a stable version because of IsReleaseOnlyPackageVersion == true.
+             This allows for the default 'stable asset to non-isolated feed' detection behavior to still pick up accidental cases of stabilization. -->
+				<ManifestArtifactData Condition="'$(PublishingVersion)' == '4' and
+                                         '%(ItemsToPushToBlobFeed.Kind)' == 'Package' and
+																				 '$(IsReleaseOnlyPackageVersion)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);CouldBeStable=false</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
@@ -368,78 +365,17 @@
       IsReleaseOnlyPackageVersion="$(IsReleaseOnlyPackageVersion)"
       PushToLocalStorage="$(PushToLocalStorage)"
       AssetsLocalStorageDir="$(SourceBuiltAssetsDir)"
+      PreserveRepoOrigin="$(PreserveRepoOrigin)"
       ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
       NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
       AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"
       PdbArtifactsLocalStorageDir="$(PdbArtifactsSourceBuiltOrTempDir)"
       ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)"
-      UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)" />
-  </Target>
-
-  <Target Name="PublishSymbols"
-          Condition="'$(PublishToSymbolServer)' == 'true'"
-          DependsOnTargets="$(PublishDependsOnTargets)">
-    <PropertyGroup>
-      <DotNetSymbolExpirationInDays Condition="'$(DotNetSymbolExpirationInDays)' == ''">3650</DotNetSymbolExpirationInDays>
-      <DryRun>false</DryRun>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(OfficialBuild)' != 'true'">
-      <DryRun>true</DryRun>
-      <DotNetSymbolServerTokenSymWeb>DryRunPTA</DotNetSymbolServerTokenSymWeb>
-      <DotNetSymbolServerTokenMsdl>DryRunPTA</DotNetSymbolServerTokenMsdl>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <!-- 
-        Publish Windows PDBs produced by SymStore.targets (by default, only shipping PDBs are placed there).
-        SymbolUploader doesn't support embedded PDBs yet, so let SymStore.targets do the conversion for now.
-        https://github.com/dotnet/core-eng/issues/3645
-      -->
-      <FilesToPublishToSymbolServer Include="$(ArtifactsSymStoreDirectory)**\*.pdb"/>
-
-      <!--
-        Publish Portable PDBs contained in symbol packages.
-      -->
-      <PackagesToPublishToSymbolServer Include="@(_ExistingSymbolPackage);@(_SymbolPackageToGenerate)"/>
-    </ItemGroup>
-
-    <PropertyGroup>
-      <PublishToSymbolServer Condition="'@(FilesToPublishToSymbolServer)' == '' and '@(PackagesToPublishToSymbolServer)' == ''">false</PublishToSymbolServer>
-    </PropertyGroup>
-
-    <!-- Symbol Uploader: MSDL -->
-    <Message Importance="High" Text="Publishing symbol packages to MSDL ..." Condition="$(PublishToSymbolServer)" />
-    <PublishSymbols PackagesToPublish="@(PackagesToPublishToSymbolServer)"
-                    FilesToPublish="@(FilesToPublishToSymbolServer)"
-                    PersonalAccessToken="$(DotNetSymbolServerTokenMsdl)"
-                    SymbolServerPath="https://microsoftpublicsymbols.artifacts.visualstudio.com/DefaultCollection"
-                    ExpirationInDays="$(DotNetSymbolExpirationInDays)"
-                    VerboseLogging="true"
-                    DryRun="$(DryRun)"
-                    ConvertPortablePdbsToWindowsPdbs="false"
-                    PdbConversionTreatAsWarning=""
-                    Condition="$(PublishToSymbolServer)"/>
-
-    <!-- 
-      Symbol Uploader: SymWeb 
-      Watson, VS insertion testings and the typical internal dev usage require SymWeb.
-      Currently we need to call the task twice (https://github.com/dotnet/core-eng/issues/3489).
-    -->
-    <Message Importance="High" Text="Publishing symbol packages to SymWeb ..." Condition="$(PublishToSymbolServer)" />
-    <PublishSymbols PackagesToPublish="@(PackagesToPublishToSymbolServer)"
-                    FilesToPublish="@(FilesToPublishToSymbolServer)"
-                    PersonalAccessToken="$(DotNetSymbolServerTokenSymWeb)"
-                    SymbolServerPath="https://microsoft.artifacts.visualstudio.com/DefaultCollection"
-                    ExpirationInDays="$(DotNetSymbolExpirationInDays)"
-                    VerboseLogging="true"
-                    DryRun="$(DryRun)"
-                    ConvertPortablePdbsToWindowsPdbs="false"
-                    PdbConversionTreatAsWarning=""
-                    Condition="$(PublishToSymbolServer)"/>
+      UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)"
+      PublishManifestOnly="$(PublishManifestOnly)" />
   </Target>
 
   <!-- Import the publish targets when in the inner or outer repo builds. -->
-  <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(DotNetBuildRepo)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
 
 </Project>

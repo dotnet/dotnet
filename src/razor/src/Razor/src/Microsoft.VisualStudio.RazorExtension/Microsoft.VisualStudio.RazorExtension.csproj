@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
 
@@ -19,7 +19,8 @@
     <!-- Update the VSToolsPath to ensure VSIX builds -->
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
+    <IsShippingAssembly>true</IsShippingAssembly>
 
     <GenerateResourceUsePreserializedResources Condition="'$(MSBuildRuntimeType)' == 'Core'">true</GenerateResourceUsePreserializedResources>
 
@@ -163,20 +164,17 @@
   <ItemGroup>
     <!-- Don't trim this list. It is used to feed into the binding redirects -->
     <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
+      <NgenPriority>2</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
 
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
-    </ProjectReference>
-
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.csproj">
@@ -193,7 +191,9 @@
       <Ngen>false</Ngen>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
+    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" >
+      <NgenPriority>1</NgenPriority>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.VisualStudio.LegacyEditor.Razor\Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj">
       <Name>Microsoft.CodeAnalysis.Razor.Compiler</Name>
@@ -207,7 +207,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <!-- Manually upgrade to address CG alert. When the VS packages
          pull in the right version, this can be removed. -->
-    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.
@@ -219,13 +219,9 @@
 
   <!-- Include our Razor package dependency dlls in our extension -->
   <ItemGroup>
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-
-    <VSIXSourceItem Include="@(RazorNgendVSIXSourceItem)">
-      <Ngen>$(Ngen)</Ngen>
-      <NgenApplication>$(NgenApplication)</NgenApplication>
-      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
-      <NgenPriority>$(NgenPriority)</NgenPriority>
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll">
+      <Ngen>true</Ngen>
+      <NgenPriority>1</NgenPriority>
     </VSIXSourceItem>
   </ItemGroup>
 

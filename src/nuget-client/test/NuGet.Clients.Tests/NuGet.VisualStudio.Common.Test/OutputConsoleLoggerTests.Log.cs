@@ -89,6 +89,28 @@ namespace NuGet.VisualStudio.Common.Test
             {
                 VerifyThatEntryToErrorListIsNotAdded(_outputConsoleLogger.Log, logLevel, verbosityLevel);
             }
+
+            [Theory]
+            [MemberData(nameof(GetMessageVariationsWhichAreReported))]
+            public async Task BringToFrontIfSettingsPermitAsync_WhenAnyCallsToLogAreErrorLevels_IsCalled(LogLevel logLevelError, int verbosityLevel)
+            {
+                _msBuildOutputVerbosity = verbosityLevel;
+                _outputConsoleLogger.Log(new LogMessage(logLevelError, "message"));
+                await WaitForInitializationAsync();
+                _outputConsoleLogger.End();
+                _errorList.Verify(el => el.BringToFrontIfSettingsPermitAsync());
+            }
+
+            [Theory]
+            [MemberData(nameof(GetMessageVariationsWhichAreNotReported))]
+            public async Task BringToFrontIfSettingsPermitAsync_WhenNoCallsToLogAreErrorLevels_IsCalled(LogLevel logLevelNonError, int verbosityLevel)
+            {
+                _msBuildOutputVerbosity = verbosityLevel;
+                _outputConsoleLogger.Log(new LogMessage(logLevelNonError, "message"));
+                await WaitForInitializationAsync();
+                _outputConsoleLogger.End();
+                _errorList.Verify(el => el.BringToFrontIfSettingsPermitAsync(), Times.Once);
+            }
         }
     }
 }

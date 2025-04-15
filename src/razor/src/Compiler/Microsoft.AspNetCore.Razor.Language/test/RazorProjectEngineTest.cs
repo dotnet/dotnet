@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -74,13 +72,11 @@ public class RazorProjectEngineTest
             feature => Assert.IsType<ComponentSplatLoweringPass>(feature),
             feature => Assert.IsType<ComponentTemplateDiagnosticPass>(feature),
             feature => Assert.IsType<ComponentWhitespacePass>(feature),
+            feature => Assert.IsType<ConfigureDirectivesFeature>(feature),
             feature => Assert.IsType<DefaultDirectiveSyntaxTreePass>(feature),
             feature => Assert.IsType<DefaultDocumentClassifierPass>(feature),
             feature => Assert.IsType<DefaultDocumentClassifierPassFeature>(feature),
             feature => Assert.IsType<DefaultMetadataIdentifierFeature>(feature),
-            feature => Assert.IsType<DefaultRazorCodeGenerationOptionsFeature>(feature),
-            feature => Assert.IsType<DefaultRazorDirectiveFeature>(feature),
-            feature => Assert.IsType<DefaultRazorParserOptionsFeature>(feature),
             feature => Assert.IsType<DefaultRazorTargetExtensionFeature>(feature),
             feature => Assert.IsType<DefaultTagHelperOptimizationPass>(feature),
             feature => Assert.IsType<DesignTimeDirectivePass>(feature),
@@ -97,10 +93,10 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultDirectives(RazorProjectEngine engine)
     {
-        var feature = engine.Engine.GetFeatures<IRazorDirectiveFeature>().FirstOrDefault();
+        var feature = engine.Engine.GetFeatures<ConfigureDirectivesFeature>().FirstOrDefault();
         Assert.NotNull(feature);
         Assert.Collection(
-            feature.Directives,
+            feature.GetDirectives(),
             directive => Assert.Same(FunctionsDirective.Directive, directive),
             directive => Assert.Same(ImplementsDirective.Directive, directive),
             directive => Assert.Same(InheritsDirective.Directive, directive),

@@ -47,7 +47,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return FileKinds.IsComponent(codeDocument.GetFileKind());
+        return codeDocument.FileKind.IsComponent();
     }
 
     protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
@@ -95,7 +95,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         @class.Modifiers.Add("public");
         @class.Modifiers.Add("partial");
 
-        if (FileKinds.IsComponentImport(codeDocument.GetFileKind()))
+        if (codeDocument.FileKind.IsComponentImport())
         {
             // We don't want component imports to be considered as real component.
             // But we still want to generate code for it so we can get diagnostics.
@@ -113,7 +113,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             @class.BaseType = new BaseTypeWithModel("global::" + ComponentsApi.ComponentBase.FullTypeName);
 
             // Constrained type parameters are only supported in Razor language versions v6.0
-            var razorLanguageVersion = codeDocument.GetParserOptions()?.Version ?? RazorLanguageVersion.Latest;
+            var razorLanguageVersion = codeDocument.ParserOptions.LanguageVersion;
             var directiveType = razorLanguageVersion >= RazorLanguageVersion.Version_6_0
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;

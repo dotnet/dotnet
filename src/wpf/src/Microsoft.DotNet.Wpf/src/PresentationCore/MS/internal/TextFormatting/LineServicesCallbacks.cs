@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -1235,7 +1234,7 @@ namespace MS.Internal.TextFormatting
                     break;
 
                 default:
-                    Debug.Assert(false, "Not supported TextDecorationUnit");
+                    Debug.Fail("Not supported TextDecorationUnit");
                     break;
             }
 
@@ -1262,7 +1261,7 @@ namespace MS.Internal.TextFormatting
                     break;
 
                 default:
-                    Debug.Assert(false, "Not supported TextDecorationUnit");
+                    Debug.Fail("Not supported TextDecorationUnit");
                     break;
             }
 
@@ -1316,7 +1315,7 @@ namespace MS.Internal.TextFormatting
                             );
 
                         // adjust the pen's thickness as it will be scaled back by the scale transform
-                        drawingPenThickness = drawingPenThickness / Math.Abs(unitValue);
+                        drawingPenThickness /= Math.Abs(unitValue);
                                                     
                         // applied transforms
                         drawingContext.PushTransform(scaleTransform);
@@ -2313,7 +2312,7 @@ namespace MS.Internal.TextFormatting
                         break;
 
                     default:
-                        Debug.Assert(false, "Unsupported installed object!");
+                        Debug.Fail("Unsupported installed object!");
                         break;
                 }
             }

@@ -91,7 +91,7 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
@@ -141,7 +141,7 @@ namespace NuGet.Commands.FuncTest
                 }");
 
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
@@ -177,7 +177,7 @@ namespace NuGet.Commands.FuncTest
                 }
             }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
             spec.RestoreMetadata.UseLegacyDependencyResolver = useLegacyAlgorithm;
 
@@ -217,7 +217,7 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
@@ -265,7 +265,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             var lockFileFormat = new LockFileFormat();
@@ -320,7 +320,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             var lockFileFormat = new LockFileFormat();
@@ -393,7 +393,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
@@ -437,7 +437,7 @@ namespace NuGet.Commands.FuncTest
                 ""win10-x64-aot"": {}
                 }
             }");
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);

@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
@@ -22,9 +21,9 @@ namespace Microsoft.VisualStudio.Razor.Discovery;
 
 public class ProjectStateDetectorTest(ITestOutputHelper testOutput) : VisualStudioWorkspaceTestBase(testOutput)
 {
-    private static readonly HostProject s_hostProject1 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "One", "One.csproj"));
-    private static readonly HostProject s_hostProject2 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "Two", "Two.csproj"));
-    private static readonly HostProject s_hostProject3 = TestHostProject.Create(PathUtilities.CreateRootedPath("path", "Three", "Three.csproj"));
+    private static readonly HostProject s_hostProject1 = TestHostProject.Create(TestPathUtilities.CreateRootedPath("path", "One", "One.csproj"));
+    private static readonly HostProject s_hostProject2 = TestHostProject.Create(TestPathUtilities.CreateRootedPath("path", "Two", "Two.csproj"));
+    private static readonly HostProject s_hostProject3 = TestHostProject.Create(TestPathUtilities.CreateRootedPath("path", "Three", "Three.csproj"));
 
 #nullable disable
     private Solution _emptySolution;

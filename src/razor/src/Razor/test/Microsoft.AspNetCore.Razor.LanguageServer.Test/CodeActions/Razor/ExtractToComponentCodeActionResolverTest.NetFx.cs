@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,8 +20,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutput) : CodeActionEndToEndTestBase(testOutput)
 {
-    private const string ExtractToComponentTitle = "Extract element to new component";
-
     [Fact]
     public async Task Handle_SingleElement()
     {
@@ -303,7 +301,7 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             null);
 
         Assert.NotEmpty(result);
-        var codeActionToRun = GetCodeActionToRun(ExtractToComponentTitle, 0, result);
+        var codeActionToRun = GetCodeActionToRun(LanguageServerConstants.CodeActions.ExtractToNewComponentAction, 0, result);
 
         if (expectedNewComponent is null)
         {
@@ -326,13 +324,13 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             );
 
         var edits = changes.Where(change => change.TextDocument.Uri.AbsolutePath == componentFilePath).Single();
-        var actual = edits.Edits.Select(edit => edit.NewText).Single();
+        var actual = edits.Edits.Select(edit => ((TextEdit)edit).NewText).Single();
 
         AssertEx.EqualOrDiff(expectedNewComponent, actual);
 
         var originalDocumentEdits = changes
             .Where(change => change.TextDocument.Uri.AbsolutePath == razorFilePath)
-            .SelectMany(change => change.Edits.Select(sourceText.GetTextChange));
+            .SelectMany(change => change.Edits.Select(e => sourceText.GetTextChange(((TextEdit)e))));
         var documentText = sourceText.WithChanges(originalDocumentEdits).ToString();
         AssertEx.EqualOrDiff(expectedOriginalDocument, documentText);
     }

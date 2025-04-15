@@ -4,7 +4,6 @@
 #nullable disable
 
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 

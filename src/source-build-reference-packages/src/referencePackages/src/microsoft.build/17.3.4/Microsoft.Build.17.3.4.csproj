@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
+    <PackageVersion>17.3.4</PackageVersion>
     <AssemblyName>Microsoft.Build</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.3.4" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.3.4" />
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.3.4/Microsoft.Build.Framework.17.3.4.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.3.4/Microsoft.NET.StringTools.17.3.4.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/6.0.0/System.Collections.Immutable.6.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/6.0.0/System.Configuration.ConfigurationManager.6.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/6.0.0/System.Reflection.Metadata.6.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadataloadcontext/6.0.0/System.Reflection.MetadataLoadContext.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encoding.codepages/6.0.0/System.Text.Encoding.CodePages.6.0.0.csproj" />
+    <ProjectReference Include="../../system.text.json/6.0.0/System.Text.Json.6.0.0.csproj" />
+    <ProjectReference Include="../../system.threading.tasks.dataflow/6.0.0/System.Threading.Tasks.Dataflow.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

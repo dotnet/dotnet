@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -32,7 +31,7 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService);
-        var endpoint = new RazorConfigurationEndpoint(optionsMonitor, LoggerFactory);
+        var endpoint = new RazorConfigurationEndpoint(LspServices.Empty, optionsMonitor, LoggerFactory);
         var request = new DidChangeConfigurationParams();
         var requestContext = CreateRazorRequestContext(documentContext: null);
 

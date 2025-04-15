@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit.Abstractions;
 
@@ -33,7 +32,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
         bool multiTargetProject = true,
         Action<VSInternalClientCapabilities>? capabilitiesUpdater = null)
     {
-        var projectKey = TestProjectKey.Create("");
+        var projectKey = new ProjectKey("C:/path/to/obj");
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(FilePathService.GetRazorCSharpFilePath(projectKey, razorFilePath));
 
@@ -72,7 +71,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
             {
                 SupportsDiagnosticRequests = true,
             },
-            razorSpanMappingService: null,
+            razorMappingService: null,
             multiTargetProject,
             capabilitiesUpdater,
             DisposalToken);

@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.6.0</PackageVersion>
     <AssemblyName>System.Memory</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Buffers" Version="4.6.0" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <ProjectReference Include="../../system.buffers/4.6.0/System.Buffers.4.6.0.csproj" />
+    <ProjectReference Include="../../system.numerics.vectors/4.6.0/System.Numerics.Vectors.4.6.0.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.1.0/System.Runtime.CompilerServices.Unsafe.6.1.0.csproj" />
   </ItemGroup>
 
 </Project>

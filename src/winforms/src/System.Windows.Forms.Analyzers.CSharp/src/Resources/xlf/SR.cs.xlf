@@ -88,12 +88,12 @@
         <note />
       </trans-unit>
       <trans-unit id="WFO2001AnalyzerMessageFormat">
-        <source>Task is being passed to InvokeAsync without a cancellation token</source>
-        <target state="translated">Do InvokeAsync se předává úloha bez tokenu zrušení.</target>
+        <source>Task is being passed to `InvokeAsync` without a cancellation token</source>
+        <target state="translated">Do InvokeAsync se předává úloha bez tokenu zrušení</target>
         <note />
       </trans-unit>
       <trans-unit id="WFO2001AnalyzerTitle">
-        <source>Task is being passed to InvokeAsync without a cancellation token</source>
+        <source>Task is being passed to `InvokeAsync` without a cancellation token</source>
         <target state="translated">Do InvokeAsync se předává úloha bez tokenu zrušení</target>
         <note />
       </trans-unit>

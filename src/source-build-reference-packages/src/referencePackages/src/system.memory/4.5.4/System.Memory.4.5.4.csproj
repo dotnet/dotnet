@@ -1,27 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.5.4</PackageVersion>
     <AssemblyName>System.Memory</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.Globalization" Version="4.3.0" />
-    <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+    <ProjectReference Include="../../system.buffers/4.5.1/System.Buffers.4.5.1.csproj" />
+    <ProjectReference Include="../../system.numerics.vectors/4.4.0/System.Numerics.Vectors.4.4.0.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/4.5.3/System.Runtime.CompilerServices.Unsafe.4.5.3.csproj" />
   </ItemGroup>
 
 </Project>

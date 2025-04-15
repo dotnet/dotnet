@@ -8,10 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -20,7 +19,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     private readonly ProjectState _state = state;
 
     private readonly object _gate = new();
-    private readonly Dictionary<string, DocumentSnapshot> _filePathToDocumentMap = new(FilePathNormalizingComparer.Instance);
+    private Dictionary<string, DocumentSnapshot>? _filePathToDocumentMap;
 
     public HostProject HostProject => _state.HostProject;
     public RazorCompilerOptions CompilerOptions => _state.CompilerOptions;
@@ -53,8 +52,12 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
             // ImmutableDictionary<,>, which has O(log n) lookup. So, checking _filePathToDocumentMap
             // first is faster if the DocumentSnapshot has already been created.
 
-            return _filePathToDocumentMap.ContainsKey(filePath) ||
-                   _state.Documents.ContainsKey(filePath);
+            if (_filePathToDocumentMap is not null && _filePathToDocumentMap.ContainsKey(filePath))
+            {
+                return true;
+            }
+
+            return _state.Documents.ContainsKey(filePath);
         }
     }
 
@@ -63,7 +66,8 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
         lock (_gate)
         {
             // Have we already seen this document? If so, return it!
-            if (_filePathToDocumentMap.TryGetValue(filePath, out var snapshot))
+            if (_filePathToDocumentMap is not null &&
+                _filePathToDocumentMap.TryGetValue(filePath, out var snapshot))
             {
                 document = snapshot;
                 return true;
@@ -78,6 +82,8 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
             // If we have DocumentState, go ahead and create a new DocumentSnapshot.
             snapshot = new DocumentSnapshot(this, state);
+
+            _filePathToDocumentMap ??= new(capacity: _state.Documents.Count, FilePathNormalizingComparer.Instance);
             _filePathToDocumentMap.Add(filePath, snapshot);
 
             document = snapshot;
@@ -98,13 +104,18 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     }
 
     /// <summary>
-    /// If the provided document is an import document, gets the other documents in the project
-    /// that include directives specified by the provided document. Otherwise returns an empty
-    /// list.
+    /// If the provided document file path references an import document, gets the other
+    /// documents in the project that include directives specified by the provided document.
+    /// Otherwise returns an empty array.
     /// </summary>
-    public ImmutableArray<DocumentSnapshot> GetRelatedDocuments(DocumentSnapshot document)
+    public ImmutableArray<string> GetRelatedDocumentFilePaths(string documentFilePath)
     {
-        var targetPath = document.TargetPath;
+        if (!_state.Documents.TryGetValue(documentFilePath, out var documentState))
+        {
+            return [];
+        }
+
+        var targetPath = documentState.HostDocument.TargetPath;
 
         if (!_state.ImportsToRelatedDocuments.TryGetValue(targetPath, out var relatedDocuments))
         {
@@ -113,13 +124,13 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
         lock (_gate)
         {
-            using var builder = new PooledArrayBuilder<DocumentSnapshot>(capacity: relatedDocuments.Count);
+            using var builder = new PooledArrayBuilder<string>(capacity: relatedDocuments.Count);
 
             foreach (var relatedDocumentFilePath in relatedDocuments)
             {
-                if (TryGetDocument(relatedDocumentFilePath, out var relatedDocument))
+                if (ContainsDocument(relatedDocumentFilePath))
                 {
-                    builder.Add(relatedDocument);
+                    builder.Add(relatedDocumentFilePath);
                 }
             }
 

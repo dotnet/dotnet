@@ -72,7 +72,10 @@ Copyright (c) .NET Foundation. All rights reserved.
     <NuGetAudit Condition=" '$(NuGetAudit)' == '' ">true</NuGetAudit>
     <!-- Report all severity vulnerabilities (low severity and higher). Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
-    <!-- Report known vulnerabilities on direct and transitive dependencies, unless SdkAnalysisLevel (or equalivant) is lower than 9.0.100. Allowed values are: direct, all -->
+    <!-- Report known vulnerabilities on direct and transitive dependencies for .NET 10 and higher, direct only otherwise -->
+    <NuGetAuditMode Condition=" '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+                    AND '$(TargetFrameworkIdentifier)' == '.NETCoreApp'
+                    AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0'))">all</NuGetAuditMode>
     <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
   </PropertyGroup>
 
@@ -1203,6 +1206,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
         <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
         <RestoreEnablePackagePruning>$(RestoreEnablePackagePruning)</RestoreEnablePackagePruning>
+        <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
       </_RestoreGraphEntry>
     </ItemGroup>
   </Target>

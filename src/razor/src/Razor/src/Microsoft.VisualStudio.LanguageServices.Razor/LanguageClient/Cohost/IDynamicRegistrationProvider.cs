@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 

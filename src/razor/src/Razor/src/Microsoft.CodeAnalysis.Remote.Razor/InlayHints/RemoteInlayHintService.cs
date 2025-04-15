@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -28,7 +27,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
     }
 
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
-       => RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
             razorDocumentId,
             context => GetInlayHintsAsync(context, inlayHintParams, displayAllOverride, cancellationToken),

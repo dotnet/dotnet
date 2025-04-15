@@ -1,26 +1,15 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
-
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class TestRazorCodeDocument
 {
     public static RazorCodeDocument CreateEmpty()
-    {
-        var source = TestRazorSourceDocument.Create(content: string.Empty);
-        return RazorCodeDocument.Create(source, imports: default);
-    }
+        => RazorCodeDocument.Create(
+            source: TestRazorSourceDocument.Create(content: string.Empty));
 
     public static RazorCodeDocument Create(string content, bool normalizeNewLines = false)
-    {
-        var source = TestRazorSourceDocument.Create(content, normalizeNewLines: normalizeNewLines);
-        return RazorCodeDocument.Create(source, imports: default);
-    }
-
-    public static RazorCodeDocument Create(RazorSourceDocument source, ImmutableArray<RazorSourceDocument> imports)
-    {
-        return RazorCodeDocument.Create(source, imports);
-    }
+        => RazorCodeDocument.Create(
+            source: TestRazorSourceDocument.Create(content, normalizeNewLines: normalizeNewLines));
 }

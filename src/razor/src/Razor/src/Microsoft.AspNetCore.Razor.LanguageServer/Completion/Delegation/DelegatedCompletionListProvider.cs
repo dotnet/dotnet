@@ -17,35 +17,23 @@ using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-internal class DelegatedCompletionListProvider
+internal class DelegatedCompletionListProvider(
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    CompletionListCache completionListCache,
+    CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
 {
-    private readonly IDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    private readonly CompletionListCache _completionListCache;
-    private readonly CompletionTriggerAndCommitCharacters _completionTriggerAndCommitCharacters;
-
-    public DelegatedCompletionListProvider(
-        IDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        CompletionListCache completionListCache,
-        CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
-    {
-        _documentMappingService = documentMappingService;
-        _clientConnection = clientConnection;
-        _completionListCache = completionListCache;
-        _completionTriggerAndCommitCharacters = completionTriggerAndCommitCharacters;
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly CompletionListCache _completionListCache = completionListCache;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = completionTriggerAndCommitCharacters;
 
     // virtual for tests
-    public virtual FrozenSet<string> TriggerCharacters => _completionTriggerAndCommitCharacters.AllDelegationTriggerCharacters;
-
-    // virtual for tests
-    public virtual async Task<VSInternalCompletionList?> GetCompletionListAsync(
+    public virtual ValueTask<RazorVSInternalCompletionList?> GetCompletionListAsync(
+        RazorCodeDocument codeDocument,
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
         DocumentContext documentContext,
@@ -54,45 +42,62 @@ internal class DelegatedCompletionListProvider
         Guid correlationId,
         CancellationToken cancellationToken)
     {
-        var positionInfo = await _documentMappingService
-            .GetPositionInfoAsync(documentContext, absoluteIndex, cancellationToken)
-            .ConfigureAwait(false);
-
+        var positionInfo = _documentMappingService.GetPositionInfo(codeDocument, absoluteIndex);
         if (positionInfo.LanguageKind == RazorLanguageKind.Razor)
         {
             // Nothing to delegate to.
-            return null;
+            return default;
         }
 
-        var provisionalCompletion = await DelegatedCompletionHelper.TryGetProvisionalCompletionInfoAsync(
-            documentContext,
-            completionContext,
-            positionInfo,
-            _documentMappingService,
-            cancellationToken).ConfigureAwait(false);
         TextEdit? provisionalTextEdit = null;
-        if (provisionalCompletion is { } provisionalCompletionValue)
+        if (DelegatedCompletionHelper.TryGetProvisionalCompletionInfo(codeDocument, completionContext, positionInfo, _documentMappingService, out var provisionalCompletion))
         {
-            provisionalTextEdit = provisionalCompletionValue.ProvisionalTextEdit;
-            positionInfo = provisionalCompletionValue.DocumentPositionInfo;
+            provisionalTextEdit = provisionalCompletion.ProvisionalTextEdit;
+            positionInfo = provisionalCompletion.DocumentPositionInfo;
         }
 
-        if (DelegatedCompletionHelper.RewriteContext(completionContext, positionInfo.LanguageKind, _completionTriggerAndCommitCharacters) is not { } rewrittenContext)
+        if (DelegatedCompletionHelper.RewriteContext(completionContext, positionInfo.LanguageKind, _triggerAndCommitCharacters) is not { } rewrittenContext)
         {
-            return null;
+            return default;
         }
 
         completionContext = rewrittenContext;
 
-        var razorCodeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         // It's a bit confusing, but we have two different "add snippets" options - one is a part of
         // RazorCompletionOptions and becomes a part of RazorCompletionContext and is used by
         // RazorCompletionFactsService, and the second one below that's used for delegated completion
         // Their values are not related in any way.
-        var shouldIncludeDelegationSnippets = DelegatedCompletionHelper.ShouldIncludeSnippets(razorCodeDocument, absoluteIndex);
+        var shouldIncludeDelegationSnippets = DelegatedCompletionHelper.ShouldIncludeSnippets(codeDocument, absoluteIndex);
 
-        var delegatedParams = new DelegatedCompletionParams(
+        return new(GetDelegatedCompletionListAsync(
+            codeDocument,
+            absoluteIndex,
+            completionContext,
             documentContext.GetTextDocumentIdentifierAndVersion(),
+            clientCapabilities,
+            razorCompletionOptions,
+            correlationId,
+            positionInfo,
+            provisionalTextEdit,
+            shouldIncludeDelegationSnippets,
+            cancellationToken));
+    }
+
+    private async Task<RazorVSInternalCompletionList?> GetDelegatedCompletionListAsync(
+        RazorCodeDocument codeDocument,
+        int absoluteIndex,
+        VSInternalCompletionContext completionContext,
+        TextDocumentIdentifierAndVersion identifier,
+        VSInternalClientCapabilities clientCapabilities,
+        RazorCompletionOptions razorCompletionOptions,
+        Guid correlationId,
+        DocumentPositionInfo positionInfo,
+        TextEdit? provisionalTextEdit,
+        bool shouldIncludeDelegationSnippets,
+        CancellationToken cancellationToken)
+    {
+        var delegatedParams = new DelegatedCompletionParams(
+            identifier,
             positionInfo.Position,
             positionInfo.LanguageKind,
             completionContext,
@@ -100,24 +105,19 @@ internal class DelegatedCompletionListProvider
             shouldIncludeDelegationSnippets,
             correlationId);
 
-        var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
-            LanguageServerConstants.RazorCompletionEndpointName,
-            delegatedParams,
-            cancellationToken).ConfigureAwait(false);
-
-        var rewrittenResponse = delegatedParams.ProjectedKind == RazorLanguageKind.CSharp
-             ? await DelegatedCompletionHelper.RewriteCSharpResponseAsync(
-                delegatedResponse,
-                absoluteIndex,
-                documentContext,
-                delegatedParams.ProjectedPosition,
-                razorCompletionOptions,
+        var delegatedResponse = await _clientConnection
+            .SendRequestAsync<DelegatedCompletionParams, RazorVSInternalCompletionList?>(
+                LanguageServerConstants.RazorCompletionEndpointName,
+                delegatedParams,
                 cancellationToken)
-                .ConfigureAwait(false)
+            .ConfigureAwait(false);
+
+        var rewrittenResponse = positionInfo.LanguageKind == RazorLanguageKind.CSharp
+            ? DelegatedCompletionHelper.RewriteCSharpResponse(delegatedResponse, absoluteIndex, codeDocument, positionInfo.Position, razorCompletionOptions)
             : DelegatedCompletionHelper.RewriteHtmlResponse(delegatedResponse, razorCompletionOptions);
 
         var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-        var resolutionContext = new DelegatedCompletionResolutionContext(delegatedParams, rewrittenResponse.Data);
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, positionInfo.LanguageKind, rewrittenResponse.Data);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, completionCapability);
 

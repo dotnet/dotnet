@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Threading;
 using System.ComponentModel;
@@ -1301,7 +1300,7 @@ namespace System.Windows.Interop
 
         private void OnMonitorPowerEvent(object sender, MonitorPowerEventArgs eventArgs)
         {
-            OnMonitorPowerEvent(sender, eventArgs.PowerOn, /*paintOnWake*/true);
+            OnMonitorPowerEvent(sender, eventArgs.PowerOn, paintOnWake: true);
         }
 
         private void OnMonitorPowerEvent(object sender, bool powerOn, bool paintOnWake)
@@ -1956,7 +1955,7 @@ namespace System.Windows.Interop
             }
         }
 
-        bool _windowPosChanging;
+        private bool _windowPosChanging;
 
         private void OnShowWindow(bool enableRenderTarget)
         {
@@ -2588,7 +2587,7 @@ namespace System.Windows.Interop
                     // behavior. It is too early for the hwnd to paint, hence
                     // pass paintOnWake=false assuming that it will soon get
                     // a WM_PAINT message.
-                    hwndTarget.OnMonitorPowerEvent(null, _monitorOn, /*paintOnWake*/ false);
+                    hwndTarget.OnMonitorPowerEvent(null, _monitorOn, paintOnWake: false);
                 }
                 _hwndTargetCount++;
             }

@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 

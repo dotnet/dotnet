@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // Description: 
 //    SignatureSummaryDialog.  This dialog class handles both the Signature Summary
@@ -46,7 +45,7 @@ namespace MS.Internal.Documents
             InitializeDialogType();
 
             //Show only the buttons appropriate for the current mode.
-            if (_showRequestDialog == true)
+            if (_showRequestDialog)
             {
                 Text = SR.DigSigRequestTitle;
 
@@ -193,7 +192,7 @@ namespace MS.Internal.Documents
             InitializeColumnHeaders();
 
             //Show only the buttons appropriate for the current mode.
-            if (_showRequestDialog == true)
+            if (_showRequestDialog)
             {
                 Text = SR.DigSigRequestTitle;
 

@@ -32,8 +32,10 @@
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.0.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
     <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">6.0.4</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">4.4.0</SystemSecurityCryptographyProtectedDataVersion>
     <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. This property can be probably removed when MSBuild is updated to a newer version. -->
     <SystemSecurityCryptographyXmlVersion Condition="'$(SystemSecurityCryptographyXmlVersion)' == ''">8.0.1</SystemSecurityCryptographyXmlVersion>
+    <MicrosoftVisualStudioSolutionPersistenceVersion Condition="'$(MicrosoftVisualStudioSolutionPersistenceVersion)' == ''">1.0.52</MicrosoftVisualStudioSolutionPersistenceVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -72,7 +74,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
-    <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.28" />
+    <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="$(MicrosoftVisualStudioSolutionPersistenceVersion)" />
     <!-- Microsoft.VisualStudio.SDK has vulnerable dependencies System.Text.json and Microsoft.IO.Redist. When it's upgraded, try removing the pinned packages -->
     <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.11.39714" />
     <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.11.8" />
@@ -97,7 +99,7 @@
     <PackageVersion Include="System.Memory" Version="4.5.5" />
     <!-- System.Security.Cryptography.Pkcs has a vulnerable dependency System.Formats.Asn1. When it's upgraded, try removing the pinned packages -->
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
-    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
+    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="$(SystemSecurityCryptographyProtectedDataVersion)" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <!--

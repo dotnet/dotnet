@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.Linq;
@@ -14,6 +12,11 @@ namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
+
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
+    }
 
     [Fact]
     public void WriteUsingDirective_NoSource_WritesContent()
@@ -49,7 +52,7 @@ public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
         var node = new UsingDirectiveIntermediateNode()
         {
             Content = "System",
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3)
         };
 
         // Act
@@ -81,7 +84,7 @@ using System
         {
             Content = "System",
             Source = new SourceSpan("test.cshtml", 0, 0, 0, 3),
-            AppendLineDefaultAndHidden = true,
+            AppendLineDefaultAndHidden = true
         };
 
         // Act
@@ -110,8 +113,9 @@ using System
         // Arrange
         var writer = new RuntimeNodeWriter()
         {
-            WriteCSharpExpressionMethod = "Test",
+            WriteCSharpExpressionMethod = "Test"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
@@ -119,7 +123,7 @@ using System
         builder.Add(new IntermediateToken()
         {
             Content = "i++",
-            Kind = TokenKind.CSharp,
+            Kind = TokenKind.CSharp
         });
 
         // Act
@@ -141,8 +145,9 @@ i++);
         // Arrange
         var writer = new RuntimeNodeWriter()
         {
-            WriteCSharpExpressionMethod = "Test",
+            WriteCSharpExpressionMethod = "Test"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
@@ -151,7 +156,7 @@ i++);
         {
             Content = "i++",
             Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3)
         });
 
         // Act
@@ -180,8 +185,9 @@ i++
         // Arrange
         var writer = new RuntimeNodeWriter()
         {
-            WriteCSharpExpressionMethod = "Test",
+            WriteCSharpExpressionMethod = "Test"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
@@ -189,13 +195,15 @@ i++
         builder.Add(new IntermediateToken()
         {
             Content = "i",
-            Kind = TokenKind.CSharp,
+            Kind = TokenKind.CSharp
         });
+
         builder.Add(new MyExtensionIntermediateNode());
+
         builder.Add(new IntermediateToken()
         {
             Content = "++",
-            Kind = TokenKind.CSharp,
+            Kind = TokenKind.CSharp
         });
 
         // Act
@@ -218,8 +226,9 @@ iRender Children
         // Arrange
         var writer = new RuntimeNodeWriter()
         {
-            WriteCSharpExpressionMethod = "Test",
+            WriteCSharpExpressionMethod = "Test"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
@@ -228,14 +237,16 @@ iRender Children
         {
             Content = "i",
             Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 1, 0, 1),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 1, 0, 1)
         });
+
         builder.Add(new MyExtensionIntermediateNode());
+
         builder.Add(new IntermediateToken()
         {
             Content = "++",
             Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 2, 0, 2, 2, 0, 4),
+            Source = new SourceSpan("test.cshtml", 2, 0, 2, 2, 0, 4)
         });
 
         // Act
@@ -329,7 +340,7 @@ Render Children
             {
                 Kind = TokenKind.CSharp,
                 Content = "if (true) { }",
-                Source = new SourceSpan("test.cshtml", 0, 0, 0, 13),
+                Source = new SourceSpan("test.cshtml", 0, 0, 0, 13)
             });
 
         // Act
@@ -506,7 +517,7 @@ WriteLiteral(""👧‍👧"");
         node.Children.Add(new IntermediateToken()
         {
             Content = new string('*', 2000),
-            Kind = TokenKind.Html,
+            Kind = TokenKind.Html
         });
 
         // Act
@@ -529,9 +540,10 @@ WriteLiteral(@""{1}"");
         // Arrange
         var writer = new RuntimeNodeWriter();
         var content = "<input checked=\"hello-world @false\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single();
 
         using var context = TestCodeRenderingContext.CreateRuntime();
@@ -557,9 +569,10 @@ EndWriteAttribute();
         // Arrange
         var writer = new RuntimeNodeWriter();
         var content = "<input checked=\"hello-world @false\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[0] as HtmlAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateRuntime();
@@ -582,9 +595,10 @@ EndWriteAttribute();
         // Arrange
         var writer = new RuntimeNodeWriter();
         var content = "<input checked=\"hello-world @false\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpExpressionAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateRuntime();
@@ -616,12 +630,13 @@ false
         var writer = new RuntimeNodeWriter();
 
         var content = "<input checked=\"hello-world @if(@true){ }\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
 
-        using var context = TestCodeRenderingContext.CreateRuntime(source: sourceDocument);
+        using var context = TestCodeRenderingContext.CreateRuntime(source: source);
 
         // Act
         writer.WriteCSharpCodeAttributeValue(context, node);
@@ -654,6 +669,7 @@ if(@true){ }
         {
             PushWriterMethod = "TestPushWriter"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         // Act
@@ -676,6 +692,7 @@ if(@true){ }
         {
             PopWriterMethod = "TestPopWriter"
         };
+
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         // Act
@@ -688,30 +705,6 @@ if(@true){ }
 ",
             csharp,
             ignoreLineEndingDifferences: true);
-    }
-
-    private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
-    {
-        var projectEngine = CreateProjectEngine();
-        return Lower(codeDocument, projectEngine);
-    }
-
-    private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine projectEngine)
-    {
-        foreach (var phase in projectEngine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorIntermediateNodeLoweringPhase)
-            {
-                break;
-            }
-        }
-
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        Assert.NotNull(irDocument);
-
-        return irDocument;
     }
 
     private class MyExtensionIntermediateNode : ExtensionIntermediateNode

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -183,7 +182,7 @@ namespace System.Windows.Documents
                     default:
                         // Throw exception because this function should only be called after MoveNext, and not 
                         // if MoveNext returns false
-                        Debug.Assert(false, "Invalid state in HostedElements.cs");
+                        Debug.Fail("Invalid state in HostedElements.cs");
                         break;
                 }
                 return currentElement;
@@ -200,9 +199,9 @@ namespace System.Windows.Documents
 
         #region Private Fields
 
-        ReadOnlyCollection<TextSegment> _textSegments;
-        TextPointer _currentPosition;
-        int _currentTextSegment;
+        private ReadOnlyCollection<TextSegment> _textSegments;
+        private TextPointer _currentPosition;
+        private int _currentTextSegment;
 
         #endregion Private Fields
     }

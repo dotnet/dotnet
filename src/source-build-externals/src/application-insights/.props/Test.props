@@ -20,7 +20,7 @@
           - net7.0 (GA Nov 2022)
     -->
 
-    <SupportedFrameworks_NetCore>net8.0;net7.0;net6.0;netcoreapp3.1;</SupportedFrameworks_NetCore>
+    <SupportedFrameworks_NetCore>net9.0;net8.0;net7.0;net6.0;netcoreapp3.1;</SupportedFrameworks_NetCore>
     <SupportedFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net481;net480;net472;net462;</SupportedFrameworks_NetFx>
     <LegacyFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net46;net452;</LegacyFrameworks_NetFx>
     

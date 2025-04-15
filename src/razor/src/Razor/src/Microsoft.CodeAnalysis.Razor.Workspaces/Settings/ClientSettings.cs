@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.CodeAnalysis.Razor.Settings;
@@ -32,7 +33,25 @@ internal sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)
     public int IndentSize { get; } = IndentSize >= 0 ? IndentSize : throw new ArgumentOutOfRangeException(nameof(IndentSize));
 }
 
-internal sealed record ClientAdvancedSettings(bool FormatOnType, bool AutoClosingTags, bool AutoInsertAttributeQuotes, bool ColorBackground, bool CodeBlockBraceOnNextLine, bool CommitElementsWithSpace, SnippetSetting SnippetSetting, LogLevel LogLevel, bool FormatOnPaste)
+internal sealed record ClientAdvancedSettings(bool FormatOnType,
+                                              bool AutoClosingTags,
+                                              bool AutoInsertAttributeQuotes,
+                                              bool ColorBackground,
+                                              bool CodeBlockBraceOnNextLine,
+                                              bool CommitElementsWithSpace,
+                                              SnippetSetting SnippetSetting,
+                                              LogLevel LogLevel,
+                                              bool FormatOnPaste,
+                                              ImmutableArray<string> TaskListDescriptors)
 {
-    public static readonly ClientAdvancedSettings Default = new(FormatOnType: true, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: true, SnippetSetting.All, LogLevel.Warning, FormatOnPaste: true);
+    public static readonly ClientAdvancedSettings Default = new(FormatOnType: true,
+                                                                AutoClosingTags: true,
+                                                                AutoInsertAttributeQuotes: true,
+                                                                ColorBackground: false,
+                                                                CodeBlockBraceOnNextLine: false,
+                                                                CommitElementsWithSpace: true,
+                                                                SnippetSetting.All,
+                                                                LogLevel.Warning,
+                                                                FormatOnPaste: true,
+                                                                TaskListDescriptors: []);
 }

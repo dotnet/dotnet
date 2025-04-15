@@ -226,7 +226,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 Directory.CreateDirectory(pluginPath);
                 var myPlugin = Path.Combine(pluginPath, fileName);
                 Mock<IEnvironmentVariableReader> environmentalVariableReader = new Mock<IEnvironmentVariableReader>();
-                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("NUGET_PLUGIN_PATHS")).Returns(pluginPath);
+                environmentalVariableReader.Setup(env => env.GetEnvironmentVariable(EnvironmentVariableConstants.PluginPaths)).Returns($"{Path.PathSeparator}{pluginPath}{Path.PathSeparator}");
                 environmentalVariableReader.Setup(env => env.GetEnvironmentVariable("PATHS")).Returns("");
                 File.WriteAllText(myPlugin, string.Empty);
 
@@ -519,13 +519,34 @@ namespace NuGet.Protocol.Plugins.Tests
             Assert.Empty(plugins);
         }
 
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("nuget-plugin-auth.exe", true)]
+        [InlineData("nuget-plugin-AUTH.bat", true)]
+        [InlineData("nuGet-plugin-auth.exe", false)]
+        [InlineData("NUGet-PLUGIN-auth.bat", false)]
+        public void IsValidPlugin_IsCaseSensitive(string file, bool isValid)
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var workingPath = testDirectory.Path;
+            var pluginFilePath = Path.Combine(workingPath, file);
+            File.Create(pluginFilePath);
+            var fileInfo = new FileInfo(pluginFilePath);
+
+            // Act
+            bool result = PluginDiscoverer.IsValidPluginFile(fileInfo);
+
+            // Assert
+            Assert.Equal(isValid, result);
+        }
+
         [PlatformFact(Platform.Windows)]
         public void IsValidPluginFile_ExeFile_ReturnsTrue()
         {
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var pluginFilePath = Path.Combine(workingPath, "plugin.exe");
+            var pluginFilePath = Path.Combine(workingPath, "nuget-plugin-.exe");
             File.Create(pluginFilePath);
             var fileInfo = new FileInfo(pluginFilePath);
 
@@ -542,7 +563,7 @@ namespace NuGet.Protocol.Plugins.Tests
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var nonPluginFilePath = Path.Combine(workingPath, "plugin.txt");
+            var nonPluginFilePath = Path.Combine(workingPath, "nuget-plugin-.txt");
             File.Create(nonPluginFilePath);
             var fileInfo = new FileInfo(nonPluginFilePath);
 
@@ -559,7 +580,7 @@ namespace NuGet.Protocol.Plugins.Tests
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            var pluginFilePath = Path.Combine(workingPath, "nuget-plugin-");
             File.Create(pluginFilePath).Dispose();
 
 #if NET8_0_OR_GREATER
@@ -585,7 +606,7 @@ namespace NuGet.Protocol.Plugins.Tests
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            var pluginFilePath = Path.Combine(workingPath, "nuget-plugin-");
             File.Create(pluginFilePath);
 
             // Set execute permissions
@@ -606,7 +627,7 @@ namespace NuGet.Protocol.Plugins.Tests
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var pluginFilePath = Path.Combine(workingPath, "plugin");
+            var pluginFilePath = Path.Combine(workingPath, "nuget-plugin-");
             File.Create(pluginFilePath);
 
             // Remove execute permissions
@@ -627,7 +648,7 @@ namespace NuGet.Protocol.Plugins.Tests
             // Arrange
             using TestDirectory testDirectory = TestDirectory.Create();
             var workingPath = testDirectory.Path;
-            var pluginFilePath = Path.Combine(workingPath, "plugin with space");
+            var pluginFilePath = Path.Combine(workingPath, "nuget-plugin- with space");
             File.Create(pluginFilePath).Dispose();
 
             // Set execute permissions

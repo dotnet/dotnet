@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Collections.Specialized;       // NotifyCollectionChangedAction
@@ -935,7 +934,7 @@ namespace System.Windows.Controls
                                 }
                                 else
                                 {
-                                    Debug.Assert(false, "Head is container for itself, but parent is neither GridViewHeaderRowPresenter nor null.");
+                                    Debug.Fail("Head is container for itself, but parent is neither GridViewHeaderRowPresenter nor null.");
                                 }
                             }
                             else

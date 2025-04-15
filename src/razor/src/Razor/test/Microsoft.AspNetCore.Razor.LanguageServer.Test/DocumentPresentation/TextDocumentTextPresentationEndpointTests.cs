@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -91,37 +91,6 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var documentContext = CreateDocumentContext(uri, codeDocument);
 
         var clientConnection = CreateClientConnection(response: null);
-        var endpoint = CreateEndpoint(clientConnection);
-
-        var parameters = new TextPresentationParams()
-        {
-            TextDocument = new() { Uri = uri },
-            Range = codeDocument.Source.Text.GetRange(code.Span),
-            Text = "Hi there"
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        TestCode code = "<[|d|]iv></div>";
-
-        var codeDocument = CreateCodeDocument(code.Text);
-        codeDocument.SetUnsupported();
-
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-
-        var clientConnection = CreateClientConnection(response: new WorkspaceEdit());
         var endpoint = CreateEndpoint(clientConnection);
 
         var parameters = new TextPresentationParams()

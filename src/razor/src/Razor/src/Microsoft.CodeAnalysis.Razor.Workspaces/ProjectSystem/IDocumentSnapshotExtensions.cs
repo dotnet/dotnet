@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -28,7 +27,7 @@ internal static class IDocumentSnapshotExtensions
         CancellationToken cancellationToken)
     {
         // No point doing anything if its not a component
-        if (documentSnapshot.FileKind != FileKinds.Component)
+        if (documentSnapshot.FileKind != RazorFileKind.Component)
         {
             return null;
         }
@@ -58,7 +57,7 @@ internal static class IDocumentSnapshotExtensions
 
     public static bool IsPathCandidateForComponent(this IDocumentSnapshot documentSnapshot, ReadOnlyMemory<char> path)
     {
-        if (documentSnapshot.FileKind != FileKinds.Component)
+        if (documentSnapshot.FileKind != RazorFileKind.Component)
         {
             return false;
         }

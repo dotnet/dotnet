@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //#define OLD_ISF
 
@@ -280,7 +279,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
                     }
                     catch (InvalidOperationException) // Matrix.Parse failed.
                     {
-                        System.Diagnostics.Debug.Assert(false, "Corrupt Matrix in the ExtendedPropertyCollection!");
+                        System.Diagnostics.Debug.Fail("Corrupt Matrix in the ExtendedPropertyCollection!");
                     }
                     finally
                     {
@@ -448,7 +447,7 @@ namespace MS.Internal.Ink.InkSerializedFormat
         {
 #if DEBUG
             System.Diagnostics.Debug.Assert(compressionAlgorithm == 0);
-            System.Diagnostics.Debug.Assert(fTag == true);
+            System.Diagnostics.Debug.Assert(fTag);
 #endif
             Debug.Assert(stream != null);
             uint cbData = 0;

@@ -317,7 +317,9 @@ namespace NuGet.CommandLine.XPlat
             var nuspecFilePath = Path.GetFullPath(Path.Combine(packageDirectory, nuspecFile));
 
             // read development dependency from nuspec file
-            var developmentDependency = new NuspecReader(nuspecFilePath).GetDevelopmentDependency();
+            NuspecReader nuspecReader = new(nuspecFilePath);
+            var developmentDependency = nuspecReader.GetDevelopmentDependency();
+            string packageId = nuspecReader.GetId();
 
             if (developmentDependency)
             {
@@ -343,7 +345,7 @@ namespace NuGet.CommandLine.XPlat
                     dependency = new LibraryDependency(dependency)
                     {
                         IncludeType = includeType,
-                        LibraryRange = new LibraryRange(dependency.LibraryRange) { VersionRange = version },
+                        LibraryRange = new LibraryRange(dependency.LibraryRange) { VersionRange = version, Name = packageId },
                         SuppressParent = suppressParent,
                         VersionCentrallyManaged = isCentralPackageManagementEnabled,
                     };
@@ -358,7 +360,7 @@ namespace NuGet.CommandLine.XPlat
             return new LibraryDependency()
             {
                 LibraryRange = new LibraryRange(
-                    name: packageReferenceArgs.PackageId,
+                    name: packageId,
                     versionRange: version,
                     typeConstraint: LibraryDependencyTarget.Package),
                 VersionCentrallyManaged = isCentralPackageManagementEnabled

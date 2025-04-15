@@ -8,9 +8,9 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Manifest;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Deployment.Tasks.Links;
-using Microsoft.DotNet.VersionTools.BuildManifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {

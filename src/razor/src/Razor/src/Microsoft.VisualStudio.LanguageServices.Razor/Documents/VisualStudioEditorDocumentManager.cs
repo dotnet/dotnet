@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
@@ -180,7 +181,7 @@ internal sealed class VisualStudioEditorDocumentManager(
             // We have to deal with some complications here due to renames and event ordering and such.
             // We we might see multiple documents open for a cookie (due to linked files), but only one of them
             // has been renamed. In that case, we just process the change that we know about.
-            var filePaths = new HashSet<string>(documents.Select(d => d.DocumentFilePath));
+            var filePaths = new HashSet<string>(documents.Select(d => d.FilePath));
 
             // `Remove` can correctly handle the case when the incoming value is null without any exceptions.
             // The method is just not properly annotated for it,

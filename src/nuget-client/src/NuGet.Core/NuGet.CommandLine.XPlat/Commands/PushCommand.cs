@@ -81,6 +81,11 @@ namespace NuGet.CommandLine.XPlat
                     Strings.PushCommandSkipDuplicateDescription,
                     CommandOptionType.NoValue);
 
+                var configurationFile = push.Option(
+                    "--configfile",
+                    Strings.Option_ConfigFile,
+                    CommandOptionType.SingleValue);
+
                 push.OnExecute(async () =>
                 {
                     if (arguments.Values.Count < 1)
@@ -105,7 +110,7 @@ namespace NuGet.CommandLine.XPlat
                     }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                    var sourceProvider = new PackageSourceProvider(XPlatUtility.GetSettingsForCurrentWorkingDirectory(), enablePackageSourcesChangedEvent: false);
+                    var sourceProvider = new PackageSourceProvider(XPlatUtility.ProcessConfigFile(configurationFile.Value()), enablePackageSourcesChangedEvent: false);
 #pragma warning restore CS0618 // Type or member is obsolete
 
                     try

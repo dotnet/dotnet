@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using MS.Internal.Media3D;
@@ -56,7 +55,7 @@ namespace System.Windows.Media.Media3D
                 
                     // in this case we have a non-indexed mesh
                     int count = positions.Count;
-                    count = count - (count % 3);
+                    count -= count % 3;
 
                     for (int i = 0; i < count; i+=3)
                     {
@@ -374,7 +373,7 @@ namespace System.Windows.Media.Media3D
             // Visual(3D).AddVisualChild for the things they propagate on adding a new child
             
             // Fire notifications
-            this.OnVisualChildrenChanged(child, null /* no removed child */);
+            this.OnVisualChildrenChanged(child, visualRemoved: null);
             child.FireOnVisualParentChanged(null);
         }
 
@@ -406,7 +405,7 @@ namespace System.Windows.Media.Media3D
             
             // Fire notifications
             child.FireOnVisualParentChanged(this);
-            OnVisualChildrenChanged(null /* no child added */, child);
+            OnVisualChildrenChanged(visualAdded: null, child);
         }
 
         /// <summary>

@@ -9,10 +9,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -83,6 +83,7 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
     /// use when creating <see cref="ProjectState"/>.</param>
     /// <param name="compilerOptions">Options used to control Razor compilation.</param>
+    /// <param name="featureOptions">The <see cref="LanguageServerFeatureOptions"/> to use.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
     /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
     /// Note that this is called during construction, so it does not run on the dispatcher and notifications
@@ -90,12 +91,13 @@ internal partial class ProjectSnapshotManager : IDisposable
     public ProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         RazorCompilerOptions compilerOptions,
+        LanguageServerFeatureOptions featureOptions,
         ILoggerFactory loggerFactory,
         Action<Updater>? initializer = null)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
         _compilerOptions = compilerOptions;
-        _dispatcher = new(loggerFactory);
+        _dispatcher = new(featureOptions, loggerFactory);
         _logger = loggerFactory.GetOrCreateLogger(GetType());
 
         initializer?.Invoke(new(this));
@@ -301,30 +303,22 @@ internal partial class ProjectSnapshotManager : IDisposable
 
     private void OpenDocument(ProjectKey projectKey, string documentFilePath, SourceText text)
     {
-        if (TryUpdateProject(
-            projectKey,
-            transformer: state => state.WithDocumentText(documentFilePath, text),
-            onAfterUpdate: () => _openDocumentSet.Add(documentFilePath),
-            out var oldProject,
-            out var newProject,
-            out var isSolutionClosing))
+        using (_readerWriterLock.DisposableWrite())
         {
-            NotifyListeners(ProjectChangeEventArgs.DocumentChanged(oldProject, newProject, documentFilePath, isSolutionClosing));
+            _openDocumentSet.Add(documentFilePath);
         }
+
+        UpdateDocumentText(projectKey, documentFilePath, text);
     }
 
     private void CloseDocument(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        if (TryUpdateProject(
-            projectKey,
-            transformer: state => state.WithDocumentText(documentFilePath, textLoader),
-            onAfterUpdate: () => _openDocumentSet.Remove(documentFilePath),
-            out var oldProject,
-            out var newProject,
-            out var isSolutionClosing))
+        using (_readerWriterLock.DisposableWrite())
         {
-            NotifyListeners(ProjectChangeEventArgs.DocumentChanged(oldProject, newProject, documentFilePath, isSolutionClosing));
+            _openDocumentSet.Remove(documentFilePath);
         }
+
+        UpdateDocumentText(projectKey, documentFilePath, textLoader);
     }
 
     private void UpdateDocumentText(ProjectKey projectKey, string documentFilePath, SourceText text)
@@ -413,15 +407,6 @@ internal partial class ProjectSnapshotManager : IDisposable
         [NotNullWhen(true)] out ProjectSnapshot? oldProject,
         [NotNullWhen(true)] out ProjectSnapshot? newProject,
         out bool isSolutionClosing)
-        => TryUpdateProject(projectKey, transformer, onAfterUpdate: null, out oldProject, out newProject, out isSolutionClosing);
-
-    private bool TryUpdateProject(
-        ProjectKey projectKey,
-        Func<ProjectState, ProjectState> transformer,
-        Action? onAfterUpdate,
-        [NotNullWhen(true)] out ProjectSnapshot? oldProject,
-        [NotNullWhen(true)] out ProjectSnapshot? newProject,
-        out bool isSolutionClosing)
     {
         if (_initialized)
         {
@@ -458,8 +443,6 @@ internal partial class ProjectSnapshotManager : IDisposable
 
         var newEntry = new Entry(newState);
         _projectMap[projectKey] = newEntry;
-
-        onAfterUpdate?.Invoke();
 
         oldProject = oldEntry.GetSnapshot();
         newProject = newEntry.GetSnapshot();

@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
+using Microsoft.DotNet.Build.Manifest;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
@@ -830,7 +830,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
-                symbolTargetType: SymbolPublishVisibility.Public),
+                symbolTargetType: SymbolPublishVisibility.Public,
+                // Temporarily work around https://github.com/dotnet/source-build/issues/5004
+                flatten: false),
 
             // .NET 10 Preview 1,
             new TargetChannelConfig(
@@ -1499,6 +1501,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             // VS 17.14
             new TargetChannelConfig(
                 id: 6136,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            // VS 17.15
+            new TargetChannelConfig(
+                id: 6989,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: [],

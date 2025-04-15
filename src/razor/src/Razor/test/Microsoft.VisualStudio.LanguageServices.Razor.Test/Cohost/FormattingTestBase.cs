@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -12,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Threading;
 using Roslyn.Test.Utilities;
@@ -38,7 +38,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     private protected async Task RunFormattingTestAsync(
         TestCode input,
         string expected,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         bool inGlobalNamespace = false,
         bool codeBlockBraceOnNextLine = false,
         bool insertSpaces = true,
@@ -47,7 +47,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
         if (!allowDiagnostics)
         {
             //TODO: Tests in LanguageServer have extra components that are not present in this project, like Counter, etc.
@@ -97,12 +97,12 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         bool inGlobalNamespace = false,
         bool insertSpaces = true,
         int tabSize = 4,
-        string? fileKind = null,
+        RazorFileKind? fileKind = null,
         int? expectedChangedLines = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
@@ -156,12 +156,6 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     private (TestCode, string) ProcessFormattingContext(TestCode input, string expected)
     {
         Assert.True(_context.CreatedByFormattingDiscoverer, "Test class is using FormattingTestContext, but not using [FormattingTestFact] or [FormattingTestTheory]");
-
-        UpdateClientInitializationOptions(opt => opt with
-        {
-            ForceRuntimeCodeGeneration = _context.ForceRuntimeCodeGeneration,
-            UseNewFormattingEngine = _context.UseNewFormattingEngine
-        });
 
         if (_context.ShouldFlipLineEndings)
         {

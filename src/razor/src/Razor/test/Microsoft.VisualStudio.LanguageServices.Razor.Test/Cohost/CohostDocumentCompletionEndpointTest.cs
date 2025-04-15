@@ -4,31 +4,30 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
+using Roslyn.Test.Utilities;
+using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
-using RoslynCompletionParams = Roslyn.LanguageServer.Protocol.CompletionParams;
-using RoslynCompletionTriggerKind = Roslyn.LanguageServer.Protocol.CompletionTriggerKind;
-using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
-using RoslynTextDocumentIdentifier = Roslyn.LanguageServer.Protocol.TextDocumentIdentifier;
-using RoslynVSInternalCompletionContext = Roslyn.LanguageServer.Protocol.VSInternalCompletionContext;
-using RoslynVSInternalCompletionInvokeKind = Roslyn.LanguageServer.Protocol.VSInternalCompletionInvokeKind;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task CSharpInEmptyExplicitStatement()
     {
         await VerifyCompletionListAsync(
@@ -41,15 +40,15 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["var", "char", "DateTime", "Exception"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpClassesAtTransition()
     {
         await VerifyCompletionListAsync(
@@ -60,16 +59,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "@",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["char", "DateTime", "Exception"]);
+            expectedItemLabels: ["char", "DateTime", "Exception"],
+            itemToResolve: "DateTime",
+            expectedResolvedItemDescription: "readonly struct System.DateTime");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpClassMembersAtProvisionalCompletion()
     {
         await VerifyCompletionListAsync(
@@ -80,16 +81,16 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = ".",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpClassesInCodeBlock()
     {
         await VerifyCompletionListAsync(
@@ -102,16 +103,16 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["char", "DateTime", "Exception"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpClassMembersInCodeBlock()
     {
         await VerifyCompletionListAsync(
@@ -129,16 +130,16 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = ".",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharpOverrideMethods()
     {
         await VerifyCompletionListAsync(
@@ -147,21 +148,39 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 <div></div>
 
-                @code{ public override $$ }
+                @code {
+                    public override $$
+                }
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            expected: """
+                This is a Razor document.
+            
+                <div></div>
+            
+                @code {
+                    public override Task SetParametersAsync(ParameterView parameters)
+                    {
+                        return base.SetParametersAsync(parameters);
+                    }
+                }
+            
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"]);
+            expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"],
+            itemToResolve: "SetParametersAsync(ParameterView parameters)",
+            expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)");
     }
 
     // Tests MarkupTransitionCompletionItemProvider
-    [FuseFact]
+    [Fact]
     public async Task CSharpMarkupTransitionAndTagHelpersInCodeBlock()
     {
         await VerifyCompletionListAsync(
@@ -179,17 +198,17 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "<",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["text", "EditForm", "InputDate", "div"],
-            delegatedItemLabels: ["div"]);
+            htmlItemLabels: ["div"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task RazorDirectives()
     {
         var expectedDirectiveLabels = new string[]
@@ -220,16 +239,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "@",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: expectedLabels);
+            expectedItemLabels: expectedLabels,
+            itemToResolve: "page",
+            expectedResolvedItemDescription: "Mark the page as a routable component.");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ElementNameTagHelpersCompletion()
     {
         await VerifyCompletionListAsync(
@@ -240,17 +261,27 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            expected:
+                """
+                This is a Razor document.
+
+                <EditForm 
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "<",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["LayoutView", "EditForm", "ValidationMessage", "div"],
-            delegatedItemLabels: ["div"]);
+            htmlItemLabels: ["div"],
+            itemToResolve: "EditForm",
+            expectedResolvedItemDescription: "Microsoft.AspNetCore.Components.Forms.EditForm");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlElementNamesAndTagHelpersCompletion()
     {
         await VerifyCompletionListAsync(
@@ -261,17 +292,17 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "<",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"]);
+            htmlItemLabels: ["div", "h1"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlElementNamesAndTagHelpersCompletion_EndOfDocument()
     {
         await VerifyCompletionListAsync(
@@ -280,18 +311,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 <$$
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "<",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"],
+            htmlItemLabels: ["div", "h1"],
             unexpectedItemLabels: ["snippet1", "snippet2"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlElementDoNotCommitWithSpace()
     {
         await VerifyCompletionListAsync(
@@ -302,19 +333,19 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "<",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
-            delegatedItemLabels: ["div", "h1"],
-            delegatedItemCommitCharacters: [" ", ">"],
+            htmlItemLabels: ["div", "h1"],
+            htmlItemCommitCharacters: [" ", ">"],
             commitElementsWithSpace: false);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlSnippetsCompletion()
     {
         await VerifyCompletionListAsync(
@@ -325,36 +356,36 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlSnippetsCompletion_EmptyDocument()
     {
         await VerifyCompletionListAsync(
             input: """
                 $$
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument1()
     {
         await VerifyCompletionListAsync(
@@ -362,18 +393,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 $$
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument2()
     {
         await VerifyCompletionListAsync(
@@ -381,18 +412,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
                 $$
 
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: [],
+            htmlItemLabels: [],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlSnippetsCompletion_NotInStartTag()
     {
         await VerifyCompletionListAsync(
@@ -403,20 +434,20 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = " ",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir"],
             unexpectedItemLabels: ["snippet1", "snippet2"],
-            delegatedItemLabels: ["style", "dir"],
+            htmlItemLabels: ["style", "dir"],
             snippetLabels: ["snippet1", "snippet2"]);
     }
 
     // Tests HTML attributes and DirectiveAttributeTransitionCompletionItemProvider
-    [FuseFact]
+    [Fact]
     public async Task HtmlAndDirectiveAttributeTransitionNamesCompletion()
     {
         await VerifyCompletionListAsync(
@@ -427,18 +458,18 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = " ",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
     // Tests HTML attributes and DirectiveAttributeCompletionItemProvider
-    [FuseFact]
+    [Fact]
     public async Task HtmlAndDirectiveAttributeNamesCompletion()
     {
         await VerifyCompletionListAsync(
@@ -449,18 +480,23 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = "@",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "@rendermode", "@bind-..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "@rendermode",
+            expectedResolvedItemDescription: """
+                IComponentRenderMode Microsoft.AspNetCore.Components.RenderMode.RenderMode
+                Specifies the render mode for a component.
+                """);
     }
 
     // Tests HTML attributes and DirectiveAttributeParameterCompletionItemProvider
-    [FuseFact]
+    [Fact]
     public async Task HtmlAndDirectiveAttributeParameterNamesCompletion()
     {
         await VerifyCompletionListAsync(
@@ -471,17 +507,17 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "culture", "event", "format", "get", "set", "after"],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlAttributeNamesAndTagHelpersCompletion()
     {
         await VerifyCompletionListAsync(
@@ -492,17 +528,19 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = " ",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "FormName",
+            expectedResolvedItemDescription: "string Microsoft.AspNetCore.Components.Forms.EditForm.FormName");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlAttributeNamesAndTagHelpersCompletion_EndOfDocument()
     {
         await VerifyCompletionListAsync(
@@ -511,17 +549,17 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 <EditForm $$
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Explicit,
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerCharacter = null,
-                TriggerKind = RoslynCompletionTriggerKind.Invoked
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
-            delegatedItemLabels: ["style", "dir"]);
+            htmlItemLabels: ["style", "dir"]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task TagHelperAttributes_NoAutoInsertQuotes_Completion()
     {
         await VerifyCompletionListAsync(
@@ -532,31 +570,32 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
 
                 The end.
                 """,
-            completionContext: new RoslynVSInternalCompletionContext()
+            completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
                 TriggerCharacter = " ",
-                TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["FormName", "OnValidSubmit", "@...", "style"],
-            delegatedItemLabels: ["style"],
+            htmlItemLabels: ["style"],
             autoInsertAttributeQuotes: false);
     }
 
     private async Task VerifyCompletionListAsync(
         TestCode input,
-        RoslynVSInternalCompletionContext completionContext,
+        VSInternalCompletionContext completionContext,
         string[] expectedItemLabels,
         string[]? unexpectedItemLabels = null,
-        string[]? delegatedItemLabels = null,
-        string[]? delegatedItemCommitCharacters = null,
+        string[]? htmlItemLabels = null,
+        string[]? htmlItemCommitCharacters = null,
         string[]? snippetLabels = null,
+        string? itemToResolve = null,
+        string? expected = null,
+        string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);
@@ -565,17 +604,17 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
         const string InvalidLabel = "_INVALID_";
 
         // If delegatedItemLabels wasn't supplied, supply our own to ensure delegation isn't happening and causing a false positive result
-        delegatedItemLabels ??= [InvalidLabel];
-        var response = new VSInternalCompletionList()
+        htmlItemLabels ??= [InvalidLabel];
+        var response = new RazorVSInternalCompletionList()
         {
-            Items = delegatedItemLabels.Select((label) => new VSInternalCompletionItem()
+            Items = [.. htmlItemLabels.Select((label) => new VSInternalCompletionItem()
             {
                 Label = label,
-                CommitCharacters = delegatedItemCommitCharacters,
+                CommitCharacters = htmlItemCommitCharacters,
                 // If test specifies not to commit with space, set kind to element since we remove space
                 // commit from elements only. Otherwise test doesn't care, so set to None
                 Kind = !commitElementsWithSpace ? CompletionItemKind.Element : CompletionItemKind.None,
-            }).ToArray(),
+            })],
             IsIncomplete = true
         };
 
@@ -587,22 +626,25 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
         var snippetInfos = snippetLabels.Select(label => new SnippetInfo(label, label, label, string.Empty, SnippetLanguage.Html)).ToImmutableArray();
         snippetCompletionItemProvider.SnippetCache.Update(SnippetLanguage.Html, snippetInfos);
 
+        var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             RemoteServiceInvoker,
             clientSettingsManager,
+            ClientCapabilitiesService,
             TestHtmlDocumentSynchronizer.Instance,
             snippetCompletionItemProvider,
-            new CompletionTriggerAndCommitCharacters(TestLanguageServerFeatureOptions.Instance),
+            TestLanguageServerFeatureOptions.Instance,
             requestInvoker,
+            completionListCache,
             LoggerFactory);
 
-        var request = new RoslynCompletionParams()
+        var request = new CompletionParams()
         {
-            TextDocument = new RoslynTextDocumentIdentifier()
+            TextDocument = new TextDocumentIdentifier()
             {
                 Uri = document.CreateUri()
             },
-            Position = RoslynLspExtensions.GetPosition(sourceText, input.Position),
+            Position = sourceText.GetPosition(input.Position),
             Context = completionContext
         };
 
@@ -641,5 +683,78 @@ public class CohostDocumentCompletionEndpointTest(FuseTestContext context, ITest
             // to false
             Assert.False(result.Items.Any(item => item.InsertText?.Contains("\"$0\"") ?? false));
         }
+
+        if (itemToResolve is null)
+        {
+            return;
+        }
+
+        Assert.NotNull(expectedResolvedItemDescription);
+
+        var item = Assert.Single(result.Items.Where(i => i.Label == itemToResolve));
+
+        await VerifyCompletionResolveAsync(document, completionListCache, item, expected, expectedResolvedItemDescription);
+    }
+
+    private async Task VerifyCompletionResolveAsync(CodeAnalysis.TextDocument document, CompletionListCache completionListCache, VSInternalCompletionItem item, string? expected, string expectedResolvedItemDescription)
+    {
+        // We expect data to be a JsonElement, so for tests we have to _not_ strongly type
+        item.Data = JsonSerializer.SerializeToElement(item.Data, JsonHelpers.JsonSerializerOptions);
+
+        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
+        var endpoint = new CohostDocumentCompletionResolveEndpoint(
+            completionListCache,
+            RemoteServiceInvoker,
+            clientSettingsManager,
+            TestHtmlDocumentSynchronizer.Instance,
+            new TestLSPRequestInvoker(),
+            LoggerFactory);
+
+        var tdi = endpoint.GetTestAccessor().GetRazorTextDocumentIdentifier(item);
+        Assert.NotNull(tdi);
+        Assert.Equal(document.CreateUri(), tdi.Value.Uri);
+
+        var result = await endpoint.GetTestAccessor().HandleRequestAsync(item, document, DisposalToken);
+
+        Assert.NotNull(result);
+
+        if (result.Description is not null)
+        {
+            AssertEx.EqualOrDiff(expectedResolvedItemDescription, FlattenDescription(result.Description));
+        }
+        else if (result.Documentation is { Value: string description })
+        {
+            AssertEx.EqualOrDiff(expectedResolvedItemDescription, description);
+        }
+        else
+        {
+            Assert.Fail("Unhandled description type: " + JsonSerializer.SerializeToElement(result).ToString());
+        }
+
+        if (result.TextEdit is { Value: TextEdit edit })
+        {
+            Assert.NotNull(expected);
+
+            var text = await document.GetTextAsync(DisposalToken).ConfigureAwait(false);
+            var changedText = text.WithChanges(text.GetTextChange(edit));
+
+            AssertEx.EqualOrDiff(expected, changedText.ToString());
+        }
+    }
+
+    private string? FlattenDescription(ClassifiedTextElement? description)
+    {
+        if (description is null)
+        {
+            return null;
+        }
+
+        var sb = new StringBuilder();
+        foreach (var run in description.Runs)
+        {
+            sb.Append(run.Text);
+        }
+
+        return sb.ToString();
     }
 }

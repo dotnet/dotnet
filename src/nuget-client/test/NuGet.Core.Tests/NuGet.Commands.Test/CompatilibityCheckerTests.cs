@@ -80,7 +80,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -151,7 +151,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -224,7 +224,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -292,7 +292,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -362,7 +362,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -431,7 +431,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -499,7 +499,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -570,7 +570,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -648,7 +648,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)
@@ -727,7 +727,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger)

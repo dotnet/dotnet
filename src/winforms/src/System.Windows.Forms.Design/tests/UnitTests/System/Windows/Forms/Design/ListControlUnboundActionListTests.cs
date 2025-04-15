@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable enable
-
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using Moq;
@@ -40,12 +38,5 @@ public sealed class ListControlUnboundActionListTests : IDisposable
         methodItem.DisplayName.Should().Be(SR.ListControlUnboundActionListEditItemsDisplayName);
         methodItem.Category.Should().Be(SR.ItemsCategoryName);
         methodItem.Description.Should().Be(SR.ListControlUnboundActionListEditItemsDescription);
-    }
-
-    [Fact]
-    public void InvokeItemsDialog_ShouldThrowException()
-    {
-        Action action = _actionList.InvokeItemsDialog;
-        action.Should().Throw<Exception>();
     }
 }

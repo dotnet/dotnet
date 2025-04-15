@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 /***************************************************************************\
 *
@@ -317,7 +316,7 @@ namespace System.Windows
             Debug.Assert(d != null, "Must have non-null current node");
 
             // This must be an inherited dependency property
-            Debug.Assert(fMetadata.IsInherited == true, "This must be an inherited dependency property");
+            Debug.Assert(fMetadata.IsInherited, "This must be an inherited dependency property");
 
             // IsSelfInheritanceParent can only change from false to true
             Debug.Assert(!wasSelfInheritanceParent || isSelfInheritanceParent, "IsSelfInheritanceParent changed from true to false");

@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
@@ -12,12 +11,28 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 public class FilePathServiceTest
 {
     [Theory]
-    [InlineData(true, @"C:\path\to\file.razor.t3Gf1FBjln6S9T95.ide.g.cs")]
+    [InlineData(@"C:\path\to\file.razor.t3Gf1FBjln6S9T95.ide.g.cs")]
+    [InlineData(@"C:\path\to\file.razor__virtual.html")]
+    [InlineData(@"C:\path\to\file.razor")]
+    public void GetRazorFilePath_ReturnsExpectedPath(string inputFilePath)
+    {
+        // Arrange
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true));
+
+        // Act
+        var result = filePathService.GetTestAccessor().GetRazorFilePath(inputFilePath);
+
+        // Assert
+        Assert.Equal(@"C:\path\to\file.razor", result);
+    }
+
+    [Theory]
+    [InlineData(true, @"C:\path\to\file.razor.21z2YGQgr-neX-Hd.ide.g.cs")]
     [InlineData(false, @"C:\path\to\file.razor.ide.g.cs")]
     public void GetRazorCSharpFilePath_ReturnsExpectedPath(bool includeProjectKey, string expected)
     {
         // Arrange
-        var projectKey = TestProjectKey.Create("Hello");
+        var projectKey = new ProjectKey(@"C:\path\to\obj");
         var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
 
         // Act
@@ -66,6 +81,18 @@ public class FilePathServiceTest
         var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true));
         // Act
         var result = filePathService.GetRazorDocumentUri(new Uri(@"C:\path\to\file.razor__virtual.html"));
+
+        // Assert
+        Assert.Equal(@"C:/path/to/file.razor", result.GetAbsoluteOrUNCPath());
+    }
+
+    [Fact]
+    public void GetRazorDocumentUri_RazorFile_ReturnsExpectedUri()
+    {
+        // Arrange
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true));
+        // Act
+        var result = filePathService.GetRazorDocumentUri(new Uri(@"C:\path\to\file.razor"));
 
         // Assert
         Assert.Equal(@"C:/path/to/file.razor", result.GetAbsoluteOrUNCPath());

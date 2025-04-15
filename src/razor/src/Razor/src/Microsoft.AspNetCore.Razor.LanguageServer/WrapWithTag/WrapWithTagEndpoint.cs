@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
@@ -41,17 +40,29 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         if (request.Range?.Start is not { } start ||
             !sourceText.TryGetAbsoluteIndex(start, out var hostDocumentIndex))
         {
             return null;
+        }
+
+        // First thing we do is make sure we start at a non-whitespace character. This is important because in some
+        // situations the whitespace can be technically C#, but move one character to the right and it's HTML. eg
+        //
+        // @if (true) {
+        //   |   <p></p>
+        // }
+        //
+        // Limiting this to only whitespace on the same line, as it's not clear what user expectation would be otherwise.
+        var requestSpan = sourceText.GetTextSpan(request.Range);
+        if (sourceText.TryGetFirstNonWhitespaceOffset(requestSpan, out var offset, out var newLineCount) &&
+            newLineCount == 0)
+        {
+            request.Range.Start.Character += offset;
+            requestSpan = sourceText.GetTextSpan(request.Range);
+            hostDocumentIndex += offset;
         }
 
         // Since we're at the start of the selection, lets prefer the language to the right of the cursor if possible.
@@ -89,13 +100,12 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
             // <p>[|@currentCount|]</p>
 
             var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            var requestSpan = sourceText.GetTextSpan(request.Range);
             var node = tree.Root.FindNode(requestSpan, includeWhitespace: false, getInnermostNodeForTie: true);
             if (node?.FirstAncestorOrSelf<CSharpImplicitExpressionSyntax>() is { Parent: CSharpCodeBlockSyntax codeBlock } &&
-                (requestSpan == codeBlock.FullSpan || requestSpan.Length == 0))
+                (requestSpan == codeBlock.Span || requestSpan.Length == 0))
             {
                 // Pretend we're in Html so the rest of the logic can continue
-                request.Range = sourceText.GetRange(codeBlock.FullSpan);
+                request.Range = sourceText.GetRange(codeBlock.Span);
                 languageKind = RazorLanguageKind.Html;
             }
         }

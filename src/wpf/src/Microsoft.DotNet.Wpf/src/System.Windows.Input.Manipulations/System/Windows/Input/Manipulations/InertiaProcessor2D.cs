@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.ComponentModel;
@@ -1259,7 +1258,7 @@ namespace System.Windows.Input.Manipulations
                 double result = InitialVelocity - Deceleration * elapsedTimeSinceInitialTimestamp;
 
                 // convert to milliseconds
-                result = result * timestampTicksPerMillisecond;
+                result *= timestampTicksPerMillisecond;
                 Debug.Assert(Validations.IsFinite((float)result));
                 return (float)result;
             }

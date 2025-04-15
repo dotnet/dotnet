@@ -29,7 +29,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     
     <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsNetFramework)' == 'True'">

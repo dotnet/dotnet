@@ -5,21 +5,19 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact(Skip = "Roslyn doesn't perform rename in source generated documents")]
     public Task CSharp_Method()
         => VerifyRenamesAsync(
             input: """
@@ -54,7 +52,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 The end.
                 """);
 
-    [FuseTheory]
+    [Theory]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -102,7 +100,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 """,
             renames: [("Component.razor", "DifferentName.razor")]);
 
-    [FuseTheory]
+    [Theory]
     [InlineData("$$Component")]
     [InlineData("Com$$ponent")]
     [InlineData("Component$$")]
@@ -150,29 +148,33 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
                 """,
             renames: [("Component.razor", "DifferentName.razor")]);
 
-    [FuseFact]
+    [Fact]
     public Task Mvc()
-       => VerifyRenamesAsync(
-           input: """
+        => VerifyRenamesAsync(
+            input: """
                 This is a Razor document.
 
                 <Com$$ponent />
 
                 The end.
                 """,
-           additionalFiles: [
+            additionalFiles: [
                 (FilePath("Component.razor"), "")
-           ],
-           newName: "DifferentName",
-           expected: "",
-           fileKind: FileKinds.Legacy);
+            ],
+            newName: "DifferentName",
+            expected: "",
+            fileKind: RazorFileKind.Legacy);
 
-    private async Task VerifyRenamesAsync(string input, string newName, string expected, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null, (string oldName, string newName)[]? renames = null)
+    private async Task VerifyRenamesAsync(
+        string input,
+        string newName,
+        string expected,
+        RazorFileKind? fileKind = null,
+        (string fileName, string contents)[]? additionalFiles = null,
+        (string oldName, string newName)[]? renames = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
-        var document = await CreateProjectAndRazorDocumentAsync(source, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 
@@ -227,7 +229,7 @@ public class CohostRenameEndpointTest(FuseTestContext context, ITestOutputHelper
             {
                 foreach (var edit in textDocumentEdit.Edits)
                 {
-                    inputText = inputText.WithChanges(inputText.GetTextChange(edit));
+                    inputText = inputText.WithChanges(inputText.GetTextChange((TextEdit)edit));
                 }
             }
         }

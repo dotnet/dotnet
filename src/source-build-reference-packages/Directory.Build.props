@@ -3,12 +3,6 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <!-- Disable TFM filtering because it filteres old netstandard TFMs.
-         Once all old netstandard TFMs are cleanup, this could be removed. -->
-    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>true</IsPackable>
@@ -17,9 +11,6 @@
       equality with real packages.
     -->
     <Serviceable />
-    <!-- TODO: Remove netstandard1.x TFMs. https://github.com/dotnet/source-build/issues/4482 -->
-    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
-
     <CustomizationsPrefix>Customizations</CustomizationsPrefix>
     <CustomizationsPropsFile>$(CustomizationsPrefix).props</CustomizationsPropsFile>
     <CustomizationsSourceFile>$(CustomizationsPrefix).cs</CustomizationsSourceFile>

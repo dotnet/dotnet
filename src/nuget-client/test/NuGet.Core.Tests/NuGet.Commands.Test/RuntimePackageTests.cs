@@ -136,7 +136,7 @@ namespace NuGet.Commands.Test
                 }".Replace("_FRAMEWORK_", framework));
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
                 request.LockFilePath = Path.Combine(projectDir, "project.lock.json");
@@ -203,7 +203,7 @@ namespace NuGet.Commands.Test
             }".Replace("_FRAMEWORK_", framework));
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
                 request.LockFilePath = Path.Combine(projectDir, "project.lock.json");

@@ -23,7 +23,7 @@ internal class SyntaxTreeVerifier
 
         if (ensureFullFidelity)
         {
-            var syntaxTreeString = syntaxTree.Root.ToFullString();
+            var syntaxTreeString = syntaxTree.Root.ToString();
             var sourceText = syntaxTree.Source.Text;
             var builder = new StringBuilder(sourceText.Length);
             for (var i = 0; i < sourceText.Length; i++)

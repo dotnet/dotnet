@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -93,7 +92,7 @@ namespace System.Windows
     [UsableDuringInitialization(true)]
     public partial class FrameworkElement : UIElement, IFrameworkInputElement, ISupportInitialize, IHaveResources, IQueryAmbient
     {
-        static private readonly Type _typeofThis = typeof(FrameworkElement);
+        private static readonly Type _typeofThis = typeof(FrameworkElement);
 
         /// <summary>
         ///     Default FrameworkElement constructor
@@ -579,7 +578,7 @@ namespace System.Windows
         /// <summary>
         /// Gets or sets the template child of the FrameworkElement.
         /// </summary>
-        virtual internal UIElement TemplateChild
+        internal virtual UIElement TemplateChild
         {
             get
             {
@@ -1948,7 +1947,7 @@ namespace System.Windows
             // Inheritance
             //
 
-            if (!TreeWalkHelper.SkipNext(InheritanceBehavior) || fmetadata.OverridesInheritanceBehavior == true)
+            if (!TreeWalkHelper.SkipNext(InheritanceBehavior) || fmetadata.OverridesInheritanceBehavior)
             {
                 // Used to terminate tree walk if a tree boundary is hit
                 InheritanceBehavior inheritanceBehavior = InheritanceBehavior.Default;
@@ -2460,7 +2459,7 @@ namespace System.Windows
             // Fire Loaded and Unloaded Events
             BroadcastEventHelper.BroadcastLoadedOrUnloadedEvent(this, oldParent, newParent);
 
-            if (newParent != null && (newParent is FrameworkElement) == false)
+            if (newParent != null && newParent is not FrameworkElement)
             {
                 // If you are being connected to a non-FE parent then start listening for VisualAncestor
                 // changes because otherwise you won't know about changes happening above you
@@ -2474,7 +2473,7 @@ namespace System.Windows
                     ((Visual3D)newParent).VisualAncestorChanged += new Visual.AncestorChangedEventHandler(OnVisualAncestorChanged);
                 }
             }
-            else if (oldParent != null && (oldParent is FrameworkElement) == false)
+            else if (oldParent != null && oldParent is not FrameworkElement)
             {
                 // If you are being disconnected from a non-FE parent then stop listening for
                 // VisualAncestor changes
@@ -3164,7 +3163,7 @@ namespace System.Windows
         /// This will make the culture pertain to the scope of the element where it is applied.  The
         /// XmlLanguage names follow the RFC 3066 standard. For example, U.S. English is "en-US".
         /// </summary>
-        static public readonly DependencyProperty LanguageProperty =
+        public static readonly DependencyProperty LanguageProperty =
                     DependencyProperty.RegisterAttached(
                                 "Language",
                                 typeof(XmlLanguage),
@@ -3862,7 +3861,7 @@ namespace System.Windows
         }
 
         // If the cursor is changed, we may need to set the actual cursor.
-        static private void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FrameworkElement fe = ((FrameworkElement)d);
 
@@ -3897,7 +3896,7 @@ namespace System.Windows
         }
 
         // If the ForceCursor property changed, we may need to set the actual cursor.
-        static private void OnForceCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnForceCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FrameworkElement fe = ((FrameworkElement)d);
 

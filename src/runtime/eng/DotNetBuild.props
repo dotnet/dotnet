@@ -1,6 +1,6 @@
 <!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
 
-<Project>
+<Project TreatAsLocalProperty="TargetOS;TargetRid">
 
   <PropertyGroup>
     <GitHubRepositoryName>runtime</GitHubRepositoryName>
@@ -16,6 +16,7 @@
     <_targetRidPlatformIndex>$(TargetRid.LastIndexOf('-'))</_targetRidPlatformIndex>
     <TargetArch>$(TargetRid.Substring($(_targetRidPlatformIndex)).TrimStart('-'))</TargetArch>
     <TargetOS>$(TargetRid.Substring(0, $(_targetRidPlatformIndex)))</TargetOS>
+    <TargetOS Condition="'$(TargetOS)' == 'win'">windows</TargetOS>
 
     <_hostRidPlatformIndex>$(_hostRid.LastIndexOf('-'))</_hostRidPlatformIndex>
     <_hostArch>$(_hostRid.Substring($(_hostRidPlatformIndex)).TrimStart('-'))</_hostArch>
@@ -36,6 +37,19 @@
     <ShortStack Condition="'$(TargetOS)' == 'linux-bionic'">true</ShortStack>
     <!-- Mono LLVM builds are short -->
     <ShortStack Condition="'$(DotNetBuildMonoEnableLLVM)' == 'true' or '$(DotNetBuildMonoAOTEnableLLVM)' == 'true'">true</ShortStack>
+  </PropertyGroup>
+
+  <!--
+    Allow the VMR orchestrator to control whether or not to build rid-specific artifacts,
+    but provide defaults until the VMR orchestrator provides controls in all scenarios.
+  -->
+  <PropertyGroup Condition="'$(EnableDefaultRidSpecificArtifacts)' == ''">
+    <!-- Source-build always needs all artifacts to be published. -->
+    <EnableDefaultRidSpecificArtifacts Condition="'$(DotNetBuildSourceOnly)' != ''">false</EnableDefaultRidSpecificArtifacts>
+    <!-- Short-stack builds should always only publish RID-specific artifacts. -->
+    <EnableDefaultRidSpecificArtifacts Condition="'$(ShortStack)' == 'true'">true</EnableDefaultRidSpecificArtifacts>
+    <!-- If no override is specified, don't use RID-specific publishing. Instead, publish everything. -->
+    <EnableDefaultRidSpecificArtifacts Condition="'$(EnableDefaultRidSpecificArtifacts)' == ''">false</EnableDefaultRidSpecificArtifacts>
   </PropertyGroup>
 
   <Target Name="GetRuntimeSourceBuildCommandConfiguration"
@@ -86,6 +100,8 @@
       <InnerBuildArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(InnerBuildArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(DotNetEsrpToolPath)' != ''">$(InnerBuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(DotNetBuildTests)' != ''">$(InnerBuildArgs) /p:DotNetBuildTests=$(DotNetBuildTests)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(PublishingVersion)' != ''">$(InnerBuildArgs) /p:PublishingVersion=$(PublishingVersion)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(RepositoryUrl)' != ''">$(InnerBuildArgs) /p:RepositoryUrl=$(RepositoryUrl)</InnerBuildArgs>
 
       <!-- Pass locations for assets, packages and symbols -->
       <InnerBuildArgs Condition="'$(SourceBuiltAssetsDir)' != ''">$(InnerBuildArgs) /p:SourceBuiltAssetsDir=$(SourceBuiltAssetsDir)</InnerBuildArgs>
@@ -97,24 +113,19 @@
       <InnerBuildArgs Condition="'$(GitHubRepositoryName)' != ''">$(InnerBuildArgs) /p:GitHubRepositoryName=$(GitHubRepositoryName)</InnerBuildArgs>
 
       <!-- Handle system libraries -->
-      <UseSystemLibs Condition="'$(UseSystemLibs)' != ''">+$(UseSystemLibs)+</UseSystemLibs>
-      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+brotli+'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</InnerBuildArgs>
-      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+libunwind+'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</InnerBuildArgs>
+      <UseSystemLibs Condition="'$(UseSystemLibs)' != ''">+$(UseSystemLibs)</UseSystemLibs>
+      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+brotli'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+libunwind'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</InnerBuildArgs>
       <!-- TODO: llvm-libunwind -->
       <!-- TODO: LinuxTracepoints -->
-      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson+'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</InnerBuildArgs>
-      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+zlib+'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('+zlib'))">$(InnerBuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="$(UseSystemLibs.Contains('-lttng'))">$(InnerBuildArgs) /p:FeatureXplatEventSource=false</InnerBuildArgs>
 
       <!-- Needed until https://github.com/dotnet/runtime/issues/109329 is fixed. -->
       <InnerBuildArgs Condition="'$(NetCoreAppToolCurrentVersion)' != ''">$(InnerBuildArgs) /p:NetCoreAppToolCurrentVersion=$(NetCoreAppToolCurrentVersion)</InnerBuildArgs>
 
-      <!--
-        If we're in a full-stack VMR build or Source-Build, publish all packages.
-        ShortStack jobs should only publish their specific packages.
-        In the future, some full-stack VMR jobs may not publish all packages.
-        SourceBuild will always need to publish everything.
-      -->
-      <InnerBuildArgs Condition="'$(ShortStack)' == 'true'">$(InnerBuildArgs) /p:EnableDefaultArtifacts=false</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(InnerBuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</InnerBuildArgs>
     </PropertyGroup>
   </Target>
 

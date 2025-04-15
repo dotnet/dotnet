@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections;
 using System.Windows.Threading;
@@ -259,7 +258,7 @@ namespace System.Windows
             ArgumentNullException.ThrowIfNull(ce);
 
 
-            if (true == (bool)ce.GetValue(GetsSourceChangedEventProperty))
+            if ((bool)ce.GetValue(GetsSourceChangedEventProperty))
             {
                 UpdateSourceOfElement(ce, null, null);
             }
@@ -520,7 +519,7 @@ namespace System.Windows
         {
             Debug.Assert(uie is UIElement3D or UIElement);
             
-            if (true == (bool)uie.GetValue(GetsSourceChangedEventProperty))
+            if ((bool)uie.GetValue(GetsSourceChangedEventProperty))
             {
                 UpdateSourceOfElement(uie, e.Ancestor, e.OldParent);
             }
@@ -528,7 +527,7 @@ namespace System.Windows
 
         internal static PresentationSource CriticalFromVisual(DependencyObject v)
         {
-            return CriticalFromVisual(v, true /* enable2DTo3DTransition */);
+            return CriticalFromVisual(v, enable2DTo3DTransition: true);
         }
 
         /// <param name="v">The dependency object to find the source for</param>
@@ -643,7 +642,7 @@ namespace System.Windows
 
         private static PresentationSource FindSource(DependencyObject o)
         {
-            return FindSource(o, true /* enable2DTo3DTransition */);
+            return FindSource(o, enable2DTo3DTransition: true);
         }
 
         /// <param name="o">The dependency object to find the source for</param>

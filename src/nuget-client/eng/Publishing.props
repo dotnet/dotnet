@@ -1,8 +1,13 @@
 <Project>
-
   <ItemGroup>
     <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg"
-              PublishFlatContainer="false" />
+              PublishFlatContainer="false"
+              Condition="'$(EnableDefaultRidSpecificArtifacts)' != 'true'" />
+    <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg"
+              PublishFlatContainer="false"
+              Visibility="Vertical"
+              Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'" />
   </ItemGroup>
+
 
 </Project>

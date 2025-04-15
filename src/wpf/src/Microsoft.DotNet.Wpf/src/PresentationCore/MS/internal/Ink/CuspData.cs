@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Windows;
@@ -499,7 +498,7 @@ namespace MS.Internal.Ink
             rR -= rL;
             rB -= rT;
             _dist = Math.Abs(rR) + Math.Abs(rB);
-            if (false == DoubleUtil.IsZero(rSpan))
+            if (!DoubleUtil.IsZero(rSpan))
                 _span = rSpan;
             else if (0 < _dist)
             {
@@ -535,8 +534,8 @@ namespace MS.Internal.Ink
         // Parameters governing the cusp detection algorithm
         // Distance between probes for curvature checking
         private double _span = 3; // Default span
-    
-        struct CDataPoint
+
+        private struct CDataPoint
         {
             public Point        Point;       // Point (coordinates are double)
             public int          Index;       // Index into the original array

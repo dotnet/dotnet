@@ -1,48 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;netstandard1.3;netstandard1.4;netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PackageVersion>5.0.0</PackageVersion>
     <AssemblyName>System.Security.Cryptography.Cng</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="System.Formats.Asn1" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
-    <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
-    <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageReference Include="System.Security.Cryptography.Encoding" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-    <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageReference Include="System.Security.Cryptography.Encoding" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+    <ProjectReference Include="../../system.formats.asn1/5.0.0/System.Formats.Asn1.5.0.0.csproj" />
   </ItemGroup>
 
 </Project>

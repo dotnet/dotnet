@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -62,29 +61,6 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     }
 
     [Fact]
-    public async Task Handle_Unsupported()
-    {
-        // Arrange
-        var documentPath = new Uri("c:/Test.razor");
-        var contents = "@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetUnsupported();
-
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var resolver = new AddUsingsCodeActionResolver();
-        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
-        {
-            Namespace = "System",
-        });
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
     public async Task Handle_AddOneUsingToEmpty()
     {
         // Arrange
@@ -112,11 +88,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         Assert.Single(textDocumentEdit.Edits);
         var firstEdit = textDocumentEdit.Edits.First();
-        Assert.Equal(0, firstEdit.Range.Start.Line);
+        Assert.Equal(0, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -149,11 +125,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, firstEdit.Range.Start.Line);
+        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -166,14 +142,22 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             @model IndexModel
             """;
 
-        var projectItem = new TestRazorProjectItem("c:/Test.cshtml", "c:/Test.cshtml", "Test.cshtml") { Content = contents };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) =>
+        var projectItem = new TestRazorProjectItem(
+            filePath: "c:/Test.cshtml",
+            physicalPath: "c:/Test.cshtml",
+            relativePhysicalPath: "Test.cshtml",
+            fileKind: RazorFileKind.Legacy)
+        {
+            Content = contents
+        };
+
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
         {
             PageDirective.Register(builder);
             ModelDirective.Register(builder);
         });
+
         var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var resolver = new AddUsingsCodeActionResolver();
@@ -194,11 +178,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, firstEdit.Range.Start.Line);
+        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -233,11 +217,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(0, firstEdit.Range.Start.Line);
+        Assert.Equal(0, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -270,11 +254,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, firstEdit.Range.Start.Line);
+        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -308,11 +292,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(2, firstEdit.Range.Start.Line);
+        Assert.Equal(2, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -342,11 +326,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, firstEdit.Range.Start.Line);
+        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using System.Linq
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     [Fact]
@@ -380,21 +364,31 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(2, firstEdit.Range.Start.Line);
+        Assert.Equal(2, ((TextEdit)firstEdit).Range.Start.Line);
         Assert.Equal("""
             @using Microsoft.AspNetCore.Razor.Language
 
-            """, firstEdit.NewText);
+            """, ((TextEdit)firstEdit).NewText);
     }
 
     private static RazorCodeDocument CreateCodeDocument(string text)
     {
         var fileName = "Test.razor";
-        var filePath = "c:/{fileName}";
-        var projectItem = new TestRazorProjectItem(filePath, filePath, fileName) { Content = text };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) => PageDirective.Register(builder));
-        var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Component);
-        return codeDocument;
+        var filePath = $"c:/{fileName}";
+        var projectItem = new TestRazorProjectItem(
+            filePath,
+            physicalPath: filePath,
+            relativePhysicalPath: fileName,
+            fileKind: RazorFileKind.Component)
+        {
+            Content = text
+        };
+
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
+        {
+            PageDirective.Register(builder);
+        });
+
+        return projectEngine.Process(projectItem);
     }
 }

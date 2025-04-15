@@ -7,11 +7,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.Editor.Razor.Test.Shared;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Telemetry;
 using Microsoft.VisualStudio.Telemetry.Metrics;
 using StreamJsonRpc;
@@ -363,42 +362,42 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(100),
             TimeSpan.FromMilliseconds(100),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Succeeded);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Succeeded);
 
         reporter.ReportRequestTiming(
             Methods.TextDocumentCodeActionName,
             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(200),
             TimeSpan.FromMilliseconds(200),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Cancelled);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Cancelled);
 
         reporter.ReportRequestTiming(
             Methods.TextDocumentCodeActionName,
             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(300),
             TimeSpan.FromMilliseconds(300),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Failed);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Failed);
 
         reporter.ReportRequestTiming(
             Methods.TextDocumentCompletionName,
              WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(100),
             TimeSpan.FromMilliseconds(100),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Succeeded);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Succeeded);
 
         reporter.ReportRequestTiming(
             Methods.TextDocumentCompletionName,
              WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(200),
             TimeSpan.FromMilliseconds(200),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Cancelled);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Cancelled);
 
         reporter.ReportRequestTiming(
             Methods.TextDocumentCompletionName,
              WellKnownLspServerKinds.RazorLspServer.GetContractName(),
             TimeSpan.FromMilliseconds(300),
             TimeSpan.FromMilliseconds(300),
-            AspNetCore.Razor.Telemetry.TelemetryResult.Failed);
+            CodeAnalysis.Razor.Telemetry.TelemetryResult.Failed);
 
         reporter.Dispose();
 

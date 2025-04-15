@@ -11,6 +11,11 @@ parameters:
   default: ' '
   displayName: (Optional) List of packages (<name>[/<version>]) to skip from deletion (space separated)
 
+- name: knownFalsePositives
+  type: string
+  default: 'microsoft.netcore.app.ref/6.0.0 microsoft.netcore.app.ref/9.0.0 microsoft.build.notargets/3.7.0 microsoft.build.traversal/3.4.0'
+  displayName: List of known false positives (<name>[/<version>]) in the sbrpPackageUsage.json to skip from deletion (space separated)
+
 pool:
   name: NetCore1ESPool-Svc-Internal
   demands: ImageOverride -equals 1es-ubuntu-2204
@@ -98,7 +103,7 @@ stages:
     - script: |
         json_file="$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json"
         unreferenced_paths=$(jq -r '.UnreferencedSbrps[]' "$json_file")
-        skip_packages_array=(${{ lower(parameters.skipPackages) }})
+        skip_packages_array=(${{ lower(parameters.skipPackages) }} ${{ lower(parameters.knownFalsePositives) }})
 
         for path in $unreferenced_paths; do
           package_path="$(RepoRoot)${path#/__w/1/s/src/source-build-reference-packages}"
@@ -116,15 +121,9 @@ stages:
             continue
           fi
 
-          # textOnlyPackage usage detection has false positives and should be skipped
-          if [[ "$package_path" == *"textOnlyPackage"* ]]; then
-            echo "Skipping $package_path as it contains 'textOnlyPackage'"
-            continue
-          fi
-
           echo "Deleting $package_path"
           rm -rf "$package_path"
-          echo "${package_path#$(RepoRoot)/src/referencePackages/src/}" >> $(DeletedPackagesLogFilePath)
+          echo "${package_path#$(RepoRoot)/src/}" >> $(DeletedPackagesLogFilePath)
         done
       displayName: Delete Unreferenced Packages
 

@@ -87,9 +87,9 @@
     <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.9.2</XUnitVersion>
     <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.16.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion Condition="'$(XUnitRunnerConsoleVersion)' == ''">$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">2.8.2</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">3.0.2</XUnitRunnerVisualStudioVersion>
 
-    <MSTestVersion Condition="'$(MSTestVersion)' == ''">3.7.0</MSTestVersion>
+    <MSTestVersion Condition="'$(MSTestVersion)' == ''">3.8.3</MSTestVersion>
     <MSTestTestAdapterVersion Condition="'$(MSTestTestAdapterVersion)' == ''">$(MSTestVersion)</MSTestTestAdapterVersion>
     <MSTestTestFrameworkVersion Condition="'$(MSTestTestFrameworkVersion)' == ''">$(MSTestVersion)</MSTestTestFrameworkVersion>
     <MicrosoftDotNetBuildTasksFeedVersion Condition="'$(MicrosoftDotNetBuildTasksFeedVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksFeedVersion>
@@ -100,7 +100,6 @@
     <SNVersion Condition="'$(SNVersion)' == ''">1.0.0</SNVersion>
     <MicrosoftDotNetBuildTasksVisualStudioVersion Condition="'$(MicrosoftDotNetBuildTasksVisualStudioVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksVisualStudioVersion>
     <MicrosoftDotNetSourceBuildTasksVersion Condition="'$(MicrosoftDotNetSourceBuildTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSourceBuildTasksVersion>
-    <RichCodeNavPackageVersion Condition="'$(RichCodeNavPackageVersion)' == ''">0.1.1832-alpha</RichCodeNavPackageVersion>
     <MicrosoftVisualStudioEngMicroBuildCoreVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildCoreVersion)' == ''">1.0.0</MicrosoftVisualStudioEngMicroBuildCoreVersion>
     <MicrosoftManifestToolCrossPlatformVersion Condition="'$(MicrosoftManifestToolCrossPlatformVersion)' == ''">2.1.3</MicrosoftManifestToolCrossPlatformVersion>
     <MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)' == ''">1.1.286</MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion>

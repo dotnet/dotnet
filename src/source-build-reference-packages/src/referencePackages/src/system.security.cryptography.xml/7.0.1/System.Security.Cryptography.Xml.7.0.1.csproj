@@ -2,22 +2,23 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
     <AssemblyName>System.Security.Cryptography.Xml</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/7.0.0/System.Security.Cryptography.Pkcs.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/7.0.0/System.Security.Cryptography.Pkcs.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/7.0.0/System.Security.Cryptography.Pkcs.7.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+    <ProjectReference Include="../../system.security.accesscontrol/6.0.0/System.Security.AccessControl.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

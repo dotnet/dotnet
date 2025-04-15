@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFramework);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVS);$(NetFxVS)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ServerGarbageCollection>true</ServerGarbageCollection>
@@ -15,13 +15,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.Remote.Razor\Microsoft.CodeAnalysis.Remote.Razor.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />
+
+    <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
 
     <Compile Remove="Resources\**\*.*" />
     <None Remove="Resources\**\*.*" />
@@ -37,8 +38,6 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.DiaSymReader" />
-
-    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />

@@ -84,13 +84,6 @@ stages:
     - template: vs-test/build.yml
       parameters:
         NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
-        GitHubChecksToInitialize:
-        - name: "VS tests - E2E part 1"
-          enabled: "ne(variables['RunEndToEndTests'], 'false')"
-        - name: "VS tests - E2E part 2"
-          enabled: "ne(variables['RunEndToEndTests'], 'false')"
-        - name: "VS tests - Apex"
-          enabled: "ne(variables['RunApexTests'], 'false')"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
@@ -109,8 +102,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: End_To_End_Tests_On_Windows Part1
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -119,7 +110,6 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
     testMachineCleanUpStrategy: ${{parameters.E2EPart1AgentCleanup}}
-    GitHubStatusName: "VS tests - E2E part 1"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
@@ -138,8 +128,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: End_To_End_Tests_On_Windows Part2
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -148,7 +136,6 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
     testMachineCleanUpStrategy: ${{parameters.E2EPart2AgentCleanup}}
-    GitHubStatusName: "VS tests - E2E part 2"
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/apex.yml
@@ -165,8 +152,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: Apex Tests On Windows
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     dartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -175,4 +160,3 @@ stages:
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 150
     testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}
-    GitHubStatusName: "VS tests - Apex"

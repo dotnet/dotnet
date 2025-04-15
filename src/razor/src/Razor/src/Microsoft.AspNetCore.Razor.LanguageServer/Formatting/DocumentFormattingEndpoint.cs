@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -49,14 +48,18 @@ internal class DocumentFormattingEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
+
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+
+        if (await _htmlFormatter.GetDocumentFormattingEditsAsync(
+            documentContext.Snapshot,
+            documentContext.Uri,
+            request.Options,
+            cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
         {
             return null;
         }
 
-        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
-
-        var htmlChanges = await _htmlFormatter.GetDocumentFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Options, cancellationToken).ConfigureAwait(false);
         var changes = await _razorFormattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges, span: null, options, cancellationToken).ConfigureAwait(false);
 
         return [.. changes.Select(codeDocument.Source.Text.GetTextEdit)];

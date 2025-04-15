@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Scaffolding;
 
-public abstract class CompiledModelTestBase : NonSharedModelTestBase
+public abstract class CompiledModelTestBase(NonSharedFixture fixture) : NonSharedModelTestBase(fixture), IClassFixture<NonSharedFixture>
 {
     [ConditionalFact]
     public virtual Task SimpleModel()
@@ -1191,8 +1191,7 @@ namespace TestNamespace
                 eb.ComplexProperty(
                     e => e.Owned, eb =>
                     {
-                        eb.IsRequired()
-                            .HasField("_ownedField")
+                        eb.HasField("_ownedField")
                             .UsePropertyAccessMode(PropertyAccessMode.Field)
                             .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotificationsWithOriginalValues)
                             .HasPropertyAnnotation("goo", "ber")
@@ -1210,7 +1209,6 @@ namespace TestNamespace
                         eb.ComplexProperty(
                             o => o.Principal, cb =>
                             {
-                                cb.IsRequired();
                                 cb.Property("FlagsEnum2");
                             });
                     });
@@ -1274,7 +1272,10 @@ namespace TestNamespace
         Assert.NotNull(detailsProperty.GetValueComparer());
         Assert.NotNull(detailsProperty.GetKeyValueComparer());
 
-        var nestedComplexType = complexType.FindComplexProperty(nameof(OwnedType.Principal))!.ComplexType;
+        var nestedComplexProperty = complexType.FindComplexProperty(nameof(OwnedType.Principal))!;
+        Assert.True(nestedComplexProperty.IsNullable);
+
+        var nestedComplexType = nestedComplexProperty.ComplexType;
 
         Assert.Equal(ExpectedComplexTypeProperties, nestedComplexType.GetProperties().Count());
 
@@ -1972,7 +1973,7 @@ namespace TestNamespace
         [CallerMemberName] string testName = "")
         where TContext : DbContext
     {
-        var contextFactory = await CreateContextFactory<TContext>(
+        var contextFactory = CreateContextFactory<TContext>(
             modelBuilder =>
             {
                 var model = modelBuilder.Model;
@@ -2030,17 +2031,16 @@ namespace TestNamespace
 
         if (useContext != null)
         {
+            await TestStore.InitializeAsync(ServiceProvider, contextFactory.CreateContext);
             ListLoggerFactory.Clear();
-            var testStore = await TestStore.InitializeAsync(ServiceProvider, contextFactory.CreateContext);
-            await using var _ = testStore;
 
-            using var compiledModelContext = (await CreateContextFactory<TContext>(
+            using var compiledModelContext = CreateContextFactory<TContext>(
                     onConfiguring: options =>
                     {
                         onConfiguring?.Invoke(options);
                         options.UseModel(compiledModel);
                     },
-                    addServices: addServices))
+                    addServices: addServices)
                 .CreateContext();
             await useContext(compiledModelContext);
         }

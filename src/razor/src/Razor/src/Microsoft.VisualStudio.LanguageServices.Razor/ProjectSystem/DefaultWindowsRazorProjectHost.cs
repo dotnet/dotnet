@@ -12,9 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
@@ -31,8 +31,9 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 internal class DefaultWindowsRazorProjectHost(
     IUnconfiguredProjectCommonServices commonServices,
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    ProjectSnapshotManager projectManager)
-    : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager)
+    ProjectSnapshotManager projectManager,
+    LanguageServerFeatureOptions languageServerFeatureOptions)
+    : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
 {
     private const string RootNamespaceProperty = "RootNamespace";
     private static readonly ImmutableHashSet<string> s_ruleNames = ImmutableHashSet.CreateRange(new string[]
@@ -321,7 +322,10 @@ internal class DefaultWindowsRazorProjectHost(
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-                    var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
+
+                    var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
+                        ? kind
+                        : RazorFileKind.Component;
 
                     documents.Add(new HostDocument(filePath, targetPath, fileKind));
                 }
@@ -337,7 +341,7 @@ internal class DefaultWindowsRazorProjectHost(
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-                    documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
+                    documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
                 }
             }
         }
@@ -359,7 +363,10 @@ internal class DefaultWindowsRazorProjectHost(
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-                        var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
+
+                        var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
+                            ? kind
+                            : RazorFileKind.Component;
 
                         documents.Add(new HostDocument(filePath, targetPath, fileKind));
                     }
@@ -378,7 +385,7 @@ internal class DefaultWindowsRazorProjectHost(
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-                        documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
+                        documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
                     }
                 }
             }

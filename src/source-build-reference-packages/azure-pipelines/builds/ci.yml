@@ -25,6 +25,8 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      binskim:
+        enabled: true
       componentgovernance:
         # All of the SBRPs must be ignored because it is possible some of them are for vulnerable versions.
         # Because they are reference only packages they are not vulnerable themselves.
@@ -43,8 +45,6 @@ extends:
       name: $(DncEngInternalBuildPool)
       image: 1es-ubuntu-2204
       os: linux
-    customBuildTags:
-    - ES365AIMigrationTooling
     stages:
     - template: /azure-pipelines/templates/stages/build.yml@self
       parameters:

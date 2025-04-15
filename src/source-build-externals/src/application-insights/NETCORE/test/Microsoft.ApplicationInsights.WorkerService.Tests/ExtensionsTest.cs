@@ -124,6 +124,37 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         }
 
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public static void TelemetryModulesResolvableWhenKeyedServiceRegistered(bool manuallyRegisterDiagnosticsTelemetryModule)
+        {
+            // Note: This test verifies a regression doesn't get introduced for:
+            // https://github.com/microsoft/ApplicationInsights-dotnet/issues/2879
+
+            var services = new ServiceCollection();
+
+            services.AddSingleton<ITelemetryModule, TestTelemetryModule>();
+            if (manuallyRegisterDiagnosticsTelemetryModule)
+            {
+                services.AddSingleton<ITelemetryModule, DiagnosticsTelemetryModule>();
+            }
+
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationType: typeof(TestService));
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationInstance: new TestService());
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationFactory: (sp, key) => new TestService());
+
+            services.AddApplicationInsightsTelemetryWorkerService();
+
+            using var sp = services.BuildServiceProvider();
+
+            var telemetryModules = sp.GetServices<ITelemetryModule>();
+
+            Assert.Equal(8, telemetryModules.Count());
+
+            Assert.Single(telemetryModules.Where(m => m.GetType() == typeof(DiagnosticsTelemetryModule)));
+        }
+
+        [Theory]
         [InlineData(typeof(ITelemetryInitializer), typeof(ApplicationInsights.WorkerService.TelemetryInitializers.DomainNameRoleInstanceTelemetryInitializer), ServiceLifetime.Singleton)]
         [InlineData(typeof(ITelemetryInitializer), typeof(AzureWebAppRoleEnvironmentTelemetryInitializer), ServiceLifetime.Singleton)]
         [InlineData(typeof(ITelemetryInitializer), typeof(ComponentVersionTelemetryInitializer), ServiceLifetime.Singleton)]
@@ -168,7 +199,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             this.output.WriteLine("json:" + jsonFullPath);
             var config = new ConfigurationBuilder().AddJsonFile(jsonFullPath).Build();
             var services = new ServiceCollection();
-            
+
             services.AddApplicationInsightsTelemetryWorkerService(config);
             IServiceProvider serviceProvider = services.BuildServiceProvider();
             var telemetryConfiguration = serviceProvider.GetRequiredService<TelemetryConfiguration>();
@@ -191,9 +222,9 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             // This line mimics the default behavior by CreateDefaultBuilder
             services.AddSingleton<IConfiguration>(config);
 
-            // ACT             
+            // ACT
             services.AddApplicationInsightsTelemetryWorkerService();
-            
+
             // VALIDATE
             IServiceProvider serviceProvider = services.BuildServiceProvider();
             var telemetryConfiguration = serviceProvider.GetRequiredService<TelemetryConfiguration>();
@@ -203,7 +234,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         }
 
         /// <summary>
-        /// Tests that the connection string can be read from a JSON file by the configuration factory.            
+        /// Tests that the connection string can be read from a JSON file by the configuration factory.
         /// </summary>
         /// <param name="useDefaultConfig">
         /// Calls services.AddApplicationInsightsTelemetryWorkerService() when the value is true and reads IConfiguration from user application automatically.
@@ -237,7 +268,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             // to configuration and is made available for constructor injection.
             // this test validates that SDK reads settings from this configuration by default
             // and gives priority to the ENV variables than the one from config.
-            
+
             // ARRANGE
             Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", TestInstrumentationKeyEnv);
             Environment.SetEnvironmentVariable("APPINSIGHTS_ENDPOINTADDRESS", TestEndPointEnv);
@@ -253,7 +284,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
                 // This line mimics the default behavior by CreateDefaultBuilder
                 services.AddSingleton<IConfiguration>(config);
 
-                // ACT             
+                // ACT
                 services.AddApplicationInsightsTelemetryWorkerService();
 
                 // VALIDATE
@@ -287,7 +318,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
                 // This line mimics the default behavior by CreateDefaultBuilder
                 services.AddSingleton<IConfiguration>(config);
 
-                // ACT             
+                // ACT
                 services.AddApplicationInsightsTelemetryWorkerService("userkey");
 
                 // VALIDATE
@@ -306,7 +337,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         {
             // Host.CreateDefaultBuilder() in .NET Core 3.0  adds appsetting.json and env variable
             // to configuration and is made available for constructor injection.
-            // This test validates that SDK does not throw any error if it cannot find 
+            // This test validates that SDK does not throw any error if it cannot find
             // application insights configuration in default IConfiguration.
             // ARRANGE
             var jsonFullPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "sample-appsettings_dontexist.json");
@@ -316,7 +347,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             // This line mimics the default behavior by CreateDefaultBuilder
             services.AddSingleton<IConfiguration>(config);
 
-            // ACT             
+            // ACT
             services.AddApplicationInsightsTelemetryWorkerService();
 
             // VALIDATE
@@ -330,7 +361,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         {
             var services = new ServiceCollection();
 
-            // ACT                         
+            // ACT
             services.AddApplicationInsightsTelemetryWorkerService("ikey");
 
             // VALIDATE
@@ -345,7 +376,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
             // AppID
             var channel = serviceProvider.GetRequiredService<ITelemetryChannel>();
-            Assert.NotNull(channel);            
+            Assert.NotNull(channel);
             Assert.True(channel is ServerTelemetryChannel);
 
             // TelemetryModules
@@ -399,7 +430,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
             // ACT
             IServiceProvider serviceProvider = services.BuildServiceProvider();
-            var modules = serviceProvider.GetServices<ITelemetryModule>();            
+            var modules = serviceProvider.GetServices<ITelemetryModule>();
             var telemetryConfiguration = serviceProvider.GetRequiredService<TelemetryConfiguration>();
             var eventCounterModule = modules.OfType<EventCounterCollectionModule>().Single();
 
@@ -414,7 +445,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             var services = new ServiceCollection();
             var telemetryInitializer = new FakeTelemetryInitializer();
 
-            // ACT                         
+            // ACT
             services.AddApplicationInsightsTelemetryWorkerService();
             services.AddSingleton<ITelemetryInitializer>(telemetryInitializer);
 
@@ -431,7 +462,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             var services = new ServiceCollection();
             var telChannel = new ServerTelemetryChannel() {StorageFolder = "c:\\mycustom" };
 
-            // ACT                         
+            // ACT
             services.AddApplicationInsightsTelemetryWorkerService("ikey");
             services.AddSingleton<ITelemetryChannel>(telChannel);
 
@@ -449,7 +480,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         {
             var services = new ServiceCollection();
 
-            // ACT             
+            // ACT
             var aiOptions = new ApplicationInsightsServiceOptions();
             aiOptions.AddAutoCollectedMetricExtractor = false;
             aiOptions.EnableAdaptiveSampling = false;
@@ -478,7 +509,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             services.AddApplicationInsightsTelemetryWorkerService();
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            // Request TC from DI which would be made with the default TelemetryConfiguration which should 
+            // Request TC from DI which would be made with the default TelemetryConfiguration which should
             // contain the telemetry initializer capable of populate node name and role instance name.
             var tc = serviceProvider.GetRequiredService<TelemetryClient>();
             var mockItem = new EventTelemetry();
@@ -487,19 +518,19 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             // This is expected to run all TI and populate the node name and role instance.
             tc.Initialize(mockItem);
 
-            // VERIFY                
+            // VERIFY
             Assert.Contains(expected, mockItem.Context.Cloud.RoleInstance, StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
         /// User could enable or disable PerformanceCounterCollectionModule by setting EnablePerformanceCounterCollectionModule.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnablePerformanceCounterCollectionModule.</param>
         [Theory]
@@ -520,13 +551,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable EventCounterCollectionModule by setting EnableEventCounterCollectionModule.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableEventCounterCollectionModule.</param>
         [Theory]
@@ -547,13 +578,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable DependencyTrackingTelemetryModule by setting EnableDependencyTrackingTelemetryModule.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableDependencyTrackingTelemetryModule.</param>
         [Theory]
@@ -574,13 +605,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable QuickPulseCollectorModule by setting EnableQuickPulseMetricStream.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableQuickPulseMetricStream.</param>
         [Theory]
@@ -601,13 +632,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable AzureInstanceMetadataModule by setting EnableAzureInstanceMetadataTelemetryModule.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableAzureInstanceMetadataTelemetryModule.</param>
         [Theory]
@@ -690,13 +721,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable LegacyCorrelationHeadersInjection of DependencyCollectorOptions.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableLegacyCorrelationHeadersInjection.</param>
         [Theory]
@@ -740,13 +771,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable sampling by setting EnableAdaptiveSampling.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableAdaptiveSampling.</param>
         [Theory]
@@ -781,13 +812,13 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         /// <summary>
         /// User could enable or disable auto collected metrics by setting AddAutoCollectedMetricExtractor.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetryWorkerService() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetryWorkerService(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property AddAutoCollectedMetricExtractor.</param>
         [Theory]
@@ -822,8 +853,8 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         /// <summary>
         /// Creates two copies of ApplicationInsightsServiceOptions. First object is created by calling services.AddApplicationInsightsTelemetryWorkerService() or services.AddApplicationInsightsTelemetryWorkerService(config).
         /// Second object is created directly from configuration file without using any of SDK functionality.
-        /// Compares ApplicationInsightsServiceOptions object from dependency container and one created directly from configuration. 
-        /// This proves all that SDK read configuration successfully from configuration file. 
+        /// Compares ApplicationInsightsServiceOptions object from dependency container and one created directly from configuration.
+        /// This proves all that SDK read configuration successfully from configuration file.
         /// Properties from appSettings.json, appsettings.{env.EnvironmentName}.json and Environmental Variables are read if no IConfiguration is supplied or used in an application.
         /// </summary>
         /// <param name="readFromAppSettings">If this is set, read value from appsettings.json, else from passed file.</param>
@@ -850,7 +881,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
             // VALIDATE
 
             // Generate config and don't pass to services
-            // this is directly generated from config file 
+            // this is directly generated from config file
             // which could be used to validate the data from dependency container
 
             if (!readFromAppSettings)
@@ -895,6 +926,21 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
         {
             return telemetryConfiguration.DefaultTelemetrySink.TelemetryProcessors.Where(processor => processor.GetType() == typeof(T)).Count();
         }
+
+        private sealed class TestService : ITestService
+        {
+        }
+
+        private sealed class TestTelemetryModule : ITelemetryModule
+        {
+            public void Initialize(TelemetryConfiguration configuration)
+            {
+            }
+        }
+
+        private interface ITestService
+        {
+        }
     }
 
     internal class FakeTelemetryInitializer : ITelemetryInitializer
@@ -905,7 +951,7 @@ namespace Microsoft.ApplicationInsights.WorkerService.Tests
 
         public void Initialize(ITelemetry telemetry)
         {
-            
+
         }
     }
 }

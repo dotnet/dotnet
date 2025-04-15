@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using SC = System.Collections;
 
@@ -217,7 +216,7 @@ namespace System.Windows.Media
         /// </summary>
         public void Add(int key, CharacterMetrics value)
         {
-            SetValue(key, value, /* failIfExists = */ true);
+            SetValue(key, value, failIfExists: true);
         }
 
         /// <summary>
@@ -242,7 +241,7 @@ namespace System.Windows.Media
         public CharacterMetrics this[int key]
         {
             get { return GetValue(key); }
-            set { SetValue(key, value, /* failIfExists = */ false); }
+            set { SetValue(key, value, failIfExists: false); }
         }
 
         /// <summary>
@@ -277,7 +276,7 @@ namespace System.Windows.Media
 
             set
             {
-                SetValue(ConvertKey(key), ConvertValue(value), /* failIfExists = */ false);
+                SetValue(ConvertKey(key), ConvertValue(value), failIfExists: false);
             }
         }
 
@@ -293,7 +292,7 @@ namespace System.Windows.Media
 
         void SC.IDictionary.Add(object key, object value)
         {
-            SetValue(ConvertKey(key), ConvertValue(value), /* failIfExists = */ false);
+            SetValue(ConvertKey(key), ConvertValue(value), failIfExists: false);
         }
 
         bool SC.IDictionary.Contains(object key)

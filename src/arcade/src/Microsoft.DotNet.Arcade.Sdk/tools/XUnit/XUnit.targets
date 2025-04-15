@@ -13,11 +13,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
   </ItemGroup>
 
-  <!-- Workaround for https://github.com/xunit/xunit/issues/1651 -->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net462\xunit.abstractions.dll" />
-  </ItemGroup>
-
   <PropertyGroup>
     <XUnitDesktopSettingsFile Condition="'$(XUnitDesktopSettingsFile)' == ''">$(MSBuildThisFileDirectory)xunit.runner.json</XUnitDesktopSettingsFile>
   </PropertyGroup>

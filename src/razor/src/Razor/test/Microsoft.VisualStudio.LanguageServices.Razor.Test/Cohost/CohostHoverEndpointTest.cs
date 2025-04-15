@@ -7,18 +7,16 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using RoslynHover = Roslyn.LanguageServer.Protocol.Hover;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 using static HoverAssertions;
 
-public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task Razor()
     {
         TestCode code = """
@@ -53,7 +51,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html()
     {
         TestCode code = """
@@ -73,7 +71,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         await VerifyHoverAsync(code, htmlResponse, h => Assert.Same(htmlResponse, h));
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp()
     {
         TestCode code = """
@@ -106,7 +104,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ComponentAttribute()
     {
         // Component attributes are within HTML but actually map to C#.
@@ -145,7 +143,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithCallbacks()
     {
         TestCode code = """
@@ -183,35 +181,25 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
         });
     }
 
-    private async Task VerifyHoverAsync(TestCode input, Func<RoslynHover, TextDocument, Task> verifyHover)
+    private async Task VerifyHoverAsync(TestCode input, Func<Hover, TextDocument, Task> verifyHover)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input);
 
         Assert.NotNull(result);
-        var value = result.GetValueOrDefault();
-
-        Assert.True(value.TryGetFirst(out var hover));
-        await verifyHover(hover, document);
+        await verifyHover(result, document);
     }
 
     private async Task VerifyHoverAsync(TestCode input, Hover htmlResponse, Action<Hover?> verifyHover)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input, htmlResponse);
 
         Assert.NotNull(result);
-        var value = result.GetValueOrDefault();
-
-        Assert.True(value.TryGetSecond(out var hover));
-        verifyHover(hover);
+        verifyHover(result);
     }
 
-    private async Task<SumType<RoslynHover, Hover>?> GetHoverResultAsync(TextDocument document, TestCode input, Hover? htmlResponse = null)
+    private async Task<Hover?> GetHoverResultAsync(TextDocument document, TestCode input, Hover? htmlResponse = null)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
         var linePosition = inputText.GetLinePosition(input.Position);
@@ -221,7 +209,7 @@ public class CohostHoverEndpointTest(FuseTestContext context, ITestOutputHelper 
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
-            Position = VsLspFactory.CreatePosition(linePosition),
+            Position = LspFactory.CreatePosition(linePosition),
             TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
         };
 

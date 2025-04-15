@@ -13,16 +13,15 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Protocol.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
-using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location,
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
-    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
-using ImplementationResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
-    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalReferenceItem[]>;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
+using DefinitionResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation[],
+    Roslyn.LanguageServer.Protocol.DocumentLink[]>;
+using ImplementationResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location[],
+    Roslyn.LanguageServer.Protocol.VSInternalReferenceItem[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -64,10 +63,25 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 CustomMessageNames.RazorSimplifyMethodEndpointName => HandleSimplifyMethod(@params),
                 CustomMessageNames.RazorInlayHintEndpoint => await HandleInlayHintAsync(@params),
                 CustomMessageNames.RazorInlayHintResolveEndpoint => await HandleInlayHintResolveAsync(@params),
+                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName => await HandleCSharpDiagnosticsAsync(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
             return (TResponse)result;
+        }
+
+        private Task<SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?> HandleCSharpDiagnosticsAsync<TParams>(TParams @params)
+        {
+            Assert.IsType<DelegatedDiagnosticParams>(@params);
+            var actualParams = new DocumentDiagnosticParams()
+            {
+                TextDocument = new TextDocumentIdentifier { Uri = _csharpDocumentUri }
+            };
+
+            return _csharpServer.ExecuteRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                Methods.TextDocumentDiagnosticName,
+                actualParams,
+                _cancellationToken);
         }
 
         private static TextEdit[] HandleSimplifyMethod<TParams>(TParams @params)
@@ -271,7 +285,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 _cancellationToken);
         }
 
-        private Task<VisualStudio.LanguageServer.Protocol.SignatureHelp> HandleSignatureHelpAsync<T>(T @params)
+        private Task<LspSignatureHelp> HandleSignatureHelpAsync<T>(T @params)
         {
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
             var delegatedRequest = new SignatureHelpParams()
@@ -284,7 +298,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 Position = delegatedParams.ProjectedPosition,
             };
 
-            return _csharpServer.ExecuteRequestAsync<SignatureHelpParams, VisualStudio.LanguageServer.Protocol.SignatureHelp>(
+            return _csharpServer.ExecuteRequestAsync<SignatureHelpParams, LspSignatureHelp>(
                 Methods.TextDocumentSignatureHelpName,
                 delegatedRequest,
                 _cancellationToken);
@@ -341,7 +355,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             throw new NotImplementedException();
         }
 
-        private Task<Range> HandleValidateBreakpointRangeAsync<T>(T @params)
+        private Task<LspRange> HandleValidateBreakpointRangeAsync<T>(T @params)
         {
             var delegatedParams = Assert.IsType<DelegatedValidateBreakpointRangeParams>(@params);
             var delegatedRequest = new VSInternalValidateBreakableRangeParams()
@@ -354,7 +368,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 Range = delegatedParams.ProjectedRange,
             };
 
-            return _csharpServer.ExecuteRequestAsync<VSInternalValidateBreakableRangeParams, Range>(
+            return _csharpServer.ExecuteRequestAsync<VSInternalValidateBreakableRangeParams, LspRange>(
                 VSInternalMethods.TextDocumentValidateBreakableRangeName, delegatedRequest, _cancellationToken);
         }
     }

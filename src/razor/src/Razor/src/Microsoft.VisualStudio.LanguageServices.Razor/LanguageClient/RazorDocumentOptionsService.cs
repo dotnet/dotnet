@@ -8,10 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Settings;
+using FormattingOptions = Microsoft.CodeAnalysis.Formatting.FormattingOptions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 

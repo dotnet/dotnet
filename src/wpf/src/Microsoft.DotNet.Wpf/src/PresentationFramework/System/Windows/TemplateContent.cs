@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Xaml;
 using System.Xaml.Schema;
@@ -423,7 +422,7 @@ namespace System.Windows
 
                         // Check to see if the parent object needs to have the name set
                         if (stack.Depth > 0 &&
-                            stack.CurrentFrame.NameSet == false &&
+!stack.CurrentFrame.NameSet &&
                             stack.CurrentFrame.Type != null &&
                             !stack.CurrentFrame.IsInNameScope &&
                             !stack.CurrentFrame.IsInStyleOrTemplate)
@@ -451,7 +450,7 @@ namespace System.Windows
                     {
                         // Check to see if the parent object needs to have the name set
                         if (stack.Depth > 0 &&
-                            stack.CurrentFrame.NameSet == false &&
+                            !stack.CurrentFrame.NameSet &&
                             stack.CurrentFrame.Type != null &&
                             !stack.CurrentFrame.IsInNameScope &&
                             !stack.CurrentFrame.IsInStyleOrTemplate)
@@ -479,7 +478,7 @@ namespace System.Windows
                 case System.Xaml.XamlNodeType.EndObject:
                     if (!stack.CurrentFrame.IsInStyleOrTemplate)
                     {
-                        if (stack.CurrentFrame.NameSet == false && !stack.CurrentFrame.IsInNameScope)
+                        if (!stack.CurrentFrame.NameSet && !stack.CurrentFrame.IsInNameScope)
                         {
                             // FEs and FCEs need to be added to the name to index map
                             if (typeof(FrameworkElement).IsAssignableFrom(stack.CurrentFrame.Type.UnderlyingType) ||
@@ -570,10 +569,8 @@ namespace System.Windows
                                 stack.CurrentFrame.ContentSourceSet = true;
                         }
 
-                        if (!stack.CurrentFrame.IsInNameScope &&
-                            xamlReader.Member.IsDirective == false)
+                        if (!stack.CurrentFrame.IsInNameScope && !xamlReader.Member.IsDirective)
                         {
-
                             // Try to see if the property is shareable
                             PropertyValue? sharedValue;
                             var iReader = xamlReader as IXamlIndexingReader;
@@ -723,7 +720,7 @@ namespace System.Windows
                     if (!stack.CurrentFrame.IsInStyleOrTemplate)
                     {
                         // Check to see if the parent object needs to have the name set
-                        if (stack.Depth > 0 && stack.CurrentFrame.NameSet == false && stack.CurrentFrame.Type != null && !stack.CurrentFrame.IsInNameScope)
+                        if (stack.Depth > 0 && !stack.CurrentFrame.NameSet && stack.CurrentFrame.Type != null && !stack.CurrentFrame.IsInNameScope)
                         {
                             // FEs and FCEs need to be added to the name to index map
                             if (typeof(FrameworkElement).IsAssignableFrom(stack.CurrentFrame.Type.UnderlyingType) ||
@@ -1221,7 +1218,7 @@ namespace System.Windows
             bool isContentStringFormatPropertyDefined
             )
         {
-            if (String.IsNullOrEmpty(contentSource) && isContentSourceSet == false)
+            if (String.IsNullOrEmpty(contentSource) && !isContentSourceSet)
                 contentSource = "Content";
 
             if (!String.IsNullOrEmpty(contentSource) && !isContentPropertyDefined)

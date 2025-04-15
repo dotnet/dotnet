@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 /***************************************************************************\
 *
@@ -2070,7 +2069,7 @@ namespace System.Windows
                 if( walkNode != container && nextParent != null ) // Only interested in nodes that are "Not me" and not auto-generated (== no TemplatedParent)
                 {
                     // Do the cheaper comparison first - the Style reference should be cached
-                    if ((frameworkTemplate != null && walkNodeIsFE == true && feWalkNode.TemplateInternal == frameworkTemplate) )
+                    if ((frameworkTemplate != null && walkNodeIsFE && feWalkNode.TemplateInternal == frameworkTemplate) )
                     {
                         // Then the expensive one - pulling in reflection to check if they're also the same types.
                         if( walkNode.GetType() == container.GetType() )
@@ -5800,7 +5799,7 @@ namespace System.Windows
         // GetHashCode, ==, and != are required when Equals is overridden, even though we don't expect to need them.
         public override int GetHashCode()
         {
-            Debug.Assert(false, "GetHashCode for value types will use reflection to generate the hashcode.  Write a better hash code generation algorithm if this struct is to be used in a hashtable, or remove this assert if it's decided that reflection is OK.");
+            Debug.Fail("GetHashCode for value types will use reflection to generate the hashcode.  Write a better hash code generation algorithm if this struct is to be used in a hashtable, or remove this assert if it's decided that reflection is OK.");
 
             return base.GetHashCode();
         }
@@ -6124,9 +6123,9 @@ namespace System.Windows
         }
 
         // the origin of the instance value in the container's style:
-        int _childIndex;    // the childIndex of the target element
-        int _dpIndex;       // the global index of the target DP
-        int _index;         // the index in the ItemStructList<ChildValueLookup>
+        private int _childIndex;    // the childIndex of the target element
+        private int _dpIndex;       // the global index of the target DP
+        private int _index;         // the index in the ItemStructList<ChildValueLookup>
     }
 
     #endregion DataStructures

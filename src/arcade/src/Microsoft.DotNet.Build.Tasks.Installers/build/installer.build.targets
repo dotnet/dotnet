@@ -100,7 +100,10 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(CreateRPMForAzureLinux)' == 'true'">
-      <_InstallerFileAzureLinux>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).azl$(InstallerExtension)</_InstallerFileAzureLinux>
+      <_AzureLinuxVersionSuffix>azl</_AzureLinuxVersionSuffix>
+      <_InstallerBuildPartAzureLinux>$(Version)-$(_AzureLinuxVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartAzureLinux>
+      <_InstallerFileNameWithoutExtensionAzureLinux>$(InstallerName)-$(_InstallerBuildPartAzureLinux)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionAzureLinux>
+      <_InstallerFileAzureLinux>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionAzureLinux)$(InstallerExtension)</_InstallerFileAzureLinux>
     </PropertyGroup>
   </Target>
 

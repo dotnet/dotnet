@@ -7,17 +7,17 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location,
-    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
-    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
+using DefinitionResult = Roslyn.LanguageServer.Protocol.SumType<
+    Roslyn.LanguageServer.Protocol.Location,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation,
+    Roslyn.LanguageServer.Protocol.VSInternalLocation[],
+    Roslyn.LanguageServer.Protocol.DocumentLink[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
@@ -84,8 +84,8 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         var result = await GetDefinitionResultAsync(codeDocument, razorFilePath, cursorPosition);
 
         // Assert
-        Assert.NotNull(result.Value.Second);
-        var locations = result.Value.Second;
+        Assert.NotNull(result.Value.Third);
+        var locations = result.Value.Third;
         var location = Assert.Single(locations);
         Assert.EndsWith("String.cs", location.Uri.ToString());
 
@@ -187,8 +187,8 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         var result = await GetDefinitionResultAsync(codeDocument, razorFilePath, cursorPosition, additionalRazorDocuments);
 
         // Assert
-        Assert.NotNull(result.Value.Second);
-        var locations = result.Value.Second;
+        Assert.NotNull(result.Value.Third);
+        var locations = result.Value.Third;
         var location = Assert.Single(locations);
 
         // Our tests don't currently support mapping multiple documents, so we just need to verify Roslyn sent back the right info.
@@ -213,8 +213,8 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         var result = await GetDefinitionResultAsync(codeDocument, razorFilePath, cursorPosition);
 
         // Assert
-        Assert.NotNull(result.Value.Second);
-        var locations = result.Value.Second;
+        Assert.NotNull(result.Value.Third);
+        var locations = result.Value.Third;
         var location = Assert.Single(locations);
         Assert.Equal(new Uri(razorFilePath), location.Uri);
 

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -30,7 +29,7 @@ using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
 using Microsoft.DotNet.ArcadeAzureIntegration;
 #endif
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
+using Microsoft.DotNet.Build.Manifest;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
@@ -40,7 +39,7 @@ using MsBuildUtils = Microsoft.Build.Utilities;
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
 
-#if !NET472_OR_GREATER
+#if NET
     /// <summary>
     /// The intended use of this task is to push artifacts described in
     /// a build manifest to a static package feed.
@@ -160,7 +159,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AzureApiVersionForFileDownload { get; set; } = "4.1-preview.4";
 
-        public string AzureProject { get; set; }
+        public string AzureDevOpsProject { get; set; }
 
         public string BuildId { get; set; }
 
@@ -196,6 +195,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private readonly ConcurrentDictionary<(int AssetId, string AssetLocation, LocationType LocationType), ValueTuple> NewAssetLocations =
             new ConcurrentDictionary<(int AssetId, string AssetLocation, LocationType LocationType), ValueTuple>();
 
+        private ConcurrentDictionary<string, IArtifactUrlHelper> _artifactUrlHelpers = new ConcurrentDictionary<string, IArtifactUrlHelper>();
+
         // Matches versions such as 1.0.0.1234
         private static readonly string FourPartVersionPattern = @"\d+\.\d+\.\d+\.\d+";
 
@@ -227,14 +228,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             DelayBase = 2.5 // 2.5 ^ 5 = ~1.5 minutes max wait between retries
         };
 
-        public enum ArtifactName
-        {
-            [Description("PackageArtifacts")]
-            PackageArtifacts,
-
-            [Description("BlobArtifacts")]
-            BlobArtifacts
-        }
+        public const string BlobArtifactsArtifactName = "BlobArtifacts";
+        public const string PackageArtifactsArtifactName = "PackageArtifacts";
 
         private int TimeoutInSeconds = 300;
 
@@ -380,11 +375,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         public void CheckForStableAssetsInNonIsolatedFeeds()
         {
-            if (BuildModel.Identity.IsReleaseOnlyPackageVersion || SkipSafetyChecks)
-            {
-                return;
-            }
-
             foreach (var packagesPerCategory in PackagesByCategory)
             {
                 var category = packagesPerCategory.Key;
@@ -395,13 +385,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     foreach (var feedConfig in feedConfigsForCategory)
                     {
                         // Look at the version numbers. If any of the packages here are stable and about to be published to a
-                        // non-isolated feed, then issue an error. Isolated feeds may recieve all packages.
+                        // non-isolated feed, then issue an error. Isolated feeds may receive all packages.
                         if (feedConfig.Isolated)
                         {
                             continue;
                         }
 
-                        HashSet<PackageArtifactModel> filteredPackages = FilterPackages(packages, feedConfig);
+                        HashSet<PackageArtifactModel> filteredPackages = SplitPackageByAssetSelection(packages, feedConfig);
 
                         foreach (var package in filteredPackages)
                         {
@@ -418,7 +408,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             // use by the public. This is for technical (can't overwrite the original packages) reasons as well as 
                             // to avoid confusion. Because .NET core generally brands its "final" bits without prerelease version
                             // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists.
-                            else if (!version.IsPrerelease)
+                            else if (!version.IsPrerelease && package.CouldBeStable != false)
                             {
                                 Log.LogError($"Package '{package.Id}' has stable version '{package.Version}' but is targeted at a non-isolated feed '{feedConfig.TargetURL}'");
                             }
@@ -448,9 +438,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 return true;
             }
 
-            using HttpClient client = CreateAzdoClient(AzureDevOpsOrg, setAutomaticDecompression: true, AzureProject);
-            client.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
-            string containerId = await GetContainerIdAsync(client, ArtifactName.BlobArtifacts);
+            using HttpClient downloadClient = CreateAzdoClient();
 
             IEnumerable<Task<bool>> publishingTasks = symbolAssetNames.Select(assetName => PublishSymbolPackageWithDownload(assetName));
             IEnumerable<bool> results = await Task.WhenAll(publishingTasks);
@@ -467,9 +455,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     Log.LogMessage(MessageImportance.High, $"Downloading symbol: {symbolPackageName} to {localSymbolPath}");
                     Stopwatch gatherDownloadTime = Stopwatch.StartNew();
                     await DownloadFileAsync(
-                        client,
-                        ArtifactName.BlobArtifacts,
-                        containerId,
+                        downloadClient,
+                        BlobArtifactsArtifactName,
                         symbolPackageName,
                         localSymbolPath);
                     gatherDownloadTime.Stop();
@@ -785,7 +772,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 {
                     foreach (var feedConfig in feedConfigsForCategory)
                     {
-                        HashSet<PackageArtifactModel> filteredPackages = FilterPackages(packages, feedConfig);
+                        HashSet<PackageArtifactModel> filteredPackages = SplitPackageByAssetSelection(packages, feedConfig);
 
                         foreach (var package in filteredPackages)
                         {
@@ -824,7 +811,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             Log.LogMessage(MessageImportance.High, "\nCompleted publishing of packages: ");
         }
 
-        private HashSet<PackageArtifactModel> FilterPackages(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
+        protected virtual HashSet<PackageArtifactModel> SplitPackageByAssetSelection(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
         {
             return feedConfig.AssetSelection switch
             {
@@ -838,60 +825,98 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             };
         }
 
-        /// <summary>
-        /// Creates Azdo client
-        /// </summary>
-        /// <param name="accountName">Name of the org</param>
-        /// <param name="setAutomaticDecompression">If client is used for downloading the artifact then AutomaticDecompression has to be set, else it is not required</param>
-        /// <param name="projectName">Azure devOps project name</param>
-        /// <param name="versionOverride">Default version is 6.0</param>
-        /// <returns>HttpClient</returns>
-        public HttpClient CreateAzdoClient(
-            string accountName,
-            bool setAutomaticDecompression,
-            string projectName = null,
-            string versionOverride = null)
+        private HttpClient CreateAzdoClient(string tokenOverride = null)
         {
             HttpClientHandler handler = new HttpClientHandler { CheckCertificateRevocationList = true };
-            if (setAutomaticDecompression)
-            {
-                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            }
+            // Must set automatic decompression when dealing with build artifacts. Not required for pipeline artifacts.
+            handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            string address = $"https://dev.azure.com/{accountName}/";
-
-            if (!string.IsNullOrEmpty(projectName))
-            {
-                address += $"{projectName}/";
-            }
-
-            var client = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(address)
-            };
+            var client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Basic",
                 Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "",
-                    AzdoApiToken))));
-            client.DefaultRequestHeaders.Add(
-                "Accept",
-                $"application/xml;api-version={versionOverride ?? AzureDevOpsFeedsApiVersion}");
+                    tokenOverride ?? AzdoApiToken))));
             return client;
         }
 
+        private SemaphoreSlim _createArtifactSemaphore = new SemaphoreSlim(1,1);
+
         /// <summary>
-        /// Gets the container Id, that is going to be used in another API call to download the assets
-        /// ContainerId is the same for PackageArtifacts and BlobArtifacts
+        /// Download artifact file using Azure API
         /// </summary>
+        /// <param name="apiClient">Azdo client</param>
         /// <param name="artifactName">If it is PackageArtifacts or BlobArtifacts</param>
-        /// <returns>ContainerId</returns>
-        public async Task<string> GetContainerIdAsync(HttpClient client, ArtifactName artifactName)
+        /// <param name="containerId">ContainerId where the packageArtifact and BlobArtifacts are stored</param>
+        /// <param name="fileName">Name the file we are trying to download</param>
+        /// <param name="path">Path where the file is being downloaded</param>
+        public async Task DownloadFileAsync(
+            HttpClient client,
+            string artifactName,
+            string fileName,
+            string path)
         {
-            string uri =
-                 $"{AzureDevOpsBaseUrl}/{AzureDevOpsOrg}/{AzureProject}/_apis/build/builds/{BuildId}/artifacts?api-version={AzureDevOpsFeedsApiVersion}";
+            // Look up or create a helper for the specified artifact type.
+            if (!_artifactUrlHelpers.TryGetValue(artifactName, out IArtifactUrlHelper helper))
+            {
+                // Since the helper creation makes an http call, let's only do this once
+                // per artifact name by locking
+
+                await _createArtifactSemaphore.WaitAsync();
+                try
+                {
+                    if (!_artifactUrlHelpers.TryGetValue(artifactName, out helper))
+                    {
+                        helper = await CreateArtifactUrlHelper(client, artifactName);
+                        _artifactUrlHelpers[artifactName] = helper;
+                    }
+                }
+                finally
+                {
+                    _createArtifactSemaphore.Release();
+                }
+            }
+
+            string uri = helper.ConstructDownloadUrl(fileName);
+
+
+            Log.LogMessage(MessageImportance.Low, $"Downloading file from '{uri}' to '{path}'");
+
             Exception mostRecentlyCaughtException = null;
-            string containerId = "";
+            bool success = await RetryHandler.RunAsync(async attempt =>
+            {
+                try
+                {
+                    using CancellationTokenSource timeoutTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(TimeoutInMinutes));
+                    using HttpResponseMessage response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, timeoutTokenSource.Token);
+                    response.EnsureSuccessStatusCode();
+                    using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    using var stream = await response.Content.ReadAsStreamAsync(timeoutTokenSource.Token);
+                    await stream.CopyToAsync(fs, timeoutTokenSource.Token);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    mostRecentlyCaughtException = ex;
+                    return false;
+                }
+            }).ConfigureAwait(false);
+
+            if (!success)
+            {
+                throw new Exception(
+                    $"Failed to download '{path}' after {RetryHandler.MaxAttempts} attempts. See inner exception for details.",
+                    mostRecentlyCaughtException);
+            }
+        }
+
+        private async Task<IArtifactUrlHelper> CreateArtifactUrlHelper(HttpClient client, string artifactName)
+        {
+            // Get information about the artifacts from the artifacts API
+            string uri =
+                 $"{AzureDevOpsBaseUrl}/{AzureDevOpsOrg}/{AzureDevOpsProject}/_apis/build/builds/{BuildId}/artifacts?api-version={AzureDevOpsFeedsApiVersion}";
+            Exception mostRecentlyCaughtException = null;
+            IArtifactUrlHelper helper = null;
             bool success = await RetryHandler.RunAsync(async attempt =>
             {
                 try
@@ -905,17 +930,35 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     string responseBody = await response.Content.ReadAsStringAsync();
                     BuildArtifacts buildArtifacts = JsonConvert.DeserializeObject<BuildArtifacts>(responseBody);
 
-                    foreach (var artifact in buildArtifacts.value)
+                    var artifactInfo = buildArtifacts.value.SingleOrDefault(a => a.name == artifactName);
+                    if (artifactInfo == null)
                     {
-                        ArtifactName name;
-                        if (Enum.TryParse<ArtifactName>(artifact.name, out name) && name == artifactName)
-                        {
-                            string[] segment = artifact.resource.data.Split('/');
-                            containerId = segment[1];
-                            return true;
-                        }
+                        Log.LogError($"Artifact '{artifactName}' not found in build {BuildId}");
+                        return false;
                     }
-                    return false;
+
+                    switch (artifactInfo.resource.type.ToLowerInvariant())
+                    {
+                        case "container":
+                            string[] segment = artifactInfo.resource.data.Split('/');
+                            if (segment.Length < 2)
+                            {
+                                Log.LogError($"Artifact '{artifactName}' does not have a valid container id");
+                                return false;
+                            }
+                            helper = new BuildArtifactUrlHelper(
+                                segment[1],
+                                artifactName,
+                                AzureDevOpsBaseUrl,
+                                AzureDevOpsOrg,
+                                AzureApiVersionForFileDownload);
+                            return true;
+                        case "pipelineartifact":
+                            helper = new PipelineArtifactDownloadHelper(artifactInfo.resource.downloadUrl);
+                            return true;
+                        default:
+                            throw new Exception($"Artifact '{artifactName}' is not a build or pipeline artifact but a '{artifactInfo.resource.type}'");
+                    }
                 }
                 catch (Exception toStore) when (toStore is HttpRequestException || toStore is TaskCanceledException)
                 {
@@ -924,73 +967,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 }
             }).ConfigureAwait(false);
 
-            if (string.IsNullOrEmpty(containerId))
-            {
-                Log.LogError("Container Id does not exists");
-            }
-
             if (!success)
             {
                 throw new Exception(
-                    $"Failed to get container id after {RetryHandler.MaxAttempts} attempts.  See inner exception for details, {mostRecentlyCaughtException}");
+                    $"Failed to construct download URL helper after {RetryHandler.MaxAttempts} attempts.  See inner exception for details, {mostRecentlyCaughtException}");
             }
 
-            return containerId;
-        }
-
-        /// <summary>
-        /// Download artifact file using Azure API
-        /// </summary>
-        /// <param name="client">Azdo client</param>
-        /// <param name="artifactName">If it is PackageArtifacts or BlobArtifacts</param>
-        /// <param name="containerId">ContainerId where the packageArtifact and BlobArtifacts are stored</param>
-        /// <param name="fileName">Name the file we are trying to download</param>
-        /// <param name="path">Path where the file is being downloaded</param>
-        public async Task DownloadFileAsync(
-            HttpClient client,
-            ArtifactName artifactName,
-            string containerId,
-            string fileName,
-            string path)
-        {
-            string uri =
-                $"{AzureDevOpsBaseUrl}/{AzureDevOpsOrg}/_apis/resources/Containers/{containerId}?itemPath=/{artifactName}/{fileName}&isShallow=true&api-version={AzureApiVersionForFileDownload}";
-            Exception mostRecentlyCaughtException = null;
-            bool success = await RetryHandler.RunAsync(async attempt =>
-            {
-                try
-                {
-                    Log.LogMessage(MessageImportance.Low, $"Download file uri = {uri}");
-
-                    CancellationTokenSource timeoutTokenSource =
-                        new CancellationTokenSource(TimeSpan.FromMinutes(TimeoutInMinutes));
-
-                    using HttpResponseMessage response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, timeoutTokenSource.Token);
-
-                    response.EnsureSuccessStatusCode();
-
-                    using var fs = new FileStream(
-                        path,
-                        FileMode.Create,
-                        FileAccess.ReadWrite,
-                        FileShare.ReadWrite);
-                    using var stream = await response.Content.ReadAsStreamAsync(timeoutTokenSource.Token);
-
-                    await stream.CopyToAsync(fs, timeoutTokenSource.Token);
-                    return true;
-                }
-                catch (Exception toStore)
-                {
-                    mostRecentlyCaughtException = toStore;
-                    return false;
-                }
-            }).ConfigureAwait(false);
-
-            if (!success)
-            {
-                throw new Exception(
-                    $"Failed to download local file '{path}' after {RetryHandler.MaxAttempts} attempts.  See inner exception for details.", mostRecentlyCaughtException);
-            }
+            return helper;
         }
 
         protected async Task HandleBlobPublishingAsync(ReadOnlyDictionary<string, Asset> buildAssets, SemaphoreSlim clientThrottle = null)
@@ -1172,10 +1155,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             SemaphoreSlim clientThrottle)
         {
             bool failed = false;
-            using HttpClient httpClient = CreateAzdoClient(AzureDevOpsOrg, false, AzureProject);
-            string containerId = await GetContainerIdAsync(httpClient, ArtifactName.PackageArtifacts);
-
-            using HttpClient client = CreateAzdoClient(AzureDevOpsOrg, true);
+            using HttpClient downloadFileClient = CreateAzdoClient();
+            using HttpClient feedPublishingClient = CreateAzdoClient(feedConfig.Token);
 
             await Task.WhenAll(packagesToPublish.Select(async package =>
             {
@@ -1192,9 +1173,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     Stopwatch gatherPackageDownloadTime = Stopwatch.StartNew();
                     await DownloadFileAsync(
-                        client,
-                        ArtifactName.PackageArtifacts,
-                        containerId,
+                        downloadFileClient,
+                        PackageArtifactsArtifactName,
                         packageFilename,
                         localPackagePath);
 
@@ -1224,19 +1204,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         feedConfig,
                         LocationType.NugetFeed);
 
-                    using HttpClient httpClient = new HttpClient(new HttpClientHandler
-                    {
-                        CheckCertificateRevocationList = true
-                    });
-
-                    httpClient.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                        "Basic",
-                        Convert.ToBase64String(
-                            Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", feedConfig.Token))));
-
                     Stopwatch gatherPackagePublishingTime = Stopwatch.StartNew();
-                    await PushPackageToNugetFeed(httpClient, feedConfig, localPackagePath, package.Id, package.Version);
+                    await PushPackageToNugetFeed(feedPublishingClient, feedConfig, localPackagePath, package.Id, package.Version);
                     gatherPackagePublishingTime.Stop();
                     Log.LogMessage(MessageImportance.Low, $"Publishing package {localPackagePath} took {gatherPackagePublishingTime.ElapsedMilliseconds / 1000.0} (seconds)");
 
@@ -1509,15 +1478,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             SemaphoreSlim clientThrottle)
         {
             bool failed = false;
-            using HttpClient httpClient = CreateAzdoClient(AzureDevOpsOrg, false, AzureProject);
-            string containerId = await GetContainerIdAsync(httpClient, ArtifactName.BlobArtifacts);
 
             var pushOptions = new PushOptions
             {
                 AllowOverwrite = feedConfig.AllowOverwrite,
                 PassIfExistingItemIdentical = true,
             };
-            using HttpClient client = CreateAzdoClient(AzureDevOpsOrg, true, AzureProject);
+            using HttpClient downloadClient = CreateAzdoClient();
 
             await Task.WhenAll(assetsToPublish.Select(async asset =>
             {
@@ -1530,9 +1497,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     Stopwatch gatherBlobDownloadTime = Stopwatch.StartNew();
                     await DownloadFileAsync(
-                        client,
-                        ArtifactName.BlobArtifacts,
-                        containerId,
+                        downloadClient,
+                        BlobArtifactsArtifactName,
                         fileName,
                         localBlobPath);
                     gatherBlobDownloadTime.Stop();

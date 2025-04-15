@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.Discovery;
@@ -23,7 +22,14 @@ namespace Microsoft.VisualStudio.Razor.Discovery;
 [Export(typeof(IRazorStartupService))]
 internal partial class ProjectStateChangeDetector : IRazorStartupService, IDisposable
 {
-    private readonly record struct Work(ProjectKey Key, ProjectId? Id);
+    private readonly record struct Work(ProjectKey Key, ProjectId? Id)
+    {
+        public bool Equals(Work other)
+            => Key.Equals(other.Key);
+
+        public override int GetHashCode()
+            => Key.GetHashCode();
+    }
 
     private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(1);
 
@@ -34,6 +40,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
 
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<Work> _workQueue;
+    private readonly HashSet<Work> _workerSet;
 
     /// <summary>
     ///  A map of assembly path strings to ProjectKeys. This will be cleared when the solution is closed.
@@ -63,6 +70,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         _projectManager = projectManager;
         _options = options;
 
+        _workerSet = [];
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<Work>(
             delay,
@@ -95,7 +103,9 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
 
     private ValueTask ProcessBatchAsync(ImmutableArray<Work> items, CancellationToken token)
     {
-        foreach (var (projectKey, projectId) in items.GetMostRecentUniqueItems(Comparer.Instance))
+        _workerSet.Clear();
+
+        foreach (var (projectKey, projectId) in items.GetMostRecentUniqueItems(_workerSet))
         {
             if (token.IsCancellationRequested)
             {

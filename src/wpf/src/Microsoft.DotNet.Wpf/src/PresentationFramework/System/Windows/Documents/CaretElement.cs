@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Media; // Brush, Transform
 using System.Windows.Media.Animation; // AnimationClock
@@ -706,7 +705,7 @@ namespace System.Windows.Documents
                     if (flowDirection == FlowDirection.RightToLeft)
                     {
                         // BiDi caret indicator should always direct by the right to left
-                        bidiCaretIndicatorWidth = bidiCaretIndicatorWidth * (-1);
+                        bidiCaretIndicatorWidth *= -1;
                     }
 
                     // Draw BIDI caret to indicate the coming input is BIDI characters.

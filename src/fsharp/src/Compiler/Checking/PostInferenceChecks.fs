@@ -335,9 +335,9 @@ let RecordAnonRecdInfo cenv (anonInfo: AnonRecdTypeInfo) =
 // approx walk of type
 //--------------------------------------------------------------------------
 
-/// Represents the container for nester type instantions, carrying information about the parent (generic type) and data about correspinding generic typar definition.
+/// Represents the container for nester type instantions, carrying information about the parent (generic type) and data about corresponding generic typar definition.
 /// For current use, IlGenericParameterDef was enough. For other future use cases, conversion into F# Typar might be needed.
-type TypeInstCtx = 
+type TypeInstCtx =
     | NoInfo
     | IlGenericInst of parent:TyconRef * genericArg:ILGenericParameterDef
     | TyparInst of parent:TyconRef
@@ -649,7 +649,7 @@ let CheckTypeAux permitByRefLike (cenv: cenv) env m ty onInnerByrefError =
                errorR (Error(FSComp.SR.checkNotSufficientlyGenericBecauseOfScope(tp.DisplayName), m))
 
         let visitTyconRef (ctx:TypeInstCtx) tcref =
-            let checkInner() = 
+            let checkInner() =
                 match ctx with
                 | TopLevelAllowingByRef -> false
                 | TyparInst(parentTcRef)
@@ -694,11 +694,11 @@ let CheckTypeAux permitByRefLike (cenv: cenv) env m ty onInnerByrefError =
                    cenv.potentialUnboundUsesOfVals <- cenv.potentialUnboundUsesOfVals.Add(vref.Stamp, m)
             | _ -> ()
 
-        let initialCtx = 
+        let initialCtx =
             match permitByRefLike with
             | PermitByRefType.SpanLike
             | PermitByRefType.NoInnerByRefLike -> TopLevelAllowingByRef
-            | _ -> NoInfo        
+            | _ -> NoInfo
 
         CheckTypeDeep cenv (ignore, Some visitTyconRef, Some visitAppTy, Some visitTraitSolution, Some visitTyar) cenv.g env initialCtx ty
 
@@ -1958,7 +1958,7 @@ and CheckAttribArgExpr cenv env expr =
         | Const.Single _
         | Const.Char _
         | Const.Zero
-        | Const.String _  
+        | Const.String _
         | Const.Decimal _ -> ()
         | _ ->
             if cenv.reportErrors then
@@ -2231,7 +2231,7 @@ let CheckModuleBinding cenv env (TBind(v, e, _) as bind) =
                 // Default augmentation contains the nasty 'Is<UnionCase>' etc.
                 let prefix = "Is"
                 if not v.IsImplied && nm.StartsWithOrdinal prefix && hasDefaultAugmentation then
-                    match tcref.GetUnionCaseByName(nm[prefix.Length ..]) with 
+                    match tcref.GetUnionCaseByName(nm[prefix.Length ..]) with
                     | Some uc -> error(NameClash(nm, kind, v.DisplayName, v.Range, FSComp.SR.chkUnionCaseDefaultAugmentation(), uc.DisplayName, uc.Range))
                     | None -> ()
 
@@ -2398,9 +2398,23 @@ let CheckEntityDefn cenv env (tycon: Entity) =
                 errorR(Error(FSComp.SR.chkCurriedMethodsCantHaveOutParams(), m))
 
             if numCurriedArgSets = 1 then
+                let errorIfNotStringTy m ty callerInfo =
+                    if not (typeEquiv g g.string_ty ty) then
+                        errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv ty), m))
+
+                let errorIfNotStringOptionTy m ty callerInfo =
+                    if not ((isOptionTy g ty) && (typeEquiv g g.string_ty (destOptionTy g ty))) then
+                        errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv (destOptionTy g ty)), m))
+
                 minfo.GetParamDatas(cenv.amap, m, minfo.FormalMethodInst)
-                |> List.iterSquared (fun (ParamData(_, isInArg, _, optArgInfo, callerInfo, _, _, ty)) ->
+                |> List.iterSquared (fun (ParamData(_, isInArg, _, optArgInfo, callerInfo, nameOpt, _, ty)) ->
                     ignore isInArg
+
+                    let m =
+                        match nameOpt with
+                        | Some name -> name.idRange
+                        | None -> m
+
                     match (optArgInfo, callerInfo) with
                     | _, NoCallerInfo -> ()
                     | NotOptional, _ -> errorR(Error(FSComp.SR.tcCallerInfoNotOptional(callerInfo |> string), m))
@@ -2410,18 +2424,9 @@ let CheckEntityDefn cenv env (tycon: Entity) =
                     | CalleeSide, CallerLineNumber ->
                         if not ((isOptionTy g ty) && (typeEquiv g g.int32_ty (destOptionTy g ty))) then
                             errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "int", NicePrint.minimalStringOfType cenv.denv (destOptionTy g ty)), m))
-                    | CallerSide _, CallerFilePath ->
-                        if not (typeEquiv g g.string_ty ty) then
-                            errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv ty), m))
-                    | CalleeSide, CallerFilePath ->
-                        if not ((isOptionTy g ty) && (typeEquiv g g.string_ty (destOptionTy g ty))) then
-                            errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv (destOptionTy g ty)), m))
-                    | CallerSide _, CallerMemberName ->
-                        if not (typeEquiv g g.string_ty ty) then
-                            errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv ty), m))
-                    | CalleeSide, CallerMemberName ->
-                        if not ((isOptionTy g ty) && (typeEquiv g g.string_ty (destOptionTy g ty))) then
-                            errorR(Error(FSComp.SR.tcCallerInfoWrongType(callerInfo |> string, "string", NicePrint.minimalStringOfType cenv.denv (destOptionTy g ty)), m)))
+                    | CallerSide _, (CallerFilePath | CallerMemberName) -> errorIfNotStringTy m ty callerInfo
+                    | CalleeSide, (CallerFilePath | CallerMemberName) -> errorIfNotStringOptionTy m ty callerInfo
+                )
 
         for pinfo in immediateProps do
             let nm = pinfo.PropertyName
@@ -2518,7 +2523,7 @@ let CheckEntityDefn cenv env (tycon: Entity) =
     if TyconRefHasAttribute g m g.attrib_IsReadOnlyAttribute tcref && not tycon.IsStructOrEnumTycon then
         errorR(Error(FSComp.SR.tcIsReadOnlyNotStruct(), tycon.Range))
 
-    // Considers TFSharpTyconRepr and TFSharpUnionRepr. 
+    // Considers TFSharpTyconRepr and TFSharpUnionRepr.
     // [Review] are all cases covered: TILObjectRepr, TAsmRepr. [Yes - these are FSharp.Core.dll only]
     tycon.AllFieldsArray |> Array.iter (CheckRecdField false cenv env tycon)
 
@@ -2554,10 +2559,10 @@ let CheckEntityDefn cenv env (tycon: Entity) =
 
     // We do not have to check access of interface implementations.
 
-    if tycon.IsFSharpDelegateTycon then 
-        match tycon.TypeReprInfo with 
+    if tycon.IsFSharpDelegateTycon then
+        match tycon.TypeReprInfo with
         | TFSharpTyconRepr r ->
-            match r.fsobjmodel_kind with 
+            match r.fsobjmodel_kind with
             | TFSharpDelegate ss ->
                 //ss.ClassTypars
                 //ss.MethodTypars

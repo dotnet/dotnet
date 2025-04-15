@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using Microsoft.Win32;
@@ -16,7 +15,7 @@ namespace System.Windows.Input.StylusWisp
     /// </summary>
     public class WispTabletDeviceCollection : TabletDeviceCollection
     {
-        const int VistaMajorVersion = 6;
+        private const int VistaMajorVersion = 6;
 
         /////////////////////////////////////////////////////////////////////
 
@@ -251,7 +250,7 @@ namespace System.Windows.Input.StylusWisp
         }
 
         /////////////////////////////////////////////////////////////////////
-        void UpdateTabletsImpl()
+        private void UpdateTabletsImpl()
         {
             // REENTRANCY NOTE: Let a PenThread do this work to avoid reentrancy!
             //                  On return you get entire list of tablet and info needed to
@@ -265,7 +264,7 @@ namespace System.Windows.Input.StylusWisp
             // There was an error acquiring a PenThread, do no work here.
             if (penThread == null)
             {
-                Debug.Assert(false, "Error acquiring PenThread in UpdateTabletsImpl()");
+                Debug.Fail("Error acquiring PenThread in UpdateTabletsImpl()");
                 return;
             }
 
@@ -413,7 +412,7 @@ namespace System.Windows.Input.StylusWisp
             // There was an error acquiring a PenThread, return true to force a complete tablet refresh
             if (penThread == null)
             {
-                Debug.Assert(false, "Error acquiring PenThread in HandleTabletAdded()");
+                Debug.Fail("Error acquiring PenThread in HandleTabletAdded()");
                 return true;
             }
 
@@ -535,7 +534,7 @@ namespace System.Windows.Input.StylusWisp
         /////////////////////////////////////////////////////////////////////
         //  NOTE: This routine takes indexes that are in the TabletCollection range
         //        and not in the wisptis tablet index range.
-        void AddTablet(uint index, TabletDevice tabletDevice)
+        private void AddTablet(uint index, TabletDevice tabletDevice)
         {
             Debug.Assert(index <= Count);
             Debug.Assert(tabletDevice.Type != (TabletDeviceType)(-1)); // make sure not the mouse tablet device!
@@ -555,7 +554,7 @@ namespace System.Windows.Input.StylusWisp
         /////////////////////////////////////////////////////////////////////
         //  NOTE: This routine takes indexes that are in the TabletCollection range
         //        and not in the wisptis tablet index range.
-        void RemoveTablet(uint index)
+        private void RemoveTablet(uint index)
         {
             System.Diagnostics.Debug.Assert(index < Count && Count > 0);
 
@@ -693,10 +692,10 @@ namespace System.Windows.Input.StylusWisp
 
         /////////////////////////////////////////////////////////////////////
 
-        TabletDevice[]          _tablets = Array.Empty<TabletDevice>();
-        uint                    _indexMouseTablet = UInt32.MaxValue;
-        bool                    _inUpdateTablets;       // detect re-entrancy
-        bool                    _hasUpdateTabletsBeenCalledReentrantly;
-        List<TabletDevice>      _deferredTablets = new List<TabletDevice>();
+        private TabletDevice[]          _tablets = Array.Empty<TabletDevice>();
+        private uint                    _indexMouseTablet = UInt32.MaxValue;
+        private bool                    _inUpdateTablets;       // detect re-entrancy
+        private bool                    _hasUpdateTabletsBeenCalledReentrantly;
+        private List<TabletDevice>      _deferredTablets = new List<TabletDevice>();
     }
 }

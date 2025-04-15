@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Table row implementation
@@ -232,7 +231,7 @@ namespace System.Windows.Documents
             Debug.Assert(_spannedCells != null);
 
             if ((_formatCellCount > 0) ||
-               isLastRowOfAnySpan == true)
+               isLastRowOfAnySpan)
             {
                 SetFlags(true, Flags.HasRealCells);
             }

@@ -29,8 +29,8 @@ internal static class TestDocumentContext
     public static DocumentContext Create(string filePath)
     {
         var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
-        var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var source = RazorSourceDocument.Create(content: string.Empty, properties);
+        var codeDocument = RazorCodeDocument.Create(source);
 
         return Create(filePath, codeDocument);
     }

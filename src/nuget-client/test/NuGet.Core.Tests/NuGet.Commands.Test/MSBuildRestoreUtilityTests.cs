@@ -5102,6 +5102,64 @@ namespace NuGet.Commands.Test
             }
         }
 
+        [Fact]
+        public void GetRestoreAuditProperties_MultiTargetingProjectWithOneNuGetAuditModeAll_ReturnsNuGetAuditModeAll()
+        {
+            // Arrange
+            var project = CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "NuGetAuditMode", "direct" }
+            });
+
+            var tfms = new IMSBuildItem[]
+            {
+                CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "NuGetAuditMode", "direct" }
+                }),
+                CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "NuGetAuditMode", "all" }
+                })
+            };
+
+            // Act
+            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.AuditMode.Should().Be("all");
+        }
+
+        [Fact]
+        public void GetRestoreAuditProperties_MultiTargetingProjectWithoutNuGetAuditModeAll_ReturnsProjectAuditMode()
+        {
+            // Arrange
+            var project = CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "NuGetAuditMode", "direct" }
+            });
+
+            var tfms = new IMSBuildItem[]
+            {
+                CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "NuGetAuditMode", "one" }
+                }),
+                CreateItems(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "NuGetAuditMode", "two" }
+                })
+            };
+
+            // Act
+            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.AuditMode.Should().Be("direct");
+        }
+
         private static IDictionary<string, string> CreateProject(string root, string uniqueName)
         {
             var project1Path = Path.Combine(root, "a.csproj");

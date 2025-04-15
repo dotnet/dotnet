@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -21,7 +22,7 @@ public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOut
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer([]);
+                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
                 b.AddExport(startupInitializer);
             }));
 
@@ -49,7 +50,7 @@ public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOut
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer([]);
+                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
                 b.AddExport(startupInitializer);
             }));
 

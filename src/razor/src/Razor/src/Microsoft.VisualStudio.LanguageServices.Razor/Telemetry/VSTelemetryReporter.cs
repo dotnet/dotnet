@@ -3,8 +3,8 @@
 
 using System;
 using System.ComponentModel.Composition;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 using StreamJsonRpc;
 

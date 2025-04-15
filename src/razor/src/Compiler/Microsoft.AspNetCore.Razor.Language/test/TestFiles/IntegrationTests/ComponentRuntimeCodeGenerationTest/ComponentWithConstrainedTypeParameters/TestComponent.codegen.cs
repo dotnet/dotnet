@@ -77,10 +77,9 @@ foreach (var item2 in Items2)
 #nullable disable
 
             __builder.OpenElement(1, "p");
-            __builder.AddContent(2, 
 #nullable restore
-#line (10,6)-(10,25) "x:\dir\subdir\Test\TestComponent.cshtml"
-ChildContent(item2)
+#line (10,6)-(10,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(2, ChildContent(item2)
 
 #line default
 #line hidden

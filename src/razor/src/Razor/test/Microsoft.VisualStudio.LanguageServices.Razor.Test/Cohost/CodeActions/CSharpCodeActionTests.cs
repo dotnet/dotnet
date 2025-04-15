@@ -2,15 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task GenerateConstructor()
     {
         var input = """
@@ -45,7 +45,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task UseExpressionBodiedMember()
     {
         var input = """
@@ -78,7 +78,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.UseExpressionBody);
     }
 
-    [FuseFact]
+    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
     public async Task IntroduceLocal()
     {
         var input = """
@@ -125,7 +125,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable);
     }
 
-    [FuseFact]
+    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
     public async Task IntroduceLocal_All()
     {
         var input = """
@@ -172,7 +172,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable, childActionIndex: 1);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_CSharpStatement()
     {
         var input = """
@@ -190,7 +190,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_ExplicitExpression()
     {
         var input = """
@@ -204,7 +204,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertConcatenationToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -224,7 +224,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock()
     {
         var input = """
@@ -244,7 +244,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock2()
     {
         var input = """
@@ -264,7 +264,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimString_CodeBlock()
     {
         var input = """
@@ -284,7 +284,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertBetweenRegularAndVerbatimString_CodeBlock2()
     {
         var input = """
@@ -304,7 +304,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertPlaceholderToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -324,7 +324,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertPlaceholderToInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ConvertToInterpolatedString_CodeBlock()
     {
         var input = """
@@ -344,7 +344,7 @@ public class CSharpCodeActionTests(FuseTestContext context, ITestOutputHelper te
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertToInterpolatedString);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddDebuggerDisplay()
     {
         var input = """

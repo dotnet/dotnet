@@ -15,7 +15,6 @@
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
-    DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolExpirationInDays    Symbol expiration time in days (defaults to 10 years).
@@ -54,7 +53,7 @@
   <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
-  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(DotNetBuildRepo)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
 
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
@@ -72,6 +71,7 @@
     <!-- Setting 'Projects' overrides the ProjectToBuild list. -->
     <ProjectToBuild Remove="@(ProjectToBuild)" />
     <ProjectToBuild Include="$(Projects)" />
+    <ProjectToBuild Update="@(ProjectToBuild)" Condition="'$(_DotNetBuildPassNormalized)' != ''" DotNetBuildPass="$(_DotNetBuildPassNormalized)" />
   </ItemGroup>
 
   <!--
@@ -79,7 +79,7 @@
     Don't do this filtering in non-unified builds to allow repos to define how different build passes are handled
     in their own repo-specific builds.
   -->
-  <ItemGroup Condition="'$(DotNetBuildInnerRepo)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false'">
     <_ProjectToBuildCurrentBuildPass Include="@(ProjectToBuild->WithMetadataValue('DotNetBuildPass', '$(_DotNetBuildPassNormalized)'))" />
     <ProjectToBuild Remove="@(ProjectToBuild)" />
     <ProjectToBuild Include="@(_ProjectToBuildCurrentBuildPass)" />
@@ -152,17 +152,6 @@
       <!-- 'IsRunningFromVisualStudio' may be true even when running msbuild.exe from command line. This generally means that MSBuild is from a Visual Studio installation and therefore we need to find NuGet.targets in a different location. -->
       <_NuGetRestoreTargets Condition="Exists('$(MSBuildToolsPath)\NuGet.targets')" >$(MSBuildToolsPath)\NuGet.targets</_NuGetRestoreTargets>
       <_NuGetRestoreTargets Condition="'$([MSBuild]::IsRunningFromVisualStudio())' == 'true' And Exists('$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets')">$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets</_NuGetRestoreTargets>
-
-      <!-- If `DotNetPublishUsingPipelines` is not set we default it to false. -->
-      <DotNetPublishUsingPipelines Condition="'$(DotNetPublishUsingPipelines)' == ''">false</DotNetPublishUsingPipelines>
-
-      <!--
-        If DotNetPublishUsingPipelines is set we don't publish symbols during the build stage,
-        only in the Maestro post-build stages. If DotNetPublishUsingPipelines is NOT set then
-        we publish symbols during the build stage.
-      -->
-      <PublishToSymbolServer>true</PublishToSymbolServer>
-      <PublishToSymbolServer Condition="'$(DotNetPublishUsingPipelines)' == 'true'">false</PublishToSymbolServer>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(Restore)' == 'true'">
@@ -173,12 +162,6 @@
 
       <!-- Used in the SDK (Tools.proj) to control whether Build.Tasks.Feed will be restored or not. -->
       <_RestoreToolsProps Include="Publish=$(Publish)"/>
-
-      <!-- Used in the SDK (Tools.proj) to control whether SymbolUploader.Build.Task will be restored or not. -->
-      <_RestoreToolsProps Include="PublishToSymbolServer=$(PublishToSymbolServer)"/>
-
-      <!-- Forward this property because we can't assume it will be available globally. -->
-      <_RestoreToolsProps Include="DotNetPublishUsingPipelines=$(DotNetPublishUsingPipelines)"/>
     </ItemGroup>
 
     <!--
@@ -218,6 +201,8 @@
       <_SolutionRestoreProps Include="_NETCORE_ENGINEERING_TELEMETRY=Restore" />
       <_SolutionRestoreProps Include="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
       <_SolutionRestoreProps Include="RestoreUseStaticGraphEvaluation=$(RestoreUseStaticGraphEvaluation)" />
+      <_SolutionRestoreProps Include="RestoreEmbedFilesInBinlog=true" />
+      <_SolutionRestoreProps Include="RestoreStaticGraphEnableBinaryLogger=$(GenerateRestoreUseStaticGraphEvaluationBinlog)" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -262,7 +247,7 @@
     <!-- Enable binlog generation during static graph restore evaluation -->
     <ItemGroup Condition="'$(GenerateRestoreUseStaticGraphEvaluationBinlog)' == 'true'">
       <_ProjectToRestore>
-        <AdditionalProperties>RESTORE_TASK_BINLOG_PARAMETERS=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
+        <AdditionalProperties>RestoreStaticGraphBinaryLoggerParameters=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
       </_ProjectToRestore>
     </ItemGroup>
 
@@ -279,7 +264,7 @@
     <MSBuild Projects="AfterSolutionBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Build"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')" />
+             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')" />
 
     <!--
       Sign artifacts.
@@ -287,12 +272,12 @@
     <MSBuild Projects="Sign.proj"
              Properties="@(_CommonProps)"
              Targets="Sign"
-             Condition="'$(Sign)' == 'true' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')"/>
+             Condition="'$(Sign)' == 'true' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')"/>
 
     <MSBuild Projects="AfterSigning.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo')"/>
+             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')" />
 
     <!--
       Perform post-source-build tasks. Validate source-build requirements, such as the prebuilt
@@ -302,7 +287,7 @@
     -->
     <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildRepo)' == 'true'"/>
+             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
 
     <!--
       Publish artifacts. This should run in the following situations:
@@ -320,16 +305,13 @@
       <!-- Run publish in inner VMR builds, or outer non-VMR builds. -->
       <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">true</_ShouldRunPublish>
       <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' != 'InnerRepo' and '$(DotNetBuildOrchestrator)' != 'true'">true</_ShouldRunPublish>
+      <_ShouldRunPublish Condition="'$(UseArPowBuildInfra)' == 'false'">true</_ShouldRunPublish>
     </PropertyGroup>
 
     <ItemGroup>
       <_PublishProps Include="@(_CommonProps)"/>
       <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
       <_PublishProps Include="Publish=$(Publish)"/>
-      <!-- Used in the SDK (Publish.proj) to control whether in-build symbol publishing should be performed. -->
-      <_PublishProps Include="PublishToSymbolServer=$(PublishToSymbolServer)"/>
-      <!-- Forward this property because we can't assume it will be available globally. -->
-      <_PublishProps Include="DotNetPublishUsingPipelines=$(DotNetPublishUsingPipelines)"/>
     </ItemGroup>
 
       <!-- Make sure we always publish in VMR build - working around runtime repo which sets Publish to false. -->

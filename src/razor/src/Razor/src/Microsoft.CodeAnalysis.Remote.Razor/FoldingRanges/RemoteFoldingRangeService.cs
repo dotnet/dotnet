@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -55,7 +54,7 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
             .SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
     }
 
-    public static FoldingRange ToFoldingRange(Roslyn.LanguageServer.Protocol.FoldingRange r)
+    public static FoldingRange ToFoldingRange(FoldingRange r)
         => new()
         {
             StartLine = r.StartLine,

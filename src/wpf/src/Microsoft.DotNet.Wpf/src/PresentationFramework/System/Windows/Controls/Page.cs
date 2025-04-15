@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Implements the Avalon Page class
@@ -169,7 +168,7 @@ namespace System.Windows.Controls
                     PageHelperObject._windowTitle = value;
                     PropertyIsSet(SetPropertyFlags.WindowTitle);
                 }
-                else if (_isTopLevel == true) // only top level page can set this property
+                else if (_isTopLevel) // only top level page can set this property
                 {
                     WindowService.Title = value;
                     PropertyIsSet(SetPropertyFlags.WindowTitle);
@@ -224,7 +223,7 @@ namespace System.Windows.Controls
                     PageHelperObject._windowHeight = value;
                     PropertyIsSet(SetPropertyFlags.WindowHeight);
                 }
-                else if (_isTopLevel == true)// only top level page can set this property
+                else if (_isTopLevel)// only top level page can set this property
                 {
                     if (!WindowService.UserResized)
                     {
@@ -276,7 +275,7 @@ namespace System.Windows.Controls
                     PageHelperObject._windowWidth = value;
                     PropertyIsSet(SetPropertyFlags.WindowWidth);
                 }
-                else if (_isTopLevel == true) // only top level page can set this property
+                else if (_isTopLevel) // only top level page can set this property
                 {
                     if (!WindowService.UserResized)
                     {
@@ -344,7 +343,7 @@ namespace System.Windows.Controls
         }
 
         // If the Title has changed we want to set the flag.
-        static private void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((Page)d).PropertyIsSet(SetPropertyFlags.Title);
         }
@@ -382,7 +381,7 @@ namespace System.Windows.Controls
                     PageHelperObject._showsNavigationUI = value;
                     PropertyIsSet(SetPropertyFlags.ShowsNavigationUI);
                 }
-                else if (_isTopLevel == true) // only top level page can set this property
+                else if (_isTopLevel) // only top level page can set this property
                 {
                     SetShowsNavigationUI(value);
                     PropertyIsSet(SetPropertyFlags.ShowsNavigationUI);
@@ -693,7 +692,7 @@ namespace System.Windows.Controls
                 }
             }
 
-            if (isParentValid == false)
+            if (!isParentValid)
             {
                 throw new InvalidOperationException(SR.ParentOfPageMustBeWindowOrFrame);
             }
@@ -745,7 +744,7 @@ namespace System.Windows.Controls
 
             if (_currentIws != null)
             {
-                if (_isTopLevel == true)
+                if (_isTopLevel)
                 {
                     PropagateProperties();
                 }
@@ -947,7 +946,7 @@ namespace System.Windows.Controls
         #endregion Page Class
     }
 
-    class PageHelperObject
+    internal class PageHelperObject
     {
         //----------------------------------------------
         //

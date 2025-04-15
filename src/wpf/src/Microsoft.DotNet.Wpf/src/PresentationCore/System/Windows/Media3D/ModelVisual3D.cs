@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using System.Windows.Markup;
@@ -77,7 +76,7 @@ namespace System.Windows.Media.Media3D
 
             if (visual3D == null)
             {
-                throw new System.ArgumentException(SR.Format(SR.Collection_BadType, this.GetType().Name, value.GetType().Name, typeof(Visual3D).Name));
+                throw new System.ArgumentException(SR.Format(SR.Collection_BadType, this.GetType().Name, value.GetType().Name, nameof(Visual3D)));
             }
 
             Children.Add(visual3D);
@@ -115,8 +114,8 @@ namespace System.Windows.Media.Media3D
         public static readonly DependencyProperty ContentProperty =
             DependencyProperty.Register(
                     "Content",
-                    /* propertyType = */ typeof(Model3D),
-                    /* ownerType = */ typeof(ModelVisual3D),
+                    propertyType: typeof(Model3D),
+                    ownerType: typeof(ModelVisual3D),
                     new PropertyMetadata(ContentPropertyChanged),
                     (ValidateValueCallback) delegate { return MediaContext.CurrentMediaContext.WriteAccessEnabled; });
 

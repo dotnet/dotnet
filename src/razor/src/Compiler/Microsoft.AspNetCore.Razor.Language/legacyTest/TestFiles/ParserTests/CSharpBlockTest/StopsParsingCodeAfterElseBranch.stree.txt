@@ -178,13 +178,23 @@
                         Whitespace;[ ];
                     MarkupTextLiteral - [274..275)::1 - [{] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         Text;[{];
-                MarkupMinimizedAttributeBlock - [275..302)::27 - [LF    Debug.WriteLine(@"bar]
+                MarkupMinimizedAttributeBlock - [275..297)::22 - [LF    Debug.WriteLine(]
                     MarkupTextLiteral - [275..281)::6 - [LF    ] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         NewLine;[LF];
                         Whitespace;[    ];
-                    MarkupTextLiteral - [281..302)::21 - [Debug.WriteLine(@"bar] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupTextLiteral - [281..297)::16 - [Debug.WriteLine(] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         Text;[Debug.WriteLine(];
-                        Transition;[@];
+                MarkupMiscAttributeContent - [297..298)::1
+                    CSharpCodeBlock - [297..298)::1
+                        CSharpImplicitExpression - [297..298)::1
+                            CSharpTransition - [297..298)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                Transition;[@];
+                            CSharpImplicitExpressionBody - [298..298)::0
+                                CSharpCodeBlock - [298..298)::0
+                                    CSharpExpressionLiteral - [298..298)::0 - [] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K15
+                                        Marker;[];
+                MarkupMinimizedAttributeBlock - [298..302)::4 - ["bar]
+                    MarkupTextLiteral - [298..302)::4 - ["bar] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         DoubleQuote;["];
                         Text;[bar];
                 MarkupMinimizedAttributeBlock - [302..304)::2 - [ }]

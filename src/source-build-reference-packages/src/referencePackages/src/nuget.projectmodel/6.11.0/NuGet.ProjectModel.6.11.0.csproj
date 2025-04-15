@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.11.0</PackageVersion>
     <AssemblyName>NuGet.ProjectModel</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="NuGet.DependencyResolver.Core" Version="6.11.0" />
+    <ProjectReference Include="../../nuget.dependencyresolver.core/6.11.0/NuGet.DependencyResolver.Core.6.11.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.DependencyResolver.Core" Version="6.11.0" />
+    <ProjectReference Include="../../nuget.dependencyresolver.core/6.11.0/NuGet.DependencyResolver.Core.6.11.0.csproj" />
   </ItemGroup>
 
 </Project>

@@ -81,114 +81,123 @@ namespace NuGet.Protocol
                 action: async lockedToken =>
                 {
                     cacheResult.Stream = TryReadCacheFile(request.Uri, cacheResult.MaxAge, cacheResult.CacheFile);
-
-                    if (cacheResult.Stream != null)
+                    try
                     {
-                        log.LogInformation(string.Format(CultureInfo.InvariantCulture, "  " + Strings.Http_RequestLog, "CACHE", request.Uri));
-
-                        // Validate the content fetched from the cache.
-                        try
+                        if (cacheResult.Stream != null)
                         {
-                            request.EnsureValidContents?.Invoke(cacheResult.Stream);
+                            log.LogInformation(string.Format(CultureInfo.InvariantCulture, "  " + Strings.Http_RequestLog, "CACHE", request.Uri));
 
-                            cacheResult.Stream.Seek(0, SeekOrigin.Begin);
-
-                            var httpSourceResult = new HttpSourceResult(
-                                HttpSourceResultStatus.OpenedFromDisk,
-                                cacheResult.CacheFile,
-                                cacheResult.Stream);
-
-                            return await processAsync(httpSourceResult);
-                        }
-                        catch (Exception e)
-                        {
-                            cacheResult.Stream.Dispose();
-                            cacheResult.Stream = null;
-
-                            string message = string.Format(CultureInfo.CurrentCulture, Strings.Log_InvalidCacheEntry, request.Uri)
-                                             + Environment.NewLine
-                                             + ExceptionUtilities.DisplayMessage(e);
-                            log.LogWarning(message);
-                        }
-                    }
-
-                    Func<HttpRequestMessage> requestFactory = () =>
-                    {
-                        var requestMessage = HttpRequestMessageFactory.Create(HttpMethod.Get, request.Uri, log);
-
-                        foreach (var acceptHeaderValue in request.AcceptHeaderValues)
-                        {
-                            requestMessage.Headers.Accept.Add(acceptHeaderValue);
-                        }
-
-                        return requestMessage;
-                    };
-
-                    Func<Task<ThrottledResponse>> throttledResponseFactory = () => GetThrottledResponse(
-                        requestFactory,
-                        request.RequestTimeout,
-                        request.DownloadTimeout,
-                        request.MaxTries,
-                        request.IsRetry,
-                        request.IsLastAttempt,
-                        request.CacheContext.SourceCacheContext.SessionId,
-                        log,
-                        lockedToken);
-
-                    using (var throttledResponse = await throttledResponseFactory())
-                    {
-                        if (request.IgnoreNotFounds && throttledResponse.Response.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            var httpSourceResult = new HttpSourceResult(HttpSourceResultStatus.NotFound);
-
-                            return await processAsync(httpSourceResult);
-                        }
-
-                        if (throttledResponse.Response.StatusCode == HttpStatusCode.NoContent)
-                        {
-                            // Ignore reading and caching the empty stream.
-                            var httpSourceResult = new HttpSourceResult(HttpSourceResultStatus.NoContent);
-
-                            return await processAsync(httpSourceResult);
-                        }
-
-                        throttledResponse.Response.EnsureSuccessStatusCode();
-
-                        if (!request.CacheContext.DirectDownload)
-                        {
-                            await HttpCacheUtility.CreateCacheFileAsync(
-                                cacheResult,
-                                throttledResponse.Response,
-                                request.EnsureValidContents,
-                                lockedToken);
-
-                            using (var httpSourceResult = new HttpSourceResult(
-                                HttpSourceResultStatus.OpenedFromDisk,
-                                cacheResult.CacheFile,
-                                cacheResult.Stream))
+                            // Validate the content fetched from the cache.
+                            try
                             {
+                                request.EnsureValidContents?.Invoke(cacheResult.Stream);
+
+                                cacheResult.Stream.Seek(0, SeekOrigin.Begin);
+
+                                var httpSourceResult = new HttpSourceResult(
+                                    HttpSourceResultStatus.OpenedFromDisk,
+                                    cacheResult.CacheFile,
+                                    cacheResult.Stream);
+
                                 return await processAsync(httpSourceResult);
                             }
+                            catch (Exception e)
+                            {
+                                cacheResult.Stream.Dispose();
+                                cacheResult.Stream = null;
+
+                                string message = string.Format(CultureInfo.CurrentCulture, Strings.Log_InvalidCacheEntry, request.Uri)
+                                                 + Environment.NewLine
+                                                 + ExceptionUtilities.DisplayMessage(e);
+                                log.LogWarning(message);
+                            }
                         }
-                        else
+
+                        Func<HttpRequestMessage> requestFactory = () =>
                         {
-                            // Note that we do not execute the content validator on the response stream when skipping
-                            // the cache. We cannot seek on the network stream and it is not valuable to download the
-                            // content twice just to validate the first time (considering that the second download could
-                            // be different from the first thus rendering the first validation meaningless).
+                            var requestMessage = HttpRequestMessageFactory.Create(HttpMethod.Get, request.Uri, log);
+
+                            foreach (var acceptHeaderValue in request.AcceptHeaderValues)
+                            {
+                                requestMessage.Headers.Accept.Add(acceptHeaderValue);
+                            }
+
+                            return requestMessage;
+                        };
+
+                        Func<Task<ThrottledResponse>> throttledResponseFactory = () => GetThrottledResponse(
+                            requestFactory,
+                            request.RequestTimeout,
+                            request.DownloadTimeout,
+                            request.MaxTries,
+                            request.IsRetry,
+                            request.IsLastAttempt,
+                            request.CacheContext.SourceCacheContext.SessionId,
+                            log,
+                            lockedToken);
+
+                        using (var throttledResponse = await throttledResponseFactory())
+                        {
+                            if (request.IgnoreNotFounds && throttledResponse.Response.StatusCode == HttpStatusCode.NotFound)
+                            {
+                                var httpSourceResult = new HttpSourceResult(HttpSourceResultStatus.NotFound);
+
+                                return await processAsync(httpSourceResult);
+                            }
+
+                            if (throttledResponse.Response.StatusCode == HttpStatusCode.NoContent)
+                            {
+                                // Ignore reading and caching the empty stream.
+                                var httpSourceResult = new HttpSourceResult(HttpSourceResultStatus.NoContent);
+
+                                return await processAsync(httpSourceResult);
+                            }
+
+                            throttledResponse.Response.EnsureSuccessStatusCode();
+
+                            if (!request.CacheContext.DirectDownload)
+                            {
+                                await HttpCacheUtility.CreateCacheFileAsync(
+                                    cacheResult,
+                                    throttledResponse.Response,
+                                    request.EnsureValidContents,
+                                    lockedToken);
+
+                                using (var httpSourceResult = new HttpSourceResult(
+                                    HttpSourceResultStatus.OpenedFromDisk,
+                                    cacheResult.CacheFile,
+                                    cacheResult.Stream))
+                                {
+                                    return await processAsync(httpSourceResult);
+                                }
+                            }
+                            else
+                            {
+                                // Note that we do not execute the content validator on the response stream when skipping
+                                // the cache. We cannot seek on the network stream and it is not valuable to download the
+                                // content twice just to validate the first time (considering that the second download could
+                                // be different from the first thus rendering the first validation meaningless).
 #if NETCOREAPP2_0_OR_GREATER
 
-                            using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync(lockedToken))
+                                using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync(lockedToken))
 #else
-                            using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync())
+                                using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync())
 #endif
-                            using (var httpSourceResult = new HttpSourceResult(
-                                HttpSourceResultStatus.OpenedFromNetwork,
-                                cacheFileName: null,
-                                stream: stream))
-                            {
-                                return await processAsync(httpSourceResult);
+                                using (var httpSourceResult = new HttpSourceResult(
+                                    HttpSourceResultStatus.OpenedFromNetwork,
+                                    cacheFileName: null,
+                                    stream: stream))
+                                {
+                                    return await processAsync(httpSourceResult);
+                                }
                             }
+                        }
+                    }
+                    finally
+                    {
+                        if (cacheResult.Stream != null)
+                        {
+                            cacheResult.Stream.Dispose();
                         }
                     }
                 },

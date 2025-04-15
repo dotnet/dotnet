@@ -1,1 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.2.0-1.22102.8</PackageVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.Collections</AssemblyName>
+  </PropertyGroup>
+
+</Project>

@@ -15,8 +15,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -28,7 +28,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,7 +41,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
     private static readonly VSInternalServerCapabilities s_semanticTokensServerCapabilities = new()
     {
-        SemanticTokensOptions = new()
+        SemanticTokensOptions = new SemanticTokensOptions()
         {
             Full = false,
             Range = true

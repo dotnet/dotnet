@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //                                             
 
@@ -108,7 +107,7 @@ namespace System.Windows.Media
                         Transform.GetTransformValue(transform, out geometryMatrix);
 
                         boundsRect = RectangleGeometry.GetBoundsHelper(
-                            null /* no pen */,
+                            pen: null,
                             Matrix.Identity,
                             currentRect,
                             radiusX,
@@ -413,21 +412,21 @@ namespace System.Windows.Media
             {
                 Point[] points = GetPointList(rect, radiusX, radiusY);
 
-                ctx.BeginFigure(points[0], true /* is filled */, true /* is closed */);
-                ctx.BezierTo(points[1], points[2], points[3], true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(points[4], true /* is stroked */, false /* is smooth join */);
-                ctx.BezierTo(points[5], points[6], points[7], true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(points[8], true /* is stroked */, false /* is smooth join */);
-                ctx.BezierTo(points[9], points[10], points[11], true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(points[12], true /* is stroked */, false /* is smooth join */);
-                ctx.BezierTo(points[13], points[14], points[15], true /* is stroked */, false /* is smooth join */);
+                ctx.BeginFigure(points[0], isFilled: true, isClosed: true);
+                ctx.BezierTo(points[1], points[2], points[3], isStroked: true, isSmoothJoin: false);
+                ctx.LineTo(points[4], isStroked: true, isSmoothJoin: false);
+                ctx.BezierTo(points[5], points[6], points[7], isStroked: true, isSmoothJoin: false);
+                ctx.LineTo(points[8], isStroked: true, isSmoothJoin: false);
+                ctx.BezierTo(points[9], points[10], points[11], isStroked: true, isSmoothJoin: false);
+                ctx.LineTo(points[12], isStroked: true, isSmoothJoin: false);
+                ctx.BezierTo(points[13], points[14], points[15], isStroked: true, isSmoothJoin: false);
             }
             else
             {   
-                ctx.BeginFigure(rect.TopLeft, true /* is filled */, true /* is closed */);
-                ctx.LineTo(rect.TopRight, true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(rect.BottomRight, true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(rect.BottomLeft, true /* is stroked */, false /* is smooth join */);
+                ctx.BeginFigure(rect.TopLeft, isFilled: true, isClosed: true);
+                ctx.LineTo(rect.TopRight, isStroked: true, isSmoothJoin: false);
+                ctx.LineTo(rect.BottomRight, isStroked: true, isSmoothJoin: false);
+                ctx.LineTo(rect.BottomLeft, isStroked: true, isSmoothJoin: false);
             }
 
             ctx.Close();
@@ -455,7 +454,7 @@ namespace System.Windows.Media
             return points;
         }
 
-        private unsafe static void GetPointList(Point * points, uint pointsCount, Rect rect, double radiusX, double radiusY)
+        private static unsafe void GetPointList(Point * points, uint pointsCount, Rect rect, double radiusX, double radiusY)
         {
             if (IsRounded(radiusX, radiusY))
             {
@@ -588,14 +587,14 @@ namespace System.Windows.Media
         #region InstanceData
 
         // Rouneded
-        static private UInt32 c_roundedSegmentCount = 8;
-        static private UInt32 c_roundedPointCount = 17;
+        private static UInt32 c_roundedSegmentCount = 8;
+        private static UInt32 c_roundedPointCount = 17;
 
-        static private byte smoothBezier = (byte)MILCoreSegFlags.SegTypeBezier |
+        private static byte smoothBezier = (byte)MILCoreSegFlags.SegTypeBezier |
                                             (byte)MILCoreSegFlags.SegIsCurved   |
                                             (byte)MILCoreSegFlags.SegSmoothJoin;
 
-        static private byte smoothLine = (byte)MILCoreSegFlags.SegTypeLine | (byte)MILCoreSegFlags.SegSmoothJoin;
+        private static byte smoothLine = (byte)MILCoreSegFlags.SegTypeLine | (byte)MILCoreSegFlags.SegSmoothJoin;
 
         private static ReadOnlySpan<byte> RoundedPathTypes => new byte[] {
             (byte)MILCoreSegFlags.SegTypeBezier |

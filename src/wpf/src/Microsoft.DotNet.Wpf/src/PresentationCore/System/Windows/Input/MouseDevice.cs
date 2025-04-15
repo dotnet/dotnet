@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections;
 using System.Windows.Input.StylusPointer;
@@ -718,7 +717,7 @@ namespace System.Windows.Input
             // Second, if we still haven't thought of a reason to kill capture, validate
             // it on a Visual basis for things like still being in the right tree.
             //
-            if (killCapture == false)
+            if (!killCapture)
             {
                 DependencyObject containingVisual = InputElement.GetContainingVisual(dependencyObject);
                 killCapture = !ValidateVisualForCapture(containingVisual);
@@ -748,13 +747,13 @@ namespace System.Windows.Input
 
         private bool ValidateUIElementForCapture(UIElement element)
         {
-            if (element.IsEnabled == false)
+            if (!element.IsEnabled)
                 return false;
 
-            if (element.IsVisible == false)
+            if (!element.IsVisible)
                 return false;
 
-            if (element.IsHitTestVisible == false)
+            if (!element.IsHitTestVisible)
                 return false;
 
             return true;
@@ -762,13 +761,13 @@ namespace System.Windows.Input
 
         private bool ValidateUIElement3DForCapture(UIElement3D element)
         {
-            if (element.IsEnabled == false)
+            if (!element.IsEnabled)
                 return false;
 
-            if (element.IsVisible == false)
+            if (!element.IsVisible)
                 return false;
 
-            if (element.IsHitTestVisible == false)
+            if (!element.IsHitTestVisible)
                 return false;
 
             return true;
@@ -777,7 +776,7 @@ namespace System.Windows.Input
 
         private bool ValidateContentElementForCapture(ContentElement element)
         {
-            if (element.IsEnabled == false)
+            if (!element.IsEnabled)
                 return false;
 
             // NOTE: there are no IsVisible or IsHitTestVisible properties for ContentElements.
@@ -1481,7 +1480,7 @@ namespace System.Windows.Input
                             IInputElement mouseOver = _mouseOver; // assume mouse is still over whatever it was before
                             IInputElement rawMouseOver = (_rawMouseOver != null) ? (IInputElement)_rawMouseOver.Target : null;
                             bool isPhysicallyOver = _isPhysicallyOver;
-                            bool isGlobalChange = ArePointsClose(ptClient, _lastPosition) == false;  // determine if the mouse actually physically moved
+                            bool isGlobalChange = !ArePointsClose(ptClient, _lastPosition);  // determine if the mouse actually physically moved
 
                             // Invoke Hit Test logic to determine what element the mouse will be over AFTER the move is processed.
                             // - Only do this if:
@@ -1669,7 +1668,7 @@ namespace System.Windows.Input
                             // element we are over or a change in which element
                             // we are over.
                             //
-                            bool isLocalChange = isMouseOverChange || ArePointsClose(ptRelativeToOver, _positionRelativeToOver) == false;
+                            bool isLocalChange = isMouseOverChange || !ArePointsClose(ptRelativeToOver, _positionRelativeToOver);
 
                             // Console.WriteLine("RawMouseActions.AbsoluteMove: isGlobalChange=" + isGlobalChange + " isLocalChange=" + isLocalChange);
 

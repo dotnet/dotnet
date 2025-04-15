@@ -18,13 +18,13 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
@@ -34,7 +34,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
@@ -59,19 +58,16 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IOnInitialized>(clientConnection);
     }
 
-    public static void AddFormattingServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddFormattingServices(this IServiceCollection services)
     {
         // Formatting
         services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
 
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
+        services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
 
-            services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
-        }
+        services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
+        services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
+        services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
     }
 
     public static void AddCompletionServices(this IServiceCollection services)
@@ -100,7 +96,8 @@ internal static class IServiceCollectionExtensions
 
     public static void AddDiagnosticServices(this IServiceCollection services)
     {
-        services.AddHandlerWithCapabilities<DocumentPullDiagnosticsEndpoint>();
+        services.AddHandlerWithCapabilities<VSDocumentDiagnosticsEndpoint>();
+
         services.AddSingleton<RazorTranslateDiagnosticsService>();
         services.AddSingleton(sp => new Lazy<RazorTranslateDiagnosticsService>(sp.GetRequiredService<RazorTranslateDiagnosticsService>));
         services.AddSingleton<IRazorStartupService, WorkspaceDiagnosticsRefresher>();
@@ -112,17 +109,14 @@ internal static class IServiceCollectionExtensions
         services.AddHandlerWithCapabilities<HoverEndpoint>();
     }
 
-    public static void AddSemanticTokensServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddSemanticTokensServices(this IServiceCollection services)
     {
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
-            // Ensure that we don't add the default service if something else has added one.
-            services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
-            services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
+        services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
+        // Ensure that we don't add the default service if something else has added one.
+        services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
+        services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
 
-            services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
-        }
+        services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
 
         services.AddHandler<RazorSemanticTokensRefreshEndpoint>();
 
@@ -167,18 +161,15 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IHtmlCodeActionResolver, HtmlCodeActionResolver>();
     }
 
-    public static void AddTextDocumentServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddTextDocumentServices(this IServiceCollection services)
     {
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
-            services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
+        services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
+        services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
 
-            services.AddSingleton<ISpellCheckService, SpellCheckService>();
-            services.AddSingleton<ICSharpSpellCheckRangeProvider, LspCSharpSpellCheckRangeProvider>();
-            services.AddHandlerWithCapabilities<DocumentSpellCheckEndpoint>();
-            services.AddHandler<WorkspaceSpellCheckEndpoint>();
-        }
+        services.AddSingleton<ISpellCheckService, SpellCheckService>();
+        services.AddSingleton<ICSharpSpellCheckRangeProvider, LspCSharpSpellCheckRangeProvider>();
+        services.AddHandlerWithCapabilities<DocumentSpellCheckEndpoint>();
+        services.AddHandler<WorkspaceSpellCheckEndpoint>();
 
         services.AddHandlerWithCapabilities<DocumentDidChangeEndpoint>();
         services.AddHandler<DocumentDidCloseEndpoint>();
@@ -201,7 +192,7 @@ internal static class IServiceCollectionExtensions
         });
     }
 
-    public static void AddDocumentManagementServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddDocumentManagementServices(this IServiceCollection services)
     {
         services.AddSingleton<IGeneratedDocumentPublisher, GeneratedDocumentPublisher>();
         services.AddSingleton<IRazorStartupService>((services) => (GeneratedDocumentPublisher)services.GetRequiredService<IGeneratedDocumentPublisher>());
@@ -214,19 +205,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IDocumentMappingService, LspDocumentMappingService>();
         services.AddSingleton<IEditMappingService, LspEditMappingService>();
-        services.AddSingleton<RazorFileChangeDetectorManager>();
-        services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<RazorFileChangeDetectorManager>());
-
-        services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
-        services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
-
-        // Document processed listeners
-        if (!featureOptions.SingleServerSupport)
-        {
-            // If single server is on, then we don't want to publish diagnostics, so best to just not hook up to any
-            // events etc.
-            services.AddSingleton<IDocumentProcessedListener, RazorDiagnosticsPublisher>();
-        }
+        services.AddSingleton<WorkspaceRootPathWatcher>();
+        services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<WorkspaceRootPathWatcher>());
 
         services.AddSingleton<IDocumentProcessedListener, GeneratedDocumentSynchronizer>();
 

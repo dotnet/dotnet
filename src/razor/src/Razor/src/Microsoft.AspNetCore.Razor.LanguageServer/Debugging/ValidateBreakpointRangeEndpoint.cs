@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
@@ -21,7 +20,7 @@ internal class ValidateBreakpointRangeEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
-    : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>(
+    : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, LspRange?>(
         languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
@@ -38,10 +37,10 @@ internal class ValidateBreakpointRangeEndpoint(
         serverCapabilities.EnableValidateBreakpointRange();
     }
 
-    protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    protected override Task<LspRange?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         // no such thing as Razor breakpoints (yet?!)
-        return SpecializedTasks.Null<Range>();
+        return SpecializedTasks.Null<LspRange>();
     }
 
     protected async override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -72,7 +71,7 @@ internal class ValidateBreakpointRangeEndpoint(
             positionInfo.LanguageKind);
     }
 
-    protected async override Task<Range?> HandleDelegatedResponseAsync(Range? delegatedResponse, ValidateBreakpointRangeParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    protected async override Task<LspRange?> HandleDelegatedResponseAsync(LspRange? delegatedResponse, ValidateBreakpointRangeParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         if (delegatedResponse is null)
         {

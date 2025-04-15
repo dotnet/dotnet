@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // Description: Code behind file for the DocumentViewer FindToolBar.
 
@@ -77,7 +76,7 @@ namespace MS.Internal.Documents
         /// <value></value>
         public bool MatchCase
         {
-            get { return OptionsCaseMenuItem.IsChecked == true; }
+            get { return OptionsCaseMenuItem.IsChecked; }
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace MS.Internal.Documents
         /// <value></value>
         public bool MatchWholeWord
         {
-            get { return OptionsWholeWordMenuItem.IsChecked == true; }
+            get { return OptionsWholeWordMenuItem.IsChecked; }
         }
         /// <summary>
         /// Specifies whether the search should match diacritics.
@@ -95,7 +94,7 @@ namespace MS.Internal.Documents
         /// <value></value>
         public bool MatchDiacritic
         {
-            get { return OptionsDiacriticMenuItem.IsChecked == true; }
+            get { return OptionsDiacriticMenuItem.IsChecked; }
         }
 
         /// <summary>
@@ -104,7 +103,7 @@ namespace MS.Internal.Documents
         /// <value></value>
         public bool MatchKashida
         {
-            get { return OptionsKashidaMenuItem.IsChecked == true; }
+            get { return OptionsKashidaMenuItem.IsChecked; }
         }
 
         /// <summary>
@@ -113,7 +112,7 @@ namespace MS.Internal.Documents
         /// <value></value>
         public bool MatchAlefHamza
         {
-            get { return OptionsAlefHamzaMenuItem.IsChecked == true; }
+            get { return OptionsAlefHamzaMenuItem.IsChecked; }
         }
 
         /// <summary>

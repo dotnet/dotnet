@@ -37,10 +37,9 @@ UpdateValue
 #nullable disable
             , value: ParentValue), ParentValue));
             __builder.SetUpdatesAttributeName("myvalue");
-            __builder.AddContent(3, 
 #nullable restore
-#line (1,39)-(1,50) "x:\dir\subdir\Test\TestComponent.cshtml"
-ParentValue
+#line (1,39)-(1,50) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(3, ParentValue
 
 #line default
 #line hidden

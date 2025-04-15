@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.13.1</PackageVersion>
+    <AssemblyName>NuGet.Frameworks</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+</Project>

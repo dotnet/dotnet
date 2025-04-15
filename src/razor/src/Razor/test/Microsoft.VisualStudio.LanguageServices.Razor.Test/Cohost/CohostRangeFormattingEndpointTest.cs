@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Threading;
 using Roslyn.Test.Utilities;
@@ -19,10 +18,10 @@ using Xunit.Abstractions;
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 [Collection(HtmlFormattingCollection.Name)]
-public class CohostRangeFormattingEndpointTest(FuseTestContext context, HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
-    : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
+    : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public Task RangeFormatting()
         => VerifyRangeFormattingAsync(
             input: """
@@ -102,9 +101,7 @@ public class CohostRangeFormattingEndpointTest(FuseTestContext context, HtmlForm
 
     private async Task VerifyRangeFormattingAsync(TestCode input, string expected)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlDocumentPublisher = new HtmlDocumentPublisher(RemoteServiceInvoker, StrictMock.Of<TrackingLSPDocumentManager>(), StrictMock.Of<JoinableTaskContext>(), LoggerFactory);

@@ -1,3 +1,4 @@
 #nullable enable
+~NuGet.Protocol.Core.Types.PackageUpdateResource.PushAsync(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, bool allowSnupkg, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata(System.Uri advisoryUrl, int severity) -> void
 ~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state) -> void
