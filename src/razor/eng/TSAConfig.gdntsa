@@ -4,15 +4,12 @@
         "CoreRazorTooling@microsoft.com"
     ],
     "codebaseAdmins": [
-        "REDMOND\\manishj",
+        "REDMOND\\jaredpar",
         "REDMOND\\phillipa"
     ],
     "instanceUrl": "https://devdiv.visualstudio.com",
     "projectName": "DevDiv",
     "areaPath": "DevDiv\\NET Developer Experience\\Razor Tooling",
     "iterationPath": "DevDiv",
-    "tools": [
-        "APIScan",
-        "BinSkim"
-    ]
+    "allTools": true
 }
