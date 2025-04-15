@@ -22,9 +22,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.617601">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.620402">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>1556b6c639edcaee959013681afcf2e66b118537</Sha>
+      <Sha>14f833124983b36ac4083338d0cad6caefce2489</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
@@ -44,14 +44,14 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25164.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25204.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
+      <Sha>97cbc7361ff28b2948c8182720c166a744049f55</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.25164.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.25204.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
+      <Sha>97cbc7361ff28b2948c8182720c166a744049f55</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
@@ -62,9 +62,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.25164.2">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.25204.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5ba9ca776c1d0bb72b2791591e54cf51fc52dfee</Sha>
+      <Sha>97cbc7361ff28b2948c8182720c166a744049f55</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

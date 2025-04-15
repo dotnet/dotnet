@@ -16,7 +16,7 @@
     <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.4.25206.7</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.4.25211.22</MicrosoftDotNetGenAPITaskPackageVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>

@@ -36,11 +36,11 @@
       "commitSha": "3bbb940ceeb3254790899d751a8d418348563d40"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25181.1",
+      "packageVersion": "9.0.0-preview.1.25207.1",
       "barId": null,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "f3fbe1adbd890adc4709b033d5bd965ddbcee55f"
+      "commitSha": "dd4d34c5adceabc4a02c345473a5baaece64d8bd"
     },
     {
       "packageVersion": "9.0.0-preview.25173.1",
@@ -71,11 +71,11 @@
       "commitSha": "4ba36db1f42f33a66d9677f0b9d589d39b204a9c"
     },
     {
-      "packageVersion": "17.15.0-preview-25211-01",
+      "packageVersion": "17.15.0-preview-25211-02",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b96560aa033132c61c19d7c6b16d17c26fe3dbaf"
+      "commitSha": "46b5fa75b0f9a5525846981359daa6850d21ea0f"
     },
     {
       "packageVersion": "6.14.0-preview.1.102",
@@ -85,25 +85,25 @@
       "commitSha": "7f50923823cb8fe4dab9b6565ece9516407de498"
     },
     {
-      "packageVersion": "10.0.0-preview.25213.1",
+      "packageVersion": "10.0.0-preview.25214.1",
       "barId": null,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f50cc83551d1458a73206ac8f08bf117d0b32d5a"
+      "commitSha": "6ba945a8415f59d1bf8d686c21f25a3661e8bd02"
     },
     {
-      "packageVersion": "5.0.0-1.25211.1",
+      "packageVersion": "5.0.0-1.25213.1",
       "barId": null,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "6a1833332064ba3569b488cab144490ddcb727c2"
+      "commitSha": "e2700e893c8884ccdcb15bdb294c89d624f597af"
     },
     {
-      "packageVersion": "10.0.0-preview.25181.1",
+      "packageVersion": "10.0.0-preview.25214.1",
       "barId": null,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "bca09e7c4c74e5ce6c59a264870464fe9f229503"
+      "commitSha": "729249ec799901c8949ab4eb9394dd35b2f571cd"
     },
     {
       "packageVersion": "10.0.0-preview.4.25211.19",
@@ -124,21 +124,21 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "26f496bafa5c3f78e305746b4baed562f2b35778"
+      "commitSha": "06d1103f188d426497c7344ebf507b170ae1ce3b"
     },
     {
-      "packageVersion": "10.0.620701",
+      "packageVersion": "10.0.621401",
       "barId": null,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ebe6fe9cc5b8b9c87cb218b35514bf9d04475047"
+      "commitSha": "d64d8da45618323a39fb77860d1140bdbcd506ad"
     },
     {
-      "packageVersion": "10.0.621001",
+      "packageVersion": "10.0.621401",
       "barId": null,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1df7df81ac783e63aa7fbccb0232ad20fb128b15"
+      "commitSha": "0fb2d0d836dffe32b32e362e86f0dccd6f40bee8"
     },
     {
       "packageVersion": "10.0.0-beta.25201.1",
@@ -155,18 +155,18 @@
       "commitSha": "d1c0c096d93db9c45001409afbb3dfec4bce89bb"
     },
     {
-      "packageVersion": "10.0.100-preview.4.25213.1",
+      "packageVersion": "10.0.100-preview.4.25214.2",
       "barId": null,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "7095698ed9852bb44d33243293e4a3a31e18b103"
+      "commitSha": "d92055f1223d7c91b96cbea90afe0f7ca7f0542b"
     },
     {
-      "packageVersion": "17.14.0-preview-25202-02",
+      "packageVersion": "17.15.0-preview-25211-01",
       "barId": null,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "d45df4b7119f16b31c3d0adcd3adbf3ec0842d02"
+      "commitSha": "92a3cb95e0d1b901ab0eb77f511e4cabe76edd61"
     },
     {
       "packageVersion": "10.0.0-preview.4.25211.2",
