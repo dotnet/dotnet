@@ -203,7 +203,7 @@ namespace NuGet.Test.Utility
         {
             var config = GetOrAddSection(doc, "config");
 
-            foreach (var item in config.Elements(XName.Get("add")).Where(e => e.Name.LocalName.Equals(key, StringComparison.OrdinalIgnoreCase)).ToArray())
+            foreach (var item in config.Elements(XName.Get("add")).Where(e => e.FirstAttribute.Value.Equals(key, StringComparison.OrdinalIgnoreCase)).ToArray())
             {
                 item.Remove();
             }

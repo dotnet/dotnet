@@ -60,15 +60,7 @@ namespace NuGet.Commands.Test
 
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
-
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                JObject configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -130,14 +122,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -199,14 +184,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -274,14 +252,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -370,14 +341,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -469,14 +433,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -565,14 +522,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -658,14 +608,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -734,15 +677,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
-
+                JObject configJson = GetConfigWithFrameworkAndDependency(framework);
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
@@ -805,14 +740,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -875,14 +803,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -945,14 +866,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1022,14 +936,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1097,14 +1004,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1175,14 +1075,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1254,14 +1147,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1334,14 +1220,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1415,14 +1294,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1498,14 +1370,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1581,14 +1446,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1658,14 +1516,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1730,14 +1581,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                JObject configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1785,14 +1629,7 @@ namespace NuGet.Commands.Test
                 var sources = new List<PackageSource>();
                 sources.Add(new PackageSource(repository));
 
-                var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
-                    ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                    }
-                }".Replace("_FRAMEWORK_", framework));
+                var configJson = GetConfigWithFrameworkAndDependency(framework);
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
@@ -1998,14 +1835,7 @@ namespace NuGet.Commands.Test
 
                 if (configJson == null)
                 {
-                    configJson = JObject.Parse(@"{
-                      ""dependencies"": {
-                        ""packageA"": ""1.0.0""
-                      },
-                      ""frameworks"": {
-                        ""_FRAMEWORK_"": {}
-                      }
-                    }".Replace("_FRAMEWORK_", framework));
+                    configJson = GetConfigWithFrameworkAndDependency(framework);
                 }
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
@@ -2023,6 +1853,19 @@ namespace NuGet.Commands.Test
 
                 return result;
             }
+        }
+
+        private static JObject GetConfigWithFrameworkAndDependency(string framework)
+        {
+            return JObject.Parse(@"{
+                    ""frameworks"": {
+                    ""_FRAMEWORK_"": {
+                        ""dependencies"": {
+                          ""packageA"": ""1.0.0""
+                        }
+                      }
+                    }
+                }".Replace("_FRAMEWORK_", framework));
         }
 
         private static FileInfo CreateRuntimesPackage(string repositoryDir)

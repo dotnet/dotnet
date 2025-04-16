@@ -16903,12 +16903,12 @@
     ]
   },
   "project": {
-    "dependencies": {
-      "Microsoft.NETCore.UniversalWindowsPlatform": "[5.0.0, )"
-    },
     "frameworks": {
       "uap10.0": {
-        "targetAlias": "uap10.0"
+        "targetAlias": "uap10.0",
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "[5.0.0, )"
+        }
       }
     },
     "runtimes": {

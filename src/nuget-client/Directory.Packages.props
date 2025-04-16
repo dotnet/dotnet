@@ -8,7 +8,7 @@
 
     <!-- Read docs/updating-packages.md before updating System.Text.Json's version -->
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">8.0.5</SystemTextJsonVersion>
-    <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta4.23307.1</SystemCommandLineVersion>
+    <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <MSTestPackageVersion>3.4.3</MSTestPackageVersion>
   </PropertyGroup>
 
@@ -42,6 +42,7 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="ILMerge" Version="3.0.41" />
     <PackageVersion Include="Lucene.Net" Version="3.0.3" />
+    <PackageVersion Include="MessagePack" Version="2.5.192" />
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Artifacts" Version="4.2.0" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildVersion)" />
@@ -76,13 +77,13 @@
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="$(MicrosoftVisualStudioSolutionPersistenceVersion)" />
     <!-- Microsoft.VisualStudio.SDK has vulnerable dependencies System.Text.json and Microsoft.IO.Redist. When it's upgraded, try removing the pinned packages -->
-    <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.11.39714" />
+    <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.13.39276" />
     <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.4.2244" />
     <PackageVersion Include="Microsoft.VisualStudio.TemplateWizardInterface" Version="17.10.40170" />
-    <PackageVersion Include="Microsoft.VisualStudio.VCProjectEngine" Version="17.11.39721" />
+    <PackageVersion Include="Microsoft.VisualStudio.VCProjectEngine" Version="17.13.39273" />
     <PackageVersion Include="Microsoft.VisualStudio.Workspace.VSIntegration" Version="17.0.7-preview-0001-g5492e466a9" />
-    <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.12.2069" />
+    <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.13.2126" />
     <PackageVersion Include="Microsoft.Web.Xdt" Version="$(MicrosoftWebXdtPackageVersion)" />
     <PackageVersion Include="Moq" Version="4.18.1" />
     <PackageVersion Include="MSTest.TestAdapter" Version="$(MSTestPackageVersion)" />
@@ -136,11 +137,11 @@
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Contracts.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Interop.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.SolutionRestoreManager.Interop.csproj'">
-    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.5.31" />
+    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.8.3" />
     <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.10.191" />
     <PackageVersion Update="Microsoft.VisualStudio.SDK" Version="" />
     <!-- Microsoft.VisualStudio.Shell.15.0 has vulnerable dependencies System.Text.Json and Microsoft.IO.Redist. When it's upgraded, try removing the pinned packages -->
-    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.10.40173" />
+    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" />
   </ItemGroup>
 
   <ItemGroup>

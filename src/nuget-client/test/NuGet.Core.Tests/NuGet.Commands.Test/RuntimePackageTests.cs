@@ -126,12 +126,13 @@ namespace NuGet.Commands.Test
                     ""runtimes"": {
                         ""unix"": {}
                     },
-                    ""dependencies"": {
-                        ""packageA"": ""1.0.0"",
-                        ""packageB"": ""1.0.0""
-                    },
                     ""frameworks"": {
-                        ""_FRAMEWORK_"": {}
+                        ""_FRAMEWORK_"": {
+                            ""dependencies"": {
+                                ""packageA"": ""1.0.0"",
+                                ""packageB"": ""1.0.0""
+                            }
+                        }
                     }
                 }".Replace("_FRAMEWORK_", framework));
 

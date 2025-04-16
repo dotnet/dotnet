@@ -15,7 +15,7 @@ namespace NuGet.Common
         /// Split on ; and trim. Null or empty inputs will return an
         /// empty array.
         /// </summary>
-        public static string[] Split(string s)
+        public static string[] Split(string? s)
         {
             return Split(s, ';');
         }
@@ -24,13 +24,13 @@ namespace NuGet.Common
         /// Split on ; and trim. Null or empty inputs will return an
         /// empty array.
         /// </summary>
-        public static string[] Split(string s, params char[] chars)
+        public static string[] Split(string? s, params char[] chars)
         {
             if (!string.IsNullOrEmpty(s))
             {
                 // Split on ; and trim all entries
                 // After trimming remove any entries that are now empty due to trim.
-                return s.Split(chars)
+                return s!.Split(chars)
                     .Select(entry => entry.Trim())
                     .Where(entry => entry.Length != 0)
                     .ToArray();

@@ -30,7 +30,6 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             using (var packageDir = TestDirectory.Create())
-            using (TestFileSystemUtility.SetCurrentDirectory(packageDir))
             {
                 var packageId = "XPlatPushTests.PushToServerSucceeds";
                 var packageVersion = "1.0.0";
@@ -72,7 +71,6 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             using (var packageDir = TestDirectory.Create())
-            using (TestFileSystemUtility.SetCurrentDirectory(packageDir))
             {
                 var packageId = "XPlatPushTests.PushToServerSucceeds";
                 var packageVersion = "1.0.0";
@@ -121,7 +119,6 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             using (var packageDir = TestDirectory.Create())
-            using (TestFileSystemUtility.SetCurrentDirectory(packageDir))
             {
                 var packageId = "XPlatPushTests.PushToServerSucceeds";
                 var packageVersion = "1.0.0";

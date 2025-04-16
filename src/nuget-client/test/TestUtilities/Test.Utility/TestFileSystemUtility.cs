@@ -195,27 +195,6 @@ namespace NuGet.Test.Utility
             }
         }
 
-        private class ResetDirectory : IDisposable
-        {
-            public string OldPath { get; set; }
-
-            void IDisposable.Dispose()
-            {
-                Directory.SetCurrentDirectory(OldPath);
-            }
-        }
-
-        public static IDisposable SetCurrentDirectory(string path)
-        {
-            var oldPath = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(path);
-
-            return new ResetDirectory()
-            {
-                OldPath = oldPath
-            };
-        }
-
         public static DirectoryInfo GetDirectoryOfPathAbove(string relativePath)
         {
             var currentDirInfo = new DirectoryInfo(Directory.GetCurrentDirectory());

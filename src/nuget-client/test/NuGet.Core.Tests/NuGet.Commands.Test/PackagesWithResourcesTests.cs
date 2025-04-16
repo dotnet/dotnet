@@ -61,11 +61,12 @@ namespace NuGet.Commands.Test
                 sources.Add(new PackageSource(repository));
 
                 var configJson = JObject.Parse(@"{
-                    ""dependencies"": {
-                    ""packageA"": ""1.0.0""
-                    },
                     ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
+                    ""_FRAMEWORK_"": {
+                        ""dependencies"": {
+                          ""packageA"": ""1.0.0""
+                        }
+                    }
                     }
                 }".Replace("_FRAMEWORK_", framework));
 

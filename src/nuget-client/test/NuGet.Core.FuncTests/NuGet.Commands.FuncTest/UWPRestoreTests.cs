@@ -81,13 +81,12 @@ namespace NuGet.Commands.FuncTest
             using (var projectDir = TestDirectory.Create())
             {
                 var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.AspNet.Mvc.de"": ""5.2.3""
-                  },
                   ""frameworks"": {
                     ""net46"": {
+                      ""dependencies"": {
+                        ""Microsoft.AspNet.Mvc.de"": ""5.2.3""
+                      }                    }
                     }
-                  }
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
@@ -121,14 +120,15 @@ namespace NuGet.Commands.FuncTest
 
             using var pathContext = new SimpleTestPathContext();
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": {
-                        ""version"": ""5.0.0"",
-                        ""exclude"": ""build,runtime,compile,native""
-                     }
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": {
+                            ""version"": ""5.0.0"",
+                            ""exclude"": ""build,runtime,compile,native""
+                         }
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},
@@ -249,11 +249,12 @@ namespace NuGet.Commands.FuncTest
             using var pathContext = new SimpleTestPathContext();
 
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},
@@ -304,11 +305,12 @@ namespace NuGet.Commands.FuncTest
             using var pathContext = new SimpleTestPathContext();
 
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},

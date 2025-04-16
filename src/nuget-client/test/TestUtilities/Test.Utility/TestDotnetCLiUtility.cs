@@ -16,8 +16,8 @@ namespace NuGet.Test.Utility
 {
     public static class TestDotnetCLiUtility
     {
-#if NET8_0 // This override allows us to test the next version of the CLI without making all the projects target that version.
-        private static NuGetFramework FrameworkOverride = new NuGetFramework("net9.0");
+#if NET9_0 // This override allows us to test the next version of the CLI without making all the projects target that version.
+        private static NuGetFramework FrameworkOverride = new NuGetFramework("net10.0");
 #elif !IS_DESKTOP
         private static NuGetFramework FrameworkOverride = null;
 #endif

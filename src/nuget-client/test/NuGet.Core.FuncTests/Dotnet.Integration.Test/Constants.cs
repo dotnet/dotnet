@@ -8,9 +8,9 @@ namespace Dotnet.Integration.Test
 {
     internal static class Constants
     {
-#if NET8_0 || NET9_0
+#if NET9_0
         // Specifies a target framework for projects used during testing.  This should match the framework that the SDK being tested has.
-        internal const string ProjectTargetFramework = "net9.0";
+        internal const string ProjectTargetFramework = "net10.0";
         internal static readonly NuGetFramework DefaultTargetFramework = NuGetFramework.Parse(ProjectTargetFramework);
 #else
 #error Update the logic for which target framework to use for tests projects!!!

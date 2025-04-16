@@ -227,6 +227,7 @@ NuGet.Protocol.Core.Types.PackageUpdateResource
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
+~NuGet.Protocol.Core.Types.PackageUpdateResource.PushAsync(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, bool allowSnupkg, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.get -> NuGet.Configuration.ISettings
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.set -> void
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.SourceUri.get -> System.Uri
@@ -838,6 +839,7 @@ NuGet.Protocol.PackageUpdateResourceV3Provider.PackageUpdateResourceV3Provider()
 NuGet.Protocol.PackageVulnerabilityMetadata
 ~NuGet.Protocol.PackageVulnerabilityMetadata.AdvisoryUrl.get -> System.Uri
 NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata() -> void
+~NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata(System.Uri advisoryUrl, int severity) -> void
 NuGet.Protocol.PackageVulnerabilityMetadata.Severity.get -> int
 NuGet.Protocol.PackageVulnerabilitySeverity
 NuGet.Protocol.PackageVulnerabilitySeverity.Critical = 3 -> NuGet.Protocol.PackageVulnerabilitySeverity
@@ -1224,6 +1226,7 @@ NuGet.Protocol.Plugins.PluginFactory
 NuGet.Protocol.Plugins.PluginFactory.PluginFactory(System.TimeSpan pluginIdleTimeout) -> void
 NuGet.Protocol.Plugins.PluginFile
 ~NuGet.Protocol.Plugins.PluginFile.Path.get -> string
+~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state) -> void
 ~NuGet.Protocol.Plugins.PluginFile.PluginFile(string filePath, System.Lazy<NuGet.Protocol.Plugins.PluginFileState> state, bool requiresDotnetHost) -> void
 ~NuGet.Protocol.Plugins.PluginFile.State.get -> System.Lazy<NuGet.Protocol.Plugins.PluginFileState>
 NuGet.Protocol.Plugins.PluginFileState

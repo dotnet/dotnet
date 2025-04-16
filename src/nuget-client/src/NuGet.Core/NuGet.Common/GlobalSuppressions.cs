@@ -40,3 +40,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Build", "CA1012:Abstract type LoggerBase should not have constructors", Justification = "<Pending>", Scope = "type", Target = "~T:NuGet.Common.LoggerBase")]
 [assembly: SuppressMessage("Build", "CA1815:SearchPathResult should override Equals.", Justification = "<Pending>", Scope = "type", Target = "~T:NuGet.Common.PathResolver.SearchPathResult")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Common.Migrations.MigrationRunner.Run(System.String,NuGet.Common.IEnvironmentVariableReader)")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Common.PathUtility.CheckIfFileSystemIsCaseInsensitive~System.Boolean")]

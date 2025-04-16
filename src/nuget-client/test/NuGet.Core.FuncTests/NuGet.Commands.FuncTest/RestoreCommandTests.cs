@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -155,16 +156,14 @@ namespace NuGet.Commands.FuncTest
                 Directory.CreateDirectory(Path.Combine(projectDir, "TestProject"));
                 var projectSpecPath = Path.Combine(projectDir, "TestProject", "project.json");
                 var projectSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "TestProject", projectSpecPath).WithTestRestoreMetadata();
-                projectSpec.Dependencies = new List<LibraryDependency>
+
+                ProjectTestHelpers.AddDependency(projectSpec, new LibraryDependency()
                 {
-                    new LibraryDependency()
-                    {
-                        LibraryRange = new LibraryRange(
+                    LibraryRange = new LibraryRange(
                             "REFERENCEDPROJECT",
                             VersionRange.Parse("*"),
                             LibraryDependencyTarget.Project)
-                    }
-                };
+                });
 
                 Directory.CreateDirectory(Path.Combine(projectDir, "ReferencedProject"));
                 var referenceSpecPath = Path.Combine(projectDir, "ReferencedProject", "project.json");
@@ -503,13 +502,13 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""dotnet"": {
                             ""imports"": ""portable-net452+win81"",
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
@@ -559,13 +558,13 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""netstandard1.2"": {
                             ""imports"": [""dotnet5.3"",""portable-net452+win81""],
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
@@ -675,13 +674,13 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""dotnet"": {
                             ""imports"": ""portable-net452+win81"",
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
@@ -775,13 +774,13 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""WindowsAzure.Storage"": ""4.4.1-preview""
-                    },
                     ""frameworks"": {
                         ""dotnet"": {
                             ""imports"": ""portable-net452+win81"",
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""WindowsAzure.Storage"": ""4.4.1-preview""
+                            }
                         }
                     }
                 }");
@@ -1139,17 +1138,11 @@ namespace NuGet.Commands.FuncTest
 
             var project1Json = @"
             {
-              ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""packageA"": ""1.0.0""
-              },
               ""frameworks"": {
                 ""net45"": {
+                    ""dependencies"": {
+                        ""packageA"": ""1.0.0""
+                    }
                 }
               }
             }";
@@ -1893,11 +1886,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
+                        }
                     }
                 }");
 
@@ -1987,11 +1981,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1-*""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1-*""
+                            }
+                        }
                     }
                 }");
 
@@ -2028,11 +2023,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1-*""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1-*""
+                            }
+                        }
                     }
                 }");
 
@@ -2338,11 +2334,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""XXX"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""XXX"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -2388,11 +2385,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""XXX"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""XXX"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -2438,11 +2436,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""XXX"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""XXX"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -5288,30 +5287,22 @@ namespace NuGet.Commands.FuncTest
                 }
             };
 
-            if (spec.Dependencies == null)
-            {
-                spec.Dependencies = new List<LibraryDependency>();
-            }
-
-            spec.Dependencies.Add(target);
+            ProjectTestHelpers.AddDependency(spec, target);
         }
 
         private static JObject BasicConfig
         {
             get
             {
-
-
-                var frameworks = new JObject
-                {
-                    ["netcore50"] = new JObject()
-                };
-
                 var json = new JObject
                 {
-                    ["dependencies"] = new JObject(),
-
-                    ["frameworks"] = frameworks
+                    ["frameworks"] = new JObject
+                    {
+                        ["netcore50"] = new JObject()
+                        {
+                            ["dependencies"] = new JObject()
+                        }
+                    }
                 };
 
                 json.Add("runtimes", JObject.Parse("{ \"uap10-x86\": { }, \"uap10-x86-aot\": { } }"));
@@ -5324,18 +5315,16 @@ namespace NuGet.Commands.FuncTest
         {
             get
             {
-
-
-                var frameworks = new JObject
-                {
-                    ["net46"] = new JObject()
-                };
-
                 var json = new JObject
                 {
-                    ["dependencies"] = new JObject(),
 
-                    ["frameworks"] = frameworks
+                    ["frameworks"] = new JObject
+                    {
+                        ["net46"] = new JObject()
+                        {
+                            ["dependencies"] = new JObject(),
+                        }
+                    }
                 };
 
                 json.Add("runtimes", JObject.Parse("{ \"uap10-x86\": { }, \"uap10-x86-aot\": { } }"));

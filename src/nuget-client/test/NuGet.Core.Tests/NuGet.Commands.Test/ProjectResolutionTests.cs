@@ -508,16 +508,11 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
               ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""project2"": ""1.0.0-*""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""project2"": ""1.0.0-*""
+                  }
                 }
               }
             }";
@@ -525,11 +520,6 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
               ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }

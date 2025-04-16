@@ -13,14 +13,14 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        var rootCommand = new CliRootCommand("Check that nupkg dependencies are available on specified source(s).");
+        var rootCommand = new RootCommand("Check that nupkg dependencies are available on specified source(s).");
 
-        var nupkgsArgument = new CliArgument<List<FileInfo>>("nupkgs");
+        var nupkgsArgument = new Argument<List<FileInfo>>("nupkgs");
         nupkgsArgument.Arity = ArgumentArity.OneOrMore;
         nupkgsArgument.Description = "Nupkgs to check";
         rootCommand.Add(nupkgsArgument);
 
-        var sourcesOption = new CliOption<List<string>>("--source");
+        var sourcesOption = new Option<List<string>>("--source");
         sourcesOption.Aliases.Add("-s");
         sourcesOption.Required = true;
         sourcesOption.Arity = ArgumentArity.OneOrMore;
