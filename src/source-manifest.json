@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25212.2",
+      "packageVersion": "10.0.0-preview.4.25215.10",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d9c0bed66a470a205dd8885d4306d0ecf3f3e37b"
+      "commitSha": "a94ba4b6c94e09433b586db219bd854e70021e5a"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -50,11 +50,11 @@
       "commitSha": "e2f850daa95eea9d675ba0c6d793fd41c4b76f7a"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25211.2",
+      "packageVersion": "10.0.0-preview.4.25214.1",
       "barId": null,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ae4a6bc3cbeb8afda9a59c193f7b16b9ef305c7d"
+      "commitSha": "2b564f7c09dd9fba0d9e1daa2e41056dd8b8b673"
     },
     {
       "packageVersion": "10.0.0-preview.4.25215.3",
@@ -71,11 +71,11 @@
       "commitSha": "4ba36db1f42f33a66d9677f0b9d589d39b204a9c"
     },
     {
-      "packageVersion": "17.15.0-preview-25215-08",
+      "packageVersion": "17.15.0-preview-25215-13",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b57af8f00b52e854ec7d82c4ff11a3cfa08a9bef"
+      "commitSha": "95ecbd29a31a44fa39745045118468be21e982d7"
     },
     {
       "packageVersion": "6.14.0-preview.1.102",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "00f7c38d2bc09203b34d17dffb5b8e23c20553c6"
+      "commitSha": "c8f81a84022d80a27286d46fd9ca271530602aaa"
     },
     {
       "packageVersion": "10.0.621401",
@@ -208,7 +208,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "52204f78f94d7512df1f0f3bea1d47437a2c3a58"
+      "commitSha": "e90fe2485641bab0d6af4500192dc503384950d1"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
