@@ -563,13 +563,17 @@
   <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="TextControlBackgroundDisabled" Color="{StaticResource SystemColorWindowColor}" />
-  <!--<SolidColorBrush x:Key="TextControlBorderBrush" Color="{StaticResource TextControlElevationBorderBrush}" />-->
   <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource SystemColorWindowTextColor}" />
+  <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="{StaticResource SystemColorWindowTextColor}" />
+  <SolidColorBrush x:Key="TextControlForegroundFocused" Color="{StaticResource SystemColorWindowTextColor}" />
   <SolidColorBrush x:Key="TextControlForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+  <SolidColorBrush x:Key="TextControlBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="TextControlFocusedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="TextControlBorderBrushDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+  <!-- Deprecated TextControl Brushes -->
+  <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{StaticResource SystemColorGrayTextColor}" />
-  <!-- <SolidColorBrush x:Key="TextControlButtonForeground" Color="{StaticResource SystemColorWindowTextColor}" /> -->
   <!--  Thumb  -->
   <SolidColorBrush x:Key="ThumbBackground" Color="{StaticResource SystemColorButtonTextColor}" />
   <!--  ThumbRate  -->
@@ -3285,7 +3289,9 @@
                 <TranslateTransform />
               </Border.RenderTransform>
               <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuItemScrollViewerStyle}">
-                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                <Grid>
+                  <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle" Grid.IsSharedSizeScope="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                </Grid>
               </ScrollViewer>
               <Border.Effect>
                 <DropShadowEffect BlurRadius="20" Direction="270" Opacity="0.25" ShadowDepth="6" />
@@ -3365,8 +3371,8 @@
     <Border x:Name="Border" Margin="4,1,4,1" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="4">
       <Grid Margin="8,6,8,6">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemCheckBoxIconColumnGroup" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup" />
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
         </Grid.ColumnDefinitions>
@@ -3413,7 +3419,7 @@
       <Border x:Name="Border" Grid.Row="1" Margin="4,1,4,1" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="4">
         <Grid x:Name="MenuItemContent" Margin="8,6,8,6">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
@@ -3431,7 +3437,7 @@
               <TranslateTransform />
             </Border.RenderTransform>
             <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuItemScrollViewerStyle}">
-              <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+              <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle" Grid.IsSharedSizeScope="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
             </ScrollViewer>
             <Border.Effect>
               <DropShadowEffect BlurRadius="20" Direction="270" Opacity="0.5" ShadowDepth="6" />
