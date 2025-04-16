@@ -267,6 +267,7 @@
 
     <ItemGroup>
       <PyCaches Include="$(ArtifactsObjDir)\upstream\**\*.pyc" />
+      <PyCaches Include="$(ArtifactsObjDir)\python\**\*.pyc" />
       <PyCacheDirs Include="@(PyCaches->'%(RelativeDir)')" />
       <PyCacheDirsDeduplicated Include="@(PyCacheDirs->Distinct())" />
     </ItemGroup>
