@@ -28,7 +28,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/efcore`  
 *[_git/dotnet-efcore@9275e9a](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC9275e9ac55e413546a09551c29d5227d6d009747)*
 - `src/emsdk`  
-*[dotnet/emsdk@78be8cd](https://github.com/dotnet/emsdk/tree/78be8cdf4f0bfd93018fd7a87f8282a41d041298)*
+*[dotnet/emsdk@78f6f07](https://github.com/dotnet/emsdk/tree/78f6f07d38e8755e573039a8aa04e131d3e59b76)*
 - `src/fsharp`  
 *[dotnet/fsharp@47d4e3f](https://github.com/dotnet/fsharp/tree/47d4e3f91e4e5414b6dafbf14288b9c5a798ef99)*
 - `src/msbuild`  
