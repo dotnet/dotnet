@@ -23,8 +23,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25211.4</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25211.4</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25216.6</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25216.6</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta5.25210.1</SystemCommandLineVersion>
     <!-- corefx -->
@@ -95,7 +95,7 @@
     <!-- diagnostics -->
     <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-preview.4.25213.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-preview.4.25217.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->

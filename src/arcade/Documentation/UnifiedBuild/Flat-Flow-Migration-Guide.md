@@ -185,6 +185,18 @@ graph TD
 
 The `runtime` and `arcade` dependencies will flow into `winforms` through the VMR, and the `winforms-assets` dependency will still flow directly into `winforms` (as it's not part of the VMR). The `winforms-tests` repository will newly depend on the VMR instead of `winforms` and will get its packages from the VMR.
 
+## Potential rollback plan
+
+We will consider rolling back the subscription changes if we see that the codeflow PRs contain changes that don't belong there, if the backflow PRs contain unexpected changes or if we see general problems with adoption of the flat flow in the product repositories.
+In such case, we will re-enable the original subscriptions and disable the codeflow ones.
+
+## Expected downtime
+
+The migration should happen within few (<4) hours after which we will keep monitoring all the dependency PRs in the product repositories.
+Developers can keep merging code as usual during this time and their productivity should not be affected.
+The only affected process will be the current VMR one-way synchronization which will be disabled at the begining of the migration.
+We also expect potential minor problems in PRs against the `main` branch of `dotnet/sdk` which might need to be rebased on top of `main` again to pick up new infrastructural changes in that repo.
+
 ## FAQ
 
 ### How can I see dependency subscriptions for my repository?
