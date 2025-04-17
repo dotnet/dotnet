@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25215.10",
+      "packageVersion": "10.0.0-preview.4.25216.9",
       "barId": null,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "a94ba4b6c94e09433b586db219bd854e70021e5a"
+      "commitSha": "b80c0c430d440116252fdc6ffef3405846022eb1"
     },
     {
       "packageVersion": "0.11.5-alpha.25125.1",
@@ -57,11 +57,11 @@
       "commitSha": "2b564f7c09dd9fba0d9e1daa2e41056dd8b8b673"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25215.3",
+      "packageVersion": "10.0.0-preview.4.25216.1",
       "barId": null,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "b9d9ac4bbb44ff998e7f867738f16a8b6553554a"
+      "commitSha": "a60e542ada35042987dc96b1b0a9174645039fcf"
     },
     {
       "packageVersion": "9.0.300-beta.25207.2",
@@ -71,11 +71,11 @@
       "commitSha": "4ba36db1f42f33a66d9677f0b9d589d39b204a9c"
     },
     {
-      "packageVersion": "17.15.0-preview-25215-13",
+      "packageVersion": "17.15.0-preview-25216-04",
       "barId": null,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "95ecbd29a31a44fa39745045118468be21e982d7"
+      "commitSha": "c6468bdb2c3014005e6fb3bf0c1a33a2b3f02c39"
     },
     {
       "packageVersion": "6.15.0-preview.1.7",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9fa6e7f2ac9813481a9219d8f0afef3cf9cd69f0"
+      "commitSha": "d814ae49db16dc17ebec0618d4dbb7bb36c4c0de"
     },
     {
       "packageVersion": "10.0.621401",
