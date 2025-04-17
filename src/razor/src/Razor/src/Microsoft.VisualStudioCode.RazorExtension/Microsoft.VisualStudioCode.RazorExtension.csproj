@@ -25,9 +25,6 @@
     <PackageReference Include="Microsoft.Extensions.ObjectPool" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
-
-    <!-- Roslyn does not use Microsoft.VisualStudio.LanguageServer.Protocol so we have to pack it -->
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" GeneratePathProperty="True" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,13 +56,13 @@
       <Content Include="$(PublishDir)\fr\**\*.*" Pack="true" PackagePath="content\fr\" CopyToOutputDirectory="PreserveNewest" />
       <Content Include="$(PublishDir)\it\**\*.*" Pack="true" PackagePath="content\it\" CopyToOutputDirectory="PreserveNewest" />
       <Content Include="$(PublishDir)\ja\**\*.*" Pack="true" PackagePath="content\ja\" CopyToOutputDirectory="PreserveNewest" />
-      <Content Include="$(PublishDir)\ko\**\*.*" Pack="true" PackagePath="content\ko\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\pl\**\*.*" Pack="true" PackagePath="content\pl\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\pt-BR\**\*.*" Pack="true" PackagePath="content\pt-BR\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\ru\**\*.*" Pack="true" PackagePath="content\ru\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\tr\**\*.*" Pack="true" PackagePath="content\tr\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\zh-Hans\**\*.*" Pack="true" PackagePath="content\zh-Hans\" CopyToOutputDirectory="false" />
-      <Content Include="$(PublishDir)\zh-Hant\**\*.*" Pack="true" PackagePath="content\zh-Hant\" CopyToOutputDirectory="false" />
+      <Content Include="$(PublishDir)\ko\**\*.*" Pack="true" PackagePath="content\ko\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\pl\**\*.*" Pack="true" PackagePath="content\pl\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\pt-BR\**\*.*" Pack="true" PackagePath="content\pt-BR\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\ru\**\*.*" Pack="true" PackagePath="content\ru\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\tr\**\*.*" Pack="true" PackagePath="content\tr\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\zh-Hans\**\*.*" Pack="true" PackagePath="content\zh-Hans\" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\zh-Hant\**\*.*" Pack="true" PackagePath="content\zh-Hant\" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
 </Project>

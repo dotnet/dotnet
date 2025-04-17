@@ -85,7 +85,10 @@
          property as it is used by other repositories already. -->
     <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
 
-    <SymbolPackageBaseRelativeBlobPath>assets/symbols/$(BUILD_REPOSITORY_NAME)/$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(GitHubRepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(GitHubRepositoryName)/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
   </PropertyGroup>
 
   <!-- Keep these asset manifest properties here as other repos already depend on them in Publishing.props. -->
@@ -139,6 +142,8 @@
       <_ExistingSymbolPackage Include="@(Artifact)" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))">
         <!-- Update the kind of the symbol packages to blob -->
         <Kind>Blob</Kind>
+        <!-- Set the category to Symbols (otherwise it will inherit the original package category -->
+        <Category>Symbols</Category>
         <RelativeBlobPath>$(SymbolPackageBaseRelativeBlobPath)%(Filename)%(Extension)</RelativeBlobPath>
       </_ExistingSymbolPackage>
       <_PackageToPublish Include="@(Artifact)" Exclude="@(_ExistingSymbolPackage)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' == '.nupkg'" />
@@ -176,7 +181,7 @@
     <ItemGroup>
       <_PackageToPublish Update="@(_PackageToPublish)">
         <SymbolPackageToGenerate Condition="!Exists('%(RootDir)%(Directory)%(Filename).symbols.nupkg')">$(SymbolPackagesDir)%(Filename).symbols.nupkg</SymbolPackageToGenerate>
-        <SymbolPackageRelativeBlobPath>$(SymbolPackageBaseRelativeBlobPath)/%(Filename).symbols.nupkg</SymbolPackageRelativeBlobPath>
+        <SymbolPackageRelativeBlobPath>$(SymbolPackageBaseRelativeBlobPath)%(Filename).symbols.nupkg</SymbolPackageRelativeBlobPath>
       </_PackageToPublish>
 
       <_SymbolPackageToGenerate Include="@(_PackageToPublish->'%(SymbolPackageToGenerate)')"
@@ -185,6 +190,7 @@
         <OriginalPackage>%(_PackageToPublish.Identity)</OriginalPackage>
         <IsShipping>%(_PackageToPublish.IsShipping)</IsShipping>
         <Kind>Blob</Kind>
+        <Category>Symbols</Category>
         <RelativeBlobPath>%(_PackageToPublish.SymbolPackageRelativeBlobPath)</RelativeBlobPath>
       </_SymbolPackageToGenerate>
     </ItemGroup>
@@ -309,6 +315,13 @@
       <ItemsToPushToBlobFeed>
         <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
         <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
+      </ItemsToPushToBlobFeed>
+    </ItemGroup>
+
+    <!-- Set the category -->
+    <ItemGroup>
+      <ItemsToPushToBlobFeed>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.Category)' != ''">%(ItemsToPushToBlobFeed.ManifestArtifactData);Category=%(ItemsToPushToBlobFeed.Category)</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 

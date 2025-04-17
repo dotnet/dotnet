@@ -39,20 +39,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             "secondfilename"
         );
 
-        private readonly List<TargetFeedContentType> InstallersAndSymbols = new List<TargetFeedContentType>() { 
-            TargetFeedContentType.OSX,
-            TargetFeedContentType.Deb,
-            TargetFeedContentType.Rpm,
-            TargetFeedContentType.Node,
-            TargetFeedContentType.BinaryLayout,
-            TargetFeedContentType.Installer,
-            TargetFeedContentType.Maven,
-            TargetFeedContentType.VSIX,
-            TargetFeedContentType.Badge,
-            TargetFeedContentType.Symbols,
-            TargetFeedContentType.Other
-        };
-
         private readonly ITaskItem[] FeedKeys = GetFeedKeys();
 
         private static ITaskItem[] GetFeedKeys()
@@ -89,20 +75,38 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             var expectedFeeds = new List<TargetFeedConfig>();
 
-            expectedFeeds.Add(
-                new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    StablePackageFeed,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
-                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.ShippingOnly,
-                    isolated: true,
-                    @internal: isInternalBuild,
-                    allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility));
+            foreach (var contentType in PublishingConstants.Packages)
+            {
+                expectedFeeds.Add(
+                    new TargetFeedConfig(
+                        contentType,
+                        StablePackageFeed,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.ShippingOnly,
+                        isolated: true,
+                        @internal: isInternalBuild,
+                        allowOverwrite: false,
+                        symbolPublishVisibility: symbolVisibility));
+
+                expectedFeeds.Add(
+                    new TargetFeedConfig(
+                        contentType,
+                        PublishingConstants.FeedDotNetEng,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.NonShippingOnly,
+                        isolated: false,
+                        @internal: isInternalBuild,
+                        allowOverwrite: false,
+                        symbolPublishVisibility: symbolVisibility));
+            }
 
             expectedFeeds.Add(
                 new TargetFeedConfig(
@@ -119,24 +123,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     allowOverwrite: false,
                     symbolPublishVisibility: symbolVisibility));
 
-            expectedFeeds.Add(
-                new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    PublishingConstants.FeedDotNetEng,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
-                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.NonShippingOnly,
-                    isolated: false,
-                    @internal: isInternalBuild,
-                    allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility));
-
             if (publishInstallersAndChecksums)
             {
-                foreach (var contentType in InstallersAndSymbols)
+                foreach (var contentType in PublishingConstants.InstallersAndSymbols)
                 {
                     if (contentType == TargetFeedContentType.Symbols)
                     {
@@ -206,37 +195,40 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             var expectedFeeds = new List<TargetFeedConfig>();
 
-            expectedFeeds.Add(new TargetFeedConfig(
-                TargetFeedContentType.Package,
-                PublishingConstants.FeedDotNetEng,
-                FeedType.AzDoNugetFeed,
-                AzureDevOpsFeedsKey,
-                latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
-                akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                assetSelection: AssetSelection.ShippingOnly,
-                isolated: false,
-                @internal: true,
-                allowOverwrite: false,
-                symbolPublishVisibility: symbolVisibility));
+            foreach (var packageType in PublishingConstants.Packages)
+            {
+                expectedFeeds.Add(new TargetFeedConfig(
+                    packageType,
+                    PublishingConstants.FeedDotNetEng,
+                    FeedType.AzDoNugetFeed,
+                    AzureDevOpsFeedsKey,
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                    assetSelection: AssetSelection.ShippingOnly,
+                    isolated: false,
+                    @internal: true,
+                    allowOverwrite: false,
+                    symbolPublishVisibility: symbolVisibility));
 
-            expectedFeeds.Add(new TargetFeedConfig(
-                TargetFeedContentType.Package,
-                PublishingConstants.FeedDotNetEng,
-                FeedType.AzDoNugetFeed,
-                AzureDevOpsFeedsKey,
-                latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
-                akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                assetSelection: AssetSelection.NonShippingOnly,
-                isolated: false,
-                @internal: true,
-                allowOverwrite: false,
-                symbolPublishVisibility: symbolVisibility));
+                expectedFeeds.Add(new TargetFeedConfig(
+                    packageType,
+                    PublishingConstants.FeedDotNetEng,
+                    FeedType.AzDoNugetFeed,
+                    AzureDevOpsFeedsKey,
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                    assetSelection: AssetSelection.NonShippingOnly,
+                    isolated: false,
+                    @internal: true,
+                    allowOverwrite: false,
+                    symbolPublishVisibility: symbolVisibility));
+            }
 
             if (publishInstallersAndChecksums)
             {
-                foreach (var contentType in InstallersAndSymbols)
+                foreach (var contentType in PublishingConstants.InstallersAndSymbols)
                 {
                     expectedFeeds.Add(
                         new TargetFeedConfig(
@@ -317,39 +309,42 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             var expectedFeeds = new List<TargetFeedConfig>();
 
-            expectedFeeds.Add(
-                new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    PublishingConstants.FeedDotNetEng,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: [ $"{LatestLinkShortUrlPrefix}/{BuildQuality}" ],
-                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.ShippingOnly,
-                    isolated: false,
-                    @internal: false,
-                    allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility));
+            foreach (var packageType in PublishingConstants.Packages)
+            {
+                expectedFeeds.Add(
+                    new TargetFeedConfig(
+                        packageType,
+                        PublishingConstants.FeedDotNetEng,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                            akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.ShippingOnly,
+                        isolated: false,
+                        @internal: false,
+                        allowOverwrite: false,
+                        symbolPublishVisibility: symbolVisibility));
 
-            expectedFeeds.Add(
-                new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    PublishingConstants.FeedDotNetEng,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
-                    akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
-                    akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.NonShippingOnly,
-                    isolated: false,
-                    @internal: false,
-                    allowOverwrite: false,
-                    symbolPublishVisibility: symbolVisibility));
+                expectedFeeds.Add(
+                    new TargetFeedConfig(
+                        packageType,
+                        PublishingConstants.FeedDotNetEng,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                        akaMSCreateLinkPatterns: PublishingConstants.DefaultAkaMSCreateLinkPatterns,
+                        akaMSDoNotCreateLinkPatterns: PublishingConstants.DefaultAkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.NonShippingOnly,
+                        isolated: false,
+                        @internal: false,
+                        allowOverwrite: false,
+                        symbolPublishVisibility: symbolVisibility));
+            }
 
             if (publishInstallersAndChecksums)
             {
-                foreach (var contentType in InstallersAndSymbols)
+                foreach (var contentType in PublishingConstants.InstallersAndSymbols)
                 {
                     expectedFeeds.Add(
                         new TargetFeedConfig(

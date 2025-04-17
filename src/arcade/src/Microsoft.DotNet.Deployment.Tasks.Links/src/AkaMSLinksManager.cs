@@ -20,8 +20,8 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
 {
     public class AkaMSLinkManager
     {
-        private const string ApiBaseUrl = "https://redirectionapi.trafficmanager.net/api/aka";
-        private const string Endpoint = "https://microsoft.onmicrosoft.com/redirectionapi";
+        private const string ApiBaseUrl = "https://redirectionapi-ame.trafficmanager.net/api/aka";
+        private const string Endpoint = "https://msazurecloud.onmicrosoft.com/RedirectionMgmtApi-Prod";
         private const string Authority = "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/authorize";
         /// <summary>
         ///     Aka.ms max links per batch request. There are two maximums:

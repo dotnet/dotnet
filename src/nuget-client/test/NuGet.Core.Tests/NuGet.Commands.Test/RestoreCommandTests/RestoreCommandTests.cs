@@ -1262,16 +1262,11 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             var project1Json = @"
             {
               ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""project1"": { ""version"": ""1.0.0"", ""target"": ""package"" }
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""project1"": { ""version"": ""1.0.0"", ""target"": ""package"" }
+                  }
                 }
               }
             }";

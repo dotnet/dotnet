@@ -33,26 +33,25 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                ""dependencies"": {
-                    ""packageX"": {
-                        ""version"": ""1.0.0"",
-                        ""suppressParent"": ""runtime,compile""
-                    },
-                    ""packageY"": {
-                        ""version"": ""1.0.0"",
-                        ""exclude"": ""runtime,compile"",
-                        ""suppressParent"": ""runtime,compile""
-                    }
-                },
                 ""frameworks"": {
-                ""net46"": {}
+                ""net46"": {
+                    ""dependencies"": {
+                        ""packageX"": {
+                            ""version"": ""1.0.0"",
+                            ""suppressParent"": ""runtime,compile""
+                        },
+                        ""packageY"": {
+                            ""version"": ""1.0.0"",
+                            ""exclude"": ""runtime,compile"",
+                            ""suppressParent"": ""runtime,compile""
+                        }
+                    }
+                }
                 },
                 ""runtimes"": { ""any"": { } }
             }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -90,17 +89,18 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                ""dependencies"": {
-                    ""packageX"": {
-                        ""version"": ""1.0.0""
-                    },
-                    ""packageY"": {
-                        ""version"": ""1.0.0"",
-                        ""exclude"": ""runtime,compile""
-                    }
-                },
                 ""frameworks"": {
-                ""net46"": {}
+                ""net46"": {
+                    ""dependencies"": {
+                        ""packageX"": {
+                            ""version"": ""1.0.0""
+                        },
+                        ""packageY"": {
+                            ""version"": ""1.0.0"",
+                            ""exclude"": ""runtime,compile""
+                        }
+                    }
+                }
                 },
                 ""runtimes"": { ""any"": { } }
             }";
@@ -146,20 +146,19 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                ""dependencies"": {
-                    ""packageX"": {
-                        ""version"": ""1.0.0""
-                    }
-                },
                 ""frameworks"": {
-                ""net46"": {}
+                ""net46"": {
+                    ""dependencies"": {
+                        ""packageX"": {
+                            ""version"": ""1.0.0""
+                        }
+                    }
+                }
                 },
                 ""runtimes"": { ""any"": { } }
             }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -215,14 +214,15 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                ""dependencies"": {
-                    ""packageX"": {
-                        ""version"": ""1.0.0"",
-                        ""suppressParent"": ""none""
-                    }
-                },
                 ""frameworks"": {
-                ""net46"": {}
+                ""net46"": {
+                    ""dependencies"": {
+                        ""packageX"": {
+                            ""version"": ""1.0.0"",
+                            ""suppressParent"": ""none""
+                        }
+                    }
+                }
                 },
                 ""runtimes"": { ""any"": { } }
             }";
@@ -285,14 +285,15 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                ""dependencies"": {
-                    ""packageX"": {
-                        ""version"": ""1.0.0"",
-                        ""suppressParent"": ""none""
-                    }
-                },
                 ""frameworks"": {
-                ""net46"": {}
+                ""net46"": {
+                    ""dependencies"": {
+                        ""packageX"": {
+                            ""version"": ""1.0.0"",
+                            ""suppressParent"": ""none""
+                        }
+                    }
+                }
                 },
                 ""runtimes"": { ""any"": { } }
             }";
@@ -354,34 +355,34 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson3 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""suppressParent"": ""compile,runtime""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""suppressParent"": ""compile,runtime""
+                            }
+                        }
+                    }
                     },
                 ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""suppressParent"": ""native,runtime""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""suppressParent"": ""native,runtime""
+                            }
+                        }
+                    }
                     },
                   ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                    },
                     ""frameworks"": {
                     ""net46"": {}
                     },
@@ -424,17 +425,18 @@ namespace NuGet.Commands.Test
             {
 
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageB"": {
-                                ""version"": ""1.0.0"",
-                                ""exclude"": ""all""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                            ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageB"": {
+                                        ""version"": ""1.0.0"",
+                                        ""exclude"": ""all""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }";
@@ -471,11 +473,12 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": ""1.0.0""
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                  }";
@@ -545,12 +548,13 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageA"": ""1.0.0"",
-                            ""packageB"": ""2.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": ""1.0.0"",
+                                    ""packageB"": ""2.0.0""
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                  }";
@@ -639,24 +643,26 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": ""1.0.0""
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": ""1.0.0""
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""exclude"": ""build""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""exclude"": ""build""
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -690,23 +696,25 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0""
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                        ""packageX"": ""1.0.0""
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": ""1.0.0""
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -740,13 +748,14 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0""
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -789,13 +798,14 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0""
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -890,24 +900,26 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""suppressParent"": ""all""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""suppressParent"": ""all""
+                            }
+                        }
+                        }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                        ""packageZ"": ""1.0.0""
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                          ""packageZ"": ""1.0.0""
+                        }
+                      }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -992,20 +1004,19 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                    },
                     ""frameworks"": {
                     ""net46"": {}
                     },
@@ -1037,14 +1048,15 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson1 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""type"": ""build""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                        ""dependencies"": {
+                            ""packageX"": {
+                                ""version"": ""1.0.0"",
+                                ""type"": ""build""
+                            }
+                        }
+                    }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
@@ -1098,16 +1110,17 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0"",
-                                ""include"": ""compile""
+                        ""frameworks"": {
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0"",
+                                        ""include"": ""compile""
+                                    }
+                                }
                             }
                         },
-                        ""frameworks"": {
-                            ""net46"": {}
-                        },
-                        ""runtimes"": { ""any"": { } }
+                    ""runtimes"": { ""any"": { } }
                  }";
 
                 await CreateXYZAsync(Path.Combine(workingDir, "source"));
@@ -1143,15 +1156,16 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageY"": ""1.0.0"",
-                            ""packageZ"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageY"": ""1.0.0"",
+                                    ""packageZ"": ""1.0.0""
+                                }
+                            }
                         },
                          ""runtimes"": { ""any"": { } }
                  }";
@@ -1271,16 +1285,17 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
+                        ""frameworks"": {
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    }
+                                }
                             }
                         },
-                        ""frameworks"": {
-                            ""net46"": {}
-                        },
                     ""runtimes"": { ""any"": { } }
-                 }";
+                    }";
 
                 await CreateXYZAsync(Path.Combine(workingDir, "source"), string.Empty, "build");
 
@@ -1313,13 +1328,14 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    }
+                                }
+                            }
                         },
                     ""runtimes"": { ""any"": { } }
                  }";
@@ -1357,13 +1373,14 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    }
+                                }
+                            }
                         },
                     ""runtimes"": { ""any"": { } }
                  }";
@@ -1398,16 +1415,17 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageB"": {
-                                ""version"": ""1.0.0""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageB"": {
+                                        ""version"": ""1.0.0""
+                                    }
+                                }
+                            }
                         },
                     ""runtimes"": { ""any"": { } }
                     }";
@@ -1444,13 +1462,14 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0""
+                                    }
+                                }
+                            }
                         },
                     ""runtimes"": { ""any"": { } }
                     }";
@@ -1484,107 +1503,115 @@ namespace NuGet.Commands.Test
 
         [Theory]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0"",
-                                ""suppressParent"": ""all""
-                            },
-                            ""packageB"": {
-                                ""version"": ""1.0.0"",
-                                ""suppressParent"": ""all"",
-                                ""exclude"": ""contentFiles""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0"",
+                                        ""suppressParent"": ""all""
+                                    },
+                                    ""packageB"": {
+                                        ""version"": ""1.0.0"",
+                                        ""suppressParent"": ""all"",
+                                        ""exclude"": ""contentFiles""
+                                    }
+                                }       
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageB"": {
-                                ""version"": ""1.0.0"",
-                                ""exclude"": ""contentFiles""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageB"": {
+                                        ""version"": ""1.0.0"",
+                                        ""exclude"": ""contentFiles""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageB"": {
-                                ""version"": ""1.0.0"",
-                                ""include"": ""build,compile,runtime,native""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageB"": {
+                                        ""version"": ""1.0.0"",
+                                        ""include"": ""build,compile,runtime,native""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0"",
-                                ""include"": ""build,compile,runtime,native,contentfiles""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0"",
+                                        ""include"": ""build,compile,runtime,native,contentfiles""
+                                    }
+                                }
+                        }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0"",
-                                ""include"": ""all"",
-                                ""exclude"": ""none""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0"",
+                                        ""include"": ""all"",
+                                        ""exclude"": ""none""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0"",
-                                ""exclude"": ""none""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0"",
+                                        ""exclude"": ""none""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": {
-                                ""version"": ""1.0.0"",
-                                ""include"": ""all""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": {
+                                        ""version"": ""1.0.0"",
+                                        ""include"": ""all""
+                                    }
+                                }
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
         [InlineData(@"{
-                        ""dependencies"": {
-                            ""packageA"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageA"": ""1.0.0""
+                                }  
+                            }
                         },
                         ""runtimes"": { ""any"": { } }
                     }")]
@@ -1640,15 +1667,16 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageY"": ""1.0.0"",
-                            ""packageZ"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageY"": ""1.0.0"",
+                                    ""packageZ"": ""1.0.0""
+                                }
+                            }
                         },
                          ""runtimes"": { ""any"": { } }
                  }";
@@ -1682,17 +1710,18 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageY"": ""1.0.0"",
-                            ""packageZ"": ""1.0.0"",
-                            ""packageA"": ""1.0.0"",
-                            ""packageB"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageY"": ""1.0.0"",
+                                    ""packageZ"": ""1.0.0"",
+                                    ""packageA"": ""1.0.0"",
+                                    ""packageB"": ""1.0.0""
+                                }
+                            }
                         },
                          ""runtimes"": { ""any"": { } }
                  }";
@@ -1730,15 +1759,16 @@ namespace NuGet.Commands.Test
             using (var workingDir = TestDirectory.Create())
             {
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0""
-                            },
-                            ""packageY"": ""1.0.0"",
-                            ""packageZ"": ""1.0.0""
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0""
+                                    },
+                                    ""packageY"": ""1.0.0"",
+                                    ""packageZ"": ""1.0.0""
+                                }
+                            }
                         },
                          ""runtimes"": { ""any"": { } }
                  }";

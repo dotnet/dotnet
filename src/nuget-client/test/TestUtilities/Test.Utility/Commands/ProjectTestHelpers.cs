@@ -324,5 +324,16 @@ namespace NuGet.Commands.Test
             }
             return packageSpec;
         }
+
+        public static void AddDependency(PackageSpec spec, LibraryDependency libraryDependency)
+        {
+            for (int i = 0; i < spec.TargetFrameworks.Count; i++)
+            {
+                spec.TargetFrameworks[i] = new TargetFrameworkInformation(spec.TargetFrameworks[i])
+                {
+                    Dependencies = [.. spec.TargetFrameworks[i].Dependencies, libraryDependency]
+                };
+            }
+        }
     }
 }

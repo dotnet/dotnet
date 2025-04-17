@@ -18,43 +18,43 @@ namespace NuGet.CommandLine.XPlat
             Arity = ArgumentArity.Zero
         };
 
-        private static CliArgument<string> SetConfigKeyArgument = new CliArgument<string>(name: "config-key")
+        private static Argument<string> SetConfigKeyArgument = new Argument<string>(name: "config-key")
         {
             Arity = ArgumentArity.ExactlyOne,
             Description = Strings.ConfigSetConfigKeyDescription,
         };
 
-        private static CliArgument<string> UnsetConfigKeyArgument = new CliArgument<string>(name: "config-key")
+        private static Argument<string> UnsetConfigKeyArgument = new Argument<string>(name: "config-key")
         {
             Arity = ArgumentArity.ExactlyOne,
             Description = Strings.ConfigUnsetConfigKeyDescription,
         };
 
-        private static CliArgument<string> ConfigValueArgument = new CliArgument<string>(name: "config-value")
+        private static Argument<string> ConfigValueArgument = new Argument<string>(name: "config-value")
         {
             Arity = ArgumentArity.ExactlyOne,
             Description = Strings.ConfigSetConfigValueDescription,
         };
 
-        private static CliArgument<string> AllOrConfigKeyArgument = new CliArgument<string>(name: "all-or-config-key")
+        private static Argument<string> AllOrConfigKeyArgument = new Argument<string>(name: "all-or-config-key")
         {
             Arity = ArgumentArity.ExactlyOne,
             Description = Strings.ConfigGetAllOrConfigKeyDescription
         };
 
-        private static CliOption<string> WorkingDirectory = new CliOption<string>(name: "--working-directory")
+        private static Option<string> WorkingDirectory = new Option<string>(name: "--working-directory")
         {
             Arity = ArgumentArity.ZeroOrOne,
             Description = Strings.ConfigPathsWorkingDirectoryDescription
         };
 
-        private static CliOption<bool> ShowPathOption = new CliOption<bool>(name: "--show-path")
+        private static Option<bool> ShowPathOption = new Option<bool>(name: "--show-path")
         {
             Arity = ArgumentArity.Zero,
             Description = Strings.ConfigGetShowPathDescription,
         };
 
-        private static CliOption<string> ConfigFileOption = new CliOption<string>(name: "--configfile")
+        private static Option<string> ConfigFileOption = new Option<string>(name: "--configfile")
         {
             Arity = ArgumentArity.ZeroOrOne,
             Description = Strings.Option_ConfigFile,
@@ -84,7 +84,7 @@ namespace NuGet.CommandLine.XPlat
             });
         }
 
-        internal static CliCommand Register(CliCommand app, Func<ILogger> getLogger)
+        internal static Command Register(Command app, Func<ILogger> getLogger)
         {
             var ConfigCmd = new DocumentedCommand(name: "config", description: Strings.Config_Description, "https://aka.ms/dotnet/nuget/config");
             ConfigCmd.Options.Add(HelpOption);
@@ -128,7 +128,7 @@ namespace NuGet.CommandLine.XPlat
             return ConfigCmd;
         } // End noun method
 
-        private static void RegisterOptionsForCommandConfigPaths(CliCommand cmd, Func<ILogger> getLogger)
+        private static void RegisterOptionsForCommandConfigPaths(Command cmd, Func<ILogger> getLogger)
         {
             cmd.Options.Add(WorkingDirectory);
             cmd.Options.Add(HelpOption);
@@ -145,7 +145,7 @@ namespace NuGet.CommandLine.XPlat
             });
         }
 
-        private static void RegisterOptionsForCommandConfigGet(CliCommand cmd, Func<ILogger> getLogger)
+        private static void RegisterOptionsForCommandConfigGet(Command cmd, Func<ILogger> getLogger)
         {
             cmd.Arguments.Add(AllOrConfigKeyArgument);
             cmd.Options.Add(WorkingDirectory);
@@ -167,7 +167,7 @@ namespace NuGet.CommandLine.XPlat
             });
         }
 
-        private static void RegisterOptionsForCommandConfigSet(CliCommand cmd, Func<ILogger> getLogger)
+        private static void RegisterOptionsForCommandConfigSet(Command cmd, Func<ILogger> getLogger)
         {
             cmd.Arguments.Add(SetConfigKeyArgument);
             cmd.Arguments.Add(ConfigValueArgument);
@@ -188,7 +188,7 @@ namespace NuGet.CommandLine.XPlat
             });
         }
 
-        private static void RegisterOptionsForCommandConfigUnset(CliCommand cmd, Func<ILogger> getLogger)
+        private static void RegisterOptionsForCommandConfigUnset(Command cmd, Func<ILogger> getLogger)
         {
             cmd.Arguments.Add(UnsetConfigKeyArgument);
             cmd.Options.Add(ConfigFileOption);

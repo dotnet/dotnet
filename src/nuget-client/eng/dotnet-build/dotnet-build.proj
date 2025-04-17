@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.DotNet.Arcade.Sdk" DefaultTargets="Build">
 
-  <Import Project="../SourceBuild.props" />
+  <Import Project="../DotNetBuild.props" />
 
   <PropertyGroup>
     <ProjectRoot>$(MSBuildThisFileDirectory)../../</ProjectRoot>

@@ -5,7 +5,7 @@ using System.CommandLine;
 
 namespace NuGet.CommandLine.XPlat.Commands
 {
-    public class DocumentedCommand : CliCommand
+    public class DocumentedCommand : Command
     {
         public DocumentedCommand(string name, string description, string helpUrl)
             : base(name, description)

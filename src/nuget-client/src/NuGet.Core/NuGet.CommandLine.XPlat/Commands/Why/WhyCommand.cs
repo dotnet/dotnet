@@ -22,7 +22,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             });
         }
 
-        internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger)
+        internal static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger)
         {
             Register(rootCommand, getLogger, WhyCommandRunner.ExecuteCommand);
         }
@@ -32,21 +32,21 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// For now, this allows the dotnet CLI to invoke why directly, instead of running NuGet.CommandLine.XPlat as a child process.
         /// </summary>
         /// <param name="rootCommand">The <c>dotnet nuget</c> command handler, to add <c>why</c> to.</param>
-        public static void GetWhyCommand(CliCommand rootCommand)
+        public static void GetWhyCommand(Command rootCommand)
         {
             Register(rootCommand, CommandOutputLogger.Create, WhyCommandRunner.ExecuteCommand);
         }
 
-        internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, Task<int>> action)
+        internal static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, Task<int>> action)
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
-            CliArgument<string> path = new CliArgument<string>("PROJECT|SOLUTION")
+            Argument<string> path = new Argument<string>("PROJECT|SOLUTION")
             {
                 Description = Strings.WhyCommand_PathArgument_Description,
                 // We really want this to be zero or one, however, because this is the first argument, it doesn't work.
                 // Instead, we need to use a CustomParser to choose if the argument is the path, or the package.
-                // In order for the parser to tell us there's more than 1 argument available, we need to tell CliArgument
+                // In order for the parser to tell us there's more than 1 argument available, we need to tell Argument
                 // that it supports more than one, but then in the custom parser we'll make sure we only take at most 1.
                 Arity = ArgumentArity.ZeroOrMore,
                 CustomParser = ar =>
@@ -76,13 +76,13 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 }
             };
 
-            CliArgument<string> package = new CliArgument<string>("PACKAGE")
+            Argument<string> package = new Argument<string>("PACKAGE")
             {
                 Description = Strings.WhyCommand_PackageArgument_Description,
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            CliOption<List<string>> frameworks = new CliOption<List<string>>("--framework", "-f")
+            Option<List<string>> frameworks = new Option<List<string>>("--framework", "-f")
             {
                 Description = Strings.WhyCommand_FrameworksOption_Description,
                 Arity = ArgumentArity.OneOrMore

@@ -72,7 +72,7 @@ namespace NuGet.CommandLine.XPlat
 
             NuGet.Common.Migrations.MigrationRunner.Run();
 
-            // TODO: Migrating from Microsoft.Extensions.CommandLineUtils.CommandLineApplication to System.Commandline.CliCommand
+            // TODO: Migrating from Microsoft.Extensions.CommandLineUtils.CommandLineApplication to System.Commandline.Command
             // If we are looking to add further commands here, we should also look to redesign this parsing logic at that time
             // See related issues:
             //    - https://github.com/NuGet/Home/issues/11996
@@ -88,16 +88,16 @@ namespace NuGet.CommandLine.XPlat
                     return log;
                 };
 
-                CliCommand rootCommand;
+                Command rootCommand;
                 if (args[0] == "package")
                 {
-                    rootCommand = new CliCommand("package");
+                    rootCommand = new Command("package");
 
                     PackageSearchCommand.Register(rootCommand, getHidePrefixLogger);
                 }
                 else
                 {
-                    rootCommand = new CliCommand("nuget");
+                    rootCommand = new Command("nuget");
 
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
                     Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
@@ -106,7 +106,7 @@ namespace NuGet.CommandLine.XPlat
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
                 tokenSource.CancelAfter(TimeSpan.FromMinutes(DotnetPackageSearchTimeOut));
                 int exitCodeValue = 0;
-                CliConfiguration config = new(rootCommand);
+                CommandLineConfiguration config = new(rootCommand);
                 ParseResult parseResult = rootCommand.Parse(args, config);
 
                 try

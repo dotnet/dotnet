@@ -577,8 +577,8 @@ static NuGet.Common.MSBuildStringUtility.GetBooleanOrNull(string? value) -> bool
 static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Immutable.ImmutableArray<NuGet.Common.NuGetLogCode>
 static NuGet.Common.MSBuildStringUtility.IsTrue(string? value) -> bool
 static NuGet.Common.MSBuildStringUtility.IsTrueOrEmpty(string? value) -> bool
-static NuGet.Common.MSBuildStringUtility.Split(string! s) -> string![]!
-static NuGet.Common.MSBuildStringUtility.Split(string! s, params char[]! chars) -> string![]!
+static NuGet.Common.MSBuildStringUtility.Split(string? s) -> string![]!
+static NuGet.Common.MSBuildStringUtility.Split(string? s, params char[]! chars) -> string![]!
 static NuGet.Common.MSBuildStringUtility.TrimAndExcludeNullOrEmpty(string?[]? strings) -> string![]!
 static NuGet.Common.MSBuildStringUtility.TrimAndGetNullForEmpty(string? s) -> string?
 static NuGet.Common.Migrations.MigrationRunner.Run() -> void

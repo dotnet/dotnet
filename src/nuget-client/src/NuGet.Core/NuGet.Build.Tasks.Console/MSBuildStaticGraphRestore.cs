@@ -23,6 +23,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Graph;
 using Microsoft.Build.Logging;
 using NuGet.Commands;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -101,7 +102,7 @@ namespace NuGet.Build.Tasks.Console
 
             string binaryLoggerParameters = GetBinaryLoggerParameters(_environment, options);
 
-            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive, binaryLoggerParameters);
+            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive, binaryLoggerParameters, EnvironmentVariableWrapper.Instance);
 
             // If the dependency graph spec is null, something went wrong evaluating the projects, so return false
             if (dependencyGraphSpec == null)
@@ -187,7 +188,7 @@ namespace NuGet.Build.Tasks.Console
 
             string binaryLoggerParameters = GetBinaryLoggerParameters(_environment, options);
 
-            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive, binaryLoggerParameters);
+            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive, binaryLoggerParameters, EnvironmentVariableWrapper.Instance);
 
             try
             {
@@ -764,7 +765,71 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing the global properties to use when evaluation MSBuild projects.</param>
         /// <param name="interactive"><see langword="true" /> if the build is allowed to interact with the user, otherwise <see langword="false" />.</param>
         /// <returns>A <see cref="DependencyGraphSpec" /> for the specified project if they could be loaded, otherwise <code>null</code>.</returns>
-        private DependencyGraphSpec GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties, bool interactive, string binaryLoggerParameters)
+        private DependencyGraphSpec GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties, bool interactive, string binaryLoggerParameters, IEnvironmentVariableReader environmentVariableReader)
+        {
+            string envVar = environmentVariableReader.GetEnvironmentVariable("NUGET_USE_NEW_PACKAGESPEC_FACTORY");
+            if (!string.Equals(envVar, bool.FalseString, StringComparison.OrdinalIgnoreCase))
+            {
+                return GetDependencyGraphSpec(
+                    entryProjectPath,
+                    globalProperties,
+                    interactive,
+                    binaryLoggerParameters,
+                    createProjectFactory: static (string projectPath, (ProjectInstance projectInstance, string targetFramework) args) =>
+                    {
+                        var adapter = new RestoreProjectAdapter(args.projectInstance.FullPath);
+                        adapter.AddTargetFramework(args.targetFramework, new TargetFrameworkAdapter(args.projectInstance));
+                        return adapter;
+                    },
+                    updateProjectFactory: static (string projectPath, RestoreProjectAdapter project, (ProjectInstance projectInstance, string targetFramework) args) =>
+                    {
+                        project.AddTargetFramework(args.targetFramework, new TargetFrameworkAdapter(args.projectInstance));
+                        return project;
+                    },
+                    projectFinalizeDelegate: static project => project.Prepare(),
+                    getPackageSpec: project =>
+                    {
+                        var settings = RestoreSettingsUtils.ReadSettings(
+                            project.OuterBuild.GetProperty("RestoreSolutionDirectory"),
+                            project.OuterBuild.GetProperty("RestoreRootConfigDirectory") ?? project.Directory,
+                            UriUtility.GetAbsolutePath(project.Directory, project.OuterBuild.GetProperty("RestoreConfigFile")),
+                            MachineWideSettingsLazy,
+                            _settingsLoadContext);
+
+                        var packageSpec = PackageSpecFactory.GetPackageSpec(project, settings);
+                        return packageSpec;
+                    });
+            }
+            else
+            {
+                // Delete this code path once PackageSpecFactory.GetPackageSpec has been tested long enough to trust.
+                return GetDependencyGraphSpec(
+                    entryProjectPath,
+                    globalProperties,
+                    interactive,
+                    binaryLoggerParameters,
+                    createProjectFactory: static (string projectPath, (ProjectInstance projectInstance, string targetFramework) args) =>
+                        new ProjectWithInnerNodes(args.targetFramework, new MSBuildProjectInstance(args.projectInstance)),
+                    updateProjectFactory: static (string projectPath, ProjectWithInnerNodes project, (ProjectInstance projectInstance, string targetFramework) args) =>
+                        project.Add(args.targetFramework, new MSBuildProjectInstance(args.projectInstance)),
+                    projectFinalizeDelegate: null,
+                    getPackageSpec: project =>
+                    {
+                        var packageSpec = GetPackageSpec(project.OuterProject, project);
+                        return packageSpec;
+                    });
+            }
+        }
+
+        private DependencyGraphSpec GetDependencyGraphSpec<TProject>(
+            string entryProjectPath,
+            IDictionary<string, string> globalProperties,
+            bool interactive,
+            string binaryLoggerParameters,
+            Func<string, (ProjectInstance, string), TProject> createProjectFactory,
+            Func<string, TProject, (ProjectInstance, string), TProject> updateProjectFactory,
+            Action<TProject> projectFinalizeDelegate,
+            Func<TProject, PackageSpec> getPackageSpec)
         {
             try
             {
@@ -773,10 +838,10 @@ namespace NuGet.Build.Tasks.Console
                 var entryProjects = GetProjectGraphEntryPoints(entryProjectPath, globalProperties);
 
                 // Load the projects via MSBuild and create an array of them since Parallel.ForEach is optimized for arrays
-                var projects = LoadProjects(entryProjects, interactive, binaryLoggerParameters)?.ToArray();
+                var projects = LoadProjects(entryProjects, interactive, binaryLoggerParameters, createProjectFactory, updateProjectFactory, projectFinalizeDelegate);
 
                 // If no projects were loaded, return an empty DependencyGraphSpec
-                if (projects == null || projects.Length == 0)
+                if (projects == null || projects.Count == 0)
                 {
                     return new DependencyGraphSpec();
                 }
@@ -796,7 +861,7 @@ namespace NuGet.Build.Tasks.Console
                     // Get the PackageSpecs in parallel because creating each one is relatively expensive so parallelism speeds things up
                     Parallel.ForEach(projects, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, project =>
                     {
-                        var packageSpec = GetPackageSpec(project.OuterProject, project);
+                        PackageSpec packageSpec = getPackageSpec(project.Value);
 
                         if (packageSpec != null)
                         {
@@ -820,7 +885,9 @@ namespace NuGet.Build.Tasks.Console
                         }
                     });
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     LogErrorFromException(e);
 
@@ -851,7 +918,9 @@ namespace NuGet.Build.Tasks.Console
 
                 return dependencyGraphSpec;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 LogErrorFromException(e);
             }
@@ -1010,8 +1079,17 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="entryProjects">An <see cref="IEnumerable{ProjectGraphEntryPoint}" /> containing the entry projects to load.</param>
         /// <param name="interactive"><see langword="true" /> if the build is allowed to interact with the user, otherwise <see langword="false" />.</param>
         /// <param name="binaryLoggerParameters">Optional parameters to use for the MSBuild binary log.</param>
+        /// <param name="createProjectFactory">A factory method that creates a project adapter from an MSBuild ProjectInstance.</param>
+        /// <param name="updateProjectFactory">A factory method that updates a project adapter with a target framework and MSBuild ProjectInstance.</param>
+        /// <param name="projectFinalizeDelegate">An option delegate to finalize a project adapter once all projects have been evaluated.</param>
         /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
-        private ICollection<ProjectWithInnerNodes> LoadProjects(IEnumerable<ProjectGraphEntryPoint> entryProjects, bool interactive, string binaryLoggerParameters)
+        private ConcurrentDictionary<string, TProject> LoadProjects<TProject>(
+            IEnumerable<ProjectGraphEntryPoint> entryProjects,
+            bool interactive,
+            string binaryLoggerParameters,
+            Func<string, (ProjectInstance, string), TProject> createProjectFactory,
+            Func<string, TProject, (ProjectInstance, string), TProject> updateProjectFactory,
+            Action<TProject> projectFinalizeDelegate)
         {
             try
             {
@@ -1034,7 +1112,7 @@ namespace NuGet.Build.Tasks.Console
                     logTaskInputs = true;
                 }
 
-                var projects = new ConcurrentDictionary<string, ProjectWithInnerNodes>(StringComparer.OrdinalIgnoreCase);
+                var projects = new ConcurrentDictionary<string, TProject>(PathUtility.GetStringComparerBasedOnOS());
 
                 using var projectCollection = new ProjectCollection(
                     globalProperties: null,
@@ -1121,8 +1199,9 @@ namespace NuGet.Build.Tasks.Console
 
                             projects.AddOrUpdate(
                                 projectInstance.FullPath,
-                                key => new ProjectWithInnerNodes(targetFramework, new MSBuildProjectInstance(projectInstance)),
-                                (_, item) => item.Add(targetFramework, new MSBuildProjectInstance(projectInstance)));
+                                createProjectFactory,
+                                updateProjectFactory,
+                                (projectInstance, targetFramework));
                         }, context: null);
                     }
                 }
@@ -1134,6 +1213,14 @@ namespace NuGet.Build.Tasks.Console
 
                 sw.Stop();
 
+                if (projectFinalizeDelegate is not null)
+                {
+                    foreach (var kvp in projects)
+                    {
+                        projectFinalizeDelegate(kvp.Value);
+                    }
+                }
+
                 MSBuildLogger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.ProjectEvaluationSummary, projectGraph.ProjectNodes.Count, sw.ElapsedMilliseconds, buildCount, failedBuildSubmissionCount));
 
                 if (failedBuildSubmissionCount != 0)
@@ -1143,22 +1230,16 @@ namespace NuGet.Build.Tasks.Console
                 }
 
                 // Just return the projects not the whole dictionary as it was just used to group the projects together
-                return projects.Values;
+                return projects;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 LogErrorFromException(e);
 
                 return null;
             }
-        }
-
-        private static HashSet<string> GetAuditSuppressions(IMSBuildProject project)
-        {
-            IEnumerable<string> suppressions = GetDistinctItemsOrEmpty(project, "NuGetAuditSuppress")
-                                                    .Select(i => i.Identity);
-
-            return suppressions?.Count() > 0 ? new HashSet<string>(suppressions) : null;
         }
 
         /// <summary>

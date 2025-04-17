@@ -16,8 +16,6 @@
     <!-- Don't automatically include dependencies -->
     <IncludePackageReferencesInVSIXContainer>false</IncludePackageReferencesInVSIXContainer>
 
-    <!-- Update the VSToolsPath to ensure VSIX builds -->
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable>true</IsPackable>
     <IsShippingAssembly>true</IsShippingAssembly>

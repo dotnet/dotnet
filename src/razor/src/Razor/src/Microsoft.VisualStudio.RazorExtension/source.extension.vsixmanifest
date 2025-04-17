@@ -42,7 +42,7 @@
     <Asset Type="Microsoft.VisualStudio.MefComponent"  Path="Microsoft.VisualStudio.LanguageServer.ContainedLanguage.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.dll" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.AspNetCore.Razor.Utilities.Shared.dll" />
+    <Asset Type="Microsoft.VisualStudio.RazorAssembly" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
+    <Asset Type="Microsoft.VisualStudio.RazorAssembly" Path="Microsoft.AspNetCore.Razor.Utilities.Shared.dll" />
   </Assets>
 </PackageManifest>

@@ -109,34 +109,39 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 CreateStablePackagesFeedIfNeeded();
 
-                yield return new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    StablePackagesFeed,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    LatestLinkShortUrlPrefixes,
-                    _targetChannelConfig.AkaMSCreateLinkPatterns,
-                    _targetChannelConfig.AkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.CouldBeStable,
-                    symbolPublishVisibility: SymbolServerVisibility,
-                    isolated: true,
-                    @internal: IsInternalBuild,
-                    flatten: Flatten);
+                foreach (var packageType in PublishingConstants.Packages)
+                {
+                    yield return new TargetFeedConfig(
+                        packageType,
+                        StablePackagesFeed,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        LatestLinkShortUrlPrefixes,
+                        _targetChannelConfig.AkaMSCreateLinkPatterns,
+                        _targetChannelConfig.AkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.CouldBeStable,
+                        symbolPublishVisibility: SymbolServerVisibility,
+                        isolated: true,
+                        @internal: IsInternalBuild,
+                        flatten: Flatten);
+                }
             }
 
             foreach (var spec in _targetChannelConfig.TargetFeeds)
             {
                 foreach (var type in spec.ContentTypes)
                 {
+                    // This code specifically has any package type to go to
+                    // the override feed, rather than splitting them by content type.
                     var oldFeed = spec.FeedUrl;
                     var feed = GetFeedOverride(oldFeed);
-                    if (type is TargetFeedContentType.Package &&
+                    if (PublishingConstants.Packages.Contains(type) &&
                         spec.Assets == AssetSelection.NonShippingOnly &&
                         FeedOverrides.TryGetValue("transport-packages", out string newFeed))
                     {
                         feed = newFeed;
                     }
-                    else if (type is TargetFeedContentType.Package &&
+                    else if (PublishingConstants.Packages.Contains(type) &&
                         spec.Assets == AssetSelection.ShippingOnly &&
                         FeedOverrides.TryGetValue("shipping-packages", out newFeed))
                     {

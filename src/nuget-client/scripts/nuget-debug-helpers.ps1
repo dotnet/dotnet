@@ -3,7 +3,7 @@ $NuGetClientRoot= Resolve-Path $(Join-Path $PSScriptRoot "..\")
 $Configuration = "Debug"
 $NETFramework = "net472"
 $NETStandard = "netstandard2.0"
-$NETCoreApp = "netcoreapp5.0"
+$NETCoreApp = "net9.0"
 
 <#
 Auto bootstraps NuGet for debugging the targets. This includes both restore and pack and is the recommended way to test things :)

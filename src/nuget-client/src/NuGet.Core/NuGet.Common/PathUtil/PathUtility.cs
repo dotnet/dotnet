@@ -450,16 +450,26 @@ namespace NuGet.Common
             }
             else
             {
-                var listOfPathsToCheck = new string[]
+                var listOfPathsToCheck = new Func<string>[]
                 {
-                    NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome),
-                    NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
-                    Directory.GetCurrentDirectory()
+                    () => NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome),
+                    () => NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
+                    () => Directory.GetCurrentDirectory()
                 };
 
                 var isCaseInsensitive = true;
-                foreach (var path in listOfPathsToCheck)
+                foreach (var pathFunc in listOfPathsToCheck)
                 {
+                    string path;
+                    try
+                    {
+                        path = pathFunc();
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+
                     string? firstParentDirectory = GetFirstParentDirectoryThatExists(path);
                     if (firstParentDirectory is not null)
                     {

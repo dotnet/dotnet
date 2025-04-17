@@ -27,5 +27,8 @@
     <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" ExcludeAssets="all" />
     <!-- System.Text.Json is a dependency of Microsoft.ServiceHub.Framework. Remove the PackageReference once it no longer depends on a vulnerable version -->
     <PackageReference Include="System.Text.Json" />
+
+    <!-- MessagePack is a dependency of StreamJsonRpc. Remove the PackageReference once it no longer depends on a vulnerable version -->
+    <PackageReference Include="MessagePack" />
   </ItemGroup>
 </Project>

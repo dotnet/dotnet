@@ -8,43 +8,43 @@
         <AllowClientRole>true</AllowClientRole>
     </Metadata>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
     </Prerequisites>
     <Installation SystemComponent="true" InstalledByMsi="false" AllUsers="true">
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VPDExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VPDExpress" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VPDExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VPDExpress" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[17.0,)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[17.0,18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[17.0,)">
             <ProductArchitecture>x86</ProductArchitecture>
         </InstallationTarget>
     </Installation>
