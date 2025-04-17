@@ -1,5 +1,8 @@
 <Project>
-   <PropertyGroup>
-      <PublishingVersion>3</PublishingVersion>
-   </PropertyGroup>
+
+   <!-- Update all Artifacts with Kind=Package to have additional metadata item Category="InfrastructurePackage" --> 
+   <ItemGroup>
+     <Artifact Update="@(Artifact->WithMetadataValue('Kind', 'Package'))" Category="InfrastructurePackage" />
+   </ItemGroup>
+
 </Project>

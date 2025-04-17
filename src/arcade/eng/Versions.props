@@ -23,10 +23,10 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25208.1</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25208.1</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25211.4</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25211.4</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
-    <SystemCommandLineVersion>2.0.0-beta4.24126.1</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.0-beta5.25210.1</SystemCommandLineVersion>
     <!-- corefx -->
     <SystemRuntimeInteropServicesRuntimeInformation>4.3.0</SystemRuntimeInteropServicesRuntimeInformation>
     <!-- deployment-tools -->
@@ -44,11 +44,11 @@
     <!-- nuget -->
     <!-- Important: Don't version higher than what's available in the toolset SDK as
          NuGet assemblies aren't redistributed with .NETCoreApp msbuild tasks. -->
-    <NuGetCommandsVersion>6.11.0</NuGetCommandsVersion>
-    <NuGetFrameworksVersion>6.11.0</NuGetFrameworksVersion>
-    <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
-    <NuGetProjectModelVersion>6.11.0</NuGetProjectModelVersion>
-    <NuGetVersioningVersion>6.11.0</NuGetVersioningVersion>
+    <NuGetCommandsVersion>6.13.2</NuGetCommandsVersion>
+    <NuGetFrameworksVersion>6.13.2</NuGetFrameworksVersion>
+    <NuGetPackagingVersion>6.13.2</NuGetPackagingVersion>
+    <NuGetProjectModelVersion>6.13.2</NuGetProjectModelVersion>
+    <NuGetVersioningVersion>6.13.2</NuGetVersioningVersion>
     <!-- roslyn -->
     <MicrosoftCodeAnalysisCSharpVersion>4.8.0</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
@@ -87,7 +87,7 @@
     <MicrosoftNETSdkWorkloadManifestReaderVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderVersion>
     <!-- source-build-externals -->
     <!-- The version is overridden by the VMR to use the version from the previous (n-1) build of Arcade. -->
-    <MicrosoftApplicationInsightsVersion>2.22.0</MicrosoftApplicationInsightsVersion>
+    <MicrosoftApplicationInsightsVersion>2.23.0</MicrosoftApplicationInsightsVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderConverterVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterVersion>
@@ -95,7 +95,7 @@
     <!-- diagnostics -->
     <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-preview.4.25206.2</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-preview.4.25213.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
