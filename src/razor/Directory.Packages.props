@@ -25,7 +25,6 @@
     <PackageVersion Include="BenchmarkDotNet" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />
-    <PackageVersion Include="FluentAssertions" Version="6.7.0" />
     <PackageVersion Include="MessagePack" Version="2.5.192" />
     <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(_MicrosoftBuildPackageVersion)" />

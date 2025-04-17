@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <PackageReference Include="Basic.Reference.Assemblies.AspNet80" />
-    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Moq" />
