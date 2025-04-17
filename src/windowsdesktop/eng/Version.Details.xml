@@ -5,18 +5,18 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>464e5fe6fbe499012445cbd6371010748b89dba3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Private.Winforms" Version="10.0.0-preview.4.25214.4" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
+    <Dependency Name="Microsoft.Private.Winforms" Version="10.0.0-preview.4.25215.9" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>b7f91f4224904dcaf5dd138acdb948857eb17832</Sha>
+      <Sha>6b3acda54bffa15a06ff059fabb390ea90842956</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.GitHub" Version="10.0.0-preview.4.25215.1">
+    <Dependency Name="Microsoft.DotNet.Wpf.GitHub" Version="10.0.0-preview.4.25215.2">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>780159e0e0bd25aabef603a98c392b8d840a8c8e</Sha>
+      <Sha>97aabaccce1e3793c05cdea43eaa197a062fb3b8</Sha>
       <SourceBuildTarball RepoName="wpf" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="10.0.0-preview.4.25215.1">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="10.0.0-preview.4.25215.2">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>780159e0e0bd25aabef603a98c392b8d840a8c8e</Sha>
+      <Sha>97aabaccce1e3793c05cdea43eaa197a062fb3b8</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.0-preview.4.25211.19" CoherentParentDependency="Microsoft.Private.Winforms">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -30,13 +30,13 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>464e5fe6fbe499012445cbd6371010748b89dba3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="10.0.0-preview.4.25214.4" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="10.0.0-preview.4.25215.9" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>b7f91f4224904dcaf5dd138acdb948857eb17832</Sha>
+      <Sha>6b3acda54bffa15a06ff059fabb390ea90842956</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="10.0.0-preview.4.25215.1">
+    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="10.0.0-preview.4.25215.2">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>780159e0e0bd25aabef603a98c392b8d840a8c8e</Sha>
+      <Sha>97aabaccce1e3793c05cdea43eaa197a062fb3b8</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Win32.Registry.AccessControl" Version="10.0.0-preview.4.25211.19" CoherentParentDependency="Microsoft.Private.Winforms">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -146,35 +146,35 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>464e5fe6fbe499012445cbd6371010748b89dba3</Sha>
     </Dependency>
-    <Dependency Name="System.Drawing.Common" Version="10.0.0-preview.4.25214.4" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
+    <Dependency Name="System.Drawing.Common" Version="10.0.0-preview.4.25215.9" CoherentParentDependency="Microsoft.DotNet.Wpf.GitHub">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>b7f91f4224904dcaf5dd138acdb948857eb17832</Sha>
+      <Sha>6b3acda54bffa15a06ff059fabb390ea90842956</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SharedFramework.Sdk" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.SharedFramework.Sdk" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Archives" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Archives" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.25214.8">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.25216.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5af24911dd2de348e66143167d66d05eb55a9db6</Sha>
+      <Sha>85aaca76f75b109aa45b9e949f4a1c9047725d09</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.VersionTools.Tasks" Version="10.0.0-beta.25181.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
