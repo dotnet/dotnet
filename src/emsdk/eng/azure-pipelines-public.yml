@@ -57,7 +57,6 @@ stages:
             /p:TargetArchitecture=$(targetArchitecture)
             /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
-            /p:PlatformName=$(assetManifestPlatform)
             $(_InternalBuildArgs)
             $(_NonWindowsInternalPublishArg)
           displayName: Build
@@ -104,7 +103,6 @@ stages:
             /p:TargetArchitecture=$(targetArchitecture)
             /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
-            /p:PlatformName=$(assetManifestPlatform)
             $(_InternalBuildArgs)
             $(_NonWindowsInternalPublishArg)
           displayName: Build
@@ -146,7 +144,6 @@ stages:
             /p:SkipWorkloads=true
             /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
-            /p:PlatformName=$(assetManifestPlatform)
             /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
             $(_InternalBuildArgs)
           displayName: Build and Publish
@@ -204,7 +201,6 @@ stages:
             /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestFileName=win-workloads.xml
             /p:AssetManifestOS=$(assetManifestOS)
-            /p:PlatformName=$(assetManifestPlatform)
             /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
             $(_InternalBuildArgs)
           displayName: Build and Publish

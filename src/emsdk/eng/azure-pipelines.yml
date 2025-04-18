@@ -71,7 +71,6 @@ extends:
                 /p:TargetArchitecture=x64
                 /p:PackageRID=osx-x64
                 /p:AssetManifestOS=osx
-                /p:PlatformName=x64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -101,7 +100,6 @@ extends:
                 /p:TargetArchitecture=arm64
                 /p:PackageRID=osx-arm64
                 /p:AssetManifestOS=osx
-                /p:PlatformName=arm64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -132,7 +130,6 @@ extends:
                 /p:TargetArchitecture=x64
                 /p:PackageRID=linux-x64
                 /p:AssetManifestOS=linux
-                /p:PlatformName=x64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -162,7 +159,6 @@ extends:
                 /p:TargetArchitecture=arm64
                 /p:PackageRID=linux-arm64
                 /p:AssetManifestOS=linux
-                /p:PlatformName=arm64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -192,7 +188,6 @@ extends:
                 /p:TargetArchitecture=x64
                 /p:PackageRID=linux-musl-x64
                 /p:AssetManifestOS=linux-musl
-                /p:PlatformName=x64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -222,7 +217,6 @@ extends:
                 /p:TargetArchitecture=arm64
                 /p:PackageRID=linux-musl-arm64
                 /p:AssetManifestOS=linux-musl
-                /p:PlatformName=arm64
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -256,7 +250,6 @@ extends:
                 /p:SkipWorkloads=true
                 /p:PackageRID=win-x64
                 /p:AssetManifestOS=win
-                /p:PlatformName=x64
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
               displayName: Build
@@ -299,7 +292,6 @@ extends:
                 /p:SkipWorkloads=true
                 /p:PackageRID=win-arm64
                 /p:AssetManifestOS=win
-                /p:PlatformName=arm64
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
               displayName: Build
@@ -406,7 +398,6 @@ extends:
                 /p:PackageRID=win-x64
                 /p:AssetManifestFileName=win-workloads.xml
                 /p:AssetManifestOS=win
-                /p:PlatformName=x64
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
                 $(_InternalBuildArgs)
               displayName: Build and Publish
