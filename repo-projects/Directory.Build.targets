@@ -540,7 +540,8 @@
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true">
+          IgnoreStandardErrorWarningFormat="true"
+          YieldDuringToolExecution="true">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
@@ -1021,5 +1022,11 @@
       <DependencyGraphString>$(DependencyGraphIndent)-_$(RepositoryName)$(_LineBreak)$(_DependencyGraphString)</DependencyGraphString>
     </PropertyGroup>
   </Target>
+
+  <!-- Graph hack -->
+  <ItemGroup>
+    <ProjectReference Include="@(RepositoryReference -> '%(Identity).proj')" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\eng\tools\tools.proj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
 
 </Project>
