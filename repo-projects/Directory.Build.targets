@@ -539,7 +539,8 @@
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true">
+          IgnoreStandardErrorWarningFormat="true"
+          YieldDuringToolExecution="true">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
