@@ -10,7 +10,7 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(Sign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
-    <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
