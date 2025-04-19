@@ -69,7 +69,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=x64
-                /p:PackageRID=osx-x64
+                /p:TargetRid=osx-x64
                 /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -98,7 +98,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=arm64
-                /p:PackageRID=osx-arm64
+                /p:TargetRid=osx-arm64
                 /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -128,7 +128,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=x64
-                /p:PackageRID=linux-x64
+                /p:TargetRid=linux-x64
                 /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -157,7 +157,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=arm64
-                /p:PackageRID=linux-arm64
+                /p:TargetRid=linux-arm64
                 /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -186,7 +186,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=x64
-                /p:PackageRID=linux-musl-x64
+                /p:TargetRid=linux-musl-x64
                 /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -215,7 +215,7 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 /p:TargetArchitecture=arm64
-                /p:PackageRID=linux-musl-arm64
+                /p:TargetRid=linux-musl-arm64
                 /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
                 $(_NonWindowsInternalPublishArg)
@@ -248,7 +248,7 @@ extends:
                 -publish
                 /p:TargetArchitecture=x64
                 /p:SkipWorkloads=true
-                /p:PackageRID=win-x64
+                /p:TargetRid=win-x64
                 /p:AssetManifestOS=win
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
@@ -290,7 +290,7 @@ extends:
                 -publish
                 /p:TargetArchitecture=arm64
                 /p:SkipWorkloads=true
-                /p:PackageRID=win-arm64
+                /p:TargetRid=win-arm64
                 /p:AssetManifestOS=win
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
@@ -395,7 +395,7 @@ extends:
                 -publish
                 /p:TargetArchitecture=x64
                 /p:SkipBuild=true
-                /p:PackageRID=win-x64
+                /p:TargetRid=win-x64
                 /p:AssetManifestFileName=win-workloads.xml
                 /p:AssetManifestOS=win
                 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
