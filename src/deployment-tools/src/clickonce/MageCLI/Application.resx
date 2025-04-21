@@ -145,7 +145,7 @@
 
 
 Options
-  -Algorithm &lt;sha256RSA&gt;           -a
+  -Algorithm &lt;sha256RSA&gt;            -a
   -AppCodeBase &lt;path&gt;	            -appc
   -AppManifest &lt;path&gt;	            -appm
   -CertFile &lt;file_name&gt;	            -cf

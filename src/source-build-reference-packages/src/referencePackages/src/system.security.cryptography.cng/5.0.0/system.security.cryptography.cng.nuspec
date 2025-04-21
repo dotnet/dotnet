@@ -24,9 +24,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
-      <group targetFramework=".NETCoreApp3.0">
-        <dependency id="System.Formats.Asn1" version="5.0.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETStandard2.0" />
       <group targetFramework=".NETStandard2.1" />
     </dependencies>

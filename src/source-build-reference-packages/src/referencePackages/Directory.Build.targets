@@ -51,7 +51,6 @@
   <!-- Keep in sync with available targeting packs under src/targetPacks/ILsrc. -->
   <ItemGroup>
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.0'">3.0.0</TargetingPackVersion>
       <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
     </KnownFrameworkReference>
 

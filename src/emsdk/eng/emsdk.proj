@@ -144,7 +144,7 @@
   </Target>
 
   <Target Name="ReallyBuild" BeforeTargets="Build">
-    <Error Condition="'$(PackageRID)' == ''" Text="PackageRID needs to be specified, e.g. 'osx-x64'!" />
+    <Error Condition="'$(TargetRid)' == ''" Text="TargetRid needs to be specified, e.g. 'osx-x64'!" />
 
     <PropertyGroup>
       <EmSdkFileName Condition="!$([MSBuild]::IsOSPlatform(Windows))">./emsdk</EmSdkFileName>

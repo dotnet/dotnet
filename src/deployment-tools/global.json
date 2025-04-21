@@ -1,14 +1,14 @@
 {
   "sdk": {
-    "version": "10.0.100-preview.3.25167.3",
+    "version": "10.0.100-preview.3.25201.16",
     "allowPrerelease": true,
     "rollForward": "major"
   },
   "tools": {
-    "dotnet": "10.0.100-preview.3.25167.3"
+    "dotnet": "10.0.100-preview.3.25201.16"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25206.1",
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25212.1",
     "Microsoft.Build.NoTargets": "3.7.0",
     "Microsoft.Build.Traversal": "3.4.0"
   }
