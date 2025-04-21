@@ -27,10 +27,10 @@
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.25213.3</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>10.0.0-alpha.1.25213.3</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
     <!-- cpython -->
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25076.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25076.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25076.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25076.1</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25218.5</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25218.5</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25218.5</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>10.0.0-alpha.1.25218.5</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
     <!-- node -->
     <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.25214.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
     <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.25214.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
@@ -50,7 +50,7 @@
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25207.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25207.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
     <!-- emscripten -->
-    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>10.0.0-alpha.1.25215.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
+    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>10.0.0-alpha.1.25218.4</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
