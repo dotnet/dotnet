@@ -22,11 +22,11 @@
       "commitSha": "30826892c4bb32805c843ab6ab898ca069d2020c"
     },
     {
-      "packageVersion": "0.11.5-alpha.25125.1",
+      "packageVersion": "0.11.5-alpha.25166.4",
       "barId": null,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "f7a78a77069262841fe3c3c6b89ff243fc43cefc"
+      "commitSha": "40bfdb55eac2e9a65f07029f8c426e08eb53168e"
     },
     {
       "packageVersion": "0.1.621801",
@@ -106,11 +106,11 @@
       "commitSha": "cbcc6ddf3db6dedff5049f0397e1351951c13271"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25217.10",
+      "packageVersion": "10.0.0-preview.4.25222.1",
       "barId": null,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e1702c393a1ef71b211f51d00beedec0151c9f25"
+      "commitSha": "8c3a2e15a63d1a7b2b54312b79f8a725ccdc2d4d"
     },
     {
       "packageVersion": "10.0.0-preview.25214.1",
@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e9f2a8e0c98063a89e4d76eea7ade9adcef1df7b"
+      "commitSha": "1149d074948ec3d8a6fd72bff81d7cb9830b0fee"
     },
     {
       "packageVersion": "10.0.622101",
