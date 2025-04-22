@@ -273,22 +273,22 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>e1702c393a1ef71b211f51d00beedec0151c9f25</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="10.0.0-preview.4.25221.1">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="10.0.0-preview.4.25221.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>8abada48162108c0c21e9b68a231284e6dd026f3</Sha>
+      <Sha>841cdaf5c435ec6c7dabcd393faff3b2d824a30e</Sha>
       <SourceBuildTarball RepoName="windowsdesktop" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.10.0" Version="10.0.0-preview.4.25221.1">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.10.0" Version="10.0.0-preview.4.25221.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>8abada48162108c0c21e9b68a231284e6dd026f3</Sha>
+      <Sha>841cdaf5c435ec6c7dabcd393faff3b2d824a30e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0-preview.4.25221.1">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0-preview.4.25221.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>8abada48162108c0c21e9b68a231284e6dd026f3</Sha>
+      <Sha>841cdaf5c435ec6c7dabcd393faff3b2d824a30e</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.10.0" Version="10.0.0-preview.4.25221.1">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.10.0" Version="10.0.0-preview.4.25221.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>8abada48162108c0c21e9b68a231284e6dd026f3</Sha>
+      <Sha>841cdaf5c435ec6c7dabcd393faff3b2d824a30e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="10.0.0-preview.4.25221.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
@@ -631,42 +631,42 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25217.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25221.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>76dd1b4eb3b15881da350de93805ea6ab936364c</Sha>
+      <Sha>f68e9e905ba5a7b6437b7560d5a6b170057ecb2f</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.Reflection.MetadataLoadContext" Version="10.0.0-preview.4.25217.10">

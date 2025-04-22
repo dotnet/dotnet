@@ -87,7 +87,6 @@ namespace Microsoft.SignCheck.Verification
             Options = options;
 
 #if NETFRAMEWORK
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".js"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psd1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
@@ -112,6 +111,7 @@ namespace Microsoft.SignCheck.Verification
             AddFileVerifier(new RpmVerifier(log, exclusions, options));
 #endif
             AddFileVerifier(new ExeVerifier(log, exclusions, options, ".exe"));
+            AddFileVerifier(new JavaScriptVerifier(log, exclusions, options));
             AddFileVerifier(new LzmaVerifier(log, exclusions, options));
             AddFileVerifier(new NupkgVerifier(log, exclusions, options));
             AddFileVerifier(new PortableExecutableVerifier(log, exclusions, options, ".dll"));

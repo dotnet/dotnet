@@ -11,22 +11,19 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Pkcs;
 using Microsoft.SignCheck.Interop;
-#if NET
-using System.Reflection.PortableExecutable;
-#endif
 
 namespace Microsoft.SignCheck.Verification
 {
     public static class AuthentiCode
-    { 
-        public static bool IsSigned(string path, SignatureVerificationResult svr) =>
-            string.IsNullOrEmpty(path) ? false : IsSignedInternal(path, svr);
+    {
+        public static bool IsSigned(string path, SignatureVerificationResult svr, ISecurityInfoProvider securityInfoProvider) =>
+            string.IsNullOrEmpty(path) ? false : IsSignedInternal(path, svr, securityInfoProvider);
 
-        public static IEnumerable<Timestamp> GetTimestamps(string path) =>
-            string.IsNullOrEmpty(path) ? Enumerable.Empty<Timestamp>() : GetTimestampsInternal(path);
+        public static IEnumerable<Timestamp> GetTimestamps(string path, ISecurityInfoProvider securityInfoProvider) =>
+            string.IsNullOrEmpty(path) ? Enumerable.Empty<Timestamp>() : GetTimestampsInternal(path, securityInfoProvider);
 
 #if NETFRAMEWORK
-        private static bool IsSignedInternal(string path, SignatureVerificationResult svr)
+        private static bool IsSignedInternal(string path, SignatureVerificationResult svr, ISecurityInfoProvider securityInfoProvider)
         {
             WinTrustFileInfo fileInfo = new WinTrustFileInfo()
             {
@@ -75,7 +72,7 @@ namespace Microsoft.SignCheck.Verification
             return hrresult == 0;
         }
 
-        private static IEnumerable<Timestamp> GetTimestampsInternal(string path)
+        private static IEnumerable<Timestamp> GetTimestampsInternal(string path, ISecurityInfoProvider securityInfoProvider)
         {
             int msgAndCertEncodingType;
             int msgContentType;
@@ -122,11 +119,16 @@ namespace Microsoft.SignCheck.Verification
             return ExtractTimestamps(signedCms);
         }
 #else
-        private static bool IsSignedInternal(string path, SignatureVerificationResult svr)
+        private static bool IsSignedInternal(string path, SignatureVerificationResult svr, ISecurityInfoProvider securityInfoProvider)
         {
+            if (securityInfoProvider == null)
+            {
+                throw new ArgumentNullException(nameof(securityInfoProvider));
+            }
+
             try
             {
-                SignedCms signedCms = ReadSecurityInfo(path);
+                SignedCms signedCms = securityInfoProvider.ReadSecurityInfo(path);
                 if (signedCms == null)
                 {
                     return false;
@@ -153,53 +155,20 @@ namespace Microsoft.SignCheck.Verification
             }
         }
 
-        private static IEnumerable<Timestamp> GetTimestampsInternal(string path)
+        private static IEnumerable<Timestamp> GetTimestampsInternal(string path, ISecurityInfoProvider securityInfoProvider)
         {
-            SignedCms signedCms = ReadSecurityInfo(path);
+            if (securityInfoProvider == null)
+            {
+                throw new ArgumentNullException(nameof(securityInfoProvider));
+            }
+
+            SignedCms signedCms = securityInfoProvider.ReadSecurityInfo(path);
             if (signedCms == null)
             {
                 return Enumerable.Empty<Timestamp>();
             }
 
             return ExtractTimestamps(signedCms);
-        }
-
-        private static SignedCms ReadSecurityInfo(string path)
-        {
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (PEReader peReader = new PEReader(fs))
-            {
-                var securityDirectory = peReader.PEHeaders.PEHeader.CertificateTableDirectory;
-                if (securityDirectory.RelativeVirtualAddress != 0 && securityDirectory.Size != 0)
-                {
-                    int securityHeaderSize = 8; // 4(length of cert) + 2(cert revision) + 2(cert type)
-                    if (securityDirectory.Size <= securityHeaderSize)
-                    {
-                        // No security entry - just the header
-                        return null;
-                    }
-
-                    // Skip the header
-                    fs.Position = securityDirectory.RelativeVirtualAddress + securityHeaderSize;
-                    byte[] securityEntry = new byte[securityDirectory.Size - securityHeaderSize];
-
-                    // Ensure the stream has enough data to read
-                    if (fs.Length < fs.Position + securityEntry.Length)
-                    {
-                        throw new CryptographicException($"File '{path}' is too small to contain a valid security entry.");
-                    }
-
-                    // Read the security entry
-                    fs.ReadExactly(securityEntry);
-
-                    // Decode the security entry
-                    var signedCms = new SignedCms();
-                    signedCms.Decode(securityEntry);
-                    return signedCms;
-                }
-            }
-
-            return null;
         }
 
         private static SignerInfo GetPrimarySignerInfo(SignerInfoCollection signerInfos)
