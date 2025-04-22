@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>9.0.0</PackageVersion>
+    <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+  </PropertyGroup>
+
+</Project>
