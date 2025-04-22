@@ -18,4 +18,6 @@
     <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true" />
   </ItemGroup>
 
+  <Import Project="..\..\Microsoft.DotNet.XUnitExtensions.Shared\Microsoft.DotNet.XUnitExtensions.Shared.projitems" Label="Shared" />
+
 </Project>

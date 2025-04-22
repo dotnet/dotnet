@@ -4,26 +4,36 @@
             MarkupStartTag - [0..21)::21 - [<p "ab" class="@c" />] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[p];
-                MarkupMiscAttributeContent - [2..19)::17
-                    MarkupTextLiteral - [2..15)::13 - [ "ab" class="] - Gen<Markup>
+                MarkupMinimizedAttributeBlock - [2..7)::5 - [ "ab"]
+                    MarkupTextLiteral - [2..3)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
+                    MarkupTextLiteral - [3..7)::4 - ["ab"] - Gen<Markup>
                         DoubleQuote;["];
                         Text;[ab];
                         DoubleQuote;["];
+                MarkupAttributeBlock - [7..18)::11 - [ class="@c"]
+                    MarkupTextLiteral - [7..8)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
+                    MarkupTextLiteral - [8..13)::5 - [class] - Gen<Markup>
                         Text;[class];
-                        Equals;[=];
+                    Equals;[=];
+                    MarkupTextLiteral - [14..15)::1 - ["] - Gen<Markup>
                         DoubleQuote;["];
-                    CSharpCodeBlock - [15..17)::2
-                        CSharpImplicitExpression - [15..17)::2
-                            CSharpTransition - [15..16)::1 - Gen<None>
-                                Transition;[@];
-                            CSharpImplicitExpressionBody - [16..17)::1
-                                CSharpCodeBlock - [16..17)::1
-                                    CSharpExpressionLiteral - [16..17)::1 - [c] - Gen<Expr>
-                                        Identifier;[c];
-                    MarkupTextLiteral - [17..19)::2 - [" ] - Gen<Markup>
+                    GenericBlock - [15..17)::2
+                        MarkupDynamicAttributeValue - [15..17)::2 - [@c]
+                            GenericBlock - [15..17)::2
+                                CSharpCodeBlock - [15..17)::2
+                                    CSharpImplicitExpression - [15..17)::2
+                                        CSharpTransition - [15..16)::1 - Gen<None>
+                                            Transition;[@];
+                                        CSharpImplicitExpressionBody - [16..17)::1
+                                            CSharpCodeBlock - [16..17)::1
+                                                CSharpExpressionLiteral - [16..17)::1 - [c] - Gen<Expr>
+                                                    Identifier;[c];
+                    MarkupTextLiteral - [17..18)::1 - ["] - Gen<Markup>
                         DoubleQuote;["];
+                MarkupMiscAttributeContent - [18..19)::1
+                    MarkupTextLiteral - [18..19)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
                 ForwardSlash;[/];
                 CloseAngle;[>];

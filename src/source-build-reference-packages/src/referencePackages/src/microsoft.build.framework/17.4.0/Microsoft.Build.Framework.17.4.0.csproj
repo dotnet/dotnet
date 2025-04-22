@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.4.0</PackageVersion>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.permissions/6.0.0/System.Security.Permissions.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/6.0.0/System.Security.Permissions.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

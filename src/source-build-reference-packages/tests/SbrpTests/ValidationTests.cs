@@ -35,10 +35,10 @@ public class ValidationTests
 
     [SkippableFact]
     public void ValidateSbrpAttribute()
-    {      
+    {
         string[] packages = GetPackages();
 
-        HashSet<string> targetAndTextOnlyPacks = new (
+        HashSet<string> targetAndTextOnlyPacks = new(
             Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/targetPacks/ILsrc"))
                 .Union(Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/textOnlyPackages/src")))
                 .Select(x => Path.GetFileName(x).ToLower())
@@ -66,8 +66,8 @@ public class ValidationTests
 
                 foreach (var dll in dlls)
                 {
-                    using FileStream stream = new (dll, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    using PEReader peReader = new (stream);
+                    using FileStream stream = new(dll, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using PEReader peReader = new(stream);
                     MetadataReader reader = peReader.GetMetadataReader();
 
                     Assert.True(HasSbrpAttribute(reader), $"{package}/{Path.GetRelativePath(tempDirectory, dll)} does not contain the {SbrpAttributeType} attribute with key='source' and value='{SbrpRepoIdentifier}'.");
@@ -86,7 +86,7 @@ public class ValidationTests
         string[] packages = GetPackages();
 
         ISignatureVerificationProvider[] trustProviders = [new SignatureTrustAndValidityVerificationProvider()];
-        PackageSignatureVerifier verifier = new (trustProviders);
+        PackageSignatureVerifier verifier = new(trustProviders);
         var settings = SignedPackageVerifierSettings.GetDefault();
 
         Output.WriteLine($"Checking {packages.Count()} packages for signatures.");
@@ -159,7 +159,7 @@ public class ValidationTests
 
     private static async Task<bool> IsPackageSignedAsync(string packagePath, PackageSignatureVerifier verifier, SignedPackageVerifierSettings settings)
     {
-        using PackageArchiveReader packageReader = new (packagePath);
+        using PackageArchiveReader packageReader = new(packagePath);
         var result = await verifier.VerifySignaturesAsync(packageReader, settings, CancellationToken.None);
         return result.IsSigned;
     }

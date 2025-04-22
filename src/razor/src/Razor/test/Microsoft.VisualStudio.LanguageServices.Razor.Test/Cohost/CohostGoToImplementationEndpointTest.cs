@@ -9,17 +9,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using LspLocation = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
-using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task CSharp_Method()
     {
         var input = """
@@ -40,7 +37,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_Field()
     {
         var input = """
@@ -64,7 +61,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task CSharp_Multiple()
     {
         var input = """
@@ -85,7 +82,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         await VerifyCSharpGoToImplementationAsync(input);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html()
     {
         // This really just validates Uri remapping, the actual response is largely arbitrary
@@ -100,7 +97,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
             </script>
             """;
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlResponse = new SumType<LspLocation[], VSInternalReferenceItem[]>?(new LspLocation[]
@@ -119,9 +116,7 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
 
     private async Task VerifyCSharpGoToImplementationAsync(TestCode input)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text);
 
         var requestInvoker = new TestLSPRequestInvoker();
 
@@ -130,8 +125,6 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
 
     private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
@@ -154,18 +147,10 @@ public class CohostGoToImplementationEndpointTest(FuseTestContext context, ITest
         if (result.Value.TryGetFirst(out var roslynLocations))
         {
             var expected = input.Spans.Select(s => inputText.GetRange(s).ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
-            var actual = roslynLocations.Select(l => RoslynLspExtensions.ToLinePositionSpan(l.Range)).OrderBy(r => r.Start.Line).ToArray();
+            var actual = roslynLocations.Select(l => l.Range.ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
             Assert.Equal(expected, actual);
 
             Assert.All(roslynLocations, l => l.Uri.Equals(document.CreateUri()));
-        }
-        else if (result.Value.TryGetSecond(out var vsLocations))
-        {
-            var expected = input.Spans.Select(s => inputText.GetRange(s).ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
-            var actual = vsLocations.Select(l => l.Range.ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
-            Assert.Equal(expected, actual);
-
-            Assert.All(vsLocations, l => l.Uri.Equals(document.CreateUri()));
         }
         else
         {

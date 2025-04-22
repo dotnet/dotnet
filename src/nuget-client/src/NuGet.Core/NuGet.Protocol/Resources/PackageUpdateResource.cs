@@ -67,7 +67,7 @@ namespace NuGet.Protocol.Core.Types
             await Push(packagePaths, symbolSource, timeoutInSecond, disableBuffering, getApiKey, getSymbolApiKey, noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource, allowInsecureConnections: false, log);
         }
 
-        public async Task Push(
+        public async Task PushAsync(
             IList<string> packagePaths,
             string symbolSource, // empty to not push symbols
             int timeoutInSecond,
@@ -76,7 +76,7 @@ namespace NuGet.Protocol.Core.Types
             Func<string, string> getSymbolApiKey,
             bool noServiceEndpoint,
             bool skipDuplicate,
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowSnupkg,
             bool allowInsecureConnections,
             ILogger log)
         {
@@ -94,7 +94,7 @@ namespace NuGet.Protocol.Core.Types
                 {
                     // Push nupkgs and possibly the corresponding snupkgs.
                     await PushPackagePath(packagePath, _source, symbolSource, apiKey, getSymbolApiKey, noServiceEndpoint, skipDuplicate,
-                        symbolPackageUpdateResource, allowInsecureConnections, requestTimeout, log, tokenSource.Token);
+                        allowSnupkg, allowInsecureConnections, requestTimeout, log, tokenSource.Token);
                 }
                 else // Explicit snupkg push
                 {
@@ -106,11 +106,27 @@ namespace NuGet.Protocol.Core.Types
                         string symbolApiKey = getSymbolApiKey(symbolSource);
 
                         await PushSymbolsPath(packagePath, symbolSource, symbolApiKey,
-                            noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource, allowInsecureConnections,
+                            noServiceEndpoint, skipDuplicate, allowSnupkg, allowInsecureConnections,
                             requestTimeout, log, tokenSource.Token);
                     }
                 }
             }
+        }
+
+        public async Task Push(
+            IList<string> packagePaths,
+            string symbolSource, // empty to not push symbols
+            int timeoutInSecond,
+            bool disableBuffering,
+            Func<string, string> getApiKey,
+            Func<string, string> getSymbolApiKey,
+            bool noServiceEndpoint,
+            bool skipDuplicate,
+            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowInsecureConnections,
+            ILogger log)
+        {
+            await PushAsync(packagePaths, symbolSource, timeoutInSecond, disableBuffering, getApiKey, getSymbolApiKey, noServiceEndpoint, skipDuplicate, allowSnupkg: symbolPackageUpdateResource is not null, allowInsecureConnections, log);
         }
 
         [Obsolete("Use Push method which takes multiple package paths.")]
@@ -207,17 +223,16 @@ namespace NuGet.Protocol.Core.Types
             string apiKey,
             bool noServiceEndpoint,
             bool skipDuplicate,
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowSnupkg,
             bool allowInsecureConnections,
             TimeSpan requestTimeout,
             ILogger log,
             CancellationToken token)
         {
-            bool isSymbolEndpointSnupkgCapable = symbolPackageUpdateResource != null;
             // Get the symbol package for this package
-            string symbolPackagePath = GetSymbolsPath(packagePath, isSymbolEndpointSnupkgCapable);
+            string symbolPackagePath = GetSymbolsPath(packagePath, allowSnupkg);
 
-            IEnumerable<string> symbolsToPush = LocalFolderUtility.ResolvePackageFromPath(symbolPackagePath, isSnupkg: isSymbolEndpointSnupkgCapable);
+            IEnumerable<string> symbolsToPush = LocalFolderUtility.ResolvePackageFromPath(symbolPackagePath, isSnupkg: allowSnupkg);
             bool symbolsPathResolved = symbolsToPush != null && symbolsToPush.Any();
 
             //No files were resolved.
@@ -259,7 +274,7 @@ namespace NuGet.Protocol.Core.Types
             Func<string, string> getSymbolApiKey,
             bool noServiceEndpoint,
             bool skipDuplicate,
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowSnupkg,
             bool allowInsecureConnections,
             TimeSpan requestTimeout,
             ILogger log,
@@ -290,8 +305,7 @@ namespace NuGet.Protocol.Core.Types
                 // Push corresponding symbols, if successful.
                 if (packageWasPushed && !string.IsNullOrEmpty(symbolSource))
                 {
-                    bool isSymbolEndpointSnupkgCapable = symbolPackageUpdateResource != null;
-                    string symbolPackagePath = GetSymbolsPath(nupkgToPush, isSnupkg: isSymbolEndpointSnupkgCapable);
+                    string symbolPackagePath = GetSymbolsPath(nupkgToPush, isSnupkg: allowSnupkg);
 
                     // There may not be a snupkg with the same filename. Ignore it since this isn't an explicit snupkg push.
                     if (!File.Exists(symbolPackagePath))

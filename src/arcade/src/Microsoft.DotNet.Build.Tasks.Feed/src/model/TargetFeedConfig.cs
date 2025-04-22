@@ -162,7 +162,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         Maven           = 512,
         VSIX            = 1024,
         Badge           = 2048,
-        Other           = 4096
+        Other           = 4096,
+        InfrastructurePackage = 8192,
+        CorePackage     = 16384,
+        LibraryPackage  = 32768,
+        ToolingPackage  = 65536
     }
 
     public enum SymbolPublishVisibility
@@ -189,6 +193,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
     {
         All,
         ShippingOnly,
-        NonShippingOnly
+        NonShippingOnly,
+        CouldBeStable, // V4 only. Assets that could be stable (whether shipping or non-shipping)
     }
 }

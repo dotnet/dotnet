@@ -1,61 +1,88 @@
-# Workflow
+# Workflow Guidelines
 
 In here we describe the general workflow guidelines the NuGet developer/contributor.
 
-## Basics
-
-### Pull requests & Code reviews
+## Pull Requests & Code Reviews
 
 To help ensure that only the highest quality code makes its way into the project, all code changes need to be submitted to GitHub as PRs.
+This repo has bots that manage all stale PRs.
+Stale PRs will be auto closed.
 
-In general a PR should be approved by a Subject Matter Expert (SME) of that code. For example, a change to the Banana project should be signed off by `@Monkey`, and not by `@Giraffe`. If you don't know the SME, someone on the team will help you identify them. Of course, sometimes it's the SME who is making a change, in which case a secondary person will have to sign off on the change (e.g. `@JuniorMonkey`).
+These are guidelines to follow but unless indicated, they are not required.
+- [❗] = Required
+- [🤖] = Enforced with tooling
 
-To commit the PR to the repo use the GitHub `Squash and Merge` button. We can't stress this enough. Always use `Squash and Merge` unless an exception is explicitly stated in this document.
+### Requesting a Pull Request Review
 
-This repo has bots that manage all stale PRs. Stale PRs will be autoclosed.
+- Focus on small, iterative, changes when possible.
+- Follow the pull request template, as it helps the maintainers drive quality across the product.
+- [❗] Include the Subject Matter Expert (SME) for the area you are working on.
+  - If you don't know the SME, someone on the team will help you identify them.
+- Request at least 2 reviewers, and re-request their review when feedback has been addressed.
+- Include screenshots and PM when making UX changes.
+  - If you do not know who the PM is someone on the team will help you identify them.
+- Include perf traces when making performance improvements.
 
-- *Do* follow the pull request template, as it helps the maintainers drive quality across the product.
-- *Do* favor having more than 1 reviewer.
-- *Do not* merge too quickly. Wait for at least 24h after the last significant changes before merging unless the change is urgent.
-- *Do* address all feedback. Not necessarily by accepting it, but by reaching a resolution with the reviewer. All comments need to be marked as resolved before merging.
-- *Do* use GitHub's tooling. Re-request review after all feedback has been addressed.
-- *Do* pay special attention to the commit message. Ensure the merge message is appropriate and helpful to the future reader. See [merge commit considerations](#merge-commit-considerations).
+### Addressing Feedback
 
-#### Pull Request Etiquette and Best Practices
+- [❗] Focus on collaboration when responding to feedback.
+  - Try your best not to take feedback personally, we're all working towards the same goals.
+  - When conflict arises try to address it directly with the commentor offline, preferably synchronously.
+  - Provide an explanation if you decide not to implement a recommendation.
 
-- Leaving [suggested changes](https://docs.github.com/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request) is welcomed, but please never commit them for a PR you did not create.
-- Make sure your intent is clear. Is your comment about just trying to understand the code? Use softer language, such as "I'm curious ...". Do you have a knowledge that the change could introduce a regression? Make your comment emphasize that!
-- For comments that are just optional suggestions or are explicitly non-blocking, prefix them with "nit: " or "non-blocking: ".
-- When to mark a PR as "Approved"
-  - You feel confident that the code meets a high quality bar, has adequate test coverage, is ready to merge.
-  - You have left comments that are uncontroversial and there is a shared understanding with the author that the comments can be addressed or resolved either within this PR or a follow up PR, without a significant change to the design or approach. If the author pushes a new change addressing those comments, you may need to re-approve as it's required that the latest iteration of a PR is approved.
-- When to leave comments without approval
-  - You do not feel confident that your review alone is sufficient to call the PR ready to merge.
-  - You have feedback that may require detailed discussion or may indicate a need to change the current design or approach in a non-trivial way.
-- When to mark a PR as "Request Changes"
-  - You have significant concerns that must be addressed before this PR should be merged such as unintentional breaking changes, security issues, or potential data loss.
+### Merging Pull Requests
 
-#### Merge commit considerations
-
-GitHub merges have 2 means to specify a commit message when squash merging. Inspect both! In most scenarios, you will want to delete the commit by commit messages. Only leave the messages when they are helpful to a user in the future.
-
+- [🤖] All comments must be resolved before merging.
+- [🤖] use the GitHub `Squash and Merge` button for this repository.
+- Merge a PR when you are confident it has been sufficiently reviewed.
+- When possible wait 24h after the last significant change before merging.
+- Ensure commit message is descriptive and helpful
 ![Good Commit Message](images/good-commit-message.png)
-
 ![Good Commit Message With More Details](images/good-commit-message-expanded.png)
-
 ![Bad Commit Message](images/bad-commit-message.png)
 
-#### Draft Pull Requests
+### Providing Pull Request Feedback
 
-Draft pull requests are allowed, but should have a clear plan for transition to a review ready pull request.
+- [❗] Focus on collaboration when providing feedback.
+- Use [suggested changes](https://docs.github.com/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request), but please never commit them for a PR you did not create.
+- Make the intent of your comment clear.
+  - ex. "Consider changing the color of this border because..."
+  - ex. "I've never seen this before! Can you help me understand..."
+  - ex. "Nit: Spelling mistake"
+- Focus on actionable feedback when requesting changes.
+  - **Be Constructive**: Offer suggestions for improvement, or guide the author in the right direction, rather than just pointing out what's wrong.
+  - **Provide Context**: Explain why a change is necessary or how it aligns with project goals
+  - **Be Specific**: Clearly point out the exact lines or sections of code that need attention.
+- Ensure the subject of your feedback is the code and not the PR author.
+  - Use soft language if you must address the author directly.
 
-### Branching strategy
+#### When to mark a PR as "Approved"
+
+- You feel confident that the code meets a high-quality bar, has adequate test coverage, and is ready to merge.
+- Any comments submitted are uncontroversial and do not need to be resolved before merging.
+  - If the author addresses your comments you may need to re-approve, since changes reset previous approval statuses.
+- Previous feedback has been sufficiently addressed.
+
+#### When to leave comments without approval
+
+- You are not confident you can approve the PR with the requirements stated above.
+- You have feedback that you would like addressed but do not want to block the PR from merging.
+
+#### When to mark a PR as "Request Changes"
+
+- You have significant concerns that must be addressed before this PR should be merged such as unintentional breaking changes, security issues, or potential data loss.
+
+### Draft Pull Requests
+
+Draft pull requests are allowed but should have a clear plan for transitioning to a review ready pull request.
+
+## Branching strategy
 
 The active development branch in our repo is `dev`. What we ship comes from the `release-major.minor.x` branches.
 
-#### Adding fixes in release branches
+### Adding fixes in release branches
 
-NuGet primarily works on the dev branch and that's where most of the commmits will be merged. At a certain point, NuGet branches to a release branch during the release stabilization phase and the last few commits usually go into that branch.
+NuGet primarily works on the dev branch and that's where most of the commits will be merged. At a certain point, NuGet branches to a release branch during the release stabilization phase and the last few commits usually go into that branch.
 
 In most cases, a fix will be originally developed on the dev branch and then moved to the release branch.
 When moving to the release branch the recommended approach is the following:
@@ -71,7 +98,7 @@ The recommended pattern for release branches is slightly different. We should pr
 
 ![Good Release branch Commit Message](images/release-branch-commit-message.png)
 
-### Solution and project folder structure and naming
+## Solution and project folder structure and naming
 
 The NuGet.Client repo currently has only one solution file named `NuGet.sln`. We do not want/need to have more than one solution file.
 We have some Solution Filters (.slnf files), currently for projects specific to working with NuGet's Command line, VS, or UnitTests directly, and can consider more based on team and community feedback.
@@ -85,7 +112,7 @@ We have some Solution Filters (.slnf files), currently for projects specific to 
 Follow the existing pattern for new project files (for example, if NuGet.Commands imports common.props at some point, so should NuGet.MyNewProject).
 Test projects have a different convention for the build customization files they import, so be mindful of that.
 
-### Project naming pattern
+## Project naming pattern
 
 The general naming pattern is `NuGet.<area>.<subarea>`.
 

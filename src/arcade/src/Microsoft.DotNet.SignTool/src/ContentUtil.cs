@@ -60,27 +60,6 @@ namespace Microsoft.DotNet.SignTool
 
         }
 
-        /// <summary>
-        /// Returns true if the PE file meets all of the pre-conditions to be Open Source Signed.
-        /// Returns false and logs msbuild errors otherwise.
-        /// </summary>
-        public static bool IsPublicSigned(PEReader peReader)
-        {
-            if (!peReader.HasMetadata)
-            {
-                return false;
-            }
-
-            var mdReader = peReader.GetMetadataReader();
-            if (!mdReader.IsAssembly)
-            {
-                return false;
-            }
-
-            CorHeader header = peReader.PEHeaders.CorHeader;
-            return (header.Flags & CorFlags.StrongNameSigned) == CorFlags.StrongNameSigned;
-        }
-
         public static bool IsManaged(string filePath)
         {
             try

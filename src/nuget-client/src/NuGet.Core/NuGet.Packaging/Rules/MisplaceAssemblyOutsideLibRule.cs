@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,9 +19,20 @@ namespace NuGet.Packaging.Rules
         {
             MessageFormat = messageFormat;
         }
+
+        internal MisplacedAssemblyOutsideLibRule()
+            : this(AnalysisResources.AssemblyOutsideLibWarning)
+        {
+        }
+
         public IEnumerable<PackagingLogMessage> Validate(PackageArchiveReader builder)
         {
-            foreach (var packageFile in builder.GetFiles())
+            return Validate(builder.GetFiles);
+        }
+
+        internal IEnumerable<PackagingLogMessage> Validate(Func<IEnumerable<string>> getFiles)
+        {
+            foreach (var packageFile in getFiles())
             {
                 var file = PathUtility.GetPathWithDirectorySeparator(packageFile);
                 var directory = Path.GetDirectoryName(file);
@@ -48,20 +60,17 @@ namespace NuGet.Packaging.Rules
         /// <summary>
         /// Folders that are expected to have .dll and .winmd files
         /// </summary>
-        private static IEnumerable<string> ValidFolders
-        {
-            get
-            {
-                yield return PackagingConstants.Folders.Lib + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Analyzers + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Ref + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Runtimes + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Native + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Build + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.BuildCrossTargeting + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Tools + Path.DirectorySeparatorChar;
-                yield break;
-            }
-        }
+        private static ImmutableArray<string> ValidFolders =
+        [
+            PackagingConstants.Folders.Lib + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Analyzers + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Ref + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Runtimes + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Native + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Build + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.BuildCrossTargeting + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.BuildTransitive + Path.DirectorySeparatorChar,
+            PackagingConstants.Folders.Tools + Path.DirectorySeparatorChar,
+         ];
     }
 }

@@ -8,10 +8,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Client;
@@ -224,8 +224,8 @@ internal class RazorLanguageServerClient(
 
     public Task OnLoadedAsync()
     {
-        // If the user hasn't turned on the Cohost server, then don't disable the Razor server
-        if (_languageServerFeatureOptions.DisableRazorLanguageServer && _languageServerFeatureOptions.UseRazorCohostServer)
+        // If the user has turned on the Cohost server, then disable the Razor server
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
         {
             return Task.CompletedTask;
         }

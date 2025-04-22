@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
+namespace Microsoft.CodeAnalysis.Razor.Telemetry;
 
 /// <summary>
 /// A set of constants used to reduce the telemetry emitted to the set that help us understand

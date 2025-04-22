@@ -4,6 +4,7 @@
 using System.ComponentModel;
 
 namespace Microsoft.VisualStudio.RazorExtension.Options;
+
 internal class LocDisplayNameAttribute : DisplayNameAttribute
 {
     private string _resourceKey;

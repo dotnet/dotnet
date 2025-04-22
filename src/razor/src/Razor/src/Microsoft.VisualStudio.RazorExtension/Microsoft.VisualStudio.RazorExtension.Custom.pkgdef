@@ -63,12 +63,6 @@
 "Title"="Use Roslyn Cohost server for Razor (requires restart)"
 "PreviewPaneChannels"="IntPreview,int.main"
 
-[$RootKey$\FeatureFlags\Razor\LSP\DisableRazorLanguageServer]
-"Description"="Disables the Razor Language Server so that only the Cohost server is active. This is probably a bad idea to turn on if you are not on the Razor Tooling team."
-"Value"=dword:00000000
-"Title"="Disable Razor Language Server (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
-
 [$RootKey$\FeatureFlags\Razor\LSP\ForceRuntimeCodeGeneration]
 "Description"="Enable combined design time/runtime code generation for Razor files"
 "Value"=dword:00000001

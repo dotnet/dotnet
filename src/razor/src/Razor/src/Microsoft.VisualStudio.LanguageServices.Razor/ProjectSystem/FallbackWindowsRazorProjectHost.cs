@@ -13,9 +13,9 @@ using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
 using ContentItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
@@ -44,8 +44,9 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        ProjectSnapshotManager projectManager)
-        : base(commonServices, serviceProvider, projectManager)
+        ProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
+        : base(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
     {
     }
 
@@ -246,7 +247,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             if (targetPath.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
             {
                 targetPath = CommonServices.UnconfiguredProject.MakeRooted(targetPath);
-                razorDocument = new HostDocument(filePath, targetPath, FileKinds.Legacy);
+                razorDocument = new HostDocument(filePath, targetPath, RazorFileKind.Legacy);
                 return true;
             }
         }

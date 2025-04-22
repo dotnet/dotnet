@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Text Object Models Text pattern provider
@@ -284,8 +283,8 @@ namespace MS.Internal.Automation
                 return null;
 
             // map null into the appropriate endpoint
-            rangeStart = rangeStart ?? _textContainer.Start;
-            rangeEnd = rangeEnd ?? _textContainer.End;
+            rangeStart ??= _textContainer.Start;
+            rangeEnd ??= _textContainer.End;
 
             // if either pointer belongs to the wrong tree, return null (meaning "entire range")
             if (rangeStart.TextContainer != _textContainer || rangeEnd.TextContainer != _textContainer)

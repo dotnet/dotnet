@@ -7,15 +7,13 @@ Azure.Core.dll
 Ben.Demystifier.dll
 Markdig.Signed.dll
 Microsoft.DataAI.NuGetRecommender.Contracts.dll
-Microsoft.IO.Redist.dll
-Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.dll
+Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
 Microsoft.IdentityModel.JsonWebTokens.dll
 Microsoft.IdentityModel.Logging.dll
 Microsoft.IdentityModel.Tokens.dll
 Microsoft.Internal.VisualStudio.Shell.Framework.dll
 Microsoft.Internal.VisualStudio.Shell.Framework.resources.dll
-Microsoft.NET.StringTools.dll
 Microsoft.TeamFoundation.Build.Client.dll
 Microsoft.TeamFoundation.Build.Client.resources.dll
 Microsoft.TeamFoundation.Build.Common.dll
@@ -56,16 +54,16 @@ Microsoft.TeamFoundation.TestManagement.Client.resources.dll
 Microsoft.TeamFoundation.TestManagement.Common.dll
 Microsoft.TeamFoundation.TestManagement.WebApi.dll
 Microsoft.TeamFoundation.VersionControl.Client.dll
+Microsoft.TeamFoundation.VersionControl.Common.dll
 Microsoft.TeamFoundation.VersionControl.Common.Integration.dll
 Microsoft.TeamFoundation.VersionControl.Common.Integration.resources.dll
-Microsoft.TeamFoundation.VersionControl.Common.dll
 Microsoft.TeamFoundation.VersionControl.Common.resources.dll
 Microsoft.TeamFoundation.Wiki.WebApi.dll
 Microsoft.TeamFoundation.Work.WebApi.dll
 Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
+Microsoft.TeamFoundation.WorkItemTracking.Client.dll
 Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage.dll
 Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage.resources.dll
-Microsoft.TeamFoundation.WorkItemTracking.Client.dll
 Microsoft.TeamFoundation.WorkItemTracking.Client.resources.dll
 Microsoft.TeamFoundation.WorkItemTracking.Common.dll
 Microsoft.TeamFoundation.WorkItemTracking.Common.resources.dll
@@ -75,29 +73,28 @@ Microsoft.TeamFoundation.WorkItemTracking.Proxy.resources.dll
 Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll
 Microsoft.VisualStudio.Debugger.UI.Interfaces.dll
 Microsoft.VisualStudio.Extensibility.Editor.Contracts.dll
+Microsoft.VisualStudio.ExtensionEngineContract.dll
 Microsoft.VisualStudio.HotReload.Components.dll
 Microsoft.VisualStudio.Linux.ConnectionManager.Store.dll
 Microsoft.VisualStudio.Markdown.Core.dll
 Microsoft.VisualStudio.Markdown.Platform.dll
 Microsoft.VisualStudio.Markdown.Platform.resources.dll
-Microsoft.VisualStudio.ProjectSystem.Managed.VS.dll
-Microsoft.VisualStudio.ProjectSystem.Managed.VS.resources.dll
 Microsoft.VisualStudio.ProjectSystem.Managed.dll
 Microsoft.VisualStudio.ProjectSystem.Managed.resources.dll
+Microsoft.VisualStudio.ProjectSystem.Managed.VS.dll
+Microsoft.VisualStudio.ProjectSystem.Managed.VS.resources.dll
 Microsoft.VisualStudio.ProjectSystem.Query.dll
 Microsoft.VisualStudio.ProjectSystem.Query.resources.dll
 Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.dll
 Microsoft.VisualStudio.Services.TestResults.WebApi.dll
-System.Configuration.ConfigurationManager.dll
+Microsoft.VisualStudio.Setup.Common.dll
+Microsoft.VisualStudio.SolutionPersistence.dll
 System.Drawing.Common.dll
 System.IdentityModel.Tokens.Jwt.dll
 System.Management.Automation.dll
 System.Memory.Data.dll
 System.Net.Http.Formatting.dll
-System.Reflection.MetadataLoadContext.dll
-System.Resources.Extensions.dll
 System.Text.Encodings.Web.dll
-System.Text.Json.dll
 System.Web.Http.dll
 
 # Ignore third party assemblies because we sign them in a specific location on disk and manually add them to the list
@@ -105,6 +102,7 @@ Lucene.Net.dll
 
 # Assembly XML Documentation isn't needed in the VSIX
 Microsoft.Build.NuGetSdkResolver.xml
+Microsoft.VisualStudio.ExtensionEngineContract.xml
 NuGet.Build.Tasks.xml
 NuGet.Commands.xml
 NuGet.Common.xml

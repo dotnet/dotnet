@@ -56,20 +56,20 @@ namespace NuGet.Packaging
             }
             catch (System.Text.Json.JsonException ex)
             {
-                LogMessage(log, path, ex);
-                throw new InvalidDataException(ex.Message, ex);
+                throw LogAndWrap(log, path, ex);
             }
             catch (Exception ex)
             {
-                LogMessage(log, path, ex);
-                throw;
+                throw LogAndWrap(log, path, ex);
             }
 
-            static void LogMessage(ILogger log, string path, Exception ex)
+            static InvalidDataException LogAndWrap(ILogger log, string path, Exception ex)
             {
-                log.LogWarning(string.Format(CultureInfo.CurrentCulture,
+                string message = (string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_LoadingHashFile,
                     path, ex.Message));
+                log.LogWarning(message);
+                return new InvalidDataException(message, ex);
             }
         }
 

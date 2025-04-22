@@ -144,7 +144,7 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
         public static void VerifyResultFailure(CommandRunnerResult result, string expectedErrorMessage)
         {
             result.ExitCode.Should().NotBe(0);
-            result.Output.Should().Contain(expectedErrorMessage);
+            result.AllOutput.Should().Contain(expectedErrorMessage);
         }
     }
 }

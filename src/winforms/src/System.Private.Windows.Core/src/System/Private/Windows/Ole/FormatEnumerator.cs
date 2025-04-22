@@ -43,7 +43,9 @@ internal unsafe class FormatEnumerator : ComTypes.IEnumFORMATETC, IEnumFORMATETC
                 dwAspect = ComTypes.DVASPECT.DVASPECT_CONTENT,
                 ptd = 0,
                 lindex = -1,
-                tymed = format.Equals(DataFormatNames.Bitmap) ? ComTypes.TYMED.TYMED_GDI : ComTypes.TYMED.TYMED_HGLOBAL
+                tymed = format == DataFormatNames.Bitmap
+                    ? ComTypes.TYMED.TYMED_GDI
+                    : format == DataFormatNames.Emf ? ComTypes.TYMED.TYMED_ENHMF : ComTypes.TYMED.TYMED_HGLOBAL
             };
 
             _formats.Add(temp);
@@ -54,10 +56,7 @@ internal unsafe class FormatEnumerator : ComTypes.IEnumFORMATETC, IEnumFORMATETC
     {
         if (_current >= _formats.Count || celt <= 0)
         {
-            if (pceltFetched is not null)
-            {
-                pceltFetched[0] = 0;
-            }
+            pceltFetched?[0] = 0;
 
             return (int)HRESULT.S_FALSE;
         }
@@ -72,10 +71,7 @@ internal unsafe class FormatEnumerator : ComTypes.IEnumFORMATETC, IEnumFORMATETC
             lindex = -1
         };
 
-        if (pceltFetched is not null)
-        {
-            pceltFetched[0] = 1;
-        }
+        pceltFetched?[0] = 1;
 
         _current++;
         return (int)HRESULT.S_OK;

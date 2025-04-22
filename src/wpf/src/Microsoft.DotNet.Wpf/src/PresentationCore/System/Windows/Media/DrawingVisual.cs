@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 
@@ -16,7 +15,7 @@ namespace System.Windows.Media
     {
         // bbox in inner coordinate space. Note that this bbox does not
         // contain the childrens extent.
-        IDrawingContent _content;
+        private IDrawingContent _content;
 
         /// <summary>
         /// HitTestCore implements precise hit testing against render contents
@@ -92,7 +91,7 @@ namespace System.Windows.Media
                 // Remove the notification handlers.
                 //
 
-                oldContent.PropagateChangedHandler(ContentsChangedHandler, false /* remove */);
+                oldContent.PropagateChangedHandler(ContentsChangedHandler, adding: false);
 
 
                 //
@@ -110,7 +109,7 @@ namespace System.Windows.Media
             // 
 
             // Propagate notification handlers.
-            newContent?.PropagateChangedHandler(ContentsChangedHandler, true /* adding */);
+            newContent?.PropagateChangedHandler(ContentsChangedHandler, adding: true);
 
             _content = newContent;
 

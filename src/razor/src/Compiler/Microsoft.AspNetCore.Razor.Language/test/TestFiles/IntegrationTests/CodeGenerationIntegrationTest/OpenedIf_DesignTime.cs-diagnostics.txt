@@ -22,10 +22,10 @@ Diagnostic(ErrorCode.ERR_RbraceExpected, "private").WithLocation(65, 118),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,118): error CS1513: } expected
 //         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;
 Diagnostic(ErrorCode.ERR_RbraceExpected, "private").WithLocation(65, 118),
-// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,129): error CS1519: Invalid token ';' in class, record, struct, or interface member declaration
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,129): error CS1519: Invalid token ';' in a member declaration
 //         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;
 Diagnostic(ErrorCode.ERR_InvalidMemberDecl, ";").WithArguments(";").WithLocation(65, 129),
-// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,129): error CS1519: Invalid token ';' in class, record, struct, or interface member declaration
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,129): error CS1519: Invalid token ';' in a member declaration
 //         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;
 Diagnostic(ErrorCode.ERR_InvalidMemberDecl, ";").WithArguments(";").WithLocation(65, 129),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(65,133): error CS1022: Type or namespace definition, or end-of-file expected

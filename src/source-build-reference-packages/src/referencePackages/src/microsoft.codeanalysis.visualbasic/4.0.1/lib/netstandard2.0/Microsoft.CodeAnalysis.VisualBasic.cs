@@ -156,8 +156,6 @@ namespace Microsoft.CodeAnalysis.VisualBasic
 
         public static bool operator !=(Conversion left, Conversion right) { throw null; }
 
-        Operations.CommonConversion ToCommonConversion() { throw null; }
-
         public override string ToString() { throw null; }
     }
 
@@ -262,10 +260,7 @@ namespace Microsoft.CodeAnalysis.VisualBasic
 
     public partial struct LocalizableErrorArgument : System.IFormattable
     {
-        private int _dummyPrimitive;
-        public override string ToString() { throw null; }
-
-        string System.IFormattable.ToString(string format, System.IFormatProvider formatProvider) { throw null; }
+        public string ToString(string? format, System.IFormatProvider? formatProvider) { throw null; }
     }
 
     public enum OptionStrict : byte
@@ -4813,7 +4808,7 @@ namespace Microsoft.CodeAnalysis.VisualBasic
         public static SyntaxTree ParseText(string text, VisualBasicParseOptions options, string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken) { throw null; }
 
         public abstract bool TryGetRoot(ref VisualBasicSyntaxNode root);
-        protected bool TryGetRootCore(ref SyntaxNode root) { throw null; }
+        protected override bool TryGetRootCore(out SyntaxNode? root) { throw null; }
 
         public override SyntaxTree WithChangedText(Text.SourceText newText) { throw null; }
     }
@@ -11193,6 +11188,8 @@ namespace Microsoft.CodeAnalysis.VisualBasic.Syntax
 
     public abstract partial class StructuredTriviaSyntax : VisualBasicSyntaxNode, IStructuredTriviaSyntax
     {
+        internal StructuredTriviaSyntax() { }
+
         SyntaxTrivia IStructuredTriviaSyntax.ParentTrivia { get { throw null; } }
     }
 

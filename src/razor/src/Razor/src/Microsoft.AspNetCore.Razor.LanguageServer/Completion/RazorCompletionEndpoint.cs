@@ -7,26 +7,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentCompletionName)]
 internal class RazorCompletionEndpoint(
     CompletionListProvider completionListProvider,
-    CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters,
-    ITelemetryReporter? telemetryReporter,
+    CompletionTriggerAndCommitCharacters triggerAndCommitCharacters,
+    ITelemetryReporter telemetryReporter,
     RazorLSPOptionsMonitor optionsMonitor)
-    : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
+    : IRazorRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
-    private readonly CompletionTriggerAndCommitCharacters _completionTriggerAndCommitCharacters = completionTriggerAndCommitCharacters;
-    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = triggerAndCommitCharacters;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
 
     private VSInternalClientCapabilities? _clientCapabilities;
@@ -40,8 +38,8 @@ internal class RazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = _completionTriggerAndCommitCharacters.AllTriggerCharacters,
-            AllCommitCharacters = CompletionTriggerAndCommitCharacters.AllCommitCharacters
+            TriggerCharacters = [.. _triggerAndCommitCharacters.AllTriggerCharacters],
+            AllCommitCharacters = [.. _triggerAndCommitCharacters.AllCommitCharacters]
         };
     }
 
@@ -50,11 +48,17 @@ internal class RazorCompletionEndpoint(
         return request.TextDocument;
     }
 
-    public async Task<VSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<RazorVSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.DocumentContext;
+        if (request.Context is not VSInternalCompletionContext completionContext ||
+            requestContext.DocumentContext is not { } documentContext)
+        {
+            return null;
+        }
 
-        if (request.Context is null || documentContext is null)
+        var autoShownCompletion = completionContext.InvokeKind != VSInternalCompletionInvokeKind.Explicit;
+        var options = _optionsMonitor.CurrentValue;
+        if (autoShownCompletion && !options.AutoShowCompletion)
         {
             return null;
         }
@@ -65,33 +69,35 @@ internal class RazorCompletionEndpoint(
             return null;
         }
 
-        if (request.Context is not VSInternalCompletionContext completionContext)
-        {
-            Debug.Fail("Completion context should never be null in practice");
-            return null;
-        }
-
-        var autoShownCompletion = completionContext.InvokeKind != VSInternalCompletionInvokeKind.Explicit;
-        if (autoShownCompletion && !_optionsMonitor.CurrentValue.AutoShowCompletion)
-        {
-            return null;
-        }
-
         var correlationId = Guid.NewGuid();
-        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CompletionRazorTelemetryThreshold, correlationId);
+        using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CompletionRazorTelemetryThreshold, correlationId))
+        {
+            var razorCompletionOptions = new RazorCompletionOptions(
+                SnippetsSupported: true,
+                AutoInsertAttributeQuotes: options.AutoInsertAttributeQuotes,
+                CommitElementsWithSpace: options.CommitElementsWithSpace);
 
-        var razorCompletionOptions = new RazorCompletionOptions(
-            SnippetsSupported: true,
-            AutoInsertAttributeQuotes: _optionsMonitor.CurrentValue.AutoInsertAttributeQuotes,
-            CommitElementsWithSpace: _optionsMonitor.CurrentValue.CommitElementsWithSpace);
-        var completionList = await _completionListProvider.GetCompletionListAsync(
-            hostDocumentIndex,
-            completionContext,
-            documentContext,
-            _clientCapabilities!,
-            razorCompletionOptions,
-            correlationId,
-            cancellationToken).ConfigureAwait(false);
-        return completionList;
+            var result = await _completionListProvider
+                .GetCompletionListAsync(
+                    hostDocumentIndex,
+                    completionContext,
+                    documentContext,
+                    _clientCapabilities.AssumeNotNull(),
+                    razorCompletionOptions,
+                    correlationId,
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            if (result is null)
+            {
+                return null;
+            }
+
+            var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
+            var supportsCompletionListData = completionCapability?.CompletionList?.Data ?? false;
+
+            RazorCompletionResolveData.Wrap(result, request.TextDocument, supportsCompletionListData: supportsCompletionListData);
+            return result;
+        }
     }
 }

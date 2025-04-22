@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>System.Drawing.Common</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.win32.systemevents/6.0.0/Microsoft.Win32.SystemEvents.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

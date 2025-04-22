@@ -166,7 +166,6 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
         public async Task<ReturnCode> Monitor(
             CancellationToken ct,
-            List<string> counter_list,
             string counters,
             int processId,
             int refreshInterval,
@@ -176,7 +175,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
             int maxHistograms,
             int maxTimeSeries,
             TimeSpan duration,
-            bool showDeltas)
+            bool showDeltas,
+            string dsrouter)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // to it.
                 ValidateNonNegative(maxHistograms, nameof(maxHistograms));
                 ValidateNonNegative(maxTimeSeries, nameof(maxTimeSeries));
-                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ValidateArgumentsForAttach(processId, name, diagnosticPort, out _processId))
+                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ResolveProcessForAttach(processId, name, diagnosticPort, dsrouter, out _processId))
                 {
                     return ReturnCode.ArgumentError;
                 }
@@ -205,7 +205,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     {
                         // the launch command may misinterpret app arguments as the old space separated
                         // provider list so we need to ignore it in that case
-                        _counterList = ConfigureCounters(counters, _processId != 0 ? counter_list : null);
+                        _counterList = ConfigureCounters(counters);
                         _renderer = new ConsoleWriter(new DefaultConsole(useAnsi), showDeltaColumn:showDeltas);
                         _diagnosticsClient = holder.Client;
                         _settings = new MetricsPipelineSettings();
@@ -250,7 +250,6 @@ namespace Microsoft.Diagnostics.Tools.Counters
         }
         public async Task<ReturnCode> Collect(
             CancellationToken ct,
-            List<string> counter_list,
             string counters,
             int processId,
             int refreshInterval,
@@ -261,7 +260,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
             bool resumeRuntime,
             int maxHistograms,
             int maxTimeSeries,
-            TimeSpan duration)
+            TimeSpan duration,
+            string dsrouter)
         {
             try
             {
@@ -271,7 +271,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // to it.
                 ValidateNonNegative(maxHistograms, nameof(maxHistograms));
                 ValidateNonNegative(maxTimeSeries, nameof(maxTimeSeries));
-                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ValidateArgumentsForAttach(processId, name, diagnosticPort, out _processId))
+                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ResolveProcessForAttach(processId, name, diagnosticPort, dsrouter, out _processId))
                 {
                     return ReturnCode.ArgumentError;
                 }
@@ -289,7 +289,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     {
                         // the launch command may misinterpret app arguments as the old space separated
                         // provider list so we need to ignore it in that case
-                        _counterList = ConfigureCounters(counters, _processId != 0 ? counter_list : null);
+                        _counterList = ConfigureCounters(counters);
                         _settings = new MetricsPipelineSettings();
                         _settings.Duration = duration == TimeSpan.Zero ? Timeout.InfiniteTimeSpan : duration;
                         _settings.MaxHistograms = maxHistograms;
@@ -360,7 +360,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
             }
         }
 
-        internal List<EventPipeCounterGroup> ConfigureCounters(string commaSeparatedProviderListText, List<string> providerList)
+        internal List<EventPipeCounterGroup> ConfigureCounters(string commaSeparatedProviderListText)
         {
             List<EventPipeCounterGroup> counters = new();
             try
@@ -375,23 +375,6 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // the FormatException message strings thrown by ParseProviderList are controlled
                 // by us and anticipate being integrated into the command-line error text.
                 throw new CommandLineErrorException("Error parsing --counters argument: " + e.Message);
-            }
-
-            if (providerList != null)
-            {
-                try
-                {
-                    foreach (string providerText in providerList)
-                    {
-                        ParseCounterProvider(providerText, counters);
-                    }
-                }
-                catch (FormatException e)
-                {
-                    // the FormatException message strings thrown by ParseCounterProvider are controlled
-                    // by us and anticipate being integrated into the command-line error text.
-                    throw new CommandLineErrorException("Error parsing counter_list: " + e.Message);
-                }
             }
 
             if (counters.Count == 0)

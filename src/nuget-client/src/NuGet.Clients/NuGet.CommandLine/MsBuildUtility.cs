@@ -875,6 +875,16 @@ namespace NuGet.CommandLine
                                nameof(NuGetResources.MSbuildFromPath)),
                            msbuildPath);
 
+                if (msbuildPath.EndsWith("MSBuild.exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    string msbuildDirectory = Path.GetDirectoryName(msbuildPath);
+
+                    if (!string.IsNullOrWhiteSpace(msbuildDirectory))
+                    {
+                        msbuildPath = msbuildDirectory;
+                    }
+                }
+
                 if (!Directory.Exists(msbuildPath))
                 {
                     var message = string.Format(

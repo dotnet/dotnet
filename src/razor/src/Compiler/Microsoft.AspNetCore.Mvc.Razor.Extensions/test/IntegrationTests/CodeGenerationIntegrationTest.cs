@@ -223,7 +223,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     public void BasicComponent_Runtime()
     {
         // Arrange
-        var projectItem = CreateProjectItemFromFile(fileKind: FileKinds.Component);
+        var projectItem = CreateProjectItemFromFile(fileKind: RazorFileKind.Component);
 
         // Act
         var compiled = CompileToAssembly(projectItem, designTime: false);
@@ -904,6 +904,27 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         CompileToAssembly(generated);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10965")]
+    public void InvalidCode_EmptyImplicitExpression_Runtime()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            <html>
+                <head>
+                    @
+                </head>
+            </html>
+            """, designTime: false);
+
+        // Assert
+        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var csharp = generated.CodeDocument.GetCSharpDocument();
+        AssertDocumentNodeMatchesBaseline(intermediate);
+        AssertCSharpDocumentMatchesBaseline(csharp);
+        AssertSourceMappingsMatchBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: false, ignoreRazorDiagnostics: true);
+    }
+
     #endregion
 
     #region DesignTime
@@ -1116,7 +1137,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     public void BasicComponent_DesignTime()
     {
         // Arrange
-        var projectItem = CreateProjectItemFromFile(fileKind: FileKinds.Component);
+        var projectItem = CreateProjectItemFromFile(fileKind: RazorFileKind.Component);
 
         // Act
         var compiled = CompileToAssembly(projectItem, designTime: true);
@@ -1514,6 +1535,26 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
         CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10965")]
+    public void InvalidCode_EmptyImplicitExpression_DesignTime()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            <html>
+                <head>
+                    @
+                </head>
+            </html>
+            """, designTime: true);
+
+        // Assert
+        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var csharp = generated.CodeDocument.GetCSharpDocument();
+        AssertDocumentNodeMatchesBaseline(intermediate);
+        AssertCSharpDocumentMatchesBaseline(csharp);
+        CompileToAssembly(generated, throwOnFailure: false, ignoreRazorDiagnostics: true);
     }
 
     #endregion

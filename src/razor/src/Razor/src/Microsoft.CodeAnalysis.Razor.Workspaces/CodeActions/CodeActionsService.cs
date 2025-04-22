@@ -12,14 +12,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -102,11 +101,6 @@ internal class CodeActionsService(
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
-
         var sourceText = codeDocument.Source.Text;
 
         if (!sourceText.TryGetAbsoluteIndex(request.Range.Start, out var startLocation))
@@ -246,7 +240,7 @@ internal class CodeActionsService(
     {
         var results = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        using var codeActions = new PooledArrayBuilder<RazorVSInternalCodeAction>();
+        using var codeActions = new PooledArrayBuilder<RazorVSInternalCodeAction>(capacity: tasks.Length);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -255,7 +249,7 @@ internal class CodeActionsService(
             codeActions.AddRange(result);
         }
 
-        return codeActions.ToImmutable();
+        return codeActions.DrainToImmutableOrderedBy(static r => r.Order);
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()
@@ -278,5 +272,28 @@ internal class CodeActionsService(
         availableCodeActionNames.Add(LanguageServerConstants.CodeActions.CodeActionFromVSCode);
 
         return availableCodeActionNames.ToImmutableHashSet();
+    }
+
+    public static void AdjustRequestRangeIfNecessary(VSCodeActionParams request)
+    {
+        // VS Provides `CodeActionParams.Context.SelectionRange` in addition to
+        // `CodeActionParams.Range`. The `SelectionRange` is relative to where the
+        // code action was invoked (ex. line 14, char 3) whereas the `Range` is
+        // always at the start of the line (ex. line 14, char 0). We want to utilize
+        // the relative positioning to ensure we provide code actions for the appropriate
+        // context.
+        //
+        // We only do this if the Range contains the SelectionRange, or in other words if
+        // the SelectionRange serves to better focus the Range. It is possible for the selection
+        // to be on one line, and the code action request to be for an entirely different line
+        // if the user is invoking from the lightbulb button directly, for example on hovering
+        // over a diagnostic. In those cases, using SelectionRange would be wrong.
+        //
+        // Note: VS Code doesn't provide a `SelectionRange`.
+        if (request.Context.SelectionRange is { } selectionRange &&
+            request.Range.Contains(selectionRange))
+        {
+            request.Range = selectionRange;
+        }
     }
 }

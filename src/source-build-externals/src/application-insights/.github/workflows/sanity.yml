@@ -29,16 +29,17 @@ jobs:
           ./WEB/Src/Microsoft.ApplicationInsights.Web.sln]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v3.1.0
+      uses: actions/setup-dotnet@v4.3.0
       with:
         dotnet-version: |
             3.1.x
             6.0.x
             7.0.x
             8.0.x
+            9.0.x
 
     - name: Restore
       run: dotnet restore ${{ matrix.solution }}

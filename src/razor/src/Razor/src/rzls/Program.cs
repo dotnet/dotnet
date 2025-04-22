@@ -7,12 +7,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Logging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Composition;
 
@@ -96,6 +97,7 @@ public class Program
             {
                 services.AddSingleton<IRazorProjectInfoDriver, NamedPipeBasedRazorProjectInfoDriver>();
                 services.AddHandler<RazorNamedPipeConnectEndpoint>();
+                services.AddHandlerWithCapabilities<DocumentDiagnosticsEndpoint>();
 
                 services.AddSingleton(logLevelProvider);
                 services.AddHandler<UpdateLogLevelEndpoint>();

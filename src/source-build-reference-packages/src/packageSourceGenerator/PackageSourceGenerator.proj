@@ -9,10 +9,10 @@
     <PackagesTargetDirectory Condition="'$(PackageType)' == 'text'">$(RepoRoot)src\textOnlyPackages\src\</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
-    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net20;net35;net4*;netcore50;netcoreapp2.*;portable*;uap*;win8;win81;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net20;net35;net4*;netcore50;netcoreapp2.*;netcoreapp3.0;portable*;uap*;win8;win81;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
     <!-- The following target frameworks should be excluded even though they are supported by the current SDK because there is no need to have them.
          Only exclude them when target frameworks to include aren't provided. -->
-    <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1;netstandard1*</ExcludeTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">
@@ -25,6 +25,11 @@
     <!-- The reference package output directory including the package version. -->
     <PackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(BasePackageTargetDirectory)', '$(PackageVersion)'))</PackageTargetDirectory>
   </PropertyGroup>
+
+  <!-- The list of allowed external dependencies -->
+  <ItemGroup>
+    <AllowedPackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="PackageSourceGeneratorTask\PackageSourceGeneratorTask.csproj"
@@ -164,7 +169,7 @@
   </Target>
 
   <!-- Retrieve compile items, placeholder files, package dependencies and framework references with their target framework. -->
-  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GetPackageItems">
     <PropertyGroup>
       <PackageNupkgPath>$(RestoredPackageDirectory)$(PackageName.ToLowerInvariant()).$(PackageVersion).nupkg</PackageNupkgPath>
@@ -332,7 +337,7 @@
   </Target>
 
   <!-- Generate the final reference package project and write it to the package target directory. -->
-  <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GeneratePackageProject"
           DependsOnTargets="GetPackageItems"
           Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
@@ -342,18 +347,21 @@
     </PropertyGroup>
 
     <GenerateProject PackageId="$(RealPackageId)"
+                     PackageVersion="$(PackageVersion)"
                      ProjectTemplate="$(PackageProjectTemplate)"
+                     ProjectRoot="$(PackagesTargetDirectory)"
                      TargetPath="$(PackageProjectTargetPath)"
                      CompileItems="@(PackageCompileItem)"
                      PackageDependencies="@(PackageDependency)"
-                     FrameworkReferences="@(PackageFrameworkReference)" />
+                     FrameworkReferences="@(PackageFrameworkReference)"
+                     AllowedPackageReference="@(AllowedPackageReference)" />
 
     <Message Text="$(MSBuildProjectName) -> $(PackageProjectTargetPath)"
              Importance="high" />
   </Target>
 
   <!-- Rewrite nuspec and copy to target directory. -->
-  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RewriteNuspec"
           Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
     <PropertyGroup>
@@ -401,13 +409,9 @@
     
     <!-- External packages aren't visited as they shouldn't be added to SBRP. --> 
     <ItemGroup>
-      <ExternalPackage Include="Newtonsoft.Json" />
-    </ItemGroup>
-
-    <ItemGroup>
       <FilteredPackageDependency Include="@(PackageDependency)"
                                  Exclude="@(TargetingPackage);
-                                          @(ExternalPackage)" />
+                                          @(AllowedPackageReference)" />
     </ItemGroup>
 
     <MSBuild Projects="$(MSBuildThisFileFullPath)"

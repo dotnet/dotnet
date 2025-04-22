@@ -7,19 +7,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -30,9 +26,9 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     private CodeActionEndpoint? CodeActionEndpoint { get; set; }
     private IDocumentSnapshot? DocumentSnapshot { get; set; }
     private SourceText? DocumentText { get; set; }
-    private Range? RazorCodeActionRange { get; set; }
-    private Range? CSharpCodeActionRange { get; set; }
-    private Range? HtmlCodeActionRange { get; set; }
+    private LspRange? RazorCodeActionRange { get; set; }
+    private LspRange? CSharpCodeActionRange { get; set; }
+    private LspRange? HtmlCodeActionRange { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
 
     public enum FileTypes
@@ -70,7 +66,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         var targetPath = "/Components/Pages/Generated.razor";
 
         DocumentUri = new Uri(_filePath);
-        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
+        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath, "Root.Namespace");
         DocumentText = await DocumentSnapshot.GetTextAsync(CancellationToken.None);
 
         RazorCodeActionRange = DocumentText.GetZeroWidthRange(razorCodeActionIndex);
@@ -79,11 +75,11 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
 
         var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(CancellationToken.None);
-        // Need a root namespace for the Extract to Code Behind light bulb to be happy
-        codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(c => c.RootNamespace = "Root.Namespace"));
-
-        RazorRequestContext = new RazorRequestContext(documentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
+        RazorRequestContext = new RazorRequestContext(
+            documentContext,
+            RazorLanguageServerHost.GetRequiredService<LspServices>(),
+            "lsp/method",
+            uri: null);
     }
 
     private string GetFileContents(FileTypes fileType)

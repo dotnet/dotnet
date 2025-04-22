@@ -4,7 +4,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -12,7 +11,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
 internal partial class RazorCustomMessageTarget
 {
     [JsonRpcMethod(CustomMessageNames.RazorValidateBreakpointRangeName, UseSingleObjectParameterDeserialization = true)]
-    public async Task<Range?> ValidateBreakpointRangeAsync(DelegatedValidateBreakpointRangeParams request, CancellationToken cancellationToken)
+    public async Task<LspRange?> ValidateBreakpointRangeAsync(DelegatedValidateBreakpointRangeParams request, CancellationToken cancellationToken)
     {
         var delegationDetails = await GetProjectedRequestDetailsAsync(request, cancellationToken).ConfigureAwait(false);
         if (delegationDetails is null)
@@ -26,7 +25,7 @@ internal partial class RazorCustomMessageTarget
             Range = request.ProjectedRange
         };
 
-        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalValidateBreakableRangeParams, Range?>(
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalValidateBreakableRangeParams, LspRange?>(
             delegationDetails.Value.TextBuffer,
             VSInternalMethods.TextDocumentValidateBreakableRangeName,
             delegationDetails.Value.LanguageServerName,

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ public class StressTests(ITestOutputHelper testOutputHelper) : AbstractStressTes
 
         async Task RunIterationAsync(int index, CancellationToken cancellationToken)
         {
-            await TestServices.Editor.InsertTextAsync($"<h1>Iteration {index}</h1>{Environment.NewLine}", cancellationToken);
+            await TestServices.Editor.InsertTextAsync($"<h1>Iteration {index}</h1>{{ENTER}}", cancellationToken);
 
             await TestServices.Editor.PlaceCaretAsync("h1", charsOffset: -1, cancellationToken);
 
@@ -54,6 +53,54 @@ public class StressTests(ITestOutputHelper testOutputHelper) : AbstractStressTes
             await TestServices.Editor.PlaceCaretAsync("Component", charsOffset: -1, cancellationToken);
 
             await TestServices.Editor.InvokeDeleteLineAsync(cancellationToken);
+        }
+    }
+
+    [ManualRunOnlyIdeFact]
+    public async Task RenameComponentAttribute()
+    {
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
+
+        var attributeName = "Title";
+
+        await TestServices.Editor.PlaceCaretAsync($"{attributeName}=", charsOffset: -1, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+        // Make sure the test file is still what we expect, with one attribute
+        await TestServices.Editor.WaitForSemanticClassificationAsync("RazorComponentAttribute", ControlledHangMitigatingCancellationToken, count: 1, exact: true);
+
+        await RunStressTestAsync(RunIterationAsync);
+
+        async Task RunIterationAsync(int index, CancellationToken cancellationToken)
+        {
+            attributeName = $"RenamedTitle{index}";
+
+            await Task.Delay(500);
+
+            await TestServices.Editor.InvokeRenameAsync(cancellationToken);
+            TestServices.Input.Send($"{attributeName}{{ENTER}}");
+
+            // The rename operation causes SurveyPrompt.razor to be opened
+            await TestServices.Editor.WaitForActiveWindowByFileAsync("SurveyPrompt.razor", cancellationToken);
+            await TestServices.Editor.VerifyTextContainsAsync($"public string? {attributeName} {{ get; set; }}", cancellationToken);
+            await TestServices.Editor.VerifyTextContainsAsync($"@{attributeName}", cancellationToken);
+
+            await TestServices.Editor.ValidateNoDiscoColorsAsync(cancellationToken);
+
+            await TestServices.Editor.CloseCurrentlyFocusedWindowAsync(HangMitigatingCancellationToken, save: true);
+
+            await TestServices.Editor.WaitForActiveWindowByFileAsync("Index.razor", cancellationToken);
+            await TestServices.Editor.VerifyTextContainsAsync($"<SurveyPrompt {attributeName}=", cancellationToken);
+
+            // Wait for our new attribute to color correctly
+            await TestServices.Editor.WaitForSemanticClassificationAsync("RazorComponentAttribute", cancellationToken, count: 1, exact: true);
+
+            await TestServices.Editor.ValidateNoDiscoColorsAsync(cancellationToken);
+
+            await Task.Delay(500);
+
+            // Reset the editor state for the next iteration
+            await TestServices.Editor.PlaceCaretAsync($"{attributeName}=", charsOffset: -1, cancellationToken);
         }
     }
 }

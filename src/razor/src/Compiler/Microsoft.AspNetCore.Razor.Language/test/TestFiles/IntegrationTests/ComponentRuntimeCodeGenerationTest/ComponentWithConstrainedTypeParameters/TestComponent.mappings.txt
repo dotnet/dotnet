@@ -44,13 +44,13 @@ Generated Location: (1796:71,0 [34] )
 
 Source Location: (234:9,5 [19] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildContent(item2)|
-Generated Location: (2047:82,0 [19] )
+Generated Location: (2036:81,24 [19] )
 |ChildContent(item2)|
 
 Source Location: (266:11,0 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |}
 |
-Generated Location: (2312:92,0 [3] )
+Generated Location: (2301:91,0 [3] )
 |}
 |
 
@@ -61,7 +61,7 @@ Source Location: (294:15,7 [236] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter] public TItem3 Item3 { get; set; }
     [Parameter] public RenderFragment<TItem2> ChildContent { get; set; }
 |
-Generated Location: (2558:103,0 [236] )
+Generated Location: (2547:102,0 [236] )
 |
     [Parameter] public TItem1 Item1 { get; set; }
     [Parameter] public List<TItem2> Items2 { get; set; }

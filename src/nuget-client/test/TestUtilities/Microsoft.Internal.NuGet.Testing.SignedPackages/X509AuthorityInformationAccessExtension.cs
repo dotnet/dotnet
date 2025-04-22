@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #nullable enable
+#pragma warning disable CS1591
 
 using System;
 using System.Formats.Asn1;
@@ -9,9 +10,9 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 {
-    internal sealed class X509AuthorityInformationAccessExtension : X509Extension
+    public sealed class X509AuthorityInformationAccessExtension : X509Extension
     {
-        internal X509AuthorityInformationAccessExtension(Uri? ocspResponderUrl, Uri? caIssuersUrl)
+        public X509AuthorityInformationAccessExtension(Uri? ocspResponderUrl, Uri? caIssuersUrl)
             : base(TestOids.AuthorityInfoAccess.Value!, Encode(ocspResponderUrl, caIssuersUrl), critical: false)
         {
         }

@@ -29,8 +29,8 @@
     <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" IncludeAssets="None" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.Build.Framework" IncludeAssets="None" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Framework" IncludeAssets="None" PrivateAssets="all" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="None" PrivateAssets="all"/>
     <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="None" PrivateAssets="all"/>
     <PackageReference Include="Microsoft.CodeAnalysis" IncludeAssets="None" PrivateAssets="all" />

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Defines MultiBinding object, uses a collection of bindings together.
@@ -107,7 +106,7 @@ public class MultiBinding : BindingBase, IAddChild
                 case BindingFlags.OneTime:          return BindingMode.OneTime;
                 case BindingFlags.PropDefault:      return BindingMode.Default;
             }
-            Debug.Assert(false, "Unexpected BindingMode value");
+            Debug.Fail("Unexpected BindingMode value");
             return 0;
         }
         set
@@ -130,7 +129,7 @@ public class MultiBinding : BindingBase, IAddChild
                 case BindingFlags.UpdateExplicitly:     return UpdateSourceTrigger.Explicit;
                 case BindingFlags.UpdateDefault:        return UpdateSourceTrigger.Default;
             }
-            Debug.Assert(false, "Unexpected UpdateSourceTrigger value");
+            Debug.Fail("Unexpected UpdateSourceTrigger value");
             return 0;
         }
         set
@@ -440,12 +439,12 @@ public class MultiBinding : BindingBase, IAddChild
         CheckSealed();
     }
 
-    //------------------------------------------------------
-    //
-    //  Private Fields
-    //
-    //------------------------------------------------------
+        //------------------------------------------------------
+        //
+        //  Private Fields
+        //
+        //------------------------------------------------------
 
-    BindingCollection       _bindingCollection;
+        private BindingCollection       _bindingCollection;
 }
 }

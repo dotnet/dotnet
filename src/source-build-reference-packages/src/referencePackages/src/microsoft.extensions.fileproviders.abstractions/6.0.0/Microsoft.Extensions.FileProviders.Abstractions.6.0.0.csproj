@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>Microsoft.Extensions.FileProviders.Abstractions</AssemblyName>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/6.0.0/Microsoft.Extensions.Primitives.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/6.0.0/Microsoft.Extensions.Primitives.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

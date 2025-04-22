@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 #region Using declarations
@@ -979,7 +978,7 @@ namespace Microsoft.Windows.Controls.Ribbon
 
         #region Dropdown Resizing
 
-        void OnPopupResizeStarted(object sender, DragStartedEventArgs e)
+        private void OnPopupResizeStarted(object sender, DragStartedEventArgs e)
         {
             RibbonDropDownHelper.OnPopupResizeStarted(_itemsPresenter);
 
@@ -996,7 +995,7 @@ namespace Microsoft.Windows.Controls.Ribbon
             e.Handled = true;
         }
 
-        void OnPopupResize(object sender, DragDeltaEventArgs e)
+        private void OnPopupResize(object sender, DragDeltaEventArgs e)
         {
             RibbonDropDownHelper.ResizePopup(_itemsPresenter,
                 RibbonDropDownHelper.GetMinDropDownSize(_itemsHost, _popup, BorderThickness),
@@ -1163,7 +1162,7 @@ namespace Microsoft.Windows.Controls.Ribbon
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(HandleIsVisibleChanged);
         }
 
-        void HandleIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void HandleIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             RibbonHelper.DelayCoerceProperty(this, IsDropDownOpenProperty);
             IsVisibleChanged -= new DependencyPropertyChangedEventHandler(HandleIsVisibleChanged);
@@ -1481,7 +1480,7 @@ namespace Microsoft.Windows.Controls.Ribbon
                 // If HasPushedMenuMode=true...
                 PropertyInfo property = type.GetProperty("HasPushedMenuMode", BindingFlags.NonPublic | BindingFlags.Instance);
                 Debug.Assert(property != null);
-                if (property != null && (bool)property.GetValue(this, null) == true)
+                if (property != null && (bool)property.GetValue(this, null))
                 {
                     // ...call PopMenuMode.
                     MethodInfo method = type.GetMethod("PopMenuMode", BindingFlags.NonPublic | BindingFlags.Instance);

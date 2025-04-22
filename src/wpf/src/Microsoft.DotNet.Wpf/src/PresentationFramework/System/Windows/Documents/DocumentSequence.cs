@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal.Documents;
 using System.Collections;
@@ -138,7 +137,7 @@ namespace System.Windows.Documents
 
         void IFixedNavigate.NavigateAsync(string elementID)
         {
-            if (IsPageCountValid == true)
+            if (IsPageCountValid)
             {
                 FixedHyperLink.NavigateToElement(this, elementID);
             }
@@ -672,7 +671,7 @@ namespace System.Windows.Documents
                 }
             }
 
-            if (documentSequencePageCountFinal == true)
+            if (documentSequencePageCountFinal)
             {
                 _paginator.NotifyPaginationCompleted(EventArgs.Empty);
             }

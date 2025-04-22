@@ -79,14 +79,13 @@
     <FileExtensionSignInfo Include=".deb" CertificateName="LinuxSign" />
     <FileExtensionSignInfo Include=".jar" CertificateName="MicrosoftJARSHA2" />
     <FileExtensionSignInfo Include=".js;.ps1;.psd1;.psm1;.psc1;.py" CertificateName="Microsoft400" />
-    <FileExtensionSignInfo Include=".dll;.exe;.mibc" CertificateName="Microsoft400" />
+    <FileExtensionSignInfo Include=".dll;.exe;.mibc;.msi" CertificateName="Microsoft400" />
     <FileExtensionSignInfo Include=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Include=".vsix" CertificateName="VsixSHA2" />
     <FileExtensionSignInfo Include=".zip" CertificateName="None" />
     <FileExtensionSignInfo Include=".tgz" CertificateName="None" />
     <FileExtensionSignInfo Include=".tar.gz" CertificateName="None" />
     <!-- Note, RPMs can only be unpack/repacked on Linux. They can be signed on non-Linux -->
-    <FileExtensionSignInfo Include=".azl.rpm" CertificateName="LinuxSignMariner" />
     <FileExtensionSignInfo Include=".rpm" CertificateName="LinuxSign" />
     <!-- Note, these can only be unpack/repacked on Mac. They can be signed on a non-Mac -->
     <FileExtensionSignInfo Include=".pkg" CertificateName="MacDeveloper" />
@@ -95,6 +94,11 @@
     <FileExtensionSignInfo Include=".app" CertificateName="MacDeveloper" />
     <!-- Runtime hardening is required for notarization. -->
     <FileExtensionSignInfo Include=".dylib" CertificateName="MacDeveloperHarden" />
+
+    <!-- Explicitly use the azure linux cert for azl binaries -->
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
+    <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400

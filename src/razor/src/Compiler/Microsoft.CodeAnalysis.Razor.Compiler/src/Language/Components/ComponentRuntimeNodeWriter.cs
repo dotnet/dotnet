@@ -90,25 +90,49 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         var methodInvocation = _scopeStack.BuilderVarName + '.' + ComponentsApi.RenderTreeBuilder.AddContent + '(' + sourceSequenceAsString;
         _sourceSequence++;
 
-        // Since we're not in the middle of writing an element, this must evaluate as some
-        // text to display
-        context.CodeWriter
-            .Write(methodInvocation)
-            .WriteParameterSeparator();
-
-        for (var i = 0; i < node.Children.Count; i++)
+        // Sequence points can only be emitted when the eval stack is empty. That means we can't arbitrarily map everything that could be in
+        // the node. Instead we map just the first C# child node by putting the pragma before we start the method invocation and offset it.
+        // This is not a perfect mapping, but generally this works for most cases:
+        // - Common case: there is only a single node and it is C#, so it maps correctly
+        // - There is some C# followed by a render template: the C# gets mapped, and the render template issues a lambda call which conceptually
+        //   is another method so a sequence point can be emitted. Unfortunately any trailing C# is not mapped, although in many cases it's uninteresting
+        //   such as closing parenthesis.
+        // - Error cases: there are no nodes, so we do nothing
+        var firstCSharpChild = node.Children.FirstOrDefault(IsCSharpToken) as IntermediateToken;
+        using (context.CodeWriter.BuildEnhancedLinePragma(firstCSharpChild?.Source, context, characterOffset: methodInvocation.Length + 2))
         {
-            if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+            context.CodeWriter
+                .Write(methodInvocation)
+                .WriteParameterSeparator();
+        
+            if (firstCSharpChild is not null)
             {
-                WriteCSharpToken(context, token);
+                context.CodeWriter.Write(firstCSharpChild.Content);
+            }
+        }
+
+        // render the remaining children. We still emit the #line pragmas for the remaining csharp tokens but
+        // these wont actually generate any sequence points for debugging.
+        foreach (var child in node.Children)
+        {
+            if (child == firstCSharpChild)
+            {
+                continue;
+            }
+            else if (IsCSharpToken(child))
+            {
+                WriteCSharpToken(context, (IntermediateToken)child);
             }
             else
             {
                 // There may be something else inside the expression like a Template or another extension node.
-                context.RenderNode(node.Children[i]);
+                context.RenderNode(child);
             }
         }
+
         context.CodeWriter.WriteEndMethodInvocation();
+
+        static bool IsCSharpToken(IntermediateNode n) => n is IntermediateToken token && token.IsCSharp;
     }
 
     public override void WriteCSharpExpressionAttributeValue(CodeRenderingContext context, CSharpExpressionAttributeValueIntermediateNode node)

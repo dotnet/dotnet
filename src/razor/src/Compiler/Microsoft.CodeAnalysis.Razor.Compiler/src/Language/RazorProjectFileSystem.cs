@@ -42,7 +42,7 @@ public abstract partial class RazorProjectFileSystem
     /// <param name="path">The path.</param>
     /// <param name="fileKind">The file kind</param>
     /// <returns>The <see cref="RazorProjectItem"/>.</returns>
-    public abstract RazorProjectItem GetItem(string path, string? fileKind);
+    public abstract RazorProjectItem GetItem(string path, RazorFileKind? fileKind);
 
     /// <summary>
     /// Gets the sequence of files named <paramref name="fileName"/> that are applicable to the specified path.

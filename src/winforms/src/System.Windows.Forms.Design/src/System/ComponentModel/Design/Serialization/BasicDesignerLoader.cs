@@ -431,7 +431,7 @@ public abstract partial class BasicDesignerLoader : DesignerLoader, IDesignerLoa
     }
 
     /// <summary>
-    /// This method can be used to Enable or Disable component notification by the DesignerLoader.
+    ///  This method can be used to Enable or Disable component notification by the DesignerLoader.
     /// </summary>
     protected virtual bool EnableComponentNotification(bool enable)
     {
@@ -635,10 +635,7 @@ public abstract partial class BasicDesignerLoader : DesignerLoader, IDesignerLoa
             if (!successful && !(TryGetService(out IDesignerLoaderHost2? lh2) && lh2.IgnoreErrorsDuringReload))
             {
                 // Can we even show the Continue Ignore errors in DTEL?
-                if (lh2 is not null)
-                {
-                    lh2.CanReloadWithErrors = LoaderHost.RootComponent is not null;
-                }
+                lh2?.CanReloadWithErrors = LoaderHost.RootComponent is not null;
 
                 UnloadDocument();
             }

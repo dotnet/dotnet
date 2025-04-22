@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
 using MS.Win32;
@@ -115,7 +114,7 @@ namespace System.Windows.Input
             GC.SuppressFinalize(this);
         }
 
-        void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if ( _cursorHandle != null )
             {
@@ -123,8 +122,6 @@ namespace System.Windows.Input
                 _cursorHandle = null;
             }
         }
-
-
 
         /// <summary>
         /// CursorType - Cursor Type Enumeration
@@ -231,13 +228,13 @@ namespace System.Windows.Input
                         // If the buffer is filled up, then write those bytes out and read more bytes up to BUFFERSIZE
                         for (dataSize = cursorData.Length;
                              dataSize >= BUFFERSIZE;
-                             dataSize = reader.Read(cursorData, 0 /*index in array*/, BUFFERSIZE /*bytes to read*/))
+                             dataSize = reader.Read(cursorData, index: 0, count: BUFFERSIZE))
                         {
-                            fileStream.Write(cursorData, 0 /*index in array*/, BUFFERSIZE /*bytes to write*/);
+                            fileStream.Write(cursorData, offset: 0, count: BUFFERSIZE);
                         }
 
                         // Write any remaining bytes
-                        fileStream.Write(cursorData, 0 /*index in array*/, dataSize /*bytes to write*/);
+                        fileStream.Write(cursorData, offset: 0, count: dataSize);
                     }
                 }
 

@@ -4,14 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Threading;
@@ -27,6 +28,7 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     private readonly IServiceProvider _serviceProvider;
     private readonly ProjectSnapshotManager _projectManager;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly AsyncSemaphore _lock;
 
     private readonly Dictionary<ProjectConfigurationSlice, IDisposable> _projectSubscriptions = new();
@@ -43,12 +45,14 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
     protected WindowsRazorProjectHostBase(
         IUnconfiguredProjectCommonServices commonServices,
         IServiceProvider serviceProvider,
-        ProjectSnapshotManager projectManager)
+        ProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
         : base(commonServices.ThreadingService.JoinableTaskContext)
     {
         CommonServices = commonServices;
         _serviceProvider = serviceProvider;
         _projectManager = projectManager;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
 
         _lock = new AsyncSemaphore(initialCount: 1);
     }
@@ -61,6 +65,8 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected sealed override Task InitializeCoreAsync(CancellationToken cancellationToken)
     {
+        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "When cohosting is on this should never be initialized.");
+
         CommonServices.UnconfiguredProject.ProjectRenaming += UnconfiguredProject_ProjectRenamingAsync;
 
         // CPS represents the various target frameworks that a project has in configuration groups, which are called "slices". Each
@@ -160,6 +166,11 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected override async Task DisposeCoreAsync(bool initialized)
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return;
+        }
+
         if (initialized)
         {
             CommonServices.UnconfiguredProject.ProjectRenaming -= UnconfiguredProject_ProjectRenamingAsync;
@@ -283,6 +294,11 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     Task IProjectDynamicLoadComponent.LoadAsync()
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return Task.CompletedTask;
+        }
+
         return InitializeAsync();
     }
 

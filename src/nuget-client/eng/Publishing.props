@@ -2,7 +2,9 @@
 
   <ItemGroup>
     <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg"
-              PublishFlatContainer="false" />
+              Kind="Package">
+      <Visibility Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Vertical</Visibility>
+    </Artifact>
   </ItemGroup>
 
 </Project>

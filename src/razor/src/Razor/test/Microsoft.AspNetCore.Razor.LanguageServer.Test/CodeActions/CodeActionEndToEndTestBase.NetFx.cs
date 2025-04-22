@@ -12,20 +12,19 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -95,11 +94,11 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
             {
                 if (FilePathNormalizer.Normalize(change.TextDocument.Uri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
                 {
-                    codeBehindEdits.AddRange(change.Edits.Select(codeBehindSourceText.GetTextChange));
+                    codeBehindEdits.AddRange(change.Edits.Select(e => codeBehindSourceText.GetTextChange((TextEdit)e)));
                 }
                 else
                 {
-                    razorEdits.AddRange(change.Edits.Select(razorSourceText.GetTextChange));
+                    razorEdits.AddRange(change.Edits.Select(e => razorSourceText.GetTextChange((TextEdit)e)));
                 }
             }
 
@@ -160,7 +159,6 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
             diagnostics,
             selectionRange: selectionRange);
 
-        Assert.NotEmpty(result);
         var codeActionToRun = GetCodeActionToRun(codeAction, childActionIndex, result);
 
         if (expected is null)
@@ -183,7 +181,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         var edits = new List<TextChange>();
         foreach (var change in changes)
         {
-            edits.AddRange(change.Edits.Select(sourceText.GetTextChange));
+            edits.AddRange(change.Edits.Select(e => sourceText.GetTextChange((TextEdit)e)));
         }
 
         var actual = sourceText.WithChanges(edits).ToString();
@@ -192,7 +190,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
 
     internal static VSInternalCodeAction? GetCodeActionToRun(string codeAction, int childActionIndex, SumType<Command, CodeAction>[] result)
     {
-        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeAction || ((RazorVSInternalCodeAction)e.Value!).Title == codeAction).Value;
+        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeAction).Value;
         if (codeActionToRun?.Children?.Length > 0)
         {
             codeActionToRun = codeActionToRun.Children[childActionIndex];
@@ -292,7 +290,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
 
     internal static ImmutableArray<TagHelperDescriptor> CreateTagHelperDescriptors()
     {
-        return BuildTagHelpers().ToImmutableArray();
+        return [.. BuildTagHelpers()];
 
         static IEnumerable<TagHelperDescriptor> BuildTagHelpers()
         {
@@ -347,7 +345,6 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
                 new(TagHelperMetadata.Common.TypeNamespace, "Microsoft.AspNetCore.Components"),
                 new(TagHelperMetadata.Common.TypeNameIdentifier, "TestGenericComponent"));
             yield return builder.Build();
-
 
             // Sets up a component to make the following available
             // <TestComponent OnDragStart="OnDragStart" />

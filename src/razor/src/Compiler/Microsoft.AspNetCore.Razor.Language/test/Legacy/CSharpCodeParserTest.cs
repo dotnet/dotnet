@@ -214,7 +214,7 @@ public class CSharpCodeParserTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create();
-        var options = RazorParserOptions.CreateDefault();
+        var options = RazorParserOptions.Default;
         using var context = new ParserContext(source, options);
 
         // Act & Assert (Does not throw)

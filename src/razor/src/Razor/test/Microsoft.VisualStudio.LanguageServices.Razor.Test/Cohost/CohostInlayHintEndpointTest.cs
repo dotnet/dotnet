@@ -7,21 +7,19 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public Task InlayHints()
         => VerifyInlayHintsAsync(
             input: """
@@ -63,7 +61,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
             """);
 
-    [FuseFact]
+    [Fact]
     public Task InlayHints_DisplayAllOverride()
         => VerifyInlayHintsAsync(
             input: """
@@ -106,7 +104,7 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
             """,
             displayAllOverride: true);
 
-    [FuseFact]
+    [Fact]
     public Task InlayHints_ComponentAttributes()
         => VerifyInlayHintsAsync(
             input: """
@@ -129,24 +127,22 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
                 """);
 
-    [FuseTheory]
+    [Theory]
     [InlineData(0, 0, 0, 20)]
     [InlineData(0, 0, 2, 0)]
     [InlineData(2, 0, 4, 0)]
     public async Task InlayHints_InvalidRange(int startLine, int starChar, int endLine, int endChar)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         var input = """
             <div></div>
             """;
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
 
         var request = new InlayHintParams()
         {
             TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
-            Range = RoslynLspFactory.CreateRange(startLine, starChar, endLine, endChar)
+            Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
 
         var hints = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, displayAllOverride: false, DisposalToken);
@@ -157,10 +153,8 @@ public class CohostInlayHintEndpointTest(FuseTestContext context, ITestOutputHel
 
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output, bool displayAllOverride = false)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);

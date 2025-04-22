@@ -22,7 +22,15 @@ using System.Reflection
     ;
     #line default
     #line hidden
-    [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(
+#nullable restore
+#line (4,9)-(4,19) "x:\dir\subdir\Test\_Imports.razor"
+MainLayout
+
+#line default
+#line hidden
+#nullable disable
+    ))]
     #nullable restore
     public partial class _Imports : object
     #nullable disable
@@ -30,10 +38,9 @@ using System.Reflection
         #pragma warning disable 1998
         protected void Execute()
         {
-            __builder.AddContent(0, 
 #nullable restore
-#line (5,2)-(5,5) "x:\dir\subdir\Test\_Imports.razor"
-Foo
+#line (5,2)-(5,5) 24 "x:\dir\subdir\Test\_Imports.razor"
+__builder.AddContent(0, Foo
 
 #line default
 #line hidden

@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_Razor()
     {
         // Arrange
@@ -50,7 +50,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
             });
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_Html()
     {
         // Arrange
@@ -82,7 +82,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
             });
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_CSharp()
     {
         // Arrange
@@ -114,7 +114,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
             });
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_CSharp_NoDocType()
     {
         // Why this test, when we have the above test, and they seem so similar, and we also have Diagnostics_ShowErrors_CSharpAndHtml you ask? Well I'll tell you!
@@ -154,7 +154,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
             });
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_CSharpAndHtml()
     {
         // Arrange

@@ -6,7 +6,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.DocumentSymbols;
 
@@ -26,12 +25,15 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
 
             foreach (var symbolInformation in symbolInformations)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
+                // SymbolInformation is obsolete, but things still return it so we have to handle it
                 if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, symbolInformation.Location.Range, out var newRange))
                 {
                     symbolInformation.Location.Range = newRange;
                     symbolInformation.Location.Uri = razorDocumentUri;
                     mappedSymbols.Add(symbolInformation);
                 }
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             return mappedSymbols.ToArray();

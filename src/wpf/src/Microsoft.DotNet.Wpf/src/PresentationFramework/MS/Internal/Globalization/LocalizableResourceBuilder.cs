@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Windows;
@@ -513,7 +512,7 @@ namespace MS.Internal.Globalization
                     }
                 default:
                     {
-                        Debug.Assert(false, "Can't process localizability attribute on nodes other than Element, Property and LiteralContent.");
+                        Debug.Fail("Can't process localizability attribute on nodes other than Element, Property and LiteralContent.");
                         break;
                     }
             }

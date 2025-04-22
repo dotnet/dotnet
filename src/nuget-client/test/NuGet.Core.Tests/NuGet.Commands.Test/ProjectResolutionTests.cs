@@ -391,58 +391,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var sources = new List<PackageSource>();
 
-            var project1Json = @"
+            using (var pathContext = new SimpleTestPathContext())
             {
-              ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""frameworks"": {
-                ""net45"": {
-                }
-              }
-            }";
-
-            using (var workingDir = TestDirectory.Create())
-            {
-                var packagesDir = new DirectoryInfo(Path.Combine(workingDir, "globalPackages"));
-                var packageSource = new DirectoryInfo(Path.Combine(workingDir, "packageSource"));
-                var project1 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project1"));
-                var project2 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project2"));
-                packagesDir.Create();
-                packageSource.Create();
-                project1.Create();
-                project2.Create();
-
-                File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
-
-                var msbuidPath1 = Path.Combine(project2.FullName, "project1.xproj");
-                var msbuidPath2 = Path.Combine(project2.FullName, "project2.csproj");
-
-                File.WriteAllText(msbuidPath1, string.Empty);
-                File.WriteAllText(msbuidPath2, string.Empty);
-
-                var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = ProjectTestHelpers.GetPackageSpec("project1", pathContext.SolutionRoot, framework: "net472");
 
                 var logger = new TestLogger();
-                var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger);
+                var spec2 = ProjectTestHelpers.GetPackagesConfigPackageSpec("project2", pathContext.SolutionRoot);
 
-                request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
-
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project1",
-                    spec1,
-                    msbuidPath1,
-                    new string[] { "project2" }));
-
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project2",
-                    null,
-                    msbuidPath2,
-                    new string[] { }));
+                spec1 = spec1.WithTestProjectReference(spec2);
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2);
 
                 // Act
                 var command = new RestoreCommand(request);
@@ -551,16 +508,11 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
               ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""project2"": ""1.0.0-*""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""project2"": ""1.0.0-*""
+                  }
                 }
               }
             }";
@@ -568,11 +520,6 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
               ""version"": ""1.0.0-*"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }
@@ -606,8 +553,8 @@ namespace NuGet.Commands.Test
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var specPath2 = Path.Combine(project2.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", specPath2).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
+                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", specPath2).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir.FullName, logger);

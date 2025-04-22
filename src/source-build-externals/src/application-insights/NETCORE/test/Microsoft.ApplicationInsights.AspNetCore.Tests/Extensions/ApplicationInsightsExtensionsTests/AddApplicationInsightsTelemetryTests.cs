@@ -38,6 +38,37 @@ namespace Microsoft.Extensions.DependencyInjection.Test
     public class AddApplicationInsightsTelemetryTests : BaseTestClass
     {
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public static void TelemetryModulesResolvableWhenKeyedServiceRegistered(bool manuallyRegisterDiagnosticsTelemetryModule)
+        {
+            // Note: This test verifies a regression doesn't get introduced for:
+            // https://github.com/microsoft/ApplicationInsights-dotnet/issues/2879
+
+            var services = new ServiceCollection();
+
+            services.AddSingleton<ITelemetryModule, TestTelemetryModule>();
+            if (manuallyRegisterDiagnosticsTelemetryModule)
+            {
+                services.AddSingleton<ITelemetryModule, DiagnosticsTelemetryModule>();
+            }
+
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationType: typeof(TestService));
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationInstance: new TestService());
+            services.AddKeyedSingleton(typeof(ITestService), serviceKey: new(), implementationFactory: (sp, key) => new TestService());
+
+            services.AddApplicationInsightsTelemetry();
+
+            using var sp = services.BuildServiceProvider();
+
+            var telemetryModules = sp.GetServices<ITelemetryModule>();
+
+            Assert.Equal(8, telemetryModules.Count());
+
+            Assert.Single(telemetryModules.Where(m => m.GetType() == typeof(DiagnosticsTelemetryModule)));
+        }
+
+        [Theory]
         [InlineData(typeof(ITelemetryInitializer), typeof(ApplicationInsights.AspNetCore.TelemetryInitializers.DomainNameRoleInstanceTelemetryInitializer), ServiceLifetime.Singleton)]
         [InlineData(typeof(ITelemetryInitializer), typeof(AzureAppServiceRoleNameFromHostNameHeaderInitializer), ServiceLifetime.Singleton)]
         [InlineData(typeof(ITelemetryInitializer), typeof(ComponentVersionTelemetryInitializer), ServiceLifetime.Singleton)]
@@ -94,7 +125,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
         }
 
         /// <summary>
-        /// Tests that the instrumentation key configuration can be read from a JSON file by the configuration factory.            
+        /// Tests that the instrumentation key configuration can be read from a JSON file by the configuration factory.
         /// </summary>
         /// <param name="useDefaultConfig">
         /// Calls services.AddApplicationInsightsTelemetry() when the value is true and reads IConfiguration from user application automatically.
@@ -119,7 +150,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
         }
 
         /// <summary>
-        /// Tests that the connection string can be read from a JSON file by the configuration factory.            
+        /// Tests that the connection string can be read from a JSON file by the configuration factory.
         /// </summary>
         /// <param name="useDefaultConfig">
         /// Calls services.AddApplicationInsightsTelemetry() when the value is true and reads IConfiguration from user application automatically.
@@ -141,7 +172,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
         }
 
         /// <summary>
-        /// Tests that the connection string can be read from a JSON file by the configuration factory.            
+        /// Tests that the connection string can be read from a JSON file by the configuration factory.
         /// This config has both a connection string and an instrumentation key. It is expected to use the ikey from the connection string.
         /// </summary>
         [Fact]
@@ -159,7 +190,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// Tests that the Active configuration singleton is updated, but another instance of telemetry configuration is created for dependency injection.
-        /// ASP.NET Core developers should always use Dependency Injection instead of static singleton approach. 
+        /// ASP.NET Core developers should always use Dependency Injection instead of static singleton approach.
         /// See Microsoft/ApplicationInsights-dotnet#613
         /// </summary>
         [Fact]
@@ -221,7 +252,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
             if (useDefaultConfig)
             {
-                // Endpoint comes from appSettings 
+                // Endpoint comes from appSettings
                 Assert.Equal("http://hosthere/v2/track/", telemetryConfiguration.TelemetryChannel.EndpointAddress);
             }
             else
@@ -603,7 +634,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
 #if NETCOREAPP
             // Developer Note: Expected modules:
-            //      RequestTrackingTelemetryModule, PerformanceCollectorModule, AppServicesHeartbeatTelemetryModule, AzureInstanceMetadataTelemetryModule, 
+            //      RequestTrackingTelemetryModule, PerformanceCollectorModule, AppServicesHeartbeatTelemetryModule, AzureInstanceMetadataTelemetryModule,
             //      QuickPulseTelemetryModule, DiagnosticsTelemetryModule, DependencyTrackingTelemetryModule, EventCollectorCollectionModule
             Assert.Equal(8, modules.Count());
 #else
@@ -681,13 +712,13 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// User could enable or disable LegacyCorrelationHeadersInjection of DependencyCollectorOptions.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetry() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetry(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableLegacyCorrelationHeadersInjection.</param>
         [Theory]
@@ -1018,13 +1049,13 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// User could enable or disable RequestCollectionOptions by setting InjectResponseHeaders, TrackExceptions and EnableW3CDistributedTracing.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetry() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetry(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property InjectResponseHeaders, TrackExceptions and EnableW3CDistributedTracing.</param>
         [Theory]
@@ -1121,13 +1152,13 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// User could enable or disable sampling by setting EnableAdaptiveSampling.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetry() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetry(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableAdaptiveSampling.</param>
         [Theory]
@@ -1335,13 +1366,13 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// User could enable or disable auto collected metrics by setting AddAutoCollectedMetricExtractor.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetry() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetry(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property AddAutoCollectedMetricExtractor.</param>
         [Theory]
@@ -1386,13 +1417,13 @@ namespace Microsoft.Extensions.DependencyInjection.Test
 
         /// <summary>
         /// User could enable or disable AuthenticationTrackingJavaScript by setting EnableAuthenticationTrackingJavaScript.
-        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions. 
+        /// This configuration can be read from a JSON file by the configuration factory or through code by passing ApplicationInsightsServiceOptions.
         /// </summary>
         /// <param name="configType">
         /// DefaultConfiguration - calls services.AddApplicationInsightsTelemetry() which reads IConfiguration from user application automatically.
         /// SuppliedConfiguration - invokes services.AddApplicationInsightsTelemetry(configuration) where IConfiguration object is supplied by caller.
-        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file. 
-        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it. 
+        /// Code - Caller creates an instance of ApplicationInsightsServiceOptions and passes it. This option overrides all configuration being used in JSON file.
+        /// There is a special case where NULL values in these properties - InstrumentationKey, ConnectionString, EndpointAddress and DeveloperMode are overwritten. We check IConfiguration object to see if these properties have values, if values are present then we override it.
         /// </param>
         /// <param name="isEnable">Sets the value for property EnableAuthenticationTrackingJavaScript.</param>
         [Theory]
@@ -1523,8 +1554,8 @@ namespace Microsoft.Extensions.DependencyInjection.Test
         /// <summary>
         /// Creates two copies of ApplicationInsightsServiceOptions. First object is created by calling services.AddApplicationInsightsTelemetry() or services.AddApplicationInsightsTelemetry(config).
         /// Second object is created directly from configuration file without using any of SDK functionality.
-        /// Compares ApplicationInsightsServiceOptions object from dependency container and one created directly from configuration. 
-        /// This proves all that SDK read configuration successfully from configuration file. 
+        /// Compares ApplicationInsightsServiceOptions object from dependency container and one created directly from configuration.
+        /// This proves all that SDK read configuration successfully from configuration file.
         /// Properties from appSettings.json, appsettings.{env.EnvironmentName}.json and Environmental Variables are read if no IConfiguration is supplied or used in an application.
         /// </summary>
         /// <param name="readFromAppSettings">If this is set, read value from appsettings.json, else from passed file.</param>
@@ -1551,7 +1582,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
             // VALIDATE
 
             // Generate config and don't pass to services
-            // this is directly generated from config file 
+            // this is directly generated from config file
             // which could be used to validate the data from dependency container
 
             if (!readFromAppSettings)
@@ -1617,7 +1648,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
                 // This line mimics the default behavior by CreateDefaultBuilder
                 services.AddSingleton<IConfiguration>(config);
 
-                // ACT             
+                // ACT
                 services.AddApplicationInsightsTelemetry();
 
                 // VALIDATE
@@ -1654,7 +1685,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
                 // This line mimics the default behavior by CreateDefaultBuilder
                 services.AddSingleton<IConfiguration>(config);
 
-                // ACT             
+                // ACT
                 services.AddApplicationInsightsTelemetry("userkey");
 
                 // VALIDATE
@@ -1689,7 +1720,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
         {
             // Host.CreateDefaultBuilder() in .NET Core 3.0  adds appsetting.json and env variable
             // to configuration and is made available for constructor injection.
-            // This test validates that SDK does not throw any error if it cannot find 
+            // This test validates that SDK does not throw any error if it cannot find
             // application insights configuration in default IConfiguration.
             // ARRANGE
             var jsonFullPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "sample-appsettings_dontexist.json");
@@ -1698,7 +1729,7 @@ namespace Microsoft.Extensions.DependencyInjection.Test
             // This line mimics the default behavior by CreateDefaultBuilder
             services.AddSingleton<IConfiguration>(config);
 
-            // ACT             
+            // ACT
             services.AddApplicationInsightsTelemetry();
 
             // VALIDATE
@@ -1710,6 +1741,14 @@ namespace Microsoft.Extensions.DependencyInjection.Test
                     .AddJsonFile("appsettings.json", false).Build();
 
             Assert.Equal(appSettingsConfig["ApplicationInsights:InstrumentationKey"], telemetryConfiguration.InstrumentationKey);
+        }
+
+        private sealed class TestService : ITestService
+        {
+        }
+
+        private interface ITestService
+        {
         }
     }
 }

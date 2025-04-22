@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using MS.Internal.Media;
@@ -143,8 +142,8 @@ namespace System.Windows.Media.Media3D
         public static readonly DependencyProperty TransformProperty =
             DependencyProperty.Register(
                     "Transform",
-                    /* propertyType = */ typeof(Transform3D),
-                    /* ownerType = */ typeof(Visual3D),
+                    propertyType: typeof(Transform3D),
+                    ownerType: typeof(Visual3D),
                     new PropertyMetadata(Transform3D.Identity, TransformPropertyChanged),
                     (ValidateValueCallback) delegate { return MediaContext.CurrentMediaContext.WriteAccessEnabled; });
 
@@ -170,7 +169,7 @@ namespace System.Windows.Media.Media3D
             // and subgraph bounds.  A better solution that would be both a 2D
             // and 3D win would be to stop invalidating _bboxSubgraph when a
             // visual’s transform changes.
-            owner.RenderChanged(/* sender = */ owner, EventArgs.Empty);
+            owner.RenderChanged(sender: owner, EventArgs.Empty);
         }
 
         /// <summary>
@@ -258,7 +257,7 @@ namespace System.Windows.Media.Media3D
             // UIElement.PropagateResumeLayout(child);
 
             // Fire notifications
-            OnVisualChildrenChanged(child, /* visualRemoved = */ null);
+            OnVisualChildrenChanged(child, visualRemoved: null);
 
             child.FireOnVisualParentChanged(null);
             VisualDiagnostics.OnVisualChildChanged(this, child, true);
@@ -290,7 +289,7 @@ namespace System.Windows.Media.Media3D
 
             VisualDiagnostics.OnVisualChildChanged(this, child, false);
 
-            child.SetParent(/* newParent = */ (Visual3D) null);  // CS0121: Call is ambigious without casting null to Visual3D.
+            child.SetParent(newParent: (Visual3D) null);  // CS0121: Call is ambigious without casting null to Visual3D.
 
             // remove the inheritance context
             RemoveSelfAsInheritanceContext(child, null);
@@ -328,7 +327,7 @@ namespace System.Windows.Media.Media3D
             // Fire notifications
             child.FireOnVisualParentChanged(this);
 
-            OnVisualChildrenChanged(/* visualAdded = */ null , child);
+            OnVisualChildrenChanged(visualAdded: null , child);
         }
 
         /// <summary>
@@ -368,7 +367,7 @@ namespace System.Windows.Media.Media3D
 
                     SetFlagsOnAllChannels(true, VisualProxyFlags.IsTransformDirty);
 
-                    RenderChanged(/* sender = */ this, EventArgs.Empty);
+                    RenderChanged(sender: this, EventArgs.Empty);
 
                     _internalIsVisible = value;
                 }
@@ -393,14 +392,14 @@ namespace System.Windows.Media.Media3D
 
             SetFlags(false, VisualFlags.Are3DContentBoundsValid);
 
-            RenderChanged(/* sender = */ this, EventArgs.Empty);
+            RenderChanged(sender: this, EventArgs.Empty);
         }
 
         private void Visual3DModelPropertyChanged(object o, EventArgs e)
         {
             // forward on to the main property changed method.  Since this method is
             // only called on subproperty chanes, oldValue is meaningless.
-            Visual3DModelPropertyChanged(null, /* isSubpropertyChange = */ true);
+            Visual3DModelPropertyChanged(null, isSubpropertyChange: true);
         }
 
         /// <summary>
@@ -428,7 +427,7 @@ namespace System.Windows.Media.Media3D
                     }
 
                     // notify of the property change
-                    Visual3DModelPropertyChanged(_visual3DModel, /* isSubpropertyChange = */ false);
+                    Visual3DModelPropertyChanged(_visual3DModel, isSubpropertyChange: false);
                     _visual3DModel = value;
 
                     // set the new one
@@ -1231,7 +1230,7 @@ namespace System.Windows.Media.Media3D
                             DUCE.Visual3DNode.InsertChildAt(
                                 handle,
                                 ((DUCE.IResource)child).GetHandle(channel),
-                                /* iPosition = */ (uint)i,
+                                iPosition: (uint)i,
                                 ctx.Channel);
 
                             child.SetFlags(channel, true, VisualProxyFlags.IsConnectedToParent);
@@ -2126,7 +2125,7 @@ namespace System.Windows.Media.Media3D
         // store the parent in an UncommonField.  Both fields must be considered when determining
         // the parent of this node.
         private static readonly UncommonField<Visual> _2DParent =
-            new UncommonField<Visual>(/* defaultValue = */ null);
+            new UncommonField<Visual>(defaultValue: null);
 
         // Sentinel value we use to differentiate between a null inheritance context stored in the
         // _inheritanceContext uncommon field and "empty", meaning use the parent as context.
@@ -2135,7 +2134,7 @@ namespace System.Windows.Media.Media3D
         // Normally the inheritance context is the same as the parent, except when we are parent to
         // a Viewport3D visual, in which case we use this uncommon field to store are alternate context.
         private static readonly UncommonField<DependencyObject> _inheritanceContext =
-            new UncommonField<DependencyObject>(/* defaultValue = */ UseParentAsContext);
+            new UncommonField<DependencyObject>(defaultValue: UseParentAsContext);
 
         private static readonly UncommonField<Visual.AncestorChangedEventHandler> AncestorChangedEventField
             = new UncommonField<Visual.AncestorChangedEventHandler>();

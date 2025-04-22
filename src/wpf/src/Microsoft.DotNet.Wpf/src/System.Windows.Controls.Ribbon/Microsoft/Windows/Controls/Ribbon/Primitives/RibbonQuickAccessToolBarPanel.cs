@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -314,9 +313,9 @@ namespace Microsoft.Windows.Controls.Ribbon.Primitives
                 Debug.Assert(object.ReferenceEquals(InternalChildren[j], GeneratedChildren[j]));
                 UIElement currentChild = InternalChildren[j];
                 Debug.Assert(currentChild != null);
-                Debug.Assert(RibbonQuickAccessToolBar.GetIsOverflowItem(currentChild) == false);
-                Debug.Assert(this.Children.Contains(currentChild) == true);
-                Debug.Assert(QAT.OverflowPanel.Children.Contains(currentChild) == false);
+                Debug.Assert(!RibbonQuickAccessToolBar.GetIsOverflowItem(currentChild));
+                Debug.Assert(this.Children.Contains(currentChild));
+                Debug.Assert(!QAT.OverflowPanel.Children.Contains(currentChild));
                 Debug.Assert(currentChild.IsVisible == this.IsVisible);
                 Debug.Assert(currentChild.DesiredSize.Width > 0.0);
             }
@@ -328,9 +327,9 @@ namespace Microsoft.Windows.Controls.Ribbon.Primitives
                 Debug.Assert(object.ReferenceEquals(QAT.OverflowPanel.Children[overflowPanelIndex], GeneratedChildren[k]));
                 UIElement currentChild = GeneratedChildren[k];
                 Debug.Assert(currentChild != null);
-                Debug.Assert(RibbonQuickAccessToolBar.GetIsOverflowItem(currentChild) == true);
-                Debug.Assert(this.Children.Contains(currentChild) == false);
-                Debug.Assert(QAT.OverflowPanel.Children.Contains(currentChild) == true);
+                Debug.Assert(RibbonQuickAccessToolBar.GetIsOverflowItem(currentChild));
+                Debug.Assert(!this.Children.Contains(currentChild));
+                Debug.Assert(QAT.OverflowPanel.Children.Contains(currentChild));
             }
         }
 #endif

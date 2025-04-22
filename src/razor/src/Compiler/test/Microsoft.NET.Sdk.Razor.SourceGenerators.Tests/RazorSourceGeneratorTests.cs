@@ -802,10 +802,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -972,10 +971,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -1203,6 +1201,38 @@ public class SurveyPrompt : ComponentBase
                 stream.Position = 0;
                 return MetadataReference.CreateFromStream(stream);
             }
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_RazorFiles_CssScopeRemoved()
+        {
+            // Compile with CssScope set.
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, _, options) = await GetDriverWithAdditionalTextAndProviderAsync(project, static options =>
+            {
+                options.AdditionalTextOptions["Pages/Index.razor"]["build_metadata.AdditionalFiles.CssScope"] = "test-css-scope";
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is enabled.
+            Assert.Contains("<h1 test-css-scope>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
+
+            // Unset CssScope.
+            options = options.Clone();
+            options.AdditionalTextOptions["Pages/Index.razor"].Options.Remove("build_metadata.AdditionalFiles.CssScope");
+            driver = driver.WithUpdatedAnalyzerConfigOptions(options);
+
+            result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is disabled.
+            Assert.Contains("<h1>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
         }
 
         [Fact]
@@ -3311,10 +3341,9 @@ namespace MyApp
                         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
                         {
                             __builder.OpenElement(0, "div");
-                            __builder.AddContent(1, 
                 #nullable restore
-                #line (1,8)-(3,8) "Pages/Index.razor"
-                """
+                #line (1,8)-(3,8) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
                     nested "
                     """
 
@@ -3400,10 +3429,9 @@ namespace MyApp
                         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
                         {
                             __builder.OpenElement(0, "div");
-                            __builder.AddContent(1, 
                 #nullable restore
-                #line (1,8)-(3,15) "Pages/Index.razor"
-                """
+                #line (1,8)-(3,15) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
                     nested "
                     """)</div>
                 #line default

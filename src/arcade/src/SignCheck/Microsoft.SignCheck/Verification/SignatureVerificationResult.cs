@@ -80,6 +80,15 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
+        /// True if this file was marked as IGNORE-STRONG-NAME. This result can be used with IsStrongNameSigned
+        /// </summary>
+        public bool IsIgnoreStrongName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// True if the file was excluded from verification, false otherwise.
         /// </summary>
         public bool IsExcluded
@@ -258,6 +267,19 @@ namespace Microsoft.SignCheck.Verification
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="detailKey"></param>
+        /// <returns></returns>
+        public string ToString(string detailKey)
+        {
+            if (Detail.TryGetValue(detailKey, out string value))
+            {
+                return value;
+            }
+            return String.Empty;
         }
 
         /// <summary>

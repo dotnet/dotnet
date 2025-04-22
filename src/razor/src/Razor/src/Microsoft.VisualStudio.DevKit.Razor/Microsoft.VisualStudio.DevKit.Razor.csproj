@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetVSCode)</TargetFramework>
     <OutputType>Library</OutputType>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the language server assets for C# DevKit.</Description>
     <EnableApiCheck>false</EnableApiCheck>
@@ -38,6 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" PrivateAssets="all" />
   </ItemGroup>
 </Project>

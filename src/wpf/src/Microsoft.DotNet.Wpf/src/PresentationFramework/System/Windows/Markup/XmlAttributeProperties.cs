@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description:
@@ -233,7 +232,7 @@ namespace System.Windows.Markup
                 throw new ArgumentNullException( nameof(dependencyObject));
             }
 
-            if (dependencyObject.IsSealed == false)
+            if (!dependencyObject.IsSealed)
             {
                 dependencyObject.SetValue(XmlnsDictionaryProperty, value);
             }

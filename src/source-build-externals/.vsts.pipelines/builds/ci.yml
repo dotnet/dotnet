@@ -31,6 +31,8 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      binskim:
+        enabled: true
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       policheck:
@@ -41,8 +43,6 @@ extends:
         os: windows
       tsa:
         enabled: true
-    customBuildTags:
-    - ES365AIMigrationTooling
     stages:
     - stage: build
       displayName: Build

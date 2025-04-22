@@ -35,6 +35,8 @@ internal static class LanguageServerConstants
     {
         public const string GenerateEventHandler = "GenerateEventHandler";
 
+        public const string GenerateAsyncEventHandler = "GenerateAsyncEventHandler";
+
         public const string EditBasedCodeActionCommand = "EditBasedCodeActionCommand";
 
         public const string ExtractToCodeBehindAction = "ExtractToCodeBehind";
@@ -44,6 +46,8 @@ internal static class LanguageServerConstants
         public const string CreateComponentFromTag = "CreateComponentFromTag";
 
         public const string AddUsing = "AddUsing";
+
+        public const string FullyQualify = "FullyQualify";
 
         public const string PromoteUsingDirective = "PromoteUsingDirective";
 

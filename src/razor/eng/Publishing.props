@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <PublishingVersion>3</PublishingVersion>
     <PublishDependsOnTargets>$(PublishDependsOnTargets);_UpdatePublishItems</PublishDependsOnTargets>
     <_UploadPathRoot>razor</_UploadPathRoot>
   </PropertyGroup>
@@ -11,8 +10,14 @@
     <_ItemsToPublish Include="$(ArtifactsDir)LanguageServer\**\*.zip" />
     <_ItemsToPublish Include="$(ArtifactsDir)DevKitTelemetry\**\*.zip" />
   </ItemGroup>
+  
+  <!-- Update Artifacts with Kind=Package to have additional metadata item Category="ToolingPackage".
+       Depending on channel configuration, this means that these assets could be pushed to a different feed. -->
+  <ItemGroup>
+    <Artifact Update="@(Artifact->WithMetadataValue('Kind', 'Package'))" Category="ToolingPackage" />
+  </ItemGroup>
 
-<Target Name="_UpdatePublishItems">
+  <Target Name="_UpdatePublishItems">
     <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
     <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj"
         Targets="_GetPackageVersionInfo"

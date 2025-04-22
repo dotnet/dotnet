@@ -52,19 +52,17 @@ public static class TestCodeRenderingContext
             return options;
         }
 
-        var builder = options.ToBuilder();
-
         if (newLine is not null)
         {
-            builder.NewLine = newLine;
+            options = options.WithNewLine(newLine);
         }
 
         if (suppressUniqueIds is not null)
         {
-            builder.SuppressUniqueIds = suppressUniqueIds;
+            options = options.WithSuppressUniqueIds(suppressUniqueIds);
         }
 
-        return builder.Build();
+        return options;
     }
 
     private class RenderChildrenVisitor(CodeWriter writer) : IntermediateNodeVisitor

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 //
@@ -375,8 +374,7 @@ namespace System.Windows
             if (templateRoot != null &&
                 typeof(FrameworkContentElement).IsAssignableFrom(templateRoot.Type))
             {
-                throw new ArgumentException(SR.Format(SR.VisualTreeRootIsFrameworkElement,
-                    typeof(FrameworkElement).Name, templateRoot.Type.Name));
+                throw new ArgumentException(SR.Format(SR.VisualTreeRootIsFrameworkElement, nameof(FrameworkElement), templateRoot.Type.Name));
             }
         }
 
@@ -827,7 +825,7 @@ namespace System.Windows
                 }
                 else
                 {
-                    Debug.Assert(false, "We do not have support for DynamicResource within unshared template content");
+                    Debug.Fail("We do not have support for DynamicResource within unshared template content");
                 }
             }
 
@@ -1049,7 +1047,7 @@ namespace System.Windows
                             break;
 
                         default:
-                            Debug.Assert(false, "Unknown enum value");
+                            Debug.Fail("Unknown enum value");
                             break;
                     }
                 }
@@ -1617,7 +1615,7 @@ namespace System.Windows
 
 #if DEBUG
         // Debug counter for intelligent breakpoints.
-        static private int _globalDebugInstanceCounter = 0;
+        private static int _globalDebugInstanceCounter = 0;
         private int        _debugInstanceCounter;
 #endif
 

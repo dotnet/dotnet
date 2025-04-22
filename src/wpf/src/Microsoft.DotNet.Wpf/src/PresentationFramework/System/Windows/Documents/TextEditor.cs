@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using System.Globalization;
@@ -1647,7 +1646,7 @@ namespace System.Windows.Documents
             This.SetSpellCheckEnabled(This.IsSpellCheckEnabled);
 
             // Finalize any active IME composition when transitioning to true.
-            if ((bool)e.NewValue == true && This._textstore != null)
+            if ((bool)e.NewValue && This._textstore != null)
             {
                 This._textstore.CompleteCompositionAsync();
             }

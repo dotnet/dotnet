@@ -104,7 +104,6 @@ namespace NuGet.VisualStudio.Common
                 await _outputConsole.WriteLineAsync(Resources.Finished);
                 await _outputConsole.WriteLineAsync(string.Empty);
 
-                // Give the error list focus
                 await _errorList.Value.BringToFrontIfSettingsPermitAsync();
             });
         }

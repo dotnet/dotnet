@@ -8,14 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -40,7 +39,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
         var file = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var folder = Path.GetDirectoryName(file).AssumeNotNull();
         var importsFile = Path.GetFullPath(Path.Combine(folder, "..", importsFileName));
-        var importFileUri = VsLspFactory.CreateFilePathUri(importsFile);
+        var importFileUri = LspFactory.CreateFilePathUri(importsFile);
 
         using var edits = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
 
@@ -67,7 +66,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
         edits.Add(new TextDocumentEdit
         {
             TextDocument = new OptionalVersionedTextDocumentIdentifier() { Uri = importFileUri },
-            Edits = [VsLspFactory.CreateTextEdit(insertLocation, textToInsert)]
+            Edits = [LspFactory.CreateTextEdit(insertLocation, textToInsert)]
         });
 
         var removeRange = sourceText.GetRange(actionParams.RemoveStart, actionParams.RemoveEnd);
@@ -75,7 +74,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
         edits.Add(new TextDocumentEdit
         {
             TextDocument = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri },
-            Edits = [VsLspFactory.CreateTextEdit(removeRange, string.Empty)]
+            Edits = [LspFactory.CreateTextEdit(removeRange, string.Empty)]
         });
 
         return new WorkspaceEdit

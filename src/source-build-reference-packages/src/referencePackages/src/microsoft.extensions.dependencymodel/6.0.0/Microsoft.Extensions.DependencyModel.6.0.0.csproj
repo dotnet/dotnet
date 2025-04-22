@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>Microsoft.Extensions.DependencyModel</AssemblyName>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encodings.web/6.0.0/System.Text.Encodings.Web.6.0.0.csproj" />
+    <ProjectReference Include="../../system.text.json/6.0.0/System.Text.Json.6.0.0.csproj" />
+    <ProjectReference Include="../../system.buffers/4.5.1/System.Buffers.4.5.1.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.4/System.Memory.4.5.4.csproj" />
   </ItemGroup>
 
 </Project>

@@ -24,11 +24,11 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
         var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
-                       <Counter>
+                       <PageTitle>
                         @if(true){
                             <p>@DateTime.Now</p>
                     }
-                    </Counter>
+                    </PageTitle>
 
                         <GridTable>
                         @foreach (var row in rows){
@@ -39,12 +39,12 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     </GridTable>
                     """,
             expected: """
-                    <Counter>
+                    <PageTitle>
                         @if (true)
                         {
                             <p>@DateTime.Now</p>
                         }
-                    </Counter>
+                    </PageTitle>
 
                     <GridTable>
                         @foreach (var row in rows)
@@ -431,12 +431,12 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     }
                     """;
 
-            var selectComponent = CompileToCSharp("Select.razor", select, throwOnFailure: true, fileKind: FileKinds.Component);
-            var selectItemComponent = CompileToCSharp("SelectItem.razor", selectItem, throwOnFailure: true, fileKind: FileKinds.Component);
+            var selectComponent = CompileToCSharp("Select.razor", select, throwOnFailure: true, fileKind: RazorFileKind.Component);
+            var selectItemComponent = CompileToCSharp("SelectItem.razor", selectItem, throwOnFailure: true, fileKind: RazorFileKind.Component);
 
             using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var tagHelpers);
-            tagHelpers.AddRange(selectComponent.CodeDocument.GetTagHelperContext().TagHelpers);
-            tagHelpers.AddRange(selectItemComponent.CodeDocument.GetTagHelperContext().TagHelpers);
+            tagHelpers.AddRange(selectComponent.CodeDocument.GetRequiredTagHelperContext().TagHelpers);
+            tagHelpers.AddRange(selectItemComponent.CodeDocument.GetRequiredTagHelperContext().TagHelpers);
 
             return tagHelpers.ToImmutable();
         }
@@ -538,8 +538,8 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                 }
                 """));
 
-        var generated = CompileToCSharp("Test.razor", string.Empty, throwOnFailure: false, fileKind: FileKinds.Component);
+        var generated = CompileToCSharp("Test.razor", string.Empty, throwOnFailure: false, fileKind: RazorFileKind.Component);
 
-        return generated.CodeDocument.GetTagHelperContext().TagHelpers.ToImmutableArray();
+        return generated.CodeDocument.GetRequiredTagHelperContext().TagHelpers;
     }
 }

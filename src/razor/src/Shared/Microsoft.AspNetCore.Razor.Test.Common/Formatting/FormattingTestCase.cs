@@ -54,11 +54,6 @@ internal sealed class FormattingTestCase : XunitTestCase
             return "Some tests cover features not supported by the old formatting engine";
         }
 
-        if (_forceRuntimeCodeGeneration && TestMethod.TestClass.TestCollection.TestAssembly.Assembly.Name.StartsWith("Microsoft.AspNetCore.Razor.LanguageServer"))
-        {
-            return "Language server cannot run FUSE tests";
-        }
-
         return base.GetSkipReason(factAttribute);
     }
 

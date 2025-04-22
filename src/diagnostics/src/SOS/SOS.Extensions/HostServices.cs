@@ -130,7 +130,7 @@ namespace SOS.Extensions
             SOSPath = Path.GetDirectoryName(extensionPath);
             SOSHandle = extensionsLibrary;
 
-            _host = new Host(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? HostType.DbgEng : HostType.Lldb);
+            _host = new HostForHostServices(this);
             _commandService = new CommandService(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ">!sos" : null);
             _host.ServiceManager.NotifyExtensionLoad.Register(_commandService.AddCommands);
 
@@ -408,6 +408,43 @@ namespace SOS.Extensions
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
+            }
+        }
+
+        #endregion
+
+        #region HostForHostServices
+
+        internal sealed class HostForHostServices : Host
+        {
+            private readonly HostServices _hostServices;
+
+            public HostForHostServices(HostServices hostServices)
+                : base(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? HostType.DbgEng : HostType.Lldb)
+            {
+                _hostServices = hostServices;
+            }
+
+            public override bool DacSignatureVerificationEnabled
+            {
+                get
+                {
+                    if (_hostServices.DebuggerServices is null)
+                    {
+                        throw new InvalidOperationException("DacSignatureVerificationEnabled called too soon in initialization");
+                    }
+                    HResult hr = _hostServices.DebuggerServices.GetDacSignatureVerificationSettings(out bool value);
+                    if (hr.IsOK)
+                    {
+                        return value;
+                    }
+                    // Return true (verify DAC signature) if any errors. Secure by default.
+                    return true;
+                }
+                set
+                {
+                    throw new NotSupportedException("Changing the DacSignatureVerificationEnabled setting is not supported.");
+                }
             }
         }
 

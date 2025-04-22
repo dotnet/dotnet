@@ -339,7 +339,7 @@ namespace NuGet.SolutionRestoreManager
         {
             string? enableAudit = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAudit, s => s);
             string? auditLevel = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditLevel, s => s);
-            string? auditMode = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditMode, s => s);
+            string? auditMode = GetAuditMode(tfms);
             HashSet<string>? suppressedAdvisories = GetSuppressedAdvisories(tfms);
 
             return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel) || !string.IsNullOrEmpty(auditMode) || suppressedAdvisories is not null
@@ -351,6 +351,25 @@ namespace NuGet.SolutionRestoreManager
                     SuppressedAdvisories = suppressedAdvisories,
                 }
                 : null;
+
+            // For multi-targeting projects, we want to set audit mode to "all" if the project targets .NET 10 or higher.
+            // NuGet.targets achieves this by doing the NuGetAuditMode assigning in the "inner-build", which means that
+            // different inner builds can have different values. So, if any of the values is "all", then we use it.
+            // Otherwise, we can fall back to our previous behavior.
+            static string? GetAuditMode(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
+            {
+                ImmutableArray<string?> auditMode = GetNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditMode, s => s);
+
+                foreach (var value in auditMode)
+                {
+                    if (string.Equals(value, "all", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return value;
+                    }
+                }
+
+                return GetSingleNonEvaluatedPropertyOrNull(auditMode, ProjectBuildProperties.NuGetAuditMode);
+            }
 
             static HashSet<string>? GetSuppressedAdvisories(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
             {
@@ -492,7 +511,7 @@ namespace NuGet.SolutionRestoreManager
         }
 
         // Trying to fetch a property value from tfm property bags.
-        // If defined the property should have identical values in all of the occurances.
+        // If defined the property should have identical values in all of the occurrences.
         private static TValue? GetSingleNonEvaluatedPropertyOrNull<TValue>(
             IReadOnlyList<IVsTargetFrameworkInfo4> values,
             string propertyName,
@@ -500,9 +519,18 @@ namespace NuGet.SolutionRestoreManager
         {
             ImmutableArray<TValue?> distinctValues = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory);
 
+            return GetSingleNonEvaluatedPropertyOrNull(distinctValues, propertyName);
+        }
+
+        // Trying to fetch a property value from tfm property bags.
+        // If defined the property should have identical values in all of the occurrences.
+        private static TValue? GetSingleNonEvaluatedPropertyOrNull<TValue>(
+            ImmutableArray<TValue?> distinctValues,
+            string propertyName)
+        {
             if (distinctValues.Length == 0)
             {
-                return default(TValue);
+                return default;
             }
             else if (distinctValues.Length == 1)
             {
@@ -510,8 +538,8 @@ namespace NuGet.SolutionRestoreManager
             }
             else
             {
-                distinctValues.Sort();
-                var distinctValueStrings = string.Join(", ", distinctValues);
+                var sorted = distinctValues.Sort();
+                var distinctValueStrings = string.Join(", ", sorted);
                 var message = string.Format(CultureInfo.CurrentCulture, Resources.PropertyDoesNotHaveSingleValue, propertyName, distinctValueStrings);
                 throw new InvalidOperationException(message);
             }

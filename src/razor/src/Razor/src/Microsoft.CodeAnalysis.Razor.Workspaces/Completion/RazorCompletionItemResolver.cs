@@ -5,19 +5,19 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Text.Adornments;
+using Roslyn.Text.Adornments;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal class RazorCompletionItemResolver : CompletionItemResolver
 {
-    public override async Task<VSInternalCompletionItem?> ResolveAsync(
+    public override Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem completionItem,
         VSInternalCompletionList containingCompletionList,
-        object? originalRequestContext,
+        ICompletionResolveContext originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
@@ -25,9 +25,14 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
         if (originalRequestContext is not RazorCompletionResolveContext razorCompletionResolveContext)
         {
             // Can't recognize the original request context, bail.
-            return null;
+            return SpecializedTasks.Null<VSInternalCompletionItem>();
         }
 
+        return ResolveAsync(completionItem, clientCapabilities, componentAvailabilityService, razorCompletionResolveContext, cancellationToken);
+    }
+
+    public static async Task<VSInternalCompletionItem?> ResolveAsync(VSInternalCompletionItem completionItem, VSInternalClientCapabilities? clientCapabilities, IComponentAvailabilityService componentAvailabilityService, RazorCompletionResolveContext razorCompletionResolveContext, CancellationToken cancellationToken)
+    {
         var associatedRazorCompletion = razorCompletionResolveContext.CompletionItems.FirstOrDefault(completion =>
         {
             if (completion.DisplayText != completionItem.Label)

@@ -11,10 +11,16 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     internal class SourceGeneratorProjectItem : RazorProjectItem, IEquatable<SourceGeneratorProjectItem>
     {
-        private readonly string _fileKind;
+        private readonly RazorFileKind _fileKind;
         private readonly RazorSourceDocument? _source;
 
-        public SourceGeneratorProjectItem(string basePath, string filePath, string relativePhysicalPath, string fileKind, AdditionalText additionalText, string? cssScope)
+        public SourceGeneratorProjectItem(
+            string basePath, 
+            string filePath, 
+            string relativePhysicalPath,
+            RazorFileKind fileKind, 
+            AdditionalText additionalText, 
+            string? cssScope)
         {
             BasePath = basePath;
             FilePath = filePath;
@@ -42,7 +48,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         public override string RelativePhysicalPath { get; }
 
-        public override string FileKind => _fileKind ?? base.FileKind;
+        public override RazorFileKind FileKind => _fileKind;
 
         public override string? CssScope { get; }
 
@@ -54,7 +60,13 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         public bool Equals(SourceGeneratorProjectItem? other)
         {
-            if (ReferenceEquals(AdditionalText, other?.AdditionalText))
+            if (other is null ||
+                CssScope != other.CssScope)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(AdditionalText, other.AdditionalText))
             {
                 return true;
             }
@@ -64,7 +76,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             // It's technically possible for these hashes to collide, but other things would
             // also break in those cases, so for now we're okay with this.
             var thisHash = AdditionalText.GetText()?.GetContentHash() ?? [];
-            var otherHash = other?.AdditionalText.GetText()?.GetContentHash() ?? [];
+            var otherHash = other.AdditionalText.GetText()?.GetContentHash() ?? [];
             return thisHash.SequenceEqual(otherHash);
         }
 

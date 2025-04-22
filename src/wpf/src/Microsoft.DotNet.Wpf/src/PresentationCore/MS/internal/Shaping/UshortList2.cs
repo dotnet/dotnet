@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 //
@@ -132,24 +131,24 @@ namespace MS.Internal.Shaping
 
         public virtual ushort[] ToArray()
         {
-            Debug.Assert(false, "Not supported");
+            Debug.Fail("Not supported");
             return null;
         }
 
         public virtual ushort[] GetSubsetCopy(int index, int count)
         {
-            Debug.Assert(false, "Not supported");
+            Debug.Fail("Not supported");
             return null;
         }
 
         public virtual void Insert(int index, int count, int length)
         {
-            Debug.Assert(false, "Not supported");
+            Debug.Fail("Not supported");
         }
 
         public virtual void Remove(int index, int count, int length)
         {
-            Debug.Assert(false, "Not supported");
+            Debug.Fail("Not supported");
         }
     }
 

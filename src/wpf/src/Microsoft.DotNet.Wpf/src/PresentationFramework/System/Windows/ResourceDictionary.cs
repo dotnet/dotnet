@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 /***************************************************************************\
 *
@@ -343,7 +342,7 @@ namespace System.Windows
             {
                 WritePrivateFlag(PrivateFlags.IsReadOnly, value);
 
-                if (value == true)
+                if (value)
                 {
                     // Seal all the styles and templates in this dictionary
                     SealValues();
@@ -950,7 +949,7 @@ namespace System.Windows
             {
                 throw new InvalidOperationException(SR.EndInitWithoutBeginInitNotSupported);
             }
-            Debug.Assert(IsInitialized == false, "Dictionary should not be initialized when EndInit is called");
+            Debug.Assert(!IsInitialized, "Dictionary should not be initialized when EndInit is called");
 
             IsInitializePending = false;
             IsInitialized = true;
@@ -1288,7 +1287,7 @@ namespace System.Windows
                     }
                     else
                     {
-                        Debug.Assert(false, "StaticResources[] entry is not a StaticResource not OptimizedStaticResource");
+                        Debug.Fail("StaticResources[] entry is not a StaticResource not OptimizedStaticResource");
                         continue;  // other types of entries are not processed.
                     }
                 }
@@ -2646,8 +2645,7 @@ namespace System.Windows
         // a dummy DO, used as the InheritanceContext when the dictionary's owner is
         // not itself a DO
         private static readonly DependencyObject DummyInheritanceContext = new DependencyObject();
-
-        XamlObjectIds _contextXamlObjectIds  = new XamlObjectIds();
+        private XamlObjectIds _contextXamlObjectIds  = new XamlObjectIds();
 
         private IXamlObjectWriterFactory _objectWriterFactory;
         private XamlObjectWriterSettings _objectWriterSettings;

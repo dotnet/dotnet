@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Packaging;
+using Microsoft.DotNet.StrongName;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -248,7 +249,7 @@ namespace Microsoft.DotNet.SignTool
         {
             _log.LogMessage($"Strong-name signing '{file.FullPath}' locally with key '{file.SignInfo.StrongName}'.");
 
-            return StrongName.Sign(file.FullPath, file.SignInfo.StrongName, _args.SNBinaryPath, _log);
+            return StrongNameHelper.Sign(file.FullPath, file.SignInfo.StrongName, _args.SNBinaryPath);
         }
     }
 }

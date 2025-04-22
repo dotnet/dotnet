@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
-    <PackageReference Include="Microsoft.Build.Framework" />
-    <PackageReference Include="Microsoft.NET.StringTools" />
+    <PackageReference Include="Microsoft.Build.Framework" NoWarn="NU1605" />
   </ItemGroup>
 </Project>

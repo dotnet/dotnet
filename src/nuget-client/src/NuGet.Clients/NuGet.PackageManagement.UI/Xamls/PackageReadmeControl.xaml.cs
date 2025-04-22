@@ -43,7 +43,7 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         public bool IsBusy
         {
-            get => _isBusy || ReadmeViewModel.IsBusy;
+            get => _isBusy || ReadmeViewModel?.IsBusy == true;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         public bool IsReadmeReady
         {
-            get => !_isBusy && ReadmeViewModel.IsReadmeReady;
+            get => !_isBusy && ReadmeViewModel?.IsReadmeReady == true;
         }
 
         public ReadmePreviewViewModel ReadmeViewModel { get => (ReadmePreviewViewModel)DataContext; }
@@ -81,7 +81,7 @@ namespace NuGet.PackageManagement.UI
         {
             if (e.PropertyName == nameof(ReadmePreviewViewModel.ReadmeMarkdown))
             {
-                if (!string.IsNullOrWhiteSpace(ReadmeViewModel.ReadmeMarkdown))
+                if (!string.IsNullOrWhiteSpace(ReadmeViewModel?.ReadmeMarkdown))
                 {
                     CancelAndExchangeToken();
                     UpdateMarkdownAsync(ReadmeViewModel.ReadmeMarkdown, _markdownRenderingCancellationTokenSource.Token).PostOnFailure(nameof(PackageReadmeControl));
@@ -105,7 +105,7 @@ namespace NuGet.PackageManagement.UI
                 await TaskScheduler.Default;
                 var success = await _markdownPreview.UpdateContentAsync(markdown, ScrollHint.None, token).PostOnFailureAsync(nameof(PackageReadmeControl));
                 await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(token);
-                if (!success)
+                if (ReadmeViewModel is not null && !success)
                 {
                     ReadmeViewModel.ErrorWithReadme = true;
                     ReadmeViewModel.ReadmeMarkdown = string.Empty;
@@ -117,8 +117,11 @@ namespace NuGet.PackageManagement.UI
         private void UpdateBusy(bool isBusy)
         {
             _isBusy = isBusy;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsReadmeReady)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsBusy)));
+            if (ReadmeViewModel is not null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsReadmeReady)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsBusy)));
+            }
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -137,7 +140,7 @@ namespace NuGet.PackageManagement.UI
 
         private void PackageReadmeControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(ReadmeViewModel.ReadmeMarkdown))
+            if (!string.IsNullOrWhiteSpace(ReadmeViewModel?.ReadmeMarkdown))
             {
                 CancelAndExchangeToken();
                 UpdateMarkdownAsync(ReadmeViewModel.ReadmeMarkdown, _markdownRenderingCancellationTokenSource.Token).PostOnFailure(nameof(PackageReadmeControl));

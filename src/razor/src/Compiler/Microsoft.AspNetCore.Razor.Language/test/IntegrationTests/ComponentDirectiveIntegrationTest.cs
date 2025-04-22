@@ -19,7 +19,7 @@ public class ComponentDirectiveIntegrationTest : RazorIntegrationTestBase
         AdditionalSyntaxTrees.Add(Parse(AdditionalCode));
     }
 
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     [Fact]
     public void ComponentsDoNotHaveLayoutAttributeByDefault()

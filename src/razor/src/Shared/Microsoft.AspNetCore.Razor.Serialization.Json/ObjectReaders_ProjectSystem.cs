@@ -5,8 +5,9 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.Strings;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
@@ -28,7 +29,7 @@ internal static partial class ObjectReaders
     {
         var filePath = reader.ReadNonNullString(nameof(DocumentSnapshotHandle.FilePath));
         var targetPath = reader.ReadNonNullString(nameof(DocumentSnapshotHandle.TargetPath));
-        var fileKind = reader.ReadNonNullString(nameof(DocumentSnapshotHandle.FileKind));
+        var fileKind = (RazorFileKind)reader.ReadInt32OrDefault(nameof(DocumentSnapshotHandle.FileKind), defaultValue: (int)RazorFileKind.Component);
 
         return new DocumentSnapshotHandle(filePath, targetPath, fileKind);
     }

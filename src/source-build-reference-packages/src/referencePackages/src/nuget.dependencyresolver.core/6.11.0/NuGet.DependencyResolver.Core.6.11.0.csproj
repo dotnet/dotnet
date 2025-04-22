@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.11.0</PackageVersion>
     <AssemblyName>NuGet.DependencyResolver.Core</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="NuGet.Configuration" Version="6.11.0" />
-    <PackageReference Include="NuGet.LibraryModel" Version="6.11.0" />
-    <PackageReference Include="NuGet.Protocol" Version="6.11.0" />
+    <ProjectReference Include="../../nuget.configuration/6.11.0/NuGet.Configuration.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.librarymodel/6.11.0/NuGet.LibraryModel.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.protocol/6.11.0/NuGet.Protocol.6.11.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.Configuration" Version="6.11.0" />
-    <PackageReference Include="NuGet.LibraryModel" Version="6.11.0" />
-    <PackageReference Include="NuGet.Protocol" Version="6.11.0" />
+    <ProjectReference Include="../../nuget.configuration/6.11.0/NuGet.Configuration.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.librarymodel/6.11.0/NuGet.LibraryModel.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.protocol/6.11.0/NuGet.Protocol.6.11.0.csproj" />
   </ItemGroup>
 
 </Project>

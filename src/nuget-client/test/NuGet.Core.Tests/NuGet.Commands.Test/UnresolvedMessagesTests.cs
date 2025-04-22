@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -181,7 +182,7 @@ namespace NuGet.Commands.Test
             var cacheContext = new Mock<SourceCacheContext>();
             var remoteLibraryProviders = new List<IRemoteDependencyProvider>() { provider1.Object, provider2.Object };
 
-            List<KeyValuePair<PackageSource, SortedSet<NuGetVersion>>> infos = await UnresolvedMessages.GetSourceInfosForIdAsync(id: "a", remoteLibraryProviders: remoteLibraryProviders, sourceCacheContext: cacheContext.Object, logger: NullLogger.Instance, token: CancellationToken.None);
+            List<KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>> infos = await UnresolvedMessages.GetSourceInfosForIdAsync(id: "a", remoteLibraryProviders: remoteLibraryProviders, sourceCacheContext: cacheContext.Object, logger: NullLogger.Instance, token: CancellationToken.None);
 
             infos.Count.Should().Be(2);
             infos[0].Value.Should().BeEquivalentTo(versions1);
@@ -233,11 +234,10 @@ namespace NuGet.Commands.Test
         public void GivenARangeWithExclusiveBoundsVerifyExactMatchesCanStillBeSelected()
         {
             var range = VersionRange.Parse("(1.0.0, 2.0.0)");
-            var versions = new SortedSet<NuGetVersion>()
-            {
+            var versions = ImmutableArray.Create(
                 NuGetVersion.Parse("1.0.0"),
                 NuGetVersion.Parse("2.0.0")
-            };
+            );
 
             UnresolvedMessages.GetBestMatch(versions, range).Should().BeEquivalentTo(NuGetVersion.Parse("1.0.0"));
         }
@@ -246,10 +246,9 @@ namespace NuGet.Commands.Test
         public void GivenARangeWithExclusiveBoundsVerifyExactMatchesCanStillBeSelectedForUpper()
         {
             var range = VersionRange.Parse("(1.0.0, 2.0.0)");
-            var versions = new SortedSet<NuGetVersion>()
-            {
+            var versions = ImmutableArray.Create(
                 NuGetVersion.Parse("2.0.0")
-            };
+            );
 
             UnresolvedMessages.GetBestMatch(versions, range).Should().BeEquivalentTo(NuGetVersion.Parse("2.0.0"));
         }
@@ -268,7 +267,26 @@ namespace NuGet.Commands.Test
         public void GivenRangeOf1To2VerifyBestMatch(string expected, string versionStrings)
         {
             var range = VersionRange.Parse("[1.0.0, 2.0.0]");
-            var versions = new SortedSet<NuGetVersion>(versionStrings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(NuGetVersion.Parse));
+            var versions = ImmutableArray.CreateRange(versionStrings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(NuGetVersion.Parse));
+
+            UnresolvedMessages.GetBestMatch(versions, range).Should().BeEquivalentTo(NuGetVersion.Parse(expected));
+        }
+
+        [Theory]
+        // in the range first
+        [InlineData("1.0.0", "4.0.0,3.0.0,1.0.0,0.1.0")]
+        // then above the range
+        [InlineData("3.0.0", "4.0.0,3.0.0,0.2.0,0.1.0")]
+        // include prerelease also
+        [InlineData("3.0.0-beta", "4.0.0,3.0.0,3.0.0-beta,0.2.0,0.1.0")]
+        [InlineData("4.0.0", "4.0.0,0.2.0,0.1.0")]
+        // then below the range
+        [InlineData("0.2.0", "0.2.0,0.1.0")]
+        [InlineData("0.1.0-beta", "0.1.0-beta")]
+        public void GivenRangeOf1To2ReversedVerifyBestMatch(string expected, string versionStrings)
+        {
+            var range = VersionRange.Parse("[1.0.0, 2.0.0]");
+            var versions = ImmutableArray.CreateRange(versionStrings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(NuGetVersion.Parse));
 
             UnresolvedMessages.GetBestMatch(versions, range).Should().BeEquivalentTo(NuGetVersion.Parse(expected));
         }
@@ -286,7 +304,7 @@ namespace NuGet.Commands.Test
         public void GivenVersionRangeVerifyBestMatch(string versionRange, string expectedVersion, string versionStrings)
         {
             var range = VersionRange.Parse(versionRange);
-            var versions = new SortedSet<NuGetVersion>(versionStrings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(NuGetVersion.Parse));
+            var versions = ImmutableArray.CreateRange(versionStrings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(NuGetVersion.Parse));
             Assert.Null(range.FindBestMatch(versions));
             UnresolvedMessages.GetBestMatch(versions, range).Should().BeEquivalentTo(NuGetVersion.Parse(expectedVersion));
         }
@@ -295,7 +313,7 @@ namespace NuGet.Commands.Test
         public void GivenNoVersionsVerifyBestMatch()
         {
             var range = VersionRange.Parse("2.0.0");
-            var versions = new SortedSet<NuGetVersion>();
+            var versions = ImmutableArray<NuGetVersion>.Empty;
 
             UnresolvedMessages.GetBestMatch(versions, range).Should().BeNull();
         }
@@ -304,12 +322,9 @@ namespace NuGet.Commands.Test
         public void GivenASourceInfoVerifyFullFormatting()
         {
             var range = VersionRange.Parse("2.0.0");
-            var sourceInfo = new KeyValuePair<PackageSource, SortedSet<NuGetVersion>>(
+            var sourceInfo = new KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>(
                 key: new PackageSource("http://nuget.org/a/"),
-                value: new SortedSet<NuGetVersion>()
-                {
-                    NuGetVersion.Parse("1.0.0")
-                });
+                value: [NuGetVersion.Parse("1.0.0")]);
 
             var s = UnresolvedMessages.FormatSourceInfo(sourceInfo, range);
 
@@ -320,9 +335,9 @@ namespace NuGet.Commands.Test
         public void GivenASourceInfoWithNoVersionsVerifyOutputString()
         {
             var range = VersionRange.Parse("2.0.0");
-            var sourceInfo = new KeyValuePair<PackageSource, SortedSet<NuGetVersion>>(
+            var sourceInfo = new KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>(
                 key: new PackageSource("http://nuget.org/a/"),
-                value: new SortedSet<NuGetVersion>());
+                value: []);
 
             var s = UnresolvedMessages.FormatSourceInfo(sourceInfo, range);
 

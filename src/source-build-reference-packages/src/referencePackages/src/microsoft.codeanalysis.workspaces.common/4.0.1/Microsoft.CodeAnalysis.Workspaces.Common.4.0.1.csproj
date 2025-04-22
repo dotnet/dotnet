@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.0.1</PackageVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.Workspaces</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.codeanalysis.common/4.0.1/Microsoft.CodeAnalysis.Common.4.0.1.csproj" />
+    <ProjectReference Include="../../humanizer.core/2.2.0/Humanizer.Core.2.2.0.csproj" />
+    <ProjectReference Include="../../microsoft.bcl.asyncinterfaces/5.0.0/Microsoft.Bcl.AsyncInterfaces.5.0.0.csproj" />
+    <ProjectReference Include="../../system.composition/1.0.31/System.Composition.1.0.31.csproj" />
+    <ProjectReference Include="../../system.io.pipelines/5.0.1/System.IO.Pipelines.5.0.1.csproj" />
+  </ItemGroup>
+
+</Project>

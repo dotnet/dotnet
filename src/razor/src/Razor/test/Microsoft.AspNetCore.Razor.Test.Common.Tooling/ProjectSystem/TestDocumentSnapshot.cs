@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -50,6 +49,8 @@ internal sealed class TestDocumentSnapshot : IDocumentSnapshot
         var project = TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState);
         var hostDocument = TestHostDocument.Create(project.HostProject, filePath);
 
+        hostDocument = hostDocument with { FileKind = codeDocument.FileKind };
+
         var sourceText = codeDocument.Source.Text;
 
         var documentState = DocumentState.Create(hostDocument, sourceText);
@@ -59,7 +60,7 @@ internal sealed class TestDocumentSnapshot : IDocumentSnapshot
 
     public HostDocument HostDocument => RealSnapshot.HostDocument;
 
-    public string FileKind => RealSnapshot.FileKind;
+    public RazorFileKind FileKind => RealSnapshot.FileKind;
     public string FilePath => RealSnapshot.FilePath;
     public string TargetPath => RealSnapshot.TargetPath;
     public IProjectSnapshot Project => RealSnapshot.Project;

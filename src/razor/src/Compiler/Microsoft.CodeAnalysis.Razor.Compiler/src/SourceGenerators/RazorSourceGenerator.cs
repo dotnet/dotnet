@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -37,7 +39,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var compilation = context.CompilationProvider;
 
             // determine if we should suppress this run and filter out all the additional files and references if so
-            var isGeneratorSuppressed = analyzerConfigOptions.CheckGlobalFlagSet("SuppressRazorSourceGenerator");
+            var isGeneratorSuppressed = analyzerConfigOptions.CheckGlobalFlagSet("SuppressRazorSourceGenerator").Select((suppress, _) => !RazorCohostingOptions.UseRazorCohostServer && suppress);
             var additionalTexts = context.AdditionalTextsProvider.EmptyOrCachedWhen(isGeneratorSuppressed, true);
             var metadataRefs = context.MetadataReferencesProvider.EmptyOrCachedWhen(isGeneratorSuppressed, true);
 
@@ -147,7 +149,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     // When using the generator cache in the compiler it's possible to encounter metadata references that are different instances
                     // but ultimately represent the same underlying assembly. We compare the module version ids to determine if the references are the same
-                    if (!compilationA.References.SequenceEqual(compilationB.References, new LambdaComparer<MetadataReference>((old, @new) => 
+                    if (!compilationA.References.SequenceEqual(compilationB.References, new LambdaComparer<MetadataReference>((old, @new) =>
                     {
                         if (ReferenceEquals(old, @new))
                         {
@@ -294,7 +296,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Select(static (pair, _) =>
                 {
                     var (filePath, document) = pair;
-                    return (filePath, csharpDocument: document.CodeDocument.GetCSharpDocument());
+                    return (hintName: GetIdentifierFromPath(filePath), codeDocument: document.CodeDocument, csharpDocument: document.CodeDocument.GetCSharpDocument());
                 })
                 .WithLambdaComparer(static (a, b) =>
                 {
@@ -315,14 +317,11 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             context.RegisterImplementationSourceOutput(csharpDocumentsWithSuppressionFlag, static (context, pair) =>
             {
-                var ((filePath, csharpDocument), isGeneratorSuppressed) = pair;
+                var ((hintName, _, csharpDocument), isGeneratorSuppressed) = pair;
 
                 // When the generator is suppressed, we may still have a lot of cached data for perf, but we don't want to actually add any of the files to the output
                 if (!isGeneratorSuppressed)
                 {
-                    // Add a generated suffix so tools, such as coverlet, consider the file to be generated
-                    var hintName = GetIdentifierFromPath(filePath) + ".g.cs";
-
                     RazorSourceGeneratorEventSource.Log.AddSyntaxTrees(hintName);
                     foreach (var razorDiagnostic in csharpDocument.Diagnostics)
                     {
@@ -331,6 +330,33 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     }
 
                     context.AddSource(hintName, csharpDocument.Text);
+                }
+            });
+
+            var hostOutputs = csharpDocuments
+                .Collect()
+                .Combine(allTagHelpers)
+                .Combine(isGeneratorSuppressed)
+                .WithTrackingName("HostOutputs");
+
+#pragma warning disable RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            context.RegisterHostOutput(hostOutputs, (context, pair) =>
+#pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            {
+                var ((documents, tagHelpers), isGeneratorSuppressed) = pair;
+
+                if (!isGeneratorSuppressed)
+                {
+                    using var filePathToDocument = new PooledDictionaryBuilder<string, (string, RazorCodeDocument)>();
+                    using var hintNameToFilePath = new PooledDictionaryBuilder<string, string>();
+
+                    foreach (var (hintName, codeDocument, _) in documents)
+                    {
+                        filePathToDocument.Add(codeDocument.Source.FilePath!, (hintName, codeDocument));
+                        hintNameToFilePath.Add(hintName, codeDocument.Source.FilePath!);
+                    }
+
+                    context.AddOutput(nameof(RazorGeneratorResult), new RazorGeneratorResult(tagHelpers, filePathToDocument.ToImmutable(), hintNameToFilePath.ToImmutable()));
                 }
             });
         }

@@ -30,6 +30,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AzureDevOpsOrg => "dnceng";
 
+        protected bool IsStableBuild { get; set; }
+
+
         public SetupTargetFeedConfigV3(
             TargetChannelConfig targetChannelConfig,
             bool isInternalBuild,
@@ -48,8 +51,21 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             ImmutableList<string> filesToExclude = null,
             bool flatten = true,
             TaskLoggingHelper log = null) 
-            : base(isInternalBuild, isStableBuild, repositoryName, commitSha, publishInstallersAndChecksums, null, null, null, null, null, null, null, latestLinkShortUrlPrefixes, null)
+            : base(isInternalBuild: isInternalBuild,
+                   repositoryName: repositoryName,
+                   commitSha: commitSha,
+                   publishInstallersAndChecksums: publishInstallersAndChecksums,
+                   installersTargetStaticFeed: null,
+                   installersAzureAccountKey: null,
+                   checksumsTargetStaticFeed: null,
+                   checksumsAzureAccountKey: null,
+                   azureDevOpsStaticShippingFeed: null,
+                   azureDevOpsStaticTransportFeed: null,
+                   azureDevOpsStaticSymbolsFeed: null,
+                   latestLinkShortUrlPrefixes: latestLinkShortUrlPrefixes,
+                   azureDevOpsFeedsKey: null)
         {
+            IsStableBuild = isStableBuild;
             _targetChannelConfig = targetChannelConfig;
             BuildEngine = buildEngine;
             StableSymbolsFeed = stableSymbolsFeed;
@@ -94,19 +110,22 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 CreateStablePackagesFeedIfNeeded();
                 CreateStableSymbolsFeedIfNeeded();
 
-                yield return new TargetFeedConfig(
-                    TargetFeedContentType.Package,
-                    StablePackagesFeed,
-                    FeedType.AzDoNugetFeed,
-                    AzureDevOpsFeedsKey,
-                    LatestLinkShortUrlPrefixes,
-                    _targetChannelConfig.AkaMSCreateLinkPatterns,
-                    _targetChannelConfig.AkaMSDoNotCreateLinkPatterns,
-                    assetSelection: AssetSelection.ShippingOnly,
-                    symbolPublishVisibility: SymbolServerVisibility,
-                    isolated: true,
-                    @internal: IsInternalBuild,
-                    flatten: Flatten);
+                foreach (var packageType in PublishingConstants.Packages)
+                {
+                    yield return new TargetFeedConfig(
+                        packageType,
+                        StablePackagesFeed,
+                        FeedType.AzDoNugetFeed,
+                        AzureDevOpsFeedsKey,
+                        LatestLinkShortUrlPrefixes,
+                        _targetChannelConfig.AkaMSCreateLinkPatterns,
+                        _targetChannelConfig.AkaMSDoNotCreateLinkPatterns,
+                        assetSelection: AssetSelection.ShippingOnly,
+                        symbolPublishVisibility: SymbolServerVisibility,
+                        isolated: true,
+                        @internal: IsInternalBuild,
+                        flatten: Flatten);
+                }
 
                 yield return new TargetFeedConfig(
                     TargetFeedContentType.Symbols,
@@ -136,20 +155,20 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     // If dealing with a stable build, the package feed targeted for shipping packages and symbols
                     // should be skipped, as it is added above.
-                    if (IsStableBuild && ((type is TargetFeedContentType.Package && spec.Assets == AssetSelection.ShippingOnly) || type is TargetFeedContentType.Symbols))
+                    if (IsStableBuild && ((PublishingConstants.Packages.Contains(type) && spec.Assets == AssetSelection.ShippingOnly) || type is TargetFeedContentType.Symbols))
                     {
                         continue;
                     }
 
                     var oldFeed = spec.FeedUrl;
                     var feed = GetFeedOverride(oldFeed);
-                    if (type is TargetFeedContentType.Package &&
+                    if (PublishingConstants.Packages.Contains(type) &&
                         spec.Assets == AssetSelection.NonShippingOnly &&
                         FeedOverrides.TryGetValue("transport-packages", out string newFeed))
                     {
                         feed = newFeed;
                     }
-                    else if (type is TargetFeedContentType.Package &&
+                    else if (PublishingConstants.Packages.Contains(type) &&
                         spec.Assets == AssetSelection.ShippingOnly &&
                         FeedOverrides.TryGetValue("shipping-packages", out newFeed))
                     {

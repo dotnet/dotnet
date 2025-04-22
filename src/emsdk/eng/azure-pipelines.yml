@@ -52,7 +52,6 @@ extends:
           enablePublishBuildAssets: true
           enablePublishUsingPipelines: true
           enableMicrobuild: true
-          enableSourceBuild: true
 
           jobs:
           ############ macOS BUILD ############
@@ -64,8 +63,16 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
-            - bash: |
-                ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=osx-x64 /p:AssetManifestOS=osx /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=x64
+                /p:TargetRid=osx-x64
+                /p:AssetManifestOS=osx
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -85,8 +92,16 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
-            - bash: |
-                ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=osx-arm64 /p:AssetManifestOS=osx /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=osx-arm64
+                /p:AssetManifestOS=osx
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -107,8 +122,16 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
-            - bash: |
-                ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-x64 /p:AssetManifestOS=linux /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=x64
+                /p:TargetRid=linux-x64
+                /p:AssetManifestOS=linux
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -128,8 +151,16 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
-            - bash: |
-                ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-arm64 /p:AssetManifestOS=linux /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=linux-arm64
+                /p:AssetManifestOS=linux
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -149,8 +180,16 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
-            - bash: |
-                ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-musl-x64 /p:AssetManifestOS=linux-musl /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=x64
+                /p:TargetRid=linux-musl-x64
+                /p:AssetManifestOS=linux-musl
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -170,8 +209,16 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
-            - bash: |
-                ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-musl-arm64 /p:AssetManifestOS=linux-musl /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=linux-musl-arm64
+                /p:AssetManifestOS=linux-musl
+                $(_InternalBuildArgs)
+                $(_NonWindowsInternalPublishArg)
               displayName: Build
             - task: 1ES.PublishPipelineArtifact@1
               inputs:
@@ -192,8 +239,19 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
-            - script: |
-                .\build.cmd -arch x64 -restore -build -pack -sign -publish -ci -configuration $(_BuildConfig) /p:SkipWorkloads=true /p:PackageRID=win-x64 /p:AssetManifestOS=win /p:PlatformName=x64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
+            - script: build.cmd
+                -ci
+                -prepareMachine
+                -configuration $(_BuildConfig)
+                -pack
+                -sign
+                -publish
+                /p:TargetArchitecture=x64
+                /p:SkipWorkloads=true
+                /p:TargetRid=win-x64
+                /p:AssetManifestOS=win
+                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
+                $(_InternalBuildArgs)
               displayName: Build
             - task: CopyFiles@2
               displayName: Prepare job-specific intermediate artifacts subdirectory
@@ -223,8 +281,19 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
-            - script: |
-                .\build.cmd -arch arm64 -restore -build -pack -sign -publish -ci -configuration $(_BuildConfig) /p:SkipWorkloads=true /p:PackageRID=win-arm64 /p:AssetManifestOS=win /p:PlatformName=arm64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
+            - script: build.cmd
+                -ci
+                -prepareMachine
+                -configuration $(_BuildConfig)
+                -pack
+                -sign
+                -publish
+                /p:TargetArchitecture=arm64
+                /p:SkipWorkloads=true
+                /p:TargetRid=win-arm64
+                /p:AssetManifestOS=win
+                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
+                $(_InternalBuildArgs)
               displayName: Build
             - task: CopyFiles@2
               displayName: Prepare job-specific intermediate artifacts subdirectory
@@ -317,8 +386,20 @@ extends:
               inputs:
                 artifact: Packages_win_arm64
                 path: 'artifacts/packages'
-            - script: |
-                .\build.cmd -arch x64 -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipBuild=true /p:PackageRID=win-x64 /p:AssetManifestFileName=win-workloads.xml /p:AssetManifestOS=win /p:PlatformName=x64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping $(_InternalBuildArgs)
+            - script: build.cmd
+                -ci
+                -prepareMachine
+                -configuration $(_BuildConfig)
+                -pack
+                -sign
+                -publish
+                /p:TargetArchitecture=x64
+                /p:SkipBuild=true
+                /p:TargetRid=win-x64
+                /p:AssetManifestFileName=win-workloads.xml
+                /p:AssetManifestOS=win
+                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
+                $(_InternalBuildArgs)
               displayName: Build and Publish
             - task: CopyFiles@2
               displayName: Prepare job-specific intermediate artifacts subdirectory
@@ -353,12 +434,12 @@ extends:
                 SourceFolder: $(Build.SourcesDirectory)/artifacts/workloadPackages
                 Contents: '*.wixpdb'
             # Upload artifacts to be used for generating VS components
-            - task: 1ES.PublishPipelineArtifact@1
-              displayName: Publish workload artifacts
-              inputs:
-                targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
-                artifactName: 'Workloads'
-              continueOnError: true
+            #- task: 1ES.PublishPipelineArtifact@1
+            #  displayName: Publish workload artifacts
+            #  inputs:
+            #    targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
+            #    artifactName: 'Workloads'
+            #  continueOnError: true
             - powershell: $(CheckNuGetSizesScript)
               displayName: Check NuGet sizes
 

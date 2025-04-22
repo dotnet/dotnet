@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // Description: Manage Input Methods (EA-IME, TextServicesFramework).
 
@@ -712,7 +711,7 @@ namespace System.Windows.Input
                     }
                     else
                     {
-                        Debug.Assert(false, "Unknown Speech Mode");
+                        Debug.Fail("Unknown Speech Mode");
                     }
                 }
             }
@@ -1661,7 +1660,7 @@ namespace System.Windows.Input
                 while(enumIpp.Next(1, tf_profiles,  out fetched) == NativeMethods.S_OK)
                 {
                     // Check if this profile is active.
-                    if (tf_profiles[0].fActive == true)
+                    if (tf_profiles[0].fActive)
                     {
                         // Check if this profile is keyboard category..
                         if (tf_profiles[0].catid.Equals(UnsafeNativeMethods.GUID_TFCAT_TIP_KEYBOARD))

@@ -18,7 +18,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
@@ -60,12 +59,7 @@ internal sealed class InlineCompletionEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
-
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var sourceText = codeDocument.Source.Text;
         var hostDocumentIndex = sourceText.GetPosition(request.Position);
 
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
@@ -113,7 +107,9 @@ internal sealed class InlineCompletionEndpoint(
             var formattingContext = FormattingContext.Create(
                 documentContext.Snapshot,
                 codeDocument,
-                options);
+                options,
+                // I don't think this makes a difference for inline completions, but it's better to be safe.
+                useNewFormattingEngine: false);
             if (!SnippetFormatter.TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
             {
                 continue;

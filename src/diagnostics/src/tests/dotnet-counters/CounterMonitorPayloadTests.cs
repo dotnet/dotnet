@@ -206,8 +206,7 @@ namespace DotnetCounters.UnitTests
                     return Task.Run(async () =>
                         await monitor.Collect(
                             ct: ct,
-                            counter_list: counterList,
-                            counters: null,
+                            counters: string.Join(',', counterList),
                             processId: testRunner.Pid,
                             refreshInterval: 1,
                             format: exportFormat,
@@ -217,7 +216,8 @@ namespace DotnetCounters.UnitTests
                             resumeRuntime: false,
                             maxHistograms: 10,
                             maxTimeSeries: 1000,
-                            duration: TimeSpan.FromSeconds(10)));
+                            duration: TimeSpan.FromSeconds(10),
+                            dsrouter: null));
                 }, testRunner, source.Token);
 
                 return CreateMetricComponents();

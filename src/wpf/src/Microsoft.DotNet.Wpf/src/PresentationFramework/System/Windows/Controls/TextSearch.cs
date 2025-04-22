@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Windows.Threading;
@@ -291,8 +290,8 @@ namespace System.Windows.Controls
         private static void GetMatchingPrefixAndRemainingTextLength(string matchedText, string newText, CultureInfo cultureInfo,
                                                                 bool ignoreCase, out int matchedPrefixLength, out int textExcludingPrefixLength)
         {
-            Debug.Assert(String.IsNullOrEmpty(matchedText) == false, "matchedText cannot be null or empty");
-            Debug.Assert(String.IsNullOrEmpty(newText) == false, "newText cannot be null or empty");
+            Debug.Assert(!String.IsNullOrEmpty(matchedText), "matchedText cannot be null or empty");
+            Debug.Assert(!String.IsNullOrEmpty(newText), "newText cannot be null or empty");
             Debug.Assert(matchedText.StartsWith(newText, ignoreCase, cultureInfo), "matchedText should start with newText");
             
             matchedPrefixLength = 0;

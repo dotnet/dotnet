@@ -282,7 +282,7 @@ namespace NuGet.Commands
                     result.RestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
 
                     // NuGet audit properties
-                    result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, GetAuditSuppressions(items));
+                    result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items);
                 }
 
                 if (restoreType == ProjectStyle.PackagesConfig)
@@ -300,7 +300,7 @@ namespace NuGet.Commands
                         );
                     }
                     pcRestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
-                    pcRestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, GetAuditSuppressions(items));
+                    pcRestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items);
                 }
 
                 if (restoreType == ProjectStyle.ProjectJson)
@@ -1020,11 +1020,12 @@ namespace NuGet.Commands
                 IsPropertyTrue(specItem, "RestoreLockedMode"));
         }
 
-        public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem, HashSet<string> suppressionItems)
+        public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem, IEnumerable<IMSBuildItem> allItems)
         {
             string enableAudit = specItem.GetProperty("NuGetAudit");
             string auditLevel = specItem.GetProperty("NuGetAuditLevel");
-            string auditMode = specItem.GetProperty("NuGetAuditMode");
+            string auditMode = GetAuditMode(specItem, allItems);
+            HashSet<string> suppressionItems = GetAuditSuppressions(allItems);
 
             if (enableAudit != null || auditLevel != null || auditMode != null
                 || (suppressionItems != null && suppressionItems.Count > 0))
@@ -1039,6 +1040,25 @@ namespace NuGet.Commands
             }
 
             return null;
+
+            // We want to set NuGetAuditMode to "all" if a multi-targeting project targets .NET 10 or higher.
+            // However, that can only be done by an "inner build" evaulation, but we read other audit settings
+            // from the project evaluation, not inner-builds. So, check the inner builds if any TFM sets mode
+            // to "all", otherwise use the project's "outer build" mode.
+            string GetAuditMode(IMSBuildItem project, IEnumerable<IMSBuildItem> tfms)
+            {
+                foreach (var item in tfms.NoAllocEnumerate())
+                {
+                    string auditMode = item.GetProperty("NuGetAuditMode");
+                    if (string.Equals(auditMode, "all", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return auditMode;
+                    }
+                }
+
+                string projectAuditMode = project.GetProperty("NuGetAuditMode");
+                return projectAuditMode;
+            }
         }
 
         public static NuGetVersion GetSdkAnalysisLevel(string sdkAnalysisLevel)

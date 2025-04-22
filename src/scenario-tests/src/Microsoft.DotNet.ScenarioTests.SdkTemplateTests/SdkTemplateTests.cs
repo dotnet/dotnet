@@ -204,6 +204,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Theory]
+    [Trait("Category", "RequiresNonTargetRidPackages")]
     [InlineData(DotNetLanguage.CSharp)]
     public void VerifyBlazorWasmTemplate(DotNetLanguage language)
     {

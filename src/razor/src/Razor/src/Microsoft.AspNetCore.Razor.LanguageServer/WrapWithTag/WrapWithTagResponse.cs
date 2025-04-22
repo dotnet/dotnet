@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
@@ -15,7 +14,7 @@ internal class WrapWithTagResponse
     /// Gets or sets the range of the wrapping tag.
     /// </summary>
     [JsonPropertyName("_vs_tagRange")]
-    public Range? TagRange { get; set; }
+    public LspRange? TagRange { get; set; }
 
     /// <summary>
     /// Gets or sets the text edits.

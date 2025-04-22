@@ -53,11 +53,6 @@ for detailed guidance.
 ./generate.sh --package system.buffers,4.5.1
 ```
 
-After generating new reference packages, all new projects must be referenced as a
-[DependencyPackageProjects](https://github.com/dotnet/source-build-reference-packages/blob/main/eng/Build.props#L9).
-These must be defined in dependency order. There is a
-[tracking issue](https://github.com/dotnet/source-build/issues/1690) to address this manual step.
-
 The tooling does not handle all situations and sometimes the generated code will need manual tweeks to get
 it to compile. If this occurs when generating a newer version of an existing package, it can be helpful to
 regenerate the older version to see what customizations to the generated code were made.
@@ -73,9 +68,6 @@ generated packages show changes when being regenerated.
     the case, the changes to the existing package should be reverted.
     2. The generate tooling has changed since the last time this package was generated. The new changes should
     be considered better/correct and should be committed.
-* Add `DependencyPackageProjects` for all new projects in the
-[eng/Build.props](https://github.com/dotnet/source-build-reference-packages/blob/main/eng/Build.props#L9)
-in the correct dependency order.
 * Run build with the `./build.sh -sb` command.
 * If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>`
   command for each generated reference package separately.
@@ -91,6 +83,11 @@ in the correct dependency order.
 * Add comments calling out any modifications to the generated code that were necessary.
 
 You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
+
+**Note:** When porting new packages between branches, you must regenerate the packages when crossing the 10.0/9.0 boundary.
+This is because in 10.0 the generated projects switched from using PackageReference to ProjectReference.
+Porting new packages across 10.0/9.0 boundary will introduce prebuilts.
+See the workflow documented in the servicing branch readmes for additional requirements when adding new packages pre 10.0.
 
 ### Targeting
 

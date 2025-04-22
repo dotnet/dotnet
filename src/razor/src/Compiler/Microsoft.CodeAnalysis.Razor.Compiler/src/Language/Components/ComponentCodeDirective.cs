@@ -24,6 +24,6 @@ public static class ComponentCodeDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Component);
+        builder.AddDirective(Directive, RazorFileKind.Component);
     }
 }

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 //
@@ -63,8 +62,8 @@ namespace System.Windows.Input
             GeneralTransform rootToElement)
         {
             // Get width and heith in pixel value
-            double width = GetStylusPointWidthOrHeight(stylusPoint, /*isWidth*/ true);
-            double height = GetStylusPointWidthOrHeight(stylusPoint, /*isWidth*/ false);
+            double width = GetStylusPointWidthOrHeight(stylusPoint, isWidth: true);
+            double height = GetStylusPointWidthOrHeight(stylusPoint, isWidth: false);
 
             // Get the position with respect to root
             Point rootPoint;
@@ -236,7 +235,7 @@ namespace System.Windows.Input
         #region Member Variables
 
         [ThreadStatic]
-        private static int _activeDeviceCount = 0;
+        private static int _activeDeviceCount;
 
         private TouchAction _lastAction = TouchAction.Move;
 

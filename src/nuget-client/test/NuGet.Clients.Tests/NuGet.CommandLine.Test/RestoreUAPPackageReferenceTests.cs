@@ -87,7 +87,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "");
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
@@ -184,7 +183,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
@@ -227,10 +225,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
-
-                // Set style for A since it has no references
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
-
 
                 projectB.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectB.Properties.Add("TargetPlatformVersion", "10.0.14393.0");

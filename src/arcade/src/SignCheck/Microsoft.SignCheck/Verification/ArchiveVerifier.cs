@@ -88,6 +88,18 @@ namespace Microsoft.SignCheck.Verification
                 {
                     foreach (ArchiveEntry archiveEntry in ReadArchiveEntries(svr.FullPath))
                     {
+                        if (archiveEntry.IsEmptyOrInvalid())
+                        {
+                            var result = SignatureVerificationResult.UnsupportedFileTypeResult(
+                                archiveEntry.RelativePath,
+                                svr.VirtualPath,
+                                Path.Combine(svr.VirtualPath, archiveEntry.RelativePath));
+
+                            result.AddDetail(DetailKeys.Misc, "Empty or invalid archive entry");
+                            svr.NestedResults.Add(result);
+                            continue;
+                        }
+
                         string aliasFullName = GenerateArchiveEntryAlias(archiveEntry, tempPath);
                         if (File.Exists(aliasFullName))
                         {
@@ -105,7 +117,7 @@ namespace Microsoft.SignCheck.Verification
                     // and we need to ensure they are extracted before we verify the MSIs.
                     foreach (string fullName in archiveMap.Keys)
                     {
-                        SignatureVerificationResult result = VerifyFile(archiveMap[fullName], svr.Filename,
+                        SignatureVerificationResult result = VerifyFile(archiveMap[fullName], svr.VirtualPath,
                             Path.Combine(svr.VirtualPath, fullName), fullName);
 
                         // Tag the full path into the result detail
@@ -168,9 +180,12 @@ namespace Microsoft.SignCheck.Verification
         /// </summary>
         protected class ArchiveEntry
         {
-            public string RelativePath { get; set; }
-            public Stream ContentStream { get; set; }
-            public long ContentSize { get; set; }
+            public string RelativePath { get; set; } = string.Empty;
+            public Stream ContentStream { get; set; } = Stream.Null;
+            public long ContentSize { get; set; } = 0;
+
+            public bool IsEmptyOrInvalid()
+                => string.IsNullOrEmpty(RelativePath) || ContentStream == Stream.Null || ContentSize == 0;
         }
     }
 }

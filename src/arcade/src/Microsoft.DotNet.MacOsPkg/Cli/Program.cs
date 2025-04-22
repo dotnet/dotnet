@@ -27,20 +27,20 @@ public class Program
             return 1;
         }
 
-        CliRootCommand rootCommand = Setup();
-        return new CliConfiguration(rootCommand).Invoke(args);
+        RootCommand rootCommand = Setup();
+        return new CommandLineConfiguration(rootCommand).Invoke(args);
     }
 
     /// <summary>
     /// Set up the command line interface and associated actions.
     /// </summary>
-    /// <returns>Root cli command</returns>
-    private static CliRootCommand Setup()
+    /// <returns>Root  command</returns>
+    private static RootCommand Setup()
     {
-        var rootCommand = new CliRootCommand();
-        var unpackSrcArgument = new CliArgument<string>("src") { Description = "Source path of the .pkg or .app file" };
-        var unpackDestinationArgument = new CliArgument<string>("dst") { Description = "Destination path to unpack the file" };
-        var unpackCommand = new CliCommand("unpack", "Unpack a .pkg or .app file")
+        var rootCommand = new RootCommand();
+        var unpackSrcArgument = new Argument<string>("src") { Description = "Source path of the .pkg or .app file" };
+        var unpackDestinationArgument = new Argument<string>("dst") { Description = "Destination path to unpack the file" };
+        var unpackCommand = new Command("unpack", "Unpack a .pkg or .app file")
         {
             Arguments = { unpackSrcArgument, unpackDestinationArgument }
         };
@@ -51,9 +51,9 @@ public class Program
             return MacOsPkgCore.Unpack(srcPath, dstPath);
         });
 
-        var packSrcArgument = new CliArgument<string>("src") { Description = "Source path to pack." };
-        var packDstArgument = new CliArgument<string>("dst") { Description = "Destination path of the .pkg or .app file." };
-        var packCommand = new CliCommand("pack", "Pack a directory into a .pkg or .app file.")
+        var packSrcArgument = new Argument<string>("src") { Description = "Source path to pack." };
+        var packDstArgument = new Argument<string>("dst") { Description = "Destination path of the .pkg or .app file." };
+        var packCommand = new Command("pack", "Pack a directory into a .pkg or .app file.")
         {
             Arguments = { packSrcArgument, packDstArgument }
         };
@@ -64,8 +64,8 @@ public class Program
             return MacOsPkgCore.Pack(srcPath, dstPath);
         });
 
-        var pkgOrAppArgument = new CliArgument<string>("src") { Description = "Input pkg or app to verify." };
-        var verifyCommand = new CliCommand("verify", "Verify that a pkg or app is signed.")
+        var pkgOrAppArgument = new Argument<string>("src") { Description = "Input pkg or app to verify." };
+        var verifyCommand = new Command("verify", "Verify that a pkg or app is signed.")
         {
             Arguments = { pkgOrAppArgument }
         };

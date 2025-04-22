@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Data.SqlClient;
@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Query;
 
 #nullable disable
 
-public abstract class AdHocJsonQuerySqlServerTestBase : AdHocJsonQueryTestBase
+public abstract class AdHocJsonQuerySqlServerTestBase(NonSharedFixture fixture) : AdHocJsonQueryRelationalTestBase(fixture)
 {
     protected override ITestStoreFactory TestStoreFactory
         => SqlServerTestStoreFactory.Instance;
@@ -21,29 +21,186 @@ public abstract class AdHocJsonQuerySqlServerTestBase : AdHocJsonQueryTestBase
         builder.Log(CoreEventId.StringEnumValueInJson, SqlServerEventId.JsonTypeExperimental);
     }
 
+    protected void AssertSql(params string[] expected)
+        => TestSqlLoggerFactory.AssertBaseline(expected);
+
+    public override async Task Project_root_with_missing_scalars(bool async)
+    {
+        await base.Project_root_with_missing_scalars(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[Name], [e].[Collection], [e].[OptionalReference], [e].[RequiredReference]
+FROM [Entities] AS [e]
+WHERE [e].[Id] < 4
+""");
+    }
+
+    public override async Task Project_top_level_json_entity_with_missing_scalars(bool async)
+    {
+        await base.Project_top_level_json_entity_with_missing_scalars(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[OptionalReference], [e].[RequiredReference], [e].[Collection]
+FROM [Entities] AS [e]
+WHERE [e].[Id] < 4
+""");
+    }
+
+    public override async Task Project_nested_json_entity_with_missing_scalars(bool async)
+    {
+        await base.Project_nested_json_entity_with_missing_scalars(async);
+
+        AssertSql(
+"""
+SELECT [e].[Id], JSON_QUERY([e].[OptionalReference], '$.NestedOptionalReference'), JSON_QUERY([e].[RequiredReference], '$.NestedRequiredReference'), JSON_QUERY([e].[Collection], '$[0].NestedCollection')
+FROM [Entities] AS [e]
+WHERE [e].[Id] < 4
+""");
+    }
+
+    public override async Task Project_root_entity_with_missing_required_navigation(bool async)
+    {
+        await base.Project_root_entity_with_missing_required_navigation(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[Name], [e].[Collection], [e].[OptionalReference], [e].[RequiredReference]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 5
+""");
+    }
+
+
+    public override async Task Project_missing_required_navigation(bool async)
+    {
+        await base.Project_missing_required_navigation(async);
+
+        AssertSql(
+            """
+SELECT JSON_QUERY([e].[RequiredReference], '$.NestedRequiredReference'), [e].[Id]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 5
+""");
+    }
+
+    public override async Task Project_root_entity_with_null_required_navigation(bool async)
+    {
+        await base.Project_root_entity_with_null_required_navigation(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[Name], [e].[Collection], [e].[OptionalReference], [e].[RequiredReference]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 6
+""");
+    }
+
+    public override async Task Project_null_required_navigation(bool async)
+    {
+        await base.Project_null_required_navigation(async);
+
+        AssertSql(
+            """
+SELECT [e].[RequiredReference], [e].[Id]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 6
+""");
+    }
+
+    public override async Task Project_missing_required_scalar(bool async)
+    {
+        await base.Project_missing_required_scalar(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], CAST(JSON_VALUE([e].[RequiredReference], '$.Number') AS float) AS [Number]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 2
+""");
+    }
+
+    public override async Task Project_null_required_scalar(bool async)
+    {
+        await base.Project_null_required_scalar(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], CAST(JSON_VALUE([e].[RequiredReference], '$.Number') AS float) AS [Number]
+FROM [Entities] AS [e]
+WHERE [e].[Id] = 4
+""");
+    }
+
+    protected override async Task Seed21006(Context21006 context)
+    {
+        await base.Seed21006(context);
+
+        // missing scalar on top level
+        await context.Database.ExecuteSqlAsync(
+            $$$"""
+INSERT INTO [Entities] ([Collection], [OptionalReference], [RequiredReference], [Id], [Name])
+VALUES (
+N'[{"Text":"e2 c1","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e2 c1 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e2 c1 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 c1 nor"},"NestedRequiredReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 c1 nrr"}},{"Text":"e2 c2","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e2 c2 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e2 c2 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 c2 nor"},"NestedRequiredReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 c2 nrr"}}]',
+N'{"Text":"e2 or","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e2 or c1"},{"DoB":"2000-01-01T00:00:00","Text":"e2 or c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 or nor"},"NestedRequiredReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 or nrr"}}',
+N'{"Text":"e2 rr","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e2 rr c1"},{"DoB":"2000-01-01T00:00:00","Text":"e2 rr c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 rr nor"},"NestedRequiredReference":{"DoB":"2000-01-01T00:00:00","Text":"e2 rr nrr"}}',
+2,
+N'e2')
+""");
+
+        // missing scalar on nested level
+        await context.Database.ExecuteSqlAsync(
+            $$$"""
+INSERT INTO [Entities] ([Collection], [OptionalReference], [RequiredReference], [Id], [Name])
+VALUES (
+N'[{"Number":7,"Text":"e3 c1","NestedCollection":[{"Text":"e3 c1 c1"},{"Text":"e3 c1 c2"}],"NestedOptionalReference":{"Text":"e3 c1 nor"},"NestedRequiredReference":{"Text":"e3 c1 nrr"}},{"Number":7,"Text":"e3 c2","NestedCollection":[{"Text":"e3 c2 c1"},{"Text":"e3 c2 c2"}],"NestedOptionalReference":{"Text":"e3 c2 nor"},"NestedRequiredReference":{"Text":"e3 c2 nrr"}}]',
+N'{"Number":7,"Text":"e3 or","NestedCollection":[{"Text":"e3 or c1"},{"Text":"e3 or c2"}],"NestedOptionalReference":{"Text":"e3 or nor"},"NestedRequiredReference":{"Text":"e3 or nrr"}}',
+N'{"Number":7,"Text":"e3 rr","NestedCollection":[{"Text":"e3 rr c1"},{"Text":"e3 rr c2"}],"NestedOptionalReference":{"Text":"e3 rr nor"},"NestedRequiredReference":{"Text":"e3 rr nrr"}}',
+3,
+N'e3')
+""");
+
+        // null scalar on top level
+        await context.Database.ExecuteSqlAsync(
+            $$$"""
+INSERT INTO [Entities] ([Collection], [OptionalReference], [RequiredReference], [Id], [Name])
+VALUES (
+N'[{"Number":null,"Text":"e4 c1","NestedCollection":[{"Text":"e4 c1 c1"},{"Text":"e4 c1 c2"}],"NestedOptionalReference":{"Text":"e4 c1 nor"},"NestedRequiredReference":{"Text":"e4 c1 nrr"}},{"Number":null,"Text":"e4 c2","NestedCollection":[{"Text":"e4 c2 c1"},{"Text":"e4 c2 c2"}],"NestedOptionalReference":{"Text":"e4 c2 nor"},"NestedRequiredReference":{"Text":"e4 c2 nrr"}}]',
+N'{"Number":null,"Text":"e4 or","NestedCollection":[{"Text":"e4 or c1"},{"Text":"e4 or c2"}],"NestedOptionalReference":{"Text":"e4 or nor"},"NestedRequiredReference":{"Text":"e4 or nrr"}}',
+N'{"Number":null,"Text":"e4 rr","NestedCollection":[{"Text":"e4 rr c1"},{"Text":"e4 rr c2"}],"NestedOptionalReference":{"Text":"e4 rr nor"},"NestedRequiredReference":{"Text":"e4 rr nrr"}}',
+4,
+N'e4')
+""");
+
+        // missing required navigation
+        await context.Database.ExecuteSqlAsync(
+            $$$"""
+INSERT INTO [Entities] ([Collection], [OptionalReference], [RequiredReference], [Id], [Name])
+VALUES (
+N'[{"Number":7,"Text":"e5 c1","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e5 c1 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e5 c1 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e5 c1 nor"}},{"Number":7,"Text":"e5 c2","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e5 c2 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e5 c2 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e5 c2 nor"}}]',
+N'{"Number":7,"Text":"e5 or","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e5 or c1"},{"DoB":"2000-01-01T00:00:00","Text":"e5 or c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e5 or nor"}}',
+N'{"Number":7,"Text":"e5 rr","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e5 rr c1"},{"DoB":"2000-01-01T00:00:00","Text":"e5 rr c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e5 rr nor"}}',
+5,
+N'e5')
+""");
+
+        // null required navigation
+        await context.Database.ExecuteSqlAsync(
+            $$$"""
+INSERT INTO [Entities] ([Collection], [OptionalReference], [RequiredReference], [Id], [Name])
+VALUES (
+N'[{"Number":7,"Text":"e6 c1","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e6 c1 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e6 c1 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e6 c1 nor"},"NestedRequiredReference":null},{"Number":7,"Text":"e6 c2","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e6 c2 c1"},{"DoB":"2000-01-01T00:00:00","Text":"e6 c2 c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e6 c2 nor"},"NestedRequiredReference":null}]',
+N'{"Number":7,"Text":"e6 or","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e6 or c1"},{"DoB":"2000-01-01T00:00:00","Text":"e6 or c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e6 or nor"},"NestedRequiredReference":null}',
+N'{"Number":7,"Text":"e6 rr","NestedCollection":[{"DoB":"2000-01-01T00:00:00","Text":"e6 rr c1"},{"DoB":"2000-01-01T00:00:00","Text":"e6 rr c2"}],"NestedOptionalReference":{"DoB":"2000-01-01T00:00:00","Text":"e6 rr nor"},"NestedRequiredReference":null}',
+6,
+N'e6')
+""");
+    }
+
     protected override async Task Seed29219(DbContext ctx)
     {
-        var entity1 = new MyEntity29219
-        {
-            Id = 1,
-            Reference = new MyJsonEntity29219 { NonNullableScalar = 10, NullableScalar = 11 },
-            Collection =
-            [
-                new MyJsonEntity29219 { NonNullableScalar = 100, NullableScalar = 101 },
-                new MyJsonEntity29219 { NonNullableScalar = 200, NullableScalar = 201 },
-                new MyJsonEntity29219 { NonNullableScalar = 300, NullableScalar = null }
-            ]
-        };
-
-        var entity2 = new MyEntity29219
-        {
-            Id = 2,
-            Reference = new MyJsonEntity29219 { NonNullableScalar = 20, NullableScalar = null },
-            Collection = [new MyJsonEntity29219 { NonNullableScalar = 1001, NullableScalar = null }]
-        };
-
-        ctx.AddRange(entity1, entity2);
-        await ctx.SaveChangesAsync();
+        await base.Seed29219(ctx);
 
         await ctx.Database.ExecuteSqlAsync(
             $$"""
@@ -131,52 +288,6 @@ NULL,
 N'[{ "DoB":"2000-01-01T00:00:00","Text":"junk" }]',
 2)
 """);
-    }
-
-    protected override Task SeedArrayOfPrimitives(DbContext ctx)
-    {
-        var entity1 = new MyEntityArrayOfPrimitives
-        {
-            Id = 1,
-            Reference = new MyJsonEntityArrayOfPrimitives
-            {
-                IntArray = [1, 2, 3],
-                ListOfString =
-                [
-                    "Foo",
-                    "Bar",
-                    "Baz"
-                ]
-            },
-            Collection =
-            [
-                new MyJsonEntityArrayOfPrimitives { IntArray = [111, 112, 113], ListOfString = ["Foo11", "Bar11"] },
-                new MyJsonEntityArrayOfPrimitives { IntArray = [211, 212, 213], ListOfString = ["Foo12", "Bar12"] }
-            ]
-        };
-
-        var entity2 = new MyEntityArrayOfPrimitives
-        {
-            Id = 2,
-            Reference = new MyJsonEntityArrayOfPrimitives
-            {
-                IntArray = [10, 20, 30],
-                ListOfString =
-                [
-                    "A",
-                    "B",
-                    "C"
-                ]
-            },
-            Collection =
-            [
-                new MyJsonEntityArrayOfPrimitives { IntArray = [110, 120, 130], ListOfString = ["A1", "Z1"] },
-                new MyJsonEntityArrayOfPrimitives { IntArray = [210, 220, 230], ListOfString = ["A2", "Z2"] }
-            ]
-        };
-
-        ctx.AddRange(entity1, entity2);
-        return ctx.SaveChangesAsync();
     }
 
     protected override Task SeedJunkInJson(DbContext ctx)

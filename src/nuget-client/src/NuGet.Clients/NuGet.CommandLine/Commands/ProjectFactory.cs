@@ -27,7 +27,7 @@ using XElementExtensions = NuGet.Packaging.XElementExtensions;
 
 namespace NuGet.CommandLine
 {
-    public class ProjectFactory : MSBuildUser, IProjectFactory, CoreV2.NuGet.IPropertyProvider
+    public class ProjectFactory : IProjectFactory, CoreV2.NuGet.IPropertyProvider, IDisposable
     {
         private const string NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK = nameof(NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK);
         private const string NUGET_ENABLE_LEGACY_CSPROJ_PACK = nameof(NUGET_ENABLE_LEGACY_CSPROJ_PACK);
@@ -49,6 +49,8 @@ namespace NuGet.CommandLine
         };
 
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        private readonly MSBuildAssemblyResolver _msbuildAssemblyResolver;
 
         // Packaging folders
         private const string ContentFolder = "content";
@@ -86,47 +88,31 @@ namespace NuGet.CommandLine
 
         public ProjectFactory(string msbuildDirectory, string path, IDictionary<string, string> projectProperties)
         {
-            LoadAssemblies(msbuildDirectory);
-
             _environmentVariableReader = EnvironmentVariableWrapper.Instance;
 
-            // Create project, allowing for assembly load failures
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
+            _msbuildAssemblyResolver = new MSBuildAssemblyResolver(msbuildDirectory);
 
-            try
-            {
-                var project = Activator.CreateInstance(
-                    _projectType,
+            var project = Activator.CreateInstance(
+                    _msbuildAssemblyResolver.ProjectType,
                     path,
                     projectProperties,
                     null);
-                Initialize(project);
-            }
-            finally
-            {
-                AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(AssemblyResolve);
-            }
+            Initialize(project);
         }
 
         public ProjectFactory(string msbuildDirectory, dynamic project)
         {
-            LoadAssemblies(msbuildDirectory);
             Initialize(project);
             _environmentVariableReader = EnvironmentVariableWrapper.Instance;
         }
 
         private ProjectFactory(
-            string msbuildDirectory,
-            Assembly msbuildAssembly,
-            Assembly frameworkAssembly,
+            MSBuildAssemblyResolver msbuildAssemblyResolver,
             dynamic project,
             IEnvironmentVariableReader environmentVariableReader)
         {
-            _msbuildDirectory = msbuildDirectory;
-            _msbuildAssembly = msbuildAssembly;
-            _frameworkAssembly = frameworkAssembly;
+            _msbuildAssemblyResolver = msbuildAssemblyResolver;
             _environmentVariableReader = environmentVariableReader;
-            LoadTypes();
             Initialize(project);
         }
 
@@ -487,7 +473,7 @@ namespace NuGet.CommandLine
                 properties += $" /p:{property.Key}={escapedValue}";
             }
 
-            int result = MsBuildUtility.Build(_msbuildDirectory, $"\"{_project.FullPath}\" {properties} /toolsversion:{_project.ToolsVersion}");
+            int result = MsBuildUtility.Build(_msbuildAssemblyResolver.MSBuildDirectory, $"\"{_project.FullPath}\" {properties} /toolsversion:{_project.ToolsVersion}");
 
             if (0 != result) // 0 is msbuild.exe success code
             {
@@ -593,7 +579,7 @@ namespace NuGet.CommandLine
         /// <param name="action">The action to be executed.</param>
         private void RecursivelyApply(Action<ProjectFactory> action)
         {
-            var projectCollection = Activator.CreateInstance(_projectCollectionType) as IDisposable;
+            var projectCollection = Activator.CreateInstance(_msbuildAssemblyResolver.ProjectCollectionType) as IDisposable;
             using (projectCollection)
             {
                 RecursivelyApply(action, projectCollection);
@@ -624,13 +610,12 @@ namespace NuGet.CommandLine
                     alreadyAppliedProjects.GetLoadedProjects(fullPath).Count == 0)
                 {
                     dynamic project = Activator.CreateInstance(
-                        _projectType,
+                        _msbuildAssemblyResolver.ProjectType,
                         fullPath,
                         null,
                         null,
                         alreadyAppliedProjects);
-                    var referencedProject = new ProjectFactory(
-                        _msbuildDirectory, _msbuildAssembly, _frameworkAssembly, project, _environmentVariableReader);
+                    var referencedProject = new ProjectFactory(_msbuildAssemblyResolver, project, _environmentVariableReader);
                     referencedProject.Logger = _logger;
                     referencedProject.IncludeSymbols = IncludeSymbols;
                     referencedProject.Build = Build;
@@ -691,7 +676,7 @@ namespace NuGet.CommandLine
         {
             var processedProjects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var projectsToProcess = new Queue<object>();
-            dynamic projectCollection = Activator.CreateInstance(_projectCollectionType);
+            dynamic projectCollection = Activator.CreateInstance(_msbuildAssemblyResolver.ProjectCollectionType);
             using ((IDisposable)projectCollection)
             {
                 projectsToProcess.Enqueue(_project);
@@ -718,7 +703,7 @@ namespace NuGet.CommandLine
                         var referencedProject = loadedProjects.Count > 0 ?
                             loadedProjects[0] :
                             Activator.CreateInstance(
-                                _projectType,
+                                _msbuildAssemblyResolver.ProjectType,
                                 fullPath,
                                 project.GlobalProperties,
                                 null,
@@ -750,7 +735,7 @@ namespace NuGet.CommandLine
         {
             try
             {
-                var projectFactory = new ProjectFactory(_msbuildDirectory, _msbuildAssembly, _frameworkAssembly, project, EnvironmentVariableWrapper.Instance);
+                var projectFactory = new ProjectFactory(_msbuildAssemblyResolver, project, EnvironmentVariableWrapper.Instance);
                 projectFactory.Build = Build;
                 projectFactory.ProjectProperties = ProjectProperties;
                 projectFactory.SymbolPackageFormat = SymbolPackageFormat;
@@ -1456,6 +1441,11 @@ namespace NuGet.CommandLine
 
             // Otherwise the file is probably a shortcut so just take the file name
             return Path.GetFileName(fullPath);
+        }
+
+        public void Dispose()
+        {
+            _msbuildAssemblyResolver.Dispose();
         }
 
         private class ReverseTransformFormFile : Packaging.IPackageFile

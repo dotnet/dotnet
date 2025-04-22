@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -463,7 +462,7 @@ namespace System.Windows.Interop
         /// </remarks>
         protected virtual void Dispose(bool disposing)
         {
-            if (_isDisposed == true)
+            if (_isDisposed)
             {
                 return;
             }
@@ -480,7 +479,7 @@ namespace System.Windows.Interop
                 if (_hwndSubclass != null)
                 {
                     // Check if it is trusted (WebOC and AddInHost), call CriticalDetach to avoid the Demand.
-                    if (_fTrusted == true)
+                    if (_fTrusted)
                     {
                         _hwndSubclass.CriticalDetach(false);
                     }
@@ -757,7 +756,7 @@ namespace System.Windows.Interop
 
                                     // First try to use the PrintWindow API.
                                     bool result = UnsafeNativeMethods.CriticalPrintWindow(_hwnd, hdcBitmap, 0);
-                                    if(result == false)
+                                    if(!result)
                                     {
                                         // Fall back to sending a WM_PRINT message to the window.
                                         //
@@ -1182,6 +1181,7 @@ namespace System.Windows.Interop
 
             private Dispatcher _that;
         }
-        WeakEventDispatcherShutdown _weakEventDispatcherShutdown;
+
+        private WeakEventDispatcherShutdown _weakEventDispatcherShutdown;
     }
 }

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //---------------------------------------------------------------------------
 //
@@ -619,7 +618,7 @@ namespace Microsoft.Build.Tasks.Windows
 
             XmlNode root = xmlProjectDoc.DocumentElement;
 
-            if (root.HasChildNodes == false)
+            if (!root.HasChildNodes)
             {
                 // If there is no child element in this project file, just return immediatelly.
                 return;
@@ -866,7 +865,7 @@ namespace Microsoft.Build.Tasks.Windows
         // Creates an XmlNode that contains an Import Project element
         //
         //  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-        static XmlNode CreateImportProjectSdkNode(XmlDocument xmlProjectDoc, string projectAttributeValue, SdkReference sdkReference)
+        private static XmlNode CreateImportProjectSdkNode(XmlDocument xmlProjectDoc, string projectAttributeValue, SdkReference sdkReference)
         {
             XmlNode nodeImport = xmlProjectDoc.CreateElement("Import", xmlProjectDoc.DocumentElement.NamespaceURI);
             XmlAttribute projectAttribute = xmlProjectDoc.CreateAttribute("Project");

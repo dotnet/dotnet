@@ -1,40 +1,42 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-public class SectionDirectivePassTest
+public class SectionDirectivePassTest : RazorProjectEngineTestBase
 {
+    protected override RazorLanguageVersion Version => RazorLanguageVersion.Version_2_1;
+
+    protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
+    {
+        SectionDirective.Register(builder);
+    }
+
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorDocumentClassifierPhase>();
+    }
+
     [Fact]
     public void Execute_SkipsDocumentWithNoClassNode()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine();
-        var pass = new SectionDirectivePass()
-        {
-            Engine = projectEngine.Engine,
-        };
+        var source = TestRazorSourceDocument.Create("@section Header { <p>Hello World</p> }");
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create("@section Header { <p>Hello World</p> }");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode();
-        irDocument.Children.Add(new DirectiveIntermediateNode() { Directive = SectionDirective.Directive, });
+        var docuemntNode = new DocumentIntermediateNode();
+        docuemntNode.Children.Add(new DirectiveIntermediateNode() { Directive = SectionDirective.Directive, });
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<SectionDirectivePass>(codeDocument, docuemntNode);
 
         // Assert
         Children(
-            irDocument,
+            docuemntNode,
             node => Assert.IsType<DirectiveIntermediateNode>(node));
     }
 
@@ -42,27 +44,22 @@ public class SectionDirectivePassTest
     public void Execute_WrapsStatementInSectionNode()
     {
         // Arrange
-        var projectEngine = CreateProjectEngine();
-        var pass = new SectionDirectivePass()
-        {
-            Engine = projectEngine.Engine,
-        };
-
         var content = "@section Header { <p>Hello World</p> }";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = Lower(codeDocument, projectEngine);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<SectionDirectivePass>();
 
         // Assert
+        var documentNode = processor.GetDocumentNode();
+
         Children(
-            irDocument,
+            documentNode,
             node => Assert.IsType<NamespaceDeclarationIntermediateNode>(node));
 
-        var @namespace = irDocument.Children[0];
+        var @namespace = documentNode.Children[0];
         Children(
             @namespace,
             node => Assert.IsType<ClassDeclarationIntermediateNode>(node));
@@ -75,35 +72,8 @@ public class SectionDirectivePassTest
             node => Assert.IsType<DirectiveIntermediateNode>(node),
             node => Assert.IsType<SectionIntermediateNode>(node));
 
-        var section = method.Children[1] as SectionIntermediateNode;
+        var section = Assert.IsType<SectionIntermediateNode>(method.Children[1]);
         Assert.Equal("Header", section.SectionName);
         Children(section, c => Html(" <p>Hello World</p> ", c));
-    }
-
-    private static RazorProjectEngine CreateProjectEngine()
-    {
-        return RazorProjectEngine.Create(b =>
-        {
-            SectionDirective.Register(b);
-            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
-        });
-    }
-
-    private static DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine projectEngine)
-    {
-        foreach (var phase in projectEngine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorDocumentClassifierPhase)
-            {
-                break;
-            }
-        }
-
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        Assert.NotNull(irDocument);
-
-        return irDocument;
     }
 }

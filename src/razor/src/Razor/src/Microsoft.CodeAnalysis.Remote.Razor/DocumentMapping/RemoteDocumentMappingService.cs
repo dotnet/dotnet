@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -32,11 +34,10 @@ internal sealed class RemoteDocumentMappingService(
         LinePositionSpan generatedDocumentRange,
         CancellationToken cancellationToken)
     {
-        var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
-
         // For Html we just map the Uri, the range will be the same
         if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
         {
+            var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
             return (razorDocumentUri, generatedDocumentRange);
         }
 
@@ -46,31 +47,20 @@ internal sealed class RemoteDocumentMappingService(
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var solution = originSnapshot.TextDocument.Project.Solution;
-        if (!solution.TryGetRazorDocument(razorDocumentUri, out var razorDocument))
-        {
-            return (generatedDocumentUri, generatedDocumentRange);
-        }
-
-        var razorDocumentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
-
-        var razorCodeDocument = await razorDocumentSnapshot
-            .GetGeneratedOutputAsync(cancellationToken)
-            .ConfigureAwait(false);
-
+        var project = originSnapshot.TextDocument.Project;
+        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
         if (razorCodeDocument is null)
         {
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        if (!razorCodeDocument.TryGetGeneratedDocument(generatedDocumentUri, _filePathService, out var generatedDocument))
+        if (TryMapToHostDocumentRange(razorCodeDocument.GetCSharpDocument(), generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
         {
-            return Assumed.Unreachable<(Uri, LinePositionSpan)>();
-        }
-
-        if (TryMapToHostDocumentRange(generatedDocument, generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
-        {
-            return (razorDocumentUri, mappedRange);
+            var solution = project.Solution;
+            var filePath = razorCodeDocument.Source.FilePath;
+            var documentId = solution.GetDocumentIdsWithFilePath(filePath).First();
+            var document = solution.GetAdditionalDocument(documentId).AssumeNotNull();
+            return (document.CreateUri(), mappedRange);
         }
 
         return (generatedDocumentUri, generatedDocumentRange);

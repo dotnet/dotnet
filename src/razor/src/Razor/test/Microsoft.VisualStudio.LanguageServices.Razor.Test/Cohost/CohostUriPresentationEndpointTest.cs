@@ -3,18 +3,16 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task RandomFile()
     {
         await VerifyUriPresentationAsync(
@@ -33,7 +31,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task HtmlResponse_TranslatesVirtualDocumentUri()
     {
         var siteCssFileUriString = "file:///C:/path/to/site.css";
@@ -60,14 +58,14 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
             expected: htmlTag);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component()
     {
         await VerifyUriPresentationAsync(
@@ -87,7 +85,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task ImportsFile()
     {
         await VerifyUriPresentationAsync(
@@ -104,7 +102,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Html_IntoCSharp_NoTag()
     {
         var siteCssFileUriString = "file:///C:/path/to/site.css";
@@ -132,14 +130,14 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_IntoCSharp_NoTag()
     {
         await VerifyUriPresentationAsync(
@@ -160,7 +158,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: null);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithChildFile()
     {
         await VerifyUriPresentationAsync(
@@ -184,7 +182,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_WithChildFile_RazorNotFirst()
     {
         await VerifyUriPresentationAsync(
@@ -208,7 +206,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
             expected: "<Component />");
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Component_RequiredParameter()
     {
         await VerifyUriPresentationAsync(
@@ -241,10 +239,8 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
 
     private async Task VerifyUriPresentationAsync(string input, Uri[] uris, string? expected, WorkspaceEdit? htmlResponse = null, (string fileName, string contents)[]? additionalFiles = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = await CreateProjectAndRazorDocumentAsync(input, additionalFiles: additionalFiles);
+        var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
@@ -271,7 +267,7 @@ public class CohostUriPresentationEndpointTest(FuseTestContext context, ITestOut
         {
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
-            Assert.Equal(expected, result.DocumentChanges.Value.First[0].Edits[0].NewText);
+            Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
             Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
         }
     }

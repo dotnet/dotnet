@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Input.StylusWisp;
 using System.Windows.Media;
@@ -131,7 +130,7 @@ namespace System.Windows.Input
 
         /////////////////////////////////////////////////////////////////////
 
-        void ProcessInput(
+        private void ProcessInput(
             RawStylusActions actions,
             PenContext penContext,
             int tabletDeviceId, 
@@ -486,7 +485,7 @@ namespace System.Windows.Input
                 System.Diagnostics.Debug.Assert(data.Length % pointLength == 0);
                 Point ptTablet = new Point(data[data.Length - pointLength], data[data.Length - pointLength + 1]);
                 // Note: the StylusLogic data inside DeviceUnitsFromMeasurUnits is protected by __rtiLock.
-                ptTablet = ptTablet * stylusDevice.TabletDevice.TabletDeviceImpl.TabletToScreen;
+                ptTablet *= stylusDevice.TabletDevice.TabletDeviceImpl.TabletToScreen;
                 ptTablet.X = (int)Math.Round(ptTablet.X); // Make sure we snap to whole window pixels.
                 ptTablet.Y = (int)Math.Round(ptTablet.Y);
                 ptTablet = _stylusLogic.MeasureUnitsFromDeviceUnits(stylusDevice.CriticalActiveSource, ptTablet); // change to measured units now.
@@ -518,7 +517,7 @@ namespace System.Windows.Input
 
         /////////////////////////////////////////////////////////////////////
         // NOTE: this is called on pen thread (outside of apps Dispatcher)
-        StylusPlugInCollection HittestPlugInCollection(Point pt)
+        private StylusPlugInCollection HittestPlugInCollection(Point pt)
         {
             // Caller must make call to this routine inside of lock(__rtiLock)!
             
@@ -539,15 +538,15 @@ namespace System.Windows.Input
 
         internal HwndSource _inputSource;
 
-        WispLogic                      _stylusLogic;
+        private WispLogic                      _stylusLogic;
 
-        object                       __rtiLock = new object();
-        List<StylusPlugInCollection> _plugInCollectionList = new List<StylusPlugInCollection>();
+        private object                       __rtiLock = new object();
+        private List<StylusPlugInCollection> _plugInCollectionList = new List<StylusPlugInCollection>();
 
-        PenContext[]        _contexts;
+        private PenContext[]        _contexts;
         
-        bool                _isWindowDisabled;
-        Point               _destroyedLocation = new Point(0,0);
+        private bool                _isWindowDisabled;
+        private Point               _destroyedLocation = new Point(0,0);
     }
 }
 

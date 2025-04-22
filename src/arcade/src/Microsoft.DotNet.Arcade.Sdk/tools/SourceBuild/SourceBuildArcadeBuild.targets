@@ -70,16 +70,12 @@
 
       <InnerBuildArgs Condition="'$(DotNetPackageVersionPropsPath)' != ''">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"</InnerBuildArgs>
 
-      <!-- We need to utilize publishing to copy packages, assets and manifest to shared source-build location. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:DotNetPublishUsingPipelines=true</InnerBuildArgs>
-
       <InnerBuildArgs Condition="'$(GitHubRepositoryName)' != ''">$(InnerBuildArgs) /p:GitHubRepositoryName=$(GitHubRepositoryName)</InnerBuildArgs>
     </PropertyGroup>
 
     <ItemGroup>
       <!-- Override package cache to separate source-built packages from upstream. -->
       <InnerBuildEnv Include="NUGET_PACKAGES=$(CurrentRepoSourceBuildPackageCache)" />
-      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     </ItemGroup>
   </Target>
 

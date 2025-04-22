@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using MS.Internal.Interop;
@@ -1673,7 +1672,7 @@ namespace System.Windows.Documents
             internal abstract void Do();
 
             // The TextEditor instance on which this input item applies.
-            TextEditor _textEditor;
+            private TextEditor _textEditor;
 
             protected TextEditor TextEditor
             {
@@ -1738,7 +1737,7 @@ namespace System.Windows.Documents
                     case Key.RightShift:
                         // Only support RTL flow direction in case of having the installed
                         // bidi input language.
-                        if (TextSelection.IsBidiInputLanguageInstalled() == true)
+                        if (TextSelection.IsBidiInputLanguageInstalled())
                         {
                             TextEditorTyping.OnFlowDirectionCommand(TextEditor, _key);
                         }

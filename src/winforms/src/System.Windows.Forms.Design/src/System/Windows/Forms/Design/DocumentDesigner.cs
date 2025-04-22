@@ -77,10 +77,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             ContainerControl c = Control as ContainerControl;
-            if (c is not null)
-            {
-                c.AutoScaleDimensions = value;
-            }
+            c?.AutoScaleDimensions = value;
         }
     }
 
@@ -199,10 +196,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayAutoArrange = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.AutoArrange = _trayAutoArrange;
-            }
+            _componentTray?.AutoArrange = _trayAutoArrange;
         }
     }
 
@@ -213,10 +207,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayLargeIcon = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.ShowLargeIcons = _trayLargeIcon;
-            }
+            _componentTray?.ShowLargeIcons = _trayLargeIcon;
         }
     }
 
@@ -227,10 +218,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayHeight = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.Height = _trayHeight;
-            }
+            _componentTray?.Height = _trayHeight;
         }
     }
 
@@ -1400,11 +1388,11 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <internalonly/>
     /// <summary>
-    /// The list of technologies that this designer can support
-    /// for its view. Examples of different technologies are
-    /// WinForms and Web Forms. Other object models can be
-    /// supported at design time, but they most be able to
-    /// provide a view in one of the supported technologies.
+    ///  The list of technologies that this designer can support
+    ///  for its view. Examples of different technologies are
+    ///  WinForms and Web Forms. Other object models can be
+    ///  supported at design time, but they most be able to
+    ///  provide a view in one of the supported technologies.
     /// </summary>
     ViewTechnology[] IRootDesigner.SupportedTechnologies
     {
@@ -1437,7 +1425,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <internalonly/>
     /// <summary>
-    /// <para>Selects the specified tool.</para>
+    ///  <para>Selects the specified tool.</para>
     /// </summary>
     void IToolboxUser.ToolPicked(ToolboxItem tool)
     {

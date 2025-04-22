@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -29,13 +28,13 @@ internal class WrapAttributesCodeActionResolver : IRazorCodeActionResolver
 
         var indentationString = FormattingUtilities.GetIndentationString(actionParams.IndentSize, options.InsertSpaces, options.TabSize);
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        using var edits = new PooledArrayBuilder<TextEdit>();
+        using var edits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
 
         foreach (var position in actionParams.NewLinePositions)
         {
             var start = sourceText.GetLinePosition(FindPreviousNonWhitespacePosition(sourceText, position) + 1);
             var end = sourceText.GetLinePosition(position);
-            edits.Add(VsLspFactory.CreateTextEdit(start, end, Environment.NewLine + indentationString));
+            edits.Add(LspFactory.CreateTextEdit(start, end, Environment.NewLine + indentationString));
         }
 
         var tde = new TextDocumentEdit

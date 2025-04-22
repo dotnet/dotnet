@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -77,13 +76,8 @@ internal class DocumentOnTypeFormattingEndpoint(
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         if (!sourceText.TryGetAbsoluteIndex(request.Position, out var hostDocumentIndex))
         {
             return null;
@@ -106,7 +100,17 @@ internal class DocumentOnTypeFormattingEndpoint(
         }
         else if (triggerCharacterKind == RazorLanguageKind.Html)
         {
-            var htmlChanges = await _htmlFormatter.GetOnTypeFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Position, request.Character, request.Options, cancellationToken).ConfigureAwait(false);
+            if (await _htmlFormatter.GetOnTypeFormattingEditsAsync(
+                documentContext.Snapshot,
+                documentContext.Uri,
+                request.Position,
+                request.Character,
+                request.Options,
+                cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
+            {
+                return null;
+            }
+
             formattedChanges = await _razorFormattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
         }
         else

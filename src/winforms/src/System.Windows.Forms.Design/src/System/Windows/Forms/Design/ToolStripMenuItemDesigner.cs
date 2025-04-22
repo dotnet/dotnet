@@ -2282,27 +2282,27 @@ internal class ToolStripMenuItemDesigner : ToolStripDropDownItemDesigner
     }
 
     /// <summary>
-    /// Resets the ToolStripMenuItem DoubleClickEnabled to be the default visible
+    ///  Resets the ToolStripMenuItem DoubleClickEnabled to be the default visible
     /// </summary>
     private void ResetDoubleClickEnabled() => DoubleClickEnabled = false;
 
     /// <summary>
-    /// Resets the ToolStripMenuItem CheckOnClick to be the default visible
+    ///  Resets the ToolStripMenuItem CheckOnClick to be the default visible
     /// </summary>
     private void ResetCheckOnClick() => CheckOnClick = false;
 
     /// <summary>
-    /// Resets the ToolStripMenuItem CheckOnClick to be the default visible
+    ///  Resets the ToolStripMenuItem CheckOnClick to be the default visible
     /// </summary>
     private void ResetDropDown() => DropDown = null;
 
     /// <summary>
-    /// Resets the ToolStripMenuItem Visible to be the default visible
+    ///  Resets the ToolStripMenuItem Visible to be the default visible
     /// </summary>
     private void ResetVisible() => Visible = true;
 
     /// <summary>
-    /// Restores the ToolStripMenuItem Visible to be the value set in the property grid.
+    ///  Restores the ToolStripMenuItem Visible to be the value set in the property grid.
     /// </summary>
     private void RestoreVisible() => MenuItem.Visible = Visible;
 
@@ -2345,10 +2345,7 @@ internal class ToolStripMenuItemDesigner : ToolStripDropDownItemDesigner
             int index = MenuItem.DropDownItems.IndexOf(_commitedEditorNode);
             Debug.Assert(index != -1, "Invalid Index");
             ToolStripDropDownItem editedItem = (ToolStripDropDownItem)MenuItem.DropDownItems[index + 1];
-            if (editedItem is not null)
-            {
-                editedItem.Visible = true;
-            }
+            editedItem?.Visible = true;
 
             MenuItem.DropDown.Items.Remove(_commitedEditorNode);
             if (_commitedTemplateNode is not null)
@@ -2728,17 +2725,11 @@ internal class ToolStripMenuItemDesigner : ToolStripDropDownItemDesigner
                             }
 
                             ToolStripKeyboardHandlingService keyboardHandlingService = (ToolStripKeyboardHandlingService)primaryItem.Site.GetService(typeof(ToolStripKeyboardHandlingService));
-                            if (keyboardHandlingService is not null)
-                            {
-                                keyboardHandlingService.CopyInProgress = true;
-                            }
+                            keyboardHandlingService?.CopyInProgress = true;
 
                             components = DesignerUtils.CopyDragObjects(dragComponents, primaryItem.Site);
 
-                            if (keyboardHandlingService is not null)
-                            {
-                                keyboardHandlingService.CopyInProgress = false;
-                            }
+                            keyboardHandlingService?.CopyInProgress = false;
 
                             if (primaryIndex != -1)
                             {

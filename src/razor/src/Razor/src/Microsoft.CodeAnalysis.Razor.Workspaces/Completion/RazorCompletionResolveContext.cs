@@ -5,4 +5,4 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal record RazorCompletionResolveContext(string FilePath, ImmutableArray<RazorCompletionItem> CompletionItems);
+internal record RazorCompletionResolveContext(string FilePath, ImmutableArray<RazorCompletionItem> CompletionItems) : ICompletionResolveContext;

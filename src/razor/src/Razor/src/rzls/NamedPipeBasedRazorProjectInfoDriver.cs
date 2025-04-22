@@ -7,10 +7,9 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -53,7 +52,7 @@ internal sealed class NamedPipeBasedRazorProjectInfoDriver : AbstractRazorProjec
             _namedPipe is { IsConnected: true } &&
             !cancellationToken.IsCancellationRequested)
         {
-            ProjectInfoAction? projectInfoAction;
+            RazorProjectInfoAction? projectInfoAction;
             try
             {
                 projectInfoAction = _namedPipe.ReadProjectInfoAction();
@@ -69,21 +68,25 @@ internal sealed class NamedPipeBasedRazorProjectInfoDriver : AbstractRazorProjec
                 continue;
             }
 
-            Logger.LogInformation($"Failed {failedActionReads} times but things may be back on track");
+            if (failedActionReads > 0)
+            {
+                Logger.LogInformation($"Failed {failedActionReads} times but things may be back on track");
+            }
+
             failedActionReads = 0;
 
             try
             {
                 switch (projectInfoAction)
                 {
-                    case ProjectInfoAction.Remove:
+                    case RazorProjectInfoAction.Remove:
                         Logger.LogTrace($"Attempting to read project id for removal");
                         var id = await _namedPipe.ReadProjectInfoRemovalAsync(cancellationToken).ConfigureAwait(false);
                         EnqueueRemove(new ProjectKey(id));
 
                         break;
 
-                    case ProjectInfoAction.Update:
+                    case RazorProjectInfoAction.Update:
                         Logger.LogTrace($"Attempting to read project info for update");
                         var projectInfo = await _namedPipe.ReadProjectInfoAsync(cancellationToken).ConfigureAwait(false);
                         if (projectInfo is not null)

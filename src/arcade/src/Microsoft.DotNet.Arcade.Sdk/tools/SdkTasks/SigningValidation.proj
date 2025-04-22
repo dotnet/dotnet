@@ -32,6 +32,7 @@
       <SignCheckInputDir>$(PackageBasePath)</SignCheckInputDir>
       <SignCheckLog Condition="'$(SignCheckLog)' == ''">$(ArtifactsLogDir)\signcheck.log</SignCheckLog>
       <SignCheckErrorLog Condition="'$(SignCheckErrorLog)' == ''">$(ArtifactsLogDir)\signcheck.errors.log</SignCheckErrorLog>
+      <SignCheckResultsXmlFile Condition="'$(SignCheckResultsXmlFile)' == ''">$(ArtifactsLogDir)\signcheck.xml</SignCheckResultsXmlFile>
       <InputFiles Condition="'$(BuildManifestFile)' == ''">$(SignCheckInputDir)</InputFiles>
       <InputFiles Condition="'$(BuildManifestFile)' != ''">@(ItemsToSign)</InputFiles>
     </PropertyGroup>
@@ -50,6 +51,7 @@
       VerifyStrongName="$(EnableStrongNameCheck)"
       LogFile="$(SignCheckLog)"
       ErrorLogFile="$(SignCheckErrorLog)"
+      ResultsXmlFile="$(SignCheckResultsXmlFile)"
       ArtifactFolder="$(SignCheckInputDir)"/>
 
     <Error 

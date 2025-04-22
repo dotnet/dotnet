@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -48,9 +47,30 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         var razorDiagnostics = codeDocument.GetCSharpDocument().Diagnostics;
 
         return [
-            .. RazorDiagnosticConverter.Convert(razorDiagnostics, codeDocument.Source.Text, context.Snapshot),
+            .. RazorDiagnosticHelper.Convert(razorDiagnostics, codeDocument.Source.Text, context.Snapshot),
             .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.CSharp, csharpDiagnostics, context.Snapshot, cancellationToken).ConfigureAwait(false),
             .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.Html, htmlDiagnostics, context.Snapshot, cancellationToken).ConfigureAwait(false)
         ];
+    }
+
+    public ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
+        JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
+        JsonSerializableDocumentId documentId,
+        ImmutableArray<string> taskListDescriptors,
+        CancellationToken cancellationToken)
+        => RunServiceAsync(
+            solutionInfo,
+            documentId,
+            context => GetTaskListDiagnosticsAsync(context, taskListDescriptors, cancellationToken),
+            cancellationToken);
+
+    private static async ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
+        RemoteDocumentContext context,
+        ImmutableArray<string> taskListDescriptors,
+        CancellationToken cancellationToken)
+    {
+        var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+        return TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, taskListDescriptors);
     }
 }

@@ -47,7 +47,7 @@ namespace Microsoft.DotNet.SignTool
             // https://microsoft.sharepoint.com/teams/prss/esrp/info/SitePages/Linux%20GPG%20Signing.aspx
             try
             {
-                DownloadAndConfigureMicrosoftPublicKey(tempDir);
+                DownloadAndConfigurePublicKeys(tempDir);
 
                 string debianBinary = ExtractDebContainerEntry(filePath, "debian-binary", tempDir);
                 string controlTar = ExtractDebContainerEntry(filePath, "control.tar", tempDir);
@@ -87,7 +87,7 @@ namespace Microsoft.DotNet.SignTool
 
             try
             {
-                DownloadAndConfigureMicrosoftPublicKey(tempDir);
+                DownloadAndConfigurePublicKeys(tempDir);
 
                 string signableContent = Path.Combine(tempDir, "signableContent");
                 string pgpSignableContent = Path.Combine(tempDir, "pgpSignableContent");
@@ -258,16 +258,25 @@ namespace Microsoft.DotNet.SignTool
         }
 
 # if !NET472
-        private static void DownloadAndConfigureMicrosoftPublicKey(string tempDir)
+        private static void DownloadAndConfigurePublicKeys(string tempDir)
         {
-            using (Stream stream = client.GetStreamAsync("https://packages.microsoft.com/keys/microsoft.asc").Result)
+            string[] keyUrls = new string[]
             {
-                using (FileStream fileStream = File.Create($"{tempDir}/microsoft.asc"))
+                "https://packages.microsoft.com/keys/microsoft.asc", // Microsoft public key
+                "https://raw.githubusercontent.com/microsoft/azurelinux/3.0/SPECS/azurelinux-repos/MICROSOFT-RPM-GPG-KEY" // Azure linux public key
+            };
+            foreach (string keyUrl in keyUrls)
+            {
+                string keyPath = Path.Combine(tempDir, Path.GetFileName(keyUrl));
+                using (Stream stream = client.GetStreamAsync(keyUrl).Result)
                 {
-                    stream.CopyTo(fileStream);
+                    using (FileStream fileStream = File.Create(keyPath))
+                    {
+                        stream.CopyTo(fileStream);
+                    }
                 }
+                RunCommand($"gpg --import {keyPath}");
             }
-            RunCommand($"gpg --import {tempDir}/microsoft.asc");
         }
 
         private static SigningStatus GPGVerifySignature(string signatureFile, string contentFile)

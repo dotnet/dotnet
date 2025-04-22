@@ -10,16 +10,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 
@@ -35,7 +34,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
         // Called on an uninitialized document.
         if (_document is null)
         {
-            return ImmutableArray<RazorMappedSpanResult>.Empty;
+            return [];
         }
 
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
@@ -61,13 +60,13 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
         return results.DrainToImmutable();
     }
 
-    public async Task<ImmutableArray<RazorMappedEditoResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)
     {
         try
         {
             if (_document.FilePath is null)
             {
-                return ImmutableArray<RazorMappedEditoResult>.Empty;
+                return [];
             }
 
             var changes = await newDocument.GetTextChangesAsync(oldDocument, cancellationToken).ConfigureAwait(false);
@@ -91,18 +90,20 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
                 {DisplayEdits(textChanges)}
                 """);
 
-            return [new RazorMappedEditoResult() { FilePath = _document.FilePath, TextChanges = textChanges.ToArray() }];
+            return [new RazorMappedEditResult() { FilePath = _document.FilePath, TextChanges = [.. textChanges] }];
         }
         catch (Exception ex)
         {
             _telemetryReporter.ReportFault(ex, "Failed to map edits");
-            return ImmutableArray<RazorMappedEditoResult>.Empty;
+            return [];
         }
 
-        string DisplayEdits(IEnumerable<TextChange> changes)
-            => string.Join(
-                Environment.NewLine,
-                changes.Select(e => $"{e.Span} => '{e.NewText}'"));
+        static string DisplayEdits(IEnumerable<TextChange> changes)
+        {
+            return string.Join(
+                        Environment.NewLine,
+                        changes.Select(e => $"{e.Span} => '{e.NewText}'"));
+        }
     }
 
     // Internal for testing.

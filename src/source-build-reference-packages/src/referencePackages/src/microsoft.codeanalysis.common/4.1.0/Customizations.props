@@ -1,0 +1,8 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Analyzers are excluded from SBRPs -->
+    <ProjectReference Remove="../../microsoft.codeanalysis.analyzers/3.3.3/Microsoft.CodeAnalysis.Analyzers.3.3.3.csproj" />
+  </ItemGroup>
+
+</Project>

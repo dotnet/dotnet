@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.0.1</PackageVersion>
     <AssemblyName>Microsoft.CodeAnalysis.VisualBasic</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <ProjectReference Include="..\..\microsoft.codeanalysis.common\4.0.1\Microsoft.CodeAnalysis.Common.4.0.1.csproj" />
+    <ProjectReference Include="../../microsoft.codeanalysis.common/4.0.1/Microsoft.CodeAnalysis.Common.4.0.1.csproj" />
   </ItemGroup>
 
 </Project>

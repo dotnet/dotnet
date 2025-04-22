@@ -73,7 +73,7 @@ public sealed class RazorSyntaxTree
     {
         ArgHelper.ThrowIfNull(source);
 
-        options ??= RazorParserOptions.CreateDefault();
+        options ??= RazorParserOptions.Default;
         var parser = new RazorParser(options);
         return parser.Parse(source);
     }

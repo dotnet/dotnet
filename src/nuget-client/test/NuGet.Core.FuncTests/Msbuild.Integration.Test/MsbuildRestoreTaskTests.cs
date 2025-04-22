@@ -37,9 +37,10 @@ namespace Msbuild.Integration.Test
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MsbuildRestore_PackagesConfigDependencyAsync(bool useStaticGraphRestore)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_PackagesConfigDependencyAsync(bool useStaticGraphRestore, bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -78,10 +79,13 @@ namespace Msbuild.Integration.Test
                     pathContext.PackageSource,
                     packageX);
 
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
                 // Act
                 string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore}";
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
-
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
                 // Assert
                 Assert.True(result.ExitCode == 0, result.AllOutput);
@@ -534,8 +538,10 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             }
         }
 
-        [PlatformFact(Platform.Windows)]
-        public async Task MsbuildRestore_WithLegacyPackageReferenceProject_BothStaticGraphAndRegularRestoreNoOp()
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithLegacyPackageReferenceProject_BothStaticGraphAndRegularRestoreNoOp(bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -588,8 +594,12 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     projectOutputTimestamps.Add(asset, fileInfo.LastWriteTimeUtc);
                 }
 
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
                 // Restore the project with a PackageReference which generates assets
-                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
                 result.Success.Should().BeTrue(because: result.AllOutput);
 
@@ -600,13 +610,15 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     fileInfo.LastWriteTimeUtc.Should().Be(projectOutputTimestamps[asset]);
                 }
 
-                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
                 result.Success.Should().BeTrue(result.AllOutput);
             }
         }
 
-        [PlatformFact(Platform.Windows)]
-        public async Task MsbuildRestore_WithStaticGraphAndRegularRestore_ErrorLoggedWhenOutputPathNotSpecified()
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithStaticGraphAndRegularRestore_ErrorLoggedWhenOutputPathNotSpecified(bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -648,8 +660,12 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     pathContext.PackageSource,
                     packageX);
 
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
                 // Restore the project with a PackageReference which generates assets
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
                 result.Success.Should().BeFalse(because: result.AllOutput);
 
@@ -658,9 +674,10 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MsbuildRestore_WithRelativeSource_ResolvesAgainstCurrentWorkingDirectory(bool isStaticGraphRestore)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithRelativeSource_ResolvesAgainstCurrentWorkingDirectory(bool isStaticGraphRestore, bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -702,11 +719,16 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     project.CacheFileOutputPath,
                 };
 
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
                 // Restore the project with a PackageReference which generates assets
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath} /p:RestoreSources=\"{relativePath}\"" +
                     (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
                     ignoreExitCode: true,
-                    testOutputHelper: _testOutputHelper);
+                    testOutputHelper: _testOutputHelper,
+                    environmentVariables);
                 result.Success.Should().BeTrue(because: result.AllOutput);
 
                 foreach (var asset in projectOutputPaths)
@@ -726,7 +748,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var net461 = NuGetFramework.Parse("net472");
 
-                var project = SimpleTestProjectContext.CreateLegacyPackageReference(
+                var project = SimpleTestProjectContext.CreateNonNuGet(
                     "a",
                     pathContext.SolutionRoot,
                     net461);
@@ -823,9 +845,10 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MsbuildRestore_WithMissingProjectReferences_HandlesProjectReferencesToUnsupportedProjects(bool restoreUseStaticGraphEvaluation)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithMissingProjectReferences_HandlesProjectReferencesToUnsupportedProjects(bool restoreUseStaticGraphEvaluation, bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -862,7 +885,11 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
 
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
                 // Assert
                 result.ExitCode.Should().Be(0, result.AllOutput);
@@ -907,9 +934,10 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MsbuildRestore_WithCPPCliVcxproj_RestoresSuccessfullyWithPackageReference(bool isStaticGraphRestore)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithCPPCliVcxproj_RestoresSuccessfullyWithPackageReference(bool isStaticGraphRestore, bool usePackageSpecFactory)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -930,10 +958,16 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
+
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory,
                     $"/t:restore {pathContext.SolutionRoot}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
-                    testOutputHelper: _testOutputHelper);
+                    testOutputHelper: _testOutputHelper,
+                    environmentVariables: environmentVariables);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1865,9 +1899,10 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MsbuildRestore_WithPackageReferenceAndPackageVersion_RaisesNU1008(bool useStaticGraphRestore)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithPackageReferenceAndPackageVersion_RaisesNU1008(bool useStaticGraphRestore, bool usePackageSpecFactory)
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -1899,8 +1934,12 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             var directoryPackagesPropsPath = Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props");
             File.WriteAllText(directoryPackagesPropsPath, directoryPackagesProps);
 
+            var environmentVariables = new Dictionary<string, string>();
+            environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+            environmentVariables.Add("NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString());
+
             // Act
-            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
             // Assert
             result.Success.Should().BeFalse(because: result.AllOutput);

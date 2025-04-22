@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 //
@@ -431,7 +430,7 @@ namespace System.Windows.Media
 
                 if (vTransform != null) ((DUCE.IResource)vTransform).AddRefOnChannel(channel);
 
-                UpdateResource(channel, true /* skip "on channel" check - we already know that we're on channel */ );
+                UpdateResource(channel, skipOnChannelCheck: true /* We already know that we're on channel */ );
             }
 
             return _duceResource.GetHandle(channel);

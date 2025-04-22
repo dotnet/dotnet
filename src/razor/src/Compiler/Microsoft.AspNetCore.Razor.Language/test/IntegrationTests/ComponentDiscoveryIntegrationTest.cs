@@ -1,15 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public class ComponentDiscoveryIntegrationTest : RazorIntegrationTestBase
 {
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     internal override bool UseTwoPhaseCompilation => true;
 
@@ -32,8 +30,9 @@ namespace Test
         var result = CompileToCSharp(string.Empty);
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.MyComponent");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.MyComponent");
     }
 
     [Fact]
@@ -55,15 +54,16 @@ namespace Test.AnotherNamespace
         var result = CompileToCSharp(string.Empty);
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
 
-        Assert.Contains(bindings.TagHelpers, t =>
+        Assert.Contains(context.TagHelpers, t =>
         {
             return t.Name == "Test.AnotherNamespace.MyComponent" &&
                 t.IsComponentFullyQualifiedNameMatch;
         });
 
-        Assert.DoesNotContain(bindings.TagHelpers, t =>
+        Assert.DoesNotContain(context.TagHelpers, t =>
         {
             return t.Name == "Test.AnotherNamespace.MyComponent" &&
                 !t.IsComponentFullyQualifiedNameMatch;
@@ -79,8 +79,10 @@ namespace Test.AnotherNamespace
         var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: string.Empty);
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.UniqueName");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName");
     }
 
     [Fact]
@@ -96,8 +98,10 @@ namespace Test.AnotherNamespace
 }");
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.UniqueName<TItem>");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName<TItem>");
     }
 
     [Fact]
@@ -113,8 +117,10 @@ namespace Test.AnotherNamespace
 }");
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.UniqueName<TItem>");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName<TItem>");
     }
 
     [Fact]
@@ -132,8 +138,10 @@ namespace Test.AnotherNamespace
 }");
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.UniqueName<TItem1, TItem2, TItem3>");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName<TItem1, TItem2, TItem3>");
     }
 
     [Fact]
@@ -151,7 +159,9 @@ namespace Test.AnotherNamespace
 }");
 
         // Assert
-        var bindings = result.CodeDocument.GetTagHelperContext();
-        Assert.Contains(bindings.TagHelpers, t => t.Name == "Test.UniqueName<TItem1, TItem2, TItem3>");
+        var context = result.CodeDocument.GetTagHelperContext();
+        Assert.NotNull(context);
+
+        Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName<TItem1, TItem2, TItem3>");
     }
 }

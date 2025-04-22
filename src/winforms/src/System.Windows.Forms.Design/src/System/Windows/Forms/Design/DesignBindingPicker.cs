@@ -487,10 +487,7 @@ namespace System.Windows.Forms.Design
             if (_context?.Instance is BindingSource instance && _designerHost is not null)
             {
                 BindingSourceDesigner? designer = _designerHost.GetDesigner(instance) as BindingSourceDesigner;
-                if (designer is not null)
-                {
-                    designer.BindingUpdatedByUser = true;
-                }
+                designer?.BindingUpdatedByUser = true;
             }
 
             // Tell the editor service to close the dropdown
@@ -1848,7 +1845,7 @@ namespace System.Windows.Forms.Design
         }
 
         /// <summary>
-        /// Label control that renders its text with both word wrapping, end ellipsis and partial line clipping.
+        ///  Label control that renders its text with both word wrapping, end ellipsis and partial line clipping.
         /// </summary>
         internal class HelpTextLabel : Label
         {

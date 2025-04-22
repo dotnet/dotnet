@@ -34,6 +34,7 @@ internal static partial class DataFormatNames
     internal const string FileNameAnsi = PInvokeCore.CFSTR_FILENAMEA;
     internal const string FileNameUnicode = PInvokeCore.CFSTR_FILENAME;
     internal const string BinaryFormatBitmap = "System.Drawing.Bitmap";
+    internal const string BinaryFormatMetafile = "System.Drawing.Imaging.Metafile";
 
     /// <summary>
     ///  A format used internally by the drag image manager.
@@ -108,6 +109,32 @@ internal static partial class DataFormatNames
                 break;
             case BinaryFormatBitmap:
                 formats.Add(Bitmap);
+                break;
+            case Emf:
+                formats.Add(BinaryFormatMetafile);
+                break;
+            case BinaryFormatMetafile:
+                formats.Add(Emf);
+                break;
+            default:
+                // The formats aren't case sensitive, notably when they are looked up via the OLE IDataObject
+                // proxy. We're most likely to see "TEXT", so we'll handle text cases.
+                if (string.Equals(format, Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    formats.Add(String);
+                    formats.Add(UnicodeText);
+                }
+                else if (string.Equals(format, UnicodeText, StringComparison.OrdinalIgnoreCase))
+                {
+                    formats.Add(String);
+                    formats.Add(Text);
+                }
+                else if (string.Equals(format, String, StringComparison.OrdinalIgnoreCase))
+                {
+                    formats.Add(Text);
+                    formats.Add(UnicodeText);
+                }
+
                 break;
         }
     }

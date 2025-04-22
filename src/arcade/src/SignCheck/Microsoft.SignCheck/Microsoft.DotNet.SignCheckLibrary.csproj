@@ -3,7 +3,7 @@
   <Import Project="ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>
     <!-- This assembly is bundled in the Microsoft.DotNet.SignCheck package and is not mean to be used as a class library package. -->
     <IsPackable>false</IsPackable>
@@ -11,14 +11,12 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
-    <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
-    <ProjectReference Include="..\..\Microsoft.DotNet.MacOsPkg\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.DotNet.StrongName\Microsoft.DotNet.StrongName.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LZMA-SDK" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Condition="$(TargetFramework) != $(NetToolCurrent)"/>
     <PackageReference Include="NuGet.Frameworks" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="System.IO.Packaging" />
@@ -41,20 +39,20 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+    <!-- Project References -->
+    <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+    <ProjectReference Include="..\..\Microsoft.DotNet.MacOsPkg\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+
     <!-- Interop -->
-    <Compile Remove="Interop\**" />
-    <EmbeddedResource Remove="Interop\**" />
+    <Compile Remove="Interop\Ole32.cs" />
+    <Compile Remove="Interop\StructuredStorage.cs" />
 
     <!-- Unsupported file types -->
-    <Compile Remove="Verification\AuthentiCode.cs" />
-    <Compile Remove="Verification\AuthentiCodeVerifier.cs" />
     <Compile Remove="Verification\CabVerifier.cs" />
-    <Compile Remove="Verification\ExeVerifier.cs" />
     <Compile Remove="Verification\JarVerifier.cs" />
     <Compile Remove="Verification\MsiVerifier.cs" />
     <Compile Remove="Verification\MspVerifier.cs" />
     <Compile Remove="Verification\MsuVerifier.cs" />
-    <Compile Remove="Verification\PortableExecutableVerifier.cs" />
     <Compile Remove="Verification\StrongName.cs" />
     <Compile Remove="Verification\VsixVerifier.cs" />
     <Compile Remove="Verification\Jar\JarFile.cs" />
@@ -62,9 +60,16 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != '$(NetToolCurrent)'">
+    <!-- Package References -->
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop"/>
+
+    <!-- References -->
+    <Reference Include="System.Net.Http"/>
+
     <!-- Unsupported file types -->
     <Compile Remove="Verification\DebVerifier.cs" />
     <Compile Remove="Verification\LinuxPackageVerifier.cs" />
+    <Compile Remove="Verification\MachOVerifier.cs" />
     <Compile Remove="Verification\PkgVerifier.cs" />
     <Compile Remove="Verification\TarVerifier.cs" />
     <Compile Remove="Verification\RpmVerifier.cs" />

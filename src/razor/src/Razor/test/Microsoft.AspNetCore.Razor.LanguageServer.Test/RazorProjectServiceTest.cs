@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
@@ -88,7 +87,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -96,7 +95,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
             updater.AddDocument(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
-        var newDocument = new DocumentSnapshotHandle("file.cshtml", "file.cshtml", FileKinds.Component);
+        var newDocument = new DocumentSnapshotHandle("file.cshtml", "file.cshtml", RazorFileKind.Component);
 
         // Act
         await _projectInfoListener.UpdatedAsync(new RazorProjectInfo(
@@ -112,7 +111,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         // Assert
         var document = _projectManager.GetRequiredDocument(hostProject.Key, hostDocument.FilePath);
 
-        Assert.Equal(FileKinds.Component, document.FileKind);
+        Assert.Equal(RazorFileKind.Component, document.FileKind);
     }
 
     [Fact]
@@ -120,7 +119,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -129,7 +128,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         });
 
         var oldDocument = new DocumentSnapshotHandle(hostDocument.FilePath, hostDocument.TargetPath, hostDocument.FileKind);
-        var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", FileKinds.Legacy);
+        var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", RazorFileKind.Legacy);
 
         // Act
         await _projectInfoListener.UpdatedAsync(new RazorProjectInfo(
@@ -153,7 +152,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -199,7 +198,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
 
         var project = _projectManager.GetRequiredProject(ownerProjectKey);
 
-        var addedDocument = new DocumentSnapshotHandle(DocumentFilePath, DocumentFilePath, FileKinds.Legacy);
+        var addedDocument = new DocumentSnapshotHandle(DocumentFilePath, DocumentFilePath, RazorFileKind.Legacy);
 
         // Act
         await _projectInfoListener.UpdatedAsync(new RazorProjectInfo(
@@ -226,7 +225,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -234,7 +233,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
             updater.AddDocument(MiscFilesProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
-        var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", FileKinds.Legacy);
+        var newDocument = new DocumentSnapshotHandle("C:/path/to/file2.cshtml", "file2.cshtml", RazorFileKind.Legacy);
 
         // Act
         await _projectInfoListener.UpdatedAsync(new RazorProjectInfo(
@@ -260,7 +259,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("path/to/project.csproj", "path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var document = new HostDocument("path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var document = new HostDocument("path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -291,7 +290,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
-        var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
+        var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", RazorFileKind.Legacy);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -299,7 +298,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
             updater.AddDocument(hostProject.Key, legacyDocument, StrictMock.Of<TextLoader>());
         });
 
-        var newDocument = new DocumentSnapshotHandle(legacyDocument.FilePath, legacyDocument.TargetPath, FileKinds.Component);
+        var newDocument = new DocumentSnapshotHandle(legacyDocument.FilePath, legacyDocument.TargetPath, RazorFileKind.Component);
 
         // Act
         await _projectInfoListener.UpdatedAsync(new RazorProjectInfo(
@@ -315,7 +314,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         // Assert
         var document = _projectManager.GetRequiredDocument(hostProject.Key, newDocument.FilePath);
 
-        Assert.Equal(FileKinds.Component, document.FileKind);
+        Assert.Equal(RazorFileKind.Component, document.FileKind);
     }
 
     [Fact]

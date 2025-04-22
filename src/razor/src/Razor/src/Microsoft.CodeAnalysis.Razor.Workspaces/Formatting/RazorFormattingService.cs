@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -34,6 +33,7 @@ internal class RazorFormattingService : IRazorFormattingService
     private readonly ImmutableArray<IFormattingPass> _validationPasses;
     private readonly CSharpOnTypeFormattingPass _csharpOnTypeFormattingPass;
     private readonly HtmlOnTypeFormattingPass _htmlOnTypeFormattingPass;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
     public RazorFormattingService(
         IDocumentMappingService documentMappingService,
@@ -49,7 +49,8 @@ internal class RazorFormattingService : IRazorFormattingService
             new FormattingContentValidationPass(loggerFactory)
         ];
 
-        _documentFormattingPasses = languageServerFeatureOptions.UseNewFormattingEngine
+        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _documentFormattingPasses = _languageServerFeatureOptions.UseNewFormattingEngine
             ? [
                 new New.HtmlFormattingPass(loggerFactory),
                 new RazorFormattingPass(languageServerFeatureOptions, loggerFactory),
@@ -71,13 +72,9 @@ internal class RazorFormattingService : IRazorFormattingService
         RazorFormattingOptions options,
         CancellationToken cancellationToken)
     {
-#if !FORMAT_FUSE
-        // Formatting always uses design time document
-        var generator = (IDesignTimeCodeGenerator)documentContext.Snapshot;
-        var codeDocument = await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false);
-#else
-        var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-#endif
+        var codeDocument = !_languageServerFeatureOptions.UseNewFormattingEngine && documentContext.Snapshot is IDesignTimeCodeGenerator generator
+            ? await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false)
+            : await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         // Range formatting happens on every paste, and if there are Razor diagnostics in the file
         // that can make some very bad results. eg, given:
@@ -108,7 +105,8 @@ internal class RazorFormattingService : IRazorFormattingService
         var context = FormattingContext.Create(
             documentSnapshot,
             codeDocument,
-            options);
+            options,
+            _languageServerFeatureOptions.UseNewFormattingEngine);
         var originalText = context.SourceText;
 
         var result = htmlChanges;
@@ -130,13 +128,9 @@ internal class RazorFormattingService : IRazorFormattingService
     {
         var documentSnapshot = documentContext.Snapshot;
 
-#if !FORMAT_FUSE
-        // Formatting always uses design time document
-        var generator = (IDesignTimeCodeGenerator)documentSnapshot;
-        var codeDocument = await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false);
-#else
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-#endif
+        var codeDocument = documentContext.Snapshot is IDesignTimeCodeGenerator generator
+            ? await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false)
+            : await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         return await ApplyFormattedChangesAsync(
                 documentSnapshot,
@@ -155,13 +149,8 @@ internal class RazorFormattingService : IRazorFormattingService
     {
         var documentSnapshot = documentContext.Snapshot;
 
-#if !FORMAT_FUSE
-        // Formatting always uses design time document
-        var generator = (IDesignTimeCodeGenerator)documentSnapshot;
-        var codeDocument = await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false);
-#else
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-#endif
+        // Html formatting doesn't use the C# design time document
+        var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         return await ApplyFormattedChangesAsync(
                 documentSnapshot,

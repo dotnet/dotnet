@@ -11,10 +11,10 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 using static Microsoft.VisualStudio.Razor.Telemetry.AggregatingTelemetryLog;
-using TelemetryResult = Microsoft.AspNetCore.Razor.Telemetry.TelemetryResult;
+using TelemetryResult = Microsoft.CodeAnalysis.Razor.Telemetry.TelemetryResult;
 
 namespace Microsoft.VisualStudio.Razor.Telemetry;
 
@@ -277,7 +277,7 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
             new("eventscope.correlationid", correlationId));
     }
 
-    public void ReportRequestTiming(string name, string? language, TimeSpan queuedDuration, TimeSpan requestDuration, AspNetCore.Razor.Telemetry.TelemetryResult result)
+    public void ReportRequestTiming(string name, string? language, TimeSpan queuedDuration, TimeSpan requestDuration, TelemetryResult result)
     {
         _manager?.LogRequestTelemetry(
             name,

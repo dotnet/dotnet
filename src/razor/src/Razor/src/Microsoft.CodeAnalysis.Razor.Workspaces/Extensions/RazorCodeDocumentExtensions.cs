@@ -22,6 +22,12 @@ internal static class RazorCodeDocumentExtensions
 {
     private static readonly object s_csharpSyntaxTreeKey = new();
 
+    public static RazorSyntaxTree GetRequiredSyntaxTree(this RazorCodeDocument codeDocument)
+        => codeDocument.GetSyntaxTree().AssumeNotNull();
+
+    public static Syntax.SyntaxNode GetRequiredSyntaxRoot(this RazorCodeDocument codeDocument)
+        => codeDocument.GetRequiredSyntaxTree().Root;
+
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
         => document.GetCSharpDocument().Text;
 

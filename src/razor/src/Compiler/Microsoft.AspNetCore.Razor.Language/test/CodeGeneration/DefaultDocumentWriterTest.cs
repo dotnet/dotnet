@@ -46,13 +46,14 @@ public class DefaultDocumentWriterTest
     {
         // Arrange
         var sourceText = SourceText.From("", checksumAlgorithm: SourceHashAlgorithm.Sha1);
-        var sourceDocument = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+        var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+
+        var projectEngine = RazorProjectEngine.CreateEmpty();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
 
         var document = new DocumentIntermediateNode();
 
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.Default;
-
+        var options = codeDocument.CodeGenerationOptions;
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
 
@@ -77,13 +78,14 @@ public class DefaultDocumentWriterTest
     {
         // Arrange
         var sourceText = SourceText.From("", checksumAlgorithm: SourceHashAlgorithm.Sha256);
-        var sourceDocument = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+        var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+
+        var projectEngine = RazorProjectEngine.CreateEmpty();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
 
         var document = new DocumentIntermediateNode();
 
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.Default;
-
+        var options = codeDocument.CodeGenerationOptions;
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
 
@@ -110,11 +112,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var optionsBuilder = new RazorCodeGenerationOptionsBuilder(designTime: false)
-        {
-            SuppressChecksum = true
-        };
-        var options = optionsBuilder.Build();
+        var options = RazorCodeGenerationOptions.Default.WithFlags(suppressChecksum: true);
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);

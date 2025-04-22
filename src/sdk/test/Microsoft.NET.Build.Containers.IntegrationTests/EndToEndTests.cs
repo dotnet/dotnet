@@ -369,7 +369,7 @@ public class EndToEndTests : IDisposable
     public async Task EndToEnd_MultiProjectSolution()
     {
         ILogger logger = _loggerFactory.CreateLogger(nameof(EndToEnd_MultiProjectSolution));
-        DirectoryInfo newSolutionDir = new(Path.Combine(TestSettings.TestArtifactsDirectory, $"CreateNewImageTest_EndToEnd_MultiProjectSolution"));
+        DirectoryInfo newSolutionDir = new(Path.Combine(TestSettings.TestArtifactsDirectory, nameof(EndToEnd_MultiProjectSolution)));
 
         if (newSolutionDir.Exists)
         {
@@ -407,14 +407,10 @@ public class EndToEndTests : IDisposable
             .Execute()
             .Should().Pass();
 
-        // Add 'EnableSdkContainerSupport' property to the ConsoleApp and set TFM
+        // set TFM for the console app
         using (FileStream stream = File.Open(Path.Join(newSolutionDir.FullName, "ConsoleApp", "ConsoleApp.csproj"), FileMode.Open, FileAccess.ReadWrite))
         {
             XDocument document = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
-            document
-                .Descendants()
-                .First(e => e.Name.LocalName == "PropertyGroup")?
-                .Add(new XElement("EnableSdkContainerSupport", "true"));
             document
                 .Descendants()
                 .First(e => e.Name.LocalName == "TargetFramework")
@@ -447,11 +443,89 @@ public class EndToEndTests : IDisposable
         commandResult.Should().HaveStdOutContaining("Pushed image 'consoleapp:latest'");
     }
 
+    /// <summary>
+    /// Tests that a multi-project solution with a library that targets multiple frameworks can be published.
+    /// This is interesting because before https://github.com/dotnet/sdk/pull/47693 the container targets
+    /// wouldn't be loaded for multi-TFM project evaluations, so any calls to the PublishContainer target
+    /// for libraries (which may be multi-targeted even when referenced from a single-target published app project) would fail.
+    /// It's safe to load the target for libraries in a multi-targeted context because libraries don't have EnableSdkContainerSupport
+    /// enabled by default, so the target will be skipped.
+    /// </summary>
+    [DockerAvailableFact]
+    public async Task EndToEnd_MultiProjectSolution_with_multitargeted_library()
+    {
+        ILogger logger = _loggerFactory.CreateLogger(nameof(EndToEnd_MultiProjectSolution_with_multitargeted_library));
+        DirectoryInfo newSolutionDir = new(Path.Combine(TestSettings.TestArtifactsDirectory, nameof(EndToEnd_MultiProjectSolution_with_multitargeted_library)));
+
+        if (newSolutionDir.Exists)
+        {
+            newSolutionDir.Delete(recursive: true);
+        }
+
+        newSolutionDir.Create();
+
+        // Create solution with projects
+        new DotnetNewCommand(_testOutput, "sln", "-n", nameof(EndToEnd_MultiProjectSolution_with_multitargeted_library))
+            .WithVirtualHive()
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute()
+            .Should().Pass();
+
+        new DotnetNewCommand(_testOutput, "web", "-n", "WebApp")
+            .WithVirtualHive()
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute()
+            .Should().Pass();
+
+        new DotnetCommand(_testOutput, "sln", "add", Path.Combine("WebApp", "WebApp.csproj"))
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute()
+            .Should().Pass();
+
+        new DotnetNewCommand(_testOutput, "classlib", "-n", "Library")
+            .WithVirtualHive()
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute()
+            .Should().Pass();
+
+        new DotnetCommand(_testOutput, "sln", "add", Path.Combine("Library", "Library.csproj"))
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute()
+            .Should().Pass();
+
+        // Set TFMs for Library - use current toolset + NS2.0 for compatibility
+        // also set IsPublishable to false
+        using (FileStream stream = File.Open(Path.Join(newSolutionDir.FullName, "Library", "Library.csproj"), FileMode.Open, FileAccess.ReadWrite))
+        {
+            XDocument document = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
+            var tfmNode =
+                document
+                .Descendants()
+                .First(e => e.Name.LocalName == "TargetFramework");
+            var propertyGroupNode = tfmNode.Parent!;
+            tfmNode.Remove();
+            propertyGroupNode.Add(new XElement("TargetFrameworks", $"{ToolsetInfo.CurrentTargetFramework};netstandard2.0"));
+            propertyGroupNode.Add(new XElement("IsPublishable", "false"));
+            stream.SetLength(0);
+            await document.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
+        }
+
+        // Publish
+        CommandResult commandResult = new DotnetCommand(_testOutput, "publish", "/t:PublishContainer")
+            .WithWorkingDirectory(newSolutionDir.FullName)
+            .Execute();
+
+        commandResult.Should().Pass();
+        commandResult.Should().HaveStdOutContaining("Pushed image 'webapp:latest'");
+    }
+
     [DockerAvailableTheory(Skip = "https://github.com/dotnet/sdk/issues/45181")]
     [InlineData("webapi", false)]
     [InlineData("webapi", true)]
     [InlineData("worker", false)]
     [InlineData("worker", true)]
+    [InlineData("console", true)]
+    [InlineData("console", false)]
     public async Task EndToEnd_NoAPI_ProjectType(string projectType, bool addPackageReference)
     {
         DirectoryInfo newProjectDir = new(Path.Combine(TestSettings.TestArtifactsDirectory, $"CreateNewImageTest_{projectType}_{addPackageReference}"));
@@ -503,7 +577,6 @@ public class EndToEndTests : IDisposable
             var project = XDocument.Load(projectPath);
             var ns = project.Root?.Name.Namespace ?? throw new InvalidOperationException("Project file is empty");
 
-            project.Root?.Add(new XElement("PropertyGroup", new XElement("EnableSDKContainerSupport", "true")));
             project.Save(projectPath);
         }
 
@@ -514,7 +587,7 @@ public class EndToEndTests : IDisposable
         CommandResult commandResult = new DotnetCommand(
             _testOutput,
             "publish",
-            "/p:PublishProfile=DefaultContainer",
+            "/t:PublishContainer",
             "/p:RuntimeIdentifier=linux-x64",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRegistry={DockerRegistryManager.LocalRegistry}",
@@ -543,12 +616,14 @@ public class EndToEndTests : IDisposable
         var containerName = $"test-container-1-{projectType}-{addPackageReference}";
         CommandResult processResult = ContainerCli.RunCommand(
             _testOutput,
-            "--rm",
-            "--name",
-            containerName,
-            "-P",
-            "--detach",
-            $"{DockerRegistryManager.LocalRegistry}/{imageName}:{imageTag}")
+            [
+                "--rm",
+                "--name",
+                containerName,
+                "-P",
+                ..projectType != "console" ? ["--detach"] : new string[]{},
+                $"{DockerRegistryManager.LocalRegistry}/{imageName}:{imageTag}"
+            ])
         .Execute();
         processResult.Should().Pass();
         Assert.NotNull(processResult.StdOut);
@@ -592,14 +667,13 @@ public class EndToEndTests : IDisposable
             Assert.True(everSucceeded, $"{appUri}weatherforecast never responded.");
 
             ContainerCli.StopCommand(_testOutput, appContainerId)
-           .Execute()
-           .Should().Pass();
+            .Execute()
+            .Should().Pass();
         }
         else if (projectType == "worker")
         {
             // the worker template needs a second to start up and emit the logs we are looking for
             await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-            var containerLogs =
             ContainerCli.LogsCommand(_testOutput, appContainerId)
                 .Execute()
                 .Should().Pass()
@@ -608,10 +682,11 @@ public class EndToEndTests : IDisposable
             ContainerCli.StopCommand(_testOutput, appContainerId)
             .Execute()
             .Should().Pass();
+
         }
-        else
+        else if (projectType == "console")
         {
-            throw new NotImplementedException("Unknown project type");
+            processResult.Should().Pass().And.HaveStdOutContaining("Hello, World!");
         }
 
         newProjectDir.Delete(true);
@@ -677,8 +752,7 @@ public class EndToEndTests : IDisposable
             $"/p:ContainerBaseImage={baseImage}",
             $"/p:ContainerRegistry={DockerRegistryManager.LocalRegistry}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={imageTag}")
             .WithEnvironmentVariable("NUGET_PACKAGES", privateNuGetAssets.FullName)
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute()
@@ -718,8 +792,7 @@ public class EndToEndTests : IDisposable
             "/t:PublishContainer",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={imageTag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
         commandResult.Should().Pass();
@@ -754,8 +827,7 @@ public class EndToEndTests : IDisposable
             "/p:RuntimeIdentifiers=\"linux-x64;linux-arm64\"",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={tag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={tag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
 
@@ -818,7 +890,6 @@ public class EndToEndTests : IDisposable
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
             $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true",
             "/bl")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
@@ -868,7 +939,6 @@ public class EndToEndTests : IDisposable
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
             $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true",
             "/bl")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
@@ -941,8 +1011,7 @@ public class EndToEndTests : IDisposable
             $"/p:ContainerArchiveOutputPath={archiveOutput}",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={tag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={tag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
 
@@ -1012,8 +1081,7 @@ public class EndToEndTests : IDisposable
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRegistry={registry}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={imageTag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
 
@@ -1026,7 +1094,6 @@ public class EndToEndTests : IDisposable
             .And.HaveStdOutContaining($"Pushed image '{imageX64}' to registry '{registry}'.")
             .And.HaveStdOutContaining($"Pushed image '{imageArm64}' to registry '{registry}'.")
             .And.HaveStdOutContaining($"Pushed image index '{imageIndex}' to registry '{registry}'.");
-
 
         // Check that the containers can be run
         // First pull the image from the registry for each platform
@@ -1044,7 +1111,7 @@ public class EndToEndTests : IDisposable
             imageFromRegistry)
             .Execute()
             .Should().Pass();
-        
+
         // Run the containers
         ContainerCli.RunCommand(
             _testOutput,
@@ -1087,8 +1154,7 @@ public class EndToEndTests : IDisposable
             "/p:ContainerRuntimeIdentifiers=linux-arm64",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={imageTag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={imageTag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute();
 
@@ -1138,8 +1204,7 @@ public class EndToEndTests : IDisposable
             "/p:RuntimeIdentifiers=\"linux-x64;linux-arm64\"",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={tag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={tag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute()
             .Should().Pass();
@@ -1203,8 +1268,7 @@ public class EndToEndTests : IDisposable
             "/p:RuntimeIdentifiers=\"linux-x64;linux-arm64\"",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={tag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={tag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute()
             .Should().Pass();
@@ -1290,8 +1354,7 @@ public class EndToEndTests : IDisposable
             "/p:RuntimeIdentifiers=\"linux-x64;linux-arm64\"",
             $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
             $"/p:ContainerRepository={imageName}",
-            $"/p:ContainerImageTag={tag}",
-            "/p:EnableSdkContainerSupport=true")
+            $"/p:ContainerImageTag={tag}")
             .WithWorkingDirectory(newProjectDir.FullName)
             .Execute()
             .Should().Pass();
@@ -1414,5 +1477,47 @@ public class EndToEndTests : IDisposable
             var binary = rid.StartsWith("win", StringComparison.Ordinal) ? $"{appName}.exe" : appName;
             return new[] { $"{workingDir}/{binary}" };
         }
+    }
+
+    [DockerAvailableFact(checkContainerdStoreAvailability: true)]
+    public void EnforcesOciSchemaForMultiRIDTarballOutput()
+    {
+        string imageName = NewImageName();
+        string tag = "1.0";
+
+        // Create new console app
+        DirectoryInfo newProjectDir = CreateNewProject("webapp");
+
+        // Run PublishContainer for multi-arch with ContainerGenerateLabels
+        var publishResult = new DotnetCommand(
+            _testOutput,
+            "publish",
+            "/t:PublishContainer",
+            "/p:RuntimeIdentifiers=\"linux-x64;linux-arm64\"",
+            $"/p:ContainerBaseImage={DockerRegistryManager.FullyQualifiedBaseImageAspNet}",
+            $"/p:ContainerRepository={imageName}",
+            $"/p:ContainerImageTag={tag}",
+            "/p:EnableSdkContainerSupport=true",
+            "/p:ContainerArchiveOutputPath=archive.tar.gz",
+            "-getProperty:GeneratedImageIndex",
+            "-getItem:GeneratedContainers",
+            "/bl")
+            .WithWorkingDirectory(newProjectDir.FullName)
+            .Execute();
+
+        publishResult.Should().Pass();
+        publishResult.StdOut.Should().NotBeNull();
+        var jsonDump = JsonDocument.Parse(publishResult.StdOut);
+        var index = JsonDocument.Parse(jsonDump.RootElement.GetProperty("Properties").GetProperty("GeneratedImageIndex").ToString());
+        var containers = jsonDump.RootElement.GetProperty("Items").GetProperty("GeneratedContainers").EnumerateArray().ToArray();
+
+        index.RootElement.GetProperty("mediaType").GetString().Should().Be("application/vnd.oci.image.index.v1+json");
+        containers.Should().HaveCount(2);
+        foreach (var container in containers)
+        {
+            container.GetProperty("ManifestMediaType").GetString().Should().Be("application/vnd.oci.image.manifest.v1+json");
+        }
+        // Cleanup
+        newProjectDir.Delete(true);
     }
 }

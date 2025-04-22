@@ -232,6 +232,11 @@ while [[ $# -gt 0 ]]; do
         -excludeCIBinarylog|-nobl)
             exclude_ci_binary_log=true
             ;;
+        -verbosity|-v)
+            shift
+            [ -z "${1:-}" ] && __error "Missing value for parameter --verbosity" && __usage
+            verbosity="${1:-}"
+            ;;
         -dotnet-runtime-source-feed|-dotnetruntimesourcefeed|-runtime-source-feed|-runtimesourcefeed)
             shift
             [ -z "${1:-}" ] && __error "Missing value for parameter --runtime-source-feed" && __usage
@@ -248,6 +253,12 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
+
+commandline_args=()
+
+if [ ${#msbuild_args[@]} -gt 0 ]; then
+    commandline_args=("${msbuild_args[@]}")
+fi
 
 if [ "$build_all" = true ]; then
     msbuild_args[${#msbuild_args[*]}]="-p:BuildAllProjects=true"
@@ -387,6 +398,10 @@ restore=true
 InitializeToolset
 
 restore=$_tmp_restore=
+
+if [ ${#commandline_args[@]} -gt 0 ]; then
+  toolset_build_args+=("${commandline_args[@]}")
+fi
 
 if [ "$build_repo_tasks" = true ]; then
     MSBuild $_InitializeToolset \

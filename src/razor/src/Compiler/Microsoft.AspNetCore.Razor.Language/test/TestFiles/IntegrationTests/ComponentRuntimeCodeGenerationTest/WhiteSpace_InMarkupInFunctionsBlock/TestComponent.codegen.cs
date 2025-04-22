@@ -54,10 +54,9 @@ for (var i = 0; i < 100; i++)
 #nullable disable
 
         __builder.OpenElement(1, "li");
-        __builder.AddContent(2, 
 #nullable restore
-#line (9,22)-(9,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-i
+#line (9,22)-(9,23) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(2, i
 
 #line default
 #line hidden

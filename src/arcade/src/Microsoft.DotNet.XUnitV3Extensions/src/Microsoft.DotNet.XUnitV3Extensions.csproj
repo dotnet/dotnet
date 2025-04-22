@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetMinimum);netstandard2.0;net472</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <Description>This package provides things like various traits and discovers like OuterLoop/ActiveIssue that are used by .NET test projects.</Description>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
+    <DefineConstants>$(DefineConstants);USES_XUNIT_3</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.extensibility.core" />
+
+    <Using Include="Xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true" />
+    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true" />
+  </ItemGroup>
+
+  <Import Project="..\..\Microsoft.DotNet.XUnitExtensions.Shared\Microsoft.DotNet.XUnitExtensions.Shared.projitems" Label="Shared" />
+
+</Project>

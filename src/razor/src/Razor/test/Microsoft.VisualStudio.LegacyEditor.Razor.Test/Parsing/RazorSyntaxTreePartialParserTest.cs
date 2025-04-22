@@ -357,9 +357,9 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     private static void RunPartialParseRejectionTest(TestEdit edit, PartialParseResultInternal additionalFlags = 0)
     {
         var templateEngine = CreateProjectEngine();
-        var document = TestRazorCodeDocument.Create(edit.OldSnapshot.GetText());
-        templateEngine.Engine.Process(document);
-        var syntaxTree = document.GetSyntaxTree();
+        var codeDocument = templateEngine.CreateCodeDocument(edit.OldSnapshot.GetText());
+        templateEngine.Engine.Process(codeDocument);
+        var syntaxTree = codeDocument.GetSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         var (result, _) = parser.Parse(edit.Change);
@@ -369,9 +369,9 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     private void RunPartialParseTest(TestEdit edit, PartialParseResultInternal additionalFlags = 0)
     {
         var templateEngine = CreateProjectEngine();
-        var document = TestRazorCodeDocument.Create(edit.OldSnapshot.GetText());
-        templateEngine.Engine.Process(document);
-        var syntaxTree = document.GetSyntaxTree();
+        var codeDocument = templateEngine.CreateCodeDocument(edit.OldSnapshot.GetText());
+        templateEngine.Engine.Process(codeDocument);
+        var syntaxTree = codeDocument.GetSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         var (result, _) = parser.Parse(edit.Change);
@@ -406,7 +406,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
                 builder.AddTagHelpers(tagHelpers);
             }
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         return projectEngine;

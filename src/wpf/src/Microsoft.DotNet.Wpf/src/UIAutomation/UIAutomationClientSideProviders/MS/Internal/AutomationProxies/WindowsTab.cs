@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 /***************************************************************************\
 *
@@ -23,7 +22,7 @@ using NativeMethodsSetLastError = MS.Internal.UIAutomationClientSideProviders.Na
 
 namespace MS.Internal.AutomationProxies
 {
-    class WindowsTab: ProxyHwnd, ISelectionProvider, IScrollProvider, IRawElementProviderHwndOverride
+    internal class WindowsTab: ProxyHwnd, ISelectionProvider, IScrollProvider, IRawElementProviderHwndOverride
     {
         // ------------------------------------------------------
         //
@@ -857,7 +856,7 @@ namespace MS.Internal.AutomationProxies
         #region Selection Helper
 
         // detect if tab-control supports multiple selection
-        static internal bool SupportMultipleSelection (IntPtr hwnd)
+        internal static bool SupportMultipleSelection (IntPtr hwnd)
         {
             return Misc.IsBitSet(Misc.GetWindowStyle(hwnd), (NativeMethods.TCS_BUTTONS | NativeMethods.TCS_MULTISELECT));
         }
@@ -875,7 +874,7 @@ namespace MS.Internal.AutomationProxies
         private const int SpinControl = -2;
 
         // Updown specific events.
-        private readonly static WinEventTracker.EvtIdProperty[] _upDownEvents;
+        private static readonly WinEventTracker.EvtIdProperty[] _upDownEvents;
 
         #endregion
     }
@@ -888,7 +887,7 @@ namespace MS.Internal.AutomationProxies
 
     #region WindowsTabItem
 
-    class WindowsTabItem : ProxyFragment, ISelectionItemProvider, IScrollItemProvider
+    internal class WindowsTabItem : ProxyFragment, ISelectionItemProvider, IScrollItemProvider
     {
         // ------------------------------------------------------
         //
@@ -1066,7 +1065,7 @@ namespace MS.Internal.AutomationProxies
                 throw new InvalidOperationException(SR.OperationCannotBePerformed);
             }
 
-            if (((ISelectionItemProvider)this).IsSelected == false)
+            if (!((ISelectionItemProvider)this).IsSelected)
             {
                 Select();
             }
@@ -1094,7 +1093,7 @@ namespace MS.Internal.AutomationProxies
             }
 
             // If multiple selections allowed, add requested selection
-            if (WindowsTab.SupportMultipleSelection(_hwnd) == true)
+            if (WindowsTab.SupportMultipleSelection(_hwnd))
             {
                 // Press ctrl and mouse click tab
                 NativeMethods.Win32Point pt = new NativeMethods.Win32Point();
@@ -1131,7 +1130,7 @@ namespace MS.Internal.AutomationProxies
             }
 
             // If multiple selections allowed, unselect element
-            if (WindowsTab.SupportMultipleSelection(_hwnd) == true)
+            if (WindowsTab.SupportMultipleSelection(_hwnd))
             {
                 NativeMethods.Win32Point pt = new NativeMethods.Win32Point();
                 if (GetClickablePoint(out pt, true))
@@ -1175,7 +1174,7 @@ namespace MS.Internal.AutomationProxies
 
                     if (!XSendMessage.GetItem(_hwnd, _item, ref TCItem))
                     {
-                        System.Diagnostics.Debug.Assert(false, "XSendMessage.GetItem() failed!");
+                        System.Diagnostics.Debug.Fail("XSendMessage.GetItem() failed!");
                         return false;
                     }
 
@@ -1358,7 +1357,7 @@ namespace MS.Internal.AutomationProxies
         #region Private Fields
 
         // Cached value for a winform
-        bool _fIsWinform;
+        private bool _fIsWinform;
 
         #endregion Private Fields
     }
@@ -1373,7 +1372,7 @@ namespace MS.Internal.AutomationProxies
 
     #region WindowsTabChildOverrideProxy
 
-    class WindowsTabChildOverrideProxy : ProxyHwnd
+    internal class WindowsTabChildOverrideProxy : ProxyHwnd
     {
         // ------------------------------------------------------
         //

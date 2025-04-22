@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 //---------------------------------------------------------------------------
@@ -947,7 +946,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // connect to a new mentor
-                                    void ConnectMentor(DependencyObject mentor)
+                                    private void ConnectMentor(DependencyObject mentor)
                                     {
                                         FrameworkObject foMentor = new FrameworkObject(mentor);
 
@@ -981,7 +980,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // disconnect from an old mentor
-                                    void DisconnectMentor(DependencyObject mentor)
+                                    private void DisconnectMentor(DependencyObject mentor)
                                     {
                                         FrameworkObject foMentor = new FrameworkObject(mentor);
 
@@ -1031,7 +1030,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // handle the Loaded event from the mentor
-                                    void OnMentorLoaded(object sender, RoutedEventArgs e)
+                                    private void OnMentorLoaded(object sender, RoutedEventArgs e)
                                     {
                                         FrameworkObject foMentor = new FrameworkObject((DependencyObject)sender);
 
@@ -1045,7 +1044,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // handle the Unloaded event from the mentor
-                                    void OnMentorUnloaded(object sender, RoutedEventArgs e)
+                                    private void OnMentorUnloaded(object sender, RoutedEventArgs e)
                                     {
                                         FrameworkObject foMentor = new FrameworkObject((DependencyObject)sender);
 
@@ -1058,7 +1057,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                         BroadcastEventHelper.BroadcastUnloadedSynchronously(this, IsLoaded);
                                     }
 
-                                    void ConnectLoadedEvents(ref FrameworkObject foMentor, bool isLoaded)
+                                    private void ConnectLoadedEvents(ref FrameworkObject foMentor, bool isLoaded)
                                     {
                                         if (foMentor.IsValid)
                                         {
@@ -1073,7 +1072,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                         }
                                     }
 
-                                    void DisconnectLoadedEvents(ref FrameworkObject foMentor, bool isLoaded)
+                                    private void DisconnectLoadedEvents(ref FrameworkObject foMentor, bool isLoaded)
                                     {
                                         if (foMentor.IsValid)
                                         {
@@ -1089,7 +1088,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // handle the InheritedPropertyChanged event from the mentor
-                                    void OnMentorInheritedPropertyChanged(object sender, InheritedPropertyChangedEventArgs e)
+                                    private void OnMentorInheritedPropertyChanged(object sender, InheritedPropertyChangedEventArgs e)
                                     {
                                         TreeWalkHelper.InvalidateOnInheritablePropertyChange(
                                                 [[conditional(instance.ClassName == "FrameworkElement")]]this, null,[[/conditional]]
@@ -1098,7 +1097,7 @@ namespace MS.Internal.MilCodeGen.ResourceModel
                                     }
 
                                     // handle the ResourcesChanged event from the mentor
-                                    void OnMentorResourcesChanged(object sender, EventArgs e)
+                                    private void OnMentorResourcesChanged(object sender, EventArgs e)
                                     {
                                         TreeWalkHelper.InvalidateOnResourcesChange(
                                                 [[conditional(instance.ClassName == "FrameworkElement")]]this, null,[[/conditional]]

@@ -22,14 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETStandard1.1">
-        <dependency id="NETStandard.Library" version="1.6.1" />
-      </group>
-      <group targetFramework=".NETStandard1.3">
-        <dependency id="NETStandard.Library" version="1.6.1" />
-        <dependency id="System.Dynamic.Runtime" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Reflection.TypeExtensions" version="4.4.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
   </metadata>

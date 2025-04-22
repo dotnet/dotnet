@@ -327,6 +327,62 @@ namespace NuGet.Commands.Test
             }
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task CommitAsync_WithExistingDGSpecAndDidDGHashChange_WritesDependencyGraphSpecWhenDGHashChanged(bool didDGHashChange)
+        {
+            // Arrange
+            using var td = TestDirectory.Create();
+            var path = Path.Combine(td, "project.assets.json");
+            var cachePath = Path.Combine(td, "project.csproj.nuget.cache");
+            var dgSpecPath = Path.Combine(td, "project1.nuget.g.dgspec.json");
+            File.WriteAllText(dgSpecPath, "{}");
+
+            var dgSpec = new DependencyGraphSpec();
+            var configJson = @"
+                {
+                    ""dependencies"": {
+                    },
+                     ""frameworks"": {
+                        ""net45"": { }
+                    }
+                }";
+
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson, "TestProject", Path.Combine(td, "project.csproj")).WithTestRestoreMetadata();
+            dgSpec.AddProject(spec);
+            dgSpec.AddRestore(spec.Name);
+
+            var logger = new TestLogger();
+            var result = new RestoreResult(
+                success: true,
+                restoreGraphs: null,
+                compatibilityCheckResults: null,
+                lockFile: new LockFile(),
+                previousLockFile: null, // different lock file
+                lockFilePath: path,
+                msbuildFiles: Enumerable.Empty<MSBuildOutputFile>(),
+                cacheFile: new CacheFile("NotSoRandomString"),
+                cacheFilePath: cachePath,
+                packagesLockFilePath: null,
+                packagesLockFile: null,
+                dependencyGraphSpecFilePath: dgSpecPath,
+                dependencyGraphSpec: dgSpec,
+                projectStyle: ProjectStyle.Unknown,
+                elapsedTime: TimeSpan.MinValue)
+            {
+                DidDGHashChange = didDGHashChange
+            };
+
+            // Act
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            Assert.Empty(logger.MinimalMessages);
+            Assert.Equal(didDGHashChange, logger.VerboseMessages.Contains($"Persisting dg to {dgSpecPath}"));
+            Assert.True(File.Exists(dgSpecPath));
+        }
+
         [Fact]
         public void WhenRestoreResult_LogMessagesAreSourcedFromTheAssetsFile()
         {

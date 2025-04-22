@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -16,7 +15,7 @@ internal partial class RazorCustomMessageTarget
 {
     // Called by the Razor Language Server to invoke a razor/htmlFormatting request on the virtual Html buffer.
     [JsonRpcMethod(CustomMessageNames.RazorHtmlFormattingEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public async Task<RazorDocumentFormattingResponse> HtmlFormattingAsync(RazorDocumentFormattingParams request, CancellationToken cancellationToken)
+    public async Task<RazorDocumentFormattingResponse?> HtmlFormattingAsync(RazorDocumentFormattingParams request, CancellationToken cancellationToken)
     {
         var response = new RazorDocumentFormattingResponse() { Edits = Array.Empty<TextEdit>() };
 
@@ -32,7 +31,7 @@ internal partial class RazorCustomMessageTarget
         if (!synchronized || htmlDocument is null)
         {
             Debug.Fail("RangeFormatting not synchronized.");
-            return response;
+            return null;
         }
 
         var projectedUri = htmlDocument.Uri;
@@ -51,14 +50,19 @@ internal partial class RazorCustomMessageTarget
             formattingParams,
             cancellationToken).ConfigureAwait(false);
 
-        response.Edits = edits?.Response ?? Array.Empty<TextEdit>();
+        if (edits?.Response is null)
+        {
+            return null;
+        }
+
+        response.Edits = edits.Response;
 
         return response;
     }
 
     // Called by the Razor Language Server to invoke a razor/htmlOnTypeFormatting request on the virtual Html buffer.
     [JsonRpcMethod(CustomMessageNames.RazorHtmlOnTypeFormattingEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public async Task<RazorDocumentFormattingResponse> HtmlOnTypeFormattingAsync(RazorDocumentOnTypeFormattingParams request, CancellationToken cancellationToken)
+    public async Task<RazorDocumentFormattingResponse?> HtmlOnTypeFormattingAsync(RazorDocumentOnTypeFormattingParams request, CancellationToken cancellationToken)
     {
         var response = new RazorDocumentFormattingResponse() { Edits = Array.Empty<TextEdit>() };
 
@@ -69,7 +73,7 @@ internal partial class RazorCustomMessageTarget
 
         if (!synchronized || htmlDocument is null)
         {
-            return response;
+            return null;
         }
 
         var formattingParams = new DocumentOnTypeFormattingParams()
@@ -88,7 +92,12 @@ internal partial class RazorCustomMessageTarget
             formattingParams,
             cancellationToken).ConfigureAwait(false);
 
-        response.Edits = edits?.Response ?? Array.Empty<TextEdit>();
+        if (edits?.Response is null)
+        {
+            return null;
+        }
+
+        response.Edits = edits.Response;
 
         return response;
     }

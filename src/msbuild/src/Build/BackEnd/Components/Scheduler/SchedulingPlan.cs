@@ -363,9 +363,8 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         private void ReadHierarchy(StreamReader file)
         {
-            while (!file.EndOfStream)
+            while (file.ReadLine() is string line)
             {
-                string line = file.ReadLine();
                 if (line.Length == 0)
                 {
                     return;
@@ -394,15 +393,14 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         private void ReadTimes(StreamReader file)
         {
-            while (!file.EndOfStream)
+            while (file.ReadLine() is string line)
             {
-                string line = file.ReadLine();
                 if (line.Length == 0)
                 {
                     return;
                 }
 
-                string[] values = line.Split(MSBuildConstants.SemicolonChar);
+                string[] values = line.Split(MSBuildConstants.SpaceChar);
                 if (values.Length < 3)
                 {
                     throw new InvalidDataException("Too few values in build plan.");

@@ -2,19 +2,20 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>System.Reflection.MetadataLoadContext</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
+    <ProjectReference Include="../../system.collections.immutable/6.0.0/System.Collections.Immutable.6.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/6.0.0/System.Reflection.Metadata.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <ProjectReference Include="../../system.collections.immutable/6.0.0/System.Collections.Immutable.6.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/6.0.0/System.Reflection.Metadata.6.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.4/System.Memory.4.5.4.csproj" />
   </ItemGroup>
 
 </Project>

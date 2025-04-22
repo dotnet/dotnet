@@ -4,7 +4,6 @@
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -14,7 +13,7 @@ internal static class VSInternalCompletionListExtensions
     private const string ResultIdKey = "_resultId";
 
     public static void SetResultId(
-        this VSInternalCompletionList completionList,
+        this RazorVSInternalCompletionList completionList,
         int resultId,
         VSInternalCompletionSetting? completionSetting)
     {

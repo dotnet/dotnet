@@ -6,10 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -109,7 +108,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             {
                 Uri = new Uri(razorFilePath)
             },
-            Range = VsLspFactory.CreateRange(startLine, starChar, endLine, endChar)
+            Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
         Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -140,7 +139,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             {
                 Uri = new Uri(razorFilePath)
             },
-            Range = VsLspFactory.CreateRange(0, 0, codeDocument.Source.Text.Lines.Count, 0)
+            Range = LspFactory.CreateRange(0, 0, codeDocument.Source.Text.Lines.Count, 0)
         };
         Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);

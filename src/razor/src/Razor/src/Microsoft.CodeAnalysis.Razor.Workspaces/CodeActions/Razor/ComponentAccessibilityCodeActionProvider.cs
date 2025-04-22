@@ -13,13 +13,12 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -82,7 +81,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
 
     private static bool IsApplicableTag(IStartTagSyntaxNode startTag)
     {
-        if (startTag.Name.FullWidth == 0)
+        if (startTag.Name.Width == 0)
         {
             // Empty tag name, we shouldn't show a light bulb just to create an empty file.
             return false;
@@ -133,7 +132,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         var haveAddedNonQualifiedFix = false;
 
         // First see if there are any components that match in name, but not case, without qualification
-        foreach (var t in context.CodeDocument.GetTagHelperContext().TagHelpers)
+        foreach (var t in context.CodeDocument.GetRequiredTagHelperContext().TagHelpers)
         {
             if (t.TagMatchingRules is [{ CaseSensitive: true } rule] &&
                 rule.TagName.Equals(startTag.Name.Content, StringComparison.OrdinalIgnoreCase) &&
@@ -280,17 +279,17 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
 
     private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, IStartTagSyntaxNode startTag, string newTagName)
     {
-        using var textEdits = new PooledArrayBuilder<TextEdit>();
+        using var textEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
 
-        var startTagTextEdit = VsLspFactory.CreateTextEdit(startTag.Name.GetRange(context.CodeDocument.Source), newTagName);
+        var startTagTextEdit = LspFactory.CreateTextEdit(startTag.Name.GetRange(context.CodeDocument.Source), newTagName);
 
         textEdits.Add(startTagTextEdit);
 
         var endTag = (startTag.Parent as MarkupElementSyntax)?.EndTag;
         if (endTag != null)
         {
-            var endTagTextEdit = VsLspFactory.CreateTextEdit(endTag.Name.GetRange(context.CodeDocument.Source), newTagName);
+            var endTagTextEdit = LspFactory.CreateTextEdit(endTag.Name.GetRange(context.CodeDocument.Source), newTagName);
             textEdits.Add(endTagTextEdit);
         }
 

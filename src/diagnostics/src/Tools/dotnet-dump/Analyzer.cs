@@ -27,6 +27,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
             : base(HostType.DotnetDump)
         {
             DiagnosticLoggingService.Initialize();
+            DacSignatureVerificationEnabled  = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? true : false;
 
             _consoleService = new ConsoleService();
             _fileLoggingConsoleService = new FileLoggingConsoleService(_consoleService);

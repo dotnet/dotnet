@@ -42,7 +42,7 @@ public unsafe class ClipboardCoreTests
         static HRESULT IOleServices.OleFlushClipboard() => throw new NotImplementedException();
         static unsafe HRESULT IOleServices.OleGetClipboard(IDataObject** dataObject) => throw new NotImplementedException();
         static unsafe HRESULT IOleServices.OleSetClipboard(IDataObject* dataObject) => throw new NotImplementedException();
-        static unsafe bool IOleServices.TryGetBitmapFromDataObject<T>(IDataObject* dataObject, [NotNullWhen(true)] out T data) => throw new NotImplementedException();
+        static unsafe bool IOleServices.TryGetObjectFromDataObject<T>(IDataObject* dataObject, string requestedFormat, [NotNullWhen(true)] out T data) => throw new NotImplementedException();
         static void IOleServices.ValidateDataStoreData(ref string format, bool autoConvert, object? data) => throw new NotImplementedException();
     }
 
@@ -130,7 +130,7 @@ public unsafe class ClipboardCoreTests
     }
 
     [Fact]
-    public void Clipboard_DerivedDataObject_DataPresent()
+    public void DerivedDataObject_DataPresent()
     {
         // https://github.com/dotnet/winforms/issues/12789
         SomeDataObject data = new();
@@ -151,5 +151,32 @@ public unsafe class ClipboardCoreTests
 
         public override bool GetDataPresent(string format, bool autoConvert)
             => format == Format || base.GetDataPresent(format, autoConvert);
+    }
+
+    [Fact]
+    public void SerializableObject_InProcess_DoesNotUseBinaryFormatter()
+    {
+        // This test ensures that the SerializableObject does not use BinaryFormatter when running in process.
+        using ClipboardScope scope = new();
+
+        DataObject dataObject = new();
+        SerializablePerson person = new() { Name = "John Doe", Age = 30 };
+        dataObject.SetData(person);
+        HRESULT result = ClipboardCore.SetData(dataObject, copy: false, retryTimes: 1, retryDelay: 0);
+        result.Should().Be(HRESULT.S_OK);
+
+        result = ClipboardCore.GetDataObject<DataObject, ITestDataObject>(out var data, retryTimes: 1, retryDelay: 0);
+        result.Should().Be(HRESULT.S_OK);
+        data.Should().NotBeNull();
+        data!.GetDataPresent(typeof(SerializablePerson).FullName!).Should().BeTrue();
+
+        data.GetData(typeof(SerializablePerson).FullName!).Should().BeSameAs(person);
+    }
+
+    [Serializable]
+    internal class SerializablePerson
+    {
+        public string Name { get; set; } = "DefaultName";
+        public int Age { get; set; }
     }
 }

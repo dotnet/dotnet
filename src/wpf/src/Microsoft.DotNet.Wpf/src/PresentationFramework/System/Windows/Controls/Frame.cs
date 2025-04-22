@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description:
@@ -562,7 +561,7 @@ namespace System.Windows.Controls
             // post it from the LoadedHandler.  This guarantees that
             // we don't fire ContentRendered on a subtree that is not
             // connected to a PresentationSource
-            if (IsLoaded == true)
+            if (IsLoaded)
             {
                 PostContentRendered();
             }
@@ -572,7 +571,7 @@ namespace System.Windows.Controls
                 // that we deferred to the Loaded event to PostConetentRendered
                 // for the previous content change and Loaded has not fired yet.
                 // Thus we don't want to hook up another event handler
-                if (_postContentRenderedFromLoadedHandler == false)
+                if (!_postContentRenderedFromLoadedHandler)
                 {
                     this.Loaded += new RoutedEventHandler(LoadedHandler);
                     _postContentRenderedFromLoadedHandler = true;
@@ -582,7 +581,7 @@ namespace System.Windows.Controls
 
         private void LoadedHandler(object sender, RoutedEventArgs args)
         {
-            if (_postContentRenderedFromLoadedHandler == true)
+            if (_postContentRenderedFromLoadedHandler)
             {
                 PostContentRendered();
                 _postContentRenderedFromLoadedHandler = false;

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Xunit;
@@ -38,7 +39,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         _serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer([]);
+                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
                 b.AddExport(startupInitializer);
             }));
 
@@ -624,7 +625,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         // Act & Assert
         await host.GetTestAccessor().InitializeAsync();
@@ -639,7 +640,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         // Act & Assert
         await Task.Run(async () => await host.GetTestAccessor().InitializeAsync());
@@ -658,7 +659,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -704,7 +705,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -732,14 +733,14 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Legacy, document.FileKind);
+                Assert.Equal(RazorFileKind.Legacy, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         await Task.Run(async () => await host.DisposeAsync());
@@ -758,7 +759,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     public void IntermediateOutputPathCalculationHandlesRelativePaths(string baseIntermediateOutputPath, string intermediateOutputPath, string expectedCombinedIOP)
     {
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var state = TestProjectRuleSnapshot.CreateProperties(
             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
@@ -786,7 +787,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     public void IntermediateOutputPathCalculationHandlesRelativePaths_BaseIntermediateOutputPath(string baseIntermediateOutputPath, string msbuildProjectDirectoryPropertyName, string intermediateOutputPath, string expectedCombinedIOP)
     {
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var state = TestProjectRuleSnapshot.CreateProperties(
             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
@@ -830,7 +831,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -883,7 +884,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -938,7 +939,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -966,7 +967,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.ComponentImport, document.FileKind);
+                Assert.Equal(RazorFileKind.ComponentImport, document.FileKind);
             },
             d =>
             {
@@ -979,7 +980,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         // Act - 2
@@ -1027,35 +1028,35 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.AnotherProjectNestedFile3.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.AnotherProjectNestedFile3.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Legacy, document.FileKind);
+                Assert.Equal(RazorFileKind.Legacy, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.AnotherProjectNestedComponentFile3.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.AnotherProjectNestedComponentFile3.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.ComponentImport, document.FileKind);
+                Assert.Equal(RazorFileKind.ComponentImport, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Legacy, document.FileKind);
+                Assert.Equal(RazorFileKind.Legacy, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         await Task.Run(async () => await host.DisposeAsync());
@@ -1095,7 +1096,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1171,7 +1172,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1252,7 +1253,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1274,14 +1275,14 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Legacy, document.FileKind);
+                Assert.Equal(RazorFileKind.Legacy, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         // Act - 2
@@ -1300,14 +1301,14 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Legacy, document.FileKind);
+                Assert.Equal(RazorFileKind.Legacy, document.FileKind);
             },
             d =>
             {
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         await Task.Run(async () => await host.DisposeAsync());
@@ -1350,7 +1351,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, TestLanguageServerFeatureOptions.Instance);
 
         var testAccessor = host.GetTestAccessor();
 
@@ -1378,7 +1379,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentImportFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.ComponentImport, document.FileKind);
+                Assert.Equal(RazorFileKind.ComponentImport, document.FileKind);
             },
             d =>
             {
@@ -1391,7 +1392,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
                 var document = project.GetRequiredDocument(d);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
                 Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-                Assert.Equal(FileKinds.Component, document.FileKind);
+                Assert.Equal(RazorFileKind.Component, document.FileKind);
             });
 
         // Act - 2

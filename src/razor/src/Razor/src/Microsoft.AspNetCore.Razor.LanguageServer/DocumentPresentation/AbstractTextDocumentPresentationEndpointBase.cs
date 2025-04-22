@@ -3,20 +3,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
@@ -57,14 +57,9 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex) != true)
+        if (!sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex))
         {
             return null;
         }
@@ -133,7 +128,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
                 continue;
             }
 
-            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits);
+            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e));
             if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
@@ -182,23 +177,25 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         return remappedDocumentEdits.ToArray();
     }
 
-    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, TextEdit[] edits)
+    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> edits)
     {
+        using var mappedEdits = new PooledArrayBuilder<TextEdit>();
         if (!mapRanges)
         {
-            return edits;
+            mappedEdits.AddRange(edits.Select(e => (TextEdit)e));
         }
-
-        using var mappedEdits = new PooledArrayBuilder<TextEdit>();
-        foreach (var edit in edits)
+        else
         {
-            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), edit.Range, out var newRange))
+            foreach (var edit in edits)
             {
-                return [];
-            }
+                if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), ((TextEdit)edit).Range, out var newRange))
+                {
+                    return [];
+                }
 
-            var newEdit = VsLspFactory.CreateTextEdit(newRange, edit.NewText);
-            mappedEdits.Add(newEdit);
+                var newEdit = LspFactory.CreateTextEdit(newRange, ((TextEdit)edit).NewText);
+                mappedEdits.Add(newEdit);
+            }
         }
 
         return mappedEdits.ToArray();

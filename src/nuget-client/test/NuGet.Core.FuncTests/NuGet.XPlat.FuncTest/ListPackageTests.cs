@@ -393,6 +393,8 @@ namespace NuGet.XPlat.FuncTest
             Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.Count);
             Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.Count);
             Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().Vulnerabilities.Count);
+            Assert.Equal("0.0.9", result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().RequestedVersion);
+            Assert.Equal("1.0.0", result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().ResolvedVersion);
             Assert.Equal(2, result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().Severity);
             Assert.Equal("https://test/", result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().AdvisoryUrl.ToString());
         }
@@ -500,7 +502,7 @@ namespace NuGet.XPlat.FuncTest
 
         private static SimpleTestProjectContext SetupTestProject(SimpleTestPathContext pathContext)
         {
-            var package = new SimpleTestPackageContext { Id = "task", Version = "1.0.0" };
+            var package = new SimpleTestPackageContext { Id = "task", Version = "0.0.9" };
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             var project = SimpleTestProjectContext.CreateNETCore("ProjectA", pathContext.SolutionRoot, NuGetFramework.Parse("net8.0"));

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal;
 using MS.Internal.Documents;
@@ -432,7 +431,7 @@ namespace System.Windows.Documents
                 cdb = cdb.PreviousBlock;
             }
 
-            Debug.Assert(false, "should never be here");
+            Debug.Fail("should never be here");
             return 0;
         }
         #endregion Internal Methods

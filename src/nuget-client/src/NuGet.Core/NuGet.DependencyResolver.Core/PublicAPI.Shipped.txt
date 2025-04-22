@@ -109,6 +109,7 @@ NuGet.DependencyResolver.RemoteResolveResult.RemoteResolveResult() -> void
 NuGet.DependencyResolver.RemoteWalkContext
 NuGet.DependencyResolver.RemoteWalkContext.CacheContext.get -> NuGet.Protocol.Core.Types.SourceCacheContext!
 NuGet.DependencyResolver.RemoteWalkContext.FilterDependencyProvidersForLibrary(NuGet.LibraryModel.LibraryRange! libraryRange) -> System.Collections.Generic.IList<NuGet.DependencyResolver.IRemoteDependencyProvider!>!
+NuGet.DependencyResolver.RemoteWalkContext.GetUnresolvedRemoteMatchesAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.HashSet<NuGet.DependencyResolver.RemoteMatch!>!>!
 NuGet.DependencyResolver.RemoteWalkContext.IsMsBuildBased.get -> bool
 NuGet.DependencyResolver.RemoteWalkContext.IsMsBuildBased.set -> void
 NuGet.DependencyResolver.RemoteWalkContext.LocalLibraryProviders.get -> System.Collections.Generic.IList<NuGet.DependencyResolver.IRemoteDependencyProvider!>!

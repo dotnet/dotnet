@@ -4,17 +4,21 @@
 using System;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.Discovery;
@@ -56,7 +60,7 @@ internal class OutOfProcTagHelperResolver(
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, $"Error encountered from project '{projectSnapshot.FilePath}':{Environment.NewLine}{ex}");
-            return default;
+            // if not cancellation, try getting tag helpers in-proc
         }
 
         try
@@ -87,39 +91,52 @@ internal class OutOfProcTagHelperResolver(
 
         if (deltaResult is null)
         {
+            // For some reason, TryInvokeAsync can return null if it is cancelled while fetching the client.
             return default;
         }
 
         // Apply the delta we received to any cached checksums for the current project.
         var checksums = ProduceChecksumsFromDelta(project.Id, lastResultId, deltaResult);
 
-        using var tagHelpers = new PooledArrayBuilder<TagHelperDescriptor>(capacity: checksums.Length);
-        using var checksumsToFetch = new PooledArrayBuilder<Checksum>(capacity: checksums.Length);
+        // Create an array to hold the result. We'll wrap it in an ImmutableArray at the end.
+        var result = new TagHelperDescriptor[checksums.Length];
 
-        foreach (var checksum in checksums)
+        // We need to keep track of which checksums we still need to fetch tag helpers for from OOP.
+        // In addition, we'll track the indices in tagHelpers that we'll need to replace with those we
+        // fetch to ensure that the results stay in the same order.
+        using var checksumsToFetchBuilder = new PooledArrayBuilder<Checksum>(capacity: checksums.Length);
+        using var checksumIndicesBuilder = new PooledArrayBuilder<int>(capacity: checksums.Length);
+
+        for (var i = 0; i < checksums.Length; i++)
         {
+            var checksum = checksums[i];
+
             // See if we have a cached version of this tag helper. If not, we'll need to fetch it from OOP.
             if (TagHelperCache.Default.TryGet(checksum, out var tagHelper))
             {
-                tagHelpers.Add(tagHelper);
+                result[i] = tagHelper;
             }
             else
             {
-                checksumsToFetch.Add(checksum);
+                checksumsToFetchBuilder.Add(checksum);
+                checksumIndicesBuilder.Add(i);
             }
         }
 
-        if (checksumsToFetch.Count > 0)
+        if (checksumsToFetchBuilder.Count > 0)
         {
+            var checksumsToFetch = checksumsToFetchBuilder.DrainToImmutable();
+
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
             var fetchResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
                 project.Solution,
                 (service, solutionInfo, innerCancellationToken) =>
-                    service.FetchTagHelpersAsync(solutionInfo, projectHandle, checksumsToFetch.DrainToImmutable(), innerCancellationToken),
+                    service.FetchTagHelpersAsync(solutionInfo, projectHandle, checksumsToFetch, innerCancellationToken),
                 cancellationToken);
 
             if (fetchResult is null)
             {
+                // For some reason, TryInvokeAsync can return null if it is cancelled while fetching the client.
                 return default;
             }
 
@@ -131,16 +148,49 @@ internal class OutOfProcTagHelperResolver(
                 throw new InvalidOperationException("Tag helpers could not be fetched from the Roslyn OOP.");
             }
 
+            Debug.Assert(
+                checksumsToFetch.Length == fetchedTagHelpers.Length,
+                $"{nameof(FetchTagHelpersResult)} should return the same number of tag helpers as checksums requested.");
+
+            Debug.Assert(
+                checksumsToFetch.SequenceEqual(fetchedTagHelpers.Select(static t => t.Checksum)),
+                $"{nameof(FetchTagHelpersResult)} should return tag helpers that match the checksums requested.");
+
             // Be sure to add the tag helpers we just fetched to the cache.
             var cache = TagHelperCache.Default;
-            foreach (var tagHelper in fetchedTagHelpers)
+
+            for (var i = 0; i < fetchedTagHelpers.Length; i++)
             {
-                tagHelpers.Add(tagHelper);
-                cache.TryAdd(tagHelper.Checksum, tagHelper);
+                var index = checksumIndicesBuilder[i];
+                Debug.Assert(result[index] is null);
+
+                var fetchedTagHelper = fetchedTagHelpers[i];
+                result[index] = fetchedTagHelper;
+                cache.TryAdd(fetchedTagHelper.Checksum, fetchedTagHelper);
+            }
+
+            if (checksumsToFetch.Length != fetchedTagHelpers.Length)
+            {
+                _logger.LogWarning($"Expected to receive {checksumsToFetch.Length} tag helpers from Roslyn OOP, " +
+                    $"but received {fetchedTagHelpers.Length} instead. Returning a partial set of tag helpers.");
+
+                // We didn't receive all the tag helpers we requested. This is bad. However, instead of failing,
+                // we'll just return the tag helpers we were able to retrieve.
+                using var resultBuilder = new PooledArrayBuilder<TagHelperDescriptor>(capacity: result.Length);
+
+                foreach (var tagHelper in result)
+                {
+                    if (tagHelper is not null)
+                    {
+                        resultBuilder.Add(tagHelper);
+                    }
+                }
+
+                return resultBuilder.DrainToImmutable();
             }
         }
 
-        return tagHelpers.DrainToImmutable();
+        return ImmutableCollectionsMarshal.AsImmutableArray(result);
     }
 
     // Protected virtual for testing

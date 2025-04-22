@@ -105,7 +105,7 @@ internal static class SyntaxNodeExtensions
         var location = node.GetSourceLocation(source);
         var endLocation = source.Text.Lines.GetLinePosition(node.EndPosition);
         var lineCount = endLocation.Line - location.LineIndex;
-        return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, node.FullWidth, lineCount, endLocation.Character);
+        return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, node.Width, lineCount, endLocation.Character);
     }
 
     /// <summary>

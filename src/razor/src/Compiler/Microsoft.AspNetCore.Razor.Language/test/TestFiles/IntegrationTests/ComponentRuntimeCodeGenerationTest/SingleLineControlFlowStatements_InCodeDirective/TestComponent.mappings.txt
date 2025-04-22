@@ -22,13 +22,13 @@ Generated Location: (935:28,0 [213] )
 
 Source Location: (293:8,20 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |output|
-Generated Location: (1402:44,0 [6] )
+Generated Location: (1395:43,24 [6] )
 |output|
 
 Source Location: (305:9,0 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |    }
 |
-Generated Location: (1589:53,0 [7] )
+Generated Location: (1582:52,0 [7] )
 |    }
 |
 

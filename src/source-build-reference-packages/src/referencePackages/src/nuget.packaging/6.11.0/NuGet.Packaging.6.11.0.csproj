@@ -2,22 +2,23 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.11.0</PackageVersion>
     <AssemblyName>NuGet.Packaging</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="NuGet.Configuration" Version="6.11.0" />
-    <PackageReference Include="NuGet.Versioning" Version="6.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
+    <ProjectReference Include="../../nuget.configuration/6.11.0/NuGet.Configuration.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.versioning/6.11.0/NuGet.Versioning.6.11.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.4/System.Security.Cryptography.Pkcs.6.0.4.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.Configuration" Version="6.11.0" />
-    <PackageReference Include="NuGet.Versioning" Version="6.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
+    <ProjectReference Include="../../nuget.configuration/6.11.0/NuGet.Configuration.6.11.0.csproj" />
+    <ProjectReference Include="../../nuget.versioning/6.11.0/NuGet.Versioning.6.11.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/6.0.4/System.Security.Cryptography.Pkcs.6.0.4.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ namespace System.Windows.Forms.Design
         }
 
         /// <summary>
-        /// Overridden to reaction our editor form instead of the standard collection editor form.
+        ///  Overridden to reaction our editor form instead of the standard collection editor form.
         /// </summary>
         /// <returns>An instance of a ToolStripItemEditorForm</returns>
         protected override CollectionForm CreateCollectionForm() => new ToolStripItemEditorForm(this);
@@ -63,10 +63,7 @@ namespace System.Windows.Forms.Design
 
             try
             {
-                if (designer is not null)
-                {
-                    designer.EditingCollection = true;
-                }
+                designer?.EditingCollection = true;
 
                 using (ScaleHelper.EnterDpiAwarenessScope(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_SYSTEM_AWARE))
                 {
@@ -75,10 +72,7 @@ namespace System.Windows.Forms.Design
             }
             finally
             {
-                if (designer is not null)
-                {
-                    designer.EditingCollection = false;
-                }
+                designer?.EditingCollection = false;
             }
         }
     }

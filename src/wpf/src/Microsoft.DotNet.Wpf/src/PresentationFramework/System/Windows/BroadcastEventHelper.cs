@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -129,7 +128,7 @@ namespace System.Windows
             // Added to a tree
             if (oldParent == null && newParent != null)
             {
-                if(IsLoadedHelper(newParent) == true)
+                if(IsLoadedHelper(newParent))
                 {
                     // Broadcast Loaded event if your new parent is loaded
                     // Note that this broadcast will take place when you are
@@ -140,7 +139,7 @@ namespace System.Windows
             // Removed from a tree
             else if (oldParent != null && newParent == null)
             {
-                if (IsLoadedHelper(oldParent) == true)
+                if (IsLoadedHelper(oldParent))
                 {
                     // Broadcast Unloaded event if your old parent was loaded
                     // Note that this broadcast will take place when you are

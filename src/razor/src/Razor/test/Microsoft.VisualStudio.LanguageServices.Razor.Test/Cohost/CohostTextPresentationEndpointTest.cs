@@ -2,18 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task HtmlResponse_TranslatesVirtualDocumentUri()
     {
         await VerifyUriPresentationAsync(
@@ -37,7 +35,7 @@ public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOu
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Hello World")]
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Hello World")]
                     }
                 }
             },
@@ -46,10 +44,8 @@ public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOu
 
     private async Task VerifyUriPresentationAsync(string input, string text, string? expected, WorkspaceEdit? htmlResponse = null)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
@@ -76,7 +72,7 @@ public class CohostTextPresentationEndpointTest(FuseTestContext context, ITestOu
         {
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
-            Assert.Equal(expected, result.DocumentChanges.Value.First[0].Edits[0].NewText);
+            Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
             Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
         }
     }

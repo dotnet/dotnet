@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Sources;
 using Microsoft.CodeAnalysis.Text;
 
@@ -16,14 +15,12 @@ internal sealed partial class DocumentState
     public int Version { get; }
 
     private readonly ITextAndVersionSource _textAndVersionSource;
-    private readonly GeneratedOutputSource _generatedOutputSource;
 
     private DocumentState(HostDocument hostDocument, ITextAndVersionSource textAndVersionSource)
     {
         HostDocument = hostDocument;
         Version = 1;
         _textAndVersionSource = textAndVersionSource;
-        _generatedOutputSource = new();
     }
 
     private DocumentState(DocumentState oldState, ITextAndVersionSource textAndVersionSource)
@@ -31,7 +28,6 @@ internal sealed partial class DocumentState
         HostDocument = oldState.HostDocument;
         Version = oldState.Version + 1;
         _textAndVersionSource = textAndVersionSource;
-        _generatedOutputSource = new();
     }
 
     public static DocumentState Create(HostDocument hostDocument, SourceText text)
@@ -45,12 +41,6 @@ internal sealed partial class DocumentState
 
     private static LoadableTextAndVersionSource CreateTextAndVersionSource(TextLoader textLoader)
         => new(textLoader);
-
-    public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
-        => _generatedOutputSource.TryGetValue(out result);
-
-    public ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(DocumentSnapshot document, CancellationToken cancellationToken)
-        => _generatedOutputSource.GetValueAsync(document, cancellationToken);
 
     public bool TryGetTextAndVersion([NotNullWhen(true)] out TextAndVersion? result)
         => _textAndVersionSource.TryGetValue(out result);
@@ -110,13 +100,7 @@ internal sealed partial class DocumentState
         }
     }
 
-    public DocumentState WithConfigurationChange()
-        => new(this, _textAndVersionSource);
-
-    public DocumentState WithImportsChange()
-        => new(this, _textAndVersionSource);
-
-    public DocumentState WithProjectWorkspaceStateChange()
+    public DocumentState UpdateVersion()
         => new(this, _textAndVersionSource);
 
     public DocumentState WithText(SourceText text, VersionStamp textVersion)

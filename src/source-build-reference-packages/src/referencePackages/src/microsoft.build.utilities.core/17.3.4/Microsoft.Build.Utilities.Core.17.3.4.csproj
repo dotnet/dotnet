@@ -2,24 +2,25 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.3.4</PackageVersion>
     <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.3.4" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.3.4" />
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.3.4/Microsoft.Build.Framework.17.3.4.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.3.4/Microsoft.NET.StringTools.17.3.4.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/6.0.0/System.Collections.Immutable.6.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/6.0.0/System.Configuration.ConfigurationManager.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.3.4" />
-    <PackageReference Include="Microsoft.NET.StringTools" Version="17.3.4" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+    <ProjectReference Include="../../microsoft.build.framework/17.3.4/Microsoft.Build.Framework.17.3.4.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.3.4/Microsoft.NET.StringTools.17.3.4.csproj" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/6.0.0/System.Collections.Immutable.6.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/6.0.0/System.Configuration.ConfigurationManager.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/6.0.0/System.Security.Permissions.6.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encoding.codepages/6.0.0/System.Text.Encoding.CodePages.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

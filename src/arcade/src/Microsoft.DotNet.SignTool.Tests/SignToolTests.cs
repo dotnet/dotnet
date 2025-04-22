@@ -16,6 +16,7 @@ using Microsoft.Build.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 using Microsoft.DotNet.Build.Tasks.Installers;
+using Microsoft.DotNet.StrongName;
 
 namespace Microsoft.DotNet.SignTool.Tests
 {
@@ -3028,11 +3029,11 @@ $@"
         [Fact]
         public void MissingStrongNameSignaturesDoNotValidate()
         {
-            StrongName.IsSigned(GetResourcePath("AspNetCoreCrossLib.dll")).Should().BeFalse();
-            StrongName.IsSigned(GetResourcePath("CoreLibCrossARM.dll")).Should().BeFalse();
-            StrongName.IsSigned(GetResourcePath("EmptyPKT.dll")).Should().BeFalse();
-            StrongName.IsSigned(GetResourcePath("DelaySigned.dll")).Should().BeFalse();
-            StrongName.IsSigned(GetResourcePath("ProjectOne.dll")).Should().BeFalse();
+            StrongNameHelper.IsSigned(GetResourcePath("AspNetCoreCrossLib.dll")).Should().BeFalse();
+            StrongNameHelper.IsSigned(GetResourcePath("CoreLibCrossARM.dll")).Should().BeFalse();
+            StrongNameHelper.IsSigned(GetResourcePath("EmptyPKT.dll")).Should().BeFalse();
+            StrongNameHelper.IsSigned(GetResourcePath("DelaySigned.dll")).Should().BeFalse();
+            StrongNameHelper.IsSigned(GetResourcePath("ProjectOne.dll")).Should().BeFalse();
         }
 
         /// <summary>
@@ -3099,9 +3100,9 @@ $@"
 
             PEHeaders peHeaders = new PEHeaders(inputStream);
             inputStream.Position = 0;
-            int checksumStart = peHeaders.PEHeaderStartOffset + StrongName.ChecksumOffsetInPEHeader;
+            int checksumStart = peHeaders.PEHeaderStartOffset + Microsoft.DotNet.StrongName.Constants.ChecksumOffsetInPEHeader;
             WriteBytesToLocation(inputStream, outputStream, checksumStart, peHeaders.PEHeader.CheckSum);
-            StrongName.IsSigned(outputStream).Should().BeTrue();
+            StrongNameHelper.IsSigned(outputStream).Should().BeTrue();
         }
 
         [Fact]
@@ -3113,9 +3114,9 @@ $@"
 
             PEHeaders peHeaders = new PEHeaders(inputStream);
             inputStream.Position = 0;
-            int checksumStart = peHeaders.PEHeaderStartOffset + StrongName.ChecksumOffsetInPEHeader;
+            int checksumStart = peHeaders.PEHeaderStartOffset + Microsoft.DotNet.StrongName.Constants.ChecksumOffsetInPEHeader;
             WriteBytesToLocation(inputStream, outputStream, checksumStart, peHeaders.PEHeader.CheckSum ^ 0x1);
-            StrongName.IsSigned(outputStream).Should().BeFalse();
+            StrongNameHelper.IsSigned(outputStream).Should().BeFalse();
         }
 
         // This binary has had a resource added after it was strong name. This invalidated the checksum too,
@@ -3129,25 +3130,25 @@ $@"
             PEHeaders peHeaders = new PEHeaders(inputStream);
             inputStream.Position = 0;
 
-            int checksumStart = peHeaders.PEHeaderStartOffset + StrongName.ChecksumOffsetInPEHeader;
+            int checksumStart = peHeaders.PEHeaderStartOffset + Microsoft.DotNet.StrongName.Constants.ChecksumOffsetInPEHeader;
             // Write the checksum that would be expected after editing the binary.
             WriteBytesToLocation(inputStream, outputStream, checksumStart, 110286);
 
-            StrongName.IsSigned(outputStream).Should().BeFalse();
+            StrongNameHelper.IsSigned(outputStream).Should().BeFalse();
         }
 
         [Fact]
         public void ValidStrongNameSignaturesValidate()
         {
-            StrongName.IsSigned(GetResourcePath("SignedLibrary.dll")).Should().BeTrue();
-            StrongName.IsSigned(GetResourcePath("StrongNamedWithEcmaKey.dll")).Should().BeTrue();
+            StrongNameHelper.IsSigned(GetResourcePath("SignedLibrary.dll")).Should().BeTrue();
+            StrongNameHelper.IsSigned(GetResourcePath("StrongNamedWithEcmaKey.dll")).Should().BeTrue();
         }
 
         [WindowsOnlyFact]
         public void ValidStrongNameSignaturesValidateWithFallback()
         {
-            StrongName.IsSigned_Legacy(GetResourcePath("SignedLibrary.dll"), s_snPath).Should().BeTrue();
-            StrongName.IsSigned_Legacy(GetResourcePath("StrongNamedWithEcmaKey.dll"), s_snPath).Should().BeTrue();
+            StrongNameHelper.IsSigned_Legacy(GetResourcePath("SignedLibrary.dll"), s_snPath).Should().BeTrue();
+            StrongNameHelper.IsSigned_Legacy(GetResourcePath("StrongNamedWithEcmaKey.dll"), s_snPath).Should().BeTrue();
         }
 
         [Theory]
@@ -3157,12 +3158,12 @@ $@"
         {
             // Make sure this is unique
             string resourcePath = GetResourcePath(file, Guid.NewGuid().ToString());
-            StrongName.IsSigned(resourcePath).Should().Be(initiallySigned);
-            StrongName.Sign(resourcePath, GetResourcePath(key));
-            StrongName.IsSigned(resourcePath).Should().BeTrue();
+            StrongNameHelper.IsSigned(resourcePath).Should().Be(initiallySigned);
+            StrongNameHelper.Sign(resourcePath, GetResourcePath(key));
+            StrongNameHelper.IsSigned(resourcePath).Should().BeTrue();
 
             // Legacy sn verification works on on Windows only
-            StrongName.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(
+            StrongNameHelper.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
         }
 
@@ -3174,11 +3175,11 @@ $@"
         {
             // Make sure this is unique
             string resourcePath = GetResourcePath(file, Guid.NewGuid().ToString());
-            StrongName.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(initiallySigned);
+            StrongNameHelper.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(initiallySigned);
             // Unset the strong name bit first
-            StrongName.ClearStrongNameSignedBit(resourcePath);
-            StrongName.Sign_Legacy(resourcePath, GetResourcePath(key), s_snPath).Should().BeTrue();
-            StrongName.IsSigned(resourcePath).Should().BeTrue();
+            StrongNameHelper.ClearStrongNameSignedBit(resourcePath);
+            StrongNameHelper.Sign_Legacy(resourcePath, GetResourcePath(key), s_snPath).Should().BeTrue();
+            StrongNameHelper.IsSigned(resourcePath).Should().BeTrue();
         }
 
         [Fact]
@@ -3187,7 +3188,7 @@ $@"
             // Using stream variant so that legacy fallback doesn't swallow the exception.
             using (var inputStream = File.OpenRead(GetResourcePath("StrongNamedWithEcmaKey.dll")))
             {
-                Action shouldFail = () => StrongName.Sign(inputStream, GetResourcePath("OpenSignedCorrespondingKey.snk"));
+                Action shouldFail = () => StrongNameHelper.Sign(inputStream, GetResourcePath("OpenSignedCorrespondingKey.snk"));
                 shouldFail.Should().Throw<NotImplementedException>();
             }
         }
@@ -3198,7 +3199,7 @@ $@"
             // Using stream variant so that legacy fallback doesn't swallow the exception.
             using (var inputStream = File.OpenRead(GetResourcePath("DelaySigned.dll")))
             {
-                Action shouldFail = () => StrongName.Sign(inputStream, GetResourcePath("OpenSignedCorrespondingKey.snk"));
+                Action shouldFail = () => StrongNameHelper.Sign(inputStream, GetResourcePath("OpenSignedCorrespondingKey.snk"));
                 shouldFail.Should().Throw<InvalidOperationException>();
             }
         }

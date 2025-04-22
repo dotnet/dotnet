@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
@@ -59,10 +58,10 @@ internal static class CodeBlockService
                 codeBlockStartText = $"{Environment.NewLine}{codeBlockStartText}";
             }
 
-            var eofRange = VsLspFactory.CreateZeroWidthRange(lastCharacterLocation.LineNumber, insertCharacterIndex);
-            var start = VsLspFactory.CreateTextEdit(eofRange, codeBlockStartText);
-            var method = VsLspFactory.CreateTextEdit(eofRange, indentedMethod);
-            var end = VsLspFactory.CreateTextEdit(eofRange, Environment.NewLine + "}");
+            var eofRange = LspFactory.CreateZeroWidthRange(lastCharacterLocation.LineNumber, insertCharacterIndex);
+            var start = LspFactory.CreateTextEdit(eofRange, codeBlockStartText);
+            var method = LspFactory.CreateTextEdit(eofRange, indentedMethod);
+            var end = LspFactory.CreateTextEdit(eofRange, Environment.NewLine + "}");
 
             return [start, method, end];
         }
@@ -92,7 +91,7 @@ internal static class CodeBlockService
             ? closeBraceLocation.CharacterIndex
             : 0;
 
-        return [VsLspFactory.CreateTextEdit(insertLineLocation.LineIndex, insertCharacter, formattedGeneratedMethod)];
+        return [LspFactory.CreateTextEdit(insertLineLocation.LineIndex, insertCharacter, formattedGeneratedMethod)];
     }
 
     private static string FormatMethodInCodeBlock(

@@ -8,7 +8,7 @@
     <PackageVersion Update="System.Reflection.MetadataLoadContext" Version="8.0.0" />
     <PackageVersion Update="System.Resources.Extensions" Version="8.0.0" />
     <PackageVersion Update="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageVersion Update="System.Text.Json" Version="8.0.4" />
+    <PackageVersion Update="System.Text.Json" Version="8.0.5" />
     <PackageVersion Update="System.Threading.Tasks.Dataflow" Version="8.0.0" />
 
     <!-- Packages that transitively bring above dependencies in. -->
@@ -17,11 +17,6 @@
     <PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
     <PackageVersion Update="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageVersion Update="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-  </ItemGroup>
-
-  <!-- Suppress System.Text.Json/8.0.4 advisory as desktop msbuild doesn't yet provide binding redirects for the non-vulnerable version (8.0.5). -->
-  <ItemGroup>
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
   </ItemGroup>
 
 </Project>

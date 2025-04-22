@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Context used to communicate with PTS component.
@@ -72,7 +71,7 @@ namespace MS.Internal.PtsHost
             int index;
 
             // Do actual dispose only once.
-            if (Interlocked.CompareExchange(ref _disposed, 1, 0) == 0)
+            if (!Interlocked.CompareExchange(ref _disposed, true, false))
             {
                 // Destroy all page break records. The collection is allocated during creation
                 // of the context, and can be only destroyed during dispose process.
@@ -370,7 +369,7 @@ namespace MS.Internal.PtsHost
         /// </summary>
         internal bool Disposed
         {
-            get { return (_disposed != 0); }
+            get { return _disposed; }
         }
 
         /// <summary>
@@ -609,7 +608,7 @@ namespace MS.Internal.PtsHost
         /// <summary>
         /// Whether object is already disposed.
         /// </summary>
-        private int _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Whether Dispose has been completed. It may be set to 'false' even when

@@ -6,11 +6,6 @@
     <!-- runtime prebuilts.  Update when runtime produces intermediate packages correctly. -->
     <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILAsm/*" />
     <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILDAsm/*" />
-
-    <!-- Necessary to work around NuGet non-determinism with online builds/feeds. Can be removed once 
-    dependencies on it are removed from the previous-source-built packages. -->
-    <UsagePattern IdentityGlob="Newtonsoft.Json/13.0.1" />
-
   </IgnorePatterns>
   <Usages/>
 </UsageData>

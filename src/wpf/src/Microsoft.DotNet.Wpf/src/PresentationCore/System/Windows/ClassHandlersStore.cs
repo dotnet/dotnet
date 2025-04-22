@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Utility;
 
@@ -41,7 +40,7 @@ namespace System.Windows
 
             // Check if we need to create a new node in the linked list
             RoutedEventHandlerInfoList handlers =  _eventHandlersList.List[index].Handlers;
-            if (handlers == null || _eventHandlersList.List[index].HasSelfHandlers == false)
+            if (handlers == null || !_eventHandlersList.List[index].HasSelfHandlers)
             {
                 // Create a new node in the linked list of class 
                 // handlers for this type and routed event.

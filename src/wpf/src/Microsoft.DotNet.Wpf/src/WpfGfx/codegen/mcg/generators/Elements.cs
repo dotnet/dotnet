@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 //---------------------------------------------------------------------------
@@ -63,7 +62,7 @@ namespace MS.Internal.MilCodeGen.Generators
 
                             namespace [[e.Namespace]]
                             {
-                                partial class [[e.Name]] [[(e.ImplementsIAnimatable ? ": IAnimatable" : "")]]
+                                public partial class [[e.Name]] [[(e.ImplementsIAnimatable ? ": IAnimatable" : "")]]
                                 {
                                     static private readonly Type _typeofThis = typeof([[e.Name]]);
 

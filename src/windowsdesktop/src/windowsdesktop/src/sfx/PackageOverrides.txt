@@ -1,0 +1,16 @@
+Microsoft.Win32.Registry.AccessControl|${ProductVersion}
+Microsoft.Win32.SystemEvents|${ProductVersion}
+System.CodeDom|${ProductVersion}
+System.Configuration.ConfigurationManager|${ProductVersion}
+System.Diagnostics.EventLog|${ProductVersion}
+System.Diagnostics.PerformanceCounter|${ProductVersion}
+System.DirectoryServices|${ProductVersion}
+System.Drawing.Common|${ProductVersion}
+System.Formats.Nrbf|${ProductVersion}
+System.IO.Packaging|${ProductVersion}
+System.Security.Cryptography.Pkcs|${ProductVersion}
+System.Security.Cryptography.ProtectedData|${ProductVersion}
+System.Security.Cryptography.Xml|${ProductVersion}
+System.Security.Permissions|${ProductVersion}
+System.Threading.AccessControl|${ProductVersion}
+System.Windows.Extensions|${ProductVersion}

@@ -12,7 +12,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     public partial class RazorSourceGenerator
     {
-        private static string GetIdentifierFromPath(string filePath)
+        internal static string GetIdentifierFromPath(string filePath)
         {
             var builder = new StringBuilder(filePath.Length);
 
@@ -30,6 +30,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 }
             }
 
+            builder.Append(".g.cs");
             return builder.ToString();
         }
 
@@ -48,13 +49,19 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var discoveryProjectEngine = RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
             {
                 b.Features.Add(new DefaultTypeNameFeature());
-                b.Features.Add(new ConfigureRazorCodeGenerationOptions(options =>
+
+                b.ConfigureCodeGenerationOptions(builder =>
                 {
-                    options.SuppressPrimaryMethodBody = true;
-                    options.SuppressChecksum = true;
-                    options.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
-                }));
-                b.Features.Add(new ConfigureRazorParserOptions(razorSourceGeneratorOptions.UseRoslynTokenizer, razorSourceGeneratorOptions.CSharpParseOptions));
+                    builder.SuppressPrimaryMethodBody = true;
+                    builder.SuppressChecksum = true;
+                    builder.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
+                });
+
+                b.ConfigureParserOptions(builder =>
+                {
+                    builder.UseRoslynTokenizer = razorSourceGeneratorOptions.UseRoslynTokenizer;
+                    builder.CSharpParseOptions = razorSourceGeneratorOptions.CSharpParseOptions;
+                });
 
                 b.SetRootNamespace(razorSourceGeneratorOptions.RootNamespace);
 
@@ -101,14 +108,19 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 b.Features.Add(new DefaultTypeNameFeature());
                 b.SetRootNamespace(razorSourceGeneratorOptions.RootNamespace);
 
-                b.Features.Add(new ConfigureRazorCodeGenerationOptions(options =>
+                b.ConfigureCodeGenerationOptions(builder =>
                 {
-                    options.SuppressMetadataSourceChecksumAttributes = !razorSourceGeneratorOptions.GenerateMetadataSourceChecksumAttributes;
-                    options.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
-                    options.SuppressUniqueIds = razorSourceGeneratorOptions.TestSuppressUniqueIds;
-                    options.SuppressAddComponentParameter = razorSourceGeneratorOptions.Configuration.SuppressAddComponentParameter;
-                }));
-                b.Features.Add(new ConfigureRazorParserOptions(razorSourceGeneratorOptions.UseRoslynTokenizer, razorSourceGeneratorOptions.CSharpParseOptions));
+                    builder.SuppressMetadataSourceChecksumAttributes = !razorSourceGeneratorOptions.GenerateMetadataSourceChecksumAttributes;
+                    builder.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
+                    builder.SuppressUniqueIds = razorSourceGeneratorOptions.TestSuppressUniqueIds;
+                    builder.SuppressAddComponentParameter = razorSourceGeneratorOptions.Configuration.SuppressAddComponentParameter;
+                });
+
+                b.ConfigureParserOptions(builder =>
+                {
+                    builder.UseRoslynTokenizer = razorSourceGeneratorOptions.UseRoslynTokenizer;
+                    builder.CSharpParseOptions = razorSourceGeneratorOptions.CSharpParseOptions;
+                });
 
                 CompilerFeatures.Register(b);
                 RazorExtensions.Register(b);

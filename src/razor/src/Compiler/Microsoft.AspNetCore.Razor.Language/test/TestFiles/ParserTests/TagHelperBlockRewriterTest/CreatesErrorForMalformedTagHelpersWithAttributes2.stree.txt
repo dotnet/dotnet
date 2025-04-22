@@ -1,7 +1,7 @@
 ﻿RazorDocument - [0..24)::24 - [<p bar="false"" <strong>]
     MarkupBlock - [0..24)::24
         MarkupTagHelperElement - [0..24)::24 - p[StartTagAndEndTag] - ptaghelper
-            MarkupTagHelperStartTag - [0..24)::24 - [<p bar="false"" <strong>] - Gen<Markup>
+            MarkupTagHelperStartTag - [0..16)::16 - [<p bar="false"" ] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[p];
                 MarkupTagHelperAttribute - [2..14)::12 - bar - DoubleQuotes - Unbound - [ bar="false"]
@@ -18,12 +18,16 @@
                                 Text;[false];
                     MarkupTextLiteral - [13..14)::1 - ["] - Gen<Markup>
                         DoubleQuote;["];
-                MarkupMiscAttributeContent - [14..24)::10
-                    MarkupTextLiteral - [14..24)::10 - [" <strong>] - Gen<Markup>
+                MarkupMinimizedTagHelperAttribute - [14..15)::1 - " - Minimized - Unbound - ["]
+                    MarkupTextLiteral - [14..15)::1 - ["] - Gen<Markup>
                         DoubleQuote;["];
+                MarkupMiscAttributeContent - [15..16)::1
+                    MarkupTextLiteral - [15..16)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
-                        OpenAngle;[<];
-                        Text;[strong];
-                        CloseAngle;[>];
                 CloseAngle;[<Missing>];
+            MarkupTagHelperElement - [16..24)::8 - strong[StartTagAndEndTag] - strongtaghelper
+                MarkupTagHelperStartTag - [16..24)::8 - [<strong>] - Gen<Markup>
+                    OpenAngle;[<];
+                    Text;[strong];
+                    CloseAngle;[>];
     EndOfFile;[];

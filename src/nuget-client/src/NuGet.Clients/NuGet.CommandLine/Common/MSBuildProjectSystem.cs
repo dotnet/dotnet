@@ -15,8 +15,7 @@ using NuGet.ProjectManagement;
 namespace NuGet.Common
 {
     public sealed class MSBuildProjectSystem
-        : MSBuildUser
-        , IMSBuildProjectSystem
+        : IMSBuildProjectSystem
     {
         private const string TargetName = "EnsureNuGetPackageBuildImports";
 
@@ -27,12 +26,14 @@ namespace NuGet.Common
         private const string TargetPlatformVersionProperty = "TargetPlatformVersion";
         private const string TargetPlatformMinVersionProperty = "TargetPlatformMinVersion";
 
+        private string _msbuildDirectory;
+
         public MSBuildProjectSystem(
             string msbuildDirectory,
             string projectFullPath,
             INuGetProjectContext projectContext)
         {
-            LoadAssemblies(msbuildDirectory);
+            _msbuildDirectory = msbuildDirectory;
 
             ProjectFileFullPath = projectFullPath;
             ProjectFullPath = Path.GetDirectoryName(projectFullPath);
@@ -432,28 +433,23 @@ namespace NuGet.Common
 
         private dynamic GetProject(string projectFile)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
-            try
-            {
-                dynamic globalProjectCollection = _projectCollectionType
-                    .GetProperty("GlobalProjectCollection")
-                    .GetMethod
-                    .Invoke(null, Array.Empty<object>());
-                var loadedProjects = globalProjectCollection.GetLoadedProjects(projectFile);
-                if (loadedProjects.Count > 0)
-                {
-                    return loadedProjects[0];
-                }
+            using var msbuildAssemblyResolver = new MSBuildAssemblyResolver(_msbuildDirectory);
 
-                var project = Activator.CreateInstance(
-                    _projectType,
-                    new object[] { projectFile });
-                return project;
-            }
-            finally
+            dynamic globalProjectCollection = msbuildAssemblyResolver.ProjectCollectionType
+                     .GetProperty("GlobalProjectCollection")
+                     .GetMethod
+                     .Invoke(null, Array.Empty<object>());
+            var loadedProjects = globalProjectCollection.GetLoadedProjects(projectFile);
+            if (loadedProjects.Count > 0)
             {
-                AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(AssemblyResolve);
+                return loadedProjects[0];
             }
+
+            var project = Activator.CreateInstance(
+                msbuildAssemblyResolver.ProjectType,
+                new object[] { projectFile });
+
+            return project;
         }
     }
 }

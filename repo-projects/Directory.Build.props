@@ -15,9 +15,9 @@
     <RunEachTargetSeparately Condition="'$(BuildInParallel)' == 'true' and '$(ContinuousIntegrationBuild)' != 'true'">true</RunEachTargetSeparately>
   </PropertyGroup>
 
-    <!-- TODO: Remove this import when the default build behavior for source-only builds changes to dev.
-         https://github.com/dotnet/source-build/issues/4855 -->
-  <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true'" />
+  <!-- TODO: Remove this import and the EnableDevBuildAsDefaultForSourceOnly when dev builds are the default for source only.
+        https://github.com/dotnet/source-build/issues/4922 -->
+  <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true' and '$(EnableDevBuildAsDefaultForSourceOnly)' != 'true'" />
 
   <PropertyGroup>
     <!-- Fake, to satisfy the SDK. -->
@@ -59,6 +59,18 @@
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
     <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
+
+    <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
+
+    <!--
+      Publish only RID-specific assets when we're not doing source-build and one of the following cases is true:
+      - This is not the Rid-agnostic vertical
+      - This is a BuildPass1 build
+    -->
+    <EnableDefaultRidSpecificArtifacts
+      Condition="('$(VerticalName)' != '' and '$(VerticalName)' != '$(RidAgnosticVerticalName)')
+                  and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')
+                  and '$(DotNetBuildSourceOnly)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
@@ -70,10 +82,10 @@
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
   </PropertyGroup>
 
-  <!-- Add 100 to the revision number for non-source-only builds to avoid clashing with the existing msft official builds.
-       Source-only builds don't update the revision as the assets don't get published to the same locations as the msft build and
-       still use the OfficialBuildId from repositories, not the pipeline. -->
-  <PropertyGroup Condition="'$(OfficialBuildId)' != '' and '$(DotNetBuildSourceOnly)' != 'true'">
+  <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds.
+       This is necessary for source-only builds as well so that the version numbers are identical between the two builds
+       since testing of source-build only requires some packages from the msft build. -->
+  <PropertyGroup Condition="'$(OfficialBuildId)' != '' and ('$(DotNetBuildSourceOnly)' != 'true' or '$(EnableDevBuildAsDefaultForSourceOnly)' == 'true')">
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
   </PropertyGroup>
 
@@ -92,12 +104,16 @@
 
   <!-- Common args used for building and testing. -->
   <PropertyGroup>
-    <!-- TODO: Remove the DotNetBuildSourceOnly condition when the default build behavior for source-only builds changes to dev.
-         https://github.com/dotnet/source-build/issues/4855 -->
-    <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">$(FlagParameterPrefix)ci</CommonArgs>
-    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
+    <!-- TODO: Remove the EnableDevBuildAsDefaultForSourceOnly condition when dev builds are the default for source only.
+         https://github.com/dotnet/source-build/issues/4922 -->
+    <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true' or ('$(DotNetBuildSourceOnly)' == 'true' and '$(EnableDevBuildAsDefaultForSourceOnly)' != 'true')">$(FlagParameterPrefix)ci</CommonArgs>
 
     <!-- Pass down configuration properties -->
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
+    <!-- TODO: Remove condition when the following PRs are consumed:
+          - https://github.com/NuGet/NuGet.Client/pull/6402 and
+          - https://github.com/dotnet/aspnetcore/pull/61545. -->
+    <CommonArgs Condition="'$(RepositoryName)' != 'nuget-client' and '$(RepositoryName)' != 'aspnetcore'">$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
 
     <!-- Pass through DotNetBuildPass for join point vertical support. -->
@@ -114,9 +130,9 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <!-- PGO assets by default are "Vertical" visibilty. Each repo will enable the specific artifacts it must publish externally -->
-    <CommonArgs Condition="'$(PgoInstrument)' == 'true'">$(CommonArgs) /p:DefaultArtifactVisibility=Vertical</CommonArgs>
+    <DefaultArtifactVisibility Condition="'$(PgoInstrument)' == 'true'">Vertical</DefaultArtifactVisibility>
     <!-- ShortStack builds only publish new assets from the root repository. All other assets are duplicates. -->
-    <CommonArgs Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">$(CommonArgs) /p:DefaultArtifactVisibility=Vertical</CommonArgs>
+    <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">Vertical</DefaultArtifactVisibility>
   </PropertyGroup>
 
   <!-- Build specific args -->
@@ -125,11 +141,14 @@
     <!-- Don't flow these control properties during testing to avoid the outer/inner complexity. -->
     <BuildArgs>$(BuildArgs) /p:DotNetBuildRepo=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetBuildOrchestrator=true</BuildArgs>
+    <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
+    <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
+    <BuildArgs>$(BuildArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</BuildArgs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <BuildArgs>$(BuildArgs) /p:SourceBuiltSymbolsDir=$(IntermediateSymbolsRepoDir)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
   </PropertyGroup>
 
@@ -158,9 +177,9 @@
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
     <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.).
-         TODO: Remove the DotNetBuildSourceOnly condition when the default build behavior for source-only builds changes to dev.
-         https://github.com/dotnet/source-build/issues/4855 -->
-    <EnvironmentVariables Condition="'$(ContinuousIntegrationBuild)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'" Include="ContinuousIntegrationBuild=true" />
+         TODO: Remove the EnableDevBuildAsDefaultForSourceOnly condition when dev builds are the default for source only.
+         https://github.com/dotnet/source-build/issues/4922 -->
+    <EnvironmentVariables Condition="'$(ContinuousIntegrationBuild)' == 'true' or ('$(DotNetBuildSourceOnly)' == 'true' and '$(EnableDevBuildAsDefaultForSourceOnly)' != 'true')" Include="ContinuousIntegrationBuild=true" />
 
     <!-- Turn off node reuse for source build because repos use conflicting versions
          of compilers which cause assembly load errors.

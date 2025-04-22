@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace NuGet.Test.Utility
@@ -124,7 +123,7 @@ namespace NuGet.Test.Utility
         /// <summary>
         /// Create an entire solution and projects, this will adjust the paths as needed
         /// </summary>
-        public void Create(string solutionFolder)
+        public void Create(string solutionFolder = null)
         {
             Save();
 
@@ -162,30 +161,6 @@ namespace NuGet.Test.Utility
             }
 
             return projects;
-        }
-
-        /// <summary>
-        /// All packages used in the solution
-        /// </summary>
-        public HashSet<SimpleTestPackageContext> GetAllPackages()
-        {
-            var packages = new HashSet<SimpleTestPackageContext>();
-            var toWalk = new Stack<SimpleTestPackageContext>(GetAllProjects().SelectMany(p => p.AllPackageDependencies));
-
-            while (toWalk.Count > 0)
-            {
-                var package = toWalk.Pop();
-
-                if (packages.Add(package))
-                {
-                    foreach (var dep in package.Dependencies)
-                    {
-                        toWalk.Push(dep);
-                    }
-                }
-            }
-
-            return packages;
         }
 
         public CentralPackageVersionsManagementFile CentralPackageVersionsManagementFile { get; set; }

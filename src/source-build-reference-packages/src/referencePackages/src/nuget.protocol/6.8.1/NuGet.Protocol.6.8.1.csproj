@@ -2,17 +2,18 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.8.1</PackageVersion>
     <AssemblyName>NuGet.Protocol</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="NuGet.Packaging" Version="6.8.1" />
+    <ProjectReference Include="../../nuget.packaging/6.8.1/NuGet.Packaging.6.8.1.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="NuGet.Packaging" Version="6.8.1" />
-    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+    <ProjectReference Include="../../nuget.packaging/6.8.1/NuGet.Packaging.6.8.1.csproj" />
+    <ProjectReference Include="../../system.text.json/7.0.3/System.Text.Json.7.0.3.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         public IContextService ContextService { get; set; }
 
         [ServiceImport]
+        public ISettingsService SettingsService { get; set; }
+
+        [ServiceImport]
         public ITarget Target { get; set; }
 
         [Argument(Help = "Switch to the runtime by id.")]
@@ -33,18 +36,52 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         [Option(Name = "--all", Aliases = new string[] { "-a" }, Help = "Forces all runtimes to be enumerated.")]
         public bool All { get; set; }
 
+        [Option(Name = "--usecdac", Help = "Use the CDAC if available and requested (true/false).")]
+        public bool? UseContractReader { get; set; }
+
+        [Option(Name = "--forceusecdac", Help = "Always use the CDAC (true/false).")]
+        public bool? ForceUseContractReader { get; set; }
+
+        [Option(Name = "--DacSignatureVerification", Aliases = new string[] { "-v" }, Help = "Enforce the proper DAC certificate signing when loaded (true/false).")]
+        public bool? DacSignatureVerification { get; set; }
+
         public override void Invoke()
         {
             if (NetFx && NetCore)
             {
                 throw new DiagnosticsException("Cannot specify both -netfx and -netcore options");
             }
-            RuntimeEnumerationFlags flags = RuntimeEnumerationFlags.Default;
 
+            bool flush = false;
+            if (UseContractReader.HasValue)
+            {
+                SettingsService.UseContractReader = UseContractReader.Value;
+                flush = true;
+            }
+
+            if (ForceUseContractReader.HasValue)
+            {
+                SettingsService.UseContractReader = ForceUseContractReader.Value;
+                SettingsService.ForceUseContractReader = ForceUseContractReader.Value;
+                flush = true;
+            }
+
+            if (DacSignatureVerification.HasValue)
+            {
+                SettingsService.DacSignatureVerificationEnabled = DacSignatureVerification.Value;
+                flush = true;
+            }
+
+            RuntimeEnumerationFlags flags = RuntimeEnumerationFlags.Default;
             if (All)
             {
                 // Force all runtimes to be enumerated. This requires a target flush.
                 flags = RuntimeEnumerationFlags.All;
+                flush = true;
+            }
+
+            if (flush)
+            {
                 Target.Flush();
             }
 
@@ -91,6 +128,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                     }
                     this.DisplayResources(runtime.RuntimeModule, all: false, indent: "    ");
                     this.DisplayRuntimeExports(runtime.RuntimeModule, error: true, indent: "    ");
+                    WriteLine($"Use CDAC contract reader: {SettingsService.UseContractReader}");
+                    WriteLine($"Force use CDAC contract reader: {SettingsService.ForceUseContractReader}");
+                    WriteLine($"DAC signature verification check enabled: {SettingsService.DacSignatureVerificationEnabled}");
                 }
             }
         }

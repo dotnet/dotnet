@@ -14,12 +14,10 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
@@ -40,7 +38,7 @@ internal class RenameService(
         CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
-        if (!FileKinds.IsComponent(documentContext.FileKind))
+        if (!documentContext.FileKind.IsComponent())
         {
             return null;
         }
@@ -148,7 +146,7 @@ internal class RenameService(
         var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
                     ? '/' + filePath
                     : filePath;
-        return VsLspFactory.CreateFilePathUri(updatedPath);
+        return LspFactory.CreateFilePathUri(updatedPath);
     }
 
     private static string MakeNewPath(string originalPath, string newName)
@@ -165,16 +163,12 @@ internal class RenameService(
         IDocumentSnapshot documentSnapshot,
         CancellationToken cancellationToken)
     {
-        if (!FileKinds.IsComponent(documentSnapshot.FileKind))
+        if (!documentSnapshot.FileKind.IsComponent())
         {
             return;
         }
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return;
-        }
 
         // VS Code in Windows expects path to start with '/'
         var uri = BuildUri(documentSnapshot.FilePath);
@@ -226,13 +220,13 @@ internal class RenameService(
         }
     }
 
-    private static TextEdit[] CreateEditsForMarkupTagHelperElement(MarkupTagHelperElementSyntax element, RazorCodeDocument codeDocument, string newName)
+    private static SumType<TextEdit, AnnotatedTextEdit>[] CreateEditsForMarkupTagHelperElement(MarkupTagHelperElementSyntax element, RazorCodeDocument codeDocument, string newName)
     {
-        var startTagEdit = VsLspFactory.CreateTextEdit(element.StartTag.Name.GetRange(codeDocument.Source), newName);
+        var startTagEdit = LspFactory.CreateTextEdit(element.StartTag.Name.GetRange(codeDocument.Source), newName);
 
         if (element.EndTag is MarkupTagHelperEndTagSyntax endTag)
         {
-            var endTagEdit = VsLspFactory.CreateTextEdit(endTag.Name.GetRange(codeDocument.Source), newName);
+            var endTagEdit = LspFactory.CreateTextEdit(endTag.Name.GetRange(codeDocument.Source), newName);
 
             return [startTagEdit, endTagEdit];
         }
@@ -295,7 +289,7 @@ internal class RenameService(
         // Ensure the rename action was invoked on the component name instead of a component parameter. This serves as an issue
         // mitigation till `textDocument/prepareRename` is supported and we can ensure renames aren't triggered in unsupported
         // contexts. (https://github.com/dotnet/razor/issues/4285)
-        if (!tagHelperStartTag.Name.FullSpan.IntersectsWith(absoluteIndex))
+        if (!tagHelperStartTag.Name.Span.IntersectsWith(absoluteIndex))
         {
             binding = null;
             return false;

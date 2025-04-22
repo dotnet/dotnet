@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: XamlToRtfWriter write Rtf content from Xaml content.
@@ -438,7 +437,7 @@ namespace System.Windows.Documents
                         // Increment current listitem number
                         if (openLists.Count > 0)
                         {
-                            openCounts[openLists.Count - 1] = openCounts[openLists.Count - 1] + 1;
+                            openCounts[openLists.Count - 1] += 1;
                         }
                         break;
                     case DocumentNodeType.dnParagraph:

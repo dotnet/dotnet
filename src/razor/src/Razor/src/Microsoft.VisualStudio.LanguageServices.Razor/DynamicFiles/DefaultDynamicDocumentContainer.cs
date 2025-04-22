@@ -3,12 +3,11 @@
 
 using System;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 
 namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 
@@ -20,7 +19,6 @@ internal sealed class DefaultDynamicDocumentContainer(IDocumentSnapshot document
 {
     private readonly IDocumentSnapshot _documentSnapshot = documentSnapshot ?? throw new ArgumentNullException(nameof(documentSnapshot));
     private RazorDocumentExcerptService? _excerptService;
-    private RazorSpanMappingService? _spanMappingService;
     private RazorMappingService? _mappingService;
 
     public string FilePath => _documentSnapshot.FilePath;
@@ -37,11 +35,7 @@ internal sealed class DefaultDynamicDocumentContainer(IDocumentSnapshot document
 
     public IRazorDocumentExcerptServiceImplementation GetExcerptService()
         => _excerptService ?? InterlockedOperations.Initialize(ref _excerptService,
-            new RazorDocumentExcerptService(_documentSnapshot, GetSpanMappingService()));
-
-    public IRazorSpanMappingService GetSpanMappingService()
-        => _spanMappingService ?? InterlockedOperations.Initialize(ref _spanMappingService,
-            new RazorSpanMappingService(_documentSnapshot));
+            new RazorDocumentExcerptService(_documentSnapshot, GetMappingService()));
 
     public IRazorDocumentPropertiesService GetDocumentPropertiesService()
     {
@@ -52,7 +46,7 @@ internal sealed class DefaultDynamicDocumentContainer(IDocumentSnapshot document
         return null!;
     }
 
-    public IRazorMappingService? GetMappingService()
+    public IRazorMappingService GetMappingService()
         => _mappingService ?? InterlockedOperations.Initialize(ref _mappingService,
             new RazorMappingService(_documentSnapshot, NoOpTelemetryReporter.Instance, loggerFactory));
 }

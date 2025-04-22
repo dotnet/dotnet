@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.6.0</PackageVersion>
     <AssemblyName>System.Numerics.Vectors</AssemblyName>
   </PropertyGroup>
 

@@ -5,20 +5,17 @@ using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Logging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Nerdbank.Streams;
 using Xunit;
 using Xunit.Abstractions;
@@ -82,7 +79,7 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
 
             var registeredMethods = handlerProvider.GetRegisteredMethods();
             var handlerTypes = typeof(RazorLanguageServerHost).Assembly.GetTypes()
-                .Where(t => typeof(IMethodHandler).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+                .Where(t => CLaSPTypeHelpers.IMethodHandlerType.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
 
             // We turn this into a Set to handle cases like Completion where we have two handlers, only one of which will be registered
             // CLaSP will throw if two handlers register for the same method, so if THAT doesn't hold it's a CLaSP bug, not a Razor bug.
@@ -99,12 +96,12 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
 
         static string GetMethodFromType(Type t)
         {
-            var attribute = t.GetCustomAttribute<LanguageServerEndpointAttribute>();
+            var attribute = CLaSPTypeHelpers.GetLanguageServerEnpointAttribute(t);
             if (attribute is null)
             {
                 foreach (var inter in t.GetInterfaces())
                 {
-                    attribute = inter.GetCustomAttribute<LanguageServerEndpointAttribute>();
+                    attribute = CLaSPTypeHelpers.GetLanguageServerEnpointAttribute(inter);
 
                     if (attribute is not null)
                     {
@@ -113,10 +110,7 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
                 }
             }
 
-            if (attribute is null)
-            {
-                throw new NotImplementedException();
-            }
+            Assert.NotNull(attribute);
 
             return attribute.Method;
         }
@@ -135,6 +129,7 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
 
                 // VS Code only handlers are added by rzls, but add here for testing purposes
                 s.AddHandler<RazorNamedPipeConnectEndpoint>();
+                s.AddHandlerWithCapabilities<DocumentDiagnosticsEndpoint>();
                 s.AddSingleton(new LogLevelProvider(CodeAnalysis.Razor.Logging.LogLevel.None));
                 s.AddHandler<UpdateLogLevelEndpoint>();
             });

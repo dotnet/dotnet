@@ -3,14 +3,16 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Snippets;
 using StreamJsonRpc;
 
@@ -59,7 +61,7 @@ internal partial class RazorCustomMessageTarget
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorCompletionEndpointName, UseSingleObjectParameterDeserialization = true)]
-    public async Task<VSInternalCompletionList?> ProvideCompletionsAsync(
+    public async Task<RazorVSInternalCompletionList?> ProvideCompletionsAsync(
         DelegatedCompletionParams request,
         CancellationToken cancellationToken)
     {
@@ -108,8 +110,18 @@ internal partial class RazorCustomMessageTarget
         {
             await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            var provisionalChange = new VisualStudioTextChange(provisionalTextEdit, virtualDocumentSnapshot.Snapshot);
-            UpdateVirtualDocument(provisionalChange, request.ProjectedKind, request.Identifier.Version, hostDocumentUri, virtualDocumentSnapshot.Uri);
+            var provisionalChange = new VisualStudioTextChange(
+                provisionalTextEdit.Range.Start.Line,
+                provisionalTextEdit.Range.Start.Character,
+                provisionalTextEdit.Range.End.Line,
+                provisionalTextEdit.Range.End.Character,
+                virtualDocumentSnapshot.Snapshot,
+                provisionalTextEdit.NewText);
+            // We update to a negative version number so that if a request comes in for v6, it won't see our modified document. We revert the version back
+            // later, don't worry.
+            UpdateVirtualDocument(provisionalChange, request.ProjectedKind, -1 * request.Identifier.Version, hostDocumentUri, virtualDocumentSnapshot.Uri);
+
+            _logger.LogDebug($"Updated for provisional completion to version -{request.Identifier.Version} of {virtualDocumentSnapshot!.Uri}.");
 
             // We want the delegation to continue on the captured context because we're currently on the `main` thread and we need to get back to the
             // main thread in order to update the virtual buffer with the reverted text edit.
@@ -120,10 +132,10 @@ internal partial class RazorCustomMessageTarget
         {
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
             var lspMethodName = Methods.TextDocumentCompletion.Name;
-            ReinvocationResponse<VSInternalCompletionList?>? response;
+            ReinvocationResponse<RazorVSInternalCompletionList?>? response;
             using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, request.CorrelationId))
             {
-                response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, VSInternalCompletionList?>(
+                response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, RazorVSInternalCompletionList?>(
                     textBuffer,
                     lspMethodName,
                     languageServerName,
@@ -132,7 +144,7 @@ internal partial class RazorCustomMessageTarget
             }
 
             var completionList = response?.Response;
-            using var builder = new PooledArrayBuilder<CompletionItem>();
+            using var builder = new PooledArrayBuilder<VSInternalCompletionItem>();
 
             if (completionList is not null)
             {
@@ -140,8 +152,9 @@ internal partial class RazorCustomMessageTarget
             }
             else
             {
-                completionList = new VSInternalCompletionList()
+                completionList = new RazorVSInternalCompletionList()
                 {
+                    Items = [],
                     // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
                     // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
                     // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
@@ -157,27 +170,24 @@ internal partial class RazorCustomMessageTarget
 
             completionList.Items = builder.ToArray();
 
-            completionList.Data = JsonHelpers.TryConvertFromJObject(completionList.Data);
-            ConvertJsonElementToJObject(completionList);
-
             return completionList;
         }
         finally
         {
             if (provisionalTextEdit is not null)
             {
+                _logger.LogDebug($"Reverting the update for provisional completion back to {request.Identifier.Version} of {virtualDocumentSnapshot!.Uri}.");
+
                 var revertedProvisionalTextEdit = BuildRevertedEdit(provisionalTextEdit);
-                var revertedProvisionalChange = new VisualStudioTextChange(revertedProvisionalTextEdit, virtualDocumentSnapshot.Snapshot);
+                var revertedProvisionalChange = new VisualStudioTextChange(
+                    revertedProvisionalTextEdit.Range.Start.Line,
+                    revertedProvisionalTextEdit.Range.Start.Character,
+                    revertedProvisionalTextEdit.Range.End.Line,
+                    revertedProvisionalTextEdit.Range.End.Character,
+                    virtualDocumentSnapshot.Snapshot,
+                    revertedProvisionalTextEdit.NewText);
                 UpdateVirtualDocument(revertedProvisionalChange, request.ProjectedKind, request.Identifier.Version, hostDocumentUri, virtualDocumentSnapshot.Uri);
             }
-        }
-    }
-
-    private void ConvertJsonElementToJObject(VSInternalCompletionList completionList)
-    {
-        foreach (var item in completionList.Items)
-        {
-            item.Data = JsonHelpers.TryConvertFromJObject(item.Data);
         }
     }
 
@@ -190,8 +200,8 @@ internal partial class RazorCustomMessageTarget
         if (range.Start == range.End)
         {
             // Insertion
-            revertedProvisionalTextEdit = VsLspFactory.CreateTextEdit(
-                range: VsLspFactory.CreateSingleLineRange(
+            revertedProvisionalTextEdit = LspFactory.CreateTextEdit(
+                range: LspFactory.CreateSingleLineRange(
                     range.Start,
                     length: provisionalTextEdit.NewText.Length),
                 newText: string.Empty);
@@ -199,7 +209,7 @@ internal partial class RazorCustomMessageTarget
         else
         {
             // Replace
-            revertedProvisionalTextEdit = VsLspFactory.CreateTextEdit(range, string.Empty);
+            revertedProvisionalTextEdit = LspFactory.CreateTextEdit(range, string.Empty);
         }
 
         return revertedProvisionalTextEdit;
@@ -222,7 +232,7 @@ internal partial class RazorCustomMessageTarget
             trackingDocumentManager.UpdateVirtualDocument<CSharpVirtualDocument>(
                 documentSnapshotUri,
                 virtualDocumentUri,
-                new[] { textChange },
+                [textChange],
                 hostDocumentVersion,
                 state: null);
         }
@@ -231,14 +241,14 @@ internal partial class RazorCustomMessageTarget
             trackingDocumentManager.UpdateVirtualDocument<HtmlVirtualDocument>(
                 documentSnapshotUri,
                 virtualDocumentUri,
-                new[] { textChange },
+                [textChange],
                 hostDocumentVersion,
                 state: null);
         }
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorCompletionResolveEndpointName, UseSingleObjectParameterDeserialization = true)]
-    public async Task<CompletionItem?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
+    public async Task<VSInternalCompletionItem?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
     {
         // Check if we're completing a snippet item that we provided
         if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData) &&
@@ -291,31 +301,40 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        var completionResolveParams = request.CompletionItem;
-
-        completionResolveParams.Data = JsonHelpers.TryConvertBackToJObject(completionResolveParams.Data);
-
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
-        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, CompletionItem?>(
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, VSInternalCompletionItem?>(
             textBuffer,
             Methods.TextDocumentCompletionResolve.Name,
             languageServerName,
-            completionResolveParams,
+            request.CompletionItem,
             cancellationToken).ConfigureAwait(false);
 
-        var item = response?.Response;
-        if (item is not null)
-        {
-            item.Data = JsonHelpers.TryConvertFromJObject(item.Data);
-        }
-
-        return item;
+        return response?.Response;
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorGetFormattingOptionsEndpointName, UseSingleObjectParameterDeserialization = true)]
     public Task<FormattingOptions?> GetFormattingOptionsAsync(TextDocumentIdentifierAndVersion document, CancellationToken _)
     {
         var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.Uri);
-        return Task.FromResult(formattingOptions);
+
+        if (formattingOptions is null)
+        {
+            return SpecializedTasks.Null<FormattingOptions>();
+        }
+
+        var roslynFormattingOptions = new FormattingOptions()
+        {
+            TabSize = formattingOptions.TabSize,
+            InsertSpaces = formattingOptions.InsertSpaces,
+            // Options come from the VS protocol DLL, which uses Dict<string, object> for options, but Roslyn is more strongly typed.
+            OtherOptions = formattingOptions.OtherOptions?.ToDictionary(k => k.Key, v => v.Value switch
+            {
+                bool b => b,
+                int i => i,
+                string s => s,
+                _ => Assumes.NotReachable<SumType<bool, int, string>>(),
+            }),
+        };
+        return Task.FromResult<FormattingOptions?>(roslynFormattingOptions);
     }
 }

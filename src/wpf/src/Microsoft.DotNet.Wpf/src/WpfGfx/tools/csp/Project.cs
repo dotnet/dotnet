@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 //------------------------------------------------------------------------------
@@ -11,15 +10,13 @@
 //              a set of "C# prime" files, then executes the project.
 //
 
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Reflection;
+using System.Text;
+
 namespace MS.Internal.Csp
 {
-    using System;
-    using System.IO;
-    using System.Text;
-    using System.Collections;
-    using System.Reflection;
-    using System.CodeDom.Compiler;
-
     // This kind of exception is thrown when csp detects an
     // error in the project.
     public class CspProjectException : ApplicationException
@@ -340,9 +337,9 @@ namespace MS.Internal.Csp
         //------------------------------------------------------
 
         #region Private Fields
-        Assembly _assembly;
-        TempDirectory _tempDirectory;
-        bool _breakBeforeInvoke;
+        private Assembly _assembly;
+        private TempDirectory _tempDirectory;
+        private bool _breakBeforeInvoke;
         #endregion Private Fields
     }
 }

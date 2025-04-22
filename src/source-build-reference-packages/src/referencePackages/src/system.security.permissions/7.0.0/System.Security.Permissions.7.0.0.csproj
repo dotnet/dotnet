@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>7.0.0</PackageVersion>
     <AssemblyName>System.Security.Permissions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Windows.Extensions" Version="7.0.0" />
+    <ProjectReference Include="../../system.windows.extensions/7.0.0/System.Windows.Extensions.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Windows.Extensions" Version="7.0.0" />
+    <ProjectReference Include="../../system.windows.extensions/7.0.0/System.Windows.Extensions.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.accesscontrol/6.0.0/System.Security.AccessControl.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,8 @@
+<Project>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <!-- Necessary for PermissionSet types but as a dangling compile-time only reference. -->
+    <ProjectReference Include="../../system.security.permissions/7.0.0/System.Security.Permissions.7.0.0.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

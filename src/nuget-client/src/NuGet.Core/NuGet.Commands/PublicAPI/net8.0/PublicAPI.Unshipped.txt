@@ -1,1 +1,14 @@
 #nullable enable
+NuGet.Commands.Restore.IItem
+NuGet.Commands.Restore.IItem.GetMetadata(string! name) -> string!
+NuGet.Commands.Restore.IItem.Identity.get -> string!
+NuGet.Commands.Restore.IProject
+NuGet.Commands.Restore.IProject.Directory.get -> string!
+NuGet.Commands.Restore.IProject.FullPath.get -> string!
+NuGet.Commands.Restore.IProject.OuterBuild.get -> NuGet.Commands.Restore.ITargetFramework!
+NuGet.Commands.Restore.IProject.TargetFrameworks.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Commands.Restore.ITargetFramework!>!
+NuGet.Commands.Restore.ITargetFramework
+NuGet.Commands.Restore.ITargetFramework.GetItems(string! itemType) -> System.Collections.Generic.IReadOnlyList<NuGet.Commands.Restore.IItem!>!
+NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string!
+NuGet.Commands.Restore.Utility.PackageSpecFactory
+static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Commands.Restore.IProject! project, NuGet.Configuration.ISettings! settings) -> NuGet.ProjectModel.PackageSpec?

@@ -1,1 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyName>Wcwidth.Sources</AssemblyName>
+  </PropertyGroup>
+
+</Project>

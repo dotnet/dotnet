@@ -352,7 +352,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
                 builder.AddDirective(directive);
             }
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         var sourceProjectItem = new TestRazorProjectItem("test.cshtml")

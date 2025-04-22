@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Text;
@@ -1054,7 +1053,7 @@ namespace System.Windows.Input.Manipulations
             float result = CalculateWeightedMovingAverage(queue, accessor);
 
             // convert to milliseconds
-            result = result * ManipulationProcessor2D.TimestampTicksPerMillisecond;
+            result *= ManipulationProcessor2D.TimestampTicksPerMillisecond;
             return result;
         }
 

@@ -5,19 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.LanguageServer.Protocol;
 using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper), IClassFixture<FuseTestContext>
+public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public Task FindCSharpMember(bool supportsVSExtensions)
         => VerifyFindAllReferencesAsync("""
@@ -36,7 +35,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             """,
             supportsVSExtensions);
 
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public async Task ComponentAttribute(bool supportsVSExtensions)
     {
@@ -60,7 +59,7 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             (FilePath("SurveyPrompt.razor"), surveyPrompt));
     }
 
-    [FuseTheory]
+    [Theory]
     [CombinatorialData]
     public async Task OtherCSharpFile(bool supportsVSExtensions)
     {
@@ -92,15 +91,13 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
 
     private async Task VerifyFindAllReferencesAsync(TestCode input, bool supportsVSExtensions, params (string fileName, TestCode testCode)[]? additionalFiles)
     {
-        UpdateClientInitializationOptions(c => c with { ForceRuntimeCodeGeneration = context.ForceRuntimeCodeGeneration });
-
         UpdateClientLSPInitializationOptions(c =>
         {
             c.ClientCapabilities.SupportsVisualStudioExtensions = supportsVSExtensions;
             return c;
         });
 
-        var document = await CreateProjectAndRazorDocumentAsync(input.Text, additionalFiles: additionalFiles.Select(f => (f.fileName, f.testCode.Text)).ToArray());
+        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
@@ -153,10 +150,10 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
             }
             else
             {
-                var additionalFile = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
-                var text = SourceText.From(additionalFile.testCode.Text);
+                var (fileName, testCode) = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
+                var text = SourceText.From(testCode.Text);
                 matchedText = text.Lines[location.Range.Start.Line].ToString();
-                Assert.Single(additionalFile.testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));
+                Assert.Single(testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));
             }
 
             if (result.TryGetFirst(out var referenceItem))
@@ -176,10 +173,10 @@ public class CohostFindAllReferencesEndpointTest(FuseTestContext context, ITestO
         return referenceItem.Text.AssumeNotNull().ToString();
     }
 
-    private static Location GetLocation(SumType<VSInternalReferenceItem, Location> r)
+    private static LspLocation GetLocation(SumType<VSInternalReferenceItem, LspLocation> r)
     {
         return r.TryGetFirst(out var refItem)
-            ? refItem.Location ?? Assumed.Unreachable<Location>()
+            ? refItem.Location ?? Assumed.Unreachable<LspLocation>()
             : r.Second;
     }
 }

@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // Description: Manages the listeners for one accessibility aid or test application.
 
@@ -459,7 +458,7 @@ namespace MS.Internal.Automation
                 return new FocusTracker();
             }
 
-            Debug.Assert(false, "GetNewRootTracker internal error: Unexpected Tracker value!");
+            Debug.Fail("GetNewRootTracker internal error: Unexpected Tracker value!");
             return null;
         }
 

@@ -9,11 +9,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -248,8 +246,8 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
                 {
                     var (document, fallbackProjectManager, telemetryReporter, cancellationToken) = state;
 
-                    if (updater.TryGetProject(document.ProjectKey, out var project) &&
-                        fallbackProjectManager.IsFallbackProject(project))
+                    if (fallbackProjectManager.IsFallbackProject(document.ProjectKey) &&
+                        updater.TryGetProject(document.ProjectKey, out var project))
                     {
                         // The user is opening a document that is part of a fallback project. This is a scenario we are very interested in knowing more about
                         // so fire some telemetry. We can't log details about the project, for PII reasons, but we can use document count and tag helper count

@@ -2,15 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Xunit;
 using Xunit.Abstractions;
-using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class CreateComponentFromTagTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class CreateComponentFromTagTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task CreateComponentFromTag()
     {
         await VerifyCodeActionAsync(
@@ -24,12 +24,12 @@ public class CreateComponentFromTagTests(FuseTestContext context, ITestOutputHel
 
                 <Hello><Hello>
                 """,
-            codeActionName: WorkspacesSR.Create_Component_FromTag_Title,
+            codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [
                 (FileUri("Hello.razor"), "")]);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task Attribute()
     {
         await VerifyCodeActionAsync(
@@ -43,7 +43,7 @@ public class CreateComponentFromTagTests(FuseTestContext context, ITestOutputHel
 
                 <Hello><Hello>
                 """,
-            codeActionName: WorkspacesSR.Create_Component_FromTag_Title,
+            codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [
                 (FileUri("Hello.razor"), "")]);
     }

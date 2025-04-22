@@ -100,7 +100,7 @@ namespace Microsoft.DotNet.Helix.Client
 
         private static HttpPipeline CreatePipeline(HelixApiOptions options)
         {
-            return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new HelixApiResponseClassifier());
+            return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new HttpPipelineTransportOptions() { IsClientRedirectEnabled = true }, new HelixApiResponseClassifier());
         }
 
         public HttpPipeline Pipeline
@@ -439,7 +439,7 @@ namespace Microsoft.DotNet.Helix.Client
         }
     }
 
-    
+
     public class ResponseStream : Stream
     {
         private readonly Stream _inner;

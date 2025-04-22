@@ -14,6 +14,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -37,7 +38,7 @@ internal sealed class OpenApiDocumentService(
     IHostEnvironment hostEnvironment,
     IOptionsMonitor<OpenApiOptions> optionsMonitor,
     IServiceProvider serviceProvider,
-    IServer? server = null)
+    IServer? server = null) : IOpenApiDocumentProvider
 {
     private readonly OpenApiOptions _options = optionsMonitor.Get(documentName);
     private readonly OpenApiSchemaService _componentService = serviceProvider.GetRequiredKeyedService<OpenApiSchemaService>(documentName);
@@ -56,7 +57,7 @@ internal sealed class OpenApiDocumentService(
     internal bool TryGetCachedOperationTransformerContext(string descriptionId, [NotNullWhen(true)] out OpenApiOperationTransformerContext? context)
         => _operationTransformerContextCache.TryGetValue(descriptionId, out context);
 
-    public async Task<OpenApiDocument> GetOpenApiDocumentAsync(IServiceProvider scopedServiceProvider, CancellationToken cancellationToken = default)
+    public async Task<OpenApiDocument> GetOpenApiDocumentAsync(IServiceProvider scopedServiceProvider, HttpRequest? httpRequest = null, CancellationToken cancellationToken = default)
     {
         // Schema and operation transformers are scoped per-request and can be
         // pre-allocated to hold the same number of transformers as the associated
@@ -71,13 +72,12 @@ internal sealed class OpenApiDocumentService(
         var document = new OpenApiDocument
         {
             Info = GetOpenApiInfo(),
-            Servers = GetOpenApiServers()
+            Servers = GetOpenApiServers(httpRequest)
         };
         document.Paths = await GetOpenApiPathsAsync(document, scopedServiceProvider, operationTransformers, schemaTransformers, cancellationToken);
-        document.Tags = document.Tags?.Distinct(OpenApiTagComparer.Instance).ToList();
         try
         {
-            await ApplyTransformersAsync(document, scopedServiceProvider, cancellationToken);
+            await ApplyTransformersAsync(document, scopedServiceProvider, schemaTransformers, cancellationToken);
         }
 
         finally
@@ -95,13 +95,15 @@ internal sealed class OpenApiDocumentService(
         return document;
     }
 
-    private async Task ApplyTransformersAsync(OpenApiDocument document, IServiceProvider scopedServiceProvider, CancellationToken cancellationToken)
+    private async Task ApplyTransformersAsync(OpenApiDocument document, IServiceProvider scopedServiceProvider, IOpenApiSchemaTransformer[] schemaTransformers, CancellationToken cancellationToken)
     {
         var documentTransformerContext = new OpenApiDocumentTransformerContext
         {
             DocumentName = documentName,
             ApplicationServices = scopedServiceProvider,
             DescriptionGroups = apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items,
+            Document = document,
+            SchemaTransformers = schemaTransformers
         };
         // Use index-based for loop to avoid allocating an enumerator with a foreach.
         for (var i = 0; i < _options.DocumentTransformers.Count; i++)
@@ -198,12 +200,26 @@ internal sealed class OpenApiDocumentService(
         };
     }
 
-    internal List<OpenApiServer> GetOpenApiServers()
+    // Resolve server URL from the request to handle reverse proxies.
+    // If there is active request object, assume a development environment and use the server addresses.
+    internal List<OpenApiServer> GetOpenApiServers(HttpRequest? httpRequest = null)
+    {
+        if (httpRequest is not null)
+        {
+            var serverUrl = UriHelper.BuildAbsolute(httpRequest.Scheme, httpRequest.Host, httpRequest.PathBase);
+            return [new OpenApiServer { Url = serverUrl }];
+        }
+        else
+        {
+            return GetDevelopmentOpenApiServers();
+        }
+    }
+    private List<OpenApiServer> GetDevelopmentOpenApiServers()
     {
         if (hostEnvironment.IsDevelopment() &&
             server?.Features.Get<IServerAddressesFeature>()?.Addresses is { Count: > 0 } addresses)
         {
-            return addresses.Select(address => new OpenApiServer { Url = address }).ToList();
+            return [.. addresses.Select(address => new OpenApiServer { Url = address })];
         }
         return [];
     }
@@ -257,6 +273,8 @@ internal sealed class OpenApiDocumentService(
                 DocumentName = documentName,
                 Description = description,
                 ApplicationServices = scopedServiceProvider,
+                Document = document,
+                SchemaTransformers = schemaTransformers
             };
 
             _operationTransformerContextCache.TryAdd(description.ActionDescriptor.Id, operationContext);
@@ -312,15 +330,15 @@ internal sealed class OpenApiDocumentService(
         => description.ActionDescriptor.AttributeRouteInfo?.Name ??
             description.ActionDescriptor.EndpointMetadata.OfType<IEndpointNameMetadata>().LastOrDefault()?.EndpointName;
 
-    private static List<OpenApiTagReference> GetTags(ApiDescription description, OpenApiDocument document)
+    private static HashSet<OpenApiTagReference> GetTags(ApiDescription description, OpenApiDocument document)
     {
         var actionDescriptor = description.ActionDescriptor;
         if (actionDescriptor.EndpointMetadata?.OfType<ITagsMetadata>().LastOrDefault() is { } tagsMetadata)
         {
-            List<OpenApiTagReference> tags = [];
+            HashSet<OpenApiTagReference> tags = [];
             foreach (var tag in tagsMetadata.Tags)
             {
-                document.Tags ??= [];
+                document.Tags ??= new HashSet<OpenApiTag>();
                 document.Tags.Add(new OpenApiTag { Name = tag });
                 tags.Add(new OpenApiTagReference(tag, document));
 
@@ -330,9 +348,9 @@ internal sealed class OpenApiDocumentService(
         // If no tags are specified, use the controller name as the tag. This effectively
         // allows us to group endpoints by the "resource" concept (e.g. users, todos, etc.)
         var controllerName = description.ActionDescriptor.RouteValues["controller"];
-        document.Tags ??= [];
+        document.Tags ??= new HashSet<OpenApiTag>();
         document.Tags.Add(new OpenApiTag { Name = controllerName });
-        return [new OpenApiTagReference(controllerName, document)];
+        return [new(controllerName, document)];
     }
 
     private async Task<OpenApiResponses> GetResponsesAsync(
@@ -725,5 +743,12 @@ internal sealed class OpenApiDocumentService(
             : parameter.Type;
         targetType ??= typeof(string);
         return targetType;
+    }
+
+    /// <inheritdoc />
+    public Task<OpenApiDocument> GetOpenApiDocumentAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return GetOpenApiDocumentAsync(serviceProvider, httpRequest: null, cancellationToken);
     }
 }

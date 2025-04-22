@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-# if NETFRAMEWORK
 using Microsoft.SignCheck.Interop.PortableExecutable;
-#endif
 using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
@@ -89,21 +87,22 @@ namespace Microsoft.SignCheck.Verification
             Options = options;
 
 #if NETFRAMEWORK
-            AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
-            AddFileVerifier(new PortableExecutableVerifier(log, exclusions, options, ".dll"));
-            AddFileVerifier(new ExeVerifier(log, exclusions, options, ".exe"));
-            AddFileVerifier(new JarVerifier(log, exclusions, options));
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".js"));
-            AddFileVerifier(new MsiVerifier(log, exclusions, options));
-            AddFileVerifier(new MspVerifier(log, exclusions, options));
-            AddFileVerifier(new MsuVerifier(log, exclusions, options));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psd1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
             AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
+            AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
+            AddFileVerifier(new JarVerifier(log, exclusions, options));
+            AddFileVerifier(new MsiVerifier(log, exclusions, options));
+            AddFileVerifier(new MspVerifier(log, exclusions, options));
+            AddFileVerifier(new MsuVerifier(log, exclusions, options));
             AddFileVerifier(new VsixVerifier(log, exclusions, options));
 #else
             AddFileVerifier(new DebVerifier(log, exclusions, options));
+            AddFileVerifier(new MachOVerifier(log, exclusions, options, ".dylib"));
+            AddFileVerifier(new MachOVerifier(log, exclusions, options, ".macho"));
+            AddFileVerifier(new MachOVerifier(log, exclusions, options, ".so"));
+            AddFileVerifier(new MachOVerifier(log, exclusions, options, ".a"));
             AddFileVerifier(new PkgVerifier(log, exclusions, options, ".pkg"));
             AddFileVerifier(new PkgVerifier(log, exclusions, options, ".app"));
             AddFileVerifier(new TarVerifier(log, exclusions, options, ".tar"));
@@ -111,8 +110,11 @@ namespace Microsoft.SignCheck.Verification
             AddFileVerifier(new TarVerifier(log, exclusions, options, ".gz"));
             AddFileVerifier(new RpmVerifier(log, exclusions, options));
 #endif
+            AddFileVerifier(new ExeVerifier(log, exclusions, options, ".exe"));
+            AddFileVerifier(new JavaScriptVerifier(log, exclusions, options));
             AddFileVerifier(new LzmaVerifier(log, exclusions, options));
             AddFileVerifier(new NupkgVerifier(log, exclusions, options));
+            AddFileVerifier(new PortableExecutableVerifier(log, exclusions, options, ".dll"));
             AddFileVerifier(new XmlVerifier(log, exclusions, options));
             AddFileVerifier(new ZipVerifier(log, exclusions, options));
         }
@@ -267,6 +269,11 @@ namespace Microsoft.SignCheck.Verification
                     else if (magic4 == FileHeaders.Cab)
                     {
                         fileVerifier = GetFileVerifierByExtension(".cab");
+                    }
+                    else if (magic4 == FileHeaders.MachO32 || magic4 == FileHeaders.MachO64)
+                    {
+                        // Use the ".macho" extension as a placeholder for Mach-O files
+                        fileVerifier = GetFileVerifierByExtension(".macho");
                     }
                 }
 #if NETFRAMEWORK

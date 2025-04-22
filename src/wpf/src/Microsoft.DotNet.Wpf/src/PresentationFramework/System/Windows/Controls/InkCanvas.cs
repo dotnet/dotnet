@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //#define DEBUG_LASSO_FEEDBACK // DO NOT LEAVE ENABLED IN CHECKED IN CODE
 //
@@ -1090,7 +1089,7 @@ namespace System.Windows.Controls
                             // now that we've raised the Gesture event and the developer
                             // has had a chance to change args.Cancel, see what their intent is.
                             //
-                            if (args.Cancel == false)
+                            if (!args.Cancel)
                             {
                                 //bail out and don't add
                                 //the stroke to InkCanvas.Strokes
@@ -2309,7 +2308,7 @@ namespace System.Windows.Controls
             //
             // attempt to clear selection
             //
-            ChangeInkCanvasSelection(new StrokeCollection(), new UIElement[]{});
+            ChangeInkCanvasSelection(new StrokeCollection(), Array.Empty<UIElement>());
 
             return !InkCanvasSelection.HasSelection;
         }
@@ -2325,7 +2324,7 @@ namespace System.Windows.Controls
             if ( InkCanvasSelection.HasSelection )
             {
                 // Reset the current selection
-                CoreChangeSelection(new StrokeCollection(), new UIElement[] { }, raiseSelectionChangedEvent);
+                CoreChangeSelection(new StrokeCollection(), Array.Empty<UIElement>(), raiseSelectionChangedEvent);
             }
         }
 
@@ -2510,7 +2509,7 @@ namespace System.Windows.Controls
         {
             if (selectedElements == null)
             {
-                return new UIElement[]{};
+                return Array.Empty<UIElement>();
             }
 
             List<UIElement> elements = new List<UIElement>();

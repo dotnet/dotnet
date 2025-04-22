@@ -81,17 +81,16 @@ namespace NuGet.Commands.FuncTest
             using (var projectDir = TestDirectory.Create())
             {
                 var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.AspNet.Mvc.de"": ""5.2.3""
-                  },
                   ""frameworks"": {
                     ""net46"": {
+                      ""dependencies"": {
+                        ""Microsoft.AspNet.Mvc.de"": ""5.2.3""
+                      }                    }
                     }
-                  }
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
@@ -121,14 +120,15 @@ namespace NuGet.Commands.FuncTest
 
             using var pathContext = new SimpleTestPathContext();
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": {
-                        ""version"": ""5.0.0"",
-                        ""exclude"": ""build,runtime,compile,native""
-                     }
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": {
+                            ""version"": ""5.0.0"",
+                            ""exclude"": ""build,runtime,compile,native""
+                         }
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},
@@ -141,7 +141,7 @@ namespace NuGet.Commands.FuncTest
                 }");
 
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
@@ -177,7 +177,7 @@ namespace NuGet.Commands.FuncTest
                 }
             }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
             spec.RestoreMetadata.UseLegacyDependencyResolver = useLegacyAlgorithm;
 
@@ -217,7 +217,7 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).EnsureProjectJsonRestoreMetadata();
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
@@ -249,11 +249,12 @@ namespace NuGet.Commands.FuncTest
             using var pathContext = new SimpleTestPathContext();
 
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},
@@ -265,7 +266,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             var lockFileFormat = new LockFileFormat();
@@ -304,11 +305,12 @@ namespace NuGet.Commands.FuncTest
             using var pathContext = new SimpleTestPathContext();
 
             var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
+                      }
+                    }
                   },
                   ""runtimes"": {
                     ""win10-arm"": {},
@@ -320,7 +322,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             var lockFileFormat = new LockFileFormat();
@@ -393,7 +395,7 @@ namespace NuGet.Commands.FuncTest
                   }
                 }");
 
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
@@ -437,7 +439,7 @@ namespace NuGet.Commands.FuncTest
                 ""win10-x64-aot"": {}
                 }
             }");
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).EnsureProjectJsonRestoreMetadata();
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);

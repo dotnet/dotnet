@@ -33,6 +33,13 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      policheck:
+        enabled: true
+      binskim:
+        enabled: true
+      tsa:
+        enabled: true
+        configFile: '$(Build.SourcesDirectory)/eng/tsaconfig.gdntsa'
     pool:
       name: AzurePipelines-EO
       image: AzurePipelinesWindows2022compliantGPT

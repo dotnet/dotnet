@@ -4,10 +4,9 @@
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Microsoft.DotNet.Build.Manifest;
 #if !NET472_OR_GREATER
 using Microsoft.DotNet.ProductConstructionService.Client;
-using Microsoft.DotNet.VersionTools.Automation;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -371,7 +370,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ArtifactsBasePath =  this.ArtifactsBasePath,
                 AzdoApiToken = this.AzdoApiToken,
                 BuildId = this.BuildId,
-                AzureProject = this.AzureProject,
+                AzureDevOpsProject = this.AzureProject,
                 AzureDevOpsOrg = this.AzureDevOpsOrg,
                 TempSymbolsAzureDevOpsOrg = this.TempSymbolsAzureDevOpsOrg,
                 TempSymbolsAzureDevOpsOrgToken = this.TempSymbolsAzureDevOpsOrgToken,
@@ -421,7 +420,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ArtifactsBasePath = this.ArtifactsBasePath,
                 AzdoApiToken = this.AzdoApiToken,
                 BuildId = this.BuildId,
-                AzureProject = this.AzureProject,
+                AzureDevOpsProject = this.AzureProject,
                 AzureDevOpsOrg = this.AzureDevOpsOrg,
                 TempSymbolsAzureDevOpsOrg = this.TempSymbolsAzureDevOpsOrg,
                 TempSymbolsAzureDevOpsOrgToken = this.TempSymbolsAzureDevOpsOrgToken,

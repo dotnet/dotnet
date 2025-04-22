@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description: Helper methods for code that uses types from System.Data.
@@ -81,7 +80,7 @@ namespace MS.Internal
                 return nullProperty.GetValue(null, null);
             }
 
-            Debug.Assert(false, "Could not find Null field or property for SqlNullable type");
+            Debug.Fail("Could not find Null field or property for SqlNullable type");
             return null;
         }
     }

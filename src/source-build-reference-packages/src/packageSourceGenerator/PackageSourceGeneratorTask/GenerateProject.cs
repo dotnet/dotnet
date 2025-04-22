@@ -15,21 +15,33 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// The package id.
         /// </summary>
         [Required]
-        public string? PackageId { get; set; }
+        public required string PackageId { get; set; }
+
+        /// <summary>
+        /// The package version.
+        /// </summary>
+        [Required]
+        public required string PackageVersion { get; set; }
 
         /// <summary>
         /// The path to the project template that is being transformed.
         /// </summary>
         [Required]
-        public string? ProjectTemplate { get; set; }
+        public required string ProjectTemplate { get; set; }
 
         /// <summary>
         /// The target path that the project file is written to.
         /// </summary>
         [Required]
-        public string? TargetPath { get; set; }
+        public required string TargetPath { get; set; }
 
-       /// <summary>
+        /// <summary>
+        /// The root directory that the projects are written into.
+        /// </summary>
+        [Required]
+        public required string ProjectRoot { get; set; }
+
+        /// <summary>
         /// The package's compile items, including target framework metadata.
         /// </summary>
         public ITaskItem[] CompileItems { get; set; } = Array.Empty<ITaskItem>();
@@ -44,56 +56,63 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// </summary>
         public ITaskItem[] FrameworkReferences { get; set; } = Array.Empty<ITaskItem>();
 
+        /// <summary>
+        /// The list of dependencies (package id) that should get emitted as PackageReference items.
+        /// </summary>
+        public string[]? AllowedPackageReference { get; set; }
+
         public override bool Execute()
         {
             string referenceIncludes = "";
             StrongNameData strongNameData = default;
-            string projectContent = File.ReadAllText(ProjectTemplate!);
+            string projectContent = File.ReadAllText(ProjectTemplate);
 
             // Calculate the target frameworks based on the passed-in items.
             string[] targetFrameworks = CompileItems.Select(compileItem => compileItem.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
 
             if (targetFrameworks.Length == 0)
                 targetFrameworks = PackageDependencies.Select(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
-            
+
             if (targetFrameworks.Length == 0)
                 targetFrameworks = FrameworkReferences.Select(frameworkReference => frameworkReference.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
-                    
+
             targetFrameworks = targetFrameworks.Distinct()
                 .Order()
                 .ToArray();
 
             // If no target framework is supplied, fallback to netstandard2.0.
-            projectContent = projectContent.Replace("$$TargetFrameworks$$", 
+            projectContent = projectContent.Replace("$$TargetFrameworks$$",
                 targetFrameworks.Length > 0 ? string.Join(';', targetFrameworks) : "netstandard2.0");
+
+            projectContent = projectContent.Replace("$$PackageVersion$$", PackageVersion);
 
             foreach (string targetFramework in targetFrameworks)
             {
-                string references = string.Empty;
+                string packageReferences = string.Empty;
+                string projectReferences = string.Empty;
 
                 // Add package dependencies
                 foreach (ITaskItem packageDependency in PackageDependencies.Where(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
                 {
-                    // Don't emit package references for targeting packs as those are added implicitly by the SDK.
-                    if (packageDependency.ItemSpec == "NETStandard.Library")
-                        continue;
+                    string dependencyVersion = packageDependency.GetMetadata("Version");
+                    string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj");
 
-                    references += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{packageDependency.GetMetadata("Version")}\" />{Environment.NewLine}";
-                }
-
-                // Add framework references
-                foreach (ITaskItem frameworkReference in FrameworkReferences.Where(frameworkReference => frameworkReference.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
-                {
-                    if (frameworkReference.ItemSpec != "mscorlib")
+                    // If the dependency is on the package reference allowed list (i.e. for source-build-externals packages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
+                    if (AllowedPackageReference is not null && AllowedPackageReference.Contains(packageDependency.ItemSpec))
                     {
-                        references += $"    <Reference Include=\"{frameworkReference.ItemSpec}\" />{Environment.NewLine}";
+                        packageReferences += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{dependencyVersion}\" />{Environment.NewLine}";
+                    }
+                    else
+                    {
+                        // Make sure that the path always uses forward slashes, even on Windows.
+                        projectReferences += $"    <ProjectReference Include=\"../../{dependencyProjectRelativePath.Replace('\\', '/')}\" />{Environment.NewLine}";
                     }
                 }
 
-                if (references != string.Empty)
+                if (packageReferences != string.Empty || projectReferences != string.Empty)
                 {
                     referenceIncludes += $"  <ItemGroup Condition=\"'$(TargetFramework)' == '{targetFramework}'\">{Environment.NewLine}";
-                    referenceIncludes += references;
+                    referenceIncludes += packageReferences + projectReferences;
                     referenceIncludes += $"  </ItemGroup>{Environment.NewLine}{Environment.NewLine}";
                 }
 
@@ -134,11 +153,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 .Distinct()
                 .ToArray();
             projectContent = projectContent.Replace("$$AssemblyName$$",
-                 assemblyNames.Length == 1 ? assemblyNames[0] : PackageId!);
+                 assemblyNames.Length == 1 ? assemblyNames[0] : PackageId);
 
             // Generate the project file
-            Directory.CreateDirectory(Path.GetDirectoryName(TargetPath!)!);
-            File.WriteAllText(TargetPath!, projectContent);
+            Directory.CreateDirectory(Path.GetDirectoryName(TargetPath)!);
+            File.WriteAllText(TargetPath, projectContent);
 
             return true;
         }

@@ -1,27 +1,38 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem.Sources;
 
-internal sealed class GeneratedOutputSource
+internal sealed class GeneratedOutputSource(DocumentSnapshot document)
 {
+    private readonly DocumentSnapshot _document = document;
     private readonly SemaphoreSlim _gate = new(initialCount: 1);
 
-    private RazorCodeDocument? _output;
+    // Hold the output in a WeakReference to avoid memory leaks in the case of a long-lived
+    // document snapshots. In particular, the DynamicFileInfo system results in the Roslyn
+    // workspace holding onto document snapshots.
+    private WeakReference<RazorCodeDocument>? _output;
 
     public bool TryGetValue([NotNullWhen(true)] out RazorCodeDocument? result)
     {
-        result = _output;
-        return result is not null;
+        var output = _output;
+        if (output is null)
+        {
+            result = null;
+            return false;
+        }
+
+        return output.TryGetTarget(out result);
     }
 
-    public async ValueTask<RazorCodeDocument> GetValueAsync(DocumentSnapshot document, CancellationToken cancellationToken)
+    public async ValueTask<RazorCodeDocument> GetValueAsync(CancellationToken cancellationToken)
     {
         if (TryGetValue(out var result))
         {
@@ -35,15 +46,24 @@ internal sealed class GeneratedOutputSource
                 return result;
             }
 
-            var project = document.Project;
+            var project = _document.Project;
             var projectEngine = project.ProjectEngine;
             var compilerOptions = project.CompilerOptions;
 
-            _output = await CompilationHelpers
-                .GenerateCodeDocumentAsync(document, projectEngine, compilerOptions, cancellationToken)
+            result = await CompilationHelpers
+                .GenerateCodeDocumentAsync(_document, projectEngine, compilerOptions, cancellationToken)
                 .ConfigureAwait(false);
 
-            return _output;
+            if (_output is null)
+            {
+                _output = new(result);
+            }
+            else
+            {
+                _output.SetTarget(result);
+            }
+
+            return result;
         }
     }
 }

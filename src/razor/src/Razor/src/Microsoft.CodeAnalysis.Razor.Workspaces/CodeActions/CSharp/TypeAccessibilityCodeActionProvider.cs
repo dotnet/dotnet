@@ -19,9 +19,6 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
-using LspDiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -267,7 +264,7 @@ internal class TypeAccessibilityCodeActionProvider : ICSharpCodeActionProvider
     {
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
 
-        var fqnTextEdit = VsLspFactory.CreateTextEdit(fqnDiagnostic.Range, fullyQualifiedName);
+        var fqnTextEdit = LspFactory.CreateTextEdit(fqnDiagnostic.Range, fullyQualifiedName);
 
         var fqnWorkspaceEditDocumentChange = new TextDocumentEdit()
         {

@@ -21,9 +21,9 @@ namespace Test
             __builder.AddComponentParameter(1, "Value", "Hello");
             __builder.CloseComponent();
             __builder.AddMarkupContent(2, "\r\n\r\n");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,2)-(3,2) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,2)-(3,2) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(3, 
 
 #line default
 #line hidden

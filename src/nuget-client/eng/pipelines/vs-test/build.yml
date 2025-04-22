@@ -1,21 +1,8 @@
 parameters:
 - name: NuGetLocalizationType
   type: string
-- name: GitHubChecksToInitialize
-  type: object
-  default: []
 
 steps:
-- ${{ each check in parameters.GitHubChecksToInitialize }}:
-  - task: PowerShell@1
-    displayName: "Set GitHub Check ${{ check.Name }} to pending"
-    condition: ${{ check.Enabled }}
-    inputs:
-      scriptType: "inlineScript"
-      inlineScript: |
-        . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
-        Update-GitCommitStatus -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion) -TestName "${{ check.Name }}" -Status "pending" -TargetUrl $env:BUILDURL -Description "in progress"
-
 - task: MicroBuildLocalizationPlugin@4
   displayName: "Install Localization Plugin"
 
@@ -190,14 +177,14 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
+    msbuildArguments: "/property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
 
 - task: MSBuild@1
   displayName: "Generate VSMAN file for Build Tools VSIX"
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
+    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
 
 - task: MSBuild@1
   displayName: "Create EndToEnd Test Package"

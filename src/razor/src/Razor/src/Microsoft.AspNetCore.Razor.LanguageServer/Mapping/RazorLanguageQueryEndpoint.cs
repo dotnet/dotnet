@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
@@ -46,18 +45,6 @@ internal sealed class RazorLanguageQueryEndpoint(IDocumentMappingService documen
         var sourceText = codeDocument.Source.Text;
         var hostDocumentIndex = sourceText.GetPosition(request.Position);
         var responsePosition = request.Position;
-
-        if (codeDocument.IsUnsupported())
-        {
-            // All language queries on unsupported documents return Html. This is equivalent to what pre-VSCode Razor was capable of.
-            return new RazorLanguageQueryResponse()
-            {
-                Kind = RazorLanguageKind.Html,
-                Position = responsePosition,
-                PositionIndex = hostDocumentIndex,
-                HostDocumentVersion = documentVersion,
-            };
-        }
 
         var responsePositionIndex = hostDocumentIndex;
 

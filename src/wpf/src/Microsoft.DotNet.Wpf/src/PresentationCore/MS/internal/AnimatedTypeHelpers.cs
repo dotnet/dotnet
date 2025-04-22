@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.Windows;
@@ -130,7 +129,7 @@ namespace MS.Internal.PresentationCore
 
         internal static Rotation3D InterpolateRotation3D(Rotation3D from, Rotation3D to, Double progress)
         {
-            return new QuaternionRotation3D(InterpolateQuaternion(from.InternalQuaternion, to.InternalQuaternion, progress, /* useShortestPath = */ true));
+            return new QuaternionRotation3D(InterpolateQuaternion(from.InternalQuaternion, to.InternalQuaternion, progress, useShortestPath: true));
         }
         
         internal static Single InterpolateSingle(Single from, Single to, Double progress)

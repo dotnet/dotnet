@@ -58,6 +58,14 @@ namespace SignCheckTask
             set;
         }
 
+        [Option("results-xml-file",
+            HelpText = "Output signing results to the specified XML log file. If the file already exists it will be overwritten.")]
+        public string ResultsXmlFile
+        {
+            get;
+            set;
+        }
+
         [Option('m', "verify-xml",
             HelpText = "Enable XML signature verification. By default, .xml files are not verified.")]
         public bool EnableXmlSignatureVerification

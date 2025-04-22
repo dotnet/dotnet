@@ -1,15 +1,18 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
-public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(context, testOutputHelper)
+public class TypeAccessibilityTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [FuseFact]
+    [Fact]
     public async Task FixCasing()
     {
         await VerifyCodeActionAsync(
@@ -23,10 +26,10 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
 
                 <EditForm></EditForm>
                 """,
-            codeActionName: "EditForm");
+            codeActionName: LanguageServerConstants.CodeActions.FullyQualify);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task FullyQualify()
     {
         await VerifyCodeActionAsync(
@@ -40,10 +43,10 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
 
                 <Microsoft.AspNetCore.Components.Sections.SectionOutlet></Microsoft.AspNetCore.Components.Sections.SectionOutlet>
                 """,
-            codeActionName: "Microsoft.AspNetCore.Components.Sections.SectionOutlet");
+            codeActionName: LanguageServerConstants.CodeActions.FullyQualify);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing()
     {
         await VerifyCodeActionAsync(
@@ -58,10 +61,10 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
 
                 <SectionOutlet></SectionOutlet>
                 """,
-            codeActionName: "@using Microsoft.AspNetCore.Components.Sections");
+            codeActionName: LanguageServerConstants.CodeActions.AddUsing);
     }
 
-    [FuseFact]
+    [Fact]
     public async Task AddUsing_FixTypo()
     {
         await VerifyCodeActionAsync(
@@ -76,6 +79,21 @@ public class TypeAccessibilityTests(FuseTestContext context, ITestOutputHelper t
 
                 <SectionOutlet></SectionOutlet>
                 """,
-            codeActionName: "SectionOutlet - @using Microsoft.AspNetCore.Components.Sections");
+            codeActionName: LanguageServerConstants.CodeActions.AddUsing);
+    }
+
+    [Fact]
+    public async Task AddUsingShouldBeFirst()
+    {
+        var input = """
+            <div></div>
+
+            <Section[||]Outlet></SectionOutlet>
+            """;
+
+        var document = CreateRazorDocument(input);
+        var codeActions = await GetCodeActionsAsync(document, input);
+
+        Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, codeActions.Select(a => ((RazorVSInternalCodeAction)a.Value!).Name).First());
     }
 }

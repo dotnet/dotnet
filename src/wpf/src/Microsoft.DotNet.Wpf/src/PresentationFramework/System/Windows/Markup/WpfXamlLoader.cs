@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using MS.Internal.Xaml.Context;
 using MS.Utility;
@@ -273,7 +272,7 @@ namespace System.Windows.Markup
                                     if (prop != null)
                                     {
                                         FrameworkPropertyMetadata metadata = prop.GetMetadata(stack.CurrentFrame.Type.UnderlyingType) as FrameworkPropertyMetadata;
-                                        if (metadata != null && metadata.Journal == true)
+                                        if (metadata != null && metadata.Journal)
                                         {
                                             // Ignore the BAML for this member, unless it declares a value that wasn't journaled - namely a binding or a dynamic resource
                                             int count = 1;

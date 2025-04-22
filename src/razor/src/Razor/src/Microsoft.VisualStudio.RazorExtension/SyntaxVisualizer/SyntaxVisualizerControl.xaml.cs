@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.CodeAnalysis.Razor.Formatting.New;
@@ -187,11 +188,11 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
     {
         ThreadHelper.ThrowIfNotOnUIThread();
 
-        var codeDocument = GetCodeDocument();
+        var codeDocument = GetCodeDocument().AssumeNotNull();
         var tagHelpers = displayKind switch
         {
             TagHelperDisplayMode.All => codeDocument.GetTagHelpers(),
-            TagHelperDisplayMode.InScope => codeDocument.GetTagHelperContext().TagHelpers,
+            TagHelperDisplayMode.InScope => codeDocument.GetRequiredTagHelperContext().TagHelpers,
             TagHelperDisplayMode.Referenced => (IEnumerable<TagHelperDescriptor>)codeDocument.GetReferencedTagHelpers(),
             _ => []
         };

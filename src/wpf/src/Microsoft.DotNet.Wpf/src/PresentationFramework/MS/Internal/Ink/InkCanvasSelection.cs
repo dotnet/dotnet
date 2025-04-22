@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 //
 // Description:
@@ -127,7 +126,7 @@ namespace MS.Internal.Ink
         /// <param name="activeSelectionHitResult"></param>
         internal void StartFeedbackAdorner(Rect feedbackRect, InkCanvasSelectionHitResult activeSelectionHitResult)
         {
-            Debug.Assert( _inkCanvas.EditingCoordinator.UserIsEditing == true );
+            Debug.Assert( _inkCanvas.EditingCoordinator.UserIsEditing);
             Debug.Assert(activeSelectionHitResult != InkCanvasSelectionHitResult.None, "activeSelectionHitResult cannot be InkCanvasSelectionHitResult.None.");
 
             _activeSelectionHitResult = activeSelectionHitResult;
@@ -478,7 +477,7 @@ namespace MS.Internal.Ink
             }
             else
             {
-                Debug.Assert(false, "The updatedElement has to be the same type as the originalElement.");
+                Debug.Fail("The updatedElement has to be the same type as the originalElement.");
             }
         }
 
@@ -598,7 +597,7 @@ namespace MS.Internal.Ink
                 }
                 else
                 {
-                    Debug.Assert(false, "An unexpected single selected Element");
+                    Debug.Fail("An unexpected single selected Element");
                 }
             }
 

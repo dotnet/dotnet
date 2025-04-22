@@ -1,6 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 
 using System.ComponentModel;        // DesignerSerializationVisibility
@@ -422,7 +421,7 @@ namespace System.Windows.Controls
             {
                 if (Double.IsNaN(value) || Double.IsInfinity(value) || value < 0.0)
                 {
-                    Debug.Assert(false, "Invalid value for ActualWidth.");
+                    Debug.Fail("Invalid value for ActualWidth.");
                 }
                 else if (_actualWidth != value)
                 {
@@ -714,7 +713,7 @@ namespace System.Windows.Controls
         }
 
         // Fields to implement DO's inheritance context
-        DependencyObject _inheritanceContext;
+        private DependencyObject _inheritanceContext;
 
         #endregion InheritanceContext
 

@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -64,7 +63,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
 
@@ -80,7 +79,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var documentChanges = result.DocumentChanges.GetValueOrDefault();
         Assert.True(documentChanges.TryGetFirst(out var documentEdits));
 
-        Assert.Equal("<MyTagHelper />", documentEdits[0].Edits[0].NewText);
+        Assert.Equal("<MyTagHelper />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [ConditionalFact(Is.Windows)]
@@ -124,7 +123,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris =
             [
                 new Uri("file:///c:/path/MyTagHelper.razor.cs"),
@@ -145,7 +144,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var documentChanges = result.DocumentChanges.GetValueOrDefault();
         Assert.True(documentChanges.TryGetFirst(out var documentEdits));
 
-        Assert.Equal("<MyTagHelper />", documentEdits[0].Edits[0].NewText);
+        Assert.Equal("<MyTagHelper />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [ConditionalFact(Is.Windows)]
@@ -195,7 +194,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
 
@@ -211,7 +210,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var documentChanges = result.DocumentChanges.GetValueOrDefault();
         Assert.True(documentChanges.TryGetFirst(out var documentEdits));
 
-        Assert.Equal("<FetchData MyAttribute=\"\" />", documentEdits[0].Edits[0].NewText);
+        Assert.Equal("<FetchData MyAttribute=\"\" />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [Fact]
@@ -231,7 +230,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
 
@@ -260,7 +259,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris =
             [
                 new Uri("file:///c:/path/SomeOtherFile.cs"),
@@ -295,7 +294,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
 
@@ -350,7 +349,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri1, droppedUri2]
         };
 
@@ -366,7 +365,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var documentChanges = result.DocumentChanges.GetValueOrDefault();
         Assert.True(documentChanges.TryGetFirst(out var documentEdits));
 
-        Assert.Equal("<FetchData />", documentEdits[0].Edits[0].NewText);
+        Assert.Equal("<FetchData />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [Fact]
@@ -384,7 +383,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -412,36 +411,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
-        };
-
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = CreateCodeDocument("<div></div>");
-        codeDocument.SetUnsupported();
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-
-        var clientConnection = CreateClientConnection(response: new WorkspaceEdit());
-        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
-
-        var parameters = new UriPresentationParams()
-        {
-            TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -469,7 +439,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         var parameters = new UriPresentationParams()
         {
             TextDocument = new() { Uri = uri },
-            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);

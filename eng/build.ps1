@@ -3,6 +3,9 @@ Param(
   # Common settings
   [switch][Alias('bl')]$binaryLog,
   [string][Alias('c')]$configuration = "Release",
+  [string][Alias('rid')]$targetRid,
+  [string][Alias('os')]$targetOS,
+  [string][Alias('arch')]$targetArch,
   [string][Alias('v')]$verbosity = "minimal",
 
   # Actions
@@ -13,6 +16,7 @@ Param(
 
   # Advanced settings
   [switch]$buildRepoTests,
+  [string]$projects,
   [switch]$ci,
   [switch][Alias('cwb')]$cleanWhileBuilding,
   [switch][Alias('nobl')]$excludeCIBinarylog,
@@ -22,9 +26,12 @@ Param(
 
 function Get-Usage() {
   Write-Host "Common settings:"
-  Write-Host "  -binaryLog              Output binary log (short: -bl)"
-  Write-Host "  -configuration <value>  Build configuration: 'Debug' or 'Release' (short: -c). [Default: Release]"
-  Write-Host "  -verbosity <value>      Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  Write-Host "  -binaryLog                   Output binary log (short: -bl)"
+  Write-Host "  -configuration <value>       Build configuration: 'Debug' or 'Release' (short: -c). [Default: Release]"
+  Write-Host "  -rid, -targetRid <value>     Overrides the rid that is produced by the build. e.g. win-arm64, win-x64"
+  Write-Host "  -os, -targetOS <value>       Target operating system: e.g. windows."
+  Write-Host "  -arch, -targetArch <value>   Target architecture: e.g. x64, x86, arm64, arm, riscv64"
+  Write-Host "  -verbosity <value>           Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   Write-Host ""
 
   Write-Host "Actions:"
@@ -36,6 +43,7 @@ function Get-Usage() {
 
   Write-Host "Advanced settings:"
   Write-Host "  -buildRepoTests         Build repository tests"
+  Write-Host "  -projects <value>       Project or solution file to build"
   Write-Host "  -ci                     Set when running on CI server"
   Write-Host "  -cleanWhileBuilding     Cleans each repo after building (reduces disk space usage, short: -cwb)"
   Write-Host "  -excludeCIBinarylog     Don't output binary log (short: -nobl)"
@@ -62,6 +70,23 @@ if ($test) {
 
   # Workaround for vstest hangs (https://github.com/microsoft/vstest/issues/5091) [TODO]
   $env:MSBUILDENSURESTDOUTFORTASKPROCESSES="1"
+}
+
+# Override project if specified on cmd-line
+if ($projects) {
+  $project = $projects
+}
+
+if ($targetRid) {
+  $arguments += "/p:TargetRid=$targetRid"
+}
+
+if ($targetOS) {
+  $arguments += "/p:TargetOS=$targetOS"
+}
+
+if ($targetArch) {
+  $arguments += "/p:TargetArchitecture=$targetArch"
 }
 
 if ($sign) {
