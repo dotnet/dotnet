@@ -73,7 +73,7 @@ public class SocketTests
         thread.Join();
         dataTransferred.Wait();
 
-        watch.Elapsed.Should().BeLessOrEqualTo(15.Seconds());
+        watch.Elapsed.Should().BeLessThanOrEqualTo(15.Seconds());
     }
 
     [TestMethod]
@@ -104,7 +104,7 @@ public class SocketTests
         watch.Stop();
         clientThread.Join();
 
-        watch.Elapsed.Should().BeLessOrEqualTo(20.Seconds());
+        watch.Elapsed.Should().BeLessThanOrEqualTo(20.Seconds());
     }
 
     private static void SendData(ICommunicationChannel? channel, Stopwatch watch)
