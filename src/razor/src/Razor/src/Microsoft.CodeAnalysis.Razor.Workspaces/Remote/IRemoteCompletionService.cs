@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ internal interface IRemoteCompletionService : IRemoteJsonService
         VSInternalCompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
         HashSet<string> existingHtmlCompletions,
+        Guid correlationId,
         CancellationToken cancellationToken);
 
     ValueTask<VSInternalCompletionItem> ResolveCompletionItemAsync(

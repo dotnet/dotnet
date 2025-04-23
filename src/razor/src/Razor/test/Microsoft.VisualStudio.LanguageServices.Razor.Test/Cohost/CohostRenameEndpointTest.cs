@@ -178,9 +178,9 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentRenameName, null)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentRenameName, null)]);
 
-        var endpoint = new CohostRenameEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
+        var endpoint = new CohostRenameEndpoint(RemoteServiceInvoker, requestInvoker);
 
         var renameParams = new RenameParams
         {

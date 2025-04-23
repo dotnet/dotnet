@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -31,15 +30,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class CohostCodeActionsEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     ITelemetryReporter telemetryReporter)
     : AbstractRazorCohostDocumentRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     protected override bool MutatesSolutionState => false;
@@ -115,38 +112,20 @@ internal sealed class CohostCodeActionsEndpoint(
 
     private async Task<RazorVSInternalCodeAction[]> GetHtmlCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<VSCodeActionParams, RazorVSInternalCodeAction[]>(
+            razorDocument,
+            Methods.TextDocumentCodeActionName,
+            request,
+            TelemetryThresholds.CodeActionSubLSPTelemetryThreshold,
+            correlationId,
+            cancellationToken).ConfigureAwait(false);
+
+        if (result is null)
         {
             return [];
         }
 
-        // We don't want to create a new request, and risk losing data, so we just tweak the Uri and
-        // set it back again at the end
-        var oldTdi = request.TextDocument;
-        try
-        {
-            request.TextDocument = new VSTextDocumentIdentifier { Uri = htmlDocument.Uri };
-
-            using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, RazorLSPConstants.HtmlLanguageServerName, TelemetryThresholds.CodeActionSubLSPTelemetryThreshold, correlationId);
-            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSCodeActionParams, RazorVSInternalCodeAction[]?>(
-                htmlDocument.Buffer,
-                Methods.TextDocumentCodeActionName,
-                RazorLSPConstants.HtmlLanguageServerName,
-                request,
-                cancellationToken).ConfigureAwait(false);
-
-            if (result?.Response is null)
-            {
-                return [];
-            }
-
-            return result.Response;
-        }
-        finally
-        {
-            request.TextDocument = oldTdi;
-        }
+        return result;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

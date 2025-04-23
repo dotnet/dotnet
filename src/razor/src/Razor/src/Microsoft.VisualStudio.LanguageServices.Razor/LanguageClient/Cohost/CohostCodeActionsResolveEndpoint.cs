@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -31,15 +30,13 @@ internal sealed class CohostCodeActionsResolveEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     IClientSettingsManager clientSettingsManager,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<CodeAction, CodeAction?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -125,25 +122,18 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
         try
         {
-            var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-            if (htmlDocument is null)
-            {
-                return codeAction;
-            }
-
-            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<CodeAction, CodeAction>(
-                htmlDocument.Buffer,
+            var result = await _requestInvoker.MakeHtmlLspRequestAsync<CodeAction, CodeAction>(
+                razorDocument,
                 Methods.CodeActionResolveName,
-                RazorLSPConstants.HtmlLanguageServerName,
                 codeAction,
                 cancellationToken).ConfigureAwait(false);
 
-            if (result?.Response is null)
+            if (result is null)
             {
                 return codeAction;
             }
 
-            return result.Response;
+            return result;
         }
         finally
         {

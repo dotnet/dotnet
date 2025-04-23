@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
 
@@ -24,17 +22,15 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostSignatureHelpEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostSignatureHelpEndpoint(
+internal sealed class CohostSignatureHelpEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<SignatureHelpParams, SignatureHelp?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -86,24 +82,11 @@ internal class CohostSignatureHelpEndpoint(
             return signatureHelp;
         }
 
-        // If we didn't get anything from Razor or Roslyn, lets ask Html what they want to do
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<SignatureHelpParams, SignatureHelp?>(
-            htmlDocument.Buffer,
+        return await _requestInvoker.MakeHtmlLspRequestAsync<SignatureHelpParams, SignatureHelp>(
+            razorDocument,
             Methods.TextDocumentSignatureHelpName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
-            cancellationToken)
-            .ConfigureAwait(false);
-
-        return result?.Response;
+            cancellationToken).ConfigureAwait(false);
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

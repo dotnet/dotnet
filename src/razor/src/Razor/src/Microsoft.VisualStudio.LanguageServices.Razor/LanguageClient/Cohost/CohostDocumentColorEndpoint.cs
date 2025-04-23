@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -19,13 +18,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostDocumentColorEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostDocumentColorEndpoint(
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+internal sealed class CohostDocumentColorEndpoint(
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<DocumentColorParams, ColorInformation[]?>, IDynamicRegistrationProvider
 {
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -53,22 +50,11 @@ internal class CohostDocumentColorEndpoint(
 
     private async Task<ColorInformation[]?> HandleRequestAsync(DocumentColorParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentColorParams, ColorInformation[]?>(
-            htmlDocument.Buffer,
+        return await _requestInvoker.MakeHtmlLspRequestAsync<DocumentColorParams, ColorInformation[]>(
+            razorDocument,
             Methods.TextDocumentDocumentColorName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
-
-        return result?.Response;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);
