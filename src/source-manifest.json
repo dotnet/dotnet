@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b688c4e09cf1c1e4da12a5d1af066c936d20035b"
+      "commitSha": "565f5dd21505b97084dc5084d3717b44892335e8"
     },
     {
       "packageVersion": "10.0.622101",
@@ -195,13 +195,6 @@
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
       "commitSha": "c49d8039632d608391880555414a1e226c6944ee"
-    },
-    {
-      "packageVersion": "1.0.0-beta.23475.1",
-      "barId": null,
-      "path": "xliff-tasks",
-      "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "73f0850939d96131c28cf6ea6ee5aacb4da0083a"
     }
   ],
   "submodules": [
