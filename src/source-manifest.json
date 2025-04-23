@@ -124,7 +124,7 @@
       "barId": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "421c0ecbb6092b29d75339e4776b4346703d2a5e"
+      "commitSha": "79bb7b3715d9b0260fb197618d3ee38d1b1d96f3"
     },
     {
       "packageVersion": "10.0.622101",
@@ -169,25 +169,25 @@
       "commitSha": "d59ce18d973a79c9030eabe6d8cbb0a9cbedc5a4"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25221.2",
+      "packageVersion": "10.0.0-preview.4.25222.2",
       "barId": null,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "841cdaf5c435ec6c7dabcd393faff3b2d824a30e"
+      "commitSha": "5aad917e7cd9d26645f3a3eefc7aae482ceeb3ab"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25219.1",
+      "packageVersion": "10.0.0-preview.4.25221.4",
       "barId": null,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "6efb602e71c650e1089d6671fc04e1042a1d8194"
+      "commitSha": "9bf049611c4160f35afff025d5de25d039516d02"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25221.2",
+      "packageVersion": "10.0.0-preview.5.25222.6",
       "barId": null,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "51bb6f45a9cd5b9797fe0630e185a6ec35e0d570"
+      "commitSha": "6694431782673d4f5d0ba82ee3f6df3704dfc59c"
     },
     {
       "packageVersion": "10.0.0-preview.25210.1",
