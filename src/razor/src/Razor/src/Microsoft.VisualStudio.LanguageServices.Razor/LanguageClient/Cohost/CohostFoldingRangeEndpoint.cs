@@ -9,11 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -24,16 +24,14 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostFoldingRangeEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostFoldingRangeEndpoint(
+internal sealed class CohostFoldingRangeEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<FoldingRangeParams, FoldingRange[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostFoldingRangeEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -91,33 +89,24 @@ internal class CohostFoldingRangeEndpoint(
 
     private async Task<ImmutableArray<RemoteFoldingRange>?> GetHtmlFoldingRangesAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
         var foldingRangeParams = new FoldingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = htmlDocument.Uri }
+            TextDocument = new TextDocumentIdentifier { Uri = razorDocument.CreateUri() }
         };
 
-        _logger.LogDebug($"Requesting folding ranges for {htmlDocument.Uri}");
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<FoldingRangeParams, FoldingRange[]?>(
-            htmlDocument.Buffer,
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<FoldingRangeParams, FoldingRange[]>(
+            razorDocument,
             Methods.TextDocumentFoldingRangeName,
-            RazorLSPConstants.HtmlLanguageServerName,
             foldingRangeParams,
             cancellationToken).ConfigureAwait(false);
 
-        if (result?.Response is null)
+        if (result is null)
         {
             _logger.LogDebug($"Didn't get any ranges back from Html. Returning null so we can abandon the whole thing");
             return null;
         }
 
-        return result.Response.SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
+        return result.SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

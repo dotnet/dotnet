@@ -234,9 +234,9 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
                 })
             .ToArray();
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentFoldingRangeName, htmlRanges)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFoldingRangeName, htmlRanges)]);
 
-        var endpoint = new CohostFoldingRangeEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, LoggerFactory);
+        var endpoint = new CohostFoldingRangeEndpoint(RemoteServiceInvoker, requestInvoker, LoggerFactory);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken);
 

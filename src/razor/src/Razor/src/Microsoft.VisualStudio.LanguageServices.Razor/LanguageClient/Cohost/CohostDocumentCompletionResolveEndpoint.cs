@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -31,16 +30,14 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
     CompletionListCache completionListCache,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem?>, IDynamicRegistrationProvider
 {
     private readonly CompletionListCache _completionListCache = completionListCache;
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentCompletionEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -127,22 +124,15 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
         TextDocument razorDocument,
         CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return request;
-        }
+        _logger.LogDebug($"Resolving Html completion item {request.Label} for {razorDocument.FilePath}");
 
-        _logger.LogDebug($"Resolving completion item {request.Label} for {htmlDocument.Uri}");
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, VSInternalCompletionItem>(
-            htmlDocument.Buffer,
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<VSInternalCompletionItem, VSInternalCompletionItem>(
+            razorDocument,
             Methods.TextDocumentCompletionResolveName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
 
-        return result?.Response ?? request;
+        return result ?? request;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

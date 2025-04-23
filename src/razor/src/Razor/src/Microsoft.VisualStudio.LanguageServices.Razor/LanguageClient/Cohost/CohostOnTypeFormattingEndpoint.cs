@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -29,15 +28,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostOnTypeFormattingEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     IClientSettingsManager clientSettingsManager,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostOnTypeFormattingEndpoint>();
 
@@ -135,30 +132,19 @@ internal sealed class CohostOnTypeFormattingEndpoint(
 
     private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentOnTypeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
-
-        _logger.LogDebug($"Requesting document formatting edits for {htmlDocument.Uri}");
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentOnTypeFormattingParams, TextEdit[]?>(
-            htmlDocument.Buffer,
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<DocumentOnTypeFormattingParams, TextEdit[]>(
+            razorDocument,
             Methods.TextDocumentOnTypeFormattingName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
 
-        if (result?.Response is null)
+        if (result is null)
         {
             _logger.LogDebug($"Didn't get any ranges back from Html. Returning null so we can abandon the whole thing");
             return null;
         }
 
-        return result.Response;
+        return result;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

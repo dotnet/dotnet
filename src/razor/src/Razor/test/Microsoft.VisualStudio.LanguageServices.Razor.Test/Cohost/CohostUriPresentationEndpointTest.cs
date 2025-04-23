@@ -243,9 +243,9 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
         var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, FilePathService, requestInvoker);
+        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, FilePathService, requestInvoker);
 
         var request = new VSInternalUriPresentationParams()
         {

@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -25,14 +24,12 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostGoToDefinitionEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     IFilePathService filePathService)
     : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, SumType<LspLocation, LspLocation[], DocumentLink[]>?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly IFilePathService _filePathService = filePathService;
 
     protected override bool MutatesSolutionState => false;
@@ -89,37 +86,28 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
     private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetHtmlDefinitionsAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument.Uri = htmlDocument.Uri;
-
         var result = await _requestInvoker
-            .ReinvokeRequestOnServerAsync<TextDocumentPositionParams, SumType<LspLocation, LspLocation[], DocumentLink[]>?>(
-                htmlDocument.Buffer,
+            .MakeHtmlLspRequestAsync<TextDocumentPositionParams, SumType<LspLocation, LspLocation[], DocumentLink[]>>(
+                razorDocument,
                 Methods.TextDocumentDefinitionName,
-                RazorLSPConstants.HtmlLanguageServerName,
                 request,
                 cancellationToken)
             .ConfigureAwait(false);
 
-        if (result is not { Response: { } response })
+        if (result.Value is null)
         {
             return null;
         }
 
-        if (response.TryGetFirst(out var singleLocation))
+        if (result.TryGetFirst(out var singleLocation))
         {
             return LspFactory.CreateLocation(RemapVirtualHtmlUri(singleLocation.Uri), singleLocation.Range.ToLinePositionSpan());
         }
-        else if (response.TryGetSecond(out var multipleLocations))
+        else if (result.TryGetSecond(out var multipleLocations))
         {
             return Array.ConvertAll(multipleLocations, l => LspFactory.CreateLocation(RemapVirtualHtmlUri(l.Uri), l.Range.ToLinePositionSpan()));
         }
-        else if (response.TryGetThird(out var documentLinks))
+        else if (result.TryGetThird(out var documentLinks))
         {
             using var builder = new PooledArrayBuilder<DocumentLink>(capacity: documentLinks.Length);
 
