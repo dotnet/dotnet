@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
@@ -618,7 +619,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             IsIncomplete = true
         };
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentCompletionName, response)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentCompletionName, response)]);
 
         var snippetCompletionItemProvider = new SnippetCompletionItemProvider(new SnippetCache());
         // If snippetLabels wasn't supplied, supply our own to ensure snippets aren't being requested and causing a false positive result
@@ -631,11 +632,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             RemoteServiceInvoker,
             clientSettingsManager,
             ClientCapabilitiesService,
-            TestHtmlDocumentSynchronizer.Instance,
             snippetCompletionItemProvider,
             TestLanguageServerFeatureOptions.Instance,
             requestInvoker,
             completionListCache,
+            NoOpTelemetryReporter.Instance,
             LoggerFactory);
 
         var request = new CompletionParams()
@@ -706,8 +707,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             completionListCache,
             RemoteServiceInvoker,
             clientSettingsManager,
-            TestHtmlDocumentSynchronizer.Instance,
-            new TestLSPRequestInvoker(),
+            new TestHtmlRequestInvoker(),
             LoggerFactory);
 
         var tdi = endpoint.GetTestAccessor().GetRazorTextDocumentIdentifier(item);

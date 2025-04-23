@@ -587,15 +587,17 @@
     <SolidColorBrush x:Key="TextControlForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
     <SolidColorBrush x:Key="TextControlBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{StaticResource SystemColorHighlightColor}" />
-    <SolidColorBrush x:Key="TextControlFocusedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="TextControlBorderBrushDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="{StaticResource SystemColorWindowColor}" />
     
     <!-- Deprecated TextControl Brushes -->
-        <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource SystemColorHighlightColor}" />
+        <SolidColorBrush x:Key="TextControlFocusedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
         <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{StaticResource SystemColorGrayTextColor}" />
-
+    
     <!--  Thumb  -->
     <SolidColorBrush x:Key="ThumbBackground" Color="{StaticResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ThumbBackgroundDisabled" Color="{StaticResource SystemColorButtonFaceColor}" />
 
     <!--  ThumbRate  -->
     <SolidColorBrush x:Key="ThumbRateForeground" Color="{StaticResource SystemColorHighlightColor}" />

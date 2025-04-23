@@ -8,9 +8,8 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.Razor.Settings;
-using Microsoft.VisualStudio.Threading;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -106,27 +105,28 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
-        LSPRequestInvoker requestInvoker;
+        IHtmlRequestInvoker requestInvoker;
         if (html)
         {
-            var htmlDocumentPublisher = new HtmlDocumentPublisher(RemoteServiceInvoker, StrictMock.Of<TrackingLSPDocumentManager>(), StrictMock.Of<JoinableTaskContext>(), LoggerFactory);
-            var generatedHtml = await htmlDocumentPublisher.GetHtmlSourceFromOOPAsync(document, DisposalToken);
+            var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
+                (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
+                DisposalToken).ConfigureAwait(false);
             Assert.NotNull(generatedHtml);
 
             var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
             var htmlEdits = await htmlFormattingFixture.Service.GetOnTypeFormattingEditsAsync(LoggerFactory, uri, generatedHtml, position, insertSpaces: true, tabSize: 4);
 
-            requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentOnTypeFormattingName, htmlEdits)]);
+            requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentOnTypeFormattingName, htmlEdits)]);
         }
         else
         {
             // We use a mock here so that it will throw if called
-            requestInvoker = StrictMock.Of<LSPRequestInvoker>();
+            requestInvoker = StrictMock.Of<IHtmlRequestInvoker>();
         }
 
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
 
-        var endpoint = new CohostOnTypeFormattingEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, clientSettingsManager, LoggerFactory);
+        var endpoint = new CohostOnTypeFormattingEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
 
         var request = new DocumentOnTypeFormattingParams()
         {

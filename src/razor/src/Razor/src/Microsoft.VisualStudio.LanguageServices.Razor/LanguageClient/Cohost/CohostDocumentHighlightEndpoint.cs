@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentHighlight;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -23,15 +22,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostDocumentHighlightEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostDocumentHighlightEndpoint(
+internal sealed class CohostDocumentHighlightEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<DocumentHighlightParams, DocumentHighlight[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -76,23 +73,11 @@ internal class CohostDocumentHighlightEndpoint(
         }
 
         // If we didn't get anything from Razor or Roslyn, lets ask Html what they want to do
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentHighlightParams, DocumentHighlight[]?>(
-            htmlDocument.Buffer,
+        return await _requestInvoker.MakeHtmlLspRequestAsync<DocumentHighlightParams, DocumentHighlight[]>(
+            razorDocument,
             Methods.TextDocumentDocumentHighlightName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
-
-        // Since we don't need to map positions in Html, and document highlight results don't have Uri's, we can return these results directly
-        return result?.Response;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

@@ -3,14 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.VisualStudio.Razor.LanguageClient.Cohost.HtmlDocumentSynchronizer;
@@ -33,10 +34,11 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_NewDocument_Generates()
     {
-        var publisher = new TestHtmlDocumentPublisher();
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
@@ -51,16 +53,16 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_ReopenedDocument_Generates()
     {
-        var publisher = new TestHtmlDocumentPublisher();
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
         // "Close" the document
-        var snapshot = StrictMock.Of<LSPDocumentSnapshot>(d => d.Uri == new Uri(document.FilePath));
-        synchronizer.Changed(snapshot, null, null, null, LSPDocumentChangeKind.Removed);
+        synchronizer.DocumentRemoved(document.CreateUri());
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
@@ -80,15 +82,16 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_CancelledGeneration_Generates()
     {
-        var publisher = new TestHtmlDocumentPublisher();
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
 
-        publisher.OOPReturnsNull = true;
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
+        remoteServiceInvoker.OOPReturnsNull = true;
         Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
-        publisher.OOPReturnsNull = false;
+        remoteServiceInvoker.OOPReturnsNull = false;
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
         Assert.Collection(publisher.Publishes,
@@ -102,15 +105,16 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_ExceptionDuringGeneration_Generates()
     {
-        var publisher = new TestHtmlDocumentPublisher(() => throw new Exception());
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => throw new Exception());
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
         // Stop throwing exceptions :)
-        publisher.GenerateTask = null;
+        remoteServiceInvoker.GenerateTask = null;
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
         Assert.Collection(publisher.Publishes,
@@ -124,10 +128,12 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_WorkspaceMovedForward_NoDocumentChanges_DoesntGenerate()
     {
-        var publisher = new TestHtmlDocumentPublisher();
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
         var version1 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
@@ -155,10 +161,12 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_WorkspaceUnchanged_DocumentChanges_Generates()
     {
-        var publisher = new TestHtmlDocumentPublisher();
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
         var version1 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
@@ -190,11 +198,13 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_RequestOldVersion_ImmediateFail()
     {
-        var tcs = new TaskCompletionSource<bool>();
-        var publisher = new TestHtmlDocumentPublisher(() => tcs.Task);
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document1 = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var tcs = new TaskCompletionSource<bool>();
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document1, () => tcs.Task);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
         var version1 = await RazorDocumentVersion.CreateAsync(document1, DisposalToken);
 
         Assert.True(Workspace.TryApplyChanges(Workspace.CurrentSolution.WithAdditionalDocumentText(_documentId.AssumeNotNull(), SourceText.From("<span></span>"))));
@@ -220,11 +230,12 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_RequestSameVersion_SingleGeneration()
     {
-        var tcs = new TaskCompletionSource<bool>();
-        var publisher = new TestHtmlDocumentPublisher(() => tcs.Task);
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var tcs = new TaskCompletionSource<bool>();
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => tcs.Task);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         var task1 = synchronizer.TrySynchronizeAsync(document, DisposalToken);
         var task2 = synchronizer.TrySynchronizeAsync(document, DisposalToken);
@@ -244,11 +255,12 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task TrySynchronize_RequestNewVersion_CancelOldTask()
     {
-        var tcs = new TaskCompletionSource<bool>();
-        var publisher = new TestHtmlDocumentPublisher(() => tcs.Task);
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var tcs = new TaskCompletionSource<bool>();
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => tcs.Task);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         var task1 = synchronizer.TrySynchronizeAsync(document, DisposalToken);
 
@@ -276,11 +288,13 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     [Fact]
     public async Task GetSynchronizationRequestTask_RequestSameVersion_ReturnsSameTask()
     {
-        var tcs = new TaskCompletionSource<bool>();
-        var publisher = new TestHtmlDocumentPublisher(() => tcs.Task);
-        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
-
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var tcs = new TaskCompletionSource<bool>();
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => tcs.Task);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
         var version = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
         var accessor = synchronizer.GetTestAccessor();
@@ -290,17 +304,18 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.Same(task1, task2);
     }
 
-    private class TestHtmlDocumentPublisher(Func<Task>? generateTask = null) : IHtmlDocumentPublisher
+    private class RemoteServiceInvoker(TextDocument document, Func<Task>? generateTask = null) : IRemoteServiceInvoker
     {
-        private List<(TextDocument, string)> _publishes = [];
-
-        public List<(TextDocument, string)> Publishes => _publishes;
+        private readonly DocumentId _documentId = document.Id;
 
         public bool OOPReturnsNull { get; set; }
         public Func<Task>? GenerateTask { get; set; } = generateTask;
 
-        public async Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken)
+        public async ValueTask<TResult?> TryInvokeAsync<TService, TResult>(Solution solution, Func<TService, RazorPinnedSolutionInfoWrapper, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken, [CallerFilePath] string? callerFilePath = null, [CallerMemberName] string? callerMemberName = null) where TService : class
         {
+            Assert.Equal(typeof(string), typeof(TResult));
+            Assert.Equal(typeof(IRemoteHtmlDocumentService), typeof(TService));
+
             if (GenerateTask is not null)
             {
                 await GenerateTask();
@@ -308,17 +323,23 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
             if (cancellationToken.IsCancellationRequested)
             {
-                return null;
+                return default;
             }
 
             if (OOPReturnsNull)
             {
-                return null;
+                return default;
             }
 
-            var source = await document.GetTextAsync();
-            return source.ToString();
+            return (TResult)(object)(await solution.GetAdditionalDocument(_documentId).AssumeNotNull().GetTextAsync(cancellationToken)).ToString();
         }
+    }
+
+    private class TestHtmlDocumentPublisher : IHtmlDocumentPublisher
+    {
+        private List<(TextDocument, string)> _publishes = [];
+
+        public List<(TextDocument, string)> Publishes => _publishes;
 
         public Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)
         {

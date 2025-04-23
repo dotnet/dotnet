@@ -204,8 +204,8 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         var inputText = await document.GetTextAsync(DisposalToken);
         var linePosition = inputText.GetLinePosition(input.Position);
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentHoverName, htmlResponse)]);
-        var endpoint = new CohostHoverEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentHoverName, htmlResponse)]);
+        var endpoint = new CohostHoverEndpoint(RemoteServiceInvoker, requestInvoker);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {

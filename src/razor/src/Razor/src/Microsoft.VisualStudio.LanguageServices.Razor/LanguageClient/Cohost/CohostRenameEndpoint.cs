@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -20,15 +19,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostRenameEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostRenameEndpoint(
+internal sealed class CohostRenameEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<RenameParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -74,27 +71,11 @@ internal class CohostRenameEndpoint(
             return null;
         }
 
-        return await GetHtmlRenameEditAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task<WorkspaceEdit?> GetHtmlRenameEditAsync(RenameParams request, TextDocument razorDocument, CancellationToken cancellationToken)
-    {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument.Uri = htmlDocument.Uri;
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<RenameParams, WorkspaceEdit?>(
-            htmlDocument.Buffer,
+        return await _requestInvoker.MakeHtmlLspRequestAsync<RenameParams, WorkspaceEdit>(
+            razorDocument,
             Methods.TextDocumentRenameName,
-            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
-
-        return result?.Response;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 
-[RazorLanguageServerEndpoint(CustomMessageNames.ColorPresentationMethodName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentColorPresentationName)]
 internal sealed class ColorPresentationEndpoint(IClientConnection clientConnection) : IRazorRequestHandler<ColorPresentationParams, LspColorPresentation[]>
 {
     private readonly IClientConnection _clientConnection = clientConnection;

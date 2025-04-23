@@ -9,6 +9,5 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal interface IHtmlDocumentPublisher
 {
-    Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken);
     Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken);
 }

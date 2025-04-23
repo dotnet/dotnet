@@ -30,7 +30,7 @@
     <ProjectReference Include="$(RepoRoot)src\vstest.console\vstest.console.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageReference Include="AwesomeAssertions" Version="$(AwesomeAssertionsVersion)" />
     <PackageReference Include="Microsoft.TestPlatform.TestAsset.NativeCPP" Version="2.0.0" />
     <PackageReference Include="Microsoft.TestPlatform.QTools.Assets" Version="2.0.0" />
     <PackageReference Include="Procdump" Version="0.0.1" />

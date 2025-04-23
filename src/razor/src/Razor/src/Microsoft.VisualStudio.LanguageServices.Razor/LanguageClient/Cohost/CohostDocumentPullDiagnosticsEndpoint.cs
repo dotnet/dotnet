@@ -11,10 +11,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Razor.Settings;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
@@ -28,18 +30,18 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostDocumentPullDiagnosticsEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostDocumentPullDiagnosticsEndpoint(
+internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker,
+    IHtmlRequestInvoker requestInvoker,
     IClientSettingsManager clientSettingsManager,
+    ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentPullDiagnosticsEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -103,14 +105,17 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
 
     private async Task<VSInternalDiagnosticReport[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
+        var correlationId = Guid.NewGuid();
+        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.DiagnosticsRazorTelemetryThreshold, correlationId);
+
         // Diagnostics is a little different, because Roslyn is not designed to run diagnostics in OOP. Their system will transition to OOP
         // as it needs, but we have to start here in devenv. This is not as big a problem as it sounds, specifically for diagnostics, because
         // we only need to tell Roslyn the document we need diagnostics for. If we had to map positions or ranges etc. it would be worse
         // because we'd have to transition to our OOP to find out that info, then back here to get the diagnostics, then back to OOP to process.
         _logger.LogDebug($"Getting diagnostics for {razorDocument.FilePath}");
 
-        var csharpTask = GetCSharpDiagnosticsAsync(razorDocument, cancellationToken);
-        var htmlTask = GetHtmlDiagnosticsAsync(razorDocument, cancellationToken);
+        var csharpTask = GetCSharpDiagnosticsAsync(razorDocument, correlationId, cancellationToken);
+        var htmlTask = GetHtmlDiagnosticsAsync(razorDocument, correlationId, cancellationToken);
 
         try
         {
@@ -150,7 +155,7 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
         ];
     }
 
-    private async Task<LspDiagnostic[]> GetCSharpDiagnosticsAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<LspDiagnostic[]> GetCSharpDiagnosticsAsync(TextDocument razorDocument, Guid correletionId, CancellationToken cancellationToken)
     {
         if (!razorDocument.TryComputeHintNameFromRazorDocument(out var hintName) ||
             await razorDocument.Project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken).ConfigureAwait(false) is not { } generatedDocument)
@@ -159,39 +164,34 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
         }
 
         _logger.LogDebug($"Getting C# diagnostics for {generatedDocument.FilePath}");
+
+        using var _ = _telemetryReporter.TrackLspRequest(VSInternalMethods.DocumentPullDiagnosticName, "Razor.ExternalAccess", TelemetryThresholds.DiagnosticsSubLSPTelemetryThreshold, correletionId);
         var diagnostics = await ExternalHandlers.Diagnostics.GetDocumentDiagnosticsAsync(generatedDocument, supportsVisualStudioExtensions: true, cancellationToken).ConfigureAwait(false);
         return diagnostics.ToArray();
     }
 
-    private async Task<LspDiagnostic[]> GetHtmlDiagnosticsAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<LspDiagnostic[]> GetHtmlDiagnosticsAsync(TextDocument razorDocument, Guid correletionId, CancellationToken cancellationToken)
     {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return [];
-        }
-
         var diagnosticsParams = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = htmlDocument.Uri }
+            TextDocument = new TextDocumentIdentifier { Uri = razorDocument.CreateUri() }
         };
 
-        _logger.LogDebug($"Getting Html diagnostics for {htmlDocument.Uri}");
-
-        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]?>(
-            htmlDocument.Buffer,
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(
+            razorDocument,
             VSInternalMethods.DocumentPullDiagnosticName,
-            RazorLSPConstants.HtmlLanguageServerName,
             diagnosticsParams,
+            TelemetryThresholds.DiagnosticsSubLSPTelemetryThreshold,
+            correletionId,
             cancellationToken).ConfigureAwait(false);
 
-        if (result?.Response is null)
+        if (result is null)
         {
             return [];
         }
 
         using var allDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
-        foreach (var report in result.Response)
+        foreach (var report in result)
         {
             if (report.Diagnostics is not null)
             {

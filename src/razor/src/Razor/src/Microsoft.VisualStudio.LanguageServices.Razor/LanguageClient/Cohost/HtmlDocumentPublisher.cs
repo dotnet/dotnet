@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Threading;
 
@@ -18,22 +17,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Export(typeof(IHtmlDocumentPublisher))]
 [method: ImportingConstructor]
 internal sealed class HtmlDocumentPublisher(
-    IRemoteServiceInvoker remoteServiceInvoker,
     LSPDocumentManager documentManager,
     JoinableTaskContext joinableTaskContext,
     ILoggerFactory loggerFactory) : IHtmlDocumentPublisher
 {
-    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentPublisher>();
-
-    public Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken)
-    {
-        return _remoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
-            (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
-            cancellationToken).AsTask();
-    }
 
     public async Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)
     {

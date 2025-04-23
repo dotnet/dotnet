@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -22,13 +21,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostHoverEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, LspHover?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -79,29 +76,11 @@ internal sealed class CohostHoverEndpoint(
             return null;
         }
 
-        return await GetHtmlHoverAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task<LspHover?> GetHtmlHoverAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
-    {
-        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (htmlDocument is null)
-        {
-            return null;
-        }
-
-        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
-
-        var result = await _requestInvoker
-            .ReinvokeRequestOnServerAsync<TextDocumentPositionParams, LspHover?>(
-                htmlDocument.Buffer,
-                Methods.TextDocumentHoverName,
-                RazorLSPConstants.HtmlLanguageServerName,
-                request,
-                cancellationToken)
-            .ConfigureAwait(false);
-
-        return result?.Response;
+        return await _requestInvoker.MakeHtmlLspRequestAsync<TextDocumentPositionParams, LspHover>(
+            razorDocument,
+            Methods.TextDocumentHoverName,
+            request,
+            cancellationToken).ConfigureAwait(false);
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

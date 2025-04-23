@@ -10,66 +10,36 @@ using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Utilities;
+using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-[ContentType(RazorConstants.RazorLSPContentTypeName)]
-[Export(typeof(LSPDocumentChangeListener))]
 [Export(typeof(IHtmlDocumentSynchronizer))]
 [method: ImportingConstructor]
 internal sealed partial class HtmlDocumentSynchronizer(
-    LSPDocumentManager documentManager,
+    IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlDocumentPublisher htmlDocumentPublisher,
     ILoggerFactory loggerFactory)
-    : LSPDocumentChangeListener, IHtmlDocumentSynchronizer
+    : IHtmlDocumentSynchronizer
 {
+    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentPublisher _htmlDocumentPublisher = htmlDocumentPublisher;
-    private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentSynchronizer>();
 
     private readonly Dictionary<Uri, SynchronizationRequest> _synchronizationRequests = [];
     private readonly object _gate = new();
 
-    public override void Changed(LSPDocumentSnapshot? old, LSPDocumentSnapshot? @new, VirtualDocumentSnapshot? virtualOld, VirtualDocumentSnapshot? virtualNew, LSPDocumentChangeKind kind)
+    public void DocumentRemoved(Uri razorFileUri)
     {
-        if (kind == LSPDocumentChangeKind.Removed && old is not null)
+        lock (_gate)
         {
-            lock (_gate)
+            if (_synchronizationRequests.TryGetValue(razorFileUri, out var request))
             {
-                if (_synchronizationRequests.TryGetValue(old.Uri, out var request))
-                {
-                    _logger.LogDebug($"Document {old.Uri} removed, so we're disposing and clearing out the sync request for it");
-                    request.Dispose();
-                    _synchronizationRequests.Remove(old.Uri);
-                }
+                _logger.LogDebug($"Document {razorFileUri} removed, so we're disposing and clearing out the sync request for it");
+                request.Dispose();
+                _synchronizationRequests.Remove(razorFileUri);
             }
         }
-    }
-
-    public async Task<HtmlDocumentResult?> TryGetSynchronizedHtmlDocumentAsync(TextDocument razorDocument, CancellationToken cancellationToken)
-    {
-        var syncResult = await TrySynchronizeAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (!syncResult)
-        {
-            _logger.LogDebug($"Couldn't synchronize for {razorDocument.FilePath}");
-            return null;
-        }
-
-        if (!_documentManager.TryGetDocument(razorDocument.CreateUri(), out var snapshot))
-        {
-            _logger.LogError($"Couldn't find document in LSPDocumentManager for {razorDocument.FilePath}");
-            return null;
-        }
-
-        if (!snapshot.TryGetVirtualDocument<HtmlVirtualDocumentSnapshot>(out var document))
-        {
-            _logger.LogError($"Couldn't find virtual document snapshot for {snapshot.Uri}");
-            return null;
-        }
-
-        return new HtmlDocumentResult(document.Uri, document.Snapshot.TextBuffer);
     }
 
     public async Task<bool> TrySynchronizeAsync(TextDocument document, CancellationToken cancellationToken)
@@ -145,7 +115,9 @@ internal sealed partial class HtmlDocumentSynchronizer(
         string? htmlText;
         try
         {
-            htmlText = await _htmlDocumentPublisher.GetHtmlSourceFromOOPAsync(document, cancellationToken).ConfigureAwait(false);
+            htmlText = await _remoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
+                (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
+                cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

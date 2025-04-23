@@ -235,13 +235,12 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             };
         }
 
-        var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.OnAutoInsertName, response)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.OnAutoInsertName, response)]);
 
         var endpoint = new CohostOnAutoInsertEndpoint(
             RemoteServiceInvoker,
             clientSettingsManager,
             onAutoInsertTriggerCharacterProviders,
-            TestHtmlDocumentSynchronizer.Instance,
             requestInvoker,
             LoggerFactory);
 

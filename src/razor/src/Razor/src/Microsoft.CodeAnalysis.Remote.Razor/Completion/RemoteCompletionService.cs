@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.RazorVSInternalCompletionList?>;
@@ -35,6 +37,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = args.ExportProvider.GetExportedValue<CompletionTriggerAndCommitCharacters>();
     private readonly IRazorFormattingService _formattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
+    private readonly ITelemetryReporter _telemetryReporter = args.ExportProvider.GetExportedValue<ITelemetryReporter>();
 
     public ValueTask<CompletionPositionInfo?> GetPositionInfoAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
@@ -84,6 +87,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         VSInternalCompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
         HashSet<string> existingHtmlCompletions,
+        Guid correlationId,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -94,6 +98,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionContext,
                 razorCompletionOptions,
                 existingHtmlCompletions,
+                correlationId,
                 cancellationToken),
             cancellationToken);
 
@@ -103,6 +108,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         VSInternalCompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
         HashSet<string> existingDelegatedCompletions,
+        Guid correlationId,
         CancellationToken cancellationToken)
     {
         var documentPositionInfo = positionInfo.DocumentPositionInfo;
@@ -138,6 +144,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 mappedPosition,
                 completionContext,
                 razorCompletionOptions,
+                correlationId,
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -179,6 +186,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         Position mappedPosition,
         CompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
+        Guid correlationId,
         CancellationToken cancellationToken)
     {
         var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
@@ -189,14 +197,19 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         }
 
         var mappedLinePosition = mappedPosition.ToLinePosition();
-        var completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
-            generatedDocument,
-            mappedLinePosition,
-            completionContext,
-            clientCapabilities.SupportsVisualStudioExtensions,
-            completionSetting,
-            cancellationToken)
-            .ConfigureAwait(false);
+
+        VSInternalCompletionList? completionList = null;
+        using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, "Razor.ExternalAccess", TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
+        {
+            completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
+                generatedDocument,
+                mappedLinePosition,
+                completionContext,
+                clientCapabilities.SupportsVisualStudioExtensions,
+                completionSetting,
+                cancellationToken)
+                .ConfigureAwait(false);
+        }
 
         if (completionList is null)
         {
