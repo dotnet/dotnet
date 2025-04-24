@@ -58,7 +58,9 @@ internal static class CSharpTestLspServerHelpers
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
-        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
+        var exportProvider = TestComposition.Roslyn
+            .AddParts(typeof(RazorTestLanguageServerFactory))
+            .ExportProviderFactory.CreateExportProvider();
 
         var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
         metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);

@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Razor.Settings;
 
+[Export(typeof(IClientSettingsReader))]
 [Export(typeof(IClientSettingsManager))]
 internal class ClientSettingsManager : IClientSettingsManager
 {

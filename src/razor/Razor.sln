@@ -142,6 +142,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Razo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Razor.Compiler", "src\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj", "{E102632D-EC30-474F-B2EB-6EB07ED45F27}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.CodeAnalysis.Razor.CohostingShared", "src\Razor\src\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.shproj", "{6778F3D4-C6C2-4882-9F86-54FCD44B078A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -587,15 +589,19 @@ Global
 		{094A024C-7DC1-487B-9F52-9D65CDFEE18D} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{440580F4-D746-49BB-AE8E-9F898483EA75} = {5B60F564-4AD7-4B70-A887-7D91496799A2}
 		{E102632D-EC30-474F-B2EB-6EB07ED45F27} = {440580F4-D746-49BB-AE8E-9F898483EA75}
+		{6778F3D4-C6C2-4882-9F86-54FCD44B078A} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0035341D-175A-4D05-95E6-F1C2785A1E26}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{078aef36-f319-4ce2-baa2-5b58a6536b46}*SharedItemsImports = 5
+		src\Razor\src\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems*{2223b8fd-d98a-47be-94a9-6a3a6b8557b8}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{6205467f-e381-4c42-aeec-763bd62b3d5e}*SharedItemsImports = 5
+		src\Razor\src\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems*{6778f3d4-c6c2-4882-9f86-54fcd44b078a}*SharedItemsImports = 13
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{7b1c5668-b4bc-45d9-ae4c-9c2382fc47a9}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{cd6913f3-ec47-4470-9c45-f5f898615e9d}*SharedItemsImports = 13
+		src\Razor\src\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems*{e5d92db7-5cbf-410a-9685-ff76f71ec96f}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{e5d92db7-5cbf-410a-9685-ff76f71ec96f}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

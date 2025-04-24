@@ -151,6 +151,47 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
         Assert.Null(hints);
     }
 
+    [Fact]
+    public Task PageDirective()
+       => VerifyInlayHintsAsync(
+           input: """
+            @page {|template:"/"|}
+
+            <div></div>
+
+            """,
+           toolTipMap: new Dictionary<string, string>
+           {
+                { "template", "(parameter) string template" },
+           },
+           output: """
+            @page "/"
+
+            <div></div>
+
+            """);
+
+    [Fact]
+    [System.ComponentModel.Description("Desc")]
+    public Task AttributeDirective()
+       => VerifyInlayHintsAsync(
+           input: """
+            @attribute [System.ComponentModel.Description({|description:"Desc"|})]
+
+            <div></div>
+
+            """,
+           toolTipMap: new Dictionary<string, string>
+           {
+                { "description", "(parameter) string description" },
+           },
+           output: """
+            @attribute [System.ComponentModel.Description(description: "Desc")]
+
+            <div></div>
+
+            """);
+
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output, bool displayAllOverride = false)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);

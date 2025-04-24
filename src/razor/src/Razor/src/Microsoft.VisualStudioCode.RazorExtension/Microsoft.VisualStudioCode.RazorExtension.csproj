@@ -2,9 +2,9 @@
   <PropertyGroup>
     <!-- needs to be compatible with NetVSCode as defined in Roslyn repo, eng/targets/TargetFrameworks.props -->
     <TargetFramework>$(NetVSCode)</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsShippingPackage>true</IsShippingPackage>
+    <DefineConstants>$(DefineConstants);VSCODE</DefineConstants>
 
     <!--
         Build a nuget package for this project.  This is not consumed as a standard NuGet package; it just
@@ -31,6 +31,7 @@
     <!-- Since we're including these DLLs in the package, we mark them as private assets so they're not also dependencies -->
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor\Microsoft.CodeAnalysis.Remote.Razor.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +49,7 @@
       <Content Include="$(PublishDir)\Microsoft.AspNetCore.Razor.Utilities.Shared.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
       <Content Include="$(PublishDir)\Microsoft.CodeAnalysis.Razor.Compiler.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
       <Content Include="$(PublishDir)\Microsoft.CodeAnalysis.Razor.Workspaces.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(PublishDir)\Microsoft.Extensions.ObjectPool.dll" Pack="true" PackagePath="content" CopyToOutputDirectory="PreserveNewest" />
 
       <!-- We don't need to include everything in the bin folder but we do need to add localization resources for the compiler dll -->
       <Content Include="$(PublishDir)\cs\**\*.*" Pack="true" PackagePath="content\cs\" CopyToOutputDirectory="PreserveNewest" />
@@ -65,4 +67,6 @@
       <Content Include="$(PublishDir)\zh-Hant\**\*.*" Pack="true" PackagePath="content\zh-Hant\" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
+
+  <Import Project="..\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems" Label="Shared" />
 </Project>
