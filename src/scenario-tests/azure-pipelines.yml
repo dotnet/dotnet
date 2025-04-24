@@ -43,40 +43,6 @@ extends:
         parameters:
           artifacts:
             publish:
-              artifacts: true
-              logs: true
               manifests: true
-          enableMicrobuild: true
-          enablePublishTestResults: true
-          enablePublishUsingPipelines: true
-          enableTelemetry: true
+          isAssetlessBuild: true
           publishAssetsImmediately: true
-          helixRepo: dotnet/scenario-tests
-          jobs:
-          - job: Windows
-            pool:
-              name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals 1es-windows-2022
-            variables:
-            # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-            - group: Publish-Build-Assets
-            - name: _OfficialBuildArgs
-              value: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-            strategy:
-              matrix:
-                Release:
-                  _BuildConfig: Release
-                  _BuildArgs: $(_OfficialBuildArgs) /p:DotNetPublishUsingPipelines=true
-            steps:
-            - checkout: self
-              clean: true
-            - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
-              displayName: Build and Test
-
-    - template: eng\common\templates-official\post-build\post-build.yml@self
-      parameters:
-        enableSymbolValidation: false
-        enableSigningValidation: false
-        enableNugetValidation: false
-        enableSourceLinkValidation: false
-        publishAssetsImmediately: true
