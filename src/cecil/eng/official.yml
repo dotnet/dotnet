@@ -83,8 +83,6 @@ extends:
               - _PublishArgs: /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory) /p:DotNetPublishUsingPipelines=true
             - DotNetSignType: ${{ format('{0}', variables._SignType) }}
             steps:
-            - checkout: self
-              submodules: false
             - script: eng\common\cibuild.cmd -projects $(Build.SourcesDirectory)\Mono.Cecil.sln -configuration $(_BuildConfig) $(_BuildArgs) $(_PublishArgs) -integrationTest -nodeReuse "$false"
               env:
                 MSBUILDENSURESTDOUTFORTASKPROCESSES: 1
@@ -98,8 +96,6 @@ extends:
               pool:
                 vmImage: ubuntu-latest
               steps:
-              - checkout: self
-                submodules: false
               - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln --configuration $(_BuildConfig) $(_BuildArgs) --integrationTest --nodeReuse false
                 env:
                   MSBUILDENSURESTDOUTFORTASKPROCESSES: 1
@@ -109,8 +105,6 @@ extends:
               pool:
                 vmImage: macOS-latest
               steps:
-              - checkout: self
-                submodules: false
               - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln --configuration $(_BuildConfig) $(_BuildArgs) --integrationTest --nodeReuse false
                 env:
                   MSBUILDENSURESTDOUTFORTASKPROCESSES: 1

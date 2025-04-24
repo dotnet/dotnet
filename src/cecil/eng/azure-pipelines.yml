@@ -67,8 +67,6 @@ stages:
                             /p:DotNetPublishUsingPipelines=true
           - DotNetSignType: ${{ format('{0}', variables._SignType) }} # DotNetSignType defaults to real if not specified
         steps:
-        - checkout: self
-          submodules: false
         - script: eng\common\cibuild.cmd -projects $(Build.SourcesDirectory)\Mono.Cecil.sln
                   -configuration $(_BuildConfig) $(_BuildArgs) $(_PublishArgs)
                   -integrationTest
@@ -87,8 +85,6 @@ stages:
           pool:
             vmImage: ubuntu-latest
           steps:
-          - checkout: self
-            submodules: false
           - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln
                     --configuration $(_BuildConfig) $(_BuildArgs)
                     --integrationTest
@@ -103,8 +99,6 @@ stages:
           pool:
               vmImage: macOS-latest
           steps:
-          - checkout: self
-            submodules: false
           - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln
                     --configuration $(_BuildConfig) $(_BuildArgs)
                     --integrationTest
