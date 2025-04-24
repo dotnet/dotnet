@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.InlayHints;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -18,7 +19,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning disable RS0030 // Do not use banned APIs
 [Shared]
 [CohostEndpoint(Methods.InlayHintResolveName)]
-[ExportCohostStatelessLspService(typeof(CohostInlayHintResolveEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostInlayHintResolveEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostInlayHintResolveEndpoint(IRemoteServiceInvoker remoteServiceInvoker, ILoggerFactory loggerFactory)

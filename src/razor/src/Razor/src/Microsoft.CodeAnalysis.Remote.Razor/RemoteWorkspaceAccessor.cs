@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -19,4 +21,17 @@ internal static class RemoteWorkspaceAccessor
     /// </remarks>
     public static Workspace GetWorkspace()
         => RazorBrokeredServiceImplementation.GetWorkspace();
+
+    /// <summary>
+    /// This is crap, but our EA can not have IVT to Roslyn's servicehub project, because it would cause a
+    /// circular reference. This project does have IVT though, so we have to put this code here. Needless
+    /// to say, this should only be called by tests.
+    /// </summary>
+    public static class TestAccessor
+    {
+        public async static Task<string?> InitializeRemoteExportProviderBuilderAsync(string localSettingsDirectory, CancellationToken cancellationToken)
+        {
+            return await RemoteExportProviderBuilder.InitializeAsync(localSettingsDirectory, cancellationToken).ConfigureAwait(false);
+        }
+    }
 }

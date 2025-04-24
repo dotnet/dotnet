@@ -5,46 +5,34 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-[Export(typeof(IRazorCohostDynamicRegistrationService))]
+[Export(typeof(IRazorCohostStartupService))]
 [method: ImportingConstructor]
 internal class RazorCohostDynamicRegistrationService(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
-    [ImportMany] IEnumerable<Lazy<IDynamicRegistrationProvider>> lazyRegistrationProviders,
-    Lazy<RazorCohostClientCapabilitiesService> lazyRazorCohostClientCapabilitiesService)
-    : IRazorCohostDynamicRegistrationService
+    [ImportMany] IEnumerable<Lazy<IDynamicRegistrationProvider>> lazyRegistrationProviders)
+    : IRazorCohostStartupService
 {
     private static readonly DocumentFilter[] s_filter = [new DocumentFilter()
     {
+#if VSCODE
+        Language = "aspnetcorerazor",
+#else
         Language = CodeAnalysis.ExternalAccess.Razor.Cohost.Constants.RazorLanguageName,
+#endif
         Pattern = "**/*.{razor,cshtml}"
     }];
 
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly ImmutableArray<Lazy<IDynamicRegistrationProvider>> _lazyRegistrationProviders = [.. lazyRegistrationProviders];
-    private readonly Lazy<RazorCohostClientCapabilitiesService> _lazyRazorCohostClientCapabilitiesService = lazyRazorCohostClientCapabilitiesService;
 
-    public async Task RegisterAsync(string clientCapabilitiesString, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (!_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            return;
-        }
-
-        var clientCapabilities = JsonSerializer.Deserialize<VSInternalClientCapabilities>(clientCapabilitiesString, JsonHelpers.JsonSerializerOptions) ?? new();
-
-        _lazyRazorCohostClientCapabilitiesService.Value.SetCapabilities(clientCapabilities);
-
         // We assume most registration providers will just return one, so whilst this isn't completely accurate, it's a
         // reasonable starting point
         using var registrations = new PooledArrayBuilder<Registration>(_lazyRegistrationProviders.Length);

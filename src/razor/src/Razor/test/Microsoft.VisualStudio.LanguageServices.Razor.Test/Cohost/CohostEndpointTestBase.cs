@@ -116,6 +116,10 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         UpdateClientLSPInitializationOptions(c => c);
 
         _filePathService = new RemoteFilePathService(FeatureOptions);
+
+        // Force initialization and creation of the remote workspace. It will be filled in later.
+        await RemoteWorkspaceAccessor.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), DisposalToken);
+        _ = RemoteWorkspaceAccessor.GetWorkspace();
     }
 
     private protected void UpdateClientInitializationOptions(Func<RemoteClientInitializationOptions, RemoteClientInitializationOptions> mutation)

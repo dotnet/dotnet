@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Composition;
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal readonly record struct ServiceArgs(
-    IServiceBroker ServiceBroker,
+    IServiceBroker? ServiceBroker,
     ExportProvider ExportProvider,
     ILoggerFactory ServiceLoggerFactory,
     ServiceRpcDescriptor.RpcConnection? ServerConnection = null,

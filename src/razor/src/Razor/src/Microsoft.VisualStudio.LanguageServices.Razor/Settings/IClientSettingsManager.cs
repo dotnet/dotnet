@@ -3,13 +3,12 @@
 
 using System;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.VisualStudio.Razor.Settings;
 
-internal interface IClientSettingsManager
+internal interface IClientSettingsManager : IClientSettingsReader
 {
-    ClientSettings GetClientSettings();
-
     void Update(ClientSpaceSettings updateSettings);
     void Update(ClientCompletionSettings updateSettings);
     void Update(ClientAdvancedSettings updateSettings);
