@@ -127,11 +127,11 @@
       "commitSha": "282b182cacce41ba5307a28f530c91bced5bd60d"
     },
     {
-      "packageVersion": "10.0.622101",
-      "barId": null,
+      "packageVersion": "10.0.622401",
+      "barId": 265521,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "212859a43b003e685ad7ea5f8b60ba5eb16ff31d"
+      "commitSha": "f5a9c8b33e7a3dfea00666f6fb249ba2b1a51572"
     },
     {
       "packageVersion": "10.0.622301",
