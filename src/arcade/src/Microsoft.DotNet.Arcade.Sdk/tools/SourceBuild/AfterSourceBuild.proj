@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
-    <ReportPrebuiltUsage Condition="'$(ReportPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">true</ReportPrebuiltUsage>
+    <ReportPrebuiltUsage Condition="'$(ReportPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">$(DotNetBuildOrchestrator)</ReportPrebuiltUsage>
   </PropertyGroup>
 
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
