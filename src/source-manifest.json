@@ -190,11 +190,11 @@
       "commitSha": "c80941dd15b7bfad555c096ef2fe190cd6eed276"
     },
     {
-      "packageVersion": "10.0.0-preview.25210.1",
-      "barId": null,
+      "packageVersion": "10.0.0-preview.25224.1",
+      "barId": 265524,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "c49d8039632d608391880555414a1e226c6944ee"
+      "commitSha": "7dc7c8214dd491ccb20d0dde09b94069cae7dc1c"
     }
   ],
   "submodules": [
