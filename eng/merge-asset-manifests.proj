@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
-    <ProjectReference Include="$(RepoProjectsDir)$(RootRepo).proj" />
+    <ProjectReference Include="$(RepoProjectsDir)$(RootRepo).proj" BuildReference="false" />
   </ItemGroup>
 
   <!-- Create a merge manifest from the individual repository manifest files. -->
