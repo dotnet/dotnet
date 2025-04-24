@@ -23,11 +23,6 @@
 
   <Import Project="eng\targets\Common.targets" />
 
-  <!-- Workaround https://github.com/dotnet/cli/issues/10528 -->
-  <PropertyGroup>
-    <BundledNETCorePlatformsPackageVersion>$(MicrosoftNETCorePlatformsPackageVersion)</BundledNETCorePlatformsPackageVersion>
-  </PropertyGroup>
-
   <!-- Global Analyzer Config -->
   <ItemGroup>
     <!-- Always include Common.globalconfig -->
