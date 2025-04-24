@@ -6,5 +6,12 @@
     <!-- Set PlatformName to TargetArchitecture to create unique build manifest files. -->
     <PlatformName Condition="'$(TargetArchitecture)' != ''">$(TargetArchitecture)</PlatformName>
   </PropertyGroup>
+  
+  <!-- Update all Artifacts with Kind=Package to have additional metadata item Category="ToolingPackage".
+        This will mean that in VMR builds, deployment tool packages can get published to a different feed depending on
+        the channel configuration. -->
+   <ItemGroup>
+     <Artifact Update="@(Artifact->WithMetadataValue('Kind', 'Package'))" Category="ToolingPackage" />
+   </ItemGroup>
 
 </Project>
