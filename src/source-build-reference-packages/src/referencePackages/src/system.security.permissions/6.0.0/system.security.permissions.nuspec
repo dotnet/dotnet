@@ -13,10 +13,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="4822e3c3aa77eb82b2fb33c9321f923cf11ddde6" />
     <dependencies>
-      <group targetFramework="net5.0">
-        <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Windows.Extensions" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Windows.Extensions" version="6.0.0" exclude="Build,Analyzers" />
