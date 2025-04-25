@@ -58,20 +58,26 @@ For the latest information about Source-Build support for new .NET versions, ple
 
 ### Code flow
 
-For the time being, the source code only flows one way - from the development repos into the VMR.
-More details on this process:
-
-- [Source Synchronization Process](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#source-synchronization-process)
-- [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)
-- [Moving Code and Dependencies between the VMR and Development Repos](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#moving-code-and-dependencies-between-the-vmr-and-development-repos)
-
-We expect the code flow to start working both ways at the completion of the Unified Build project.
-See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md) for more details.
+The VMR's code flow now operates in two directions. Indivdual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
 
 ### Contribution
 
-At this time, the VMR will not accept any changes and is a read-only mirror of the development repositories only.
-Please, make the changes in the respective development repositories (e.g., [dotnet/runtime](https://github.com/dotnet/runtime) or [dotnet/sdk](https://github.com/dotnet/sdk)) and they will get synchronized into the VMR automatically.
+Contribution to the .NET product should currently be done mostly in the constituent repositories. The reasons for this are two-fold:
+- We want to slowly ramp up direct VMR changes to avoid surprised
+- The individual repositories still have the best validation for most changes.
+
+If you would like to make a cross-cutting change in the VMR, please see the Unified Build team. However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
+
+#### Where to make changes:
+
+- src/* - Constituent repositories, except VMR pipeline changes.
+- Non src/* directories - Directly in VMR
+- Arcade common template changes - In Arcade if possible. Can be made in src/arcade/eng/common/*
+- VMR pipeline changes - In the VMR.
+  - The root pipeline logic lives in eng/* and should be changed in the VMR.
+  - Most build logic lives in src/sdk/eng/pipelines/templates and should be changed directly in the VMR.
+
+For any questions, please ask the Unified Build team.
 
 ## Dev instructions
 
