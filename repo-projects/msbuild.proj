@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <BuildArgs>$(BuildArgs) /p:BuildWithNetFrameworkHostedCompiler=true</BuildArgs>
+    <!-- MSBuild uses a too old version that creates a torn state when being used with a >= .NET 10 P4 SDK. -->
+    <BuildArgs>$(BuildArgs) /p:UsingToolMicrosoftNetCompilers=false</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) /p:EnableNgenOptimization=false</BuildArgs>
   </PropertyGroup>
 
