@@ -163,7 +163,6 @@ extends:
 
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        isBuiltFromVmr: true
         isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}
         desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}

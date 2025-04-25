@@ -26,11 +26,6 @@ parameters:
   # run everything
   - full
 
-# True when build is running from dotnet/dotnet directly
-- name: isBuiltFromVmr
-  type: boolean
-  default: false
-
 # True when building the VMR in source-only mode
 - name: isSourceOnlyBuild
   type: boolean
@@ -96,7 +91,6 @@ stages:
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: ${{ format('{0}_Online_MsftSdk', variables.centOSStreamName) }}
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         targetArchitecture: x64
         pool: ${{ parameters.pool_Linux }}
@@ -114,7 +108,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: ${{ format('{0}_Offline_CurrentSourceBuiltSdk', variables.centOSStreamName) }}
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         targetArchitecture: x64
         pool: ${{ parameters.pool_Linux }}
@@ -138,7 +131,6 @@ stages:
         parameters:
           # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
           buildName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           vmrBranch: ${{ variables.VmrBranch }}
           targetArchitecture: x64
           pool: ${{ parameters.pool_Linux }}
@@ -157,7 +149,6 @@ stages:
         parameters:
           # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
           buildName: ${{ format('{0}_Offline_PreviousSourceBuiltSdk', variables.centOSStreamName) }}
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           vmrBranch: ${{ variables.VmrBranch }}
           targetArchitecture: x64
           artifactsRid: ${{ variables.centOSStreamX64Rid }}
@@ -181,7 +172,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -201,7 +191,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -221,7 +210,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -240,7 +228,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Online_PreviousSourceBuiltSdk', variables.centOSStreamName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             artifactsRid: ${{ variables.centOSStreamX64Rid }}
@@ -260,7 +247,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Mono_Offline_MsftSdk', variables.centOSStreamName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -279,7 +265,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -298,7 +283,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: arm64
             pool: ${{ parameters.pool_LinuxArm64 }}
@@ -317,7 +301,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Offline_CurrentSourceBuiltSdk', variables.fedoraName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -338,7 +321,6 @@ stages:
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: ${{ format('{0}_Mono_Offline_CurrentSourceBuiltSdk', variables.centOSStreamName) }}
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             targetArchitecture: x64
             pool: ${{ parameters.pool_Linux }}
@@ -371,7 +353,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: ${{ format('{0}_Ubuntu_BuildTests', variables.ubuntuName) }}
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -385,7 +366,6 @@ stages:
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Windows_BuildTests
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           vmrBranch: ${{ variables.VmrBranch }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -408,7 +388,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         sign: ${{ variables.signEnabled }}
         signDac: ${{ variables.signDacEnabled }}
@@ -420,7 +399,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         sign: ${{ variables.signEnabled }}
         signDac: ${{ variables.signDacEnabled }}
@@ -431,7 +409,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Android_Shortstack
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -444,7 +421,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Browser_Shortstack
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -458,7 +434,6 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: iOSSimulator_Shortstack
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
@@ -471,7 +446,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Android_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -484,7 +458,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Android_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -497,7 +470,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Android_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -510,7 +482,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Browser_Multithreaded_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -525,7 +496,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: LinuxBionic_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -538,7 +508,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: LinuxBionic_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -551,7 +520,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: LinuxBionic_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -564,7 +532,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: iOS_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -574,7 +541,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: iOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -584,7 +550,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: MacCatalyst_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -594,7 +559,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: MacCatalyst_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -604,7 +568,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: tvOS_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -614,7 +577,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: tvOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -624,7 +586,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: tvOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -634,7 +595,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Wasi_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -648,7 +608,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: OSX
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -658,7 +617,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: OSX_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -670,7 +628,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -684,7 +641,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Pgo
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: false
             pool: ${{ parameters.pool_Linux }}
@@ -699,7 +655,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -715,7 +670,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -729,7 +683,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -743,7 +696,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Pgo
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: false
             pool: ${{ parameters.pool_Linux }}
@@ -758,7 +710,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Alpine
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -773,7 +724,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Alpine
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -788,7 +738,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Alpine
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux }}
@@ -803,7 +752,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -819,7 +767,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: OSX
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Mac }}
@@ -829,7 +776,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             signDac: ${{ variables.signDacEnabled }}
@@ -841,7 +787,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows_Pgo
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: false
             pool: ${{ parameters.pool_Windows }}
@@ -852,7 +797,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows_Pgo
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: false
             pool: ${{ parameters.pool_Windows }}
@@ -864,7 +808,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows_Pgo
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: false
             pool: ${{ parameters.pool_Windows }}
@@ -878,7 +821,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             signDac: ${{ variables.signDacEnabled }}
@@ -901,7 +843,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Windows }}
@@ -917,7 +858,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows_Workloads
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Windows }}
@@ -951,7 +891,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Windows }}
@@ -967,7 +906,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Windows }}
@@ -983,7 +921,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Windows
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             sign: ${{ variables.signEnabled }}
             pool: ${{ parameters.pool_Windows }}

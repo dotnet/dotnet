@@ -30,7 +30,6 @@ jobs:
 - template: ../jobs/vmr-build.yml
   parameters:
     buildName: ${{ format('{0}_SourceBuild_Online_MsftSdk', parameters.buildNamePrefix) }}
-    isBuiltFromVmr: true
     vmrBranch: ${{ variables.VmrBranch }}
     targetArchitecture: x64
     pool: ${{ parameters.pool_Linux }}
@@ -44,7 +43,6 @@ jobs:
 - template: ../jobs/vmr-build.yml
   parameters:
     buildName: ${{ format('{0}_SourceBuild_Online_MsftSdk', parameters.buildNamePrefix) }}_Validation
-    isBuiltFromVmr: true
     vmrBranch: ${{ variables.VmrBranch }}
     targetArchitecture: ${{ parameters.targetArchitecture }}
     pool: ${{ parameters.pool_Linux }}

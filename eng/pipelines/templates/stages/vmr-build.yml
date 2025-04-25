@@ -26,11 +26,6 @@ parameters:
   # run everything
   - full
 
-# True when build is running from dotnet/dotnet directly
-- name: isBuiltFromVmr
-  type: boolean
-  default: false
-
 # True when building the VMR in source-only mode
 - name: isSourceOnlyBuild
   type: boolean
@@ -87,14 +82,12 @@ stages:
           vmrBranch: ${{ parameters.vmrBranch }}
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           scope: ${{ parameters.scope }}
           isSourceOnlyBuild: ${{ parameters.isSourceOnlyBuild }}
     finalJoinCondition: ${{ and(not(parameters.isSourceOnlyBuild), eq(parameters.scope, 'full')) }}
     vmrBranch: ${{ parameters.vmrBranch }}
-    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     postJoinStages:
-    - ${{ if and(parameters.isBuiltFromVmr, not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
