@@ -63,7 +63,7 @@ The VMR's code flow now operates in two directions. Indivdual repositories flow 
 ### Contribution
 
 Contribution to the .NET product should currently be done mostly in the constituent repositories. The reasons for this are two-fold:
-- We want to slowly ramp up direct VMR changes to avoid surprised
+- We want to slowly ramp up direct VMR changes to avoid surprises
 - The individual repositories still have the best validation for most changes.
 
 If you would like to make a cross-cutting change in the VMR, please see the Unified Build team. However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
