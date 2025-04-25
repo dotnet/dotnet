@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -296,6 +296,10 @@
 }
 .assembly /*20000001*/ System.ValueTuple
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000003:0A000001*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
   .custom /*0C000004:0A000002*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000002*/::.ctor(int32) /* 0A000002 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000005:0A000003*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000003*/::.ctor() /* 0A000003 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -356,7 +360,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F2532FBB000
+// Image base: 0x00007F2BB2E82000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -4296,7 +4300,8 @@
     // Method begins at RVA 0x0
   } // end of method ITupleInternal::ToStringEnd
 
-  .property /*17000001*/ instance int32 Size()
+  .property /*17000001*/ instance callconv(8) int32
+          Size()
   {
     .get instance int32 System.ITupleInternal/*02000004*/::get_Size() /* 06000043 */
   } // end of property ITupleInternal::Size
@@ -4875,7 +4880,8 @@
     IL_0016:  /* 2A   |                  */ ret
   } // end of method ValueTuple::CombineHashCodes
 
-  .property /*17000002*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000002*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple/*02000005*/::System.ITupleInternal.get_Size() /* 06000050 */
   } // end of property ValueTuple::System.ITupleInternal.Size
@@ -5217,7 +5223,8 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method ValueTuple`1::.cctor
 
-  .property /*17000003*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000003*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`1/*02000006*/::System.ITupleInternal.get_Size() /* 0600006D */
   } // end of property ValueTuple`1::System.ITupleInternal.Size
@@ -5705,7 +5712,8 @@
     IL_0014:  /* 2A   |                  */ ret
   } // end of method ValueTuple`2::.cctor
 
-  .property /*17000004*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000004*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`2/*02000007*/::System.ITupleInternal.get_Size() /* 0600007C */
   } // end of property ValueTuple`2::System.ITupleInternal.Size
@@ -6331,7 +6339,8 @@
     IL_001e:  /* 2A   |                  */ ret
   } // end of method ValueTuple`3::.cctor
 
-  .property /*17000005*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000005*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`3/*02000008*/::System.ITupleInternal.get_Size() /* 0600008B */
   } // end of property ValueTuple`3::System.ITupleInternal.Size
@@ -7084,7 +7093,8 @@
     IL_0028:  /* 2A   |                  */ ret
   } // end of method ValueTuple`4::.cctor
 
-  .property /*17000006*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000006*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`4/*02000009*/::System.ITupleInternal.get_Size() /* 0600009A */
   } // end of property ValueTuple`4::System.ITupleInternal.Size
@@ -7965,7 +7975,8 @@
     IL_0032:  /* 2A   |                  */ ret
   } // end of method ValueTuple`5::.cctor
 
-  .property /*17000007*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000007*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`5/*0200000A*/::System.ITupleInternal.get_Size() /* 060000A9 */
   } // end of property ValueTuple`5::System.ITupleInternal.Size
@@ -8973,7 +8984,8 @@
     IL_003c:  /* 2A   |                  */ ret
   } // end of method ValueTuple`6::.cctor
 
-  .property /*17000008*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000008*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`6/*0200000B*/::System.ITupleInternal.get_Size() /* 060000B8 */
   } // end of property ValueTuple`6::System.ITupleInternal.Size
@@ -10108,7 +10120,8 @@
     IL_0046:  /* 2A   |                  */ ret
   } // end of method ValueTuple`7::.cctor
 
-  .property /*17000009*/ instance int32 System.ITupleInternal.Size()
+  .property /*17000009*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`7/*0200000C*/::System.ITupleInternal.get_Size() /* 060000C7 */
   } // end of property ValueTuple`7::System.ITupleInternal.Size
@@ -12253,7 +12266,8 @@
     IL_0050:  /* 2A   |                  */ ret
   } // end of method ValueTuple`8::.cctor
 
-  .property /*1700000A*/ instance int32 System.ITupleInternal.Size()
+  .property /*1700000A*/ instance callconv(8) int32
+          System.ITupleInternal.Size()
   {
     .get instance int32 System.ValueTuple`8/*0200000D*/::System.ITupleInternal.get_Size() /* 060000D6 */
   } // end of property ValueTuple`8::System.ITupleInternal.Size
@@ -12536,20 +12550,22 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*1700000B*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000026*/
+  .property /*1700000B*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000026*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000026*/ System.SR/*0200000E*/::get_ResourceManager() /* 060000D8 */
   } // end of property SR::ResourceManager
-  .property /*1700000C*/ string ArgumentException_ValueTupleIncorrectType()
+  .property /*1700000C*/ callconv(8) string
+          ArgumentException_ValueTupleIncorrectType()
   {
     .get string System.SR/*0200000E*/::get_ArgumentException_ValueTupleIncorrectType() /* 060000DF */
   } // end of property SR::ArgumentException_ValueTupleIncorrectType
-  .property /*1700000D*/ string ArgumentException_ValueTupleLastArgumentNotAValueTuple()
+  .property /*1700000D*/ callconv(8) string
+          ArgumentException_ValueTupleLastArgumentNotAValueTuple()
   {
     .get string System.SR/*0200000E*/::get_ArgumentException_ValueTupleLastArgumentNotAValueTuple() /* 060000E0 */
   } // end of property SR::ArgumentException_ValueTupleLastArgumentNotAValueTuple
-  .property /*1700000E*/ class [mscorlib/*23000001*/]System.Type/*01000029*/
+  .property /*1700000E*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000029*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000029*/ System.SR/*0200000E*/::get_ResourceType() /* 060000E1 */
@@ -12645,7 +12661,7 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method TupleElementNamesAttribute::get_TransformNames
 
-  .property /*1700000F*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.IList`1/*0100002E*/<string>
+  .property /*1700000F*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.IList`1/*0100002E*/<string>
           TransformNames()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.IList`1/*0100002E*/<string> System.Runtime.CompilerServices.TupleElementNamesAttribute/*02000010*/::get_TransformNames() /* 060000E5 */
