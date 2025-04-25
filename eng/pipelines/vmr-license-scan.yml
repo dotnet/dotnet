@@ -35,8 +35,6 @@ parameters:
 variables:
   # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
 - group: DotNet-Source-Build-Bot-Secrets-MVP
-- name: sdkRoot
-  value: '$(Build.SourcesDirectory)/src/sdk'
 
 resources:
   repositories:
@@ -123,7 +121,7 @@ extends:
             artifactFeeds: public/dotnet-public-pypi
             onlyAddExtraIndex: false
 
-        - script: $(sdkRoot)/eng/install-scancode.sh
+        - script: /eng/install-scancode.sh
           displayName: Install Scancode
 
         - script: >
