@@ -89,6 +89,10 @@
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(GitHubRepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(GitHubRepositoryName)/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
+
+    <!-- Relative PDB path differentiator to ensure that multiple VMR legs that happen to produce the same PDBs
+         and need them all indexed get them published to different relative paths -->
+    <LoosePDBRelativeBasePath Condition="'$(LoosePDBRelativeBasePath)' != '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)/</LoosePDBRelativeBasePath>
   </PropertyGroup>
 
   <!-- Keep these asset manifest properties here as other repos already depend on them in Publishing.props. -->
@@ -164,10 +168,16 @@
       <!-- Support existing uses of FilesToPublishToSymbolServer by translating this ItemGroup into ItemsToPushToBlobFeed,
            with type PDB. Repositories can also add these items manually if desired.
            Note that we are careful here to include the relative paths of those PDBs. Unlike most artifacts
-           that we deal with, many PDBs can have the same name but different contents. -->
+           that we deal with, many PDBs can have the same name but different contents.
+
+           The other thing to remember is that in builds where PDBs are produced by multiple
+           jobs, but could have the same relative path within the build. In some cases we would want
+           both of those PDBs to be indexed. To achieve this, the relative PDB path will include the
+           LoosePDBRelativeBasePath. This may be set to SYSTEM_PHASENAME if available.
+           -->
       <_SymbolsToPushToBlobFeed Include="@(FilesToPublishToSymbolServer)">
         <Kind>PDB</Kind>
-        <RelativePDBPath>%(RecursiveDir)%(Filename)%(Extension)</RelativePDBPath>
+        <RelativePDBPath>$(LoosePDBRelativeBasePath)%(RecursiveDir)%(Filename)%(Extension)</RelativePDBPath>
       </_SymbolsToPushToBlobFeed>
       <ItemsToPushToBlobFeed Include="@(_SymbolsToPushToBlobFeed)" />
     </ItemGroup>
