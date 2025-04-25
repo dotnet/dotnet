@@ -33,7 +33,7 @@ steps:
     azureSubscription: DotNetStaging
     scriptType: 'pscore'
     scriptLocation: 'scriptPath'
-    scriptPath: $(Build.SourcesDirectory)\src\sdk\eng\GatherDrops.ps1
+    scriptPath: $(Build.SourcesDirectory)\eng\GatherDrops.ps1
     arguments: -filePath '$(Build.SourcesDirectory)\src\source-manifest.json' -outputPath '$(Build.ArtifactStagingDirectory)\base-assets\'
       -darcPath '$(Build.SourcesDirectory)\artifacts\tools\darc\darc.exe' -githubPat $(BotAccount-dotnet-bot-repo-PAT) -azdevPat $(dn-bot-all-drop-rw-code-rw-release-all)
 
@@ -49,7 +49,7 @@ steps:
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)\base-assets"
     -issuesReport "$(Build.SourcesDirectory)\artifacts\AssetBaselines\BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)\artifacts\AssetBaselines\BaselineComparisonNoIssues.xml"
-    -baseline "$(Build.SourcesDirectory)\src\sdk\eng\vmr-msft-comparison-baseline.json"
+    -baseline "$(Build.SourcesDirectory)\eng\vmr-msft-comparison-baseline.json"
   displayName: Validate Asset Baselines
 
 - task: 1ES.PublishPipelineArtifact@1

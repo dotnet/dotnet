@@ -41,7 +41,7 @@ variables:
 - template: /eng/common/templates/variables/pool-providers.yml@self
 
 stages:
-- template: /src/sdk/eng/pipelines/templates/stages/vmr-build.yml
+- template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     isBuiltFromVmr: true
     isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}

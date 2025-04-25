@@ -16,17 +16,14 @@ stages:
     - script: |
         source ./eng/common/tools.sh
         InitializeDotNetCli true
-        cd src/sdk
-        ../../.dotnet/dotnet tool restore
+        .dotnet/dotnet tool restore
       displayName: Initialize tooling
-      workingDirectory: $(Build.SourcesDirectory)
 
     - script: |
         set -e
-        sha=`../../.dotnet/dotnet darc vmr get-version --vmr "$(Build.SourcesDirectory)" sdk`
+        sha=`.dotnet/dotnet darc vmr get-version --vmr "$(Build.SourcesDirectory)" sdk`
         echo "##vso[build.addbuildtag]$sha"
       displayName: Tag the build
-      workingDirectory: $(Build.SourcesDirectory)/src/sdk
 
     - script: |
         ./eng/detect-binaries.sh
@@ -35,10 +32,9 @@ stages:
       continueOnError: true
 
     - script: >
-        ../../.dotnet/dotnet darc vmr scan-cloaked-files
+        .dotnet/dotnet darc vmr scan-cloaked-files
         --vmr "$(Build.SourcesDirectory)"
         --tmp "$(Agent.TempDirectory)"
         || (echo '##[error]Found cloaked files in the VMR' && exit 1)
       displayName: Scan for cloaked files
-      workingDirectory: $(Build.SourcesDirectory)/src/sdk
       continueOnError: true
