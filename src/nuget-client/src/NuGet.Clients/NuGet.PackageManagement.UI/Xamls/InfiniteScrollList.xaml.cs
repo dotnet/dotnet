@@ -616,7 +616,7 @@ namespace NuGet.PackageManagement.UI
                 }
                 else
                 {
-                    package.UpdateTransitivePackageStatus(package.InstalledVersion);
+                    package.UpdateTransitivePackageStatus();
                 }
             }
         }

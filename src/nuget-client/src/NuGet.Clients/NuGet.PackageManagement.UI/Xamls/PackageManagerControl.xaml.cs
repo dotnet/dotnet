@@ -1176,7 +1176,7 @@ namespace NuGet.PackageManagement.UI
             var operationId = _packageList.OperationId;
             var selectedIndex = _packageList.SelectedIndex;
             var recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
-            var hasDeprecationAlternative = selectedPackage.DeprecationMetadata?.AlternatePackage != null;
+            var hasDeprecationAlternative = selectedPackage.AlternatePackage != null;
 
             if (_topPanel.Filter == ItemFilter.All
                 && operationId.HasValue

@@ -9,15 +9,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-//using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Microsoft.VisualStudio.Utilities.UnifiedSettings;
 using NuGet.Configuration;
 using NuGet.VisualStudio;
 
-namespace NuGet.PackageManagement.VisualStudio.Services
+namespace NuGet.PackageManagement.VisualStudio.Options
 {
     [Guid("6C09BBE2-4537-48B4-87D8-01BF5EB75901")]
-    public sealed class ExternalSettingsProviderService : IExternalSettingsProvider
+    public sealed class GeneralPage : IExternalSettingsProvider
     {
         private const string MonikerAllowRestoreDownload = "packageRestore.allowRestoreDownload";
         private const string MonikerPackageRestoreAutomatic = "packageRestore.packageRestoreAutomatic";
@@ -34,7 +33,7 @@ namespace NuGet.PackageManagement.VisualStudio.Services
         private BindingRedirectBehavior? _bindingRedirectBehavior;
         private PackageManagementFormat? _packageManagementFormat;
 
-        public ExternalSettingsProviderService()
+        public GeneralPage()
         {
             var componentModel = NuGetUIThreadHelper.JoinableTaskFactory.Run(ServiceLocator.GetComponentModelAsync);
             _settings = componentModel.GetService<ISettings>();
@@ -73,7 +72,7 @@ namespace NuGet.PackageManagement.VisualStudio.Services
             {
                 if (_packageRestoreConsent is null)
                 {
-                    _packageRestoreConsent = new PackageManagement.PackageRestoreConsent(_settings);
+                    _packageRestoreConsent = new PackageRestoreConsent(_settings);
                 }
 
                 return _packageRestoreConsent;
@@ -229,7 +228,7 @@ namespace NuGet.PackageManagement.VisualStudio.Services
 #pragma warning disable CA1031 // Do not catch general exception types
             try
             {
-                int inputValue = input();
+                var inputValue = input();
                 T strValue = inputValue switch
                 {
                     0 => (T)(object)MonikerPackagesConfig,
@@ -244,21 +243,11 @@ namespace NuGet.PackageManagement.VisualStudio.Services
             }
             catch (Exception ex)
             {
-                result = CreateSettingErrorResult<T>(ex.Message + " ('" + MonikerDefaultPackageManagementFormat + "')");
+                result = ExternalSettingsUtility.CreateSettingErrorResult<T>(ex.Message + " ('" + MonikerDefaultPackageManagementFormat + "')");
             }
 #pragma warning restore CA1031 // Do not catch general exception types
 
             return Task.FromResult(result);
-        }
-
-        private static ExternalSettingOperationResult<T> CreateSettingErrorResult<T>(string errorMessage)
-        {
-            var failure = new ExternalSettingOperationResult<T>.Failure(
-                errorMessage,
-                scope: ExternalSettingsErrorScope.SingleSettingOnly,
-                isTransient: true);
-
-            return failure;
         }
     }
 }

@@ -457,6 +457,15 @@ namespace NuGet.PackageManagement.VisualStudio {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Open.
+        /// </summary>
+        public static string VSOptions_Button_Open {
+            get {
+                return ResourceManager.GetString("VSOptions_Button_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Directory &apos;{0}&apos; is not empty. Skipping....
         /// </summary>
         public static string Warning_DirectoryNotEmpty {
