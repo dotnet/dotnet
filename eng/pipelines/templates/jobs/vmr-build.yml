@@ -124,12 +124,6 @@ parameters:
   type: stepList
   default: []
 
-#### sdk parameters ####
-
-- name: vmrBranch
-  displayName: dotnet/dotnet branch to use
-  type: string
-
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}

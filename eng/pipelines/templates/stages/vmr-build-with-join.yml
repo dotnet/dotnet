@@ -10,12 +10,6 @@ parameters:
 - name: finalJoinCondition
   type: boolean
 
-#### sdk parameters ####
-
-- name: vmrBranch
-  displayName: dotnet/dotnet branch to use
-  type: string
-
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -75,8 +69,6 @@ stages:
     - name: vmrPath
       value: $(Build.SourcesDirectory)
     - template: ../variables/vmr-build.yml
-      parameters:
-        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
       - job: FinalJoin
         displayName: Final Build Pass

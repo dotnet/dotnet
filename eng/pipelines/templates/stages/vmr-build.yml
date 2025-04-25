@@ -2,11 +2,6 @@
 ### If run in a PR, new changes are applied to a local copy of the VMR, then it is built and tested
 
 parameters:
-# Branch of the VMR to use (to push to for internal builds)
-- name: vmrBranch
-  type: string
-  default: $(Build.SourceBranch)
-
 - name: desiredSigning
   type: string
   default: ''
@@ -79,13 +74,11 @@ stages:
     verticalsStages:
       - template: vmr-verticals.yml
         parameters:
-          vmrBranch: ${{ parameters.vmrBranch }}
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
           scope: ${{ parameters.scope }}
           isSourceOnlyBuild: ${{ parameters.isSourceOnlyBuild }}
     finalJoinCondition: ${{ and(not(parameters.isSourceOnlyBuild), eq(parameters.scope, 'full')) }}
-    vmrBranch: ${{ parameters.vmrBranch }}
     postJoinStages:
     - ${{ if and(not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets

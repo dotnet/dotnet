@@ -1,9 +1,4 @@
 parameters:
-# Branch of the VMR to use (to push to for internal builds)
-- name: vmrBranch
-  type: string
-  default: $(Build.SourceBranch)
-
 - name: desiredSigning
   type: string
   default: ''
@@ -51,7 +46,6 @@ stages:
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
-      vmrBranch: ${{ parameters.vmrBranch }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredIbc: ${{ parameters.desiredIbc }}
   - group: Release-Pipeline
