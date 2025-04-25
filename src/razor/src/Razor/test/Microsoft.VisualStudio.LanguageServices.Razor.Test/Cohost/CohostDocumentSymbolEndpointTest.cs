@@ -3,8 +3,10 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -73,6 +75,9 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
         var endpoint = new CohostDocumentSymbolEndpoint(RemoteServiceInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, hierarchical, DisposalToken);
+
+        // Roslyn's DocumentSymbol type has an annoying property that makes it hard to serialize
+        Assert.NotNull(JsonSerializer.SerializeToDocument(result, JsonHelpers.JsonSerializerOptions));
 
         if (hierarchical)
         {

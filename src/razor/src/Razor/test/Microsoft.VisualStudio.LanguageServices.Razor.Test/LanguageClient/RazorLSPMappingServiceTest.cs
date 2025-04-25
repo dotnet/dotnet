@@ -55,7 +55,8 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
 
         var mappingResult = new RazorMapToDocumentRangesResponse()
         {
-            Ranges = [mappedRange]
+            Ranges = [mappedRange],
+            Spans = [textSpan.ToRazorTextSpan()]
         };
         var requestInvoker = new TestLSPRequestInvoker(new List<(string, object)>()
         {
@@ -130,7 +131,7 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
     {
         // Arrange
         var sourceTextRazor = SourceText.From("");
-        var response = new RazorMapToDocumentRangesResponse { Ranges = [LspFactory.UndefinedRange] };
+        var response = new RazorMapToDocumentRangesResponse { Ranges = [LspFactory.UndefinedRange], Spans = Array.Empty<RazorTextSpan>() };
 
         // Act
         var results = RazorLSPMappingService.GetMappedSpanResults(_mockDocumentUri.LocalPath, sourceTextRazor, response);

@@ -47,7 +47,8 @@ public class LSPDocumentMappingProviderTest : ToolingTestBase
         var response = new RazorMapToDocumentRangesResponse()
         {
             Ranges = [LspFactory.CreateRange(1, 1, 3, 3)],
-            HostDocumentVersion = 1
+            HostDocumentVersion = 1,
+            Spans = [new() { Start = 1, Length = 2 }],
         };
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
