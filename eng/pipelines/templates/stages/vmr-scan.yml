@@ -20,12 +20,6 @@ stages:
       displayName: Initialize tooling
 
     - script: |
-        set -e
-        sha=`.dotnet/dotnet darc vmr get-version --vmr "$(Build.SourcesDirectory)" sdk`
-        echo "##vso[build.addbuildtag]$sha"
-      displayName: Tag the build
-
-    - script: |
         ./eng/detect-binaries.sh
       displayName: Scan for binaries
       workingDirectory: $(Build.SourcesDirectory)
