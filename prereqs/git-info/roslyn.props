@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>859ba0dc43cb5b864d0d8d9a94f06b3ae3ee9a77</GitCommitHash>
-    <OfficialBuildId>20250424.8</OfficialBuildId>
-    <OutputPackageVersion>5.0.0-1.25224.8</OutputPackageVersion>
+    <GitCommitHash>567495e41fa4fc0eb9ffa5639b7a5461baeec6d0</GitCommitHash>
+    <OfficialBuildId>20250425.2 - ToddGrun - '___ WIP_ Significantly reduce FileUtilities.GetFileTimeStamp calls' #</OfficialBuildId>
+    <OutputPackageVersion>5.0.0</OutputPackageVersion>
   </PropertyGroup>
 </Project>
