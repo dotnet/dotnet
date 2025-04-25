@@ -73,9 +73,7 @@ If you would like to make a cross-cutting change in the VMR, please see the Unif
 - src/* - Constituent repositories, except VMR pipeline changes.
 - Non src/* directories - Directly in VMR
 - Arcade common template changes - In Arcade if possible. Can be made in src/arcade/eng/common/*
-- VMR pipeline changes - In the VMR.
-  - The root pipeline logic lives in eng/* and should be changed in the VMR.
-  - Most build logic lives in src/sdk/eng/pipelines/templates and should be changed directly in the VMR.
+- VMR pipeline changes - The root pipeline logic lives in eng/* and should be changed in the VMR.
 
 For any questions, please ask the Unified Build team.
 
