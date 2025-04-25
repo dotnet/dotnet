@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -277,6 +277,10 @@
 }
 .assembly /*20000001*/ System.Globalization.Extensions
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000003:0A000002*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000004*/::.ctor() /* 0A000002 */ = ( 01 00 00 00 ) 
   .custom /*0C000004:0A00001C*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000014*/::.ctor(int32) /* 0A00001C */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000005:0A00001D*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000015*/::.ctor() /* 0A00001D */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -350,7 +354,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FB13DB0C000
+// Image base: 0x00007F5D666EB000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -686,16 +690,17 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000008*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000008*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000008*/ System.SR/*02000004*/::get_ResourceManager() /* 06000005 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string Argument_InvalidFlag()
+  .property /*17000002*/ callconv(8) string
+          Argument_InvalidFlag()
   {
     .get string System.SR/*02000004*/::get_Argument_InvalidFlag() /* 0600000C */
   } // end of property SR::Argument_InvalidFlag
-  .property /*17000003*/ class [mscorlib/*23000001*/]System.Type/*01000009*/
+  .property /*17000003*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000009*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000009*/ System.SR/*02000004*/::get_ResourceType() /* 0600000D */

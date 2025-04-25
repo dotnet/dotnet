@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -279,6 +279,10 @@
 }
 .assembly /*20000001*/ System.Diagnostics.Tracing
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000001:0A000042*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*0100002C*/::.ctor(int32) /* 0A000042 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000002:0A000043*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*0100002D*/::.ctor() /* 0A000043 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                           63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -436,7 +440,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FC5F3AE0000
+// Image base: 0x00007FE734A81000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -912,7 +916,8 @@
     IL_0033:  /* 2A   |                  */ ret
   } // end of method EventCounter::ResetStatistics
 
-  .property /*17000001*/ instance object MyLock()
+  .property /*17000001*/ instance callconv(8) object
+          MyLock()
   {
     .get instance object System.Diagnostics.Tracing.EventCounter/*02000002*/::get_MyLock() /* 06000004 */
   } // end of property EventCounter::MyLock
@@ -1201,12 +1206,12 @@
       IL_0006:  /* 2A   |                  */ ret
     } // end of method '<get_ForEnumeration>d__31'::System.Collections.IEnumerable.GetEnumerator
 
-    .property /*1700000A*/ instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object>
+    .property /*1700000A*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object>
             'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Current'()
     {
       .get instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object> System.Diagnostics.Tracing.EventCounterPayload/*02000003*//'<get_ForEnumeration>d__31'/*02000006*/::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.get_Current'() /* 0600002E */
     } // end of property '<get_ForEnumeration>d__31'::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Current'
-    .property /*1700000B*/ instance object
+    .property /*1700000B*/ instance callconv(8) object
             System.Collections.IEnumerator.Current()
     {
       .get instance object System.Diagnostics.Tracing.EventCounterPayload/*02000003*//'<get_ForEnumeration>d__31'/*02000006*/::System.Collections.IEnumerator.get_Current() /* 06000030 */
@@ -1481,47 +1486,49 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method EventCounterPayload::.ctor
 
-  .property /*17000002*/ instance string Name()
+  .property /*17000002*/ instance callconv(8) string
+          Name()
   {
     .get instance string System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_Name() /* 0600000B */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_Name(string) /* 0600000C */
   } // end of property EventCounterPayload::Name
-  .property /*17000003*/ instance float32
+  .property /*17000003*/ instance callconv(8) float32
           Mean()
   {
     .get instance float32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_Mean() /* 0600000D */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_Mean(float32) /* 0600000E */
   } // end of property EventCounterPayload::Mean
-  .property /*17000004*/ instance float32
+  .property /*17000004*/ instance callconv(8) float32
           StandardDeviation()
   {
     .get instance float32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_StandardDeviation() /* 0600000F */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_StandardDeviation(float32) /* 06000010 */
   } // end of property EventCounterPayload::StandardDeviation
-  .property /*17000005*/ instance int32 Count()
+  .property /*17000005*/ instance callconv(8) int32
+          Count()
   {
     .get instance int32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_Count() /* 06000011 */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_Count(int32) /* 06000012 */
   } // end of property EventCounterPayload::Count
-  .property /*17000006*/ instance float32
+  .property /*17000006*/ instance callconv(8) float32
           Min()
   {
     .get instance float32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_Min() /* 06000013 */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_Min(float32) /* 06000014 */
   } // end of property EventCounterPayload::Min
-  .property /*17000007*/ instance float32
+  .property /*17000007*/ instance callconv(8) float32
           Max()
   {
     .get instance float32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_Max() /* 06000015 */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_Max(float32) /* 06000016 */
   } // end of property EventCounterPayload::Max
-  .property /*17000008*/ instance float32
+  .property /*17000008*/ instance callconv(8) float32
           IntervalSec()
   {
     .get instance float32 System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_IntervalSec() /* 06000017 */
     .set instance void System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::set_IntervalSec(float32) /* 06000018 */
   } // end of property EventCounterPayload::IntervalSec
-  .property /*17000009*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100000F*/<valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object>>
+  .property /*17000009*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100000F*/<valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object>>
           ForEnumeration()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100000F*/<valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000010*/<string,object>> System.Diagnostics.Tracing.EventCounterPayload/*02000003*/::get_ForEnumeration() /* 0600001B */
@@ -1580,7 +1587,7 @@
       IL_0007:  /* 2A   |                  */ ret
     } // end of method PayloadType::set_Payload
 
-    .property /*1700000C*/ instance class System.Diagnostics.Tracing.EventCounterPayload/*02000003*/
+    .property /*1700000C*/ instance callconv(8) class System.Diagnostics.Tracing.EventCounterPayload/*02000003*/
             Payload()
     {
       .get instance class System.Diagnostics.Tracing.EventCounterPayload/*02000003*/ System.Diagnostics.Tracing.EventCounterGroup/*02000004*//PayloadType/*02000007*/::get_Payload() /* 06000034 */

@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -346,6 +346,10 @@
 }
 .assembly /*20000001*/ System.IO.Compression
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000002:0A0000AB*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000042*/::.ctor() /* 0A0000AB */ = ( 01 00 00 00 ) 
   .custom /*0C000003:0A0000E9*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000051*/::.ctor(int32) /* 0A0000E9 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000004:0A0000EA*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000052*/::.ctor() /* 0A0000EA */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -416,7 +420,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FC07023E000
+// Image base: 0x00007F2399408000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1584,272 +1588,337 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/ System.SR/*02000003*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string ArgumentOutOfRange_Enum()
+  .property /*17000002*/ callconv(8) string
+          ArgumentOutOfRange_Enum()
   {
     .get string System.SR/*02000003*/::get_ArgumentOutOfRange_Enum() /* 06000008 */
   } // end of property SR::ArgumentOutOfRange_Enum
-  .property /*17000003*/ string ArgumentOutOfRange_NeedPosNum()
+  .property /*17000003*/ callconv(8) string
+          ArgumentOutOfRange_NeedPosNum()
   {
     .get string System.SR/*02000003*/::get_ArgumentOutOfRange_NeedPosNum() /* 06000009 */
   } // end of property SR::ArgumentOutOfRange_NeedPosNum
-  .property /*17000004*/ string CannotReadFromDeflateStream()
+  .property /*17000004*/ callconv(8) string
+          CannotReadFromDeflateStream()
   {
     .get string System.SR/*02000003*/::get_CannotReadFromDeflateStream() /* 0600000A */
   } // end of property SR::CannotReadFromDeflateStream
-  .property /*17000005*/ string CannotWriteToDeflateStream()
+  .property /*17000005*/ callconv(8) string
+          CannotWriteToDeflateStream()
   {
     .get string System.SR/*02000003*/::get_CannotWriteToDeflateStream() /* 0600000B */
   } // end of property SR::CannotWriteToDeflateStream
-  .property /*17000006*/ string GenericInvalidData()
+  .property /*17000006*/ callconv(8) string
+          GenericInvalidData()
   {
     .get string System.SR/*02000003*/::get_GenericInvalidData() /* 0600000C */
   } // end of property SR::GenericInvalidData
-  .property /*17000007*/ string InvalidArgumentOffsetCount()
+  .property /*17000007*/ callconv(8) string
+          InvalidArgumentOffsetCount()
   {
     .get string System.SR/*02000003*/::get_InvalidArgumentOffsetCount() /* 0600000D */
   } // end of property SR::InvalidArgumentOffsetCount
-  .property /*17000008*/ string InvalidBeginCall()
+  .property /*17000008*/ callconv(8) string
+          InvalidBeginCall()
   {
     .get string System.SR/*02000003*/::get_InvalidBeginCall() /* 0600000E */
   } // end of property SR::InvalidBeginCall
-  .property /*17000009*/ string InvalidBlockLength()
+  .property /*17000009*/ callconv(8) string
+          InvalidBlockLength()
   {
     .get string System.SR/*02000003*/::get_InvalidBlockLength() /* 0600000F */
   } // end of property SR::InvalidBlockLength
-  .property /*1700000A*/ string InvalidHuffmanData()
+  .property /*1700000A*/ callconv(8) string
+          InvalidHuffmanData()
   {
     .get string System.SR/*02000003*/::get_InvalidHuffmanData() /* 06000010 */
   } // end of property SR::InvalidHuffmanData
-  .property /*1700000B*/ string NotSupported()
+  .property /*1700000B*/ callconv(8) string
+          NotSupported()
   {
     .get string System.SR/*02000003*/::get_NotSupported() /* 06000011 */
   } // end of property SR::NotSupported
-  .property /*1700000C*/ string NotSupported_UnreadableStream()
+  .property /*1700000C*/ callconv(8) string
+          NotSupported_UnreadableStream()
   {
     .get string System.SR/*02000003*/::get_NotSupported_UnreadableStream() /* 06000012 */
   } // end of property SR::NotSupported_UnreadableStream
-  .property /*1700000D*/ string NotSupported_UnwritableStream()
+  .property /*1700000D*/ callconv(8) string
+          NotSupported_UnwritableStream()
   {
     .get string System.SR/*02000003*/::get_NotSupported_UnwritableStream() /* 06000013 */
   } // end of property SR::NotSupported_UnwritableStream
-  .property /*1700000E*/ string ObjectDisposed_StreamClosed()
+  .property /*1700000E*/ callconv(8) string
+          ObjectDisposed_StreamClosed()
   {
     .get string System.SR/*02000003*/::get_ObjectDisposed_StreamClosed() /* 06000014 */
   } // end of property SR::ObjectDisposed_StreamClosed
-  .property /*1700000F*/ string UnknownBlockType()
+  .property /*1700000F*/ callconv(8) string
+          UnknownBlockType()
   {
     .get string System.SR/*02000003*/::get_UnknownBlockType() /* 06000015 */
   } // end of property SR::UnknownBlockType
-  .property /*17000010*/ string UnknownState()
+  .property /*17000010*/ callconv(8) string
+          UnknownState()
   {
     .get string System.SR/*02000003*/::get_UnknownState() /* 06000016 */
   } // end of property SR::UnknownState
-  .property /*17000011*/ string ZLibErrorDLLLoadError()
+  .property /*17000011*/ callconv(8) string
+          ZLibErrorDLLLoadError()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorDLLLoadError() /* 06000017 */
   } // end of property SR::ZLibErrorDLLLoadError
-  .property /*17000012*/ string ZLibErrorInconsistentStream()
+  .property /*17000012*/ callconv(8) string
+          ZLibErrorInconsistentStream()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorInconsistentStream() /* 06000018 */
   } // end of property SR::ZLibErrorInconsistentStream
-  .property /*17000013*/ string ZLibErrorIncorrectInitParameters()
+  .property /*17000013*/ callconv(8) string
+          ZLibErrorIncorrectInitParameters()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorIncorrectInitParameters() /* 06000019 */
   } // end of property SR::ZLibErrorIncorrectInitParameters
-  .property /*17000014*/ string ZLibErrorNotEnoughMemory()
+  .property /*17000014*/ callconv(8) string
+          ZLibErrorNotEnoughMemory()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorNotEnoughMemory() /* 0600001A */
   } // end of property SR::ZLibErrorNotEnoughMemory
-  .property /*17000015*/ string ZLibErrorVersionMismatch()
+  .property /*17000015*/ callconv(8) string
+          ZLibErrorVersionMismatch()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorVersionMismatch() /* 0600001B */
   } // end of property SR::ZLibErrorVersionMismatch
-  .property /*17000016*/ string ZLibErrorUnexpected()
+  .property /*17000016*/ callconv(8) string
+          ZLibErrorUnexpected()
   {
     .get string System.SR/*02000003*/::get_ZLibErrorUnexpected() /* 0600001C */
   } // end of property SR::ZLibErrorUnexpected
-  .property /*17000017*/ string ArgumentNeedNonNegative()
+  .property /*17000017*/ callconv(8) string
+          ArgumentNeedNonNegative()
   {
     .get string System.SR/*02000003*/::get_ArgumentNeedNonNegative() /* 0600001D */
   } // end of property SR::ArgumentNeedNonNegative
-  .property /*17000018*/ string CannotBeEmpty()
+  .property /*17000018*/ callconv(8) string
+          CannotBeEmpty()
   {
     .get string System.SR/*02000003*/::get_CannotBeEmpty() /* 0600001E */
   } // end of property SR::CannotBeEmpty
-  .property /*17000019*/ string CDCorrupt()
+  .property /*17000019*/ callconv(8) string
+          CDCorrupt()
   {
     .get string System.SR/*02000003*/::get_CDCorrupt() /* 0600001F */
   } // end of property SR::CDCorrupt
-  .property /*1700001A*/ string CentralDirectoryInvalid()
+  .property /*1700001A*/ callconv(8) string
+          CentralDirectoryInvalid()
   {
     .get string System.SR/*02000003*/::get_CentralDirectoryInvalid() /* 06000020 */
   } // end of property SR::CentralDirectoryInvalid
-  .property /*1700001B*/ string CreateInReadMode()
+  .property /*1700001B*/ callconv(8) string
+          CreateInReadMode()
   {
     .get string System.SR/*02000003*/::get_CreateInReadMode() /* 06000021 */
   } // end of property SR::CreateInReadMode
-  .property /*1700001C*/ string CreateModeCapabilities()
+  .property /*1700001C*/ callconv(8) string
+          CreateModeCapabilities()
   {
     .get string System.SR/*02000003*/::get_CreateModeCapabilities() /* 06000022 */
   } // end of property SR::CreateModeCapabilities
-  .property /*1700001D*/ string CreateModeCreateEntryWhileOpen()
+  .property /*1700001D*/ callconv(8) string
+          CreateModeCreateEntryWhileOpen()
   {
     .get string System.SR/*02000003*/::get_CreateModeCreateEntryWhileOpen() /* 06000023 */
   } // end of property SR::CreateModeCreateEntryWhileOpen
-  .property /*1700001E*/ string CreateModeWriteOnceAndOneEntryAtATime()
+  .property /*1700001E*/ callconv(8) string
+          CreateModeWriteOnceAndOneEntryAtATime()
   {
     .get string System.SR/*02000003*/::get_CreateModeWriteOnceAndOneEntryAtATime() /* 06000024 */
   } // end of property SR::CreateModeWriteOnceAndOneEntryAtATime
-  .property /*1700001F*/ string DateTimeOutOfRange()
+  .property /*1700001F*/ callconv(8) string
+          DateTimeOutOfRange()
   {
     .get string System.SR/*02000003*/::get_DateTimeOutOfRange() /* 06000025 */
   } // end of property SR::DateTimeOutOfRange
-  .property /*17000020*/ string DeletedEntry()
+  .property /*17000020*/ callconv(8) string
+          DeletedEntry()
   {
     .get string System.SR/*02000003*/::get_DeletedEntry() /* 06000026 */
   } // end of property SR::DeletedEntry
-  .property /*17000021*/ string DeleteOnlyInUpdate()
+  .property /*17000021*/ callconv(8) string
+          DeleteOnlyInUpdate()
   {
     .get string System.SR/*02000003*/::get_DeleteOnlyInUpdate() /* 06000027 */
   } // end of property SR::DeleteOnlyInUpdate
-  .property /*17000022*/ string DeleteOpenEntry()
+  .property /*17000022*/ callconv(8) string
+          DeleteOpenEntry()
   {
     .get string System.SR/*02000003*/::get_DeleteOpenEntry() /* 06000028 */
   } // end of property SR::DeleteOpenEntry
-  .property /*17000023*/ string EntriesInCreateMode()
+  .property /*17000023*/ callconv(8) string
+          EntriesInCreateMode()
   {
     .get string System.SR/*02000003*/::get_EntriesInCreateMode() /* 06000029 */
   } // end of property SR::EntriesInCreateMode
-  .property /*17000024*/ string EntryNameEncodingNotSupported()
+  .property /*17000024*/ callconv(8) string
+          EntryNameEncodingNotSupported()
   {
     .get string System.SR/*02000003*/::get_EntryNameEncodingNotSupported() /* 0600002A */
   } // end of property SR::EntryNameEncodingNotSupported
-  .property /*17000025*/ string EntryNamesTooLong()
+  .property /*17000025*/ callconv(8) string
+          EntryNamesTooLong()
   {
     .get string System.SR/*02000003*/::get_EntryNamesTooLong() /* 0600002B */
   } // end of property SR::EntryNamesTooLong
-  .property /*17000026*/ string EntryTooLarge()
+  .property /*17000026*/ callconv(8) string
+          EntryTooLarge()
   {
     .get string System.SR/*02000003*/::get_EntryTooLarge() /* 0600002C */
   } // end of property SR::EntryTooLarge
-  .property /*17000027*/ string EOCDNotFound()
+  .property /*17000027*/ callconv(8) string
+          EOCDNotFound()
   {
     .get string System.SR/*02000003*/::get_EOCDNotFound() /* 0600002D */
   } // end of property SR::EOCDNotFound
-  .property /*17000028*/ string FieldTooBigCompressedSize()
+  .property /*17000028*/ callconv(8) string
+          FieldTooBigCompressedSize()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigCompressedSize() /* 0600002E */
   } // end of property SR::FieldTooBigCompressedSize
-  .property /*17000029*/ string FieldTooBigLocalHeaderOffset()
+  .property /*17000029*/ callconv(8) string
+          FieldTooBigLocalHeaderOffset()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigLocalHeaderOffset() /* 0600002F */
   } // end of property SR::FieldTooBigLocalHeaderOffset
-  .property /*1700002A*/ string FieldTooBigNumEntries()
+  .property /*1700002A*/ callconv(8) string
+          FieldTooBigNumEntries()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigNumEntries() /* 06000030 */
   } // end of property SR::FieldTooBigNumEntries
-  .property /*1700002B*/ string FieldTooBigOffsetToCD()
+  .property /*1700002B*/ callconv(8) string
+          FieldTooBigOffsetToCD()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigOffsetToCD() /* 06000031 */
   } // end of property SR::FieldTooBigOffsetToCD
-  .property /*1700002C*/ string FieldTooBigOffsetToZip64EOCD()
+  .property /*1700002C*/ callconv(8) string
+          FieldTooBigOffsetToZip64EOCD()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigOffsetToZip64EOCD() /* 06000032 */
   } // end of property SR::FieldTooBigOffsetToZip64EOCD
-  .property /*1700002D*/ string FieldTooBigStartDiskNumber()
+  .property /*1700002D*/ callconv(8) string
+          FieldTooBigStartDiskNumber()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigStartDiskNumber() /* 06000033 */
   } // end of property SR::FieldTooBigStartDiskNumber
-  .property /*1700002E*/ string FieldTooBigUncompressedSize()
+  .property /*1700002E*/ callconv(8) string
+          FieldTooBigUncompressedSize()
   {
     .get string System.SR/*02000003*/::get_FieldTooBigUncompressedSize() /* 06000034 */
   } // end of property SR::FieldTooBigUncompressedSize
-  .property /*1700002F*/ string FrozenAfterWrite()
+  .property /*1700002F*/ callconv(8) string
+          FrozenAfterWrite()
   {
     .get string System.SR/*02000003*/::get_FrozenAfterWrite() /* 06000035 */
   } // end of property SR::FrozenAfterWrite
-  .property /*17000030*/ string HiddenStreamName()
+  .property /*17000030*/ callconv(8) string
+          HiddenStreamName()
   {
     .get string System.SR/*02000003*/::get_HiddenStreamName() /* 06000036 */
   } // end of property SR::HiddenStreamName
-  .property /*17000031*/ string LengthAfterWrite()
+  .property /*17000031*/ callconv(8) string
+          LengthAfterWrite()
   {
     .get string System.SR/*02000003*/::get_LengthAfterWrite() /* 06000037 */
   } // end of property SR::LengthAfterWrite
-  .property /*17000032*/ string LocalFileHeaderCorrupt()
+  .property /*17000032*/ callconv(8) string
+          LocalFileHeaderCorrupt()
   {
     .get string System.SR/*02000003*/::get_LocalFileHeaderCorrupt() /* 06000038 */
   } // end of property SR::LocalFileHeaderCorrupt
-  .property /*17000033*/ string NumEntriesWrong()
+  .property /*17000033*/ callconv(8) string
+          NumEntriesWrong()
   {
     .get string System.SR/*02000003*/::get_NumEntriesWrong() /* 06000039 */
   } // end of property SR::NumEntriesWrong
-  .property /*17000034*/ string OffsetLengthInvalid()
+  .property /*17000034*/ callconv(8) string
+          OffsetLengthInvalid()
   {
     .get string System.SR/*02000003*/::get_OffsetLengthInvalid() /* 0600003A */
   } // end of property SR::OffsetLengthInvalid
-  .property /*17000035*/ string ReadingNotSupported()
+  .property /*17000035*/ callconv(8) string
+          ReadingNotSupported()
   {
     .get string System.SR/*02000003*/::get_ReadingNotSupported() /* 0600003B */
   } // end of property SR::ReadingNotSupported
-  .property /*17000036*/ string ReadModeCapabilities()
+  .property /*17000036*/ callconv(8) string
+          ReadModeCapabilities()
   {
     .get string System.SR/*02000003*/::get_ReadModeCapabilities() /* 0600003C */
   } // end of property SR::ReadModeCapabilities
-  .property /*17000037*/ string ReadOnlyArchive()
+  .property /*17000037*/ callconv(8) string
+          ReadOnlyArchive()
   {
     .get string System.SR/*02000003*/::get_ReadOnlyArchive() /* 0600003D */
   } // end of property SR::ReadOnlyArchive
-  .property /*17000038*/ string SeekingNotSupported()
+  .property /*17000038*/ callconv(8) string
+          SeekingNotSupported()
   {
     .get string System.SR/*02000003*/::get_SeekingNotSupported() /* 0600003E */
   } // end of property SR::SeekingNotSupported
-  .property /*17000039*/ string SetLengthRequiresSeekingAndWriting()
+  .property /*17000039*/ callconv(8) string
+          SetLengthRequiresSeekingAndWriting()
   {
     .get string System.SR/*02000003*/::get_SetLengthRequiresSeekingAndWriting() /* 0600003F */
   } // end of property SR::SetLengthRequiresSeekingAndWriting
-  .property /*1700003A*/ string SplitSpanned()
+  .property /*1700003A*/ callconv(8) string
+          SplitSpanned()
   {
     .get string System.SR/*02000003*/::get_SplitSpanned() /* 06000040 */
   } // end of property SR::SplitSpanned
-  .property /*1700003B*/ string UnexpectedEndOfStream()
+  .property /*1700003B*/ callconv(8) string
+          UnexpectedEndOfStream()
   {
     .get string System.SR/*02000003*/::get_UnexpectedEndOfStream() /* 06000041 */
   } // end of property SR::UnexpectedEndOfStream
-  .property /*1700003C*/ string UnsupportedCompression()
+  .property /*1700003C*/ callconv(8) string
+          UnsupportedCompression()
   {
     .get string System.SR/*02000003*/::get_UnsupportedCompression() /* 06000042 */
   } // end of property SR::UnsupportedCompression
-  .property /*1700003D*/ string UnsupportedCompressionMethod()
+  .property /*1700003D*/ callconv(8) string
+          UnsupportedCompressionMethod()
   {
     .get string System.SR/*02000003*/::get_UnsupportedCompressionMethod() /* 06000043 */
   } // end of property SR::UnsupportedCompressionMethod
-  .property /*1700003E*/ string UpdateModeCapabilities()
+  .property /*1700003E*/ callconv(8) string
+          UpdateModeCapabilities()
   {
     .get string System.SR/*02000003*/::get_UpdateModeCapabilities() /* 06000044 */
   } // end of property SR::UpdateModeCapabilities
-  .property /*1700003F*/ string UpdateModeOneStream()
+  .property /*1700003F*/ callconv(8) string
+          UpdateModeOneStream()
   {
     .get string System.SR/*02000003*/::get_UpdateModeOneStream() /* 06000045 */
   } // end of property SR::UpdateModeOneStream
-  .property /*17000040*/ string WritingNotSupported()
+  .property /*17000040*/ callconv(8) string
+          WritingNotSupported()
   {
     .get string System.SR/*02000003*/::get_WritingNotSupported() /* 06000046 */
   } // end of property SR::WritingNotSupported
-  .property /*17000041*/ string Zip64EOCDNotWhereExpected()
+  .property /*17000041*/ callconv(8) string
+          Zip64EOCDNotWhereExpected()
   {
     .get string System.SR/*02000003*/::get_Zip64EOCDNotWhereExpected() /* 06000047 */
   } // end of property SR::Zip64EOCDNotWhereExpected
-  .property /*17000042*/ string Argument_InvalidPathChars()
+  .property /*17000042*/ callconv(8) string
+          Argument_InvalidPathChars()
   {
     .get string System.SR/*02000003*/::get_Argument_InvalidPathChars() /* 06000048 */
   } // end of property SR::Argument_InvalidPathChars
-  .property /*17000043*/ class [mscorlib/*23000001*/]System.Type/*01000005*/
+  .property /*17000043*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000005*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000005*/ System.SR/*02000003*/::get_ResourceType() /* 06000049 */
@@ -1944,20 +2013,22 @@
       IL_000b:  /* 2A   |                  */ ret
     } // end of method TaskWrapperAsyncResult::System.IAsyncResult.get_AsyncWaitHandle
 
-    .property /*17000092*/ instance object
+    .property /*17000092*/ instance callconv(8) object
             System.IAsyncResult.AsyncState()
     {
       .get instance object System.Threading.Tasks.TaskToApm/*02000004*//TaskWrapperAsyncResult/*0200002A*/::System.IAsyncResult.get_AsyncState() /* 060001BB */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.AsyncState
-    .property /*17000093*/ instance bool System.IAsyncResult.CompletedSynchronously()
+    .property /*17000093*/ instance callconv(8) bool
+            System.IAsyncResult.CompletedSynchronously()
     {
       .get instance bool System.Threading.Tasks.TaskToApm/*02000004*//TaskWrapperAsyncResult/*0200002A*/::System.IAsyncResult.get_CompletedSynchronously() /* 060001BC */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.CompletedSynchronously
-    .property /*17000094*/ instance bool System.IAsyncResult.IsCompleted()
+    .property /*17000094*/ instance callconv(8) bool
+            System.IAsyncResult.IsCompleted()
     {
       .get instance bool System.Threading.Tasks.TaskToApm/*02000004*//TaskWrapperAsyncResult/*0200002A*/::System.IAsyncResult.get_IsCompleted() /* 060001BD */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.IsCompleted
-    .property /*17000095*/ instance class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000015*/
+    .property /*17000095*/ instance callconv(8) class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000015*/
             System.IAsyncResult.AsyncWaitHandle()
     {
       .get instance class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000015*/ System.Threading.Tasks.TaskToApm/*02000004*//TaskWrapperAsyncResult/*0200002A*/::System.IAsyncResult.get_AsyncWaitHandle() /* 060001BE */
@@ -3899,31 +3970,32 @@
     IL_006c:  /* 2A   |                  */ ret
   } // end of method ZipArchive::WriteArchiveEpilogue
 
-  .property /*17000044*/ instance class [mscorlib/*23000001*/]System.Collections.ObjectModel.ReadOnlyCollection`1/*0100001E*/<class System.IO.Compression.ZipArchiveEntry/*02000007*/>
+  .property /*17000044*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.ObjectModel.ReadOnlyCollection`1/*0100001E*/<class System.IO.Compression.ZipArchiveEntry/*02000007*/>
           Entries()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.ObjectModel.ReadOnlyCollection`1/*0100001E*/<class System.IO.Compression.ZipArchiveEntry/*02000007*/> System.IO.Compression.ZipArchive/*02000006*/::get_Entries() /* 06000055 */
   } // end of property ZipArchive::Entries
-  .property /*17000045*/ instance valuetype System.IO.Compression.ZipArchiveMode/*02000008*/
+  .property /*17000045*/ instance callconv(8) valuetype System.IO.Compression.ZipArchiveMode/*02000008*/
           Mode()
   {
     .get instance valuetype System.IO.Compression.ZipArchiveMode/*02000008*/ System.IO.Compression.ZipArchive/*02000006*/::get_Mode() /* 06000056 */
   } // end of property ZipArchive::Mode
-  .property /*17000046*/ instance class [mscorlib/*23000001*/]System.IO.BinaryReader/*0100001C*/
+  .property /*17000046*/ instance callconv(8) class [mscorlib/*23000001*/]System.IO.BinaryReader/*0100001C*/
           ArchiveReader()
   {
     .get instance class [mscorlib/*23000001*/]System.IO.BinaryReader/*0100001C*/ System.IO.Compression.ZipArchive/*02000006*/::get_ArchiveReader() /* 0600005C */
   } // end of property ZipArchive::ArchiveReader
-  .property /*17000047*/ instance class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/
+  .property /*17000047*/ instance callconv(8) class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/
           ArchiveStream()
   {
     .get instance class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/ System.IO.Compression.ZipArchive/*02000006*/::get_ArchiveStream() /* 0600005D */
   } // end of property ZipArchive::ArchiveStream
-  .property /*17000048*/ instance uint32 NumberOfThisDisk()
+  .property /*17000048*/ instance callconv(8) uint32
+          NumberOfThisDisk()
   {
     .get instance uint32 System.IO.Compression.ZipArchive/*02000006*/::get_NumberOfThisDisk() /* 0600005E */
   } // end of property ZipArchive::NumberOfThisDisk
-  .property /*17000049*/ instance class [mscorlib/*23000001*/]System.Text.Encoding/*01000020*/
+  .property /*17000049*/ instance callconv(8) class [mscorlib/*23000001*/]System.Text.Encoding/*01000020*/
           EntryNameEncoding()
   {
     .get instance class [mscorlib/*23000001*/]System.Text.Encoding/*01000020*/ System.IO.Compression.ZipArchive/*02000006*/::get_EntryNameEncoding() /* 0600005F */
@@ -4280,26 +4352,29 @@
       IL_0077:  /* 2A   |                  */ ret
     } // end of method DirectToArchiveWriterStream::Dispose
 
-    .property /*17000096*/ instance int64
+    .property /*17000096*/ instance callconv(8) int64
             Length()
     {
       .get instance int64 System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::get_Length() /* 060001C2 */
     } // end of property DirectToArchiveWriterStream::Length
-    .property /*17000097*/ instance int64
+    .property /*17000097*/ instance callconv(8) int64
             Position()
     {
       .get instance int64 System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::get_Position() /* 060001C3 */
       .set instance void System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::set_Position(int64) /* 060001C4 */
     } // end of property DirectToArchiveWriterStream::Position
-    .property /*17000098*/ instance bool CanRead()
+    .property /*17000098*/ instance callconv(8) bool
+            CanRead()
     {
       .get instance bool System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::get_CanRead() /* 060001C5 */
     } // end of property DirectToArchiveWriterStream::CanRead
-    .property /*17000099*/ instance bool CanSeek()
+    .property /*17000099*/ instance callconv(8) bool
+            CanSeek()
     {
       .get instance bool System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::get_CanSeek() /* 060001C6 */
     } // end of property DirectToArchiveWriterStream::CanSeek
-    .property /*1700009A*/ instance bool CanWrite()
+    .property /*1700009A*/ instance callconv(8) bool
+            CanWrite()
     {
       .get instance bool System.IO.Compression.ZipArchiveEntry/*02000007*//DirectToArchiveWriterStream/*0200002C*/::get_CanWrite() /* 060001C7 */
     } // end of property DirectToArchiveWriterStream::CanWrite
@@ -6990,53 +7065,60 @@
     IL_000d:  /* 2A   |                  */ ret
   } // end of method ZipArchiveEntry::.cctor
 
-  .property /*1700004A*/ instance class System.IO.Compression.ZipArchive/*02000006*/
+  .property /*1700004A*/ instance callconv(8) class System.IO.Compression.ZipArchive/*02000006*/
           Archive()
   {
     .get instance class System.IO.Compression.ZipArchive/*02000006*/ System.IO.Compression.ZipArchiveEntry/*02000007*/::get_Archive() /* 06000073 */
   } // end of property ZipArchiveEntry::Archive
-  .property /*1700004B*/ instance int64 CompressedLength()
+  .property /*1700004B*/ instance callconv(8) int64
+          CompressedLength()
   {
     .get instance int64 System.IO.Compression.ZipArchiveEntry/*02000007*/::get_CompressedLength() /* 06000074 */
   } // end of property ZipArchiveEntry::CompressedLength
-  .property /*1700004C*/ instance int32 ExternalAttributes()
+  .property /*1700004C*/ instance callconv(8) int32
+          ExternalAttributes()
   {
     .get instance int32 System.IO.Compression.ZipArchiveEntry/*02000007*/::get_ExternalAttributes() /* 06000075 */
     .set instance void System.IO.Compression.ZipArchiveEntry/*02000007*/::set_ExternalAttributes(int32) /* 06000076 */
   } // end of property ZipArchiveEntry::ExternalAttributes
-  .property /*1700004D*/ instance string FullName()
+  .property /*1700004D*/ instance callconv(8) string
+          FullName()
   {
     .get instance string System.IO.Compression.ZipArchiveEntry/*02000007*/::get_FullName() /* 06000077 */
     .set instance void System.IO.Compression.ZipArchiveEntry/*02000007*/::set_FullName(string) /* 06000078 */
   } // end of property ZipArchiveEntry::FullName
-  .property /*1700004E*/ instance valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000032*/
+  .property /*1700004E*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000032*/
           LastWriteTime()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000032*/ System.IO.Compression.ZipArchiveEntry/*02000007*/::get_LastWriteTime() /* 06000079 */
     .set instance void System.IO.Compression.ZipArchiveEntry/*02000007*/::set_LastWriteTime(valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000032*/) /* 0600007A */
   } // end of property ZipArchiveEntry::LastWriteTime
-  .property /*1700004F*/ instance int64 Length()
+  .property /*1700004F*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.ZipArchiveEntry/*02000007*/::get_Length() /* 0600007B */
   } // end of property ZipArchiveEntry::Length
-  .property /*17000050*/ instance string Name()
+  .property /*17000050*/ instance callconv(8) string
+          Name()
   {
     .get instance string System.IO.Compression.ZipArchiveEntry/*02000007*/::get_Name() /* 0600007C */
   } // end of property ZipArchiveEntry::Name
-  .property /*17000051*/ instance bool EverOpenedForWrite()
+  .property /*17000051*/ instance callconv(8) bool
+          EverOpenedForWrite()
   {
     .get instance bool System.IO.Compression.ZipArchiveEntry/*02000007*/::get_EverOpenedForWrite() /* 06000080 */
   } // end of property ZipArchiveEntry::EverOpenedForWrite
-  .property /*17000052*/ instance int64 OffsetOfCompressedData()
+  .property /*17000052*/ instance callconv(8) int64
+          OffsetOfCompressedData()
   {
     .get instance int64 System.IO.Compression.ZipArchiveEntry/*02000007*/::get_OffsetOfCompressedData() /* 06000081 */
   } // end of property ZipArchiveEntry::OffsetOfCompressedData
-  .property /*17000053*/ instance class [mscorlib/*23000001*/]System.IO.MemoryStream/*0100002A*/
+  .property /*17000053*/ instance callconv(8) class [mscorlib/*23000001*/]System.IO.MemoryStream/*0100002A*/
           UncompressedData()
   {
     .get instance class [mscorlib/*23000001*/]System.IO.MemoryStream/*0100002A*/ System.IO.Compression.ZipArchiveEntry/*02000007*/::get_UncompressedData() /* 06000082 */
   } // end of property ZipArchiveEntry::UncompressedData
-  .property /*17000054*/ instance valuetype System.IO.Compression.ZipArchiveEntry/*02000007*//CompressionMethodValues/*0200002E*/
+  .property /*17000054*/ instance callconv(8) valuetype System.IO.Compression.ZipArchiveEntry/*02000007*//CompressionMethodValues/*0200002E*/
           CompressionMethod()
   {
     .get instance valuetype System.IO.Compression.ZipArchiveEntry/*02000007*//CompressionMethodValues/*0200002E*/ System.IO.Compression.ZipArchiveEntry/*02000007*/::get_CompressionMethod() /* 06000083 */
@@ -7314,15 +7396,17 @@
     IL_0032:  /* 2A   |                  */ ret
   } // end of method ZipGenericExtraField::WriteAllBlocks
 
-  .property /*17000055*/ instance uint16 Tag()
+  .property /*17000055*/ instance callconv(8) uint16
+          Tag()
   {
     .get instance uint16 System.IO.Compression.ZipGenericExtraField/*02000009*/::get_Tag() /* 0600009E */
   } // end of property ZipGenericExtraField::Tag
-  .property /*17000056*/ instance uint16 Size()
+  .property /*17000056*/ instance callconv(8) uint16
+          Size()
   {
     .get instance uint16 System.IO.Compression.ZipGenericExtraField/*02000009*/::get_Size() /* 0600009F */
   } // end of property ZipGenericExtraField::Size
-  .property /*17000057*/ instance uint8[]
+  .property /*17000057*/ instance callconv(8) uint8[]
           Data()
   {
     .get instance uint8[] System.IO.Compression.ZipGenericExtraField/*02000009*/::get_Data() /* 060000A0 */
@@ -8111,29 +8195,30 @@
     IL_0092:  /* 2A   |                  */ ret
   } // end of method Zip64ExtraField::WriteBlock
 
-  .property /*17000058*/ instance uint16 TotalSize()
+  .property /*17000058*/ instance callconv(8) uint16
+          TotalSize()
   {
     .get instance uint16 System.IO.Compression.Zip64ExtraField/*0200000A*/::get_TotalSize() /* 060000A6 */
   } // end of property Zip64ExtraField::TotalSize
-  .property /*17000059*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
+  .property /*17000059*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
           UncompressedSize()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64> System.IO.Compression.Zip64ExtraField/*0200000A*/::get_UncompressedSize() /* 060000A7 */
     .set instance void System.IO.Compression.Zip64ExtraField/*0200000A*/::set_UncompressedSize(valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>) /* 060000A8 */
   } // end of property Zip64ExtraField::UncompressedSize
-  .property /*1700005A*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
+  .property /*1700005A*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
           CompressedSize()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64> System.IO.Compression.Zip64ExtraField/*0200000A*/::get_CompressedSize() /* 060000A9 */
     .set instance void System.IO.Compression.Zip64ExtraField/*0200000A*/::set_CompressedSize(valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>) /* 060000AA */
   } // end of property Zip64ExtraField::CompressedSize
-  .property /*1700005B*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
+  .property /*1700005B*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>
           LocalHeaderOffset()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64> System.IO.Compression.Zip64ExtraField/*0200000A*/::get_LocalHeaderOffset() /* 060000AB */
     .set instance void System.IO.Compression.Zip64ExtraField/*0200000A*/::set_LocalHeaderOffset(valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int64>) /* 060000AC */
   } // end of property Zip64ExtraField::LocalHeaderOffset
-  .property /*1700005C*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int32>
+  .property /*1700005C*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int32>
           StartDiskNumber()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*01000022*/<int32> System.IO.Compression.Zip64ExtraField/*0200000A*/::get_StartDiskNumber() /* 060000AD */
@@ -9378,24 +9463,29 @@
     IL_0043:  /* 2A   |                  */ ret
   } // end of method WrappedStream::Dispose
 
-  .property /*1700005D*/ instance int64 Length()
+  .property /*1700005D*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.WrappedStream/*02000010*/::get_Length() /* 060000C0 */
   } // end of property WrappedStream::Length
-  .property /*1700005E*/ instance int64 Position()
+  .property /*1700005E*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.IO.Compression.WrappedStream/*02000010*/::get_Position() /* 060000C1 */
     .set instance void System.IO.Compression.WrappedStream/*02000010*/::set_Position(int64) /* 060000C2 */
   } // end of property WrappedStream::Position
-  .property /*1700005F*/ instance bool CanRead()
+  .property /*1700005F*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.IO.Compression.WrappedStream/*02000010*/::get_CanRead() /* 060000C3 */
   } // end of property WrappedStream::CanRead
-  .property /*17000060*/ instance bool CanSeek()
+  .property /*17000060*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.IO.Compression.WrappedStream/*02000010*/::get_CanSeek() /* 060000C4 */
   } // end of property WrappedStream::CanSeek
-  .property /*17000061*/ instance bool CanWrite()
+  .property /*17000061*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.IO.Compression.WrappedStream/*02000010*/::get_CanWrite() /* 060000C5 */
   } // end of property WrappedStream::CanWrite
@@ -9727,24 +9817,29 @@
     IL_0020:  /* 2A   |                  */ ret
   } // end of method SubReadStream::Dispose
 
-  .property /*17000062*/ instance int64 Length()
+  .property /*17000062*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.SubReadStream/*02000011*/::get_Length() /* 060000D1 */
   } // end of property SubReadStream::Length
-  .property /*17000063*/ instance int64 Position()
+  .property /*17000063*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.IO.Compression.SubReadStream/*02000011*/::get_Position() /* 060000D2 */
     .set instance void System.IO.Compression.SubReadStream/*02000011*/::set_Position(int64) /* 060000D3 */
   } // end of property SubReadStream::Position
-  .property /*17000064*/ instance bool CanRead()
+  .property /*17000064*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.IO.Compression.SubReadStream/*02000011*/::get_CanRead() /* 060000D4 */
   } // end of property SubReadStream::CanRead
-  .property /*17000065*/ instance bool CanSeek()
+  .property /*17000065*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.IO.Compression.SubReadStream/*02000011*/::get_CanSeek() /* 060000D5 */
   } // end of property SubReadStream::CanSeek
-  .property /*17000066*/ instance bool CanWrite()
+  .property /*17000066*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.IO.Compression.SubReadStream/*02000011*/::get_CanWrite() /* 060000D6 */
   } // end of property SubReadStream::CanWrite
@@ -10136,24 +10231,29 @@
     IL_007a:  /* 2A   |                  */ ret
   } // end of method CheckSumAndSizeWriteStream::Dispose
 
-  .property /*17000067*/ instance int64 Length()
+  .property /*17000067*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::get_Length() /* 060000E0 */
   } // end of property CheckSumAndSizeWriteStream::Length
-  .property /*17000068*/ instance int64 Position()
+  .property /*17000068*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::get_Position() /* 060000E1 */
     .set instance void System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::set_Position(int64) /* 060000E2 */
   } // end of property CheckSumAndSizeWriteStream::Position
-  .property /*17000069*/ instance bool CanRead()
+  .property /*17000069*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::get_CanRead() /* 060000E3 */
   } // end of property CheckSumAndSizeWriteStream::CanRead
-  .property /*1700006A*/ instance bool CanSeek()
+  .property /*1700006A*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::get_CanSeek() /* 060000E4 */
   } // end of property CheckSumAndSizeWriteStream::CanSeek
-  .property /*1700006B*/ instance bool CanWrite()
+  .property /*1700006B*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.IO.Compression.CheckSumAndSizeWriteStream/*02000012*/::get_CanWrite() /* 060000E5 */
   } // end of property CheckSumAndSizeWriteStream::CanWrite
@@ -10996,18 +11096,20 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method DeflateInput::.ctor
 
-  .property /*1700006C*/ instance uint8[]
+  .property /*1700006C*/ instance callconv(8) uint8[]
           Buffer()
   {
     .get instance uint8[] System.IO.Compression.DeflateInput/*02000018*/::get_Buffer() /* 060000F8 */
     .set instance void System.IO.Compression.DeflateInput/*02000018*/::set_Buffer(uint8[]) /* 060000F9 */
   } // end of property DeflateInput::Buffer
-  .property /*1700006D*/ instance int32 Count()
+  .property /*1700006D*/ instance callconv(8) int32
+          Count()
   {
     .get instance int32 System.IO.Compression.DeflateInput/*02000018*/::get_Count() /* 060000FA */
     .set instance void System.IO.Compression.DeflateInput/*02000018*/::set_Count(int32) /* 060000FB */
   } // end of property DeflateInput::Count
-  .property /*1700006E*/ instance int32 StartIndex()
+  .property /*1700006E*/ instance callconv(8) int32
+          StartIndex()
   {
     .get instance int32 System.IO.Compression.DeflateInput/*02000018*/::get_StartIndex() /* 060000FC */
     .set instance void System.IO.Compression.DeflateInput/*02000018*/::set_StartIndex(int32) /* 060000FD */
@@ -13300,28 +13402,33 @@
     IL_000b:  /* 2A   |                  */ ret
   } // end of method DeflateManagedStream::'<>n__0'
 
-  .property /*1700006F*/ instance class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/
+  .property /*1700006F*/ instance callconv(8) class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/
           BaseStream()
   {
     .get instance class [mscorlib/*23000001*/]System.IO.Stream/*0100001B*/ System.IO.Compression.DeflateManagedStream/*0200001A*/::get_BaseStream() /* 06000114 */
   } // end of property DeflateManagedStream::BaseStream
-  .property /*17000070*/ instance bool CanRead()
+  .property /*17000070*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.IO.Compression.DeflateManagedStream/*0200001A*/::get_CanRead() /* 06000115 */
   } // end of property DeflateManagedStream::CanRead
-  .property /*17000071*/ instance bool CanWrite()
+  .property /*17000071*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.IO.Compression.DeflateManagedStream/*0200001A*/::get_CanWrite() /* 06000116 */
   } // end of property DeflateManagedStream::CanWrite
-  .property /*17000072*/ instance bool CanSeek()
+  .property /*17000072*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.IO.Compression.DeflateManagedStream/*0200001A*/::get_CanSeek() /* 06000117 */
   } // end of property DeflateManagedStream::CanSeek
-  .property /*17000073*/ instance int64 Length()
+  .property /*17000073*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.DeflateManagedStream/*0200001A*/::get_Length() /* 06000118 */
   } // end of property DeflateManagedStream::Length
-  .property /*17000074*/ instance int64 Position()
+  .property /*17000074*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.IO.Compression.DeflateManagedStream/*0200001A*/::get_Position() /* 06000119 */
     .set instance void System.IO.Compression.DeflateManagedStream/*0200001A*/::set_Position(int64) /* 0600011A */
@@ -13874,16 +13981,17 @@
     IL_001d:  /* 2A   |                  */ ret
   } // end of method FastEncoder::WriteDeflatePreamble
 
-  .property /*17000075*/ instance int32 BytesInHistory()
+  .property /*17000075*/ instance callconv(8) int32
+          BytesInHistory()
   {
     .get instance int32 System.IO.Compression.FastEncoder/*0200001B*/::get_BytesInHistory() /* 06000136 */
   } // end of property FastEncoder::BytesInHistory
-  .property /*17000076*/ instance class System.IO.Compression.DeflateInput/*02000018*/
+  .property /*17000076*/ instance callconv(8) class System.IO.Compression.DeflateInput/*02000018*/
           UnprocessedInput()
   {
     .get instance class System.IO.Compression.DeflateInput/*02000018*/ System.IO.Compression.FastEncoder/*0200001B*/::get_UnprocessedInput() /* 06000137 */
   } // end of property FastEncoder::UnprocessedInput
-  .property /*17000077*/ instance float64
+  .property /*17000077*/ instance callconv(8) float64
           LastCompressionRatio()
   {
     .get instance float64 System.IO.Compression.FastEncoder/*0200001B*/::get_LastCompressionRatio() /* 06000139 */
@@ -14936,16 +15044,18 @@
     IL_0000:  /* 2A   |                  */ ret
   } // end of method FastEncoderWindow::DebugAssertRecalculatedHashesAreEqual
 
-  .property /*17000078*/ instance int32 BytesAvailable()
+  .property /*17000078*/ instance callconv(8) int32
+          BytesAvailable()
   {
     .get instance int32 System.IO.Compression.FastEncoderWindow/*0200001D*/::get_BytesAvailable() /* 0600014B */
   } // end of property FastEncoderWindow::BytesAvailable
-  .property /*17000079*/ instance class System.IO.Compression.DeflateInput/*02000018*/
+  .property /*17000079*/ instance callconv(8) class System.IO.Compression.DeflateInput/*02000018*/
           UnprocessedInput()
   {
     .get instance class System.IO.Compression.DeflateInput/*02000018*/ System.IO.Compression.FastEncoderWindow/*0200001D*/::get_UnprocessedInput() /* 0600014C */
   } // end of property FastEncoderWindow::UnprocessedInput
-  .property /*1700007A*/ instance int32 FreeWindowSpace()
+  .property /*1700007A*/ instance callconv(8) int32
+          FreeWindowSpace()
   {
     .get instance int32 System.IO.Compression.FastEncoderWindow/*0200001D*/::get_FreeWindowSpace() /* 0600014F */
   } // end of property FastEncoderWindow::FreeWindowSpace
@@ -15017,7 +15127,8 @@
     // Method begins at RVA 0x0
   } // end of method IFileFormatReader::get_ZLibWindowSize
 
-  .property /*1700007B*/ instance int32 ZLibWindowSize()
+  .property /*1700007B*/ instance callconv(8) int32
+          ZLibWindowSize()
   {
     .get instance int32 System.IO.Compression.IFileFormatReader/*0200001F*/::get_ZLibWindowSize() /* 06000160 */
   } // end of property IFileFormatReader::ZLibWindowSize
@@ -15697,12 +15808,12 @@
     IL_001e:  /* 2A   |                  */ ret
   } // end of method HuffmanTree::.cctor
 
-  .property /*1700007C*/ class System.IO.Compression.HuffmanTree/*02000020*/
+  .property /*1700007C*/ callconv(8) class System.IO.Compression.HuffmanTree/*02000020*/
           StaticLiteralLengthTree()
   {
     .get class System.IO.Compression.HuffmanTree/*02000020*/ System.IO.Compression.HuffmanTree/*02000020*/::get_StaticLiteralLengthTree() /* 06000161 */
   } // end of property HuffmanTree::StaticLiteralLengthTree
-  .property /*1700007D*/ class System.IO.Compression.HuffmanTree/*02000020*/
+  .property /*1700007D*/ callconv(8) class System.IO.Compression.HuffmanTree/*02000020*/
           StaticDistanceTree()
   {
     .get class System.IO.Compression.HuffmanTree/*02000020*/ System.IO.Compression.HuffmanTree/*02000020*/::get_StaticDistanceTree() /* 06000162 */
@@ -17210,7 +17321,8 @@
     IL_0073:  /* 2A   |                  */ ret
   } // end of method InflaterManaged::.cctor
 
-  .property /*1700007E*/ instance int32 AvailableOutput()
+  .property /*1700007E*/ instance callconv(8) int32
+          AvailableOutput()
   {
     .get instance int32 System.IO.Compression.InflaterManaged/*02000021*/::get_AvailableOutput() /* 06000170 */
   } // end of property InflaterManaged::AvailableOutput
@@ -17762,11 +17874,13 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method InputBuffer::.ctor
 
-  .property /*1700007F*/ instance int32 AvailableBits()
+  .property /*1700007F*/ instance callconv(8) int32
+          AvailableBits()
   {
     .get instance int32 System.IO.Compression.InputBuffer/*02000023*/::get_AvailableBits() /* 06000179 */
   } // end of property InputBuffer::AvailableBits
-  .property /*17000080*/ instance int32 AvailableBytes()
+  .property /*17000080*/ instance callconv(8) int32
+          AvailableBytes()
   {
     .get instance int32 System.IO.Compression.InputBuffer/*02000023*/::get_AvailableBytes() /* 0600017A */
   } // end of property InputBuffer::AvailableBytes
@@ -17904,23 +18018,26 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method Match::.ctor
 
-  .property /*17000081*/ instance valuetype System.IO.Compression.MatchState/*02000025*/
+  .property /*17000081*/ instance callconv(8) valuetype System.IO.Compression.MatchState/*02000025*/
           State()
   {
     .get instance valuetype System.IO.Compression.MatchState/*02000025*/ System.IO.Compression.Match/*02000024*/::get_State() /* 06000185 */
     .set instance void System.IO.Compression.Match/*02000024*/::set_State(valuetype System.IO.Compression.MatchState/*02000025*/) /* 06000186 */
   } // end of property Match::State
-  .property /*17000082*/ instance int32 Position()
+  .property /*17000082*/ instance callconv(8) int32
+          Position()
   {
     .get instance int32 System.IO.Compression.Match/*02000024*/::get_Position() /* 06000187 */
     .set instance void System.IO.Compression.Match/*02000024*/::set_Position(int32) /* 06000188 */
   } // end of property Match::Position
-  .property /*17000083*/ instance int32 Length()
+  .property /*17000083*/ instance callconv(8) int32
+          Length()
   {
     .get instance int32 System.IO.Compression.Match/*02000024*/::get_Length() /* 06000189 */
     .set instance void System.IO.Compression.Match/*02000024*/::set_Length(int32) /* 0600018A */
   } // end of property Match::Length
-  .property /*17000084*/ instance uint8 Symbol()
+  .property /*17000084*/ instance callconv(8) uint8
+          Symbol()
   {
     .get instance uint8 System.IO.Compression.Match/*02000024*/::get_Symbol() /* 0600018B */
     .set instance void System.IO.Compression.Match/*02000024*/::set_Symbol(uint8) /* 0600018C */
@@ -18370,15 +18487,18 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method OutputBuffer::.ctor
 
-  .property /*17000085*/ instance int32 BytesWritten()
+  .property /*17000085*/ instance callconv(8) int32
+          BytesWritten()
   {
     .get instance int32 System.IO.Compression.OutputBuffer/*02000026*/::get_BytesWritten() /* 0600018F */
   } // end of property OutputBuffer::BytesWritten
-  .property /*17000086*/ instance int32 FreeBytes()
+  .property /*17000086*/ instance callconv(8) int32
+          FreeBytes()
   {
     .get instance int32 System.IO.Compression.OutputBuffer/*02000026*/::get_FreeBytes() /* 06000190 */
   } // end of property OutputBuffer::FreeBytes
-  .property /*17000087*/ instance int32 BitsInBuffer()
+  .property /*17000087*/ instance callconv(8) int32
+          BitsInBuffer()
   {
     .get instance int32 System.IO.Compression.OutputBuffer/*02000026*/::get_BitsInBuffer() /* 06000197 */
   } // end of property OutputBuffer::BitsInBuffer
@@ -18778,11 +18898,13 @@
     IL_0016:  /* 2A   |                  */ ret
   } // end of method OutputWindow::.ctor
 
-  .property /*17000088*/ instance int32 FreeBytes()
+  .property /*17000088*/ instance callconv(8) int32
+          FreeBytes()
   {
     .get instance int32 System.IO.Compression.OutputWindow/*02000027*/::get_FreeBytes() /* 0600019E */
   } // end of property OutputWindow::FreeBytes
-  .property /*17000089*/ instance int32 AvailableBytes()
+  .property /*17000089*/ instance callconv(8) int32
+          AvailableBytes()
   {
     .get instance int32 System.IO.Compression.OutputWindow/*02000027*/::get_AvailableBytes() /* 0600019F */
   } // end of property OutputWindow::AvailableBytes
@@ -19167,38 +19289,46 @@
     IL_000a:  /* 7A   |                  */ throw
   } // end of method PositionPreservingWriteOnlyStreamWrapper::Read
 
-  .property /*1700008A*/ instance bool CanRead()
+  .property /*1700008A*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_CanRead() /* 060001A3 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::CanRead
-  .property /*1700008B*/ instance bool CanSeek()
+  .property /*1700008B*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_CanSeek() /* 060001A4 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::CanSeek
-  .property /*1700008C*/ instance bool CanWrite()
+  .property /*1700008C*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_CanWrite() /* 060001A5 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::CanWrite
-  .property /*1700008D*/ instance int64 Position()
+  .property /*1700008D*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_Position() /* 060001A6 */
     .set instance void System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::set_Position(int64) /* 060001A7 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::Position
-  .property /*1700008E*/ instance bool CanTimeout()
+  .property /*1700008E*/ instance callconv(8) bool
+          CanTimeout()
   {
     .get instance bool System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_CanTimeout() /* 060001AD */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::CanTimeout
-  .property /*1700008F*/ instance int32 ReadTimeout()
+  .property /*1700008F*/ instance callconv(8) int32
+          ReadTimeout()
   {
     .get instance int32 System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_ReadTimeout() /* 060001AE */
     .set instance void System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::set_ReadTimeout(int32) /* 060001AF */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::ReadTimeout
-  .property /*17000090*/ instance int32 WriteTimeout()
+  .property /*17000090*/ instance callconv(8) int32
+          WriteTimeout()
   {
     .get instance int32 System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_WriteTimeout() /* 060001B0 */
     .set instance void System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::set_WriteTimeout(int32) /* 060001B1 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::WriteTimeout
-  .property /*17000091*/ instance int64 Length()
+  .property /*17000091*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.IO.Compression.PositionPreservingWriteOnlyStreamWrapper/*02000028*/::get_Length() /* 060001B6 */
   } // end of property PositionPreservingWriteOnlyStreamWrapper::Length
