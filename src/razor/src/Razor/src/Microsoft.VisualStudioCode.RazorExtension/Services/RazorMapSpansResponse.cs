@@ -2,17 +2,18 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Protocol.DocumentMapping;
+namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
-internal class RazorMapToDocumentRangesResponse
+internal sealed class RazorMapSpansResponse
 {
     [JsonPropertyName("ranges")]
-    public required LspRange[] Ranges { get; init; }
+    public required LspRange[] Ranges { get; set; }
 
     [JsonPropertyName("spans")]
     public required RazorTextSpan[] Spans { get; set; }
 
-    [JsonPropertyName("hostDocumentVersion")]
-    public int? HostDocumentVersion { get; init; }
+    [JsonPropertyName("razorDocument")]
+    public required TextDocumentIdentifier RazorDocument { get; set; }
 }

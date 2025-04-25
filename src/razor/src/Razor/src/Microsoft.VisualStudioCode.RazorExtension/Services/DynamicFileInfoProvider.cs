@@ -61,7 +61,7 @@ internal sealed partial class LspDynamicFileProvider(IRazorClientLanguageServerM
             RazorUri.GetDocumentFilePathFromUri(response.CSharpDocument.Uri),
             SourceCodeKind.Regular,
             textLoader,
-            documentServiceProvider: EmptyServiceProvider.Instance);
+            documentServiceProvider: new LspDocumentServiceProvider(_clientLanguageServerManager));
     }
 
     public override Task RemoveDynamicFileInfoAsync(Workspace workspace, ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
