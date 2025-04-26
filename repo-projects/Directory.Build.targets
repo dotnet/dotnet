@@ -33,7 +33,7 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltPdbArtifactsDir=$(RepoArtifactsPdbArtifactsDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
 
-    <!-- Prefer the .NET SDK compiler -->
+    <!-- Force the use of the compiler in the .NET SDK compiler to avoid torn state issues in inner repos. -->
     <CommonArgs>$(CommonArgs) /p:UsingToolMicrosoftNetCompilers=false</CommonArgs>
 
     <!-- Pass RID and Portable/non-portable information -->
