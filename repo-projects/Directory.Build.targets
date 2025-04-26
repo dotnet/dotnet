@@ -33,6 +33,9 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltPdbArtifactsDir=$(RepoArtifactsPdbArtifactsDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
 
+    <!-- Prefer the .NET SDK compiler -->
+    <CommonArgs>$(CommonArgs) /p:UsingToolMicrosoftNetCompilers=false</CommonArgs>
+
     <!-- Pass RID and Portable/non-portable information -->
     <_platformIndex>$(NETCoreSdkRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
     <RuntimeOS>$(NETCoreSdkRuntimeIdentifier.Substring(0, $(_platformIndex)))</RuntimeOS>
