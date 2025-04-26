@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
@@ -24,9 +24,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly TestLanguageServer _languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
+    private readonly IClientConnection _clientConnection = TestClientConnection.Create(builder =>
     {
-        [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>(null!),
+        builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, (string?)null);
     });
 
     [Fact]
@@ -41,7 +41,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(contents, "@code", "Test"));
 
@@ -68,7 +68,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -133,7 +133,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -206,7 +206,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -289,7 +289,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -374,7 +374,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -447,7 +447,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@functions", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -512,7 +512,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -579,7 +579,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -644,13 +644,13 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         var codeDocument = CreateCodeDocument(contents);
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
+        var clientConnection = TestClientConnection.Create(builder =>
         {
-            [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>("Hi there! I'm from Roslyn"),
+            builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, "Hi there! I'm from Roslyn");
         });
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(languageServer);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(clientConnection);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);

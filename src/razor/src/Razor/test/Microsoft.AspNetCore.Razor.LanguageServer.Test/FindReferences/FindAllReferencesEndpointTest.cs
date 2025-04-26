@@ -48,7 +48,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, multiTargetProject: false);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, multiTargetProject: false);
         var projectManager = CreateProjectSnapshotManager();
         var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
         var hostDocument = TestHostDocument.Create(TestProjectData.SomeProject, razorFilePath);

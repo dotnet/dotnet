@@ -1,10 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Testing;
@@ -13,8 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(testOutput)
+public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
 {
     [Theory]
     [CombinatorialData]
@@ -78,6 +76,9 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
             cursorPosition, documentContent, delegatedCompletionList, razorCompletionOptions);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
+        Assert.NotNull(rewrittenCompletionList.CommitCharacters);
+
         if (useVSTypes)
         {
             Assert.Contains(rewrittenCompletionList.CommitCharacters.Value.Second, c => c.Character == " ");
@@ -92,11 +93,13 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
             completion =>
             {
                 Assert.Equal("Element1", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             },
             completion =>
             {
                 Assert.Equal("Element2", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             });
     }
@@ -127,17 +130,20 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
             razorCompletionOptions);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
             completion =>
             {
                 Assert.Equal("Element1", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             },
             completion =>
             {
                 Assert.Equal("Element2", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             });
     }

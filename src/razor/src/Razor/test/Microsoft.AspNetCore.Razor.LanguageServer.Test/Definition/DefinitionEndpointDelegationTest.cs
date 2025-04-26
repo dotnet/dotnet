@@ -224,7 +224,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
     private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition, IEnumerable<(string filePath, string contents)>? additionalRazorDocuments = null)
     {
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
 
         var projectManager = CreateProjectSnapshotManager();
 

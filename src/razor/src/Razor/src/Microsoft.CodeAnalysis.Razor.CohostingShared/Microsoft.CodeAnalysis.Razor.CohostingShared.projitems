@@ -12,7 +12,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)CohostEndpointAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostDocSyncEndpointRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostStartupService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DocumentColor\CohostColorPresentationEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DocumentColor\CohostDocumentColorEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DocumentSymbol\CohostDocumentSymbolEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlDocumentSynchronizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlDocumentSynchronizer.RazorDocumentVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlDocumentSynchronizer.SynchronizationRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentPublisher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentSynchronizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlRequestInvokerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlRequestInvoker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintResolveEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRazorCohostStartupService.cs" />

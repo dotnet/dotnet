@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 #pragma warning disable RS0030 // Do not use banned APIs
 [Shared]
 [CohostEndpoint(Methods.TextDocumentColorPresentationName)]
-[ExportCohostStatelessLspService(typeof(CohostColorPresentationEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostColorPresentationEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostColorPresentationEndpoint(

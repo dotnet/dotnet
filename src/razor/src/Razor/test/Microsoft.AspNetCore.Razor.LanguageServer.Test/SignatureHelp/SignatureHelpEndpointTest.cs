@@ -96,7 +96,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         optionsMonitor ??= GetOptionsMonitor();
         var endpoint = new SignatureHelpEndpoint(
