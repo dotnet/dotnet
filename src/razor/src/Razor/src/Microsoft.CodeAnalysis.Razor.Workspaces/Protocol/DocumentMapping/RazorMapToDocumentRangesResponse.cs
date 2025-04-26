@@ -10,6 +10,9 @@ internal class RazorMapToDocumentRangesResponse
     [JsonPropertyName("ranges")]
     public required LspRange[] Ranges { get; init; }
 
+    [JsonPropertyName("spans")]
+    public required RazorTextSpan[] Spans { get; set; }
+
     [JsonPropertyName("hostDocumentVersion")]
     public int? HostDocumentVersion { get; init; }
 }

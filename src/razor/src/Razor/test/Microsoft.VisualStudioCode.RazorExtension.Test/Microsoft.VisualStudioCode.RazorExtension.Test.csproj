@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../Microsoft.AspNetCore.Razor.Test.Common.Tooling/Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudioCode.RazorExtension\Microsoft.VisualStudioCode.RazorExtension.csproj" />
   </ItemGroup>

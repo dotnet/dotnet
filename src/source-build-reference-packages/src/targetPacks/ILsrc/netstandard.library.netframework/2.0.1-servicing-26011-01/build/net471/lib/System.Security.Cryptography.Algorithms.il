@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -279,6 +279,10 @@
 }
 .assembly /*20000001*/ System.Security.Cryptography.Algorithms
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000002:0A00000D*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*0100000B*/::.ctor(int32) /* 0A00000D */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000003:0A00000E*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*0100000C*/::.ctor() /* 0A00000E */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                           63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -567,7 +571,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F4FEE7D9000
+// Image base: 0x00007FE08EB17000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1697,260 +1701,322 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/ System.SR/*02000003*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string ArgumentOutOfRange_NeedNonNegNum()
+  .property /*17000002*/ callconv(8) string
+          ArgumentOutOfRange_NeedNonNegNum()
   {
     .get string System.SR/*02000003*/::get_ArgumentOutOfRange_NeedNonNegNum() /* 06000008 */
   } // end of property SR::ArgumentOutOfRange_NeedNonNegNum
-  .property /*17000003*/ string ArgumentOutOfRange_NeedPosNum()
+  .property /*17000003*/ callconv(8) string
+          ArgumentOutOfRange_NeedPosNum()
   {
     .get string System.SR/*02000003*/::get_ArgumentOutOfRange_NeedPosNum() /* 06000009 */
   } // end of property SR::ArgumentOutOfRange_NeedPosNum
-  .property /*17000004*/ string Argument_InvalidOffLen()
+  .property /*17000004*/ callconv(8) string
+          Argument_InvalidOffLen()
   {
     .get string System.SR/*02000003*/::get_Argument_InvalidOffLen() /* 0600000A */
   } // end of property SR::Argument_InvalidOffLen
-  .property /*17000005*/ string Argument_InvalidOidValue()
+  .property /*17000005*/ callconv(8) string
+          Argument_InvalidOidValue()
   {
     .get string System.SR/*02000003*/::get_Argument_InvalidOidValue() /* 0600000B */
   } // end of property SR::Argument_InvalidOidValue
-  .property /*17000006*/ string Argument_InvalidValue()
+  .property /*17000006*/ callconv(8) string
+          Argument_InvalidValue()
   {
     .get string System.SR/*02000003*/::get_Argument_InvalidValue() /* 0600000C */
   } // end of property SR::Argument_InvalidValue
-  .property /*17000007*/ string ArgumentNull_Buffer()
+  .property /*17000007*/ callconv(8) string
+          ArgumentNull_Buffer()
   {
     .get string System.SR/*02000003*/::get_ArgumentNull_Buffer() /* 0600000D */
   } // end of property SR::ArgumentNull_Buffer
-  .property /*17000008*/ string Arg_CryptographyException()
+  .property /*17000008*/ callconv(8) string
+          Arg_CryptographyException()
   {
     .get string System.SR/*02000003*/::get_Arg_CryptographyException() /* 0600000E */
   } // end of property SR::Arg_CryptographyException
-  .property /*17000009*/ string Cryptography_BadHashSize_ForAlgorithm()
+  .property /*17000009*/ callconv(8) string
+          Cryptography_BadHashSize_ForAlgorithm()
   {
     .get string System.SR/*02000003*/::get_Cryptography_BadHashSize_ForAlgorithm() /* 0600000F */
   } // end of property SR::Cryptography_BadHashSize_ForAlgorithm
-  .property /*1700000A*/ string Cryptography_Config_EncodedOIDError()
+  .property /*1700000A*/ callconv(8) string
+          Cryptography_Config_EncodedOIDError()
   {
     .get string System.SR/*02000003*/::get_Cryptography_Config_EncodedOIDError() /* 06000010 */
   } // end of property SR::Cryptography_Config_EncodedOIDError
-  .property /*1700000B*/ string Cryptography_CSP_NoPrivateKey()
+  .property /*1700000B*/ callconv(8) string
+          Cryptography_CSP_NoPrivateKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_CSP_NoPrivateKey() /* 06000011 */
   } // end of property SR::Cryptography_CSP_NoPrivateKey
-  .property /*1700000C*/ string Cryptography_Der_Invalid_Encoding()
+  .property /*1700000C*/ callconv(8) string
+          Cryptography_Der_Invalid_Encoding()
   {
     .get string System.SR/*02000003*/::get_Cryptography_Der_Invalid_Encoding() /* 06000012 */
   } // end of property SR::Cryptography_Der_Invalid_Encoding
-  .property /*1700000D*/ string Cryptography_DSA_KeyGenNotSupported()
+  .property /*1700000D*/ callconv(8) string
+          Cryptography_DSA_KeyGenNotSupported()
   {
     .get string System.SR/*02000003*/::get_Cryptography_DSA_KeyGenNotSupported() /* 06000013 */
   } // end of property SR::Cryptography_DSA_KeyGenNotSupported
-  .property /*1700000E*/ string Cryptography_ECXmlSerializationFormatRequired()
+  .property /*1700000E*/ callconv(8) string
+          Cryptography_ECXmlSerializationFormatRequired()
   {
     .get string System.SR/*02000003*/::get_Cryptography_ECXmlSerializationFormatRequired() /* 06000014 */
   } // end of property SR::Cryptography_ECXmlSerializationFormatRequired
-  .property /*1700000F*/ string Cryptography_ECC_NamedCurvesOnly()
+  .property /*1700000F*/ callconv(8) string
+          Cryptography_ECC_NamedCurvesOnly()
   {
     .get string System.SR/*02000003*/::get_Cryptography_ECC_NamedCurvesOnly() /* 06000015 */
   } // end of property SR::Cryptography_ECC_NamedCurvesOnly
-  .property /*17000010*/ string Cryptography_HashAlgorithmNameNullOrEmpty()
+  .property /*17000010*/ callconv(8) string
+          Cryptography_HashAlgorithmNameNullOrEmpty()
   {
     .get string System.SR/*02000003*/::get_Cryptography_HashAlgorithmNameNullOrEmpty() /* 06000016 */
   } // end of property SR::Cryptography_HashAlgorithmNameNullOrEmpty
-  .property /*17000011*/ string Cryptography_InvalidOID()
+  .property /*17000011*/ callconv(8) string
+          Cryptography_InvalidOID()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidOID() /* 06000017 */
   } // end of property SR::Cryptography_InvalidOID
-  .property /*17000012*/ string Cryptography_CurveNotSupported()
+  .property /*17000012*/ callconv(8) string
+          Cryptography_CurveNotSupported()
   {
     .get string System.SR/*02000003*/::get_Cryptography_CurveNotSupported() /* 06000018 */
   } // end of property SR::Cryptography_CurveNotSupported
-  .property /*17000013*/ string Cryptography_InvalidCurveOid()
+  .property /*17000013*/ callconv(8) string
+          Cryptography_InvalidCurveOid()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidCurveOid() /* 06000019 */
   } // end of property SR::Cryptography_InvalidCurveOid
-  .property /*17000014*/ string Cryptography_InvalidCurveKeyParameters()
+  .property /*17000014*/ callconv(8) string
+          Cryptography_InvalidCurveKeyParameters()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidCurveKeyParameters() /* 0600001A */
   } // end of property SR::Cryptography_InvalidCurveKeyParameters
-  .property /*17000015*/ string Cryptography_InvalidDsaParameters_MissingFields()
+  .property /*17000015*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_MissingFields()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_MissingFields() /* 0600001B */
   } // end of property SR::Cryptography_InvalidDsaParameters_MissingFields
-  .property /*17000016*/ string Cryptography_InvalidDsaParameters_MismatchedPGY()
+  .property /*17000016*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_MismatchedPGY()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_MismatchedPGY() /* 0600001C */
   } // end of property SR::Cryptography_InvalidDsaParameters_MismatchedPGY
-  .property /*17000017*/ string Cryptography_InvalidDsaParameters_MismatchedQX()
+  .property /*17000017*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_MismatchedQX()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_MismatchedQX() /* 0600001D */
   } // end of property SR::Cryptography_InvalidDsaParameters_MismatchedQX
-  .property /*17000018*/ string Cryptography_InvalidDsaParameters_MismatchedPJ()
+  .property /*17000018*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_MismatchedPJ()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_MismatchedPJ() /* 0600001E */
   } // end of property SR::Cryptography_InvalidDsaParameters_MismatchedPJ
-  .property /*17000019*/ string Cryptography_InvalidDsaParameters_SeedRestriction_ShortKey()
+  .property /*17000019*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_SeedRestriction_ShortKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_SeedRestriction_ShortKey() /* 0600001F */
   } // end of property SR::Cryptography_InvalidDsaParameters_SeedRestriction_ShortKey
-  .property /*1700001A*/ string Cryptography_InvalidDsaParameters_QRestriction_ShortKey()
+  .property /*1700001A*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_QRestriction_ShortKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_QRestriction_ShortKey() /* 06000020 */
   } // end of property SR::Cryptography_InvalidDsaParameters_QRestriction_ShortKey
-  .property /*1700001B*/ string Cryptography_InvalidDsaParameters_QRestriction_LargeKey()
+  .property /*1700001B*/ callconv(8) string
+          Cryptography_InvalidDsaParameters_QRestriction_LargeKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidDsaParameters_QRestriction_LargeKey() /* 06000021 */
   } // end of property SR::Cryptography_InvalidDsaParameters_QRestriction_LargeKey
-  .property /*1700001C*/ string Cryptography_InvalidECCharacteristic2Curve()
+  .property /*1700001C*/ callconv(8) string
+          Cryptography_InvalidECCharacteristic2Curve()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidECCharacteristic2Curve() /* 06000022 */
   } // end of property SR::Cryptography_InvalidECCharacteristic2Curve
-  .property /*1700001D*/ string Cryptography_InvalidECPrimeCurve()
+  .property /*1700001D*/ callconv(8) string
+          Cryptography_InvalidECPrimeCurve()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidECPrimeCurve() /* 06000023 */
   } // end of property SR::Cryptography_InvalidECPrimeCurve
-  .property /*1700001E*/ string Cryptography_InvalidECNamedCurve()
+  .property /*1700001E*/ callconv(8) string
+          Cryptography_InvalidECNamedCurve()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidECNamedCurve() /* 06000024 */
   } // end of property SR::Cryptography_InvalidECNamedCurve
-  .property /*1700001F*/ string Cryptography_InvalidKeySize()
+  .property /*1700001F*/ callconv(8) string
+          Cryptography_InvalidKeySize()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidKeySize() /* 06000025 */
   } // end of property SR::Cryptography_InvalidKeySize
-  .property /*17000020*/ string Cryptography_InvalidKey_SemiWeak()
+  .property /*17000020*/ callconv(8) string
+          Cryptography_InvalidKey_SemiWeak()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidKey_SemiWeak() /* 06000026 */
   } // end of property SR::Cryptography_InvalidKey_SemiWeak
-  .property /*17000021*/ string Cryptography_InvalidKey_Weak()
+  .property /*17000021*/ callconv(8) string
+          Cryptography_InvalidKey_Weak()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidKey_Weak() /* 06000027 */
   } // end of property SR::Cryptography_InvalidKey_Weak
-  .property /*17000022*/ string Cryptography_InvalidIVSize()
+  .property /*17000022*/ callconv(8) string
+          Cryptography_InvalidIVSize()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidIVSize() /* 06000028 */
   } // end of property SR::Cryptography_InvalidIVSize
-  .property /*17000023*/ string Cryptography_InvalidOperation()
+  .property /*17000023*/ callconv(8) string
+          Cryptography_InvalidOperation()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidOperation() /* 06000029 */
   } // end of property SR::Cryptography_InvalidOperation
-  .property /*17000024*/ string Cryptography_InvalidPadding()
+  .property /*17000024*/ callconv(8) string
+          Cryptography_InvalidPadding()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidPadding() /* 0600002A */
   } // end of property SR::Cryptography_InvalidPadding
-  .property /*17000025*/ string Cryptography_InvalidRsaParameters()
+  .property /*17000025*/ callconv(8) string
+          Cryptography_InvalidRsaParameters()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidRsaParameters() /* 0600002B */
   } // end of property SR::Cryptography_InvalidRsaParameters
-  .property /*17000026*/ string Cryptography_InvalidPaddingMode()
+  .property /*17000026*/ callconv(8) string
+          Cryptography_InvalidPaddingMode()
   {
     .get string System.SR/*02000003*/::get_Cryptography_InvalidPaddingMode() /* 0600002C */
   } // end of property SR::Cryptography_InvalidPaddingMode
-  .property /*17000027*/ string Cryptography_Invalid_IA5String()
+  .property /*17000027*/ callconv(8) string
+          Cryptography_Invalid_IA5String()
   {
     .get string System.SR/*02000003*/::get_Cryptography_Invalid_IA5String() /* 0600002D */
   } // end of property SR::Cryptography_Invalid_IA5String
-  .property /*17000028*/ string Cryptography_MissingIV()
+  .property /*17000028*/ callconv(8) string
+          Cryptography_MissingIV()
   {
     .get string System.SR/*02000003*/::get_Cryptography_MissingIV() /* 0600002E */
   } // end of property SR::Cryptography_MissingIV
-  .property /*17000029*/ string Cryptography_MissingKey()
+  .property /*17000029*/ callconv(8) string
+          Cryptography_MissingKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_MissingKey() /* 0600002F */
   } // end of property SR::Cryptography_MissingKey
-  .property /*1700002A*/ string Cryptography_MissingOID()
+  .property /*1700002A*/ callconv(8) string
+          Cryptography_MissingOID()
   {
     .get string System.SR/*02000003*/::get_Cryptography_MissingOID() /* 06000030 */
   } // end of property SR::Cryptography_MissingOID
-  .property /*1700002B*/ string Cryptography_MustTransformWholeBlock()
+  .property /*1700002B*/ callconv(8) string
+          Cryptography_MustTransformWholeBlock()
   {
     .get string System.SR/*02000003*/::get_Cryptography_MustTransformWholeBlock() /* 06000031 */
   } // end of property SR::Cryptography_MustTransformWholeBlock
-  .property /*1700002C*/ string Cryptography_NotValidPrivateKey()
+  .property /*1700002C*/ callconv(8) string
+          Cryptography_NotValidPrivateKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_NotValidPrivateKey() /* 06000032 */
   } // end of property SR::Cryptography_NotValidPrivateKey
-  .property /*1700002D*/ string Cryptography_NotValidPublicOrPrivateKey()
+  .property /*1700002D*/ callconv(8) string
+          Cryptography_NotValidPublicOrPrivateKey()
   {
     .get string System.SR/*02000003*/::get_Cryptography_NotValidPublicOrPrivateKey() /* 06000033 */
   } // end of property SR::Cryptography_NotValidPublicOrPrivateKey
-  .property /*1700002E*/ string Cryptography_OpenInvalidHandle()
+  .property /*1700002E*/ callconv(8) string
+          Cryptography_OpenInvalidHandle()
   {
     .get string System.SR/*02000003*/::get_Cryptography_OpenInvalidHandle() /* 06000034 */
   } // end of property SR::Cryptography_OpenInvalidHandle
-  .property /*1700002F*/ string Cryptography_PartialBlock()
+  .property /*1700002F*/ callconv(8) string
+          Cryptography_PartialBlock()
   {
     .get string System.SR/*02000003*/::get_Cryptography_PartialBlock() /* 06000035 */
   } // end of property SR::Cryptography_PartialBlock
-  .property /*17000030*/ string Cryptography_PasswordDerivedBytes_FewBytesSalt()
+  .property /*17000030*/ callconv(8) string
+          Cryptography_PasswordDerivedBytes_FewBytesSalt()
   {
     .get string System.SR/*02000003*/::get_Cryptography_PasswordDerivedBytes_FewBytesSalt() /* 06000036 */
   } // end of property SR::Cryptography_PasswordDerivedBytes_FewBytesSalt
-  .property /*17000031*/ string Cryptography_RC2_EKS40()
+  .property /*17000031*/ callconv(8) string
+          Cryptography_RC2_EKS40()
   {
     .get string System.SR/*02000003*/::get_Cryptography_RC2_EKS40() /* 06000037 */
   } // end of property SR::Cryptography_RC2_EKS40
-  .property /*17000032*/ string Cryptography_RC2_EKSKS()
+  .property /*17000032*/ callconv(8) string
+          Cryptography_RC2_EKSKS()
   {
     .get string System.SR/*02000003*/::get_Cryptography_RC2_EKSKS() /* 06000038 */
   } // end of property SR::Cryptography_RC2_EKSKS
-  .property /*17000033*/ string Cryptography_RC2_EKSKS2()
+  .property /*17000033*/ callconv(8) string
+          Cryptography_RC2_EKSKS2()
   {
     .get string System.SR/*02000003*/::get_Cryptography_RC2_EKSKS2() /* 06000039 */
   } // end of property SR::Cryptography_RC2_EKSKS2
-  .property /*17000034*/ string Cryptography_Rijndael_BlockSize()
+  .property /*17000034*/ callconv(8) string
+          Cryptography_Rijndael_BlockSize()
   {
     .get string System.SR/*02000003*/::get_Cryptography_Rijndael_BlockSize() /* 0600003A */
   } // end of property SR::Cryptography_Rijndael_BlockSize
-  .property /*17000035*/ string Cryptography_TransformBeyondEndOfBuffer()
+  .property /*17000035*/ callconv(8) string
+          Cryptography_TransformBeyondEndOfBuffer()
   {
     .get string System.SR/*02000003*/::get_Cryptography_TransformBeyondEndOfBuffer() /* 0600003B */
   } // end of property SR::Cryptography_TransformBeyondEndOfBuffer
-  .property /*17000036*/ string Cryptography_CipherModeNotSupported()
+  .property /*17000036*/ callconv(8) string
+          Cryptography_CipherModeNotSupported()
   {
     .get string System.SR/*02000003*/::get_Cryptography_CipherModeNotSupported() /* 0600003C */
   } // end of property SR::Cryptography_CipherModeNotSupported
-  .property /*17000037*/ string Cryptography_UnknownHashAlgorithm()
+  .property /*17000037*/ callconv(8) string
+          Cryptography_UnknownHashAlgorithm()
   {
     .get string System.SR/*02000003*/::get_Cryptography_UnknownHashAlgorithm() /* 0600003D */
   } // end of property SR::Cryptography_UnknownHashAlgorithm
-  .property /*17000038*/ string Cryptography_UnknownPaddingMode()
+  .property /*17000038*/ callconv(8) string
+          Cryptography_UnknownPaddingMode()
   {
     .get string System.SR/*02000003*/::get_Cryptography_UnknownPaddingMode() /* 0600003E */
   } // end of property SR::Cryptography_UnknownPaddingMode
-  .property /*17000039*/ string Cryptography_UnexpectedTransformTruncation()
+  .property /*17000039*/ callconv(8) string
+          Cryptography_UnexpectedTransformTruncation()
   {
     .get string System.SR/*02000003*/::get_Cryptography_UnexpectedTransformTruncation() /* 0600003F */
   } // end of property SR::Cryptography_UnexpectedTransformTruncation
-  .property /*1700003A*/ string Cryptography_Unmapped_System_Typed_Error()
+  .property /*1700003A*/ callconv(8) string
+          Cryptography_Unmapped_System_Typed_Error()
   {
     .get string System.SR/*02000003*/::get_Cryptography_Unmapped_System_Typed_Error() /* 06000040 */
   } // end of property SR::Cryptography_Unmapped_System_Typed_Error
-  .property /*1700003B*/ string Cryptography_UnsupportedPaddingMode()
+  .property /*1700003B*/ callconv(8) string
+          Cryptography_UnsupportedPaddingMode()
   {
     .get string System.SR/*02000003*/::get_Cryptography_UnsupportedPaddingMode() /* 06000041 */
   } // end of property SR::Cryptography_UnsupportedPaddingMode
-  .property /*1700003C*/ string NotSupported_Method()
+  .property /*1700003C*/ callconv(8) string
+          NotSupported_Method()
   {
     .get string System.SR/*02000003*/::get_NotSupported_Method() /* 06000042 */
   } // end of property SR::NotSupported_Method
-  .property /*1700003D*/ string NotSupported_SubclassOverride()
+  .property /*1700003D*/ callconv(8) string
+          NotSupported_SubclassOverride()
   {
     .get string System.SR/*02000003*/::get_NotSupported_SubclassOverride() /* 06000043 */
   } // end of property SR::NotSupported_SubclassOverride
-  .property /*1700003E*/ string Cryptography_AlgorithmTypesMustBeVisible()
+  .property /*1700003E*/ callconv(8) string
+          Cryptography_AlgorithmTypesMustBeVisible()
   {
     .get string System.SR/*02000003*/::get_Cryptography_AlgorithmTypesMustBeVisible() /* 06000044 */
   } // end of property SR::Cryptography_AlgorithmTypesMustBeVisible
-  .property /*1700003F*/ string Cryptography_AddNullOrEmptyName()
+  .property /*1700003F*/ callconv(8) string
+          Cryptography_AddNullOrEmptyName()
   {
     .get string System.SR/*02000003*/::get_Cryptography_AddNullOrEmptyName() /* 06000045 */
   } // end of property SR::Cryptography_AddNullOrEmptyName
-  .property /*17000040*/ class [mscorlib/*23000001*/]System.Type/*01000005*/
+  .property /*17000040*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000005*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000005*/ System.SR/*02000003*/::get_ResourceType() /* 06000046 */

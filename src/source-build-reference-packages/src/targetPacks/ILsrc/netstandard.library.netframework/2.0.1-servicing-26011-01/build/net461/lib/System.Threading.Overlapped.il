@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -284,6 +284,10 @@
 }
 .assembly /*20000001*/ System.Threading.Overlapped
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000002:0A00002B*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000020*/::.ctor(int32) /* 0A00002B */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000003:0A00002C*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000021*/::.ctor() /* 0A00002C */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                           63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -357,7 +361,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F1C058CF000
+// Image base: 0x00007F425754F000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -909,36 +913,42 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000005*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000005*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000005*/ System.SR/*02000004*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string Argument_AlreadyBoundOrSyncHandle()
+  .property /*17000002*/ callconv(8) string
+          Argument_AlreadyBoundOrSyncHandle()
   {
     .get string System.SR/*02000004*/::get_Argument_AlreadyBoundOrSyncHandle() /* 06000008 */
   } // end of property SR::Argument_AlreadyBoundOrSyncHandle
-  .property /*17000003*/ string Argument_InvalidHandle()
+  .property /*17000003*/ callconv(8) string
+          Argument_InvalidHandle()
   {
     .get string System.SR/*02000004*/::get_Argument_InvalidHandle() /* 06000009 */
   } // end of property SR::Argument_InvalidHandle
-  .property /*17000004*/ string Argument_NativeOverlappedAlreadyFree()
+  .property /*17000004*/ callconv(8) string
+          Argument_NativeOverlappedAlreadyFree()
   {
     .get string System.SR/*02000004*/::get_Argument_NativeOverlappedAlreadyFree() /* 0600000A */
   } // end of property SR::Argument_NativeOverlappedAlreadyFree
-  .property /*17000005*/ string Argument_NativeOverlappedWrongBoundHandle()
+  .property /*17000005*/ callconv(8) string
+          Argument_NativeOverlappedWrongBoundHandle()
   {
     .get string System.SR/*02000004*/::get_Argument_NativeOverlappedWrongBoundHandle() /* 0600000B */
   } // end of property SR::Argument_NativeOverlappedWrongBoundHandle
-  .property /*17000006*/ string Argument_PreAllocatedAlreadyAllocated()
+  .property /*17000006*/ callconv(8) string
+          Argument_PreAllocatedAlreadyAllocated()
   {
     .get string System.SR/*02000004*/::get_Argument_PreAllocatedAlreadyAllocated() /* 0600000C */
   } // end of property SR::Argument_PreAllocatedAlreadyAllocated
-  .property /*17000007*/ string InvalidOperation_NativeOverlappedReused()
+  .property /*17000007*/ callconv(8) string
+          InvalidOperation_NativeOverlappedReused()
   {
     .get string System.SR/*02000004*/::get_InvalidOperation_NativeOverlappedReused() /* 0600000D */
   } // end of property SR::InvalidOperation_NativeOverlappedReused
-  .property /*17000008*/ class [mscorlib/*23000001*/]System.Type/*01000006*/
+  .property /*17000008*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000006*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000006*/ System.SR/*02000004*/::get_ResourceType() /* 0600000E */
@@ -1461,7 +1471,7 @@
     IL_0019:  /* 2A   |                  */ ret
   } // end of method ThreadPoolBoundHandle::EnsureNotDisposed
 
-  .property /*17000009*/ instance class [mscorlib/*23000001*/]System.Runtime.InteropServices.SafeHandle/*01000011*/
+  .property /*17000009*/ instance callconv(8) class [mscorlib/*23000001*/]System.Runtime.InteropServices.SafeHandle/*01000011*/
           Handle()
   {
     .get instance class [mscorlib/*23000001*/]System.Runtime.InteropServices.SafeHandle/*01000011*/ System.Threading.ThreadPoolBoundHandle/*02000007*/::get_Handle() /* 06000014 */

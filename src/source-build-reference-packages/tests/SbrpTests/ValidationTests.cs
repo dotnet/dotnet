@@ -38,9 +38,8 @@ public class ValidationTests
     {
         string[] packages = GetPackages();
 
-        HashSet<string> targetAndTextOnlyPacks = new(
-            Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/targetPacks/ILsrc"))
-                .Union(Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/textOnlyPackages/src")))
+        HashSet<string> textOnlyPacks = new(
+            Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/textOnlyPackages/src"))
                 .Select(x => Path.GetFileName(x).ToLower())
         );
 
@@ -49,7 +48,7 @@ public class ValidationTests
             {
                 string packageName = Path.GetFileNameWithoutExtension(package).ToLower();
                 packageName = Regex.Replace(packageName, VersionPattern, string.Empty);
-                return !targetAndTextOnlyPacks.Contains(packageName);
+                return !textOnlyPacks.Contains(packageName);
             });
 
         Output.WriteLine($"Checking {filteredPackages.Count()} packages for SBRP attribute.");

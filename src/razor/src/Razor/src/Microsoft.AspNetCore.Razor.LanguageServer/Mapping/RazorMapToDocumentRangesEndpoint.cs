@@ -34,9 +34,9 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
 
     public async Task<RazorMapToDocumentRangesResponse?> HandleRequestAsync(RazorMapToDocumentRangesParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (request is null)
+        if (request.Kind == RazorLanguageKind.Razor)
         {
-            throw new ArgumentNullException(nameof(request));
+            return null;
         }
 
         var documentContext = requestContext.DocumentContext;
@@ -45,22 +45,26 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
             return null;
         }
 
-        if (request.Kind != RazorLanguageKind.CSharp)
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        IRazorGeneratedDocument? generatedDocument = request.Kind switch
         {
-            // All other non-C# requests map directly to where they are in the document.
-            return new RazorMapToDocumentRangesResponse()
-            {
-                Ranges = request.ProjectedRanges,
-                HostDocumentVersion = documentContext.Snapshot.Version,
-            };
+            RazorLanguageKind.CSharp => codeDocument.GetCSharpDocument(),
+            RazorLanguageKind.Html => codeDocument.GetHtmlDocument(),
+            _ => throw new NotSupportedException($"Unsupported language kind '{request.Kind}'."),
+        };
+
+        if (generatedDocument is null)
+        {
+            return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var ranges = new LspRange[request.ProjectedRanges.Length];
+        var spans = new RazorTextSpan[request.ProjectedRanges.Length];
+
         for (var i = 0; i < request.ProjectedRanges.Length; i++)
         {
             var projectedRange = request.ProjectedRanges[i];
-            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, request.MappingBehavior, out var originalRange))
+            if (!_documentMappingService.TryMapToHostDocumentRange(generatedDocument, projectedRange, request.MappingBehavior, out var originalRange))
             {
                 // All language queries on unsupported documents return Html. This is equivalent to what pre-VSCode Razor was capable of.
                 ranges[i] = LspFactory.UndefinedRange;
@@ -68,12 +72,14 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
             }
 
             ranges[i] = originalRange;
+            spans[i] = originalRange.ToRazorTextSpan(generatedDocument.Text);
         }
 
         return new RazorMapToDocumentRangesResponse()
         {
             Ranges = ranges,
             HostDocumentVersion = documentContext.Snapshot.Version,
+            Spans = spans,
         };
     }
 }

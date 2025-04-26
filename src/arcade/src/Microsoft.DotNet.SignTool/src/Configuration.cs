@@ -481,6 +481,15 @@ namespace Microsoft.DotNet.SignTool
                     }
                 }
 
+                // Tracking issue to remove this warning - https://github.com/dotnet/arcade/issues/15761
+                if (signInfo.Certificate != null && signInfo.Certificate.Equals("BreakingSignatureChange", StringComparison.OrdinalIgnoreCase))
+                {
+                    _log.LogWarning($"Skipping file '{file.FullPath}' because .js files are no longer signed by default. " +
+                        "To disable this warning, please explicitly define the FileExtensionSignInfo for the .js extension " +
+                        "or set the MSBuild property 'NoSignJS' to 'true'.");
+                    return new FileSignInfo(file, SignInfo.Ignore, wixContentFilePath: wixContentFilePath);
+                }
+
                 // If the file is already signed and we are not allowed to dual sign, and we are not doing a mac notarization operation,
                 // then we should not sign the file.
                 if (isAlreadyAuthenticodeSigned && !dualCertsAllowed && string.IsNullOrEmpty(macNotarizationAppName))
