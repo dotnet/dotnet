@@ -33,6 +33,10 @@
           Link="build\wix\product\dotnethome_x64.wxs"
           PackagePath="%(Link)"
           Pack="true" />
+    <None Include="..\Common\wix5\dotnethome_x64.wxs"
+          Link="build\wix5\product\dotnethome_x64.wxs"
+          PackagePath="%(Link)"
+          Pack="true" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
