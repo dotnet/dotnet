@@ -11,8 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Completion.Delegation;
 
-public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(testOutput)
+public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
     public async Task RewriteAsync_RemovesUsingSnippetLabel()
@@ -31,6 +30,7 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -59,6 +59,7 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -92,6 +93,7 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -109,7 +111,7 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
     }
 
     private static RazorVSInternalCompletionList GenerateCompletionList(params (string? Label, CompletionItemKind Kind)[] itemsData)
-        => new RazorVSInternalCompletionList()
+        => new()
         {
             Items = [.. itemsData.Select(itemData => new VSInternalCompletionItem()
             {

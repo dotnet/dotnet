@@ -8,8 +8,8 @@ namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 internal sealed class RazorMapSpansParams
 {
     [JsonPropertyName("csharpDocument")]
-    public required TextDocumentIdentifier CSharpDocument { get; internal set; }
+    public required TextDocumentIdentifier CSharpDocument { get; set; }
 
     [JsonPropertyName("ranges")]
-    public required LspRange[] Ranges { get; internal set; }
+    public required LspRange[] Ranges { get; set; }
 }

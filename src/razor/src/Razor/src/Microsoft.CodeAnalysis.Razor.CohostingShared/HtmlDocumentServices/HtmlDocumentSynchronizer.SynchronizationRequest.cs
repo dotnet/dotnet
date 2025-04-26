@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -33,7 +34,7 @@ internal sealed partial class HtmlDocumentSynchronizer
             _cts.Token.Register(Dispose);
             _ = syncFunction.Invoke(document, _cts.Token).ContinueWith((t, state) =>
             {
-                var tcs = (TaskCompletionSource<bool>)state;
+                var tcs = (TaskCompletionSource<bool>)state.AssumeNotNull();
                 if (t.IsCanceled)
                 {
                     tcs.SetResult(false);

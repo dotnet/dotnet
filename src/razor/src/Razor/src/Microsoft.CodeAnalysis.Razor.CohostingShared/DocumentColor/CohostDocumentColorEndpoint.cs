@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -15,7 +16,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(Methods.TextDocumentDocumentColorName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostDocumentColorEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostDocumentColorEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentColorEndpoint(
@@ -30,16 +31,11 @@ internal sealed class CohostDocumentColorEndpoint(
 
     public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
-        if (clientCapabilities.SupportsVisualStudioExtensions)
+        return [new Registration
         {
-            return [new Registration
-            {
-                Method = Methods.TextDocumentDocumentColorName,
-                RegisterOptions = new DocumentColorRegistrationOptions()
-            }];
-        }
-
-        return [];
+            Method = Methods.TextDocumentDocumentColorName,
+            RegisterOptions = new DocumentColorRegistrationOptions()
+        }];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentColorParams request)

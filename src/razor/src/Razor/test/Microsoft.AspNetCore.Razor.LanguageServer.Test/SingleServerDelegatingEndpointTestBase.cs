@@ -65,6 +65,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
         DocumentMappingService = new LspDocumentMappingService(FilePathService, DocumentContextFactory, LoggerFactory);
         EditMappingService = new LspEditMappingService(DocumentMappingService, FilePathService, DocumentContextFactory);
 
+        // Don't declare this with an 'await using'. TestLanguageServer will own the lifetime of this C# LSP server.
         var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpFiles,
             new VSInternalServerCapabilities
@@ -76,10 +77,8 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
             capabilitiesUpdater,
             DisposalToken);
 
-        AddDisposable(csharpServer);
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
 
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString()).ConfigureAwait(false);
-
-        return new TestLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
+        return new TestLanguageServer(csharpServer, csharpDocumentUri);
     }
 }

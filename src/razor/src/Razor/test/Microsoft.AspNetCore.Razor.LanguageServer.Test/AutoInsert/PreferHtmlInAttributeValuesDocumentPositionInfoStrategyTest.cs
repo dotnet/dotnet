@@ -43,8 +43,7 @@ public class PreferHtmlInAttributeValuesDocumentPositionInfoStrategyTest(ITestOu
         var razorFilePath = "file://path/test.razor";
         var codeDocument = CreateCodeDocument(documentText, filePath: razorFilePath);
         var position = codeDocument.Source.Text.GetPosition(cursorPosition);
-        var uri = new Uri(razorFilePath);
-        _ = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var _ = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         // Act
         var result = PreferHtmlInAttributeValuesDocumentPositionInfoStrategy.Instance.GetPositionInfo(DocumentMappingService, codeDocument, cursorPosition);
