@@ -22,7 +22,7 @@
     <!-- Below package references are covered by the binaries shipped by roslyn and do not need to be packaged-->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
   </ItemGroup>
@@ -40,6 +40,11 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <!-- Need to make sure ObjectPool is in the bin folder for local development scenarios -->
+      <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\net8.0\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
   <Target Name="PackPublishContent" DependsOnTargets="Publish">
