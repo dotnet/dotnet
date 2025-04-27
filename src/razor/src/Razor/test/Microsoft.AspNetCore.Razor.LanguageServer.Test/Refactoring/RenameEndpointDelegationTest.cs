@@ -49,7 +49,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var projectManager = CreateProjectSnapshotManager();
 

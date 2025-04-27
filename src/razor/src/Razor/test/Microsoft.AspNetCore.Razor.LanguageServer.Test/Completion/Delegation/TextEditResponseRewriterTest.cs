@@ -1,16 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(testOutput)
+public class TextEditResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
     public async Task RewriteAsync_NotCSharp_Noops()
@@ -26,7 +23,11 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.Equal(textEditRange, rewrittenCompletionList.Items[0].TextEdit.Value.First.Range);
+        Assert.NotNull(rewrittenCompletionList);
+
+        var firstItem = rewrittenCompletionList.Items[0];
+        Assert.NotNull(firstItem.TextEdit);
+        Assert.Equal(textEditRange, firstItem.TextEdit.Value.First.Range);
     }
 
     [Fact]
@@ -45,7 +46,11 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.Equal(expectedRange, rewrittenCompletionList.Items[0].TextEdit.Value.First.Range);
+        Assert.NotNull(rewrittenCompletionList);
+
+        var firstItem = rewrittenCompletionList.Items[0];
+        Assert.NotNull(firstItem.TextEdit);
+        Assert.Equal(expectedRange, firstItem.TextEdit.Value.First.Range);
     }
 
     [Fact]
@@ -68,6 +73,8 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
+        Assert.NotNull(rewrittenCompletionList.ItemDefaults);
         Assert.Equal(expectedRange, rewrittenCompletionList.ItemDefaults.EditRange);
     }
 

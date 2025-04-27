@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
@@ -21,18 +20,18 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
     private readonly Uri _mockDocumentUri = new("C://project/path/document.razor");
 
     private const string MockGeneratedContent = """
-            Hello
-             This is the source text in the generated C# file.
-             This is some more sample text for demo purposes.
-            """;
+        Hello
+        This is the source text in the generated C# file.
+        This is some more sample text for demo purposes.
+        """;
 
     private const string MockRazorContent = """
-            Hello
-             This is the
-             source text
-             in the generated C# file.
-             This is some more sample text for demo purposes.
-            """;
+        Hello
+        This is the
+        source text
+        in the generated C# file.
+        This is some more sample text for demo purposes.
+        """;
 
     private static readonly SourceText s_sourceTextGenerated = SourceText.From(MockGeneratedContent);
     private static readonly SourceText s_sourceTextRazor = SourceText.From(MockRazorContent);
@@ -58,10 +57,10 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
             Ranges = [mappedRange],
             Spans = [textSpan.ToRazorTextSpan()]
         };
-        var requestInvoker = new TestLSPRequestInvoker(new List<(string, object)>()
-        {
+        var requestInvoker = new TestLSPRequestInvoker(
+        [
             (LanguageServerConstants.RazorMapToDocumentRangesEndpoint, mappingResult)
-        });
+        ]);
 
         var lazyManager = new Lazy<LSPDocumentManager>(() =>
         {
@@ -102,10 +101,10 @@ public class RazorLSPMappingServiceTest(ITestOutputHelper testOutput) : ToolingT
 
         var textSpanAsRange = s_sourceTextGenerated.GetRange(textSpan);
 
-        var requestInvoker = new TestLSPRequestInvoker(new List<(string, object?)>()
-        {
+        var requestInvoker = new TestLSPRequestInvoker(
+        [
             (LanguageServerConstants.RazorMapToDocumentRangesEndpoint, null)
-        });
+        ]);
 
         var lazyManager = new Lazy<LSPDocumentManager>(() =>
         {

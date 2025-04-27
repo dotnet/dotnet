@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.VisualStudio.Composition;
@@ -29,6 +28,15 @@ public sealed partial class TestComposition
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.EditorFeatures.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
+        .AddParts(typeof(RazorTestWorkspaceRegistrationService));
+
+    public static readonly TestComposition RoslynFeatures = Empty
+        .AddAssemblies(MefHostServices.DefaultAssemblies)
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.Features.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
         .AddParts(typeof(RazorTestWorkspaceRegistrationService));
@@ -223,21 +231,16 @@ public sealed partial class TestComposition
     /// Use for VS MEF composition troubleshooting.
     /// </summary>
     /// <returns>All composition error messages.</returns>
-    internal string GetCompositionErrorLog()
+    public IEnumerable<string> GetCompositionErrors()
     {
         var configuration = CompositionConfiguration.Create(GetCatalog());
-
-        using var _ = StringBuilderPool.GetPooledObject(out var sb);
 
         foreach (var errorGroup in configuration.CompositionErrors)
         {
             foreach (var error in errorGroup)
             {
-                sb.Append(error.Message);
-                sb.AppendLine();
+                yield return error.Message;
             }
         }
-
-        return sb.ToString();
     }
 }

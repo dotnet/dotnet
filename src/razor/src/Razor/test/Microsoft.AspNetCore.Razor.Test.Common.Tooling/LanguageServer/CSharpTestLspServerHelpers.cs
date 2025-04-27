@@ -53,7 +53,7 @@ internal static class CSharpTestLspServerHelpers
         VSInternalServerCapabilities serverCapabilities,
         IRazorMappingService razorMappingService,
         bool multiTargetProject,
-         Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
