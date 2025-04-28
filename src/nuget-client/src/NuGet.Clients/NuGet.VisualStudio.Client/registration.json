@@ -79,7 +79,7 @@
     "nuGetPackageManager.configurationFiles.externalSettings": {
       "type": "external",
       "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
-      "description": "@Text_ConfigurationFiles_Priority;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@Text_ConfigurationFiles_Priority;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
       "callback": {
         "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
