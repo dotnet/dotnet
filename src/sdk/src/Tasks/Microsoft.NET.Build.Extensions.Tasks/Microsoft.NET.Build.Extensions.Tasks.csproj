@@ -46,8 +46,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
-    <PackageReference Condition="'$(DotNetBuildSourceOnly)' != 'true'" Include="NETStandard.Library.NETFramework" ExcludeAssets="All" NoWarn="NU1701" />
-    <!-- Lift dependency of NETStandard.Library to version produced in SBRP. -->
+    <PackageReference Include="NETStandard.Library.NETFramework" ExcludeAssets="All" NoWarn="NU1701" />
+    <!-- Lift dependency of NETStandard.Library.NETFramework to version produced in SBRP. -->
     <PackageReference Include="NETStandard.Library" VersionOverride="$(NETStandardLibraryVersion)" ExcludeAssets="All" />
   </ItemGroup>
 
@@ -76,9 +76,6 @@
       <LayoutFile Include="@(None)" Condition="'%(None.PackagePath)' != '' and '%(None.PackagePath)' != 'Icon.png'">
         <TargetPath>%(None.PackagePath)\%(None.RecursiveDir)%(None.Filename)%(None.Extension)</TargetPath>
       </LayoutFile>
-    </ItemGroup>
-    <!-- NETFramework libraries are not used in source-build. -->
-    <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
       <NetStandardNetFxFile Include="$(_NETStandardLibraryNETFrameworkPath)\**\*" Exclude="$(_NETStandardLibraryNETFrameworkPath)\**\*.props;$(_NETStandardLibraryNETFrameworkPath)\**\*.targets" />
       <LayoutFile Include="@(NetStandardNetFxFile)">
         <TargetPath>msbuildExtensions\Microsoft\Microsoft.NET.Build.Extensions\%(NetStandardNetFxFile.RecursiveDir)%(NetStandardNetFxFile.FileName)%(NetStandardNetFxFile.Extension)</TargetPath>
