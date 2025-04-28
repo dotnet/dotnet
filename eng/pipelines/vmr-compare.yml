@@ -46,7 +46,7 @@ parameters:
 
 variables:
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
-- template: /src/sdk/eng/pipelines/templates/variables/vmr-build.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
@@ -65,7 +65,7 @@ extends:
       tsa:
         enabled: true
     stages:
-    - template: /src/sdk/eng/pipelines/templates/stages/vmr-compare.yml@self
+    - template: /eng/pipelines/templates/stages/vmr-compare.yml@self
       parameters:
         unifiedBuildRunId: ${{ parameters.unifiedBuildRunId }}
         sourceManifestCommit: ${{ parameters.sourceManifestCommit }}

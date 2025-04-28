@@ -161,7 +161,7 @@ steps:
       # Download the manifests separately if we're only collecting non-shipping artifacts.
       # This is needed because the manifests are non-shipping but are required for the comparison.
       if (!$nonShipping) {
-        $(Build.SourcesDirectory)/src/sdk/eng/GatherDrops.ps1 `
+        $(Build.SourcesDirectory)/eng/GatherDrops.ps1 `
           -filePath $filePath `
           -outputPath $outputPath `
           -darcPath $darcPath `
@@ -178,7 +178,7 @@ steps:
         $assetFilter = "`".*\/.*`""
       }
 
-      $(Build.SourcesDirectory)/src/sdk/eng/GatherDrops.ps1 `
+      $(Build.SourcesDirectory)/eng/GatherDrops.ps1 `
         -filePath $filePath `
         -outputPath $outputPath `
         -darcPath $darcPath `
@@ -254,7 +254,7 @@ steps:
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonNoIssues.xml"
-    -baseline "$(Build.SourcesDirectory)/src/sdk/eng/vmr-msft-comparison-baseline.json"
+    -baseline "$(Build.SourcesDirectory)/eng/vmr-msft-comparison-baseline.json"
     $(SetAdditionalArgs.additionalArgs)
   displayName: Compare ${{ parameters.command}}
 
