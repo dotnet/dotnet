@@ -204,7 +204,7 @@ extends:
         - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
           parameters:
             pipeline: license
-            repo: dotnet/sdk
-            originalFilesDirectory: src/SourceBuild/content/test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
+            repo: dotnet/dotnet
+            originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
             updatedFilesDirectory: $(Pipeline.Workspace)/Artifacts
             pullRequestTitle: Update Source-Build License Scan Baselines and Exclusions

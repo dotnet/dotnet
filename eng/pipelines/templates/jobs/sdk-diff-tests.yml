@@ -166,7 +166,7 @@ jobs:
       - template: ../steps/create-baseline-update-pr.yml
         parameters:
           pipeline: sdk
-          repo: dotnet/sdk
-          originalFilesDirectory: src/SourceBuild/content/test/Microsoft.DotNet.SourceBuild.Tests/assets
+          repo: dotnet/dotnet
+          originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets
           updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
           pullRequestTitle: Update Source-Build SDK Diff Tests Baselines and Exclusions
