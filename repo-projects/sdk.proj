@@ -28,13 +28,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Put runtime first so that it starts to build as early as possible. -->
+    <!-- Put runtime and its dependencies first so that runtime starts to build as early as possible. -->
+    <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="cecil" />
+    <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="runtime" />
 
-    <RepositoryReference Include="arcade" />
     <RepositoryReference Include="aspire" />
     <RepositoryReference Include="aspnetcore" />
-    <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="deployment-tools" />
     <!-- we're focusing on x64 and arm64 for the webassembly build tools -->
     <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
