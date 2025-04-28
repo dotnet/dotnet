@@ -11,6 +11,10 @@
     <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks" Version="$(MicrosoftDotNetSourceBuildTasksVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <SetUpSourceBuildIntermediateNupkgCache Condition="'$(SetUpSourceBuildIntermediateNupkgCache)' == ''">false</SetUpSourceBuildIntermediateNupkgCache>
+  </PropertyGroup>
+
   <!-- Because the condition here is rather complex, it should read as the following:
       - Don't collect intermediates if running the product build or the intermediate nupkg cache feature is explicitly disabled
       - Otherwise, collect if Building from source and we're in the inner build -->
