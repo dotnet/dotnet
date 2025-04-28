@@ -111,8 +111,8 @@ namespace Microsoft.DotNet.SignTool
         internal bool IsUnpackableContainer() => IsZip() || 
                                                  (IsUnpackableWixContainer() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) || 
                                                  IsMPack() || 
-                                                 // IsTarGZip() ||
-                                                 // IsDeb() ||
+                                                 IsTarGZip() || 
+                                                 IsDeb() ||
                                                  (IsPkg() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ||
                                                  (IsAppBundle() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ||
                                                  IsNupkg() ||
