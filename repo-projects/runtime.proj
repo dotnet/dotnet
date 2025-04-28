@@ -45,10 +45,6 @@
     <EnableDefaultRidSpecificArtifacts Condition="'$(EnableDefaultRidSpecificArtifacts)' != 'true'">false</EnableDefaultRidSpecificArtifacts>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:UsingToolMicrosoftNetCompilers=false</BuildArgs>
-  </PropertyGroup>
-
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="cecil" />

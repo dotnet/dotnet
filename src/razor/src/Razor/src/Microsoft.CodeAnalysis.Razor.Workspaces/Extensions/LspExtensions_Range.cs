@@ -1,12 +1,23 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.LanguageServer.Protocol;
 
 internal static partial class LspExtensions
 {
+    public static RazorTextSpan ToRazorTextSpan(this LspRange range, SourceText sourceText)
+    {
+        var textSpan = sourceText.GetTextSpan(range);
+        return new()
+        {
+            Start = textSpan.Start,
+            Length = textSpan.Length,
+        };
+    }
+
     public static void Deconstruct(this LspRange range, out Position start, out Position end)
         => (start, end) = (range.Start, range.End);
 

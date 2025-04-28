@@ -96,7 +96,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
         var razorFilePath = "C:/path/to/file.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var service = new InlayHintService(DocumentMappingService);
 
@@ -126,7 +126,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
         var razorFilePath = "C:/path/to/file.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var service = new InlayHintService(DocumentMappingService);
 

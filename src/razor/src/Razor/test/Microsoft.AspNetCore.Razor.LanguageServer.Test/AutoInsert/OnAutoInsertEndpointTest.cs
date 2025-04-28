@@ -5,8 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,7 +20,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider1 = new TestOnAutoInsertProvider(">", canResolve: true);
@@ -65,7 +63,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         // Arrange
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: true);
@@ -107,7 +105,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(formatOnType: false);
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: false);

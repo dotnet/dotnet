@@ -43,14 +43,12 @@
     <IsProductComponent>true</IsProductComponent>
 
     <Ngen Condition="'$(Ngen)' == ''">true</Ngen>
-    <NgenArchitecture Condition="'$(NgenArchitecture)' == ''">All</NgenArchitecture>
     <NgenPriority Condition="'$(NgenPriority)' == ''">3</NgenPriority>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(VisualStudioInsertionComponent)' != ''">
     <ProjectReference Update="@(ProjectReference)">
       <Ngen Condition="'%(Ngen)' == ''">true</Ngen>
-      <NgenArchitecture Condition="'%(NgenArchitecture)' == '' and '%(Ngen)' != 'false'">All</NgenArchitecture>
       <NgenPriority Condition="'%(NgenPriority)' == '' and '%(Ngen)' != 'false'">3</NgenPriority>
     </ProjectReference>
   </ItemGroup>

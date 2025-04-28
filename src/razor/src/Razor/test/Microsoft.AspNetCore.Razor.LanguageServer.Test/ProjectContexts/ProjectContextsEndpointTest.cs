@@ -23,7 +23,7 @@ public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleS
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ProjectContextsEndpoint(languageServer);
 
