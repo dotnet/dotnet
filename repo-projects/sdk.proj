@@ -28,6 +28,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Put runtime first so that it starts to build as early as possible. -->
+    <RepositoryReference Include="runtime" />
+
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="aspire" />
     <RepositoryReference Include="aspnetcore" />
@@ -42,7 +45,6 @@
     <RepositoryReference Include="razor" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sourcelink" />
     <RepositoryReference Include="symreader" />
     <RepositoryReference Include="templating" />
