@@ -106,7 +106,7 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         };
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, serverCapabilities, razorMappingService: null, capabilitiesUpdater: null, DisposalToken);
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
 
         var razorFilePath = "C:/path/to/file.razor";
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
@@ -153,19 +153,15 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         Assert.Equal(actual, expected);
     }
 
-    private class DocumentHighlightServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
+    private sealed class DocumentHighlightServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
-        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorDocumentHighlightEndpointName, method);
             var highlightParams = Assert.IsType<DelegatedPositionParams>(@params);
@@ -179,10 +175,8 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
                 Position = highlightParams.ProjectedPosition,
             };
 
-            var result = await csharpServer.ExecuteRequestAsync<DocumentHighlightParams, DocumentHighlight[]>(
+            return csharpServer.ExecuteRequestAsync<DocumentHighlightParams, TResponse>(
                 Methods.TextDocumentDocumentHighlightName, highlightRequest, cancellationToken);
-
-            return (TResponse)(object)result;
         }
     }
 }

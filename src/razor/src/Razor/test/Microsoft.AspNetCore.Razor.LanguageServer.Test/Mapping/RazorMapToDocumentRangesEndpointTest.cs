@@ -54,7 +54,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(expectedRange, response!.Ranges[0]);
+        Assert.Equal(expectedRange, response.Ranges[0]);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(LspFactory.UndefinedRange, response!.Ranges[0]);
+        Assert.Equal(LspFactory.UndefinedRange, response.Ranges[0]);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(LspFactory.UndefinedRange, response!.Ranges[0]);
+        Assert.Equal(LspFactory.UndefinedRange, response.Ranges[0]);
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(LspFactory.UndefinedRange, response!.Ranges[0]);
+        Assert.Equal(LspFactory.UndefinedRange, response.Ranges[0]);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(request.ProjectedRanges[0], response!.Ranges[0]);
+        Assert.Equal(request.ProjectedRanges[0], response.Ranges[0]);
     }
 
     [Fact]
@@ -187,8 +187,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
         var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        Assert.NotNull(response);
-        Assert.Equal(request.ProjectedRanges[0], response!.Ranges[0]);
+        Assert.Null(response);
     }
 
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)

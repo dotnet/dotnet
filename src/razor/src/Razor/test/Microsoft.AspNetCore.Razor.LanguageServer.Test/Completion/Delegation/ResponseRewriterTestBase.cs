@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -11,28 +9,22 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public abstract class ResponseRewriterTestBase : LanguageServerTestBase
+public abstract class ResponseRewriterTestBase(ITestOutputHelper testOutput) : CompletionTestBase(testOutput)
 {
-    private protected ResponseRewriterTestBase(
-        ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
-    private protected Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
+    private protected Task<VSInternalCompletionList?> GetRewrittenCompletionListAsync(
         int absoluteIndex,
         string documentContent,
         RazorVSInternalCompletionList initialCompletionList)
     {
         var razorCompletionOptions = new RazorCompletionOptions(
-                SnippetsSupported: true,
-                AutoInsertAttributeQuotes: true,
-                CommitElementsWithSpace: true);
+            SnippetsSupported: true,
+            AutoInsertAttributeQuotes: true,
+            CommitElementsWithSpace: true);
 
         return GetRewrittenCompletionListAsync(absoluteIndex, documentContent, initialCompletionList, razorCompletionOptions);
     }
 
-    private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
+    private protected async Task<VSInternalCompletionList?> GetRewrittenCompletionListAsync(
         int absoluteIndex,
         string documentContent,
         RazorVSInternalCompletionList initialCompletionList,
@@ -43,7 +35,11 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
         var completionContext = new VSInternalCompletionContext();
         var codeDocument = CreateCodeDocument(documentContent, filePath: FilePath);
         var documentContext = TestDocumentContext.Create(FilePath, codeDocument);
-        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory);
+
+        var clientConnection = CreateClientConnectionForCompletion(initialCompletionList);
+
+        var provider = CreateDelegatedCompletionListProvider(clientConnection);
+
         var clientCapabilities = new VSInternalClientCapabilities();
         var completionList = await provider.GetCompletionListAsync(
             codeDocument,

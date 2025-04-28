@@ -183,7 +183,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, serverCapabilities, razorMappingService: null, capabilitiesUpdater: null, DisposalToken);
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
 
         var razorFilePath = "C:/path/to/file.razor";
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
@@ -192,7 +192,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
             options.SingleServerSupport == true &&
             options.CSharpVirtualDocumentSuffix == ".g.cs" &&
             options.HtmlVirtualDocumentSuffix == ".g.html");
-        var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
+        var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri);
         var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var projectManager = CreateProjectSnapshotManager();
@@ -310,40 +310,27 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         return endpoint;
     }
 
-    private class HoverLanguageServer(
-        CSharpTestLspServer csharpServer,
-        Uri csharpDocumentUri,
-        CancellationToken cancellationToken) : IClientConnection
+    private sealed class HoverLanguageServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
-        private readonly CSharpTestLspServer _csharpServer = csharpServer;
-        private readonly Uri _csharpDocumentUri = csharpDocumentUri;
-        private readonly CancellationToken _cancellationToken = cancellationToken;
-
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
-        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorHoverEndpointName, method);
             var hoverParams = Assert.IsType<DelegatedPositionParams>(@params);
 
             var hoverRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new() { Uri = _csharpDocumentUri, },
+                TextDocument = new() { Uri = csharpDocumentUri, },
                 Position = hoverParams.ProjectedPosition
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, TResponse>(
-                Methods.TextDocumentHoverName, hoverRequest, _cancellationToken);
-
-            return result;
+            return csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, TResponse>(
+                Methods.TextDocumentHoverName, hoverRequest, cancellationToken);
         }
     }
 }

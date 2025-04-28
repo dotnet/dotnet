@@ -190,7 +190,7 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
 
         var codeDocument = CreateCodeDocument(input, filePath: filePath);
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, filePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, filePath);
 
         var foldingRangeService = new FoldingRangeService(
             DocumentMappingService,

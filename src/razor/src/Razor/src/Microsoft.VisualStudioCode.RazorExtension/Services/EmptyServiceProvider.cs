@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
-internal class EmptyServiceProvider : IRazorDocumentServiceProvider
+internal sealed class EmptyServiceProvider : IRazorDocumentServiceProvider
 {
     public static readonly EmptyServiceProvider Instance = new();
 
