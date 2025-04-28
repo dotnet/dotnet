@@ -11,6 +11,10 @@
        - If we have a repo that is not in sdk's dependency tree, we can still build it by including it here.  -->
 
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">
+    <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="cecil" />
+    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sdk" />
   </ItemGroup>
 

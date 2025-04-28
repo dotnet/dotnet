@@ -28,14 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Put runtime and its dependencies first so that runtime starts to build as early as possible. -->
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="cecil" />
-    <RepositoryReference Include="command-line-api" />
-    <RepositoryReference Include="runtime" />
-
     <RepositoryReference Include="aspire" />
     <RepositoryReference Include="aspnetcore" />
+    <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="deployment-tools" />
     <!-- we're focusing on x64 and arm64 for the webassembly build tools -->
     <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
@@ -46,6 +42,7 @@
     <RepositoryReference Include="razor" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="roslyn" />
+    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sourcelink" />
     <RepositoryReference Include="symreader" />
     <RepositoryReference Include="templating" />
