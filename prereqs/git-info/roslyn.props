@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>0a6e36a0644b544f28de972709b18c962c067888</GitCommitHash>
-    <OfficialBuildId>20250426.2 - ToddGrun - 'Move remaining legacy workspace event listeners over to new APIs.' #</OfficialBuildId>
-    <OutputPackageVersion>5.0.0</OutputPackageVersion>
+    <GitCommitHash>02a8b351452f666291280176207e83d2150c5834</GitCommitHash>
+    <OfficialBuildId>20250428.16</OfficialBuildId>
+    <OutputPackageVersion>5.0.0-1.25228.16</OutputPackageVersion>
   </PropertyGroup>
 </Project>
