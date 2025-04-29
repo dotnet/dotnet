@@ -50,6 +50,9 @@ extends:
       name: NetCore1ESPool-Svc-Internal
       image: 1es-ubuntu-2204
       os: linux
+    containers:
+      azurelinuxSourceBuildTestContainer:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
     sdl:
       sourceAnalysisPool:
           name: NetCore1ESPool-Svc-Internal
@@ -96,6 +99,7 @@ extends:
           displayName: Get Matrix
 
       - job: LicenseScan
+        container: azurelinuxSourceBuildTestContainer
         dependsOn: Setup
         timeoutInMinutes: 420
         strategy:
@@ -109,23 +113,8 @@ extends:
             artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
         steps:
 
-        - script: |
-            source ./eng/common/tools.sh
-            InitializeDotNetCli true
-          displayName: Install .NET SDK
-          workingDirectory: $(Build.SourcesDirectory)
-
-        - task: PipAuthenticate@1
-          displayName: 'Pip Authenticate'
-          inputs:
-            artifactFeeds: public/dotnet-public-pypi
-            onlyAddExtraIndex: false
-
-        - script: /eng/install-scancode.sh
-          displayName: Install Scancode
-
         - script: >
-            $(Build.SourcesDirectory)/.dotnet/dotnet test
+            dotnet test
             $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
             --filter "FullyQualifiedName=Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
             --logger:'trx;LogFileName=$(Agent.JobName)_LicenseScan.trx'
@@ -204,7 +193,7 @@ extends:
         - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
           parameters:
             pipeline: license
-            repo: dotnet/sdk
-            originalFilesDirectory: src/SourceBuild/content/test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
+            repo: dotnet/dotnet
+            originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
             updatedFilesDirectory: $(Pipeline.Workspace)/Artifacts
             pullRequestTitle: Update Source-Build License Scan Baselines and Exclusions
