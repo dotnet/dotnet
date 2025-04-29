@@ -11,9 +11,10 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using ImplementationResult = Roslyn.LanguageServer.Protocol.SumType<
-    Roslyn.LanguageServer.Protocol.Location[],
-    Roslyn.LanguageServer.Protocol.VSInternalReferenceItem[]>;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using ImplementationResult = System.Nullable<Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
+    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
+    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalReferenceItem[]>>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 
@@ -59,10 +60,10 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
 
     protected async override Task<ImplementationResult> HandleDelegatedResponseAsync(ImplementationResult delegatedResponse, TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var result = delegatedResponse.Value;
+        var result = delegatedResponse.GetValueOrDefault().Value;
 
         // Not using .TryGetXXX because this does the null check for us too
-        if (result is LspLocation[] locations)
+        if (result is Location[] locations)
         {
             foreach (var loc in locations)
             {
@@ -75,12 +76,12 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         {
             foreach (var item in referenceItems)
             {
-                (item.Location!.Uri, item.Location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(item.Location.Uri, item.Location.Range, cancellationToken).ConfigureAwait(false);
+                (item.Location.Uri, item.Location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(item.Location.Uri, item.Location.Range, cancellationToken).ConfigureAwait(false);
             }
 
             return referenceItems;
         }
 
-        return default;
+        return null;
     }
 }

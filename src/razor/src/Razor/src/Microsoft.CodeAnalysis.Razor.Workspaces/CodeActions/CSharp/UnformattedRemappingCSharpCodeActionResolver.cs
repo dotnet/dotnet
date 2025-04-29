@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -48,7 +49,7 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
             return codeAction;
         }
 
-        var textEdit = (TextEdit)textDocumentEdit.Edits.FirstOrDefault();
+        var textEdit = textDocumentEdit.Edits.FirstOrDefault();
         if (textEdit is null)
         {
             // No text edit available
@@ -56,6 +57,10 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
         }
 
         var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        if (codeDocument.IsUnsupported())
+        {
+            return codeAction;
+        }
 
         if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), textEdit.Range, MappingBehavior.Inclusive, out var originalRange))
         {

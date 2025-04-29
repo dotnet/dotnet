@@ -9,7 +9,9 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentSymbols;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using RoslynSymbolSumType = Roslyn.LanguageServer.Protocol.SumType<Roslyn.LanguageServer.Protocol.DocumentSymbol[], Roslyn.LanguageServer.Protocol.SymbolInformation[]>;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -25,7 +27,7 @@ internal sealed partial class RemoteDocumentSymbolService(in ServiceArgs args) :
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
 
     public ValueTask<SumType<DocumentSymbol[], SymbolInformation[]>?> GetDocumentSymbolsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, bool useHierarchicalSymbols, CancellationToken cancellationToken)
-        => RunServiceAsync(
+       => RunServiceAsync(
             solutionInfo,
             razorDocumentId,
             context => GetDocumentSymbolsAsync(context, useHierarchicalSymbols, cancellationToken),
@@ -43,43 +45,16 @@ internal sealed partial class RemoteDocumentSymbolService(in ServiceArgs args) :
             supportsVSExtensions: _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions,
             cancellationToken).ConfigureAwait(false);
 
-        // Roslyn uses an internal "RoslynDocumentSymbol" type, which throws when serialized after we've mapped it, so we have to
-        // convert things back to DocumentSymbol. We only need to do the first level though, as our remapping will take care of
-        // the children.
-        if (csharpSymbols.TryGetFirst(out var roslynDocumentSymbols))
-        {
-            csharpSymbols = ConvertDocumentSymbols(roslynDocumentSymbols);
-        }
-
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetCSharpDocument();
 
-        return _documentSymbolService.GetDocumentSymbols(context.Uri, csharpDocument, csharpSymbols);
-    }
-
-    private static DocumentSymbol[] ConvertDocumentSymbols(DocumentSymbol[] roslynDocumentSymbols)
-    {
-        var converted = new DocumentSymbol[roslynDocumentSymbols.Length];
-        for (var i = 0; i < roslynDocumentSymbols.Length; i++)
+        // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.
+        var vsCSharpSymbols = JsonHelpers.ToVsLSP<SumType<DocumentSymbol[], SymbolInformation[]>?, RoslynSymbolSumType>(csharpSymbols);
+        if (vsCSharpSymbols is not { } convertedSymbols)
         {
-            var symbol = roslynDocumentSymbols[i];
-            converted[i] = new DocumentSymbol
-            {
-                Children = symbol.Children is { } children
-                    ? ConvertDocumentSymbols(children)
-                    : null,
-#pragma warning disable CS0618 // Type or member is obsolete
-                Deprecated = symbol.Deprecated,
-#pragma warning restore CS0618 // Type or member is obsolete
-                Detail = symbol.Detail,
-                Kind = symbol.Kind,
-                Name = symbol.Name,
-                Range = symbol.Range,
-                SelectionRange = symbol.SelectionRange,
-                Tags = symbol.Tags
-            };
+            return null;
         }
 
-        return converted;
+        return _documentSymbolService.GetDocumentSymbols(context.Uri, csharpDocument, convertedSymbols);
     }
 }

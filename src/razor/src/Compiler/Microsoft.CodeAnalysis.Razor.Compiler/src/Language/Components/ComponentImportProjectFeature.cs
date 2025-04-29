@@ -24,7 +24,7 @@ internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureB
         ArgHelper.ThrowIfNull(projectItem);
 
         // Don't add Component imports for a non-component.
-        if (!projectItem.FileKind.IsComponent())
+        if (!FileKinds.IsComponent(projectItem.FileKind))
         {
             return;
         }

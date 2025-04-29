@@ -3,12 +3,12 @@
 
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -76,9 +76,6 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, hierarchical, DisposalToken);
 
-        // Roslyn's DocumentSymbol type has an annoying property that makes it hard to serialize
-        Assert.NotNull(JsonSerializer.SerializeToDocument(result, JsonHelpers.JsonSerializerOptions));
-
         if (hierarchical)
         {
             var documentSymbols = result.Value.First;
@@ -95,15 +92,12 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
             Assert.Equal(spansDict.Values.Count(), symbolsInformations.Length);
 
             var sourceText = SourceText.From(input);
-#pragma warning disable CS0618 // Type or member is obsolete
-            // SymbolInformation is obsolete, but things still return it so we have to handle it
             foreach (var symbolInformation in symbolsInformations)
             {
                 Assert.True(spansDict.TryGetValue(symbolInformation.Name, out var spans), $"Expected {symbolInformation.Name} to be in test provided markers");
                 var expectedRange = sourceText.GetRange(Assert.Single(spans));
                 Assert.Equal(expectedRange, symbolInformation.Location.Range);
             }
-#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 

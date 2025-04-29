@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 
@@ -73,10 +74,7 @@ internal partial class RazorCustomMessageTarget
 
             if (response.Response != null)
             {
-                foreach (var codeAction in response.Response)
-                {
-                    codeActions.Add(codeAction);
-                }
+                codeActions.AddRange(response.Response);
             }
         }
 

@@ -10,8 +10,11 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
+
+using SignatureHelp = VisualStudio.LanguageServer.Protocol.SignatureHelp;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentSignatureHelpName)]
 internal sealed class SignatureHelpEndpoint(
@@ -20,7 +23,7 @@ internal sealed class SignatureHelpEndpoint(
         IClientConnection clientConnection,
         RazorLSPOptionsMonitor optionsMonitor,
         ILoggerFactory loggerProvider)
-    : AbstractRazorDelegatingEndpoint<SignatureHelpParams, LspSignatureHelp?>(
+    : AbstractRazorDelegatingEndpoint<SignatureHelpParams, SignatureHelp?>(
         languageServerFeatureOptions,
         documentMappingService,
         clientConnection,

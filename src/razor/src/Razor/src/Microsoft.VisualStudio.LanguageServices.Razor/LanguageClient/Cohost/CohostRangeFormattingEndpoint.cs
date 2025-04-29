@@ -14,6 +14,8 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -27,13 +29,15 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostRangeFormattingEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlRequestInvoker requestInvoker,
+    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
+    LSPRequestInvoker requestInvoker,
     IClientSettingsManager clientSettingsManager,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<DocumentRangeFormattingParams, TextEdit[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostRangeFormattingEndpoint>();
 
@@ -63,7 +67,7 @@ internal sealed class CohostRangeFormattingEndpoint(
 
     private async Task<TextEdit[]?> HandleRequestAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (request.Options.OtherOptions is not null && request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) && fromPasteObj.TryGetFirst(out var fromPaste))
+        if (request.Options.OtherOptions is not null && request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) && fromPasteObj is bool fromPaste)
         {
             if (fromPaste && !_clientSettingsManager.GetClientSettings().AdvancedSettings.FormatOnPaste)
             {
@@ -104,28 +108,37 @@ internal sealed class CohostRangeFormattingEndpoint(
 
     private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
+        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+        if (htmlDocument is null)
+        {
+            return null;
+        }
+
         // We don't actually request range formatting results from Html, because our formatting engine can't deal with
         // relative formatting results. Instead we request full document formatting, and filter the edits inside the
         // formatting service to only the ones we care about.
         var formattingRequest = new DocumentFormattingParams
         {
-            TextDocument = request.TextDocument,
+            TextDocument = request.TextDocument.WithUri(htmlDocument.Uri),
             Options = request.Options
         };
 
-        var result = await _requestInvoker.MakeHtmlLspRequestAsync<DocumentFormattingParams, TextEdit[]>(
-            razorDocument,
+        _logger.LogDebug($"Requesting document formatting edits for {htmlDocument.Uri}");
+
+        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentFormattingParams, TextEdit[]?>(
+            htmlDocument.Buffer,
             Methods.TextDocumentFormattingName,
+            RazorLSPConstants.HtmlLanguageServerName,
             formattingRequest,
             cancellationToken).ConfigureAwait(false);
 
-        if (result is null)
+        if (result?.Response is null)
         {
             _logger.LogDebug($"Didn't get any ranges back from Html. Returning null so we can abandon the whole thing");
             return null;
         }
 
-        return result;
+        return result.Response;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

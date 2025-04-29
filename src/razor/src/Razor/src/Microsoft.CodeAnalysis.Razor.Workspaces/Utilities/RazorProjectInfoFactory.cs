@@ -150,7 +150,7 @@ internal static class RazorProjectInfoFactory
         foreach (var document in project.AdditionalDocuments)
         {
             if (document.FilePath is { } filePath &&
-                FileKinds.TryGetFileKindFromPath(filePath, out var kind))
+                TryGetFileKind(filePath, out var kind))
             {
                 documents.Add(new DocumentSnapshotHandle(filePath, GetTargetPath(filePath, normalizedProjectPath), kind));
             }
@@ -165,7 +165,7 @@ internal static class RazorProjectInfoFactory
             foreach (var document in project.Documents)
             {
                 if (TryGetRazorFileName(document.FilePath, out var razorFilePath) &&
-                    FileKinds.TryGetFileKindFromPath(razorFilePath, out var kind))
+                    TryGetFileKind(razorFilePath, out var kind))
                 {
                     documents.Add(new DocumentSnapshotHandle(razorFilePath, GetTargetPath(razorFilePath, normalizedProjectPath), kind));
                 }
@@ -188,6 +188,25 @@ internal static class RazorProjectInfoFactory
         var normalizedTargetFilePath = targetFilePath.Replace('/', '\\').TrimStart('\\');
 
         return normalizedTargetFilePath;
+    }
+
+    private static bool TryGetFileKind(string filePath, [NotNullWhen(true)] out string? fileKind)
+    {
+        var extension = Path.GetExtension(filePath);
+
+        if (extension.Equals(".cshtml", s_stringComparison))
+        {
+            fileKind = FileKinds.Legacy;
+            return true;
+        }
+        else if (extension.Equals(".razor", s_stringComparison))
+        {
+            fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
+            return true;
+        }
+
+        fileKind = null;
+        return false;
     }
 
     private static bool TryGetRazorFileName(string? filePath, [NotNullWhen(true)] out string? razorFilePath)

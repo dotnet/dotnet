@@ -3,13 +3,14 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 
 internal class HtmlCommitCharacterResponseRewriter
 {
-    public RazorVSInternalCompletionList Rewrite(
-        RazorVSInternalCompletionList completionList,
+    public VSInternalCompletionList Rewrite(
+        VSInternalCompletionList completionList,
         RazorCompletionOptions completionOptions)
     {
         if (completionOptions.CommitElementsWithSpace)

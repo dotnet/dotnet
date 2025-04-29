@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Classification;
-using Roslyn.Text.Adornments;
+using Microsoft.VisualStudio.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 

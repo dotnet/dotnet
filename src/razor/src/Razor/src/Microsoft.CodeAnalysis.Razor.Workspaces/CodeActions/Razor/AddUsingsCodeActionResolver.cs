@@ -6,10 +6,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -28,8 +30,12 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         var documentSnapshot = documentContext.Snapshot;
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri };
+        if (codeDocument.IsUnsupported())
+        {
+            return null;
+        }
 
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri };
         return AddUsingsHelper.CreateAddUsingWorkspaceEdit(actionParams.Namespace, actionParams.AdditionalEdit, codeDocument, codeDocumentIdentifier);
     }
 

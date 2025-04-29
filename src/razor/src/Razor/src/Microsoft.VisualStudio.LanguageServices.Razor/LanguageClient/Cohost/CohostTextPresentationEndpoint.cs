@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -19,13 +21,15 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostTextPresentationEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal sealed class CohostTextPresentationEndpoint(
+internal class CohostTextPresentationEndpoint(
+    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     IFilePathService filePathService,
-    IHtmlRequestInvoker requestInvoker)
+    LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalTextPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly IFilePathService _filePathService = filePathService;
-    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -53,13 +57,22 @@ internal sealed class CohostTextPresentationEndpoint(
 
     private async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalTextPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var workspaceEdit = await _requestInvoker.MakeHtmlLspRequestAsync<VSInternalTextPresentationParams, WorkspaceEdit>(
-            razorDocument,
+        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+        if (htmlDocument is null)
+        {
+            return null;
+        }
+
+        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
+
+        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalTextPresentationParams, WorkspaceEdit?>(
+            htmlDocument.Buffer,
             VSInternalMethods.TextDocumentTextPresentationName,
+            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
 
-        if (workspaceEdit is null)
+        if (result?.Response is not { } workspaceEdit)
         {
             return null;
         }

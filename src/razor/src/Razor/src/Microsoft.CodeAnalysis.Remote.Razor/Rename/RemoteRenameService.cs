@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -9,7 +10,8 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.WorkspaceEdit?>;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.VisualStudio.LanguageServer.Protocol.WorkspaceEdit?>;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -77,7 +79,14 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
             return NoFurtherHandling;
         }
 
-        var mappedEdit = await _editMappingService.RemapWorkspaceEditAsync(context.Snapshot, csharpEdit, cancellationToken).ConfigureAwait(false);
+        // This is, to say the least, not ideal. In future we're going to normalize on to Roslyn LSP types, and this can go.
+        var vsEdit = JsonSerializer.Deserialize<WorkspaceEdit>(JsonSerializer.SerializeToDocument(csharpEdit));
+        if (vsEdit is null)
+        {
+            return NoFurtherHandling;
+        }
+
+        var mappedEdit = await _editMappingService.RemapWorkspaceEditAsync(context.Snapshot, vsEdit, cancellationToken).ConfigureAwait(false);
         return Results(mappedEdit);
     }
 }

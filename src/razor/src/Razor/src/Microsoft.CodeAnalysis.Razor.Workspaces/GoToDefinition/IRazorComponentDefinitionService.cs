@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using LspLocation = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
 
 namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 

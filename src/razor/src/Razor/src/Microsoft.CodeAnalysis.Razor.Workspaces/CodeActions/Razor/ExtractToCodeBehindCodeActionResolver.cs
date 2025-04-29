@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -37,14 +38,19 @@ internal class ExtractToCodeBehindCodeActionResolver(
             return null;
         }
 
-        if (!documentContext.FileKind.IsComponent())
+        var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
+
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (codeDocument.IsUnsupported())
         {
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (!FileKinds.IsComponent(codeDocument.FileKind))
+        {
+            return null;
+        }
 
-        var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var codeBehindPath = FileUtilities.GenerateUniquePath(path, $"{Path.GetExtension(path)}.cs");
 
         // VS Code in Windows expects path to start with '/'
@@ -52,7 +58,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
             ? '/' + codeBehindPath
             : codeBehindPath;
 
-        var codeBehindUri = LspFactory.CreateFilePathUri(updatedCodeBehindPath);
+        var codeBehindUri = VsLspFactory.CreateFilePathUri(updatedCodeBehindPath);
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
@@ -73,12 +79,12 @@ internal class ExtractToCodeBehindCodeActionResolver(
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,
-                Edits = [LspFactory.CreateTextEdit(removeRange, string.Empty)]
+                Edits = [VsLspFactory.CreateTextEdit(removeRange, string.Empty)]
             },
             new TextDocumentEdit
             {
                 TextDocument = codeBehindDocumentIdentifier,
-                Edits = [LspFactory.CreateTextEdit(position: (0, 0), codeBehindContent)]
+                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), codeBehindContent)]
             }
         };
 

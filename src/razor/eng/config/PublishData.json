@@ -28,8 +28,9 @@
         "NonShipping"
       ],
       "vsBranch": "main",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.15 P1]"
+      "insertionTitlePrefix": "[d17.14 P3]"
     },
     "release/dev17.6": {
       "nugetKind": [
@@ -37,6 +38,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.6",
+      "vsMajorVersion": 17,
       "insertionTitlePrefix": "[17.6]"
     },
     "release/dev17.7": {
@@ -45,6 +47,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.7",
+      "vsMajorVersion": 17,
       "insertionTitlePrefix": "[17.7]"
     },
     "release/dev17.8": {
@@ -53,6 +56,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.8",
+      "vsMajorVersion": 17,
       "insertionTitlePrefix": "[17.8]"
     },
     "release/dev17.9": {
@@ -61,6 +65,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.9",
+      "vsMajorVersion": 17,
       "insertionTitlePrefix": "[17.9]"
     },
     "release/dev17.10": {
@@ -69,6 +74,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.10",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[17.10]"
     },
@@ -78,6 +84,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.11",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[17.11]"
     },
@@ -87,6 +94,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.12",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.12]"
     },
@@ -96,6 +104,7 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.13",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.13]"
     },
@@ -105,8 +114,9 @@
         "NonShipping"
       ],
       "vsBranch": "rel/d17.14",
+      "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.14 P3]"
+      "insertionTitlePrefix": "[d17.14 P2]"
     }
   }
 }

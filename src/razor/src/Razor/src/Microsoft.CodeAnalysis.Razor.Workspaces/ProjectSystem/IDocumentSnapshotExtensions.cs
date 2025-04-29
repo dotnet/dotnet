@@ -27,7 +27,7 @@ internal static class IDocumentSnapshotExtensions
         CancellationToken cancellationToken)
     {
         // No point doing anything if its not a component
-        if (documentSnapshot.FileKind != RazorFileKind.Component)
+        if (documentSnapshot.FileKind != FileKinds.Component)
         {
             return null;
         }
@@ -57,7 +57,7 @@ internal static class IDocumentSnapshotExtensions
 
     public static bool IsPathCandidateForComponent(this IDocumentSnapshot documentSnapshot, ReadOnlyMemory<char> path)
     {
-        if (documentSnapshot.FileKind != RazorFileKind.Component)
+        if (documentSnapshot.FileKind != FileKinds.Component)
         {
             return false;
         }

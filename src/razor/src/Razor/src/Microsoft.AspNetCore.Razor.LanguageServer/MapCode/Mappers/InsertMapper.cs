@@ -4,6 +4,8 @@
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
 
@@ -12,7 +14,7 @@ internal static class InsertMapper
     public static int? GetInsertionPoint(
         SyntaxNode documentRoot,
         SourceText sourceText,
-        LspLocation focusArea)
+        LSP.Location focusArea)
     {
         // If there's an specific focus area, or caret provided, we should try to insert as close as possible.
         // As long as the focused area is not empty.
@@ -33,7 +35,7 @@ internal static class InsertMapper
     private static bool TryGetFocusedInsertionPoint(
         SyntaxNode documentRoot,
         SourceText sourceText,
-        LspLocation focusArea,
+        LSP.Location focusArea,
         out int insertionPoint)
     {
         // If there's an specific focus area, or caret provided, we should try to insert as close as possible.

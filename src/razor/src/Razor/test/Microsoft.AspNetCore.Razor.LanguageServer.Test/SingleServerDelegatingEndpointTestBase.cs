@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit.Abstractions;
 
@@ -65,7 +66,6 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
         DocumentMappingService = new LspDocumentMappingService(FilePathService, DocumentContextFactory, LoggerFactory);
         EditMappingService = new LspEditMappingService(DocumentMappingService, FilePathService, DocumentContextFactory);
 
-        // Don't declare this with an 'await using'. TestLanguageServer will own the lifetime of this C# LSP server.
         var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpFiles,
             new VSInternalServerCapabilities
@@ -77,8 +77,10 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
             capabilitiesUpdater,
             DisposalToken);
 
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
+        AddDisposable(csharpServer);
 
-        return new TestLanguageServer(csharpServer, csharpDocumentUri);
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString()).ConfigureAwait(false);
+
+        return new TestLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
     }
 }

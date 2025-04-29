@@ -15,7 +15,10 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Roslyn.LanguageServer.Protocol;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert.RemoteAutoInsertTextEdit?>;
+using RoslynInsertTextFormat = Roslyn.LanguageServer.Protocol.InsertTextFormat;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -71,7 +74,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         // that adds closing tag instead of HTML even though we are in HTML
         if (_autoInsertService.TryResolveInsertion(
                 codeDocument,
-                linePosition.ToPosition(),
+                VsLspExtensions.ToPosition(linePosition),
                 character,
                 options.EnableAutoClosingTags,
                 out var insertTextEdit))
@@ -142,7 +145,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
             generatedDocument,
             mappedPosition,
             character,
-            options.FormattingOptions.ToLspFormattingOptions(),
+            options.FormattingOptions.ToRoslynFormattingOptions(),
             cancellationToken
         ).ConfigureAwait(false);
 
@@ -155,7 +158,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
 
         var csharpSourceText = await remoteDocumentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var csharpTextChange = new TextChange(csharpSourceText.GetTextSpan(autoInsertResponseItem.TextEdit.Range), autoInsertResponseItem.TextEdit.NewText);
-        var mappedChange = autoInsertResponseItem.TextEditFormat == InsertTextFormat.Snippet
+        var mappedChange = autoInsertResponseItem.TextEditFormat == RoslynInsertTextFormat.Snippet
             ? await _razorFormattingService.TryGetCSharpSnippetFormattingEditAsync(
                 remoteDocumentContext,
                 [csharpTextChange],

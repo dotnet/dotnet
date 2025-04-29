@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -53,14 +54,12 @@ internal static class CSharpTestLspServerHelpers
         VSInternalServerCapabilities serverCapabilities,
         IRazorMappingService razorMappingService,
         bool multiTargetProject,
-        Action<VSInternalClientCapabilities> capabilitiesUpdater,
+         Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
-        var exportProvider = TestComposition.Roslyn
-            .AddParts(typeof(RazorTestLanguageServerFactory))
-            .ExportProviderFactory.CreateExportProvider();
+        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
 
         var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
         metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);

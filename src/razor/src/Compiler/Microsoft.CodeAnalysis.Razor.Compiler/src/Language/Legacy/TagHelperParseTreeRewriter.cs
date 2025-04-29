@@ -34,9 +34,9 @@ internal static class TagHelperParseTreeRewriter
         builder.AddRange(treeDiagnostics);
         builder.AddRange(sinkDiagnostics);
 
-        foreach (var descriptor in binder.Descriptors)
+        foreach (var tagHelper in binder.TagHelpers)
         {
-            foreach (var diagnostic in descriptor.GetAllDiagnostics())
+            foreach (var diagnostic in tagHelper.GetAllDiagnostics())
             {
                 builder.Add(diagnostic);
             }
@@ -137,7 +137,7 @@ internal static class TagHelperParseTreeRewriter
                     else
                     {
                         // Tag helper start tag. Keep track.
-                        var tracker = new TagHelperTracker(_binder.TagNamePrefix, tagHelperInfo);
+                        var tracker = new TagHelperTracker(_binder.TagHelperPrefix, tagHelperInfo);
                         _trackerStack.Push(tracker);
                     }
                 }
@@ -347,9 +347,10 @@ internal static class TagHelperParseTreeRewriter
                     return false;
                 }
 
-                foreach (var boundRulesInfo in tagHelperBinding.AllBoundRules)
+                foreach (var descriptor in tagHelperBinding.Descriptors)
                 {
-                    var invalidRule = boundRulesInfo.Rules.FirstOrDefault(static rule => rule.TagStructure == TagStructure.WithoutEndTag);
+                    var boundRules = tagHelperBinding.Mappings[descriptor];
+                    var invalidRule = boundRules.FirstOrDefault(static rule => rule.TagStructure == TagStructure.WithoutEndTag);
 
                     if (invalidRule != null)
                     {
@@ -358,7 +359,7 @@ internal static class TagHelperParseTreeRewriter
                             RazorDiagnosticFactory.CreateParsing_TagHelperMustNotHaveAnEndTag(
                                 new SourceSpan(SourceLocationTracker.Advance(endTag.GetSourceLocation(_source), "</"), tagName.Length),
                                 tagName,
-                                boundRulesInfo.Descriptor.DisplayName,
+                                descriptor.DisplayName,
                                 invalidRule.TagStructure));
 
                         return false;
@@ -461,11 +462,10 @@ internal static class TagHelperParseTreeRewriter
             TagHelperDescriptor? baseDescriptor = null;
             TagStructure? baseStructure = null;
 
-            foreach (var boundRulesInfo in bindingResult.AllBoundRules)
+            foreach (var descriptor in bindingResult.Descriptors)
             {
-                var descriptor = boundRulesInfo.Descriptor;
-
-                foreach (var rule in boundRulesInfo.Rules)
+                var boundRules = bindingResult.Mappings[descriptor];
+                foreach (var rule in boundRules)
                 {
                     if (rule.TagStructure != TagStructure.Unspecified)
                     {
@@ -474,7 +474,7 @@ internal static class TagHelperParseTreeRewriter
                         {
                             _errorSink.OnError(
                                 RazorDiagnosticFactory.CreateTagHelper_InconsistentTagStructure(
-                                    new SourceSpan(tagBlock.GetSourceLocation(_source), tagBlock.Width),
+                                    new SourceSpan(tagBlock.GetSourceLocation(_source), tagBlock.FullWidth),
                                     baseDescriptor!.DisplayName,
                                     descriptor.DisplayName,
                                     tagName));
@@ -726,7 +726,7 @@ internal static class TagHelperParseTreeRewriter
         {
             public uint OpenMatchingTags;
 
-            private readonly string? _tagNamePrefix;
+            private readonly string? _tagHelperPrefix;
             private readonly TagHelperBinding _binding;
 
             private readonly Lazy<(ImmutableArray<string> Names, HashSet<string> NameSet)> _lazyAllowedChildren;
@@ -734,10 +734,10 @@ internal static class TagHelperParseTreeRewriter
 
             public ImmutableArray<string> AllowedChildren => _lazyAllowedChildren.Value.Names;
 
-            public TagHelperTracker(string? tagNamePrefix, TagHelperInfo info)
+            public TagHelperTracker(string? tagHelperPrefix, TagHelperInfo info)
                 : base(info.TagName, IsTagHelper: true)
             {
-                _tagNamePrefix = tagNamePrefix;
+                _tagHelperPrefix = tagHelperPrefix;
                 _binding = info.BindingResult;
 
                 _lazyAllowedChildren = new(CreateAllowedChildren);
@@ -773,7 +773,7 @@ internal static class TagHelperParseTreeRewriter
 
             private HashSet<string> CreatePrefixedAllowedChildren()
             {
-                if (_tagNamePrefix is not string tagNamePrefix)
+                if (_tagHelperPrefix is not string tagHelperPrefix)
                 {
                     return _lazyAllowedChildren.Value.NameSet;
                 }
@@ -782,7 +782,7 @@ internal static class TagHelperParseTreeRewriter
 
                 foreach (var childName in AllowedChildren)
                 {
-                    distinctSet.Add(tagNamePrefix + childName);
+                    distinctSet.Add(tagHelperPrefix + childName);
                 }
 
                 return distinctSet;

@@ -35,8 +35,9 @@ internal static class RazorCodeDocumentFactory
             RazorExtensions.Register(builder);
         });
 
-        var fileKind = FileKinds.GetFileKindFromPath(filePath);
+        var fileKind = FileKinds.GetFileKindFromFilePath(filePath);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
+        return codeDocument;
     }
 }

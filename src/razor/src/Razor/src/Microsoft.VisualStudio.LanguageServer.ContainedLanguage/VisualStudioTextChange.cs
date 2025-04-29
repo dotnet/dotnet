@@ -16,25 +16,16 @@ internal class VisualStudioTextChange : ITextChange
     }
 
     public VisualStudioTextChange(TextEdit textEdit, ITextSnapshot textSnapshot)
-        : this(
-            textEdit.Range.Start.Line,
-            textEdit.Range.Start.Character,
-            textEdit.Range.End.Line,
-            textEdit.Range.End.Character,
-            textSnapshot,
-            textEdit.NewText)
     {
-    }
-
-    public VisualStudioTextChange(int startLineNumber, int startCharacter, int endLineNumber, int endCharacter, ITextSnapshot textSnapshot, string newText)
-    {
-        var startLine = textSnapshot.GetLineFromLineNumber(startLineNumber);
-        var startAbsoluteIndex = startLine.Start + startCharacter;
-        var endLine = textSnapshot.GetLineFromLineNumber(endLineNumber);
-        var endAbsoluteIndex = endLine.Start + endCharacter;
+        var startRange = textEdit.Range.Start;
+        var startLine = textSnapshot.GetLineFromLineNumber(startRange.Line);
+        var startAbsoluteIndex = startLine.Start + startRange.Character;
+        var endRange = textEdit.Range.End;
+        var endLine = textSnapshot.GetLineFromLineNumber(endRange.Line);
+        var endAbsoluteIndex = endLine.Start + endRange.Character;
         var length = endAbsoluteIndex - startAbsoluteIndex;
         OldSpan = new Span(startAbsoluteIndex, length);
-        NewText = newText;
+        NewText = textEdit.NewText;
     }
 
     public Span OldSpan { get; }

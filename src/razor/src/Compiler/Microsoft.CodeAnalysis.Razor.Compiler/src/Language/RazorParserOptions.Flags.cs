@@ -24,7 +24,7 @@ public sealed partial class RazorParserOptions
         AllowNullableForgivenessOperator = 1 << 11
     }
 
-    private static Flags GetDefaultFlags(RazorLanguageVersion languageVersion, RazorFileKind fileKind)
+    private static Flags GetDefaultFlags(RazorLanguageVersion languageVersion, string fileKind)
     {
         Flags result = 0;
 
@@ -46,7 +46,7 @@ public sealed partial class RazorParserOptions
             result.SetFlag(Flags.AllowNullableForgivenessOperator);
         }
 
-        if (fileKind.IsComponent())
+        if (FileKinds.IsComponent(fileKind))
         {
             result.SetFlag(Flags.AllowConditionalDataDashAttributes);
             result.ClearFlag(Flags.AllowCSharpInMarkupAttributeArea);

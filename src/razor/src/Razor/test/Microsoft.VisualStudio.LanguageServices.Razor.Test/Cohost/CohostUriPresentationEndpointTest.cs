@@ -3,8 +3,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -58,7 +60,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
@@ -130,7 +132,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
@@ -243,9 +245,9 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
         var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
+        var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, FilePathService, requestInvoker);
+        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, FilePathService, requestInvoker);
 
         var request = new VSInternalUriPresentationParams()
         {
@@ -267,7 +269,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
         {
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
-            Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
+            Assert.Equal(expected, result.DocumentChanges.Value.First[0].Edits[0].NewText);
             Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
         }
     }

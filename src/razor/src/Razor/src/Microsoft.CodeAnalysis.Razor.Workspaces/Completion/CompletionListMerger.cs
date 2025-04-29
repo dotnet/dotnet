@@ -1,5 +1,4 @@
-﻿
-// Copyright (c) .NET Foundation. All rights reserved.
+﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
@@ -8,20 +7,20 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal static class CompletionListMerger
 {
-    private const string Data1Key = nameof(MergedCompletionListData.Data1);
-    private const string Data2Key = nameof(MergedCompletionListData.Data2);
+    private static readonly string s_data1Key = nameof(MergedCompletionListData.Data1);
+    private static readonly string s_data2Key = nameof(MergedCompletionListData.Data2);
     private static readonly object s_emptyData = new();
 
     [return: NotNullIfNotNull(nameof(razorCompletionList))]
     [return: NotNullIfNotNull(nameof(delegatedCompletionList))]
-    public static RazorVSInternalCompletionList? Merge(RazorVSInternalCompletionList? razorCompletionList, RazorVSInternalCompletionList? delegatedCompletionList)
+    public static VSInternalCompletionList? Merge(VSInternalCompletionList? razorCompletionList, VSInternalCompletionList? delegatedCompletionList)
     {
         if (razorCompletionList is null)
         {
@@ -48,7 +47,7 @@ internal static class CompletionListMerger
         // We don't fully support merging edit ranges currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedItemDefaultsEditRange = razorCompletionList.ItemDefaults?.EditRange ?? delegatedCompletionList.ItemDefaults?.EditRange;
 
-        var mergedCompletionList = new RazorVSInternalCompletionList()
+        var mergedCompletionList = new VSInternalCompletionList()
         {
             CommitCharacters = mergedCommitCharacters,
             Data = mergedData,
@@ -88,14 +87,6 @@ internal static class CompletionListMerger
             return false;
         }
 
-        // Needed for tests. We shouldn't ever have RazorCompletionResolveData leak out, but in our tests we avoid some
-        // serialization boundaries, like between devenv and OOP. In production not only should it never happen, but
-        // if it did, the type of Data would be JsonElement, so we wouldn't fall into this branch anyway.
-        if (data is RazorCompletionResolveData { OriginalData: var originalData })
-        {
-            return TrySplit(originalData, out splitData);
-        }
-
         using var collector = new PooledArrayBuilder<JsonElement>();
         Split(data, ref collector.AsRef());
 
@@ -130,7 +121,8 @@ internal static class CompletionListMerger
             return;
         }
 
-        if (jsonElement.TryGetProperty(Data1Key, out _) && jsonElement.TryGetProperty(Data2Key, out _))
+        if ((jsonElement.TryGetProperty(s_data1Key, out _) || jsonElement.TryGetProperty(s_data1Key.ToLowerInvariant(), out _)) &&
+            (jsonElement.TryGetProperty(s_data2Key, out _) || jsonElement.TryGetProperty(s_data2Key.ToLowerInvariant(), out _)))
         {
             // Merged data
             var mergedCompletionListData = jsonElement.Deserialize<MergedCompletionListData>();
@@ -150,7 +142,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static void EnsureMergeableData(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
+    private static void EnsureMergeableData(VSInternalCompletionList completionListA, VSInternalCompletionList completionListB)
     {
         if (completionListA.Data != completionListB.Data &&
             (completionListA.Data is null || completionListB.Data is null))
@@ -168,7 +160,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static void EnsureMergeableCommitCharacters(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
+    private static void EnsureMergeableCommitCharacters(VSInternalCompletionList completionListA, VSInternalCompletionList completionListB)
     {
         var aInheritsCommitCharacters = completionListA.CommitCharacters is not null || completionListA.ItemDefaults?.CommitCharacters is not null;
         var bInheritsCommitCharacters = completionListB.CommitCharacters is not null || completionListB.ItemDefaults?.CommitCharacters is not null;
@@ -179,7 +171,7 @@ internal static class CompletionListMerger
             var inheritableCommitCharacterCompletionsA = GetCompletionsThatDoNotSpecifyCommitCharacters(completionListA);
             var inheritableCommitCharacterCompletionsB = GetCompletionsThatDoNotSpecifyCommitCharacters(completionListB);
             IReadOnlyList<VSInternalCompletionItem>? completionItemsToStopInheriting;
-            RazorVSInternalCompletionList? completionListToStopInheriting;
+            VSInternalCompletionList? completionListToStopInheriting;
 
             // Decide which completion list has more items that benefit from "inheriting" commit characters.
             if (inheritableCommitCharacterCompletionsA.Length >= inheritableCommitCharacterCompletionsB.Length)
@@ -214,7 +206,7 @@ internal static class CompletionListMerger
         }
     }
 
-    private static ImmutableArray<VSInternalCompletionItem> GetCompletionsThatDoNotSpecifyCommitCharacters(RazorVSInternalCompletionList completionList)
+    private static ImmutableArray<VSInternalCompletionItem> GetCompletionsThatDoNotSpecifyCommitCharacters(VSInternalCompletionList completionList)
     {
         using var inheritableCompletions = new PooledArrayBuilder<VSInternalCompletionItem>();
         for (var i = 0; i < completionList.Items.Length; i++)
@@ -234,7 +226,5 @@ internal static class CompletionListMerger
         return inheritableCompletions.ToImmutable();
     }
 
-    private record MergedCompletionListData(
-        [property: JsonPropertyName(Data1Key)] object Data1,
-        [property: JsonPropertyName(Data2Key)] object Data2);
+    private record MergedCompletionListData(object Data1, object Data2);
 }

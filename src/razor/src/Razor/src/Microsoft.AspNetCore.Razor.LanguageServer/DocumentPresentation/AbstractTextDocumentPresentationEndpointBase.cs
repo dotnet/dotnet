@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -17,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
@@ -57,9 +57,14 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = codeDocument.Source.Text;
+        if (codeDocument.IsUnsupported())
+        {
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
+            return null;
+        }
 
-        if (!sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex))
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        if (sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex) != true)
         {
             return null;
         }
@@ -128,7 +133,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
                 continue;
             }
 
-            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e));
+            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits);
             if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
@@ -177,25 +182,23 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         return remappedDocumentEdits.ToArray();
     }
 
-    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> edits)
+    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, TextEdit[] edits)
     {
-        using var mappedEdits = new PooledArrayBuilder<TextEdit>();
         if (!mapRanges)
         {
-            mappedEdits.AddRange(edits.Select(e => (TextEdit)e));
+            return edits;
         }
-        else
-        {
-            foreach (var edit in edits)
-            {
-                if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), ((TextEdit)edit).Range, out var newRange))
-                {
-                    return [];
-                }
 
-                var newEdit = LspFactory.CreateTextEdit(newRange, ((TextEdit)edit).NewText);
-                mappedEdits.Add(newEdit);
+        using var mappedEdits = new PooledArrayBuilder<TextEdit>();
+        foreach (var edit in edits)
+        {
+            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), edit.Range, out var newRange))
+            {
+                return [];
             }
+
+            var newEdit = VsLspFactory.CreateTextEdit(newRange, edit.NewText);
+            mappedEdits.Add(newEdit);
         }
 
         return mappedEdits.ToArray();

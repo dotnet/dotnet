@@ -12,14 +12,14 @@ public class TestRazorProjectItem(
     string? physicalPath = null,
     string? relativePhysicalPath = null,
     string? basePath = "/",
-    RazorFileKind? fileKind = null,
+    string? fileKind = null,
     string? cssScope = null,
     Func<Stream>? onRead = null) : RazorProjectItem
 {
-    private readonly RazorFileKind? _fileKind = fileKind;
+    private readonly string _fileKind = fileKind!;
 
     public override string BasePath => basePath!;
-    public override RazorFileKind FileKind => _fileKind ?? base.FileKind;
+    public override string FileKind => _fileKind ?? base.FileKind;
     public override string FilePath => filePath;
     public override string PhysicalPath => physicalPath!;
     public override string RelativePhysicalPath => relativePhysicalPath!;

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor.Language;
-
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 
 /// <summary>
@@ -13,5 +11,5 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 /// </remarks>
 internal interface ILegacyDocumentSnapshot
 {
-    RazorFileKind FileKind { get; }
+    string FileKind { get; }
 }

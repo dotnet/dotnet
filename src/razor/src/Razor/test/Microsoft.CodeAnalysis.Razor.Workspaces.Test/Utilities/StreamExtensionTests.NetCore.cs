@@ -87,7 +87,7 @@ public class StreamExtensionTests(ITestOutputHelper testOutputHelper) : ToolingT
             "TestNamespace",
             "Test",
             projectWorkspaceState,
-            [new DocumentSnapshotHandle(@"C:\test\document.razor", @"document.razor", RazorFileKind.Component)]);
+            [new DocumentSnapshotHandle(@"C:\test\document.razor", @"document.razor", FileKinds.Component)]);
 
         var bytesToSerialize = projectInfo.Serialize();
 

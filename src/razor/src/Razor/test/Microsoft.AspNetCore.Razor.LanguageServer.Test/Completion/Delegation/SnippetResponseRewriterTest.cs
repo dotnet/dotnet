@@ -1,17 +1,20 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Completion.Delegation;
 
-public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
+public class SnippetResponseRewriterTest(ITestOutputHelper testOutput)
+    : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
     public async Task RewriteAsync_RemovesUsingSnippetLabel()
@@ -30,7 +33,6 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : Respons
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -59,7 +61,6 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : Respons
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -93,7 +94,6 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : Respons
             cursorPosition, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
@@ -110,14 +110,18 @@ public class SnippetResponseRewriterTest(ITestOutputHelper testOutput) : Respons
         );
     }
 
-    private static RazorVSInternalCompletionList GenerateCompletionList(params (string? Label, CompletionItemKind Kind)[] itemsData)
-        => new()
-        {
-            Items = [.. itemsData.Select(itemData => new VSInternalCompletionItem()
+    private static VSInternalCompletionList GenerateCompletionList(params (string? Label, CompletionItemKind Kind)[] itemsData)
+    {
+        var items = itemsData.Select(itemData => new VSInternalCompletionItem()
             {
                 Label = itemData.Label!,
                 SortText = itemData.Label,
-                Kind = itemData.Kind
-            })]
+                Kind = itemData.Kind})
+        .ToArray();
+
+        return new VSInternalCompletionList()
+        {
+            Items = items
         };
+    }
 }

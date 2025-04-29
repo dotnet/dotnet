@@ -10,15 +10,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 
 internal class TestLSPBreakpointSpanProvider : ILSPBreakpointSpanProvider
 {
     private readonly Uri _documentUri;
-    private readonly IReadOnlyDictionary<Position, LspRange> _mappings;
+    private readonly IReadOnlyDictionary<Position, Range> _mappings;
 
-    public TestLSPBreakpointSpanProvider(Uri documentUri, IReadOnlyDictionary<Position, LspRange> mappings)
+    public TestLSPBreakpointSpanProvider(Uri documentUri, IReadOnlyDictionary<Position, Range> mappings)
     {
         if (documentUri is null)
         {
@@ -34,11 +36,11 @@ internal class TestLSPBreakpointSpanProvider : ILSPBreakpointSpanProvider
         _mappings = mappings;
     }
 
-    public Task<LspRange> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, long hostDocumentSyncVersion, Position position, CancellationToken cancellationToken)
+    public Task<Range> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, long hostDocumentSyncVersion, Position position, CancellationToken cancellationToken)
     {
         if (documentSnapshot.Uri != _documentUri)
         {
-            return SpecializedTasks.Null<LspRange>();
+            return SpecializedTasks.Null<Range>();
         }
 
         foreach (var mapping in _mappings.OrderBy(d => d.Key))
@@ -50,6 +52,6 @@ internal class TestLSPBreakpointSpanProvider : ILSPBreakpointSpanProvider
             }
         }
 
-        return SpecializedTasks.Null<LspRange>();
+        return SpecializedTasks.Null<Range>();
     }
 }

@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -21,15 +23,17 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostUriPresentationEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal sealed class CohostUriPresentationEndpoint(
+internal class CohostUriPresentationEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
+    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     IFilePathService filePathService,
-    IHtmlRequestInvoker requestInvoker)
+    LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalUriPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly IFilePathService _filePathService = filePathService;
-    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -89,16 +93,25 @@ internal sealed class CohostUriPresentationEndpoint(
             return null;
         }
 
-        var workspaceEdit = await _requestInvoker.MakeHtmlLspRequestAsync<VSInternalUriPresentationParams, WorkspaceEdit>(
-            razorDocument,
+        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+        if (htmlDocument is null)
+        {
+            return null;
+        }
+
+        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
+
+        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalUriPresentationParams, WorkspaceEdit?>(
+            htmlDocument.Buffer,
             VSInternalMethods.TextDocumentUriPresentationName,
+            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
 
         // TODO: We _really_ should go back to OOP to remap the response to razor, but the fact is, Razor and Html are 1:1 mappings, so we're
         //       just adjusting Uris, and we don't need OOP for that. If we ever do proper Html mapping then this will not be true.
 
-        if (workspaceEdit is null)
+        if (result?.Response is not { } workspaceEdit)
         {
             return null;
         }

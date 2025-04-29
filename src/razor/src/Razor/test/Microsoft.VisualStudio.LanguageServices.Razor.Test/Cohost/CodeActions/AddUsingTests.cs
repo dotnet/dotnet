@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -11,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [Fact]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify()
     {
         var input = """
@@ -28,10 +27,10 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
             }
             """;
 
-        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.FullyQualify);
+        await VerifyCodeActionAsync(input, expected, "System.Text.StringBuilder");
     }
 
-    [Fact]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task FullyQualify_Multiple()
     {
         await VerifyCodeActionAsync(
@@ -55,11 +54,11 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
                     {
                     }
                     """)],
-            codeActionName: LanguageServerConstants.CodeActions.FullyQualify,
+            codeActionName: "Fully qualify 'StringBuilder'",
             childActionIndex: 0);
     }
 
-    [Fact]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing()
     {
         var input = """
@@ -80,7 +79,7 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [Fact]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_Typo()
     {
         var input = """
@@ -101,7 +100,7 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.AddImport);
     }
 
-    [Fact]
+    [Fact(Skip = "Need to map uri back to source generated document")]
     public async Task AddUsing_WithExisting()
     {
         var input = """

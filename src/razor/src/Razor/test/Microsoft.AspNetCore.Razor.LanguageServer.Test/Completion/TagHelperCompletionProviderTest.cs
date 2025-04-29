@@ -5,6 +5,8 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -939,10 +941,10 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
         TestFileMarkupParser.GetPosition(markup, out var documentContent, out var position);
         var codeDocument = CreateCodeDocument(documentContent, isRazorFile, tagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();
-        var context = codeDocument.GetRequiredTagHelperContext();
+        var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position);
-        return new RazorCompletionContext(position, owner, syntaxTree, context, Options: options);
+        return new RazorCompletionContext(position, owner, syntaxTree, tagHelperDocumentContext, Options: options);
     }
 }

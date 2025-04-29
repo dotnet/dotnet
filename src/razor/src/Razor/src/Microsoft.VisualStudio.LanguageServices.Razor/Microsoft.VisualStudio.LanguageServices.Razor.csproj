@@ -25,7 +25,6 @@
     <PackageReference Include="Microsoft.VisualStudio.LanguageServices" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.SDK" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" />
 
     <PackageReference Include="Microsoft.VisualStudio.LiveShare" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
@@ -63,10 +62,6 @@
     <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
     <AdditionalFiles Include="$(RepoRoot)src\Razor\vs-threading.MainThreadAssertingMethods.txt" Link="AnalyzerConfig\vs-threading.MainThreadAssertingMethods.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -191,7 +186,5 @@
   </Target>
 
   <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
-
-  <Import Project="..\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems" Label="Shared" />
 
 </Project>

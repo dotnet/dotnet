@@ -4,20 +4,16 @@
 using System.Composition;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
 [ExportRazorLspServiceFactory(typeof(RazorLspDynamicFileInfoProvider)), Shared]
-[method: ImportingConstructor]
-internal sealed class DynamicFileProviderFactory(LanguageServerFeatureOptions featureOptions) : AbstractRazorLspServiceFactory
+internal sealed class DynamicFileProviderFactory : AbstractRazorLspServiceFactory
 {
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
-
     protected override AbstractRazorLspService CreateService(IRazorLspServices lspServices)
     {
         var clientLanguageServerManager = lspServices.GetRequiredService<IRazorClientLanguageServerManager>();
-        return new LspDynamicFileProvider(clientLanguageServerManager, _featureOptions);
+        return new LspDynamicFileProvider(clientLanguageServerManager);
     }
 }
 

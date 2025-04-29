@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,7 +36,7 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Hello World")]
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Hello World")]
                     }
                 }
             },
@@ -48,9 +49,9 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
+        var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostTextPresentationEndpoint(FilePathService, requestInvoker);
+        var endpoint = new CohostTextPresentationEndpoint(TestHtmlDocumentSynchronizer.Instance, FilePathService, requestInvoker);
 
         var request = new VSInternalTextPresentationParams()
         {
@@ -72,7 +73,7 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
         {
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
-            Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
+            Assert.Equal(expected, result.DocumentChanges.Value.First[0].Edits[0].NewText);
             Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
         }
     }

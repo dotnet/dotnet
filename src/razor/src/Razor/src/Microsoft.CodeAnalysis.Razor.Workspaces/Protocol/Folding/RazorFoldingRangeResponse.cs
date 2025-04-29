@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 

@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 /// <summary>
 /// Providers a bridge from CLaSP, which uses ILspLogger, to our logging infrastructure, which uses ILogger
 /// </summary>
-internal partial class ClaspLoggingBridge : ILspLogger
+internal class ClaspLoggingBridge : ILspLogger
 {
     public const string LogStartContextMarker = "[StartContext]";
     public const string LogEndContextMarker = "[EndContext]";
@@ -24,6 +24,18 @@ internal partial class ClaspLoggingBridge : ILspLogger
         // We're creating this on behalf of CLaSP, because it doesn't know how to use our ILoggerFactory, so using that as the category name.
         _logger = loggerFactory.GetOrCreateLogger("CLaSP");
         _telemetryReporter = telemetryReporter;
+    }
+
+    public void LogStartContext(string message, params object[] @params)
+    {
+        // This is a special log message formatted so that the LogHub logger can detect it, and trigger the right trace event
+        _logger.LogInformation($"{LogStartContextMarker} {message}");
+    }
+
+    public void LogEndContext(string message, params object[] @params)
+    {
+        // This is a special log message formatted so that the LogHub logger can detect it, and trigger the right trace event
+        _logger.LogInformation($"{LogEndContextMarker} {message}");
     }
 
     public void LogError(string message, params object[] @params)
@@ -65,10 +77,5 @@ internal partial class ClaspLoggingBridge : ILspLogger
     public void LogWarning(string message, params object[] @params)
     {
         _logger.LogWarning($"{message}: {string.Join(",", @params)}");
-    }
-
-    public IDisposable? CreateContext(string context)
-    {
-        return new LspLoggingScope(context, _logger);
     }
 }

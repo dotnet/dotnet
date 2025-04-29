@@ -9,8 +9,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
+using LspLocation = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
+using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -109,7 +112,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             },
         });
 
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentImplementationName, htmlResponse)]);
+        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentImplementationName, htmlResponse)]);
 
         await VerifyGoToImplementationResultAsync(input, document, requestInvoker);
     }
@@ -118,22 +121,22 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
     {
         var document = CreateProjectAndRazorDocument(input.Text);
 
-        var requestInvoker = new TestHtmlRequestInvoker();
+        var requestInvoker = new TestLSPRequestInvoker();
 
         await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
-    private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
+    private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
     {
         await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
-    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
+    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var filePathService = new RemoteFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToImplementationEndpoint(RemoteServiceInvoker, requestInvoker, filePathService);
+        var endpoint = new CohostGoToImplementationEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, filePathService);
 
         var position = inputText.GetPosition(input.Position);
         var textDocumentPositionParams = new TextDocumentPositionParams
@@ -147,10 +150,18 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         if (result.Value.TryGetFirst(out var roslynLocations))
         {
             var expected = input.Spans.Select(s => inputText.GetRange(s).ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
-            var actual = roslynLocations.Select(l => l.Range.ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
+            var actual = roslynLocations.Select(l => RoslynLspExtensions.ToLinePositionSpan(l.Range)).OrderBy(r => r.Start.Line).ToArray();
             Assert.Equal(expected, actual);
 
             Assert.All(roslynLocations, l => l.Uri.Equals(document.CreateUri()));
+        }
+        else if (result.Value.TryGetSecond(out var vsLocations))
+        {
+            var expected = input.Spans.Select(s => inputText.GetRange(s).ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
+            var actual = vsLocations.Select(l => l.Range.ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
+            Assert.Equal(expected, actual);
+
+            Assert.All(vsLocations, l => l.Uri.Equals(document.CreateUri()));
         }
         else
         {

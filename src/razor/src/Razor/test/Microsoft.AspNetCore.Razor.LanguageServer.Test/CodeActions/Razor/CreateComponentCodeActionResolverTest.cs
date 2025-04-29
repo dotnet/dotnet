@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,12 +21,35 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
+    public async Task Handle_Unsupported()
+    {
+        // Arrange
+        var documentPath = new Uri("c:/Test.razor");
+        var contents = $"@page \"/test\"";
+        var codeDocument = CreateCodeDocument(contents);
+        codeDocument.SetUnsupported();
+
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new CreateComponentCodeActionResolver(TestLanguageServerFeatureOptions.Instance);
+        var data = JsonSerializer.SerializeToElement(new CreateComponentCodeActionParams()
+        {
+            Path = "c:/Another.razor",
+        });
+
+        // Act
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
+
+        // Assert
+        Assert.Null(workspaceEdit);
+    }
+
+    [Fact]
     public async Task Handle_InvalidFileKind()
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
         var contents = $"@page \"/test\"";
-        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
+        var codeDocument = CreateCodeDocument(contents, fileKind: FileKinds.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var resolver = new CreateComponentCodeActionResolver(TestLanguageServerFeatureOptions.Instance);
@@ -101,16 +125,18 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
 
         var editNewComponentChange = workspaceEdit.DocumentChanges.Value.Last();
         var editNewComponentEdit = editNewComponentChange.First.Edits.First();
-        Assert.Contains("@namespace Another.Namespace", ((TextEdit)editNewComponentEdit).NewText, StringComparison.Ordinal);
+        Assert.Contains("@namespace Another.Namespace", editNewComponentEdit.NewText, StringComparison.Ordinal);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
+    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
     {
+        fileKind ??= FileKinds.Component;
+
         var projectItem = new TestRazorProjectItem(
             filePath: "c:/Test.razor",
             physicalPath: "c:/Test.razor",
             relativePhysicalPath: "Test.razor",
-            fileKind: fileKind ?? RazorFileKind.Component)
+            fileKind: fileKind)
         {
             Content = text
         };

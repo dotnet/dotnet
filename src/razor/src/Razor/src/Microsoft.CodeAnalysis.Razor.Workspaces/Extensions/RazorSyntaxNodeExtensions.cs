@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -198,7 +199,7 @@ internal static class RazorSyntaxNodeExtensions
 
         Debug.Assert(start <= sourceText.Length && end <= sourceText.Length, "Node position exceeds source length.");
 
-        if (start == sourceText.Length && node.Width == 0)
+        if (start == sourceText.Length && node.FullWidth == 0)
         {
             // Marker symbol at the end of the document.
             var location = node.GetSourceLocation(sourceDocument);
@@ -256,14 +257,14 @@ internal static class RazorSyntaxNodeExtensions
 
     public static SyntaxNode? FindNode(this SyntaxNode @this, TextSpan span, bool includeWhitespace = false, bool getInnermostNodeForTie = false)
     {
-        if (!@this.Span.Contains(span))
+        if (!@this.FullSpan.Contains(span))
         {
             return ThrowHelper.ThrowArgumentOutOfRangeException<SyntaxNode?>(nameof(span));
         }
 
         var node = @this.FindToken(span.Start, includeWhitespace)
             .Parent!
-            .FirstAncestorOrSelf<SyntaxNode>(a => a.Span.Contains(span));
+            .FirstAncestorOrSelf<SyntaxNode>(a => a.FullSpan.Contains(span));
 
         node.AssumeNotNull();
 
@@ -282,7 +283,7 @@ internal static class RazorSyntaxNodeExtensions
             {
                 var parent = node.Parent;
                 // NOTE: We care about FullSpan equality, but FullWidth is cheaper and equivalent.
-                if (parent == null || parent.Width != node.Width)
+                if (parent == null || parent.FullWidth != node.FullWidth)
                 {
                     break;
                 }
@@ -304,10 +305,10 @@ internal static class RazorSyntaxNodeExtensions
     {
         // TODO: This looks like a potential allocation hotspot and performance bottleneck.
 
-        var nodeString = node.RemoveEmptyNewLines().ToString();
+        var nodeString = node.RemoveEmptyNewLines().ToFullString();
         var matchingNode = target.DescendantNodesAndSelf()
             // Empty new lines can affect our comparison so we remove them since they're insignificant.
-            .Where(n => n.RemoveEmptyNewLines().ToString() == nodeString)
+            .Where(n => n.RemoveEmptyNewLines().ToFullString() == nodeString)
             .FirstOrDefault();
 
         return matchingNode is not null;
@@ -352,7 +353,7 @@ internal static class RazorSyntaxNodeExtensions
                 // code {
                 //    var foo = "bar";
                 // }
-                var directive = body.Keyword.ToString();
+                var directive = body.Keyword.ToFullString();
                 if (directive != "code")
                 {
                     return false;
@@ -472,7 +473,7 @@ internal static class RazorSyntaxNodeExtensions
             var start = node.Position + parentStart;
             var end = node.EndPosition + parentStart;
 
-            if (start == sourceText.Length && node.Width == 0)
+            if (start == sourceText.Length && node.FullWidth == 0)
             {
                 // Marker symbol at the end of the document.
                 var location = node.GetSourceLocation(source);

@@ -1,31 +1,21 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
-internal sealed partial class LspDynamicFileProvider(IRazorClientLanguageServerManager clientLanguageServerManager, LanguageServerFeatureOptions languageServerFeatureOptions) : RazorLspDynamicFileInfoProvider
+internal sealed partial class LspDynamicFileProvider(IRazorClientLanguageServerManager clientLanguageServerManager) : RazorLspDynamicFileInfoProvider
 {
     private const string ProvideRazorDynamicFileInfoMethodName = "razor/provideDynamicFileInfo";
     private const string RemoveRazorDynamicFileInfoMethodName = "razor/removeDynamicFileInfo";
 
     private readonly IRazorClientLanguageServerManager _clientLanguageServerManager = clientLanguageServerManager;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public override async Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(Workspace workspace, ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        if (_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            return null;
-        }
-
         var razorUri = new Uri(filePath);
 
         var requestParams = new RazorProvideDynamicFileParams
@@ -58,10 +48,10 @@ internal sealed partial class LspDynamicFileProvider(IRazorClientLanguageServerM
             _clientLanguageServerManager);
 
         return new RazorDynamicFileInfo(
-            RazorUri.GetDocumentFilePathFromUri(response.CSharpDocument.Uri),
+            response.CSharpDocument.Uri.ToString(),
             SourceCodeKind.Regular,
             textLoader,
-            documentServiceProvider: new LspDocumentServiceProvider(_clientLanguageServerManager));
+            documentServiceProvider: EmptyServiceProvider.Instance);
     }
 
     public override Task RemoveDynamicFileInfoAsync(Workspace workspace, ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)

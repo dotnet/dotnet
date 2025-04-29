@@ -1,5 +1,5 @@
 {
-  "__Version": 8,
+  "__Version": 7,
   "ProjectKey": "C:/Users/admin/location/blazorserver/obj/Debug/net7.0/",
   "FilePath": "C:\\Users\\admin\\location\\blazorserver\\blazorserver.csproj",
   "Configuration": {
@@ -17812,53 +17812,63 @@
   "Documents": [
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Shared\\MainLayout.razor",
-      "TargetPath": "Shared\\MainLayout.razor"
+      "TargetPath": "Shared\\MainLayout.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Shared\\SurveyPrompt.razor",
-      "TargetPath": "Shared\\SurveyPrompt.razor"
+      "TargetPath": "Shared\\SurveyPrompt.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\Component.razor",
-      "TargetPath": "Pages\\Component.razor"
+      "TargetPath": "Pages\\Component.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\_Host.cshtml",
       "TargetPath": "Pages\\_Host.cshtml",
-      "FileKind": 3
+      "FileKind": "mvc"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\Error.razor",
-      "TargetPath": "Pages\\Error.razor"
+      "TargetPath": "Pages\\Error.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\_Imports.razor",
       "TargetPath": "_Imports.razor",
-      "FileKind": 2
+      "FileKind": "componentImport"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Shared\\NavMenu.razor",
-      "TargetPath": "Shared\\NavMenu.razor"
+      "TargetPath": "Shared\\NavMenu.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\Counter.razor",
-      "TargetPath": "Pages\\Counter.razor"
+      "TargetPath": "Pages\\Counter.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\Index.razor",
-      "TargetPath": "Pages\\Index.razor"
+      "TargetPath": "Pages\\Index.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\Component1.razor",
-      "TargetPath": "Pages\\Component1.razor"
+      "TargetPath": "Pages\\Component1.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\Pages\\FetchData.razor",
-      "TargetPath": "Pages\\FetchData.razor"
+      "TargetPath": "Pages\\FetchData.razor",
+      "FileKind": "component"
     },
     {
       "FilePath": "C:\\Users\\admin\\location\\blazorserver\\App.razor",
-      "TargetPath": "App.razor"
+      "TargetPath": "App.razor",
+      "FileKind": "component"
     }
   ]
 }

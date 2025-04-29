@@ -3,6 +3,10 @@
 
 using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using static Microsoft.VisualStudio.LanguageServer.Protocol.VsLspExtensions;
+using static Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
+using RoslynInsertTextFormat = Roslyn.LanguageServer.Protocol.InsertTextFormat;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
 
@@ -10,19 +14,19 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
 internal readonly record struct RemoteAutoInsertTextEdit(
     [property: DataMember(Order = 0)] LinePositionSpan LinePositionSpan,
     [property: DataMember(Order = 1)] string NewText,
-    [property: DataMember(Order = 2)] InsertTextFormat InsertTextFormat)
+    [property: DataMember(Order = 2)] RoslynInsertTextFormat InsertTextFormat)
 {
     public static RemoteAutoInsertTextEdit FromLspInsertTextEdit(VSInternalDocumentOnAutoInsertResponseItem edit)
         => new(
             edit.TextEdit.Range.ToLinePositionSpan(),
             edit.TextEdit.NewText,
-            edit.TextEditFormat);
+            (RoslynInsertTextFormat)edit.TextEditFormat);
 
     public static VSInternalDocumentOnAutoInsertResponseItem ToLspInsertTextEdit(RemoteAutoInsertTextEdit edit)
         => new()
         {
-            TextEdit = LspFactory.CreateTextEdit(edit.LinePositionSpan, edit.NewText),
-            TextEditFormat = edit.InsertTextFormat,
+            TextEdit = VsLspFactory.CreateTextEdit(edit.LinePositionSpan, edit.NewText),
+            TextEditFormat = (InsertTextFormat)edit.InsertTextFormat,
         };
 
     public override string ToString()

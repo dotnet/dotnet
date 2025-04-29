@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -61,7 +62,7 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
 
     private async Task VerifyDefinitionAsync(TestCode input, TestCode expectedDocument, params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, FileKinds.Component, additionalFiles);
 
         var service = OOPExportProvider.GetExportedValue<IRazorComponentDefinitionService>();
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();

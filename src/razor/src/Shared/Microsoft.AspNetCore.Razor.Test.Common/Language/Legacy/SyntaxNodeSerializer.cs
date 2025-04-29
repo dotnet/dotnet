@@ -49,7 +49,7 @@ public static class SyntaxNodeSerializer
             _visitor.Visit(node);
             _writer.WriteLine();
 
-            if (!node.IsToken)
+            if (!node.IsToken && !node.IsTrivia)
             {
                 _visitor.Depth++;
                 node = base.DefaultVisit(node);

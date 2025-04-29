@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -274,7 +275,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         string[] codeToMap,
         string expectedCode,
         string razorFilePath = RazorFilePath,
-        LspLocation[][]? locations = null)
+        Location[][]? locations = null)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(originalCode, out var output, out int cursorPosition, out ImmutableArray<TextSpan> spans);
@@ -283,7 +284,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var csharpDocumentUri = new Uri(razorFilePath + "__virtual.g.cs");
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorMappingService: null, capabilitiesUpdater: null, DisposalToken);
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
         var languageServer = new MapCodeServer(csharpServer, csharpDocumentUri);
@@ -310,7 +311,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 FocusLocations = locations ??
                 [
                     [
-                        new LspLocation
+                        new Location
                         {
                             Range = sourceText.GetZeroWidthRange(cursorPosition),
                             Uri = new Uri(razorFilePath)
@@ -338,15 +339,19 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         AssertEx.EqualOrDiff(expectedCode, actualCode.ToString());
     }
 
-    private sealed class MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
+    private class MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
-        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorMapCodeEndpoint, method);
             var delegatedMapCodeParams = Assert.IsType<DelegatedMapCodeParams>(@params);
@@ -367,8 +372,14 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 Mappings = mappings
             };
 
-            return csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, TResponse>(
+            var result = await csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
                 VSInternalMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
+            if (result is null)
+            {
+                return (TResponse)(object)new WorkspaceEdit();
+            }
+
+            return (TResponse)(object)result;
         }
     }
 
@@ -383,7 +394,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
             foreach (var currentEdit in edit.Edits)
             {
-                sourceText = sourceText.WithChanges(sourceText.GetTextChange(((TextEdit)currentEdit)));
+                sourceText = sourceText.WithChanges(sourceText.GetTextChange(currentEdit));
             }
         }
 

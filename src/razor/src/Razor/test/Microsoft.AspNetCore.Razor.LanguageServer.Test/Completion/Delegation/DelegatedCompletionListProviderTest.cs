@@ -1,43 +1,43 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class DelegatedCompletionListProviderTest : CompletionTestBase
+public class DelegatedCompletionListProviderTest : LanguageServerTestBase
 {
-    private static readonly RazorCompletionOptions s_defaultRazorCompletionOptions = new(
-        SnippetsSupported: true,
-        AutoInsertAttributeQuotes: true,
-        CommitElementsWithSpace: true);
-
-    private static readonly VSInternalClientCapabilities s_clientCapabilities = new();
-
-    private readonly DelegatedCompletionListProvider _provider;
-    private DelegatedCompletionParams? _delegatedParams;
+    private readonly TestDelegatedCompletionListProvider _provider;
+    private readonly VSInternalClientCapabilities _clientCapabilities;
+    private readonly RazorCompletionOptions _defaultRazorCompletionOptions;
 
     public DelegatedCompletionListProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var clientConnection = CreateClientConnectionForCompletion(response: null, processParams: @params =>
-        {
-            _delegatedParams = @params;
-        });
-
-        _provider = CreateDelegatedCompletionListProvider(clientConnection);
+        _provider = TestDelegatedCompletionListProvider.Create(LoggerFactory);
+        _clientCapabilities = new VSInternalClientCapabilities();
+        _defaultRazorCompletionOptions = new RazorCompletionOptions(
+            SnippetsSupported: true,
+            AutoInsertAttributeQuotes: true,
+            CommitElementsWithSpace: true);
     }
 
     [Fact]
@@ -54,18 +54,19 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 1,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
-        Assert.NotNull(_delegatedParams);
-        Assert.Equal(RazorLanguageKind.Html, _delegatedParams.ProjectedKind);
-        Assert.Equal(LspFactory.CreatePosition(0, 1), _delegatedParams.ProjectedPosition);
-        Assert.Equal(CompletionTriggerKind.Invoked, _delegatedParams.Context.TriggerKind);
-        Assert.Equal(1, _delegatedParams.Identifier.Version);
-        Assert.Null(_delegatedParams.ProvisionalTextEdit);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.NotNull(delegatedParameters);
+        Assert.Equal(RazorLanguageKind.Html, delegatedParameters.ProjectedKind);
+        Assert.Equal(VsLspFactory.CreatePosition(0, 1), delegatedParameters.ProjectedPosition);
+        Assert.Equal(CompletionTriggerKind.Invoked, delegatedParameters.Context.TriggerKind);
+        Assert.Equal(1, delegatedParameters.Identifier.Version);
+        Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
     [Fact]
@@ -87,19 +88,20 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 1,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
-        Assert.NotNull(_delegatedParams);
-        Assert.Equal(RazorLanguageKind.Html, _delegatedParams.ProjectedKind);
-        Assert.Equal(LspFactory.CreatePosition(0, 1), _delegatedParams.ProjectedPosition);
-        Assert.Equal(CompletionTriggerKind.TriggerCharacter, _delegatedParams.Context.TriggerKind);
-        Assert.Equal(VSInternalCompletionInvokeKind.Typing, _delegatedParams.Context.InvokeKind);
-        Assert.Equal(1, _delegatedParams.Identifier.Version);
-        Assert.Null(_delegatedParams.ProvisionalTextEdit);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.NotNull(delegatedParameters);
+        Assert.Equal(RazorLanguageKind.Html, delegatedParameters.ProjectedKind);
+        Assert.Equal(VsLspFactory.CreatePosition(0, 1), delegatedParameters.ProjectedPosition);
+        Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
+        Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
+        Assert.Equal(1, delegatedParameters.Identifier.Version);
+        Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
     [Fact]
@@ -121,13 +123,14 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 1,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
-        Assert.Null(_delegatedParams);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.Null(delegatedParameters);
     }
 
     [Fact]
@@ -140,13 +143,9 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             TriggerKind = CompletionTriggerKind.TriggerCharacter,
             TriggerCharacter = "<",
         };
-
         var codeDocument = CreateCodeDocument("<");
         var documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml", codeDocument);
-
-        var clientConnection = CreateClientConnectionForCompletionWithNullResponse();
-
-        var provider = CreateDelegatedCompletionListProvider(clientConnection);
+        var provider = TestDelegatedCompletionListProvider.CreateWithNullResponse(LoggerFactory);
 
         // Act
         var delegatedCompletionList = await provider.GetCompletionListAsync(
@@ -154,8 +153,8 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 1,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
@@ -171,7 +170,6 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
         var completionList = await GetCompletionListAsync("@$$", CompletionTriggerKind.Invoked);
 
         // Assert
-        Assert.NotNull(completionList);
         Assert.Contains(completionList.Items, item => item.Label == "System");
     }
 
@@ -182,7 +180,6 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
         var completionList = await GetCompletionListAsync("@$$", CompletionTriggerKind.TriggerCharacter);
 
         // Assert
-        Assert.NotNull(completionList);
         Assert.Contains(completionList.Items, item => item.Label == "System");
     }
 
@@ -193,7 +190,6 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
         var completionList = await GetCompletionListAsync("@(DateTime.$$)", CompletionTriggerKind.TriggerCharacter);
 
         // Assert
-        Assert.NotNull(completionList);
         Assert.Contains(completionList.Items, item => item.Label == "Now");
     }
 
@@ -211,14 +207,15 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 11,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
         Assert.Null(completionList);
-        Assert.Null(_delegatedParams);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.Null(delegatedParameters);
     }
 
     [Fact]
@@ -240,21 +237,22 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 10,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
-        Assert.NotNull(_delegatedParams);
-        Assert.Equal(RazorLanguageKind.CSharp, _delegatedParams.ProjectedKind);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.NotNull(delegatedParameters);
+        Assert.Equal(RazorLanguageKind.CSharp, delegatedParameters.ProjectedKind);
 
         // Just validating that we're generating code in a way that's different from the top-level document. Don't need to be specific.
-        Assert.True(_delegatedParams.ProjectedPosition.Line > 2);
-        Assert.Equal(CompletionTriggerKind.TriggerCharacter, _delegatedParams.Context.TriggerKind);
-        Assert.Equal(VSInternalCompletionInvokeKind.Typing, _delegatedParams.Context.InvokeKind);
-        Assert.Equal(1, _delegatedParams.Identifier.Version);
-        Assert.NotNull(_delegatedParams.ProvisionalTextEdit);
+        Assert.True(delegatedParameters.ProjectedPosition.Line > 2);
+        Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
+        Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
+        Assert.Equal(1, delegatedParameters.Identifier.Version);
+        Assert.NotNull(delegatedParameters.ProvisionalTextEdit);
     }
 
     [Fact]
@@ -276,21 +274,22 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             absoluteIndex: 10,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         // Assert
-        Assert.NotNull(_delegatedParams);
-        Assert.Equal(RazorLanguageKind.CSharp, _delegatedParams.ProjectedKind);
+        var delegatedParameters = _provider.DelegatedParams;
+        Assert.NotNull(delegatedParameters);
+        Assert.Equal(RazorLanguageKind.CSharp, delegatedParameters.ProjectedKind);
 
         // Just validating that we're generating code in a way that's different from the top-level document. Don't need to be specific.
-        Assert.True(_delegatedParams.ProjectedPosition.Line > 2);
-        Assert.Equal(CompletionTriggerKind.TriggerCharacter, _delegatedParams.Context.TriggerKind);
-        Assert.Equal(VSInternalCompletionInvokeKind.Typing, _delegatedParams.Context.InvokeKind);
-        Assert.Equal(1, _delegatedParams.Identifier.Version);
-        Assert.Null(_delegatedParams.ProvisionalTextEdit);
+        Assert.True(delegatedParameters.ProjectedPosition.Line > 2);
+        Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
+        Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
+        Assert.Equal(1, delegatedParameters.Identifier.Version);
+        Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
     [Theory]
@@ -309,20 +308,7 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
     [InlineData("<div></div$$>", false)]
     public async Task ShouldIncludeSnippets(string input, bool shouldIncludeSnippets)
     {
-        var requestSent = false;
-
-        var clientConnection = TestClientConnection.Create(builder =>
-        {
-            builder.AddFactory<DelegatedCompletionParams, RazorVSInternalCompletionList?>(
-                LanguageServerConstants.RazorCompletionEndpointName,
-                (_, @params, _) =>
-            {
-                requestSent = true;
-                Assert.Equal(shouldIncludeSnippets, @params.ShouldIncludeSnippets);
-
-                return Task.FromResult((RazorVSInternalCompletionList?)null);
-            });
-        });
+        var clientConnection = new TestClientConnection();
 
         TestFileMarkupParser.GetPosition(input, out var code, out var cursorPosition);
         var codeDocument = CreateCodeDocument(code);
@@ -335,7 +321,20 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out generatedPosition, out It.Ref<int>.IsAny))
             .Returns(true);
 
-        var completionProvider = CreateDelegatedCompletionListProvider(clientConnection, documentMappingServiceMock.Object);
+        var completionProvider = new DelegatedCompletionListProvider(
+            documentMappingServiceMock.Object,
+            clientConnection,
+            new CompletionListCache(),
+            new CompletionTriggerAndCommitCharacters(TestLanguageServerFeatureOptions.Instance));
+
+        var requestSent = false;
+        clientConnection.RequestSent += (s, o) =>
+        {
+            requestSent = true;
+
+            var @params = Assert.IsType<DelegatedCompletionParams>(o);
+            Assert.Equal(shouldIncludeSnippets, @params.ShouldIncludeSnippets);
+        };
 
         var completionContext = new VSInternalCompletionContext()
         {
@@ -344,20 +343,20 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             TriggerCharacter = ".",
         };
 
-        _ = await completionProvider.GetCompletionListAsync(
+        await completionProvider.GetCompletionListAsync(
             codeDocument,
             cursorPosition,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             DisposalToken);
 
         Assert.True(requestSent);
     }
 
-    private async Task<RazorVSInternalCompletionList?> GetCompletionListAsync(string content, CompletionTriggerKind triggerKind)
+    private async Task<VSInternalCompletionList> GetCompletionListAsync(string content, CompletionTriggerKind triggerKind)
     {
         TestFileMarkupParser.GetPosition(content, out var output, out var cursorPosition);
         var codeDocument = CreateCodeDocument(output);
@@ -368,14 +367,13 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             CompletionProvider = new CompletionOptions
             {
                 ResolveProvider = true,
-                TriggerCharacters = [" ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~"]
+                TriggerCharacters = new[] { " ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~" }
             }
         };
-
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, serverCapabilities, DisposalToken);
 
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var triggerCharacter = triggerKind == CompletionTriggerKind.TriggerCharacter ? output[cursorPosition - 1].ToString() : null;
         var invocationKind = triggerKind == CompletionTriggerKind.TriggerCharacter ? VSInternalCompletionInvokeKind.Typing : VSInternalCompletionInvokeKind.Explicit;
@@ -386,21 +384,44 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
             TriggerCharacter = triggerCharacter,
             InvokeKind = invocationKind,
         };
-
         var documentContext = TestDocumentContext.Create("C:/path/to/file.razor", codeDocument);
-        var clientConnection = CreateClientConnectionForCompletion(csharpServer);
-        var provider = CreateDelegatedCompletionListProvider(clientConnection);
+        var provider = TestDelegatedCompletionListProvider.Create(csharpServer, LoggerFactory, DisposalToken);
 
         var completionList = await provider.GetCompletionListAsync(
             codeDocument,
             absoluteIndex: cursorPosition,
             completionContext,
             documentContext,
-            s_clientCapabilities,
-            s_defaultRazorCompletionOptions,
+            _clientCapabilities,
+            _defaultRazorCompletionOptions,
             correlationId: Guid.Empty,
             cancellationToken: DisposalToken);
 
         return completionList;
+    }
+
+    private class TestClientConnection(object response = null) : IClientConnection
+    {
+        public event EventHandler<object> NotificationSent;
+        public event EventHandler<object> RequestSent;
+
+        private object _response = response;
+
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        {
+            NotificationSent?.Invoke(this, @params);
+            return Task.CompletedTask;
+        }
+
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        {
+            RequestSent?.Invoke(this, @params);
+            return Task.FromResult((TResponse)_response);
+        }
     }
 }

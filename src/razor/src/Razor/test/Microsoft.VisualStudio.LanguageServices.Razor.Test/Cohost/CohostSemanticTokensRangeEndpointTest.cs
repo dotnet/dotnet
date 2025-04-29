@@ -85,7 +85,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: FileKinds.Legacy);
     }
 
     [Theory]
@@ -110,15 +110,10 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, precise, fileKind: FileKinds.Legacy);
     }
 
-    private async Task VerifySemanticTokensAsync(
-        string input,
-        bool colorBackground,
-        bool precise,
-        RazorFileKind? fileKind = null,
-        [CallerMemberName] string? testName = null)
+    private async Task VerifySemanticTokensAsync(string input, bool colorBackground, bool precise, string? fileKind = null, [CallerMemberName] string? testName = null)
     {
         var document = CreateProjectAndRazorDocument(input, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
@@ -134,7 +129,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         var clientSettingsManager = new ClientSettingsManager([], null, null);
         clientSettingsManager.Update(ClientAdvancedSettings.Default with { ColorBackground = colorBackground });
 
-        var endpoint = new CohostSemanticTokensRangeEndpoint(RemoteServiceInvoker, clientSettingsManager, NoOpTelemetryReporter.Instance);
+        var endpoint = new CohostSemanticTokensRangeEndpoint(RemoteServiceInvoker, clientSettingsManager, legend, NoOpTelemetryReporter.Instance);
 
         var span = new LinePositionSpan(new(0, 0), new(sourceText.Lines.Count, 0));
 

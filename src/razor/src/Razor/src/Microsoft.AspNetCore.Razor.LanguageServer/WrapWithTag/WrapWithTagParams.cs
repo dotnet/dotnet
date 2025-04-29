@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
@@ -20,7 +21,7 @@ internal class WrapWithTagParams(TextDocumentIdentifier textDocument)
     /// Gets or sets the selection range to be wrapped.
     /// </summary>
     [JsonPropertyName("_vs_range")]
-    public LspRange? Range { get; set; }
+    public Range? Range { get; set; }
 
     /// <summary>
     /// Gets or sets the wrapping tag name.

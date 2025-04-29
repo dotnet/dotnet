@@ -15,6 +15,8 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -30,13 +32,15 @@ internal sealed class CohostCodeActionsResolveEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     IClientSettingsManager clientSettingsManager,
-    IHtmlRequestInvoker requestInvoker)
+    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
+    LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<CodeAction, CodeAction?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -99,15 +103,18 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
             var uri = resolveParams.DelegatedDocumentUri.AssumeNotNull();
 
-            var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(uri, cancellationToken).ConfigureAwait(false);
-            if (generatedDocument is null)
+            if (!razorDocument.Project.TryGetCSharpDocument(uri, out var generatedDocument))
             {
                 return codeAction;
             }
 
             var resourceOptions = _clientCapabilitiesService.ClientCapabilities.Workspace?.WorkspaceEdit?.ResourceOperations ?? [];
+            var roslynCodeAction = JsonHelpers.ToRoslynLSP<Roslyn.LanguageServer.Protocol.VSInternalCodeAction, CodeAction>(codeAction).AssumeNotNull();
+            var roslynResourceOptions = JsonHelpers.ToRoslynLSP<Roslyn.LanguageServer.Protocol.ResourceOperationKind[], ResourceOperationKind[]>(resourceOptions).AssumeNotNull();
 
-            return await CodeActions.ResolveCodeActionAsync(generatedDocument, codeAction, resourceOptions, cancellationToken).ConfigureAwait(false);
+            var resolvedCodeAction = await CodeActions.ResolveCodeActionAsync(generatedDocument, roslynCodeAction, roslynResourceOptions, cancellationToken).ConfigureAwait(false);
+
+            return JsonHelpers.ToVsLSP<RazorVSInternalCodeAction, Roslyn.LanguageServer.Protocol.CodeAction>(resolvedCodeAction).AssumeNotNull();
         }
         finally
         {
@@ -122,18 +129,25 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
         try
         {
-            var result = await _requestInvoker.MakeHtmlLspRequestAsync<CodeAction, CodeAction>(
-                razorDocument,
-                Methods.CodeActionResolveName,
-                codeAction,
-                cancellationToken).ConfigureAwait(false);
-
-            if (result is null)
+            var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+            if (htmlDocument is null)
             {
                 return codeAction;
             }
 
-            return result;
+            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<CodeAction, CodeAction>(
+                htmlDocument.Buffer,
+                Methods.CodeActionResolveName,
+                RazorLSPConstants.HtmlLanguageServerName,
+                codeAction,
+                cancellationToken).ConfigureAwait(false);
+
+            if (result?.Response is null)
+            {
+                return codeAction;
+            }
+
+            return result.Response;
         }
         finally
         {

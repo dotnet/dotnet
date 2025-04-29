@@ -19,6 +19,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,11 +42,11 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, fileKind: RazorFileKind.Legacy);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, fileKind: FileKinds.Legacy);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
@@ -70,7 +71,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -99,7 +100,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -128,7 +129,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -162,7 +163,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -202,7 +203,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -244,7 +245,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -280,7 +281,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -315,7 +316,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -351,7 +352,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = null!
         };
 
@@ -371,7 +372,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         int absoluteIndex,
         string filePath,
         string text,
-        RazorFileKind? fileKind = null,
+        string? fileKind = null,
         bool supportsFileCreation = true)
         => CreateRazorCodeActionContext(
             request, absoluteIndex, filePath, text, relativePath: filePath, fileKind, supportsFileCreation: supportsFileCreation);
@@ -382,16 +383,16 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         string filePath,
         string text,
         string? relativePath,
-        RazorFileKind? fileKind = null,
+        string? fileKind = null,
         bool supportsFileCreation = true)
     {
         var source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(filePath, relativePath));
 
-        var fileKindValue = fileKind ?? RazorFileKind.Component;
+        fileKind ??= FileKinds.Component;
 
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKindValue, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKind, builder =>
             {
                 builder.Directives = [ComponentCodeDirective.Directive, FunctionsDirective.Directive];
             }),

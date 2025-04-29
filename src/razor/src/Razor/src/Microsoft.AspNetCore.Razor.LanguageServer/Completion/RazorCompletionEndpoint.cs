@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
@@ -20,7 +21,7 @@ internal class RazorCompletionEndpoint(
     CompletionTriggerAndCommitCharacters triggerAndCommitCharacters,
     ITelemetryReporter telemetryReporter,
     RazorLSPOptionsMonitor optionsMonitor)
-    : IRazorRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, ICapabilitiesProvider
+    : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = triggerAndCommitCharacters;
@@ -48,7 +49,7 @@ internal class RazorCompletionEndpoint(
         return request.TextDocument;
     }
 
-    public async Task<RazorVSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<VSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         if (request.Context is not VSInternalCompletionContext completionContext ||
             requestContext.DocumentContext is not { } documentContext)
@@ -77,7 +78,7 @@ internal class RazorCompletionEndpoint(
                 AutoInsertAttributeQuotes: options.AutoInsertAttributeQuotes,
                 CommitElementsWithSpace: options.CommitElementsWithSpace);
 
-            var result = await _completionListProvider
+            return await _completionListProvider
                 .GetCompletionListAsync(
                     hostDocumentIndex,
                     completionContext,
@@ -87,17 +88,6 @@ internal class RazorCompletionEndpoint(
                     correlationId,
                     cancellationToken)
                 .ConfigureAwait(false);
-
-            if (result is null)
-            {
-                return null;
-            }
-
-            var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-            var supportsCompletionListData = completionCapability?.CompletionList?.Data ?? false;
-
-            RazorCompletionResolveData.Wrap(result, request.TextDocument, supportsCompletionListData: supportsCompletionListData);
-            return result;
         }
     }
 }

@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Roslyn.LanguageServer.Protocol;
+using LspLocation = Roslyn.LanguageServer.Protocol.Location;
+using VSLSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -29,14 +32,14 @@ internal sealed class CohostFindAllReferencesEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
+    public ImmutableArray<VSLSP.Registration> GetRegistrations(VSLSP.VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.References?.DynamicRegistration == true)
         {
-            return [new Registration
+            return [new VSLSP.Registration
             {
                 Method = Methods.TextDocumentReferencesName,
-                RegisterOptions = new ReferenceRegistrationOptions()
+                RegisterOptions = new VSLSP.ReferenceRegistrationOptions()
             }];
         }
 

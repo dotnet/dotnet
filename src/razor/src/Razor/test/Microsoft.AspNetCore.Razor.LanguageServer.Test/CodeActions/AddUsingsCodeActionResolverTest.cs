@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -61,6 +62,29 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     }
 
     [Fact]
+    public async Task Handle_Unsupported()
+    {
+        // Arrange
+        var documentPath = new Uri("c:/Test.razor");
+        var contents = "@page \"/test\"";
+        var codeDocument = CreateCodeDocument(contents);
+        codeDocument.SetUnsupported();
+
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
+        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
+        {
+            Namespace = "System",
+        });
+
+        // Act
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
+
+        // Assert
+        Assert.Null(workspaceEdit);
+    }
+
+    [Fact]
     public async Task Handle_AddOneUsingToEmpty()
     {
         // Arrange
@@ -88,11 +112,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         Assert.Single(textDocumentEdit.Edits);
         var firstEdit = textDocumentEdit.Edits.First();
-        Assert.Equal(0, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(0, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -125,11 +149,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(1, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -146,7 +170,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             filePath: "c:/Test.cshtml",
             physicalPath: "c:/Test.cshtml",
             relativePhysicalPath: "Test.cshtml",
-            fileKind: RazorFileKind.Legacy)
+            fileKind: FileKinds.Legacy)
         {
             Content = contents
         };
@@ -178,11 +202,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(1, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -217,11 +241,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(0, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(0, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -254,11 +278,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(1, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -292,11 +316,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(2, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(2, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -326,11 +350,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(1, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(1, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using System.Linq
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     [Fact]
@@ -364,11 +388,11 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var addUsingsChange = workspaceEdit.DocumentChanges.Value.First();
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
-        Assert.Equal(2, ((TextEdit)firstEdit).Range.Start.Line);
+        Assert.Equal(2, firstEdit.Range.Start.Line);
         Assert.Equal("""
             @using Microsoft.AspNetCore.Razor.Language
 
-            """, ((TextEdit)firstEdit).NewText);
+            """, firstEdit.NewText);
     }
 
     private static RazorCodeDocument CreateCodeDocument(string text)
@@ -379,7 +403,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             filePath,
             physicalPath: filePath,
             relativePhysicalPath: fileName,
-            fileKind: RazorFileKind.Component)
+            fileKind: FileKinds.Component)
         {
             Content = text
         };

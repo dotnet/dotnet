@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -91,7 +92,7 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ImplementationEndpoint(
             LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory);
@@ -111,8 +112,8 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        Assert.NotNull(result.First);
-        var locations = result.First;
+        Assert.NotNull(result.Value.First);
+        var locations = result.Value.First;
 
         Assert.Equal(expectedSpans.Length, locations.Length);
 

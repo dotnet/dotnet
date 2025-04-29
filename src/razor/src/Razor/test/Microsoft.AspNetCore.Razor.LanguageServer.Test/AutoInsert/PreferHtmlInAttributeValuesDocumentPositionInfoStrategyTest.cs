@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -43,7 +44,8 @@ public class PreferHtmlInAttributeValuesDocumentPositionInfoStrategyTest(ITestOu
         var razorFilePath = "file://path/test.razor";
         var codeDocument = CreateCodeDocument(documentText, filePath: razorFilePath);
         var position = codeDocument.Source.Text.GetPosition(cursorPosition);
-        await using var _ = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var uri = new Uri(razorFilePath);
+        _ = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         // Act
         var result = PreferHtmlInAttributeValuesDocumentPositionInfoStrategy.Instance.GetPositionInfo(DocumentMappingService, codeDocument, cursorPosition);

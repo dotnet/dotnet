@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,7 +36,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -66,7 +67,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -81,7 +82,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
                     {
                         Uri = new Uri(documentPath),
                     },
-                    Edits = [LspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
+                    Edits = [VsLspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
                 }
             }
         };
@@ -107,7 +108,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
                             {
                                 Uri = new Uri("c:/Test.razor.html"),
                             },
-                            Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Goo")]
+                            Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                         }
                     }
                 }
@@ -126,11 +127,11 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         Assert.Collection(documentEdits[0].Edits,
             e =>
             {
-                Assert.Equal("", ((TextEdit)e).NewText);
+                Assert.Equal("", e.NewText);
             },
             e =>
             {
-                Assert.Equal("", ((TextEdit)e).NewText);
+                Assert.Equal("", e.NewText);
             });
     }
 
@@ -153,7 +154,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
                 builder.UseRoslynTokenizer = true;
             });
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: default, tagHelpers);
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock

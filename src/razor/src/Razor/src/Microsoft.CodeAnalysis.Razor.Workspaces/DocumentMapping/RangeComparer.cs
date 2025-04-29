@@ -2,14 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.DocumentMapping;
 
-internal sealed class RangeComparer : IComparer<LspRange>
+internal sealed class RangeComparer : IComparer<Range>
 {
     public static readonly RangeComparer Instance = new();
 
-    public int Compare(LspRange? x, LspRange? y)
+    public int Compare(Range? x, Range? y)
     {
         if (x is null)
         {

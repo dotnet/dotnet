@@ -9,9 +9,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
 public class CloseTextTagOnAutoInsertProviderTest(ITestOutputHelper testOutput) : RazorOnAutoInsertProviderTestBase(testOutput)
 {
-    private protected override IOnAutoInsertProvider CreateProvider() =>
-        new CloseTextTagOnAutoInsertProvider();
-
     [Fact]
     public void OnTypeCloseAngle_ClosesTextTag()
     {
@@ -39,4 +36,7 @@ public class CloseTextTagOnAutoInsertProviderTest(ITestOutputHelper testOutput) 
                 <text>
                 """);
     }
+
+    internal override IOnAutoInsertProvider CreateProvider() =>
+        new CloseTextTagOnAutoInsertProvider();
 }

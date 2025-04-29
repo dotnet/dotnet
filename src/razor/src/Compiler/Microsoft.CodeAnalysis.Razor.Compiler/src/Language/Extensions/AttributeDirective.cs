@@ -26,7 +26,7 @@ internal static class AttributeDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, RazorFileKind.Legacy, RazorFileKind.Component, RazorFileKind.ComponentImport);
+        builder.AddDirective(Directive, FileKinds.Legacy, FileKinds.Component, FileKinds.ComponentImport);
         builder.Features.Add(new AttributeDirectivePass());
     }
 }

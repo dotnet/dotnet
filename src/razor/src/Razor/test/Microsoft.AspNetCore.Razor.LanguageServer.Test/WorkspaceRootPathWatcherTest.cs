@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,14 +27,12 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
         // Arrange
         var initialWorkspaceDirectory = "testpath";
 
-#pragma warning disable CS0618 // Type or member is obsolete
         var initializeParams = new InitializeParams()
         {
-            RootUri = LspFactory.CreateFilePathUri(initialWorkspaceDirectory),
+            RootUri = VsLspFactory.CreateFilePathUri(initialWorkspaceDirectory),
         };
-#pragma warning restore CS0618 // Type or member is obsolete
 
-        var capabilitiesManager = new CapabilitiesManager(LspServices.Empty);
+        var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
         capabilitiesManager.SetInitializeParams(initializeParams);
 
         var expectedWorkspaceDirectory = $"\\\\{initialWorkspaceDirectory}";
@@ -49,7 +49,7 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
             });
 
         // Act
-        await watcher.OnInitializedAsync(DisposalToken);
+        await watcher.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
 
         // Assert
         Assert.True(started);
@@ -82,7 +82,7 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
             existingRazorFiles);
 
         // Act
-        await watcher.OnInitializedAsync(DisposalToken);
+        await watcher.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
 
         // Assert
         Assert.Equal(existingRazorFiles, actual);

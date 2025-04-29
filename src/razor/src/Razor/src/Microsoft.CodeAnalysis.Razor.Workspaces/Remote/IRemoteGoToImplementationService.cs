@@ -4,14 +4,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
+using RoslynPosition = Roslyn.LanguageServer.Protocol.Position;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal interface IRemoteGoToImplementationService : IRemoteJsonService
 {
-    ValueTask<RemoteResponse<LspLocation[]?>> GetImplementationAsync(
+    ValueTask<RemoteResponse<RoslynLocation[]?>> GetImplementationAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId razorDocumentId,
-        Position position,
+        RoslynPosition position,
         CancellationToken cancellationToken);
 }

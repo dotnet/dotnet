@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -150,9 +151,9 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentDocumentHighlightName, htmlResponse)]);
+        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentDocumentHighlightName, htmlResponse)]);
 
-        var endpoint = new CohostDocumentHighlightEndpoint(RemoteServiceInvoker, requestInvoker);
+        var endpoint = new CohostDocumentHighlightEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
 
         var request = new DocumentHighlightParams()
         {

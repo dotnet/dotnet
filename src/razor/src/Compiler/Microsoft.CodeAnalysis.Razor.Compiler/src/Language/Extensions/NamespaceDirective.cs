@@ -28,7 +28,7 @@ public static class NamespaceDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, RazorFileKind.Legacy, RazorFileKind.Component, RazorFileKind.ComponentImport);
+        builder.AddDirective(Directive, FileKinds.Legacy, FileKinds.Component, FileKinds.ComponentImport);
         return builder;
     }
 }

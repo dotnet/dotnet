@@ -53,7 +53,7 @@ internal class SyntaxSerializer
             _visitor.Visit(node);
             _writer.WriteLine();
 
-            if (!node.IsToken)
+            if (!node.IsToken && !node.IsTrivia)
             {
                 _visitor.Depth++;
                 node = base.DefaultVisit(node);
@@ -122,6 +122,12 @@ internal class SyntaxSerializer
             return base.VisitToken(token);
         }
 
+        public override SyntaxNode VisitTrivia(SyntaxTrivia trivia)
+        {
+            WriteTrivia(trivia);
+            return base.VisitTrivia(trivia);
+        }
+
         private void WriteNode(SyntaxNode node)
         {
             WriteIndent();
@@ -129,7 +135,7 @@ internal class SyntaxSerializer
             WriteSeparator();
             Write($"[{node.Position}..{node.EndPosition})");
             WriteSeparator();
-            Write($"Width: {node.Width}");
+            Write($"FullWidth: {node.FullWidth}");
 
             if (node is RazorDirectiveSyntax razorDirective)
             {
@@ -181,7 +187,7 @@ internal class SyntaxSerializer
             if (!_visitedRoot)
             {
                 WriteSeparator();
-                Write($"[{node}]");
+                Write($"[{node.ToFullString()}]");
                 _visitedRoot = true;
             }
         }
@@ -249,6 +255,11 @@ internal class SyntaxSerializer
             var diagnostics = token.GetDiagnostics();
             var tokenString = $"{token.Kind};[{content}];{string.Join(", ", diagnostics.Select(diagnostic => diagnostic.Id + diagnostic.Span))}";
             Write(tokenString);
+        }
+
+        private void WriteTrivia(SyntaxTrivia trivia)
+        {
+            throw new NotImplementedException();
         }
 
         private void WriteChunkGenerator(SyntaxNode node)

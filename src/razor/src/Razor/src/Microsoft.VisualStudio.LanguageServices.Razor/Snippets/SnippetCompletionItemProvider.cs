@@ -6,6 +6,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.Snippets;
 
@@ -24,7 +25,7 @@ internal sealed class SnippetCompletionItemProvider
         RazorLanguageKind projectedKind,
         VSInternalCompletionInvokeKind invokeKind,
         string? triggerCharacter,
-        ref PooledArrayBuilder<VSInternalCompletionItem> builder)
+        ref PooledArrayBuilder<CompletionItem> builder)
     {
         // Temporary fix: snippets are broken in CSharp. We're investigating
         // but this is very disruptive. This quick fix unblocks things.
@@ -53,7 +54,7 @@ internal sealed class SnippetCompletionItemProvider
         }
 
         builder.AddRange(snippets
-            .Select(s => new VSInternalCompletionItem()
+            .Select(s => new CompletionItem()
             {
                 Label = s.Shortcut,
                 Detail = s.Description,

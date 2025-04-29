@@ -25,6 +25,7 @@ using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -55,7 +56,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         var codeDocument = CreateCodeDocument(input.Text, filePath: razorFilePath, rootNamespace: "Test", tagHelpers: CreateTagHelperDescriptors());
         var razorSourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
         File.Create(codeBehindFilePath).Close();
@@ -94,11 +95,11 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
             {
                 if (FilePathNormalizer.Normalize(change.TextDocument.Uri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
                 {
-                    codeBehindEdits.AddRange(change.Edits.Select(e => codeBehindSourceText.GetTextChange((TextEdit)e)));
+                    codeBehindEdits.AddRange(change.Edits.Select(codeBehindSourceText.GetTextChange));
                 }
                 else
                 {
-                    razorEdits.AddRange(change.Edits.Select(e => razorSourceText.GetTextChange((TextEdit)e)));
+                    razorEdits.AddRange(change.Edits.Select(razorSourceText.GetTextChange));
                 }
             }
 
@@ -145,7 +146,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         var codeDocument = CreateCodeDocument(input.Text, filePath: razorFilePath, tagHelpers: CreateTagHelperDescriptors());
         var sourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
@@ -181,7 +182,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         var edits = new List<TextChange>();
         foreach (var change in changes)
         {
-            edits.AddRange(change.Edits.Select(e => sourceText.GetTextChange((TextEdit)e)));
+            edits.AddRange(change.Edits.Select(sourceText.GetTextChange));
         }
 
         var actual = sourceText.WithChanges(edits).ToString();

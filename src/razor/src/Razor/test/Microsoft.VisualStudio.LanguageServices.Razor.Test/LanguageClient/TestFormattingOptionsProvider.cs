@@ -3,11 +3,11 @@
 
 using System;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using FormattingOptions = Microsoft.VisualStudio.LanguageServer.Protocol.FormattingOptions;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
-internal class TestFormattingOptionsProvider(FormattingOptions options) : FormattingOptionsProvider
+internal class TestFormattingOptionsProvider : FormattingOptionsProvider
 {
     public static readonly TestFormattingOptionsProvider Default = new(
         new FormattingOptions()
@@ -15,6 +15,12 @@ internal class TestFormattingOptionsProvider(FormattingOptions options) : Format
             InsertSpaces = true,
             TabSize = 4,
         });
+    private readonly FormattingOptions _options;
 
-    public override FormattingOptions? GetOptions(Uri uri) => options;
+    public TestFormattingOptionsProvider(FormattingOptions options)
+    {
+        _options = options;
+    }
+
+    public override FormattingOptions? GetOptions(Uri uri) => _options;
 }

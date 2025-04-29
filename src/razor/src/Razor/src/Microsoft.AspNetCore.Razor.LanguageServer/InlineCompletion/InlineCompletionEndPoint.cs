@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
@@ -59,7 +60,12 @@ internal sealed class InlineCompletionEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = codeDocument.Source.Text;
+        if (codeDocument.IsUnsupported())
+        {
+            return null;
+        }
+
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var hostDocumentIndex = sourceText.GetPosition(request.Position);
 
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);

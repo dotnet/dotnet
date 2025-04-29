@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -33,18 +34,22 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
             return null;
         }
 
-        if (!documentContext.FileKind.IsComponent())
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (codeDocument.IsUnsupported())
         {
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (!FileKinds.IsComponent(codeDocument.FileKind))
+        {
+            return null;
+        }
 
         // VS Code in Windows expects path to start with '/'
         var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")
             ? '/' + actionParams.Path
             : actionParams.Path;
-        var newComponentUri = LspFactory.CreateFilePathUri(updatedPath);
+        var newComponentUri = VsLspFactory.CreateFilePathUri(updatedPath);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
         documentChanges.Add(new CreateFile() { Uri = newComponentUri });
@@ -71,7 +76,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,
-                Edits = [LspFactory.CreateTextEdit(position: (0, 0), namespaceDirective.GetContent())]
+                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), namespaceDirective.GetContent())]
             });
         }
     }

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
@@ -65,7 +64,10 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected sealed override Task InitializeCoreAsync(CancellationToken cancellationToken)
     {
-        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer, "When cohosting is on this should never be initialized.");
+        if (_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return Task.CompletedTask;
+        }
 
         CommonServices.UnconfiguredProject.ProjectRenaming += UnconfiguredProject_ProjectRenamingAsync;
 
@@ -166,11 +168,6 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected override async Task DisposeCoreAsync(bool initialized)
     {
-        if (_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            return;
-        }
-
         if (initialized)
         {
             CommonServices.UnconfiguredProject.ProjectRenaming -= UnconfiguredProject_ProjectRenamingAsync;
@@ -294,11 +291,6 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     Task IProjectDynamicLoadComponent.LoadAsync()
     {
-        if (_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            return Task.CompletedTask;
-        }
-
         return InitializeAsync();
     }
 

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -56,7 +57,7 @@ internal static class AddUsingsHelper
             Debug.Assert(codeDocument.Source.FilePath != null);
             var identifier = new OptionalVersionedTextDocumentIdentifier { Uri = new Uri(codeDocument.Source.FilePath, UriKind.Relative) };
             var workspaceEdit = CreateAddUsingWorkspaceEdit(usingStatement, additionalEdit: null, codeDocument, codeDocumentIdentifier: identifier);
-            edits.AddRange(workspaceEdit.DocumentChanges!.Value.First.First().Edits.Select(e => (TextEdit)e));
+            edits.AddRange(workspaceEdit.DocumentChanges!.Value.First.First().Edits);
         }
 
         return edits.ToArray();
@@ -173,7 +174,7 @@ internal static class AddUsingsHelper
     {
         Debug.Assert(existingUsingDirectives.Count > 0);
 
-        using var edits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
+        using var edits = new PooledArrayBuilder<TextEdit>();
         var newText = $"@using {newUsingNamespace}{Environment.NewLine}";
 
         foreach (var usingDirective in existingUsingDirectives)
@@ -188,7 +189,7 @@ internal static class AddUsingsHelper
             if (string.CompareOrdinal(newUsingNamespace, usingDirectiveNamespace) < 0)
             {
                 var usingDirectiveLineIndex = codeDocument.Source.Text.GetLinePosition(usingDirective.Node.Span.Start).Line;
-                var edit = LspFactory.CreateTextEdit(line: usingDirectiveLineIndex, character: 0, newText);
+                var edit = VsLspFactory.CreateTextEdit(line: usingDirectiveLineIndex, character: 0, newText);
                 edits.Add(edit);
                 break;
             }
@@ -199,7 +200,7 @@ internal static class AddUsingsHelper
         {
             var endIndex = existingUsingDirectives[^1].Node.Span.End;
             var lineIndex = GetLineIndexOrEnd(codeDocument, endIndex - 1) + 1;
-            var edit = LspFactory.CreateTextEdit(line: lineIndex, character: 0, newText);
+            var edit = VsLspFactory.CreateTextEdit(line: lineIndex, character: 0, newText);
             edits.Add(edit);
         }
 
@@ -233,7 +234,7 @@ internal static class AddUsingsHelper
         return new TextDocumentEdit
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = [LspFactory.CreateTextEdit(insertPosition, newText: $"@using {newUsingNamespace}{Environment.NewLine}")]
+            Edits = [VsLspFactory.CreateTextEdit(insertPosition, newText: $"@using {newUsingNamespace}{Environment.NewLine}")]
         };
     }
 

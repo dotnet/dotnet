@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
@@ -46,7 +47,7 @@ internal class CSharpCodeActionResolver(IRazorFormattingService razorFormattingS
         cancellationToken.ThrowIfCancellationRequested();
 
         var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var csharpTextChanges = textDocumentEdit.Edits.SelectAsArray(e => csharpSourceText.GetTextChange((TextEdit)e));
+        var csharpTextChanges = textDocumentEdit.Edits.SelectAsArray(csharpSourceText.GetTextChange);
 
         // Remaps the text edits from the generated C# to the razor file,
         // as well as applying appropriate formatting.

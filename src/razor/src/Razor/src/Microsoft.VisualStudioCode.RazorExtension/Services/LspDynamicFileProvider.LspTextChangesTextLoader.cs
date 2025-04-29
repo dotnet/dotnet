@@ -1,13 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -41,32 +36,20 @@ internal sealed partial class LspDynamicFileProvider
 
         public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         {
-            try
+            if (_document is null)
             {
-                if (_document is null)
-                {
-                    var text = ApplyChanges(_emptySourceText.Value, _changes);
-                    return TextAndVersion.Create(text, VersionStamp.Default.GetNewerVersion());
-                }
-
-                var sourceText = await _document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-                // Validate the checksum information so the edits are known to be correct
-
-                if (IsSourceTextMatching(sourceText))
-                {
-                    var version = await _document.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
-                    var newText = ApplyChanges(sourceText, _changes);
-                    return TextAndVersion.Create(newText, version.GetNewerVersion());
-                }
+                var text = ApplyChanges(_emptySourceText.Value, _changes);
+                return TextAndVersion.Create(text, VersionStamp.Default.GetNewerVersion());
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                // This happens if ApplyChanges tries to apply an invalid TextChange.
-                // This is recoverable but incurs a perf hit for getting the full text below.
 
-                // TODO: Add ability to capture a fault here in EA. There's something wrong if
-                // the Checksum matches but the text changes can't be applied.
+            var sourceText = await _document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+
+            // Validate the checksum information so the edits are known to be correct
+            if (IsSourceTextMatching(sourceText))
+            {
+                var version = await _document.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
+                var newText = ApplyChanges(sourceText, _changes);
+                return TextAndVersion.Create(newText, version.GetNewerVersion());
             }
 
             return await GetFullDocumentFromServerAsync(cancellationToken).ConfigureAwait(false);

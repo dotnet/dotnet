@@ -14,9 +14,9 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolingIntegrationTestBase
 {
     private readonly DirectiveAttributeParameterCompletionItemProvider _provider;
-    private readonly TagHelperDocumentContext _defaultTagHelperContext;
+    private readonly TagHelperDocumentContext _defaultTagHelperDocumentContext;
 
-    internal override RazorFileKind? FileKind => RazorFileKind.Component;
+    internal override string FileKind => FileKinds.Component;
     internal override bool UseTwoPhaseCompilation => true;
 
     public DirectiveAttributeParameterCompletionItemProviderTest(ITestOutputHelper testOutput)
@@ -30,7 +30,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
             "@using Microsoft.AspNetCore.Components.Web"));
 
         var codeDocument = GetCodeDocument(string.Empty);
-        _defaultTagHelperContext = codeDocument.GetRequiredTagHelperContext();
+        _defaultTagHelperDocumentContext = codeDocument.GetTagHelperContext();
     }
 
     private RazorCodeDocument GetCodeDocument(string content)
@@ -120,7 +120,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var attributeNames = ImmutableArray.Create("@bind");
 
         // Act
-        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", "format", "input", attributeNames, _defaultTagHelperContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", "format", "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertDoesNotContain(completions, "format");
@@ -132,7 +132,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         // Arrange
 
         // Act
-        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", [], _defaultTagHelperContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", [], _defaultTagHelperDocumentContext);
 
         // Assert
         AssertContains(completions, "format");
@@ -149,7 +149,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
             "@");
 
         // Act
-        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", attributeNames, _defaultTagHelperContext);
+        var completions = DirectiveAttributeParameterCompletionItemProvider.GetAttributeParameterCompletions("@bind", string.Empty, "input", attributeNames, _defaultTagHelperDocumentContext);
 
         // Assert
         AssertDoesNotContain(completions, "format");
@@ -174,10 +174,10 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
     {
         var codeDocument = GetCodeDocument(documentContent);
         var syntaxTree = codeDocument.GetSyntaxTree();
-        var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
+        var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperContext);
+        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 }

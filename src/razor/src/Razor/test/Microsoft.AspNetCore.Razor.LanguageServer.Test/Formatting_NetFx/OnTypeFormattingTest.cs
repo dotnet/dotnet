@@ -1096,7 +1096,7 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
                     </html>
                     """,
             triggerCharacter: ';',
-            fileKind: RazorFileKind.Legacy);
+            fileKind: FileKinds.Legacy);
     }
 
     [FormattingTestFact(SkipFlipLineEnding = true)]

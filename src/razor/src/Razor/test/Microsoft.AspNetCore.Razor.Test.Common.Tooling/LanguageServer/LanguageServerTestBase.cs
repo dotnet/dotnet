@@ -22,7 +22,9 @@ using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -31,7 +33,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 {
     private protected IRazorMappingService SpanMappingService { get; } = new ThrowingRazorMappingService();
     private protected IFilePathService FilePathService { get; } = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
-    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.JsonSerializerOptions;
+    private protected JsonSerializerOptions SerializerOptions { get; } = JsonHelpers.VsLspJsonSerializerOptions;
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider, LanguageServerFeatureOptions languageServerFeatureOptions)
@@ -44,17 +46,17 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 
     private protected static RazorRequestContext CreateRazorRequestContext(
         DocumentContext? documentContext,
-        LspServices? lspServices = null)
-        => new(documentContext, lspServices ?? LspServices.Empty, "lsp/method", uri: null);
+        ILspServices? lspServices = null)
+        => new(documentContext, lspServices ?? StrictMock.Of<ILspServices>(), "lsp/method", uri: null);
 
     protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null, string? rootNamespace = null)
     {
         filePath ??= "test.cshtml";
 
-        var fileKind = FileKinds.GetFileKindFromPath(filePath);
+        var fileKind = FileKinds.GetFileKindFromFilePath(filePath);
         tagHelpers = tagHelpers.NullToEmpty();
 
-        if (fileKind == RazorFileKind.Component)
+        if (fileKind == FileKinds.Component)
         {
             tagHelpers = tagHelpers.AddRange(RazorTestResources.BlazorServerAppTagHelpers);
         }
@@ -76,8 +78,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
 
             b.Features.Add(new DefaultTypeNameFeature());
         });
-
-        var importDocumentName = fileKind == RazorFileKind.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
+        var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
         var defaultImportDocument = TestRazorSourceDocument.Create(
             """
                 @using BlazorApp1
@@ -91,8 +92,8 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
                 @using Microsoft.AspNetCore.Components.Web
                 """,
             RazorSourceDocumentProperties.Create(importDocumentName, importDocumentName));
-
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKind, [defaultImportDocument], tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, [defaultImportDocument], tagHelpers);
+        return codeDocument;
     }
 
     private protected static IDocumentContextFactory CreateDocumentContextFactory(Uri documentPath, string sourceText)

@@ -3,6 +3,8 @@
 
 using System;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 
@@ -12,12 +14,12 @@ internal class ProvideSemanticTokensRangesParams : SemanticTokensParams
     public int RequiredHostDocumentVersion { get; }
 
     [JsonPropertyName("ranges")]
-    public LspRange[] Ranges { get; }
+    public Range[] Ranges { get; }
 
     [JsonPropertyName("correlationId")]
     public Guid CorrelationId { get; }
 
-    public ProvideSemanticTokensRangesParams(TextDocumentIdentifier textDocument, int requiredHostDocumentVersion, LspRange[] ranges, Guid correlationId)
+    public ProvideSemanticTokensRangesParams(TextDocumentIdentifier textDocument, int requiredHostDocumentVersion, Range[] ranges, Guid correlationId)
     {
         TextDocument = textDocument;
         RequiredHostDocumentVersion = requiredHostDocumentVersion;

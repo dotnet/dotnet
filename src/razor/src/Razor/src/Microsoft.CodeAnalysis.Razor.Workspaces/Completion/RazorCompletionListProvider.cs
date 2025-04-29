@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -30,7 +31,7 @@ internal class RazorCompletionListProvider(
     };
 
     // virtual for tests
-    public virtual RazorVSInternalCompletionList? GetCompletionList(
+    public virtual VSInternalCompletionList? GetCompletionList(
         RazorCodeDocument codeDocument,
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
@@ -84,11 +85,11 @@ internal class RazorCompletionListProvider(
     }
 
     // Internal for benchmarking and testing
-    internal static RazorVSInternalCompletionList CreateLSPCompletionList(
+    internal static VSInternalCompletionList CreateLSPCompletionList(
         ImmutableArray<RazorCompletionItem> razorCompletionItems,
         VSInternalClientCapabilities clientCapabilities)
     {
-        using var items = new PooledArrayBuilder<VSInternalCompletionItem>();
+        using var items = new PooledArrayBuilder<CompletionItem>();
 
         foreach (var razorCompletionItem in razorCompletionItems)
         {
@@ -98,7 +99,7 @@ internal class RazorCompletionListProvider(
             }
         }
 
-        var completionList = new RazorVSInternalCompletionList()
+        var completionList = new VSInternalCompletionList()
         {
             Items = items.ToArray(),
             IsIncomplete = false,

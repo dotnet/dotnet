@@ -52,7 +52,7 @@ internal partial class DefaultRazorTagHelperContextDiscoveryPhase
         out DirectiveVisitor visitor)
     {
         var useComponentDirectiveVisitor = codeDocument.ParserOptions.AllowComponentFileKind &&
-                                           codeDocument.FileKind.IsComponent();
+                                           FileKinds.IsComponent(codeDocument.FileKind);
 
         if (useComponentDirectiveVisitor)
         {

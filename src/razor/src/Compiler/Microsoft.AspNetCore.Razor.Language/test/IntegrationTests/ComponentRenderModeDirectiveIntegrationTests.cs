@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTestBase
 {
-    internal override RazorFileKind? FileKind => RazorFileKind.Component;
+    internal override string FileKind => FileKinds.Component;
 
     [Fact]
     public void RenderMode_With_Fully_Qualified_Type()

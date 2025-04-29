@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -293,9 +294,9 @@ internal static class FormattingUtilities
         static bool IsWhitespace(char c)
             => c == ' ' || c == '\t';
 
-        static ImmutableArray<Range> GetLineRanges(string text)
+        static ImmutableArray<System.Range> GetLineRanges(string text)
         {
-            using var builder = new PooledArrayBuilder<Range>();
+            using var builder = new PooledArrayBuilder<System.Range>();
             var start = 0;
             var end = text.IndexOf('\n');
             while (true)
@@ -333,18 +334,6 @@ internal static class FormattingUtilities
             return edits;
 
         var changes = edits.SelectAsArray(htmlSourceText.GetTextChange);
-
-        var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
-        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
-    }
-
-    internal static SumType<TextEdit, AnnotatedTextEdit>[] FixHtmlTextEdits(SourceText htmlSourceText, SumType<TextEdit, AnnotatedTextEdit>[] edits)
-    {
-        // Avoid computing a minimal diff if we don't need to
-        if (!edits.Any(static e => ((TextEdit)e).NewText.Contains("~")))
-            return edits;
-
-        var changes = edits.SelectAsArray(e => htmlSourceText.GetTextChange((TextEdit)e));
 
         var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
         return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];

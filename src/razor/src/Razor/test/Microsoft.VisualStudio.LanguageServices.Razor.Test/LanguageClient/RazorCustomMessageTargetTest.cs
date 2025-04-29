@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Text;
@@ -212,7 +213,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 {
                     Uri = new Uri("C:/path/to/file.razor")
                 },
-                Range = LspFactory.DefaultRange,
+                Range = VsLspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
             }
         };
@@ -293,7 +294,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 {
                     Uri = testDocUri
                 },
-                Range = LspFactory.DefaultRange,
+                Range = VsLspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
             }
         };
@@ -414,7 +415,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to/file.razor")
             },
             requiredHostDocumentVersion: 1,
-            ranges: [LspFactory.DefaultRange],
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -461,7 +462,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: [LspFactory.DefaultRange],
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -496,11 +497,11 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var expectedCSharpResults = new SemanticTokens() { Data = new int[] { It.IsAny<int>() } };
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
-            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<SemanticTokensRangeParams, SemanticTokens>(
+            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, SemanticTokens>(
                 _textBuffer,
                 It.IsAny<string>(),
                 RazorLSPConstants.RazorCSharpLanguageServerName,
-                It.IsAny<SemanticTokensRangeParams>(),
+                It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<SemanticTokens>("languageClient", expectedCSharpResults));
 
@@ -541,7 +542,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to%20-%20project/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: [LspFactory.DefaultRange],
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -577,11 +578,11 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var expectedCSharpResults = new SemanticTokens();
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
-            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<SemanticTokensRangeParams, SemanticTokens>(
+            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, SemanticTokens>(
                 _textBuffer,
                 It.IsAny<string>(),
                 RazorLSPConstants.RazorCSharpLanguageServerName,
-                It.IsAny<SemanticTokensRangeParams>(),
+                It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<SemanticTokens>("languageClient", expectedCSharpResults));
 
@@ -622,7 +623,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to%20-%20project/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: [LspFactory.DefaultRange],
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
         var expectedResults = new ProvideSemanticTokensResponse(null, documentVersion);
 

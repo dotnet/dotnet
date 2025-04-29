@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -13,9 +14,9 @@ public class CompletionListMergerTest : ToolingTestBase
     private readonly VSInternalCompletionItem _completionItem1;
     private readonly VSInternalCompletionItem _completionItem2;
     private readonly VSInternalCompletionItem _completionItem3;
-    private readonly RazorVSInternalCompletionList _completionListWith1;
-    private readonly RazorVSInternalCompletionList _completionListWith2;
-    private readonly RazorVSInternalCompletionList _completionListWith13;
+    private readonly VSInternalCompletionList _completionListWith1;
+    private readonly VSInternalCompletionList _completionListWith2;
+    private readonly VSInternalCompletionList _completionListWith13;
 
     public CompletionListMergerTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -35,17 +36,17 @@ public class CompletionListMergerTest : ToolingTestBase
             Label = "CompletionItem3"
         };
 
-        _completionListWith1 = new RazorVSInternalCompletionList()
+        _completionListWith1 = new VSInternalCompletionList()
         {
             Items = [_completionItem1]
         };
 
-        _completionListWith2 = new RazorVSInternalCompletionList()
+        _completionListWith2 = new VSInternalCompletionList()
         {
             Items = [_completionItem2]
         };
 
-        _completionListWith13 = new RazorVSInternalCompletionList()
+        _completionListWith13 = new VSInternalCompletionList()
         {
             Items = [_completionItem1, _completionItem3]
         };

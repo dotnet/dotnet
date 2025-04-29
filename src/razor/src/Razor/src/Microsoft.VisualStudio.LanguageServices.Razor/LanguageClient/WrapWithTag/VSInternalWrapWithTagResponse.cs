@@ -3,6 +3,7 @@
 
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.WrapWithTag;
 
@@ -13,7 +14,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.WrapWithTag;
 [DataContract]
 internal class VSInternalWrapWithTagResponse
 {
-    public VSInternalWrapWithTagResponse(LspRange tagRange, TextEdit[] textEdits)
+    public VSInternalWrapWithTagResponse(Range tagRange, TextEdit[] textEdits)
     {
         TagRange = tagRange;
         TextEdits = textEdits;
@@ -24,7 +25,7 @@ internal class VSInternalWrapWithTagResponse
     /// </summary>
     [DataMember(Name = "_vs_tagRange")]
     [JsonPropertyName("_vs_tagRange")]
-    public LspRange TagRange { get; }
+    public Range TagRange { get; }
 
     /// <summary>
     /// Gets or sets the text edits.

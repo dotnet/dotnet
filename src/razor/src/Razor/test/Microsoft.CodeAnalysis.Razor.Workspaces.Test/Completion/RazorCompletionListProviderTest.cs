@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -436,7 +436,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("@in", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("@in", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -464,7 +466,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("@inje", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("@inje", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -490,7 +494,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("@inje", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("@inje", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -519,7 +525,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("<", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("<", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
@@ -547,7 +555,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         });
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("<test  ", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("<test  ", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
@@ -574,7 +584,9 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         });
         builder.SetMetadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var codeDocument = CreateCodeDocument("<test  ", documentPath, [tagHelper]);
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
+        var codeDocument = CreateCodeDocument("<test  ", documentPath);
+        codeDocument.SetTagHelperContext(tagHelperContext);
 
         // Set up desired options
         var razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true);
@@ -591,13 +603,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=$0");
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath)
     {
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: documentFilePath);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         codeDocument.SetSyntaxTree(syntaxTree);
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: null, tagHelpers.NullToEmpty());
+        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
         codeDocument.SetTagHelperContext(tagHelperDocumentContext);
         return codeDocument;
     }

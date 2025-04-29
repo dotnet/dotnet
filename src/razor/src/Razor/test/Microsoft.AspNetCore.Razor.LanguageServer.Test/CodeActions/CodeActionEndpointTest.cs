@@ -21,6 +21,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,11 +42,37 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
         var requestContext = CreateRazorRequestContext(documentContext: null);
+
+        // Act
+        var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Null(commandOrCodeActionContainer);
+    }
+
+    [Fact]
+    public async Task Handle_UnsupportedDocument()
+    {
+        // Arrange
+        var documentPath = new Uri("C:/path/to/Page.razor");
+        var codeDocument = CreateCodeDocument("@code {}");
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        codeDocument.SetUnsupported();
+        var codeActionEndpoint = CreateEndpoint();
+
+        var request = new VSCodeActionParams()
+        {
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
+            Context = new VSInternalCodeActionContext()
+        };
+
+        var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
         var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
@@ -66,7 +93,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -92,7 +119,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -122,7 +149,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -148,7 +175,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -184,7 +211,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -219,7 +246,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -245,7 +272,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -282,7 +309,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -314,7 +341,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -356,7 +383,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -399,7 +426,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -434,7 +461,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var (endpoint, _) = CreateEndpointAndService(csharpCodeActionProviders: [CreateCSharpCodeActionProvider()]);
 
-        var initialRange = LspFactory.CreateZeroWidthRange(0, 1);
+        var initialRange = VsLspFactory.CreateZeroWidthRange(0, 1);
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
@@ -456,14 +483,14 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var documentPath = new Uri("C:/path/to/Page.razor");
         var codeDocument = CreateCodeDocument("@code {}");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var projectedRange = LspFactory.CreateZeroWidthRange(15, 2);
+        var projectedRange = VsLspFactory.CreateZeroWidthRange(15, 2);
 
         var (endpoint, _) = CreateEndpointAndService(
             documentMappingService: CreateDocumentMappingService(projectedRange.ToLinePositionSpan()),
             csharpCodeActionProviders: [CreateCSharpCodeActionProvider()],
             clientConnection: TestClientConnection.Instance);
 
-        var initialRange = LspFactory.CreateZeroWidthRange(0, 1);
+        var initialRange = VsLspFactory.CreateZeroWidthRange(0, 1);
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
@@ -561,7 +588,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var sourceDocument = TestRazorSourceDocument.Create(text);
         var projectEngine = RazorProjectEngine.Create(builder => { });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: [], tagHelpers: []);
+        return projectEngine.ProcessDesignTime(sourceDocument, "mvc", importSources: [], tagHelpers: []);
     }
 
     private static IRazorCodeActionProvider CreateEmptyRazorCodeActionProvider()

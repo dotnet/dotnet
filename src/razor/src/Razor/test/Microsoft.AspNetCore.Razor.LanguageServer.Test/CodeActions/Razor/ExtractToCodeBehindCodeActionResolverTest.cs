@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,10 +25,34 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly IClientConnection _clientConnection = TestClientConnection.Create(builder =>
+    private readonly TestLanguageServer _languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
     {
-        builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, (string?)null);
+        [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>(null!),
     });
+
+    [Fact]
+    public async Task Handle_Unsupported()
+    {
+        // Arrange
+        var documentPath = new Uri("c:\\Test.razor");
+        var contents = """
+            @page "/test"
+            @code { private int x = 1; }
+            """;
+        var codeDocument = CreateCodeDocument(contents);
+        codeDocument.SetUnsupported();
+
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(contents, "@code", "Test"));
+
+        // Act
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
+
+        // Assert
+        Assert.Null(workspaceEdit);
+    }
 
     [Fact]
     public async Task Handle_InvalidFileKind()
@@ -38,10 +63,10 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             @page "/test"
             @code { private int x = 1; }
             """;
-        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
+        var codeDocument = CreateCodeDocument(contents, fileKind: FileKinds.Legacy);
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(contents, "@code", "Test"));
 
@@ -68,7 +93,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -89,9 +114,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -113,7 +138,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -133,7 +158,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -154,9 +179,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -178,7 +203,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -206,7 +231,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -227,9 +252,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -260,7 +285,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -289,7 +314,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -310,9 +335,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -343,7 +368,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -374,7 +399,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -395,9 +420,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -428,7 +453,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -447,7 +472,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@functions", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -468,9 +493,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
         var editCodeDocumentEdit = editCodeDocument.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -492,7 +517,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -512,7 +537,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -533,9 +558,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
         var editCodeDocumentEdit = editCodeDocument.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -558,7 +583,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -579,7 +604,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -600,9 +625,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -626,7 +651,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
                 }
             }
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
     [Fact]
@@ -644,13 +669,13 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         var codeDocument = CreateCodeDocument(contents);
         Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var clientConnection = TestClientConnection.Create(builder =>
+        var languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
         {
-            builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, "Hi there! I'm from Roslyn");
+            [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>("Hi there! I'm from Roslyn"),
         });
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(clientConnection);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(languageServer);
         var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
         var data = JsonSerializer.SerializeToElement(actionParams);
@@ -671,9 +696,9 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
         var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
         var sourceText = codeDocument.Source.Text;
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(editCodeDocumentEdit.Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
@@ -683,16 +708,18 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
         AssertEx.EqualOrDiff("""
             Hi there! I'm from Roslyn
             """,
-            ((TextEdit)editCodeBehindEdit).NewText);
+            editCodeBehindEdit.NewText);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
+    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
     {
+        fileKind ??= FileKinds.Component;
+
         var projectItem = new TestRazorProjectItem(
             filePath: "c:/Test.razor",
             physicalPath: "c:/Test.razor",
             relativePhysicalPath: "Test.razor",
-            fileKind: fileKind ?? RazorFileKind.Component)
+            fileKind: fileKind)
         {
             Content = text
         };

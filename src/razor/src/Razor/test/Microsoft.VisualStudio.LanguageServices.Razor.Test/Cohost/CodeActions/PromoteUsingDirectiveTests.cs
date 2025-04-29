@@ -81,7 +81,7 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                 </div>
                 """,
             codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
-            fileKind: RazorFileKind.Legacy,
+            fileKind: FileKinds.Legacy,
             additionalExpectedFiles: [
                 (FileUri(@"..\_ViewImports.cshtml"), """
                     @using System

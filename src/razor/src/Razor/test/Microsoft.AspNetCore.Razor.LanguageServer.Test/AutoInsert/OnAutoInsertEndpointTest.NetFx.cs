@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
@@ -21,7 +22,7 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: true);
@@ -37,7 +38,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -63,16 +64,16 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider1 = new TestOnAutoInsertProvider(">", canResolve: false)
         {
-            ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
+            ResolvedTextEdit = VsLspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
         var insertProvider2 = new TestOnAutoInsertProvider(">", canResolve: true)
         {
-            ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
+            ResolvedTextEdit = VsLspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
         var endpoint = new OnAutoInsertEndpoint(
@@ -86,7 +87,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -115,16 +116,16 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider1 = new TestOnAutoInsertProvider(">", canResolve: true)
         {
-            ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
+            ResolvedTextEdit = VsLspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
         var insertProvider2 = new TestOnAutoInsertProvider(">", canResolve: true)
         {
-            ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
+            ResolvedTextEdit = VsLspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
         var endpoint = new OnAutoInsertEndpoint(
@@ -138,7 +139,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -166,7 +167,7 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: false);
@@ -182,7 +183,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -208,7 +209,7 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(formatOnType: false);
         var insertProvider = new TestOnAutoInsertProvider("<", canResolve: false);
@@ -224,7 +225,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = "=",
             Options = new FormattingOptions
             {
@@ -248,7 +249,7 @@ public partial class OnAutoInsertEndpointTest
         var codeDocument = CreateCodeDocument();
         var razorFilePath = "file://path/test.razor";
         var uri = new Uri(razorFilePath);
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(autoInsertAttributeQuotes: false);
         var insertProvider = new TestOnAutoInsertProvider("<", canResolve: false);
@@ -264,7 +265,7 @@ public partial class OnAutoInsertEndpointTest
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = LspFactory.DefaultPosition,
+            Position = VsLspFactory.DefaultPosition,
             Character = "=",
             Options = new FormattingOptions
             {
@@ -393,7 +394,7 @@ public partial class OnAutoInsertEndpointTest
 
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/test.razor";
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider("!!!", canResolve: false);

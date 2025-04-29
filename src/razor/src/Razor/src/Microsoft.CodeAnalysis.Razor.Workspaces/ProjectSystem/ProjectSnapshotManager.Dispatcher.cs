@@ -8,7 +8,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -20,10 +19,10 @@ internal partial class ProjectSnapshotManager
         private readonly ILogger _logger;
         private readonly CustomScheduler _scheduler;
 
-        public Dispatcher(LanguageServerFeatureOptions featureOptions, ILoggerFactory loggerFactory)
+        public Dispatcher(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.GetOrCreateLogger<Dispatcher>();
-            _scheduler = new(featureOptions, _logger);
+            _scheduler = new(_logger);
         }
 
         public TaskScheduler Scheduler => _scheduler;
@@ -90,16 +89,14 @@ internal partial class ProjectSnapshotManager
         private class CustomScheduler : TaskScheduler, IDisposable
         {
             private readonly AsyncQueue<Task> _taskQueue = new();
-            private readonly LanguageServerFeatureOptions _featureOptions;
             private readonly ILogger _logger;
             private readonly CancellationTokenSource _disposeTokenSource;
 
             public override int MaximumConcurrencyLevel => 1;
 
-            public CustomScheduler(LanguageServerFeatureOptions featureOptions, ILogger logger)
+            public CustomScheduler(ILogger logger)
             {
                 _taskQueue = new();
-                _featureOptions = featureOptions;
                 _logger = logger;
                 _disposeTokenSource = new();
 
@@ -117,8 +114,6 @@ internal partial class ProjectSnapshotManager
                         try
                         {
                             var task = await _taskQueue.DequeueAsync(disposeToken).ConfigureAwait(false);
-
-                            Debug.Assert(!_featureOptions.UseRazorCohostServer, "If cohosting is on we should never have a task queued up in the dispatcher.");
 
                             var result = TryExecuteTask(task);
                             Debug.Assert(result);

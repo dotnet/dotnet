@@ -12,8 +12,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Classification;
-using Roslyn.Core.Imaging;
-using Roslyn.Text.Adornments;
+using Microsoft.VisualStudio.Core.Imaging;
+using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 

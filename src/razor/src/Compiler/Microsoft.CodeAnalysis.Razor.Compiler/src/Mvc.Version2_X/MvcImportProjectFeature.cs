@@ -34,7 +34,7 @@ internal sealed class MvcImportProjectFeature : RazorProjectEngineFeatureBase, I
         ArgHelper.ThrowIfNull(projectItem);
 
         // Don't add MVC imports for a component - this shouldn't happen for v2, but just in case.
-        if (projectItem.FileKind.IsComponent())
+        if (FileKinds.IsComponent(projectItem.FileKind))
         {
             return;
         }

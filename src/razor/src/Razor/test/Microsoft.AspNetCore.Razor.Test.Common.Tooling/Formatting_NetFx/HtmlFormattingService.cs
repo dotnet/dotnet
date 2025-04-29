@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.WebTools.Languages.Shared.ContentTypes;
@@ -112,7 +113,7 @@ internal sealed class HtmlFormattingService : IDisposable
         foreach (var textChange in response.TextChanges)
         {
             var span = new TextSpan(textChange.Position, textChange.Length);
-            var edit = LspFactory.CreateTextEdit(sourceText.GetRange(span), textChange.NewText);
+            var edit = VsLspFactory.CreateTextEdit(sourceText.GetRange(span), textChange.NewText);
 
             edits.Add(edit);
         }

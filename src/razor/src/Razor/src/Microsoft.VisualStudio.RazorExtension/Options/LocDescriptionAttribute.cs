@@ -4,7 +4,6 @@
 using System.ComponentModel;
 
 namespace Microsoft.VisualStudio.RazorExtension.Options;
-
 internal class LocDescriptionAttribute : DescriptionAttribute
 {
     private readonly string _resourceKey;

@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,7 +42,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
                     {
                         Uri = documentUri,
                     },
-                    Edits = [LspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
+                    Edits = [VsLspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
                 }
            }
         };
@@ -71,7 +72,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
                                 {
                                     Uri = new Uri("c:/Test.razor.html"),
                                 },
-                                Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Goo")]
+                                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                             }
                         }
             }
@@ -88,11 +89,11 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
         Assert.Collection(documentEdits[0].Edits,
             e =>
             {
-                Assert.Equal("", ((TextEdit)e).NewText);
+                Assert.Equal("", e.NewText);
             },
             e =>
             {
-                Assert.Equal("", ((TextEdit)e).NewText);
+                Assert.Equal("", e.NewText);
             });
     }
 }

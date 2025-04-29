@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 
@@ -14,14 +15,14 @@ namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 /// </remarks>
 internal class SnippetResponseRewriter : IDelegatedCSharpCompletionResponseRewriter
 {
-    public RazorVSInternalCompletionList Rewrite(
-        RazorVSInternalCompletionList completionList,
+    public VSInternalCompletionList Rewrite(
+        VSInternalCompletionList completionList,
         RazorCodeDocument codeDocument,
         int hostDocumentIndex,
         Position projectedPosition,
         RazorCompletionOptions completionOptionsn)
     {
-        using var items = new PooledArrayBuilder<VSInternalCompletionItem>(completionList.Items.Length);
+        using var items = new PooledArrayBuilder<CompletionItem>(completionList.Items.Length);
 
         foreach (var item in completionList.Items)
         {

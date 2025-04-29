@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -76,8 +77,13 @@ internal class DocumentOnTypeFormattingEndpoint(
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = codeDocument.Source.Text;
+        if (codeDocument.IsUnsupported())
+        {
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
+            return null;
+        }
 
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         if (!sourceText.TryGetAbsoluteIndex(request.Position, out var hostDocumentIndex))
         {
             return null;

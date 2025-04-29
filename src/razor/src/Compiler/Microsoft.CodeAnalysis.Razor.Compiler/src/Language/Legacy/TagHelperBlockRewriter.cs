@@ -27,9 +27,10 @@ internal static class TagHelperBlockRewriter
         }
 
         var hasDirectiveAttribute = false;
-        foreach (var boundRulesInfo in bindingResult.AllBoundRules)
+        foreach (var descriptor in bindingResult.Descriptors)
         {
-            var nonDefaultRule = boundRulesInfo.Rules.FirstOrDefault(static rule => rule.TagStructure != TagStructure.Unspecified);
+            var boundRules = bindingResult.Mappings[descriptor];
+            var nonDefaultRule = boundRules.FirstOrDefault(static rule => rule.TagStructure != TagStructure.Unspecified);
 
             if (nonDefaultRule?.TagStructure == TagStructure.WithoutEndTag)
             {
@@ -41,7 +42,6 @@ internal static class TagHelperBlockRewriter
             // <input @onclick="..."> vs <input onclick="..." />
             //
             // We don't want this to become an error just because you added a directive attribute.
-            var descriptor = boundRulesInfo.Descriptor;
             if (descriptor.IsAnyComponentDocumentTagHelper() && !descriptor.IsComponentOrChildContentTagHelper)
             {
                 hasDirectiveAttribute = true;
@@ -108,7 +108,7 @@ internal static class TagHelperBlockRewriter
                         // TODO: Accept more than just Markup attributes: https://github.com/aspnet/Razor/issues/96.
                         // Something like:
                         // <input @checked />
-                        var location = new SourceSpan(codeBlock.GetSourceLocation(source), codeBlock.Width);
+                        var location = new SourceSpan(codeBlock.GetSourceLocation(source), codeBlock.FullWidth);
                         var diagnostic = RazorDiagnosticFactory.CreateParsing_TagHelpersCannotHaveCSharpInTagDeclaration(location, tagName);
                         errorSink.OnError(diagnostic);
                         break;
@@ -847,7 +847,7 @@ internal static class TagHelperBlockRewriter
                 if (kind != SyntaxKind.MarkupLiteralAttributeValue &&
                     // We only want to collapse dynamic values if we're in a legacy file.
                     // Mixed C#/HTML content is not allowed in components.
-                    (kind != SyntaxKind.MarkupDynamicAttributeValue || !_options.FileKind.IsLegacy()))
+                    (kind != SyntaxKind.MarkupDynamicAttributeValue || !FileKinds.IsLegacy(_options.FileKind)))
                 {
                     return false;
                 }

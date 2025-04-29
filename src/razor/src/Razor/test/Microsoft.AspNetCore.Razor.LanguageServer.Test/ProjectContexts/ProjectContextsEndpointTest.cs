@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +24,7 @@ public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleS
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ProjectContextsEndpoint(languageServer);
 

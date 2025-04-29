@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
@@ -59,7 +59,7 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
         if (tagNameWithClosingBehavior.AutoClosingBehavior == AutoClosingBehavior.EndTag)
         {
             var formatForEndTag = InsertTextFormat.Snippet;
-            var editForEndTag = LspFactory.CreateTextEdit(position, $"$0</{tagNameWithClosingBehavior.TagName}>");
+            var editForEndTag = VsLspFactory.CreateTextEdit(position, $"$0</{tagNameWithClosingBehavior.TagName}>");
 
             autoInsertEdit = new()
             {
@@ -76,7 +76,7 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
 
         // Need to replace the `>` with ' />$0' or '/>$0' depending on if there's prefixed whitespace.
         var insertionText = char.IsWhiteSpace(sourceText[afterCloseAngleIndex - 2]) ? "/" : " /";
-        var edit = LspFactory.CreateTextEdit(position.Line, position.Character - 1, insertionText);
+        var edit = VsLspFactory.CreateTextEdit(position.Line, position.Character - 1, insertionText);
 
         autoInsertEdit = new()
         {
@@ -153,9 +153,10 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
     {
         var resolvedTagStructure = TagStructure.Unspecified;
 
-        foreach (var boundRulesInfo in bindingResult.AllBoundRules)
+        foreach (var descriptor in bindingResult.Descriptors)
         {
-            foreach (var tagMatchingRule in boundRulesInfo.Rules)
+            var tagMatchingRules = bindingResult.Mappings[descriptor];
+            foreach (var tagMatchingRule in tagMatchingRules)
             {
                 if (tagMatchingRule.TagStructure == TagStructure.Unspecified)
                 {

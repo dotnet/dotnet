@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 
@@ -33,7 +34,7 @@ internal partial class RazorCustomMessageTarget
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<DocumentColorParams, ColorInformation[]>(
             htmlTextBuffer,
-            Methods.TextDocumentDocumentColor.Name,
+            Methods.DocumentColorRequest.Name,
             documentColorParams,
             cancellationToken).ConfigureAwait(false);
 
@@ -68,7 +69,7 @@ internal partial class RazorCustomMessageTarget
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<ColorPresentationParams, ColorPresentation[]>(
             htmlTextBuffer,
-            Methods.TextDocumentColorPresentationName,
+            CustomMessageNames.ColorPresentationMethodName,
             colorPresentationParams,
             cancellationToken).ConfigureAwait(false);
 

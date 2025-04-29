@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -49,7 +50,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var projectManager = CreateProjectSnapshotManager();
 
@@ -91,7 +92,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        var edits = result.DocumentChanges.Value.First.FirstOrDefault().Edits.Select(e => codeDocument.Source.Text.GetTextChange(((TextEdit)e)));
+        var edits = result.DocumentChanges.Value.First.FirstOrDefault().Edits.Select(codeDocument.Source.Text.GetTextChange);
         var newText = codeDocument.Source.Text.WithChanges(edits).ToString();
         Assert.Equal(expected, newText);
     }

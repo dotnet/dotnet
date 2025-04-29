@@ -4,6 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 

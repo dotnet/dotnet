@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentHighlight;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -22,13 +24,15 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostDocumentHighlightEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal sealed class CohostDocumentHighlightEndpoint(
+internal class CohostDocumentHighlightEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IHtmlRequestInvoker requestInvoker)
+    IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
+    LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<DocumentHighlightParams, DocumentHighlight[]?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
 
@@ -64,7 +68,7 @@ internal sealed class CohostDocumentHighlightEndpoint(
         // If we got a response back, then either Razor or C# wants to do something with this, so we're good to go
         if (csharpResult.Result is { } highlights)
         {
-            return highlights.Select(RemoteDocumentHighlight.ToLspDocumentHighlight).ToArray();
+            return highlights.Select(RemoteDocumentHighlight.ToVsDocumentHighlight).ToArray();
         }
 
         if (csharpResult.StopHandling)
@@ -73,11 +77,23 @@ internal sealed class CohostDocumentHighlightEndpoint(
         }
 
         // If we didn't get anything from Razor or Roslyn, lets ask Html what they want to do
-        return await _requestInvoker.MakeHtmlLspRequestAsync<DocumentHighlightParams, DocumentHighlight[]>(
-            razorDocument,
+        var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+        if (htmlDocument is null)
+        {
+            return null;
+        }
+
+        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
+
+        var result = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentHighlightParams, DocumentHighlight[]?>(
+            htmlDocument.Buffer,
             Methods.TextDocumentDocumentHighlightName,
+            RazorLSPConstants.HtmlLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
+
+        // Since we don't need to map positions in Html, and document highlight results don't have Uri's, we can return these results directly
+        return result?.Response;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

@@ -137,19 +137,34 @@ public class RazorCodeDocumentExtensionsTest
     }
 
     [Fact]
-    public void GetAndSetTagHelperContext_ReturnsTagHelperContext()
+    public void GetTagHelperContext_ReturnsTagHelperContext()
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
         var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
-        codeDocument.SetTagHelperContext(expected);
+        codeDocument.Items[typeof(TagHelperDocumentContext)] = expected;
 
         // Act
         var actual = codeDocument.GetTagHelperContext();
 
         // Assert
         Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void SetTagHelperContext_SetsTagHelperContext()
+    {
+        // Arrange
+        var codeDocument = TestRazorCodeDocument.CreateEmpty();
+
+        var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
+
+        // Act
+        codeDocument.SetTagHelperContext(expected);
+
+        // Assert
+        Assert.Same(expected, codeDocument.Items[typeof(TagHelperDocumentContext)]);
     }
 
     [Fact]
@@ -287,7 +302,7 @@ public class RazorCodeDocumentExtensionsTest
 
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, RazorFileKind.Component, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, FileKinds.Component, builder =>
             {
                 builder.Directives = [NamespaceDirective.Directive];
             }),
@@ -312,7 +327,7 @@ public class RazorCodeDocumentExtensionsTest
 
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, RazorFileKind.Component, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, FileKinds.Component, builder =>
             {
                 builder.Directives = [NamespaceDirective.Directive];
             }),
@@ -345,7 +360,7 @@ public class RazorCodeDocumentExtensionsTest
 
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, RazorFileKind.Component, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, FileKinds.Component, builder =>
             {
                 builder.Directives = [NamespaceDirective.Directive];
             }),
@@ -379,7 +394,7 @@ public class RazorCodeDocumentExtensionsTest
 
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, RazorFileKind.Component, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, FileKinds.Component, builder =>
             {
                 builder.Directives = [NamespaceDirective.Directive];
             }));

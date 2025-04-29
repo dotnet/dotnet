@@ -31,7 +31,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
+                var startupInitializer = new RazorStartupInitializer([]);
                 b.AddExport(startupInitializer);
             }));
 

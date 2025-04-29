@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 
@@ -42,6 +43,11 @@ internal class LinkedEditingRangeEndpoint(ILoggerFactory loggerFactory)
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (codeDocument.IsUnsupported())
+        {
+            _logger.LogWarning($"FileKind {codeDocument.FileKind} is unsupported");
+            return null;
+        }
 
         if (LinkedEditingRangeHelper.GetLinkedSpans(request.Position.ToLinePosition(), codeDocument) is { } linkedSpans && linkedSpans.Length == 2)
         {

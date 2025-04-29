@@ -12,17 +12,17 @@ namespace Microsoft.AspNetCore.Razor.Language;
 public sealed partial class RazorParserOptions
 {
     private static RazorLanguageVersion DefaultLanguageVersion => RazorLanguageVersion.Latest;
-    private static RazorFileKind DefaultFileKind => RazorFileKind.Legacy;
+    private static string DefaultFileKind => FileKinds.Legacy;
 
     public static RazorParserOptions Default { get; } = new(
         languageVersion: DefaultLanguageVersion,
-        fileKind: DefaultFileKind,
+        fileKind: FileKinds.Legacy,
         directives: [],
         csharpParseOptions: CSharpParseOptions.Default,
         flags: GetDefaultFlags(DefaultLanguageVersion, DefaultFileKind));
 
     public RazorLanguageVersion LanguageVersion { get; }
-    internal RazorFileKind FileKind { get; }
+    internal string FileKind { get; }
 
     public ImmutableArray<DirectiveDescriptor> Directives { get; }
     public CSharpParseOptions CSharpParseOptions { get; }
@@ -31,7 +31,7 @@ public sealed partial class RazorParserOptions
 
     private RazorParserOptions(
         RazorLanguageVersion languageVersion,
-        RazorFileKind fileKind,
+        string fileKind,
         ImmutableArray<DirectiveDescriptor> directives,
         CSharpParseOptions csharpParseOptions,
         Flags flags)
@@ -43,13 +43,13 @@ public sealed partial class RazorParserOptions
         }
 
         LanguageVersion = languageVersion ?? DefaultLanguageVersion;
-        FileKind = fileKind;
+        FileKind = fileKind ?? DefaultFileKind;
         Directives = directives;
         CSharpParseOptions = csharpParseOptions;
         _flags = flags;
     }
 
-    public static RazorParserOptions Create(RazorLanguageVersion languageVersion, RazorFileKind fileKind, Action<Builder>? configure = null)
+    public static RazorParserOptions Create(RazorLanguageVersion languageVersion, string fileKind, Action<Builder>? configure = null)
     {
         var builder = new Builder(languageVersion, fileKind);
         configure?.Invoke(builder);

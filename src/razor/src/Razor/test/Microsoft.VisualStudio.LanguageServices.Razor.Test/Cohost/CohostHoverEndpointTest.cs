@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
+using RoslynHover = Roslyn.LanguageServer.Protocol.Hover;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -181,13 +183,16 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         });
     }
 
-    private async Task VerifyHoverAsync(TestCode input, Func<Hover, TextDocument, Task> verifyHover)
+    private async Task VerifyHoverAsync(TestCode input, Func<RoslynHover, TextDocument, Task> verifyHover)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
         var result = await GetHoverResultAsync(document, input);
 
         Assert.NotNull(result);
-        await verifyHover(result, document);
+        var value = result.GetValueOrDefault();
+
+        Assert.True(value.TryGetFirst(out var hover));
+        await verifyHover(hover, document);
     }
 
     private async Task VerifyHoverAsync(TestCode input, Hover htmlResponse, Action<Hover?> verifyHover)
@@ -196,20 +201,23 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         var result = await GetHoverResultAsync(document, input, htmlResponse);
 
         Assert.NotNull(result);
-        verifyHover(result);
+        var value = result.GetValueOrDefault();
+
+        Assert.True(value.TryGetSecond(out var hover));
+        verifyHover(hover);
     }
 
-    private async Task<Hover?> GetHoverResultAsync(TextDocument document, TestCode input, Hover? htmlResponse = null)
+    private async Task<SumType<RoslynHover, Hover>?> GetHoverResultAsync(TextDocument document, TestCode input, Hover? htmlResponse = null)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
         var linePosition = inputText.GetLinePosition(input.Position);
 
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentHoverName, htmlResponse)]);
-        var endpoint = new CohostHoverEndpoint(RemoteServiceInvoker, requestInvoker);
+        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentHoverName, htmlResponse)]);
+        var endpoint = new CohostHoverEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
-            Position = LspFactory.CreatePosition(linePosition),
+            Position = VsLspFactory.CreatePosition(linePosition),
             TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
         };
 

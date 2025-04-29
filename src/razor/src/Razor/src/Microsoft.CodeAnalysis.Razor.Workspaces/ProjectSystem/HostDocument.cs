@@ -7,14 +7,14 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed record class HostDocument
 {
-    public RazorFileKind FileKind { get; init; }
+    public string FileKind { get; init; }
     public string FilePath { get; init; }
     public string TargetPath { get; init; }
 
-    public HostDocument(string filePath, string targetPath, RazorFileKind? fileKind = null)
+    public HostDocument(string filePath, string targetPath, string? fileKind = null)
     {
         FilePath = filePath;
         TargetPath = targetPath;
-        FileKind = fileKind ?? FileKinds.GetFileKindFromPath(filePath);
+        FileKind = fileKind ?? FileKinds.GetFileKindFromFilePath(filePath);
     }
 }

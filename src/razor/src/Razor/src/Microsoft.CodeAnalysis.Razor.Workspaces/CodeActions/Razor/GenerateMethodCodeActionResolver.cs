@@ -22,6 +22,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
@@ -83,7 +84,7 @@ internal class GenerateMethodCodeActionResolver(
                 cancellationToken).ConfigureAwait(false);
         }
 
-        var codeBehindUri = LspFactory.CreateFilePathUri(codeBehindPath);
+        var codeBehindUri = VsLspFactory.CreateFilePathUri(codeBehindPath);
 
         var codeBehindTextDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = codeBehindUri };
 
@@ -97,7 +98,7 @@ internal class GenerateMethodCodeActionResolver(
             classLocationLineSpan.StartLinePosition.Character,
             text);
 
-        var edit = LspFactory.CreateTextEdit(
+        var edit = VsLspFactory.CreateTextEdit(
             line: classLocationLineSpan.EndLinePosition.Line,
             character: 0,
             $"{formattedMethod}{Environment.NewLine}");
@@ -107,7 +108,7 @@ internal class GenerateMethodCodeActionResolver(
         var codeBehindTextDocEdit = new TextDocumentEdit()
         {
             TextDocument = codeBehindTextDocumentIdentifier,
-            Edits = [.. result ?? [edit]]
+            Edits = result ?? [edit]
         };
 
         return new WorkspaceEdit() { DocumentChanges = new[] { codeBehindTextDocEdit } };
@@ -139,7 +140,7 @@ internal class GenerateMethodCodeActionResolver(
             // just get the simplified text that comes back from Roslyn.
 
             var classLocationLineSpan = @class.GetLocation().GetLineSpan();
-            var tempTextEdit = LspFactory.CreateTextEdit(
+            var tempTextEdit = VsLspFactory.CreateTextEdit(
                 line: classLocationLineSpan.EndLinePosition.Line,
                 character: 0,
                 editToSendToRoslyn.NewText);
@@ -166,7 +167,7 @@ internal class GenerateMethodCodeActionResolver(
                 .Replace(FormattingUtilities.InitialIndent, string.Empty)
                 .Replace(FormattingUtilities.Indent, string.Empty);
 
-            var remappedEdit = LspFactory.CreateTextEdit(remappedRange, unformattedMethodSignature);
+            var remappedEdit = VsLspFactory.CreateTextEdit(remappedRange, unformattedMethodSignature);
             var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext, codeBehindUri: null, remappedEdit, cancellationToken).ConfigureAwait(false);
 
             if (result is not null)
@@ -191,7 +192,7 @@ internal class GenerateMethodCodeActionResolver(
         var razorTextDocEdit = new TextDocumentEdit()
         {
             TextDocument = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri },
-            Edits = [.. edits],
+            Edits = edits,
         };
 
         return new WorkspaceEdit() { DocumentChanges = new[] { razorTextDocEdit } };

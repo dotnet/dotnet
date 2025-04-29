@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -54,7 +55,7 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -83,7 +84,7 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -109,7 +110,7 @@ public class CSharpCodeActionProviderTest : LanguageServerTestBase
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -140,7 +141,7 @@ $$Path;
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -172,7 +173,7 @@ $$Path;
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -201,7 +202,7 @@ $$Path;
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -236,7 +237,7 @@ $$Path;
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -280,7 +281,7 @@ $$Path;
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -319,7 +320,7 @@ $$Path;
             });
         });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

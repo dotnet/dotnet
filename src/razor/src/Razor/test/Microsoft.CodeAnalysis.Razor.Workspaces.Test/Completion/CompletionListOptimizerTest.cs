@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,7 +15,7 @@ public class CompletionListOptimizerTest(ITestOutputHelper testOutput) : Tooling
     {
         // Arrange
         var commitCharacters = new[] { "<" };
-        var completionList = new RazorVSInternalCompletionList()
+        var completionList = new VSInternalCompletionList()
         {
             Items = new[]
             {
@@ -50,7 +51,7 @@ public class CompletionListOptimizerTest(ITestOutputHelper testOutput) : Tooling
     {
         // Arrange
         var commitCharacters = new[] { "<" };
-        var completionList = new RazorVSInternalCompletionList()
+        var completionList = new VSInternalCompletionList()
         {
             Items = [
                 new VSInternalCompletionItem()

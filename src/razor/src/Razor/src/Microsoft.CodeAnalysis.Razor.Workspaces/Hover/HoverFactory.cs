@@ -17,7 +17,9 @@ using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Editor.Razor;
-using Roslyn.Text.Adornments;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Text.Adornments;
+using LspHover = Microsoft.VisualStudio.LanguageServer.Protocol.Hover;
 
 namespace Microsoft.CodeAnalysis.Razor.Hover;
 
@@ -47,7 +49,7 @@ internal static class HoverFactory
             owner = owner.Parent;
         }
 
-        var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
+        var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
             containingTagNameToken.Span.IntersectsWith(absoluteIndex))
@@ -71,7 +73,7 @@ internal static class HoverFactory
             var (parentTag, parentIsTagHelper) = TagHelperFacts.GetNearestAncestorTagInfo(ancestors);
             var stringifiedAttributes = TagHelperFacts.StringifyAttributes(attributes);
             var binding = TagHelperFacts.GetTagHelperBinding(
-                tagHelperContext,
+                tagHelperDocumentContext,
                 containingTagNameToken.Content,
                 stringifiedAttributes,
                 parentTag: parentTag,
@@ -92,10 +94,8 @@ internal static class HoverFactory
 
             var span = containingTagNameToken.GetLinePositionSpan(codeDocument.Source);
 
-            var filePath = codeDocument.Source.FilePath.AssumeNotNull();
-
             return ElementInfoToHoverAsync(
-                filePath, binding.Descriptors, span, options, componentAvailabilityService, cancellationToken);
+                codeDocument.Source.FilePath, binding.Descriptors, span, options, componentAvailabilityService, cancellationToken);
         }
 
         if (HtmlFacts.TryGetAttributeInfo(owner, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
@@ -111,7 +111,7 @@ internal static class HoverFactory
             var stringifiedAttributes = TagHelperFacts.StringifyAttributes(attributes);
 
             var binding = TagHelperFacts.GetTagHelperBinding(
-                tagHelperContext,
+                tagHelperDocumentContext,
                 containingTagNameToken.Content,
                 stringifiedAttributes,
                 parentTag: parentTag,
@@ -125,7 +125,7 @@ internal static class HoverFactory
 
             Debug.Assert(binding.Descriptors.Any());
             var tagHelperAttributes = TagHelperFacts.GetBoundTagHelperAttributes(
-                tagHelperContext,
+                tagHelperDocumentContext,
                 selectedAttributeName.AssumeNotNull(),
                 binding);
 
@@ -158,13 +158,13 @@ internal static class HoverFactory
             {
                 case SyntaxKind.MarkupTagHelperDirectiveAttribute:
                     var directiveAttribute = (MarkupTagHelperDirectiveAttributeSyntax)attribute.Parent;
-                    span = span.WithStart(start => start.WithCharacter(ch => ch - directiveAttribute.Transition.Width));
+                    span = span.WithStart(start => start.WithCharacter(ch => ch - directiveAttribute.Transition.FullWidth));
                     attributeName = "@" + attributeName;
                     break;
 
                 case SyntaxKind.MarkupMinimizedTagHelperDirectiveAttribute:
                     var minimizedAttribute = (MarkupMinimizedTagHelperDirectiveAttributeSyntax)containingTag;
-                    span = span.WithStart(start => start.WithCharacter(ch => ch - minimizedAttribute.Transition.Width));
+                    span = span.WithStart(start => start.WithCharacter(ch => ch - minimizedAttribute.Transition.FullWidth));
                     attributeName = "@" + attributeName;
                     break;
             }
@@ -217,7 +217,7 @@ internal static class HoverFactory
     }
 
     private static async Task<LspHover?> ElementInfoToHoverAsync(
-        string documentFilePath,
+        string? documentFilePath,
         ImmutableArray<TagHelperDescriptor> descriptors,
         LinePositionSpan span,
         HoverDisplayOptions options,
@@ -225,7 +225,7 @@ internal static class HoverFactory
         CancellationToken cancellationToken)
     {
         // Filter out attribute descriptors since we're creating an element hover
-        var keepAttributeInfo = FileKinds.GetFileKindFromPath(documentFilePath) == RazorFileKind.Legacy;
+        var keepAttributeInfo = FileKinds.GetFileKindFromFilePath(documentFilePath) == FileKinds.Legacy;
         var descriptionInfos = descriptors
             .Where(d => keepAttributeInfo || !d.IsAttributeDescriptor())
             .SelectAsArray(BoundElementDescriptionInfo.From);

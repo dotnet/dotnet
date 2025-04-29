@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -36,7 +37,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.CreateZeroWidthRange(0, 1),
+            Range = VsLspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
 
@@ -64,7 +65,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -74,7 +75,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             documentPath,
             contents,
             new SourceSpan(0, 0),
-            fileKind: RazorFileKind.Legacy);
+            fileKind: FileKinds.Legacy);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new FileSystem());
 
@@ -98,7 +99,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -126,7 +127,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -173,7 +174,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -222,7 +223,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -263,7 +264,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -310,7 +311,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -340,7 +341,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -370,7 +371,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -398,7 +399,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -432,7 +433,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         string filePath,
         string text,
         SourceSpan componentSourceSpan,
-        RazorFileKind? fileKind = null,
+        string? fileKind = null,
         bool supportsFileCreation = true)
     {
         var shortComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
@@ -466,9 +467,9 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
             });
         });
 
-        var fileKindValue = fileKind ?? RazorFileKind.Component;
+        fileKind ??= FileKinds.Component;
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

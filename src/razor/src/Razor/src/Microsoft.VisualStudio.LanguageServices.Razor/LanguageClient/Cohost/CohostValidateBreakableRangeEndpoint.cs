@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Text;
+using Roslyn.LanguageServer.Protocol;
+using VSLSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -22,7 +24,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostValidateBreakableRangeEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<VSInternalValidateBreakableRangeParams, LspRange?>, IDynamicRegistrationProvider
+    : AbstractRazorCohostDocumentRequestHandler<VSInternalValidateBreakableRangeParams, Range?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
 
@@ -30,25 +32,25 @@ internal sealed class CohostValidateBreakableRangeEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
+    public ImmutableArray<VSLSP.Registration> GetRegistrations(VSLSP.VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
-        return [new Registration
+        return [new VSLSP.Registration
         {
             Method = VSInternalMethods.TextDocumentValidateBreakableRangeName,
-            RegisterOptions = new TextDocumentRegistrationOptions()
+            RegisterOptions = new VSLSP.TextDocumentRegistrationOptions()
         }];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalValidateBreakableRangeParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<LspRange?> HandleRequestAsync(VSInternalValidateBreakableRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override Task<Range?> HandleRequestAsync(VSInternalValidateBreakableRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
         => HandleRequestAsync(
             context.TextDocument.AssumeNotNull(),
             request.Range.ToLinePositionSpan(),
             cancellationToken);
 
-    private async Task<LspRange?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
+    private async Task<Range?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
     {
         var response = await _remoteServiceInvoker
             .TryInvokeAsync<IRemoteDebugInfoService, LinePositionSpan?>(
@@ -65,7 +67,7 @@ internal sealed class CohostValidateBreakableRangeEndpoint(
 
     internal readonly struct TestAccessor(CohostValidateBreakableRangeEndpoint instance)
     {
-        public Task<LspRange?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
+        public Task<Range?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
             => instance.HandleRequestAsync(razorDocument, span, cancellationToken);
     }
 }

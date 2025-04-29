@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
@@ -40,8 +41,13 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = codeDocument.Source.Text;
+        if (codeDocument.IsUnsupported())
+        {
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
+            return null;
+        }
 
+        var sourceText = codeDocument.Source.Text;
         if (request.Range?.Start is not { } start ||
             !sourceText.TryGetAbsoluteIndex(start, out var hostDocumentIndex))
         {
@@ -102,10 +108,10 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
             var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
             var node = tree.Root.FindNode(requestSpan, includeWhitespace: false, getInnermostNodeForTie: true);
             if (node?.FirstAncestorOrSelf<CSharpImplicitExpressionSyntax>() is { Parent: CSharpCodeBlockSyntax codeBlock } &&
-                (requestSpan == codeBlock.Span || requestSpan.Length == 0))
+                (requestSpan == codeBlock.FullSpan || requestSpan.Length == 0))
             {
                 // Pretend we're in Html so the rest of the logic can continue
-                request.Range = sourceText.GetRange(codeBlock.Span);
+                request.Range = sourceText.GetRange(codeBlock.FullSpan);
                 languageKind = RazorLanguageKind.Html;
             }
         }

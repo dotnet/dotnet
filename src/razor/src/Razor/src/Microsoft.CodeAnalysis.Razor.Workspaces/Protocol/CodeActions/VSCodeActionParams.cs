@@ -3,6 +3,7 @@
 
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 
@@ -21,7 +22,7 @@ internal class VSCodeActionParams
 
     [JsonPropertyName("range")]
     [DataMember(Name = "range")]
-    public required LspRange Range { get; set; }
+    public required Range Range { get; set; }
 
     [JsonPropertyName("context")]
     [DataMember(Name = "context")]

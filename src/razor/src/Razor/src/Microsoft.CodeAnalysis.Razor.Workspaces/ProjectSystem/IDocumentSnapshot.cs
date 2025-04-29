@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal interface IDocumentSnapshot
 {
-    RazorFileKind FileKind { get; }
+    string FileKind { get; }
     string FilePath { get; }
     string TargetPath { get; }
     IProjectSnapshot Project { get; }

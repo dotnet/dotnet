@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
@@ -44,8 +45,13 @@ internal class RazorBreakpointSpanEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = codeDocument.Source.Text;
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var hostDocumentIndex = sourceText.GetPosition(request.Position);
+
+        if (codeDocument.IsUnsupported())
+        {
+            return null;
+        }
 
         var projectedIndex = hostDocumentIndex;
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);

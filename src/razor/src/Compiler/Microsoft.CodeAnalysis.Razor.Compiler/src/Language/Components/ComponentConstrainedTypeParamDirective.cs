@@ -27,7 +27,7 @@ internal static class ComponentConstrainedTypeParamDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, RazorFileKind.Component, RazorFileKind.ComponentImport);
+        builder.AddDirective(Directive, FileKinds.Component, FileKinds.ComponentImport);
         return builder;
     }
 }

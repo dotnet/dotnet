@@ -2,13 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 
 internal interface IDelegatedCSharpCompletionResponseRewriter
 {
-    RazorVSInternalCompletionList Rewrite(
-        RazorVSInternalCompletionList completionList,
+    VSInternalCompletionList Rewrite(
+        VSInternalCompletionList completionList,
         RazorCodeDocument codeDocument,
         int hostDocumentIndex,
         Position projectedPosition,

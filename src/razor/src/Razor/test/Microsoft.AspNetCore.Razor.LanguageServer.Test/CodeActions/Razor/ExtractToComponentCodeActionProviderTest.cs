@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -60,11 +61,11 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents, fileKind: RazorFileKind.Legacy);
+        var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents, fileKind: FileKinds.Legacy);
 
         var provider = new ExtractToComponentCodeActionProvider();
 
@@ -609,16 +610,16 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         string filePath,
         string text,
         string? relativePath = null,
-        RazorFileKind? fileKind = null,
+        string? fileKind = null,
         bool supportsFileCreation = true)
     {
         relativePath ??= filePath;
-        var fileKindValue = fileKind ?? RazorFileKind.Component;
+        fileKind ??= FileKinds.Component;
 
         var source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(filePath, relativePath));
         var codeDocument = RazorCodeDocument.Create(
             source,
-            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKindValue, builder =>
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKind, builder =>
             {
                 builder.Directives = [ComponentCodeDirective.Directive, FunctionsDirective.Directive];
             }),
@@ -667,14 +668,14 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = LspFactory.DefaultRange,
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
         var context = CreateRazorCodeActionContext(request, selectionSpan, documentPath, contents);
 
         var lineSpan = context.SourceText.GetLinePositionSpan(selectionSpan);
-        request.Range = LspFactory.CreateRange(lineSpan);
+        request.Range = VsLspFactory.CreateRange(lineSpan);
 
         var provider = new ExtractToComponentCodeActionProvider();
 

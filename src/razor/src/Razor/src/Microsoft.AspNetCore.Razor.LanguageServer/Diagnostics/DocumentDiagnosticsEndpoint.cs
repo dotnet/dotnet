@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting.Diagnostics;
 
@@ -36,7 +37,7 @@ internal sealed class DocumentDiagnosticsEndpoint(
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
         serverCapabilities.SupportsDiagnosticRequests = true;
-        serverCapabilities.DiagnosticOptions = new DiagnosticOptions()
+        serverCapabilities.DiagnosticOptions = new()
         {
             InterFileDependencies = false,
             WorkspaceDiagnostics = false,

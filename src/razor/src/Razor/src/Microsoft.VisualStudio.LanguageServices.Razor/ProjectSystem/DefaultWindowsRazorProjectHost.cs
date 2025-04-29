@@ -322,10 +322,7 @@ internal class DefaultWindowsRazorProjectHost(
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-
-                    var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
-                        ? kind
-                        : RazorFileKind.Component;
+                    var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
 
                     documents.Add(new HostDocument(filePath, targetPath, fileKind));
                 }
@@ -341,7 +338,7 @@ internal class DefaultWindowsRazorProjectHost(
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-                    documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
+                    documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
                 }
             }
         }
@@ -363,10 +360,7 @@ internal class DefaultWindowsRazorProjectHost(
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-
-                        var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
-                            ? kind
-                            : RazorFileKind.Component;
+                        var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
 
                         documents.Add(new HostDocument(filePath, targetPath, fileKind));
                     }
@@ -385,7 +379,7 @@ internal class DefaultWindowsRazorProjectHost(
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-                        documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
+                        documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
                     }
                 }
             }

@@ -15,7 +15,7 @@ internal abstract partial class SyntaxNode
 {
     private IEnumerable<SyntaxNode> DescendantNodesImpl(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren, bool includeSelf)
     {
-        if (includeSelf && IsInSpan(in span, Span))
+        if (includeSelf && IsInSpan(in span, FullSpan))
         {
             yield return this;
         }
@@ -96,7 +96,7 @@ internal abstract partial class SyntaxNode
         {
             while (_stack[_stackPtr].TryMoveNextAndGetCurrent(out value))
             {
-                if (IsInSpan(in span, value.Span))
+                if (IsInSpan(in span, value.FullSpan))
                 {
                     return true;
                 }
@@ -111,7 +111,7 @@ internal abstract partial class SyntaxNode
             SyntaxNode nodeValue;
             while ((nodeValue = _stack[_stackPtr].TryMoveNextAndGetCurrentAsNode()) != null)
             {
-                if (IsInSpan(in span, nodeValue.Span))
+                if (IsInSpan(in span, nodeValue.FullSpan))
                 {
                     return nodeValue;
                 }

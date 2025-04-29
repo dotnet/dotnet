@@ -68,10 +68,10 @@ internal class PromoteUsingCodeActionProvider : IRazorCodeActionProvider
         return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>([action]);
     }
 
-    public static string GetImportsFileName(RazorFileKind fileKind)
+    public static string GetImportsFileName(string fileKind)
     {
-        return fileKind.IsLegacy()
-            ? MvcImportProjectFeature.ImportsFileName
-            : ComponentMetadata.ImportsFileName;
+        return FileKinds.IsLegacy(fileKind)
+                ? MvcImportProjectFeature.ImportsFileName
+                : ComponentMetadata.ImportsFileName;
     }
 }

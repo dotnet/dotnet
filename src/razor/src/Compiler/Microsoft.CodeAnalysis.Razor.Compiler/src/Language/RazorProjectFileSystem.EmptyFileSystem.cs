@@ -15,7 +15,7 @@ public abstract partial class RazorProjectFileSystem
             return [];
         }
 
-        public override RazorProjectItem GetItem(string path, RazorFileKind? fileKind)
+        public override RazorProjectItem GetItem(string path, string? fileKind)
         {
             NormalizeAndEnsureValidPath(path);
             return new NotFoundProjectItem(path, fileKind);

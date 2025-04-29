@@ -1,22 +1,41 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
-internal sealed class TestLSPRequestInvoker(params IEnumerable<(string method, object? response)> responses) : LSPRequestInvoker
+internal class TestLSPRequestInvoker : LSPRequestInvoker
 {
-    private readonly Dictionary<string, object?> _responses = responses.ToDictionary(kvp => kvp.method, kvp => kvp.response);
+    private readonly CSharpTestLspServer _csharpServer;
+    private readonly Dictionary<string, object> _htmlResponses;
+
+    public TestLSPRequestInvoker() { }
+
+    public TestLSPRequestInvoker(List<(string method, object response)> htmlResponses)
+    {
+        _htmlResponses = htmlResponses.ToDictionary(kvp => kvp.method, kvp => kvp.response);
+    }
+
+    public TestLSPRequestInvoker(CSharpTestLspServer csharpServer)
+    {
+        if (csharpServer is null)
+        {
+            throw new ArgumentNullException(nameof(csharpServer));
+        }
+
+        _csharpServer = csharpServer;
+    }
 
     [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
@@ -79,20 +98,30 @@ internal sealed class TestLSPRequestInvoker(params IEnumerable<(string method, o
         throw new NotImplementedException();
     }
 
-    public override Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
+    public async override Task<ReinvocationResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
         string languageServerName,
         TIn parameters,
         CancellationToken cancellationToken)
     {
-        Assert.True(_responses.TryGetValue(method, out var response), $"'{method}' was not defined with a response.");
+        if (languageServerName is RazorLSPConstants.RazorCSharpLanguageServerName)
+        {
+            var result = await _csharpServer.ExecuteRequestAsync<TIn, TOut>(method, parameters, cancellationToken).ConfigureAwait(false);
+            return new ReinvocationResponse<TOut>(languageClientName: RazorLSPConstants.RazorCSharpLanguageServerName, result);
+        }
 
-        return Task.FromResult(new ReinvocationResponse<TOut>(languageClientName: "html", (TOut?)response)).AsNullable();
+        if (_htmlResponses is not null &&
+            _htmlResponses.TryGetValue(method, out var response))
+        {
+            return new ReinvocationResponse<TOut>(languageClientName: "html", (TOut)response);
+        }
+
+        return default;
     }
 
     [Obsolete]
-    public override Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
+    public override Task<ReinvocationResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
         string languageServerName,

@@ -22,8 +22,6 @@
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />
 
-    <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
-
     <Compile Remove="Resources\**\*.*" />
     <None Remove="Resources\**\*.*" />
 
@@ -38,6 +36,8 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.DiaSymReader" />
+
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Aliases="RLSP" />
   </ItemGroup>
 
   <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />

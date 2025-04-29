@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using System.Globalization;
 using Xunit;
 
@@ -8,7 +10,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public class ComponentDiagnosticRazorIntegrationTest : RazorIntegrationTestBase
 {
-    internal override RazorFileKind? FileKind => RazorFileKind.Component;
+    internal override string FileKind => FileKinds.Component;
 
     internal override bool UseTwoPhaseCompilation => true;
 

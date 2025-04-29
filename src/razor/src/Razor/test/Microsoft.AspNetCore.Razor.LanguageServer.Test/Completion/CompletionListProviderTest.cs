@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,8 +22,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 public class CompletionListProviderTest : LanguageServerTestBase
 {
-    private readonly RazorVSInternalCompletionList _completionList1;
-    private readonly RazorVSInternalCompletionList _completionList2;
+    private readonly VSInternalCompletionList _completionList1;
+    private readonly VSInternalCompletionList _completionList2;
     private readonly RazorCompletionListProvider _razorCompletionProvider;
     private readonly DelegatedCompletionListProvider _delegatedCompletionProvider;
     private readonly VSInternalCompletionContext _completionContext;
@@ -34,8 +35,8 @@ public class CompletionListProviderTest : LanguageServerTestBase
     public CompletionListProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _completionList1 = new RazorVSInternalCompletionList() { Items = [] };
-        _completionList2 = new RazorVSInternalCompletionList() { Items = [] };
+        _completionList1 = new VSInternalCompletionList() { Items = [] };
+        _completionList2 = new VSInternalCompletionList() { Items = [] };
         _razorCompletionProvider = new TestRazorCompletionListProvider(_completionList1, LoggerFactory);
         _delegatedCompletionProvider = new TestDelegatedCompletionListProvider(_completionList2);
         _completionContext = new VSInternalCompletionContext();
@@ -80,15 +81,15 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider
     {
-        private readonly RazorVSInternalCompletionList _completionList;
+        private readonly VSInternalCompletionList _completionList;
 
-        public TestDelegatedCompletionListProvider(RazorVSInternalCompletionList completionList)
+        public TestDelegatedCompletionListProvider(VSInternalCompletionList completionList)
             : base(null, null, null, null)
         {
             _completionList = completionList;
         }
 
-        public override ValueTask<RazorVSInternalCompletionList> GetCompletionListAsync(
+        public override ValueTask<VSInternalCompletionList> GetCompletionListAsync(
             RazorCodeDocument codeDocument,
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
@@ -104,17 +105,17 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
     private class TestRazorCompletionListProvider : RazorCompletionListProvider
     {
-        private readonly RazorVSInternalCompletionList _completionList;
+        private readonly VSInternalCompletionList _completionList;
 
         public TestRazorCompletionListProvider(
-            RazorVSInternalCompletionList completionList,
+            VSInternalCompletionList completionList,
             ILoggerFactory loggerFactory)
             : base(completionFactsService: null, completionListCache: null, loggerFactory)
         {
             _completionList = completionList;
         }
 
-        public override RazorVSInternalCompletionList GetCompletionList(
+        public override VSInternalCompletionList GetCompletionList(
             RazorCodeDocument codeDocument,
             int absoluteIndex,
             VSInternalCompletionContext completionContext,

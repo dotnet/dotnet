@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -34,12 +35,18 @@ internal class SyntaxNodeWriter(TextWriter writer, bool validateSpanEditHandlers
         return base.VisitToken(token);
     }
 
+    public override SyntaxNode VisitTrivia(SyntaxTrivia trivia)
+    {
+        WriteTrivia(trivia);
+        return base.VisitTrivia(trivia);
+    }
+
     private void WriteNode(SyntaxNode node)
     {
         WriteIndent();
         Write(node.Kind);
         WriteSeparator();
-        Write($"[{node.Position}..{node.EndPosition})::{node.Width}");
+        Write($"[{node.Position}..{node.EndPosition})::{node.FullWidth}");
 
         if (node is RazorDirectiveSyntax razorDirective)
         {
@@ -98,7 +105,7 @@ internal class SyntaxNodeWriter(TextWriter writer, bool validateSpanEditHandlers
         if (!_visitedRoot)
         {
             WriteSeparator();
-            Write($"[{node}]");
+            Write($"[{node.ToFullString()}]");
             _visitedRoot = true;
         }
     }
@@ -164,6 +171,11 @@ internal class SyntaxNodeWriter(TextWriter writer, bool validateSpanEditHandlers
         var diagnostics = token.GetDiagnostics();
         var tokenString = $"{token.Kind};[{content}];{string.Join(", ", diagnostics.Select(diagnostic => diagnostic.Id + diagnostic.Span))}";
         Write(tokenString);
+    }
+
+    private void WriteTrivia(SyntaxTrivia trivia)
+    {
+        throw new NotImplementedException();
     }
 
     private void WriteChunkGenerator(SyntaxNode node)

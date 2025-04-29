@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.Text.Adornments;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -48,7 +49,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, multiTargetProject: false);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, multiTargetProject: false);
         var projectManager = CreateProjectSnapshotManager();
         var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
         var hostDocument = TestHostDocument.Create(TestProjectData.SomeProject, razorFilePath);
@@ -88,9 +89,9 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         Assert.Equal(expectedSpans.Length, result.Length);
 
         var i = 0;
-        foreach (var referenceItem in result.OrderBy(l => l.Location.AssumeNotNull().Range.Start.Line))
+        foreach (var referenceItem in result.OrderBy(l => l.Location.Range.Start.Line))
         {
-            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.AssumeNotNull().Uri);
+            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.Uri);
 
             var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[i]);
             Assert.Equal(expectedRange, referenceItem.Location.Range);

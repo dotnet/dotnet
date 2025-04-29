@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -64,7 +65,7 @@ public class RazorDiagnosticHelperTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var sourceSpan = new SourceSpan(3, 0, 3, 4);
         var sourceText = SourceText.From("Hello World");
-        var expectedRange = LspFactory.CreateSingleLineRange(line: 0, character: 3, length: 4);
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 3, length: 4);
 
         // Act
         var range = RazorDiagnosticHelper.ConvertSpanToRange(sourceSpan, sourceText);
@@ -80,7 +81,7 @@ public class RazorDiagnosticHelperTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var sourceText = SourceText.From(string.Empty);
         var sourceSpan = new SourceSpan(5, 0, 5, 4);
-        var expectedRange = LspFactory.DefaultRange;
+        var expectedRange = VsLspFactory.DefaultRange;
 
         // Act
         var range = RazorDiagnosticHelper.ConvertSpanToRange(sourceSpan, sourceText);
@@ -96,7 +97,7 @@ public class RazorDiagnosticHelperTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var sourceText = SourceText.From("Hello World");
         var sourceSpan = new SourceSpan(sourceText.Length + 5, 0, sourceText.Length + 5, 4);
-        var expectedRange = LspFactory.CreateZeroWidthRange(0, 11);
+        var expectedRange = VsLspFactory.CreateZeroWidthRange(0, 11);
 
         // Act
         var range = RazorDiagnosticHelper.ConvertSpanToRange(sourceSpan, sourceText);
@@ -112,7 +113,7 @@ public class RazorDiagnosticHelperTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var sourceText = SourceText.From("Hello World");
         var sourceSpan = new SourceSpan(6, 0, 6, 15);
-        var expectedRange = LspFactory.CreateSingleLineRange(line: 0, character: 6, length: 5);
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 6, length: 5);
 
         // Act
         var range = RazorDiagnosticHelper.ConvertSpanToRange(sourceSpan, sourceText);

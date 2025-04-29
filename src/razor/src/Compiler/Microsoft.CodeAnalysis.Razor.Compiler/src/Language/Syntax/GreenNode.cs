@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
-[DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
 internal abstract class GreenNode
 {
     private static readonly RazorDiagnostic[] EmptyDiagnostics = Array.Empty<RazorDiagnostic>();
@@ -23,8 +22,6 @@ internal abstract class GreenNode
         new ConditionalWeakTable<GreenNode, RazorDiagnostic[]>();
     private static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> AnnotationsTable =
         new ConditionalWeakTable<GreenNode, SyntaxAnnotation[]>();
-
-    private int _width;
     private byte _slotCount;
 
     protected GreenNode(SyntaxKind kind)
@@ -32,10 +29,10 @@ internal abstract class GreenNode
         Kind = kind;
     }
 
-    protected GreenNode(SyntaxKind kind, int width)
+    protected GreenNode(SyntaxKind kind, int fullWidth)
         : this(kind)
     {
-        _width = width;
+        FullWidth = fullWidth;
     }
 
     protected GreenNode(SyntaxKind kind, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
@@ -43,8 +40,8 @@ internal abstract class GreenNode
     {
     }
 
-    protected GreenNode(SyntaxKind kind, int width, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
-        : this(kind, width)
+    protected GreenNode(SyntaxKind kind, int fullWidth, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
+        : this(kind, fullWidth)
     {
         if (diagnostics?.Length > 0)
         {
@@ -75,7 +72,7 @@ internal abstract class GreenNode
         }
 
         Flags |= (node.Flags & NodeFlags.InheritMask);
-        _width += node.Width;
+        FullWidth += node.FullWidth;
     }
 
     #region Kind
@@ -84,9 +81,9 @@ internal abstract class GreenNode
     internal virtual bool IsList => false;
 
     internal virtual bool IsToken => false;
-    #endregion
 
-    public int Width => _width;
+    internal virtual bool IsTrivia => false;
+    #endregion
 
     #region Slots
     public int SlotCount
@@ -124,7 +121,7 @@ internal abstract class GreenNode
             var child = GetSlot(i);
             if (child != null)
             {
-                offset += child.Width;
+                offset += child.FullWidth;
             }
         }
 
@@ -133,7 +130,7 @@ internal abstract class GreenNode
 
     public virtual int FindSlotIndexContainingOffset(int offset)
     {
-        Debug.Assert(0 <= offset && offset < Width);
+        Debug.Assert(0 <= offset && offset < FullWidth);
 
         int i;
         var accumulatedWidth = 0;
@@ -143,7 +140,7 @@ internal abstract class GreenNode
             var child = GetSlot(i);
             if (child != null)
             {
-                accumulatedWidth += child.Width;
+                accumulatedWidth += child.FullWidth;
                 if (offset < accumulatedWidth)
                 {
                     break;
@@ -187,6 +184,44 @@ internal abstract class GreenNode
     }
     #endregion
 
+    #region Spans
+    internal int FullWidth { get; private set; }
+
+    public virtual int Width
+    {
+        get
+        {
+            return FullWidth - GetLeadingTriviaWidth() - GetTrailingTriviaWidth();
+        }
+    }
+
+    public virtual int GetLeadingTriviaWidth()
+    {
+        return FullWidth != 0 ? GetFirstTerminal().GetLeadingTriviaWidth() : 0;
+    }
+
+    public virtual int GetTrailingTriviaWidth()
+    {
+        return FullWidth != 0 ? GetLastTerminal().GetTrailingTriviaWidth() : 0;
+    }
+
+    public bool HasLeadingTrivia
+    {
+        get
+        {
+            return GetLeadingTriviaWidth() != 0;
+        }
+    }
+
+    public bool HasTrailingTrivia
+    {
+        get
+        {
+            return GetTrailingTriviaWidth() != 0;
+        }
+    }
+    #endregion
+
     #region Diagnostics
     internal abstract GreenNode SetDiagnostics(RazorDiagnostic[] diagnostics);
 
@@ -223,18 +258,18 @@ internal abstract class GreenNode
     #endregion
 
     #region Text
-    private string GetDebuggerDisplay()
+    public override string ToString()
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         builder.Append(GetType().Name);
         builder.Append('<');
-        builder.Append(Kind.ToString());
+        builder.Append(Kind.ToString()); // Use ToString() to avoid boxing the enum.
         builder.Append('>');
 
         return builder.ToString();
     }
 
-    public override string ToString()
+    public virtual string ToFullString()
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         using var writer = new StringWriter(builder, CultureInfo.InvariantCulture);
@@ -242,71 +277,192 @@ internal abstract class GreenNode
         return builder.ToString();
     }
 
-    public void WriteTo(TextWriter writer)
+    public virtual void WriteTo(TextWriter writer)
+    {
+        WriteTo(writer, includeLeadingTrivia: true, includeTrailingTrivia: true);
+    }
+
+    protected internal void WriteTo(TextWriter writer, bool includeLeadingTrivia, bool includeTrailingTrivia)
     {
         // Use an actual Stack so we can write out deeply recursive structures without overflowing.
-        using var stack = new PooledArrayBuilder<GreenNode>();
+        using var stack = new PooledArrayBuilder<StackEntry>();
 
-        stack.Push(this);
+        stack.Push(new(Node: this, includeLeadingTrivia, includeTrailingTrivia));
 
-        while (stack.Count > 0)
+        // Separated out stack processing logic so that it does not unintentionally refer to
+        // "this", "leading" or "trailing.
+        ProcessStack(writer, ref stack.AsRef());
+
+        static void ProcessStack(TextWriter writer, ref PooledArrayBuilder<StackEntry> stack)
         {
-            var node = stack.Pop();
-
-            if (node.IsToken)
+            while (stack.Count > 0)
             {
-                node.WriteTokenTo(writer);
-                continue;
-            }
+                var (node, includeLeadingTrivia, includeTrailingTrivia) = stack.Pop();
 
-            var firstIndex = GetFirstNonNullChildIndex(node);
-            var lastIndex = GetLastNonNullChildIndex(node);
-
-            for (var i = lastIndex; i >= firstIndex; i--)
-            {
-                if (node.GetSlot(i) is GreenNode child)
+                if (node.IsToken)
                 {
-                    stack.Push(child);
+                    node.WriteTokenTo(writer, includeLeadingTrivia, includeTrailingTrivia);
+                    continue;
                 }
-            }
-        }
 
-        static int GetFirstNonNullChildIndex(GreenNode node)
-        {
-            var slotCount = node.SlotCount;
-            var firstIndex = 0;
-
-            for (; firstIndex < slotCount; firstIndex++)
-            {
-                if (node.GetSlot(firstIndex) is not null)
+                if (node.IsTrivia)
                 {
-                    break;
+                    node.WriteTriviaTo(writer);
+                    continue;
                 }
-            }
 
-            return firstIndex;
-        }
+                var firstIndex = GetFirstNonNullChildIndex(node);
+                var lastIndex = GetLastNonNullChildIndex(node);
 
-        static int GetLastNonNullChildIndex(GreenNode node)
-        {
-            var slotCount = node.SlotCount;
-            var lastIndex = slotCount - 1;
-
-            for (; lastIndex >= 0; lastIndex--)
-            {
-                if (node.GetSlot(lastIndex) is not null)
+                for (var i = lastIndex; i >= firstIndex; i--)
                 {
-                    break;
+                    if (node.GetSlot(i) is GreenNode child)
+                    {
+                        var isFirst = i == firstIndex;
+                        var isLast = i == lastIndex;
+
+                        stack.Push(new(
+                            child,
+                            IncludeLeadingTrivia: includeLeadingTrivia | !isFirst,
+                            IncludeTrailingTrivia: includeTrailingTrivia | !isLast));
+                    }
                 }
             }
 
-            return lastIndex;
+            static int GetFirstNonNullChildIndex(GreenNode node)
+            {
+                var slotCount = node.SlotCount;
+                var firstIndex = 0;
+
+                for (; firstIndex < slotCount; firstIndex++)
+                {
+                    if (node.GetSlot(firstIndex) is not null)
+                    {
+                        break;
+                    }
+                }
+
+                return firstIndex;
+            }
+
+            static int GetLastNonNullChildIndex(GreenNode node)
+            {
+                var slotCount = node.SlotCount;
+                var lastIndex = slotCount - 1;
+
+                for (; lastIndex >= 0; lastIndex--)
+                {
+                    if (node.GetSlot(lastIndex) is not null)
+                    {
+                        break;
+                    }
+                }
+
+                return lastIndex;
+            }
         }
     }
 
-    protected virtual void WriteTokenTo(TextWriter writer)
+    private readonly record struct StackEntry(
+        GreenNode Node,
+        bool IncludeLeadingTrivia,
+        bool IncludeTrailingTrivia);
+
+    protected virtual void WriteTriviaTo(TextWriter writer)
     {
         throw new NotImplementedException();
+    }
+
+    protected virtual void WriteTokenTo(TextWriter writer, bool includeLeadingTrivia, bool includeTrailingTrivia)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
+
+    #region Tokens
+
+    public virtual object GetValue()
+    {
+        return null;
+    }
+
+    public virtual string GetValueText()
+    {
+        return string.Empty;
+    }
+
+    public virtual GreenNode GetLeadingTrivia()
+    {
+        return null;
+    }
+
+    public virtual GreenNode GetTrailingTrivia()
+    {
+        return null;
+    }
+
+    public virtual GreenNode WithLeadingTrivia(GreenNode trivia)
+    {
+        return this;
+    }
+
+    public virtual GreenNode WithTrailingTrivia(GreenNode trivia)
+    {
+        return this;
+    }
+
+    public InternalSyntax.SyntaxToken GetFirstToken()
+    {
+        return (InternalSyntax.SyntaxToken)GetFirstTerminal();
+    }
+
+    public InternalSyntax.SyntaxToken GetLastToken()
+    {
+        return (InternalSyntax.SyntaxToken)GetLastTerminal();
+    }
+
+    internal GreenNode GetFirstTerminal()
+    {
+        var node = this;
+
+        do
+        {
+            GreenNode firstChild = null;
+            for (int i = 0, n = node.SlotCount; i < n; i++)
+            {
+                var child = node.GetSlot(i);
+                if (child != null && child.FullWidth > 0)
+                {
+                    firstChild = child;
+                    break;
+                }
+            }
+            node = firstChild;
+        } while (node?._slotCount > 0);
+
+        return node;
+    }
+
+    internal GreenNode GetLastTerminal()
+    {
+        var node = this;
+
+        do
+        {
+            GreenNode lastChild = null;
+            for (var i = node.SlotCount - 1; i >= 0; i--)
+            {
+                var child = node.GetSlot(i);
+                if (child != null && child.FullWidth > 0)
+                {
+                    lastChild = child;
+                    break;
+                }
+            }
+            node = lastChild;
+        } while (node?._slotCount > 0);
+
+        return node;
     }
     #endregion
 
@@ -349,7 +505,7 @@ internal abstract class GreenNode
             }
         }
 
-        if (node1.Width != node2.Width)
+        if (node1.FullWidth != node2.FullWidth)
         {
             return false;
         }

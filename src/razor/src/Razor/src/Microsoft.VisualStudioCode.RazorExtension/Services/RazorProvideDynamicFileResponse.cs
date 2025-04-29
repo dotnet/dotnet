@@ -3,6 +3,7 @@
 
 using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;

@@ -15,12 +15,12 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using VSLSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -66,7 +66,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
 
         // First we verify that the MEF composition above is correct, otherwise this test will be invalid
         var actualProviders = typeof(CohostLinkedEditingRangeEndpoint).Assembly.GetTypes().Where(t => !t.IsInterface && typeof(IDynamicRegistrationProvider).IsAssignableFrom(t)).ToList();
-        Assert.Equal([.. actualProviders.OrderBy(a => a.Name).Select(r => r.Name)], [.. providers.OrderBy(e => e.GetType().Name).Select(r => r.GetType().Name)]);
+        Assert.Equal(actualProviders.OrderBy(a => a.Name).Select(r => r.Name).ToArray(), providers.OrderBy(e => e.GetType().Name).Select(r => r.GetType().Name).ToArray());
 
         var clientCapabilities = new VSInternalClientCapabilities()
         {
@@ -100,7 +100,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
 
         foreach (var endpoint in providers)
         {
-            if (endpoint is CohostSemanticTokensRegistration)
+            if (endpoint is CohostSemanticTokensRangeEndpoint)
             {
                 // We can't currently test this, as the GetRegistrations method calls requestContext.GetRequiredService
                 // and we can't create a request context ourselves
@@ -115,7 +115,14 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
                 Assert.Fail($"Did not get any registrations from {endpoint.GetType().Name}. Client capabilities might be wrong?");
             }
 
-            Assert.All(registrations, registration => Assert.IsAssignableFrom<ITextDocumentRegistrationOptions>(registration.RegisterOptions));
+            foreach (var registration in registrations)
+            {
+                var options = registration.RegisterOptions as ITextDocumentRegistrationOptions;
+                if (options is null)
+                {
+                    Assert.Fail($"Could not convert registration options from {endpoint.GetType().Name} to {nameof(ITextDocumentRegistrationOptions)}. It was {registration.RegisterOptions?.GetType().Name}");
+                }
+            }
         }
     }
 
@@ -146,11 +153,11 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
         public Task<ManualInvocationResponse?> RequestAsync(ITextBuffer textBuffer, Func<JToken, bool> capabilitiesFilter, string languageServerName, string method, Func<ITextSnapshot, JToken> parameterFactory, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<JToken?> RequestAsync(ILanguageClient languageClient, string method, JToken parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<TResponse?> RequestAsync<TRequest, TResponse>(Request<TRequest, TResponse> request, CancellationToken cancellationToken) => throw new NotImplementedException();
-        public Task<(ILanguageClient?, TOut)> RequestAsync<TIn, TOut>(string[] contentTypes, Func<VSLSP.ServerCapabilities, bool> capabilitiesFilter, VSLSP.LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
-        public Task<TOut> RequestAsync<TIn, TOut>(ILanguageClient languageClient, VSLSP.LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<(ILanguageClient?, TOut)> RequestAsync<TIn, TOut>(string[] contentTypes, Func<ServerCapabilities, bool> capabilitiesFilter, LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<TOut> RequestAsync<TIn, TOut>(ILanguageClient languageClient, LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<IEnumerable<(ILanguageClient, JToken?)>> RequestMultipleAsync(string[] contentTypes, Func<JToken, bool> capabilitiesFilter, string method, JToken parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
         public IAsyncEnumerable<ManualInvocationResponse> RequestMultipleAsync(ITextBuffer textBuffer, Func<JToken, bool> capabilitiesFilter, string method, Func<ITextSnapshot, JToken> parameterFactory, CancellationToken cancellationToken) => throw new NotImplementedException();
-        public Task<IEnumerable<(ILanguageClient, TOut)>> RequestMultipleAsync<TIn, TOut>(string[] contentTypes, Func<VSLSP.ServerCapabilities, bool> capabilitiesFilter, VSLSP.LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<IEnumerable<(ILanguageClient, TOut)>> RequestMultipleAsync<TIn, TOut>(string[] contentTypes, Func<ServerCapabilities, bool> capabilitiesFilter, LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     [Export(typeof(IWorkspaceProvider))]

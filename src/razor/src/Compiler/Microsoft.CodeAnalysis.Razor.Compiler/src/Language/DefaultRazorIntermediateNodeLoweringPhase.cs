@@ -43,7 +43,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         // We need to decide up front if this document is a "component" file. This will affect how
         // lowering behaves.
         LoweringVisitor visitor;
-        if (codeDocument.FileKind.IsComponentImport() &&
+        if (FileKinds.IsComponentImport(codeDocument.FileKind) &&
             syntaxTree.Options.AllowComponentFileKind)
         {
             visitor = new ComponentImportFileKindVisitor(documentNode, builder, syntaxTree.Options)
@@ -53,7 +53,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             visitor.Visit(syntaxTree.Root);
         }
-        else if (codeDocument.FileKind.IsComponent() &&
+        else if (FileKinds.IsComponent(codeDocument.FileKind) &&
             syntaxTree.Options.AllowComponentFileKind)
         {
             visitor = new ComponentFileKindVisitor(documentNode, builder, syntaxTree.Options)
@@ -1251,7 +1251,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     node.Source.Value.AbsoluteIndex,
                     node.Source.Value.LineIndex,
                     node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.Width,
+                    node.Source.Value.Length + item.FullWidth,
                     node.Source.Value.LineCount,
                     node.Source.Value.EndCharacterIndex);
             }
@@ -2223,7 +2223,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     node.Source.Value.AbsoluteIndex,
                     node.Source.Value.LineIndex,
                     node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.Width,
+                    node.Source.Value.Length + item.FullWidth,
                     node.Source.Value.LineCount,
                     node.Source.Value.EndCharacterIndex);
             }

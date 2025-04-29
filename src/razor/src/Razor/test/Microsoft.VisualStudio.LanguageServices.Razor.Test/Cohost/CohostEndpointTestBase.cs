@@ -23,8 +23,9 @@ using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.Composition;
-using Roslyn.Test.Utilities;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
+using Roslyn.Test.Utilities;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -116,10 +117,6 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         UpdateClientLSPInitializationOptions(c => c);
 
         _filePathService = new RemoteFilePathService(FeatureOptions);
-
-        // Force initialization and creation of the remote workspace. It will be filled in later.
-        await RemoteWorkspaceAccessor.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), DisposalToken);
-        _ = RemoteWorkspaceAccessor.GetWorkspace();
     }
 
     private protected void UpdateClientInitializationOptions(Func<RemoteClientInitializationOptions, RemoteClientInitializationOptions> mutation)
@@ -140,13 +137,13 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
     protected TextDocument CreateProjectAndRazorDocument(
         string contents,
-        RazorFileKind? fileKind = null,
+        string? fileKind = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool createSeparateRemoteAndLocalWorkspaces = false,
         bool inGlobalNamespace = false)
     {
         // Using IsLegacy means null == component, so easier for test authors
-        var isComponent = fileKind != RazorFileKind.Legacy;
+        var isComponent = !FileKinds.IsLegacy(fileKind);
 
         var documentFilePath = isComponent
             ? TestProjectData.SomeProjectComponentFile1.FilePath
