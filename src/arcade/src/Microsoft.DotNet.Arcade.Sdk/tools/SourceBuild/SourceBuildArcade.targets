@@ -51,29 +51,4 @@
     <PrebuiltBaselineDataFile Condition="Exists('$(PrebuiltBaselineDataFileDefault)')">$(PrebuiltBaselineDataFileDefault)</PrebuiltBaselineDataFile>
   </PropertyGroup>
 
-  <Target Name="DiscoverRepoSymbols">
-    <PropertyGroup>
-      <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
-      <SymbolsRoot Condition="!Exists('$(SymbolsRoot)') or '$(GitHubRepositoryName)' == 'source-build-externals'">$(RepoRoot)</SymbolsRoot>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <AbsoluteSymbolPath Include="$(SymbolsRoot)**\obj\**\*.pdb" />
-      <AbsoluteSymbolPath Condition="'@(AbsoluteSymbolPath)' != ''">
-        <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
-      </AbsoluteSymbolPath>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="CopyRepoSymbolsToIntermediates"
-          DependsOnTargets="DiscoverRepoSymbols"
-          Condition="'$(SourceBuiltSymbolsDir)' != ''">
-    <MakeDir Directories="$(SourceBuiltSymbolsDir)" />
-    <Copy
-      SourceFiles="@(AbsoluteSymbolPath)"
-      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)"
-      UseHardlinksIfPossible="true" />
-  </Target>
-
 </Project>

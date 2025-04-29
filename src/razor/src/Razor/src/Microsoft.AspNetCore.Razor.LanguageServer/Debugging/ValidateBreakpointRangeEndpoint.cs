@@ -78,6 +78,12 @@ internal class ValidateBreakpointRangeEndpoint(
             return null;
         }
 
+        if (delegatedResponse == LspFactory.UndefinedRange)
+        {
+            Logger.LogInformation($"Delegation could not get a valid answer, so returning original range so we don't lose user data.");
+            return originalRequest.Range;
+        }
+
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {

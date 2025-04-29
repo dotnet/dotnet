@@ -659,6 +659,31 @@
     </MSBuild>
   </Target>
 
+  <Target Name="CopyRepoSymbols" Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsUtilityProject)' != 'true'">
+    <PropertyGroup>
+      <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
+
+      <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-externals. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-externals'">$(ProjectDirectory)</SymbolsRoot>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AbsoluteSymbolPath Include="$(SymbolsRoot)**\obj\**\*.pdb" />
+      <AbsoluteSymbolPath Condition="'@(AbsoluteSymbolPath)' != ''">
+        <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
+      </AbsoluteSymbolPath>
+    </ItemGroup>
+
+    <MakeDir Directories="$(IntermediateSymbolsRepoDir)" />
+
+    <Copy
+      SourceFiles="@(AbsoluteSymbolPath)"
+      DestinationFolder="$(IntermediateSymbolsRepoDir)%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+      UseHardlinksIfPossible="true" />
+  </Target>
+
   <!-- Copy restored packages from inner build to ensure they're included in the
        main build prebuilt check -->
   <Target Name="CopyInnerBuildRestoredPackages"
@@ -822,6 +847,7 @@
     RepoBuild;
     MoveDotNetBuildLogs;
     LogRepoArtifacts;
+    CopyRepoSymbols;
     CopyInnerBuildRestoredPackages;
     ExtractToolPackage;
     CleanupRepo" />
