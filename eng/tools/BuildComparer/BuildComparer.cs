@@ -184,8 +184,7 @@ public abstract class BuildComparer
 
             if (repoMergedManifestPath == null)
             {
-                Console.WriteLine($"Failed to find merged manifest for {baseDirectory}");
-                continue;
+                throw new FileNotFoundException($"MergedManifest.xml not found in {baseDirectory}");
             }
 
             _assetMappings.AddRange(MapFilesForManifest(vmrMergedManifestContent,
