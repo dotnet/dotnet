@@ -45,6 +45,16 @@ public class SymbolsTests : SdkTests
 
             IList<string> failedFiles = VerifySdkFilesHaveMatchingSymbols(symbolsRoot, Config.DotNetDirectory);
 
+            if (!Config.IsOfficialBuild)
+            {
+                // Ignore some MSBuild ref assemblies due to a bug: https://github.com/dotnet/msbuild/issues/11785
+                failedFiles = failedFiles
+                    .Where(file =>
+                        !file.EndsWith("ref/Microsoft.Build.Framework.dll", StringComparison.OrdinalIgnoreCase) &&
+                        !file.EndsWith("ref/Microsoft.Build.Utilities.Core.dll", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
             if (failedFiles.Count > 0)
             {
                 OutputHelper.WriteLine($"Did not find PDBs for the following SDK files:");
