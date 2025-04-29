@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #pragma warning disable CS0618 // TODO: https://github.com/dotnet/sdk/pull/48752
+#pragma warning disable CS0612 // TODO: https://github.com/dotnet/sdk/pull/48752
 
 using System.Collections.Immutable;
 using System.Diagnostics;
