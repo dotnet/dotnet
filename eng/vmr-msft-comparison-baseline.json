@@ -295,11 +295,6 @@
   },
   {
     "issueType": "MissingNonShipping",
-    "idMatch": ".*dotnet-runtime-pgo.*",
-    "justification": "PGO blobs for runtime are not required. Only SDK"
-  },
-  {
-    "issueType": "MissingNonShipping",
     "idMatch": ".*containerize.UnitTests.*",
     "justification": "sdk non-shipping test packages are not published"
   },
