@@ -202,16 +202,6 @@
     <Delete Files="$(SymbolsList)" Condition="Exists($(SymbolsList))" />
   </Target>
 
-  <Target Name="CopyRepoSymbolsToIntermediates"
-          DependsOnTargets="DiscoverRepoSymbols"
-          Condition="'$(SourceBuiltSymbolsDir)' != ''">
-    <MakeDir Directories="$(SourceBuiltSymbolsDir)" />
-    <Copy
-      SourceFiles="@(AbsoluteSymbolPath)"
-      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)"
-      UseHardlinksIfPossible="true" />
-  </Target>
-
   <!--
     This target can be removed once we enable standard repo assets manifests and SB orchestrator
     starts using it - https://github.com/dotnet/source-build/issues/3970
