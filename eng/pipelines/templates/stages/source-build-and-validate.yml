@@ -1,8 +1,4 @@
 parameters:
-- name: isBuiltFromVmr
-  type: boolean
-  default: false
-
 - name: pool_Linux
   type: object
 
@@ -26,7 +22,6 @@ stages:
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
-      vmrBranch: ${{ variables.VmrBranch }}
       buildSourceOnly: true
   jobs:
   - ${{ each leg in parameters.legs }}:
@@ -87,8 +82,6 @@ stages:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
           targetRid: ${{ variables.alpineX64Rid }}
         
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ variables.VmrBranch }}
         targetArchitecture: ${{ leg.targetArchitecture }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
@@ -112,7 +105,6 @@ stages:
     variables:
     - template: ../variables/vmr-build.yml
       parameters:
-        vmrBranch: ${{ variables.VmrBranch }}
         buildSourceOnly: true
     jobs:
     - ${{ each leg in parameters.legs }}:
@@ -156,8 +148,6 @@ stages:
               image: ${{ variables.alpineContainerImage }}
             targetRid: ${{ variables.alpineX64Rid }}
 
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          vmrBranch: ${{ variables.VmrBranch }}
           targetArchitecture: ${{ leg.targetArchitecture }}
           ${{ if eq(leg.targetArchitecture, 'arm64') }}:
             pool: ${{ parameters.pool_LinuxArm64 }}

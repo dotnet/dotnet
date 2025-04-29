@@ -69,6 +69,12 @@ parameters:
   type: object
   default: ''
 
+# Names of jobs that this job depends on. This only provides a job dependency and does not automatically
+# download artifacts from the other job. Use reuseBuildArtifactsFrom for that.
+- name: dependsOn
+  type: object
+  default: ''
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -82,6 +88,10 @@ parameters:
   default: false
 
 - name: enablePoison
+  type: boolean
+  default: false
+
+- name: excludeOmniSharpTests
   type: boolean
   default: false
 
@@ -144,7 +154,7 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+  ${{ if or(ne(parameters.reuseBuildArtifactsFrom, ''), ne(parameters.dependsOn, '')) }}:
     ${{ if eq(parameters.buildPass, '') }}:
       # For PR builds, skip the stage 2 build if the stage 1 build fails.
       # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
@@ -158,6 +168,8 @@ jobs:
     dependsOn:
     - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
       - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ if ne(parameters.dependsOn, '') }}:
+      - ${{ parameters.dependsOn }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -601,7 +613,7 @@ jobs:
             if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
               customBuildArgs="$customBuildArgs --poison"
             fi
-            customBuildArgs="$customBuildArgs --source-only"
+            customBuildArgs="$customBuildArgs --source-only /p:SourceBuildTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}"
           fi
 
           if [[ -n "${{ parameters.targetRid }}" ]]; then
