@@ -18,5 +18,8 @@
             ]
         }
     },
+    "remoteEnv": {
+        "PATH": "${containerWorkspaceFolder}/.dotnet:${containerEnv:PATH}",
+    },
     "onCreateCommand": ".devcontainer/init.sh"
 }
