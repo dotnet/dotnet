@@ -233,7 +233,6 @@ src/sourcelink/docs/GitSpec/GitSpec.md|unknown-license-reference
 src/vstest/src/Microsoft.TestPlatform.Extensions.BlameDataCollector/ProcDumpArgsBuilder.cs|proprietary-license
 
 # Build asset, but not applying to code
-src/vstest/src/package/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI/License.rtf
 
 #
 # wpf
