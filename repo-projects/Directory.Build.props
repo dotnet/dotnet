@@ -27,7 +27,6 @@
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SrcDir)', '$(RepositoryName)'))</ProjectDirectory>
 
     <!-- Paths to the version props files -->
-    <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
     <PackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <CurrentSourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
@@ -58,7 +57,6 @@
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
-    <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
 
     <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
 
@@ -71,6 +69,13 @@
       Condition="('$(VerticalName)' != '' and '$(VerticalName)' != '$(RidAgnosticVerticalName)')
                   and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')
                   and '$(DotNetBuildSourceOnly)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
+
+    <!-- prebuilt settings -->
+    <PackageReportDataFile>$(ArtifactsLogRepoDir)prebuilt-usage.xml</PackageReportDataFile>
+    <UsageReportFile>$(ArtifactsLogRepoDir)annotated-usage.xml</UsageReportFile>
+    <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
+    <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
+    <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
@@ -149,8 +154,6 @@
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <BuildArgs>$(BuildArgs) /p:SourceBuiltSymbolsDir=$(IntermediateSymbolsRepoDir)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->

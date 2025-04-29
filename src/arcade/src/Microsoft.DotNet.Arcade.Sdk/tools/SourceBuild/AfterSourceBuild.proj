@@ -5,13 +5,6 @@
 
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
-  <PropertyGroup>
-    <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
-    <ReportPrebuiltUsage Condition="'$(ReportPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">$(DotNetBuildOrchestrator)</ReportPrebuiltUsage>
-  </PropertyGroup>
-
-  <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
-
   <Target Name="AfterSourceBuildInnerBuild"
           Condition="'$(DotNetBuildInnerRepo)' == 'true' and
                      '$(DotNetBuildOrchestrator)' == 'true'"
@@ -26,69 +19,7 @@
 
   <Target Name="AfterSourceBuild"
           Condition="'$(DotNetBuildInnerRepo)' != 'true'"
-          DependsOnTargets="
-            ReportPrebuiltUsage;
-            PackSourceBuildIntermediateNupkgs" />
-
-  <Target Name="WritePrebuiltUsageData">
-    <ItemGroup>
-      <AllRestoredPackageFiles Include="$(CurrentRepoSourceBuildPackageCache)**/*.nupkg" />
-      <SourceBuiltPackageFiles Include="$(CurrentRepoSourceBuiltNupkgCacheDir)**/*.nupkg" />
-      <SourceBuiltPackageFiles Include="$(AdditionalSourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(AdditionalSourceBuiltNupkgCacheDir)' != '' " />
-      <SourceBuiltPackageFiles Include="$(ReferencePackageNupkgCacheDir)**/*.nupkg" Condition=" '$(ReferencePackageNupkgCacheDir)' != '' " />
-      <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(PreviouslySourceBuiltNupkgCacheDir)' != '' " />
-
-      <!-- Add some other potential top-level project directories for a more specific report. -->
-      <ProjectDirectories Include="$(CurrentRepoSourceBuildSourceDir)"  Condition="'$(UseInnerClone)' == 'true'" />
-      <!-- Finally, scan entire source-build, in case project.assets.json ends up in an unexpected place. -->
-      <ProjectDirectories Include="$(SourceBuildOutputDir)" />
-    </ItemGroup>
-
-    <PropertyGroup>
-      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$([MSBuild]::NormalizePath('$(SourceBuildSelfPrebuiltReportDir)prebuilt-usage.xml'))</PackageReportDataFile>
-    </PropertyGroup>
-
-    <WritePackageUsageData
-      RestoredPackageFiles="@(AllRestoredPackageFiles)"
-      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFiles)"
-      SourceBuiltPackageFiles="@(SourceBuiltPackageFiles)"
-      ReferencePackageFiles="@(ReferencePackageFiles)"
-      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
-      TargetRid="$(TargetRid)"
-      ProjectDirectories="@(ProjectDirectories)"
-      RootDir="$(SourceBuildOutputDir)"
-      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
-      DataFile="$(PackageReportDataFile)"
-      ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
-  </Target>
-
-  <Target Name="ReportPrebuiltUsage"
-          Condition="'$(ReportPrebuiltUsage)' == 'true'"
-          DependsOnTargets="WritePrebuiltUsageData">
-    <PropertyGroup>
-      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
-    </PropertyGroup>
-
-    <WriteUsageReports
-      DataFile="$(PackageReportDataFile)"
-      PoisonedReportFile="$(PoisonedReportFile)"
-      OutputDirectory="$(SourceBuildSelfPrebuiltReportDir)" />
-
-    <PropertyGroup Condition="'$(ContinueOnPrebuiltBaselineError)' == ''">
-      <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
-      <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
-    </PropertyGroup>
-
-    <!-- Usage of prebuilts against the baseline is not reported outside of source-only builds. -->
-    <ValidateUsageAgainstBaseline
-      DataFile="$(PackageReportDataFile)"
-      BaselineDataFile="$(PrebuiltBaselineDataFile)"
-      BaselineDataUpdateHintFile="$(PrebuiltBaselineDataFileDefault)"
-      OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
-      OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
-      ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
-      Condition="'$(DotNetBuildOrchestrator)' != 'true'" />
-  </Target>
+          DependsOnTargets="PackSourceBuildIntermediateNupkgs" />
 
   <!--
     Copies the intermediate nupkg project to 'artifacts/' so the repo's global.json is in an
