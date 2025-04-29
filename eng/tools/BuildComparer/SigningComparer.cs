@@ -218,8 +218,7 @@ public class SigningComparer : BuildComparer
             {
                 _command = "/bin/bash";
                 _argumentsPrefix = "--";
-                // Permissions need to be set to executable - https://github.com/dotnet/arcade/issues/15686
-                _argumentsTemplate = $"-c \"" + $"chmod +x '{sdkTaskScript}' && " + "{0}\"";
+                _argumentsTemplate = "-c \"{0}\"";
                 _baseArguments =
                     $"{sdkTaskScript} " +
                     $"{_argumentsPrefix}task SigningValidation " +
