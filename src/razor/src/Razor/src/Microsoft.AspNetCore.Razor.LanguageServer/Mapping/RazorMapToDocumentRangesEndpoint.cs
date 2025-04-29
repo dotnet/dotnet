@@ -72,7 +72,7 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
             }
 
             ranges[i] = originalRange;
-            spans[i] = originalRange.ToRazorTextSpan(generatedDocument.Text);
+            spans[i] = originalRange.ToRazorTextSpan(codeDocument.Source.Text);
         }
 
         return new RazorMapToDocumentRangesResponse()
