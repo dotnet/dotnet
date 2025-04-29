@@ -92,7 +92,7 @@
 
     <!-- Relative PDB path differentiator to ensure that multiple VMR legs that happen to produce the same PDBs
          and need them all indexed get them published to different relative paths -->
-    <LoosePDBRelativeBasePath Condition="'$(LoosePDBRelativeBasePath)' != '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)/</LoosePDBRelativeBasePath>
+    <LoosePDBRelativeBasePath Condition="'$(LoosePDBRelativeBasePath)' == '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)/</LoosePDBRelativeBasePath>
   </PropertyGroup>
 
   <!-- Keep these asset manifest properties here as other repos already depend on them in Publishing.props. -->
@@ -397,8 +397,5 @@
       UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)"
       PublishManifestOnly="$(PublishManifestOnly)" />
   </Target>
-
-  <!-- Import the publish targets when in the inner or outer repo builds. -->
-  <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
 
 </Project>

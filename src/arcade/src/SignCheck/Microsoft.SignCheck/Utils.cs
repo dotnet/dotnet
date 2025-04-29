@@ -45,18 +45,18 @@ namespace Microsoft.SignCheck
         {
             switch (hashName.ToUpperInvariant())
             {
-                case "SHA256":
+                case "SHA256" or "SHA-256":
                     return SHA256.Create();
-                case "SHA1":
+                case "SHA1" or "SHA-1":
                     return SHA1.Create();
                 case "MD5":
                     return MD5.Create();
-                case "SHA384":
+                case "SHA384" or "SHA-384":
                     return SHA384.Create();
-                case "SHA512":
+                case "SHA512" or "SHA-512":
                     return SHA512.Create();
                 default:
-                    throw new ArgumentException("Unsupported hash algorithm name", nameof(hashName));
+                    throw new ArgumentException($"Unsupported hash algorithm name '{hashName}'", nameof(hashName));
             }
         }
 
