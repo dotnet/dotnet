@@ -284,12 +284,11 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
         else
         {
             command = "/bin/bash";
-            string permissionsCommand = $"chmod +x '{sdkTaskScript}.sh' &&"; // https://github.com/dotnet/arcade/issues/15686
             string formattedArguments = argumentsTemplate
                 .Replace("$scriptExtension$", "sh")
                 .Replace("$argumentPrefix$", "--")
                 .Replace("$additionalArgs$", string.Empty);
-            arguments = $"-c \"{permissionsCommand} {formattedArguments}\"";
+            arguments = $"-c \"{formattedArguments}\"";
         }
 
         return (command, arguments);
