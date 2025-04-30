@@ -1,9 +1,0 @@
-﻿<!-- When altering this file, please include @dotnet/product-construction as a reviewer. -->
-
-<Project>
-  <PropertyGroup>
-    <GitHubRepositoryName>symreader</GitHubRepositoryName>
-    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
-  </PropertyGroup>
-
-</Project>
