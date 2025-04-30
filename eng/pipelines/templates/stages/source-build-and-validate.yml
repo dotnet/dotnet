@@ -92,6 +92,7 @@ stages:
           extraProperties: "/p:DisableDevBuildAsDefaultForSourceOnly=true"
         ${{ else }}:
           runTests: true
+        enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
         useMonoRuntime: ${{ leg.useMonoRuntime }}
