@@ -101,9 +101,9 @@ stages:
             path: $(Build.ArtifactStagingDirectory)/artifacts/packages
             artifact: PackageArtifacts
             displayName: Publish Package Artifacts
-          - output: pdbArtifact
+          - output: pipelineArtifact
             path: $(Build.ArtifactStagingDirectory)/artifacts/PDB
-            artifact: PackageArtifacts
+            artifact: PDBArtifacts
             displayName: Publish Package Artifacts
           - output: pipelineArtifact
             path: $(Build.ArtifactStagingDirectory)/artifacts/log
