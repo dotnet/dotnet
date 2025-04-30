@@ -101,7 +101,7 @@
     <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks"
                       Version="$(MicrosoftDotNetSourceBuildTasksVersion)"
                       IsImplicitlyDefined="true"
-                      Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
+                      Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildRepo)' == 'true'" />
   </ItemGroup>
 
   <!-- Repository extensibility point -->
