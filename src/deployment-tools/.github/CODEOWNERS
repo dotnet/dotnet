@@ -11,4 +11,3 @@
 
 # Infra
 /eng/DotNetBuild.props @dotnet/source-build @dotnet/product-construction
-/eng/SourceBuild* @dotnet/source-build

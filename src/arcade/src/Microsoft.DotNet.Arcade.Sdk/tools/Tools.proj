@@ -97,7 +97,12 @@
         Condition="'$(Restore)' == 'true'"/>
   </Target>
 
-  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks"
+                      Version="$(MicrosoftDotNetSourceBuildTasksVersion)"
+                      IsImplicitlyDefined="true"
+                      Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
+  </ItemGroup>
 
   <!-- Repository extensibility point -->
   <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />
