@@ -48,7 +48,7 @@
   -->
   <PropertyGroup Label="Automated">
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>3.12.0-beta1.25222.12</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.25209.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.25223.3</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftSourceBuildIntermediatearcadePackageVersion>9.0.0-beta.25208.6</MicrosoftSourceBuildIntermediatearcadePackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-1.25222.12</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-1.25222.12</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
