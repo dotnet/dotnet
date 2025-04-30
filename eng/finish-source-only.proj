@@ -106,8 +106,8 @@
        prebuilt report without performing another full build. This doesn't reevalutate which packages
        are prebuilts or search the projects: it uses the existing usage.xml file to generate report
        XMLs based on the info put in artifacts/. -->
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.ValidateUsageAgainstBaseline" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageReports" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.ValidateUsageAgainstBaseline" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="ReportPrebuiltUsage"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete"

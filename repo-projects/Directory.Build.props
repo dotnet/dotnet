@@ -148,6 +148,7 @@
     <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:SourceBuildPrebuiltReportDir="$(ArtifactsLogRepoDir)"</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->
