@@ -42,7 +42,6 @@
     <NuGetConfigFile Condition="'$(OriginalNuGetConfigFile)' != ''">$(BaseIntermediateOutputPath)$([System.IO.Path]::GetFileName('$(OriginalNuGetConfigFile)'))</NuGetConfigFile>
 
     <RepoAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(AssetManifestsIntermediateDir)', '$(RepositoryName)'))</RepoAssetManifestsDir>
-    <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
     <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
     <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', 'sb', 'package-cache'))</RepoArtifactsPackageCache>
@@ -152,7 +151,6 @@
     <BuildArgs>$(BuildArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</BuildArgs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:SourceBuiltSymbolsDir=$(IntermediateSymbolsRepoDir)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
   </PropertyGroup>
 
