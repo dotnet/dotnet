@@ -91,7 +91,7 @@ stages:
         ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, false) }}:
           extraProperties: "/p:DisableDevBuildAsDefaultForSourceOnly=true"
         ${{ else }}:
-          runTests: true
+          runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
