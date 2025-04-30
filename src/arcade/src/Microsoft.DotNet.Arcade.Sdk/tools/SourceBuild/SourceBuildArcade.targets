@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <!-- Repo extensibility point. -->
-  <Import Project="$(RepositoryEngineeringDir)DotNetBuild.props" Condition="Exists('$(RepositoryEngineeringDir)DotNetBuild.props')" />>
+  <Import Project="$(RepositoryEngineeringDir)DotNetBuild.props" Condition="Exists('$(RepositoryEngineeringDir)DotNetBuild.props')" />
 
   <PropertyGroup>
     <!--
