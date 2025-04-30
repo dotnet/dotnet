@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$([MSBuild]::NormalizePath('$(SourceBuildSelfPrebuiltReportDir)prebuilt-usage.xml'))</PackageReportDataFile>
+      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$([MSBuild]::NormalizePath('$(SourceBuildPrebuiltReportDir)prebuilt-usage.xml'))</PackageReportDataFile>
     </PropertyGroup>
 
     <WritePackageUsageData
@@ -42,7 +42,7 @@
     <WriteUsageReports
       DataFile="$(PackageReportDataFile)"
       PoisonedReportFile="$(PoisonedReportFile)"
-      OutputDirectory="$(SourceBuildSelfPrebuiltReportDir)" />
+      OutputDirectory="$(SourceBuildPrebuiltReportDir)" />
   </Target>
 
   <Import Project="SourceBuildArcade.targets" />
