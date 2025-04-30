@@ -1,11 +1,11 @@
 parameters:
 - name: pipeline
   type: string
-  default: $(SDK_OFFICIAL_CI_PIPELINE_ID)
+  default: $(DOTNET_DOTNET_CI_PIPELINE_ID)
 
 - name: buildId
   type: string
-  default: $(SdkBuildId)
+  default: $(DotnetDotnetBuildId)
 
 - name: artifact
   type: string
