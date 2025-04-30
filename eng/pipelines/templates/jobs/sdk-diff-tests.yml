@@ -30,6 +30,7 @@ jobs:
   steps:
   - script: |
       dotnet_dotnet_build='${{ replace(parameters.dotnetDotnetRunId, ' ', '') }}'
+      dotnet_dotnet_sha=''
 
       if [[ -z "$dotnet_dotnet_build" ]]; then
         dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --top 1 --query "[].id" --output tsv)
@@ -39,9 +40,19 @@ jobs:
         echo "Could not find a completed dotnet-dotnet build for branch '$(Build.SourceBranch)'"
         exit 1
       fi
+
+      if [[ -z "$dotnet_dotnet_sha" ]]; then
+        dotnet_dotnet_sha=$(az pipelines build show --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --id "$dotnet_dotnet_build" --query "sourceVersion" --output tsv)
+      fi
+
+      if [[ -z "$dotnet_dotnet_sha" ]]; then
+        echo "Could not find a completed dotnet-dotnet build for branch '$(Build.SourceBranch)'"
+        exit 1
+      fi
       
       echo "Dotnet-dotnet build: https://dev.azure.com/dnceng/internal/_build/results?buildId=$dotnet_dotnet_build&view=results"
 
+      echo "##vso[build.addbuildtag]dotnet $dotnet_dotnet_sha"
       echo "##vso[task.setvariable variable=DotnetDotnetBuildId]$dotnet_dotnet_build"
     displayName: Find associated build
     name: Get_Build_Id
