@@ -44,7 +44,7 @@ parameters:
 
 steps:
 - powershell: |
-    $build_id = '${{ parameters.unifiedBuildRunId }}'.Replace(' ', '')
+    $build_id = '${{ parameters.unifiedBuildRunId }}'.Trim()
     $build_branch = ''
     $commit_sha = ''
 
@@ -90,7 +90,7 @@ steps:
     AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
 - powershell: |
-    $source_manifest_commit = '${{ parameters.sourceManifestCommit }}'.Replace(' ', '')
+    $source_manifest_commit = '${{ parameters.sourceManifestCommit }}'.Trim()
     if ([string]::IsNullOrWhiteSpace($source_manifest_commit)) {
       $source_manifest_commit = "$(GetBuildInfo.UnifiedBuildCommitSha)"
     }
