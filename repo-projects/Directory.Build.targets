@@ -700,50 +700,24 @@
           Condition="'@(_InnerPackageCacheFiles)' != ''" />
   </Target>
 
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageReports" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="WritePrebuiltUsageData"
-          Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsUtilityProject)' != 'true'"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(PackageReportDataFile);$(UsageReportFile)">
-    <ItemGroup>
-      <AllRestoredPackageFiles Include="$(RepoArtifactsPackageCache)**/*.nupkg" />
-      <SourceBuiltPackageFiles Include="$(ReferencePackagesDir)**/*.nupkg" />
-      <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltPackagesPath)**/*.nupkg" />
-
-      <!-- Add some other potential top-level project directories for a more specific report. -->
-      <ProjectDirectories Include="$(ProjectDirectory)" />
-    </ItemGroup>
-
-    <WritePackageUsageData
-      RestoredPackageFiles="@(AllRestoredPackageFiles)"
-      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFiles)"
-      SourceBuiltPackageFiles="@(SourceBuiltPackageFiles)"
-      ReferencePackageFiles="@(ReferencePackageFiles)"
-      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
-      TargetRid="$(TargetRid)"
-      ProjectDirectories="@(ProjectDirectories)"
-      RootDir="$(ProjectDirectory)"
-      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
-      DataFile="$(PackageReportDataFile)" />
-
-    <WriteUsageReports
-      DataFile="$(PackageReportDataFile)"
-      OutputDirectory="$(ArtifactsLogRepoDir)" />
-  </Target>
-
   <Target Name="MoveDotNetBuildLogs"
         Condition="'$(IsUtilityProject)' != 'true' and
                     Exists('$(RepoArtifactsDir)')">
     <ItemGroup>
       <LogFilesToMove Include="$(RepoArtifactsDir)**/*.log" />
       <LogFilesToMove Include="$(RepoArtifactsDir)**/*.binlog" />
+      <PrebuiltReportsToMove Include="$(RepoArtifactsDir)sb/prebuilt-report/*" />
     </ItemGroup>
 
     <!-- Move the build logs -->
     <Move SourceFiles="@(LogFilesToMove)"
           DestinationFolder="$(ArtifactsLogRepoDir)"
           Condition="'@(LogFilesToMove)' != ''" />
+
+    <!-- Move the prebuilt reports -->
+    <Move SourceFiles="@(PrebuiltReportsToMove)"
+          DestinationFolder="$(PackageReportRepoDir)"
+          Condition="'@(PrebuiltReportsToMove)' != ''" />
   </Target>
 
   <!-- Make a copy of project.assets.json files for prebuilt report generation. -->
@@ -872,7 +846,6 @@
     LogRepoArtifacts;
     CopyRepoSymbols;
     CopyInnerBuildRestoredPackages;
-    WritePrebuiltUsageData;
     ExtractToolPackage;
     CleanupRepo" />
 

@@ -56,6 +56,7 @@
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
+    <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
 
     <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
 
@@ -68,13 +69,6 @@
       Condition="('$(VerticalName)' != '' and '$(VerticalName)' != '$(RidAgnosticVerticalName)')
                   and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')
                   and '$(DotNetBuildSourceOnly)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
-
-    <!-- prebuilt settings -->
-    <PackageReportDataFile>$(ArtifactsLogRepoDir)prebuilt-usage.xml</PackageReportDataFile>
-    <UsageReportFile>$(ArtifactsLogRepoDir)annotated-usage.xml</UsageReportFile>
-    <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
-    <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
-    <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
