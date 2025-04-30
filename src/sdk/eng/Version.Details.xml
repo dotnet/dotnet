@@ -169,7 +169,6 @@
     <Dependency Name="NuGet.Build.Tasks" Version="6.15.0-preview.1.7">
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>d535886475b1eeda1813eb1947af23bd046abb25</Sha>
-      <SourceBuildTarball RepoName="nuget-client" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="NuGet.Build.Tasks.Console" Version="6.15.0-preview.1.7">
       <Uri>https://github.com/nuget/nuget.client</Uri>
@@ -276,7 +275,6 @@
     <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="10.0.0-preview.5.25223.3">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
       <Sha>5d6adefd0f06ba8190dbb56ea753266d5745330e</Sha>
-      <SourceBuildTarball RepoName="windowsdesktop" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.10.0" Version="10.0.0-preview.5.25223.3">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>

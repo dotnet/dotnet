@@ -13,7 +13,6 @@
     <Dependency Name="dotnet-ef" Version="10.0.0-preview.5.25228.104">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>efbfb137a317fb339a6b7be36af7188cc508dc95</Sha>
-      <SourceBuildTarball RepoName="efcore" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.0-preview.5.25228.104">
       <Uri>https://github.com/dotnet/dotnet</Uri>
