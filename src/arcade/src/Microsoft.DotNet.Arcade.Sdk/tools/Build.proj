@@ -287,7 +287,7 @@
     -->
     <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
+             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildRepo)' == 'true'" />
 
     <!--
       Publish artifacts. This should run in the following situations:
