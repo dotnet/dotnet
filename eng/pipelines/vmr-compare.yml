@@ -11,7 +11,7 @@ resources:
     trigger:
       branches:
         include:
-        - refs/heads/release/main
+        - refs/heads/main
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.1xx*
 
