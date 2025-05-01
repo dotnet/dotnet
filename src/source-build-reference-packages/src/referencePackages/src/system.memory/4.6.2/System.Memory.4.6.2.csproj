@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>4.6.2</PackageVersion>
+    <AssemblyName>System.Memory</AssemblyName>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../system.buffers/4.6.1/System.Buffers.4.6.1.csproj" />
+    <ProjectReference Include="../../system.numerics.vectors/4.6.1/System.Numerics.Vectors.4.6.1.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.1.1/System.Runtime.CompilerServices.Unsafe.6.1.1.csproj" />
+  </ItemGroup>
+
+</Project>
