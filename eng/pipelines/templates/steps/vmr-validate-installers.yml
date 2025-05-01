@@ -36,8 +36,7 @@ steps:
       -t \
       --projects test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj \
       /p:TestRpmPackages=true \
-      /p:TestDebPackages=true \
-      /p:SkipScenarioTestsDependencies=true
+      /p:TestDebPackages=true
     displayName: Validate installer packages
     workingDirectory: $(Build.SourcesDirectory)
 
