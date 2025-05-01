@@ -7,3 +7,4 @@
 # have proper ownership.
 /src/                       @dotnet/dotnet-diag
 /documentation/             @dotnet/dotnet-diag
+/eng/DotNetBuild.props      @dotnet/product-construction
