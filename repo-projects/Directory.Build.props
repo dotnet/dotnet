@@ -56,7 +56,6 @@
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
-    <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
 
     <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
 

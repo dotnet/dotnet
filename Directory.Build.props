@@ -194,9 +194,9 @@
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
     <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
-    <PoisonReportDataFile>$(PackageReportDir)poison-catalog.xml</PoisonReportDataFile>
-    <PoisonedReportFile>$(PackageReportDir)poisoned.txt</PoisonedReportFile>
-    <PoisonUsageReportFile>$(PackageReportDir)poison-usage.xml</PoisonUsageReportFile>
+    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
+    <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
+    <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
 
   <PropertyGroup>
