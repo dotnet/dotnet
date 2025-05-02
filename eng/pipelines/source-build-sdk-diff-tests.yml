@@ -5,12 +5,12 @@ schedules:
     include:
     - main
 
-# Relies on dotnet-source-build being in the same repo as this pipeline
+# Relies on dotnet-unified-build being in the same repo as this pipeline
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops#branch-considerations
 resources:
   pipelines:
-  - pipeline: dotnet-source-build
-    source: dotnet-source-build
+  - pipeline: dotnet-unified-build
+    source: dotnet-unified-build
     # For releases branches only run on internal/release branches because that's where dependencies flow.
 
     # Previews don't have internal/release branches so they must be run from non-internal release branches.

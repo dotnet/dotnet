@@ -1,22 +1,15 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="AfterSourceBuild">
+<Project DefaultTargets="WritePrebuiltData">
 
   <Import Project="..\BuildStep.props" />
 
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
-
   <PropertyGroup>
     <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
-    <ReportPrebuiltUsage Condition="'$(ReportPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">$(DotNetBuildOrchestrator)</ReportPrebuiltUsage>
   </PropertyGroup>
 
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
 
-  <Target Name="AfterSourceBuild"
-          Condition="'$(DotNetBuildInnerRepo)' != 'true'"
-          DependsOnTargets="ReportPrebuiltUsage" />
-
-  <Target Name="WritePrebuiltUsageData">
+  <Target Name="WritePrebuiltData" Condition="'$(DotNetBuildInnerRepo)' != 'true'">
     <ItemGroup>
       <AllRestoredPackageFiles Include="$(CurrentRepoSourceBuildPackageCache)**/*.nupkg" />
       <SourceBuiltPackageFiles Include="$(AdditionalSourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(AdditionalSourceBuiltNupkgCacheDir)' != '' " />
@@ -30,7 +23,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$([MSBuild]::NormalizePath('$(SourceBuildSelfPrebuiltReportDir)prebuilt-usage.xml'))</PackageReportDataFile>
+      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$([MSBuild]::NormalizePath('$(SourceBuildPrebuiltReportDir)prebuilt-usage.xml'))</PackageReportDataFile>
     </PropertyGroup>
 
     <WritePackageUsageData
@@ -45,34 +38,11 @@
       IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
       DataFile="$(PackageReportDataFile)"
       ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
-  </Target>
-
-  <Target Name="ReportPrebuiltUsage"
-          Condition="'$(ReportPrebuiltUsage)' == 'true'"
-          DependsOnTargets="WritePrebuiltUsageData">
-    <PropertyGroup>
-      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
-    </PropertyGroup>
 
     <WriteUsageReports
       DataFile="$(PackageReportDataFile)"
       PoisonedReportFile="$(PoisonedReportFile)"
-      OutputDirectory="$(SourceBuildSelfPrebuiltReportDir)" />
-
-    <PropertyGroup Condition="'$(ContinueOnPrebuiltBaselineError)' == ''">
-      <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
-      <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
-    </PropertyGroup>
-
-    <!-- Usage of prebuilts against the baseline is not reported outside of source-only builds. -->
-    <ValidateUsageAgainstBaseline
-      DataFile="$(PackageReportDataFile)"
-      BaselineDataFile="$(PrebuiltBaselineDataFile)"
-      BaselineDataUpdateHintFile="$(PrebuiltBaselineDataFileDefault)"
-      OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
-      OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
-      ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
-      Condition="'$(DotNetBuildOrchestrator)' != 'true'" />
+      OutputDirectory="$(SourceBuildPrebuiltReportDir)" />
   </Target>
 
   <Import Project="SourceBuildArcade.targets" />

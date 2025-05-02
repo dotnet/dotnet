@@ -8,6 +8,3 @@
 
 # Releases library
 /src/Microsoft.Deployment.DotNet.Releases @joeloff
-
-# Infra
-/eng/DotNetBuild.props @dotnet/source-build @dotnet/product-construction

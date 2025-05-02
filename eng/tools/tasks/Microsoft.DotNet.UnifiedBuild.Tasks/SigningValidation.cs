@@ -217,6 +217,13 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
                 Log.LogError($"SignCheck failed with exit code {process.ExitCode}: {errorLogContent}");
             }
 
+            string stdoutLog = GetLogPath(_signCheckStdoutLogFileName);
+            string stdoutLogContent = File.Exists(stdoutLog) ? File.ReadAllText(stdoutLog).Trim() : string.Empty;
+            if (!string.IsNullOrWhiteSpace(stdoutLogContent) && stdoutLogContent.Contains("No files were processed"))
+            {
+                Log.LogError("SignCheck did not process any files.");
+            }
+
             Log.LogMessage(MessageImportance.High, $"SignCheck completed.");
         }
     }
