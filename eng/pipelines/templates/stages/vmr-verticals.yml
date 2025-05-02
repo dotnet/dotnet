@@ -210,7 +210,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: browser
             targetArchitecture: wasm
-            extraProperties: /p:DotNetBuildRuntimeWasmEnableThreads=true
+            extraProperties: /p:WasmEnableThreads=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -329,7 +329,7 @@ stages:
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: x64
-            extraProperties: /p:DotNetBuildMonoEnableLLVM=true /p:DotNetBuildMonoAOTEnableLLVM=true /p:DotNetBuildMonoBundleLLVMOptimizer=true
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -368,7 +368,7 @@ stages:
             useMonoRuntime: true
             targetOS: linux
             targetArchitecture: x64
-            extraProperties: /p:DotNetBuildMonoEnableLLVM=true /p:DotNetBuildMonoAOTEnableLLVM=true /p:DotNetBuildMonoBundleLLVMOptimizer=true
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -458,7 +458,7 @@ stages:
             useMonoRuntime: true
             targetOS: linux
             targetArchitecture: arm64
-            extraProperties: /p:DotNetBuildMonoEnableLLVM=true /p:DotNetBuildMonoAOTEnableLLVM=true /p:DotNetBuildMonoBundleLLVMOptimizer=true
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
