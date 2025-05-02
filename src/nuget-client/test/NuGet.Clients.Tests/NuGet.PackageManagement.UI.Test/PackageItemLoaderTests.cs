@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Threading;
 using Moq;
 using NuGet.Configuration;
 using NuGet.PackageManagement.UI.ViewModels;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
@@ -37,8 +38,10 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task MultipleSourcesPrefixReserved_Works()
         {
+            // Arrange
             var solutionManager = Mock.Of<INuGetSolutionManagerService>();
             var uiContext = new Mock<INuGetUIContext>();
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
 
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
@@ -90,11 +93,14 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                 searchService.Object,
                 packageFileService.Object,
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
+            // Act
             await loader.LoadNextAsync(null, CancellationToken.None);
             var items = loader.GetCurrent();
 
+            // Assert
             Assert.NotEmpty(items);
 
             // All items should not have a prefix reserved because the feed is multisource
@@ -107,12 +113,13 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task PackagePath_NotNull()
         {
-            // Prepare
+            // Arrange
             var solutionManager = Mock.Of<INuGetSolutionManagerService>();
             var uiContext = new Mock<INuGetUIContext>();
 
             uiContext.Setup(x => x.SolutionManagerService)
                 .Returns(solutionManager);
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
 
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
@@ -170,7 +177,8 @@ namespace NuGet.PackageManagement.UI.Test
                     NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                     searchService.Object,
                     packageFileService.Object,
-                    TestSearchTerm);
+                    TestSearchTerm,
+                    vulnerabilityService: vulnerabilityService.Object);
 
                 // Act
                 await loader.LoadNextAsync(progress: null, CancellationToken.None);
@@ -208,6 +216,7 @@ namespace NuGet.PackageManagement.UI.Test
 
             var serviceBroker = Mock.Of<IServiceBroker>();
             var packageFileService = new Mock<INuGetPackageFileService>();
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(s => s.SearchAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(),
                     It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
@@ -233,7 +242,8 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                 searchService.Object,
                 packageFileService.Object,
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
             // Act
             await loader.LoadNextAsync(progress: mockProgress, CancellationToken.None);
@@ -247,6 +257,7 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task GetCurrent_HasKnownOwners_CreatesKnownOwnerViewModelsAsync()
         {
+            // Arrange
             var version = NuGetVersion.Parse("4.3.0");
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
@@ -273,6 +284,7 @@ namespace NuGet.PackageManagement.UI.Test
                 new VersionInfoContextInfo(version),
             };
 
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(ss => ss.GetPackageVersionsAsync(
                 It.IsAny<PackageIdentity>(),
@@ -307,7 +319,8 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                 searchService.Object,
                 Mock.Of<INuGetPackageFileService>(),
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
             // Act
             await loader.UpdateStateAndReportAsync(searchResult, Mock.Of<IProgress<IItemLoaderState>>(), CancellationToken.None);
@@ -328,6 +341,7 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task GetCurrent_HasKnownOwners_NotOnBrowseTab_DoesNotCreateKnownOwnerViewModels()
         {
+            // Arrange
             var version = NuGetVersion.Parse("4.3.0");
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
@@ -354,6 +368,7 @@ namespace NuGet.PackageManagement.UI.Test
                 new VersionInfoContextInfo(version),
             };
 
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(ss => ss.GetPackageVersionsAsync(
                 It.IsAny<PackageIdentity>(),
@@ -388,7 +403,8 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.Installed,
                 searchService.Object,
                 Mock.Of<INuGetPackageFileService>(),
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
             // Act
             await loader.UpdateStateAndReportAsync(searchResult, Mock.Of<IProgress<IItemLoaderState>>(), CancellationToken.None);
@@ -402,6 +418,7 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task GetCurrent_HasKnownOwners_IsRecommendedPackage_DoesNotCreateKnownOwnerViewModels()
         {
+            // Arrange
             var versionString = "4.3.0";
             var version = NuGetVersion.Parse(versionString);
             var recommendedPackageSearchMetadata = new RecommendedPackageSearchMetadata(
@@ -432,6 +449,7 @@ namespace NuGet.PackageManagement.UI.Test
                 new VersionInfoContextInfo(version),
             };
 
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(ss => ss.GetPackageVersionsAsync(
                 It.IsAny<PackageIdentity>(),
@@ -466,7 +484,8 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                 searchService.Object,
                 Mock.Of<INuGetPackageFileService>(),
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
             // Act
             await loader.UpdateStateAndReportAsync(searchResult, Mock.Of<IProgress<IItemLoaderState>>(), CancellationToken.None);
@@ -480,6 +499,7 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public async Task GetCurrent_DoesNotHaveKnownOwners_DoesNotCreateKnownOwnerViewModelsAsync()
         {
+            // Arrange
             var version = NuGetVersion.Parse("4.3.0");
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
@@ -495,6 +515,7 @@ namespace NuGet.PackageManagement.UI.Test
                 new VersionInfoContextInfo(version),
             };
 
+            var vulnerabilityService = new Mock<IPackageVulnerabilityService>();
             var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(ss => ss.GetPackageVersionsAsync(
                 It.IsAny<PackageIdentity>(),
@@ -529,7 +550,8 @@ namespace NuGet.PackageManagement.UI.Test
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
                 searchService.Object,
                 Mock.Of<INuGetPackageFileService>(),
-                TestSearchTerm);
+                TestSearchTerm,
+                vulnerabilityService: vulnerabilityService.Object);
 
             // Act
             await loader.UpdateStateAndReportAsync(searchResult, Mock.Of<IProgress<IItemLoaderState>>(), CancellationToken.None);

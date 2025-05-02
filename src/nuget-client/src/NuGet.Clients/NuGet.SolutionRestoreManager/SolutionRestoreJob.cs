@@ -66,7 +66,6 @@ namespace NuGet.SolutionRestoreManager
         // relevant to packages.config restore only
         private int _missingPackagesCount = 0;
         private int _currentCount;
-        private AuditCheckResult _auditCheckResult;
         private bool _solutionHasVulnerabilities;
         private bool _didNewAuditCheckRun;
 
@@ -387,7 +386,7 @@ namespace NuGet.SolutionRestoreManager
                 NumLocalFeeds,
                 hasNuGetOrg,
                 hasVSOfflineFeed);
-            _auditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
+            _auditResultCachingService.LastAuditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
 
             TelemetryActivity.EmitTelemetryEvent(restoreTelemetryEvent);
 
@@ -703,7 +702,7 @@ namespace NuGet.SolutionRestoreManager
                             await l.WriteHeaderAsync();
 
                             PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, l, t);
-                            _auditCheckResult = packageRestoreResult?.AuditCheckResult;
+                            _auditResultCachingService.LastAuditCheckResult = packageRestoreResult?.AuditCheckResult;
                         },
                         token);
 
@@ -712,7 +711,6 @@ namespace NuGet.SolutionRestoreManager
                     {
                         _status = NuGetOperationStatus.Succeeded;
                     }
-                    _auditResultCachingService.LastAuditCheckResult = _auditCheckResult;
                     _didNewAuditCheckRun = true;
                 }
                 else
@@ -731,17 +729,16 @@ namespace NuGet.SolutionRestoreManager
                     }
                     else
                     {
-                        _auditCheckResult = _auditResultCachingService.LastAuditCheckResult;
-                        if (_auditCheckResult != null)
+                        if (_auditResultCachingService.LastAuditCheckResult != null)
                         {
-                            foreach (var warning in _auditCheckResult.Warnings)
+                            foreach (var warning in _auditResultCachingService.LastAuditCheckResult.Warnings)
                             {
                                 _logger.Log(warning);
                             }
                         }
                     }
                 }
-                _solutionHasVulnerabilities |= _auditCheckResult?.Warnings.Count > 0;
+                _solutionHasVulnerabilities |= _auditResultCachingService.LastAuditCheckResult?.Warnings.Count > 0;
 
                 ValidatePackagesConfigLockFiles(allProjects, token);
             }

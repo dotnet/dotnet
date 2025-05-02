@@ -289,12 +289,12 @@ namespace NuGet.CommandLine.Test
                     "proj2.csproj",
                     Util.CreateProjFileContent());
 
-                Util.CreateFile(solutionDirectory, "a.sln",
-                    Util.CreateSolutionFileContent());
+                Util.CreateFile(solutionDirectory, "a.slnx",
+                    Util.CreateSlnxFileContent());
 
                 var projectFile1 = Path.Combine(projectDirectory1, "proj1.csproj");
                 var projectFile2 = Path.Combine(projectDirectory2, "proj2.csproj");
-                var solutionFile = Path.Combine(solutionDirectory, "a.sln");
+                var solutionFile = Path.Combine(solutionDirectory, "a.slnx");
 
                 var testNuGetProjectContext = new TestNuGetProjectContext();
                 var msbuildDirectory = MsBuildUtility.GetMsBuildToolset(null, null).Path;
@@ -577,6 +577,88 @@ namespace NuGet.CommandLine.Test
 
                 var projectFile = Path.Combine(projectDirectory, "proj1.csproj");
                 var solutionFile = Path.Combine(solutionDirectory, "a.sln");
+
+                var testNuGetProjectContext = new TestNuGetProjectContext();
+                var msbuildDirectory = MsBuildUtility.GetMsBuildToolset(null, null).Path;
+                var projectSystem = new MSBuildProjectSystem(msbuildDirectory, projectFile, testNuGetProjectContext);
+                var msBuildProject = new MSBuildNuGetProject(projectSystem, packagesDirectory, projectDirectory);
+                using (var stream = File.OpenRead(a1Package))
+                {
+                    var downloadResult = new DownloadResourceResult(stream, packagesSourceDirectory);
+                    await msBuildProject.InstallPackageAsync(
+                        a1,
+                        downloadResult,
+                        testNuGetProjectContext,
+                        CancellationToken.None);
+                }
+
+                var args = new[]
+                {
+                    "update",
+                    solutionFile,
+                    "-Source",
+                    packagesSourceDirectory,
+                    "-Prerelease",
+                };
+
+                var r = CommandRunner.Run(
+                    Util.GetNuGetExePath(),
+                    workingPath,
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
+
+                Assert.True(r.ExitCode == 0, "Output is " + r.Output + ". Error is " + r.Errors);
+
+                var content = File.ReadAllText(projectFile);
+                Assert.False(content.Contains(Util.GetHintPath(Path.Combine("packages", "A.1.0.0", "lib", "net45", "file.dll"))));
+                Assert.True(content.Contains(Util.GetHintPath(Path.Combine("packages", "A.2.0.0-BETA", "lib", "net45", "file.dll"))));
+            }
+        }
+
+        [Fact]
+        public async Task UpdateCommand_Success_Prerelease_Slnx()
+        {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                //Arrange
+                var packagesDirectory = pathContext.PackagesV2;
+                var solutionDirectory = pathContext.SolutionRoot;
+                var packagesSourceDirectory = pathContext.PackageSource;
+                var workingPath = pathContext.WorkingDirectory;
+                var projectDirectory = Path.Combine(solutionDirectory, "proj1");
+
+                var a1 = new PackageIdentity("A", new NuGetVersion("1.0.0"));
+                var a2 = new PackageIdentity("A", new NuGetVersion("2.0.0-BETA"));
+
+                var a1Package = Util.CreateTestPackage(
+                    a1.Id,
+                    a1.Version.ToString(),
+                    packagesSourceDirectory,
+                    new List<NuGetFramework>() { NuGetFramework.Parse("net45") },
+                    new List<PackageDependencyGroup>() { });
+
+
+                var a2Package = Util.CreateTestPackage(
+                    a2.Id,
+                    a2.Version.ToString(),
+                    packagesSourceDirectory,
+                    new List<NuGetFramework>() { NuGetFramework.Parse("net45") },
+                    new List<PackageDependencyGroup>() { });
+
+                var packagesFolder = PathUtility.GetRelativePath(projectDirectory, packagesDirectory);
+
+                Directory.CreateDirectory(projectDirectory);
+                // create project 1
+                Util.CreateFile(
+                    projectDirectory,
+                    "proj1.csproj",
+                    Util.CreateProjFileContent());
+
+                Util.CreateFile(solutionDirectory, "a.slnx",
+                    Util.CreateSlnxFileContent());
+
+                var projectFile = Path.Combine(projectDirectory, "proj1.csproj");
+                var solutionFile = Path.Combine(solutionDirectory, "a.slnx");
 
                 var testNuGetProjectContext = new TestNuGetProjectContext();
                 var msbuildDirectory = MsBuildUtility.GetMsBuildToolset(null, null).Path;

@@ -1,0 +1,35 @@
+{
+    "version": "latest",
+    "suppressionSets": {
+      "default": {
+        "name": "default",
+        "createdDate": "2025-04-14T13:30:47Z",
+        "lastUpdatedDate": "2025-04-14T13:30:47Z"
+      }
+    },
+    "results": {
+      "94b262a20d21544c9527803ee2109eec43f13edee79db6408106a7bf15ffaa0b": {
+        "signature": "94b262a20d21544c9527803ee2109eec43f13edee79db6408106a7bf15ffaa0b",
+        "target": "artifacts/NuGet.VisualStudio.Implementation/bin/release/net472/Microsoft.VisualStudio.ManagedInterfaces.dll",
+        "memberOf": ["default"],
+        "tool": "BinSkim",
+        "ruleId": "BA2009",
+        "justification": "This DLL is not shipped and is not built by our team.",
+        "createdDate": "2025-04-15 17:38:54Z",
+        "expirationDate": null,
+        "type": null
+      },
+      "dadf10d994d221e4d43842f89921d1eca4a2185ef8afa6c6894e5a8faf96afc6": {
+        "signature": "dadf10d994d221e4d43842f89921d1eca4a2185ef8afa6c6894e5a8faf96afc6",
+        "target": "artifacts/NuGet.VisualStudio.Implementation/bin/release/net472/Microsoft.VisualStudio.ManagedInterfaces.dll",
+        "memberOf": ["default"],
+        "tool": "BinSkim",
+        "ruleId": "BA2016",
+        "justification": "This DLL is not shipped and is not built by our team.",
+        "createdDate": "2025-04-15 17:38:54Z",
+        "expirationDate": null,
+        "type": null
+      }
+    }
+  }
+  
