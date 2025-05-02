@@ -84,6 +84,7 @@ namespace NuGet.Commands
             public async Task<GraphItem<RemoteResolveResult>> GetGraphItemAsync(
                 ProjectRestoreMetadata projectRestoreMetadata,
                 IReadOnlyDictionary<string, PrunePackageReference>? packagesToPrune,
+                bool enablePruningWarnings,
                 bool isRootProject,
                 ILogger logger)
             {
@@ -105,7 +106,7 @@ namespace NuGet.Commands
                     LibraryDependency dependency = item.Data.Dependencies[i];
 
                     // Skip any packages that should be pruned or will be replaced with a runtime dependency
-                    if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, dependency, item.Key, isRootProject, logger)
+                    if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, dependency, item.Key, isRootProject, logger)
                         || RuntimeDependencies?.Contains(dependency) == true)
                     {
                         continue;
@@ -119,7 +120,7 @@ namespace NuGet.Commands
                     // Add any runtime dependencies unless they should be pruned
                     foreach (LibraryDependency runtimeDependency in RuntimeDependencies)
                     {
-                        if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, runtimeDependency, item.Key, isRootProject, logger) == true)
+                        if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, runtimeDependency, item.Key, isRootProject, logger) == true)
                         {
                             continue;
                         }
@@ -155,6 +156,7 @@ namespace NuGet.Commands
             private static bool ShouldPrunePackage(
                 ProjectRestoreMetadata projectRestoreMetadata,
                 IReadOnlyDictionary<string, PrunePackageReference>? packagesToPrune,
+                bool enablePruningWarnings,
                 LibraryDependency dependency,
                 LibraryIdentity parentLibrary,
                 bool isRootProject,
@@ -171,7 +173,7 @@ namespace NuGet.Commands
 
                 if (!isPackage)
                 {
-                    if (SdkAnalysisLevelMinimums.IsEnabled(
+                    if (isRootProject && enablePruningWarnings && SdkAnalysisLevelMinimums.IsEnabled(
                         projectRestoreMetadata.SdkAnalysisLevel,
                         projectRestoreMetadata.UsingMicrosoftNETSdk,
                         SdkAnalysisLevelMinimums.PruningWarnings))
@@ -184,7 +186,7 @@ namespace NuGet.Commands
 
                 if (isRootProject)
                 {
-                    if (SdkAnalysisLevelMinimums.IsEnabled(
+                    if (enablePruningWarnings && SdkAnalysisLevelMinimums.IsEnabled(
                         projectRestoreMetadata.SdkAnalysisLevel,
                         projectRestoreMetadata.UsingMicrosoftNETSdk,
                         SdkAnalysisLevelMinimums.PruningWarnings))

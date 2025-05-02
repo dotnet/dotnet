@@ -88,7 +88,12 @@ namespace NuGet.CommandLine.XPlat
         {
             ISolutionSerializer serializer = SolutionSerializers.GetSerializerByMoniker(solutionPath);
             SolutionModel solution = await serializer.OpenAsync(solutionPath, cancellationToken);
-            return solution.SolutionProjects.Select(p => p.FilePath);
+            return solution.SolutionProjects.Select(p =>
+            {
+                return Path.IsPathRooted(p.FilePath)
+                ? p.FilePath
+                : Path.GetFullPath(Path.Combine(Path.GetDirectoryName(solutionPath), p.FilePath));
+            });
         }
 
         /// <summary>

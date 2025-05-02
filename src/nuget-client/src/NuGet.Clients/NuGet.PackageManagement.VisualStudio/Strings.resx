@@ -289,4 +289,7 @@
     <value>Error occurred while getting package vulnerability data: {0}</value>
     <comment>{0} is an error message</comment>
   </data>
+  <data name="VSOptions_Button_Open" xml:space="preserve">
+    <value>_Open</value>
+  </data>
 </root>

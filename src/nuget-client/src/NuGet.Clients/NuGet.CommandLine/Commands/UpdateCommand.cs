@@ -238,7 +238,7 @@ namespace NuGet.CommandLine
                     return GetPackagesConfigPath(path);
                 }
 
-                if (extension.Equals(".sln", StringComparison.OrdinalIgnoreCase))
+                if (path.IsSolutionFile())
                 {
                     return Path.GetFullPath(path);
                 }

@@ -6,6 +6,7 @@ git config --global protocol.file.allow always
 source="${BASH_SOURCE[0]}"
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 configuration='Release'
+verbosity='minimal'
 source_build=false
 properties=''
 
@@ -25,6 +26,10 @@ repo_root="${repo_root}/"
 while [[ $# > 0 ]]; do
     lowerI="$(echo $1 | awk '{print tolower($0)}')"
     case $lowerI in
+        --verbosity|-v)
+            verbosity=$2
+            shift
+            ;;
         --configuration|-c)
             configuration=$2
             shift
@@ -91,4 +96,4 @@ properties="$properties /p:Configuration=$configuration"
 properties="$properties /p:DotNetBuildRepo=true"
 properties="$properties /p:RepoRoot=$repo_root"
 
-"$DOTNET" msbuild "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/sb/log/source-inner-build.binlog" $properties $args
+"$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/sb/log/source-inner-build.binlog" $properties $args
