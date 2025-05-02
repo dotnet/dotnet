@@ -3,10 +3,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
-namespace Microsoft.VisualStudio.Razor.Extensions;
+namespace Microsoft.CodeAnalysis;
 
 internal static class TextDocumentExtensions
 {
@@ -25,7 +25,7 @@ internal static class TextDocumentExtensions
             return false;
         }
 
-        var projectBasePath = Path.GetDirectoryName(razorDocument.Project.FilePath);
+        var projectBasePath = Path.GetDirectoryName(razorDocument.Project.FilePath).AssumeNotNull();
         var relativeDocumentPath = razorDocument.FilePath[projectBasePath.Length..].TrimStart('/', '\\');
         hintName = RazorSourceGenerator.GetIdentifierFromPath(relativeDocumentPath);
 

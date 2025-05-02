@@ -59,7 +59,7 @@ internal static class BrokeredServiceFactory
         Assert.True(s_factoryMap.TryGetValue(typeof(TService), out var factory));
 
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        var brokeredServiceData = new RazorBrokeredServiceData(exportProvider, loggerFactory, brokeredServiceInterceptor);
+        var brokeredServiceData = new RazorBrokeredServiceData(exportProvider, loggerFactory, brokeredServiceInterceptor, WorkspaceProvider: null);
         var hostProvidedServices = VsMocks.CreateServiceProvider(b =>
         {
             b.AddService(brokeredServiceData);

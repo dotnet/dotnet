@@ -9,34 +9,40 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 #pragma warning disable RS0030 // Do not use banned APIs
+#if !VSCODE
+// Visual Studio requires us to register for every method name, VS Code correctly realises that if you
+// register for code actions, and say you have resolve support, then registering for resolve is unnecessary.
+// In fact it's an error.
+[Export(typeof(IDynamicRegistrationProvider))]
+#endif
 [Shared]
 [CohostEndpoint(Methods.TextDocumentCompletionResolveName)]
-[Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostDocumentCompletionResolveEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostDocumentCompletionResolveEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentCompletionResolveEndpoint(
     CompletionListCache completionListCache,
     IRemoteServiceInvoker remoteServiceInvoker,
-    IClientSettingsManager clientSettingsManager,
+    IClientSettingsReader clientSettingsManager,
     IHtmlRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem?>, IDynamicRegistrationProvider
 {
     private readonly CompletionListCache _completionListCache = completionListCache;
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly IClientSettingsReader _clientSettingsManager = clientSettingsManager;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentCompletionEndpoint>();
 
@@ -92,8 +98,17 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
         {
             Debug.Assert(delegatedContext.ProjectedKind == RazorLanguageKind.Html);
 
+#if VSCODE
+            Debug.Assert(_requestInvoker is not null);
+            Debug.Assert(_logger is not null);
+            Debug.Assert(nameof(DelegatedCompletionHelper).Length > 0);
+
+            // We don't support completion resolve in VS Code
+            return completionItem;
+#else
             completionItem.Data = DelegatedCompletionHelper.GetOriginalCompletionItemData(completionItem, completionList, delegatedContext.OriginalCompletionListData);
             return await ResolveHtmlCompletionItemAsync(completionItem, razorDocument, cancellationToken).ConfigureAwait(false);
+#endif
         }
 
         var clientSettings = _clientSettingsManager.GetClientSettings();
@@ -119,6 +134,7 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
         return result;
     }
 
+#if !VSCODE
     private async Task<VSInternalCompletionItem> ResolveHtmlCompletionItemAsync(
         VSInternalCompletionItem request,
         TextDocument razorDocument,
@@ -134,6 +150,7 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
 
         return result ?? request;
     }
+#endif
 
     internal TestAccessor GetTestAccessor() => new(this);
 

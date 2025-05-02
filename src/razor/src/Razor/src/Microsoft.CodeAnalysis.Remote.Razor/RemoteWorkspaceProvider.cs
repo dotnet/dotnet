@@ -4,11 +4,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal static class RemoteWorkspaceAccessor
+internal sealed class RemoteWorkspaceProvider : IWorkspaceProvider
 {
+    public static RemoteWorkspaceProvider Instance = new();
+
     /// <summary>
     /// Gets the remote workspace used in the Roslyn OOP process
     /// </summary>
@@ -19,7 +22,7 @@ internal static class RemoteWorkspaceAccessor
     ///
     /// This should be used sparingly and carefully, and no updates should be made to the workspace.
     /// </remarks>
-    public static Workspace GetWorkspace()
+    public Workspace GetWorkspace()
         => RazorBrokeredServiceImplementation.GetWorkspace();
 
     /// <summary>

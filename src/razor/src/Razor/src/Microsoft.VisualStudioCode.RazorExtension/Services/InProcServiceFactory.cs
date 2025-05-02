@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
@@ -47,12 +48,12 @@ internal static class InProcServiceFactory
     }
 
     public static async Task<TService> CreateServiceAsync<TService>(
-        VSCodeBrokeredServiceInterceptor brokeredServiceInterceptor, ILoggerFactory loggerFactory)
+        VSCodeBrokeredServiceInterceptor brokeredServiceInterceptor, IWorkspaceProvider workspaceProvider, ILoggerFactory loggerFactory)
         where TService : class
     {
         Assumes.True(s_factoryMap.TryGetValue(typeof(TService), out var factory));
 
-        var brokeredServiceData = new RazorBrokeredServiceData(ExportProvider: null, loggerFactory, brokeredServiceInterceptor);
+        var brokeredServiceData = new RazorBrokeredServiceData(ExportProvider: null, loggerFactory, brokeredServiceInterceptor, workspaceProvider);
         var hostProvidedServices = new HostProvidedServices(brokeredServiceData);
 
         return (TService)await factory.CreateInProcAsync(hostProvidedServices).ConfigureAwait(false);

@@ -20,6 +20,8 @@ internal class RazorClientServerManagerProvider() : IRazorCohostStartupService
 
     public IRazorClientLanguageServerManager? ClientLanguageServerManager => _razorClientLanguageServerManager;
 
+    public int Order => WellKnownStartupOrder.ClientServerManager;
+
     public Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
         _razorClientLanguageServerManager = requestContext.GetRequiredService<IRazorClientLanguageServerManager>();

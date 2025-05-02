@@ -10,32 +10,38 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 #pragma warning disable RS0030 // Do not use banned APIs
+#if !VSCODE
+// Visual Studio requires us to register for every method name, VS Code correctly realises that if you
+// register for code actions, and say you have resolve support, then registering for resolve is unnecessary.
+// In fact it's an error.
+[Export(typeof(IDynamicRegistrationProvider))]
+#endif
 [Shared]
 [CohostEndpoint(Methods.CodeActionResolveName)]
-[Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostCodeActionsResolveEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostCodeActionsResolveEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostCodeActionsResolveEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
-    IClientSettingsManager clientSettingsManager,
+    IClientSettingsReader clientSettingsManager,
     IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<CodeAction, CodeAction?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly IClientSettingsReader _clientSettingsManager = clientSettingsManager;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;
