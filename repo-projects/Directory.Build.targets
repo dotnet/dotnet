@@ -303,12 +303,12 @@
   </Target>
 
   <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
-  <Target Name="UpdateEngCommonFiles">
+  <Target Name="UpdateEngCommonFiles" Condition="'$(UseBootstrapArcade)' != 'true'">
     <ItemGroup>
-      <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
+      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(OrchestratorEngCommonFile)"
+    <Copy SourceFiles="@(InputEngCommonFile)"
           DestinationFolder="$(ProjectDirectory)eng\common\%(RecursiveDir)"
           SkipUnchangedFiles="true" />
   </Target>
