@@ -84,6 +84,12 @@ internal abstract partial class RazorBrokeredServiceBase
                     ? new TraceSourceLoggerFactory(traceSource)
                     : EmptyLoggerFactory.Instance);
 
+            var workspaceProvider = brokeredServiceData?.WorkspaceProvider ?? RemoteWorkspaceProvider.Instance;
+
+            // Update the MEF composition's IHostServicesAccessor to the target workspace
+            var hostServicesProvider = exportProvider.GetExportedValue<RemoteHostServicesProvider>();
+            hostServicesProvider.SetWorkspaceProvider(workspaceProvider);
+
             // Update the MEF composition's ILoggerFactory to the target ILoggerFactory.
             // Note that this means that the first non-empty ILoggerFactory that we use
             // will be used for MEF component logging for the lifetime of all services.
@@ -93,7 +99,7 @@ internal abstract partial class RazorBrokeredServiceBase
             // In proc services don't use any service hub infra
             if (stream is null)
             {
-                var inProcArgs = new ServiceArgs(ServiceBroker: null, exportProvider, targetLoggerFactory, ServerConnection: null, brokeredServiceData.AssumeNotNull().Interceptor);
+                var inProcArgs = new ServiceArgs(ServiceBroker: null, exportProvider, targetLoggerFactory, workspaceProvider, ServerConnection: null, brokeredServiceData.AssumeNotNull().Interceptor);
                 return CreateService(in inProcArgs);
             }
 
@@ -104,7 +110,7 @@ internal abstract partial class RazorBrokeredServiceBase
                 : RazorServices.Descriptors.GetDescriptorForServiceFactory(typeof(TService));
             var serverConnection = descriptor.WithTraceSource(traceSource).ConstructRpcConnection(pipe);
 
-            var args = new ServiceArgs(serviceBroker.AssumeNotNull(), exportProvider, targetLoggerFactory, serverConnection, brokeredServiceData?.Interceptor);
+            var args = new ServiceArgs(serviceBroker.AssumeNotNull(), exportProvider, targetLoggerFactory, workspaceProvider, serverConnection, brokeredServiceData?.Interceptor);
 
             var service = CreateService(in args);
 

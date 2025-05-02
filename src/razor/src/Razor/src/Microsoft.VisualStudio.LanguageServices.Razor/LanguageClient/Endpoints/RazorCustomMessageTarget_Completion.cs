@@ -165,7 +165,7 @@ internal partial class RazorCustomMessageTarget
 
             if (request.ShouldIncludeSnippets)
             {
-                _snippetCompletionItemProvider.AddSnippetCompletions(request.ProjectedKind, request.Context.InvokeKind, request.Context.TriggerCharacter, ref builder.AsRef());
+                _snippetCompletionItemProvider.AddSnippetCompletions(ref builder.AsRef(), request.ProjectedKind, request.Context.InvokeKind, request.Context.TriggerCharacter);
             }
 
             completionList.Items = builder.ToArray();

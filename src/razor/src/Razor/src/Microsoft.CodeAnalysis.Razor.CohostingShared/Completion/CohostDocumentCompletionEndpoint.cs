@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -19,8 +20,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.Razor.Settings;
-using Microsoft.VisualStudio.Razor.Snippets;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.RazorVSInternalCompletionList?>;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -29,14 +29,16 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(Methods.TextDocumentCompletionName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostDocumentCompletionEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostDocumentCompletionEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentCompletionEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IClientSettingsManager clientSettingsManager,
+    IClientSettingsReader clientSettingsManager,
     IClientCapabilitiesService clientCapabilitiesService,
-    SnippetCompletionItemProvider snippetCompletionItemProvider,
+#pragma warning disable RS0030 // Do not use banned APIs
+    [Import(AllowDefault = true)] ISnippetCompletionItemProvider? snippetCompletionItemProvider,
+#pragma warning restore RS0030 // Do not use banned APIs
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IHtmlRequestInvoker requestInvoker,
     CompletionListCache completionListCache,
@@ -45,9 +47,9 @@ internal sealed class CohostDocumentCompletionEndpoint(
     : AbstractRazorCohostDocumentRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly IClientSettingsReader _clientSettingsManager = clientSettingsManager;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
-    private readonly SnippetCompletionItemProvider _snippetCompletionItemProvider = snippetCompletionItemProvider;
+    private readonly ISnippetCompletionItemProvider? _snippetCompletionItemProvider = snippetCompletionItemProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = new(languageServerFeatureOptions);
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly CompletionListCache _completionListCache = completionListCache;
@@ -194,7 +196,8 @@ internal sealed class CohostDocumentCompletionEndpoint(
             combinedCompletionList = htmlCompletionList;
         }
 
-        if (completionPositionInfo.ShouldIncludeDelegationSnippets)
+        if (completionPositionInfo.ShouldIncludeDelegationSnippets &&
+            _snippetCompletionItemProvider is not null)
         {
             combinedCompletionList = AddSnippets(
                 combinedCompletionList,
@@ -250,11 +253,11 @@ internal sealed class CohostDocumentCompletionEndpoint(
         string? triggerCharacter)
     {
         using var builder = new PooledArrayBuilder<VSInternalCompletionItem>();
-        _snippetCompletionItemProvider.AddSnippetCompletions(
+        _snippetCompletionItemProvider.AssumeNotNull().AddSnippetCompletions(
+            ref builder.AsRef(),
             languageKind,
             invokeKind,
-            triggerCharacter,
-            ref builder.AsRef());
+            triggerCharacter);
 
         // If there were no snippets, just return the original list
         if (builder.Count == 0)

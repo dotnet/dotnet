@@ -5,7 +5,7 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
-internal interface IRazorNotificationHandler<TRequestType> : INotificationHandler<TRequestType, RazorRequestContext>
+internal interface IRazorNotificationHandler<TRequest> : INotificationHandler<TRequest, RazorRequestContext>
 {
 }
 

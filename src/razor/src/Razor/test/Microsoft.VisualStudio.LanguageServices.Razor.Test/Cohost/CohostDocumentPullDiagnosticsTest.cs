@@ -163,7 +163,10 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
 
         var result = taskListRequest
             ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], DisposalToken)
-            : await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken);
+            : [new()
+                {
+                    Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken)
+                }];
 
         var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
             new[] {

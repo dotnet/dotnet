@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -24,7 +26,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(Methods.TextDocumentCodeActionName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostCodeActionsEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostCodeActionsEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostCodeActionsEndpoint(
@@ -80,9 +82,15 @@ internal sealed class CohostCodeActionsEndpoint(
             return null;
         }
 
+        // This is just to prevent a warning for an unused field in the VS Code extension
+        Debug.Assert(_requestInvoker is not null);
+
         var delegatedCodeActions = requestInfo.LanguageKind switch
         {
+            // We don't support Html code actions in VS Code
+#if !VSCODE
             RazorLanguageKind.Html => await GetHtmlCodeActionsAsync(razorDocument, request, correlationId, cancellationToken).ConfigureAwait(false),
+#endif
             RazorLanguageKind.CSharp => await GetCSharpCodeActionsAsync(razorDocument, requestInfo.CSharpRequest.AssumeNotNull(), correlationId, cancellationToken).ConfigureAwait(false),
             _ => []
         };
@@ -110,6 +118,7 @@ internal sealed class CohostCodeActionsEndpoint(
         return JsonHelpers.ConvertAll<CodeAction, RazorVSInternalCodeAction>(csharpCodeActions);
     }
 
+#if !VSCODE
     private async Task<RazorVSInternalCodeAction[]> GetHtmlCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
         var result = await _requestInvoker.MakeHtmlLspRequestAsync<VSCodeActionParams, RazorVSInternalCodeAction[]>(
@@ -127,6 +136,7 @@ internal sealed class CohostCodeActionsEndpoint(
 
         return result;
     }
+#endif
 
     internal TestAccessor GetTestAccessor() => new(this);
 
