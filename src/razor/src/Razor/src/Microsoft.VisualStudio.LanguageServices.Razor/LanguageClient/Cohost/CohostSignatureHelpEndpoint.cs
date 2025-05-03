@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
-using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 

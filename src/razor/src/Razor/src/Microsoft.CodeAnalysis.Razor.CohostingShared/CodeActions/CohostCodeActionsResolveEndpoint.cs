@@ -35,13 +35,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class CohostCodeActionsResolveEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
-    IClientSettingsReader clientSettingsManager,
+    IClientSettingsManager clientSettingsManager,
     IHtmlRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<CodeAction, CodeAction?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
-    private readonly IClientSettingsReader _clientSettingsManager = clientSettingsManager;
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
     protected override bool MutatesSolutionState => false;

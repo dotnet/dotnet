@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;
 
