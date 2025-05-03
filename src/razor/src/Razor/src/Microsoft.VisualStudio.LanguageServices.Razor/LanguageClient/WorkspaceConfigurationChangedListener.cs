@@ -1,9 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.Settings;
 
@@ -20,7 +22,7 @@ internal class WorkspaceConfigurationChangedListener(LSPRequestInvoker requestIn
         editorSettingsManager.ClientSettingsChanged += OnClientSettingsChanged;
     }
 
-    private void OnClientSettingsChanged(object sender, ClientSettingsChangedEventArgs args)
+    private void OnClientSettingsChanged(object sender, EventArgs args)
     {
         _ = OnClientSettingsChangedAsync();
     }
