@@ -71,6 +71,7 @@ steps:
       --restore --build --pack -bl \
       ${{ parameters.platform.buildArguments }} \
       $internalRuntimeDownloadArgs \
+      $internalRestoreArgs \
       $targetRidArgs \
       $runtimeOsArgs \
       $baseOsArgs \
