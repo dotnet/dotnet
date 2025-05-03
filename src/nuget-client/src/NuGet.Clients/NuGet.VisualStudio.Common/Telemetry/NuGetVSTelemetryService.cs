@@ -3,9 +3,8 @@
 
 using System;
 using NuGet.Common;
-using NuGet.VisualStudio.Telemetry;
 
-namespace NuGet.VisualStudio
+namespace NuGet.VisualStudio.Telemetry
 {
     /// <summary>
     /// Telemetry service class for restore operation

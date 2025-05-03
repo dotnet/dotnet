@@ -4,11 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.CommandLine.XPlat;
 using NuGet.Configuration;
+using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Xplat.Tests
@@ -30,9 +31,12 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_TableFormatNormalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
+                pathContext.WorkingDirectory,
+                configFileName: pathContext.NuGetConfig,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColoredMessage =
@@ -61,8 +65,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            Assert.Equal(expectedDefaultColoredMessage, ColoredMessage[System.Console.ForegroundColor]);
-            Assert.Equal(expectedRedColoredMessage, ColoredMessage[ConsoleColor.Red]);
+            ColoredMessage[System.Console.ForegroundColor].Should().Be(expectedDefaultColoredMessage);
+            ColoredMessage[ConsoleColor.Red].Should().Be(expectedRedColoredMessage);
         }
 
         [Theory]
@@ -73,10 +77,13 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_TableFormatMinimalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColorMessage =
                 "| Package ID           | Latest Version |" +
@@ -104,9 +111,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-
-            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
-            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
+            ColoredMessage[System.Console.ForegroundColor].Should().Be(expectedDefaultColorMessage);
+            ColoredMessage[ConsoleColor.Red].Should().Be(expectedRedColorMessage);
         }
 
         [Theory]
@@ -117,10 +123,13 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_TableFormatDetailedVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColorMessage =
                 "| Package ID           | Latest Version | Owners            | Total Downloads | Vulnerable | Deprecation                      | Project URL   | Description     |" +
@@ -148,9 +157,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-
-            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
-            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
+            ColoredMessage[System.Console.ForegroundColor].Should().Be(expectedDefaultColorMessage);
+            ColoredMessage[ConsoleColor.Red].Should().Be(expectedRedColorMessage);
         }
 
         [Theory]
@@ -161,10 +169,13 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_JsonFormatNormalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
             PackageSearchArgs packageSearchArgs = new()
@@ -188,7 +199,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultNormal, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultNormal);
         }
 
         [Theory]
@@ -199,10 +210,13 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_JsonFormatMinimalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
             PackageSearchArgs packageSearchArgs = new()
@@ -226,7 +240,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultMinimal, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultMinimal);
         }
 
         [Theory]
@@ -237,10 +251,13 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task RunAsync_JsonFormatDetailedVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
             PackageSearchArgs packageSearchArgs = new()
@@ -264,17 +281,21 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultDetailed, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultDetailed);
         }
 
         [Fact]
         public async Task RunAsync_ExactMatchOptionEnabled_OnePackageTableOutputted()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
+
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColorMessage =
                "| Package ID      | Version | Owners | Total Downloads |" +
@@ -300,19 +321,19 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-
-            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
-            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
+            ColoredMessage[System.Console.ForegroundColor].Should().Be(expectedDefaultColorMessage);
+            ColoredMessage[ConsoleColor.Red].Should().Be(expectedRedColorMessage);
         }
 
         [Fact]
         public async Task RunAsync_WhenSourceIsInvalid_ReturnsErrorExitCode()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
+            pathContext.WorkingDirectory,
+            configFileName: null,
+            machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             string source = "invalid-source";
             string expectedError = string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidSource, source);
@@ -334,20 +355,22 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            Assert.Equal(ExitCodes.Error, exitCode);
-            Assert.Contains(expectedError, StoredErrorMessage);
+            exitCode.Should().Be(ExitCodes.Error);
+            StoredErrorMessage.Should().Contain(expectedError);
         }
 
         [Fact]
         public async Task RunAsync_WhenSourceHasNoSearchResource_LogsSearchServiceMissingError()
         {
             // Arrange
-            ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
-                machineWideSettings: new XPlatMachineWideSetting());
-            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
             string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/indexWithNoSearchResource.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
+            ISettings settings = Settings.LoadDefaultSettings(
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
+            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             string expectedError = Protocol.Strings.Protocol_MissingSearchService;
             PackageSearchArgs packageSearchArgs = new()
             {
@@ -367,22 +390,24 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            Assert.Equal(ExitCodes.Success, exitCode);
-            Assert.Contains(expectedError, StoredErrorMessage);
+            exitCode.Should().Be(ExitCodes.Success);
+            StoredErrorMessage.Should().Contain(expectedError);
         }
 
         [Fact]
         public async Task RunAsync_HandlesOperationCanceledException_WhenCancellationIsRequested()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/indexWithNoSearchResource.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
+                pathContext.WorkingDirectory,
+                configFileName: pathContext.NuGetConfig,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedError = "A task was canceled.";
             var cts = new CancellationTokenSource();
-            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/indexWithNoSearchResource.json";
             PackageSearchArgs packageSearchArgs = new PackageSearchArgs
             {
                 Skip = 0,
@@ -404,17 +429,20 @@ namespace NuGet.CommandLine.Xplat.Tests
                     cancellationToken: cts.Token);
 
             // Assert
-            Assert.Equal(ExitCodes.Success, exitCode);
-            Assert.Contains(expectedError, StoredErrorMessage);
+            exitCode.Should().Be(ExitCodes.Success);
+            StoredErrorMessage.Should().Contain(expectedError);
         }
 
         [Fact]
         public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidNormalVerbosityOutput()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
+                pathContext.WorkingDirectory,
+                configFileName: pathContext.NuGetConfig,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
@@ -439,16 +467,19 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultNullInfoPackage);
         }
 
         [Fact]
         public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidMinimalVerbosityOutput()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
+                pathContext.WorkingDirectory,
+                configFileName: pathContext.NuGetConfig,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
@@ -473,16 +504,19 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultNullInfoPackage);
         }
 
         [Fact]
         public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidDetailedVerbosityOutput()
         {
             // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
             ISettings settings = Settings.LoadDefaultSettings(
-                Directory.GetCurrentDirectory(),
-                configFileName: null,
+                pathContext.WorkingDirectory,
+                configFileName: pathContext.NuGetConfig,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
 
@@ -507,7 +541,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Assert
             string message = _fixture.NormalizeNewlines(Message);
-            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
+            message.Should().Contain(_fixture.ExpectedSearchResultNullInfoPackage);
         }
     }
 }
