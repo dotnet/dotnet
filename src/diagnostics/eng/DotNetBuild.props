@@ -1,0 +1,9 @@
+<!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>diagnostics</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+</Project>
