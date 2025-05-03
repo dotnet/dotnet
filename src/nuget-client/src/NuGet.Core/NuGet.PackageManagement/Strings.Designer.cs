@@ -943,15 +943,6 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
-        /// </summary>
-        internal static string Warning_HttpServerUsage {
-            get {
-                return ResourceManager.GetString("Warning_HttpServerUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Package &apos;{0}&apos; {1} has a known {2} severity vulnerability, {3}.
         /// </summary>
         internal static string Warning_PackageWithKnownVulnerability {

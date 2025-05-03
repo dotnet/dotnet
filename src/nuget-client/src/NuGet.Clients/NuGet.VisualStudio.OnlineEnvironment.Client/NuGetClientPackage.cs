@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using NuGet.PackageManagement.UI;
+using NuGet.VisualStudio.Telemetry;
 using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.VisualStudio.OnlineEnvironment.Client

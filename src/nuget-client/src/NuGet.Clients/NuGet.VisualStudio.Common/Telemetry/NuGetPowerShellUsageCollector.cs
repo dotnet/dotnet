@@ -45,8 +45,11 @@ namespace NuGet.VisualStudio.Common.Telemetry
         private readonly InstanceData _vsInstanceData;
         private object _lock = new object();
 
-        public NuGetPowerShellUsageCollector()
+        private readonly INuGetTelemetryService _nuGetTelemetryService;
+
+        public NuGetPowerShellUsageCollector(INuGetTelemetryService nuGetTelemetryService)
         {
+            _nuGetTelemetryService = nuGetTelemetryService ?? throw new ArgumentNullException(nameof(nuGetTelemetryService));
             _vsSolutionData = new SolutionData();
             _vsInstanceData = new InstanceData();
 
@@ -202,7 +205,7 @@ namespace NuGet.VisualStudio.Common.Telemetry
                 if (!_vsSolutionData.SolutionLoaded && _vsSolutionData.PmcExecuteCommandCount > 0)
                 {
                     // PMC used before any solution is loaded, let's emit what we have for nugetvsinstanceclose event.
-                    TelemetryActivity.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
+                    _nuGetTelemetryService.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
                     ClearSolutionData();
                 }
 
@@ -225,7 +228,7 @@ namespace NuGet.VisualStudio.Common.Telemetry
         {
             lock (_lock)
             {
-                TelemetryActivity.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
+                _nuGetTelemetryService.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
                 ClearSolutionData();
             }
         }
@@ -238,7 +241,7 @@ namespace NuGet.VisualStudio.Common.Telemetry
                 if (!_vsSolutionData.SolutionLoaded && _vsSolutionData.PmcExecuteCommandCount > 0)
                 {
                     // PMC used before any solution is loaded, let's emit what we have for nugetvsinstanceclose event.
-                    TelemetryActivity.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
+                    _nuGetTelemetryService.EmitTelemetryEvent(_vsSolutionData.ToTelemetryEvent());
                 }
 
                 // Add VS Instance telemetry

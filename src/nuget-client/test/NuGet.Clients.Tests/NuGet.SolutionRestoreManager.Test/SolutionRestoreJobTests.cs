@@ -13,6 +13,7 @@ using NuGet.PackageManagement;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
+using NuGet.VisualStudio.Telemetry;
 using Test.Utility;
 using Xunit;
 using Task = System.Threading.Tasks.Task;
@@ -46,6 +47,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var settings = Mock.Of<ISettings>();
             var nuGetProgressReporter = Mock.Of<IVsNuGetProgressReporter>();
             var auditCheckResultCachingService = Mock.Of<IAuditCheckResultCachingService>();
+            var telemetryServiceProvider = Mock.Of<INuGetTelemetryProvider>();
 
             Mock.Get(settings)
                 .Setup(x => x.GetSection("packageRestore"))
@@ -64,7 +66,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 settings: settings,
                 solutionRestoreChecker: restoreChecker,
                 nuGetProgressReporter: nuGetProgressReporter,
-                auditCheckResultCachingService);
+                auditCheckResultCachingService,
+                telemetryServiceProvider);
 
             var restoreRequest = new SolutionRestoreRequest(
                 forceRestore: true,
@@ -98,6 +101,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var settings = Mock.Of<ISettings>();
             var nuGetProgressReporter = Mock.Of<IVsNuGetProgressReporter>();
             var auditCheckResultCachingService = Mock.Of<IAuditCheckResultCachingService>();
+            var telemetryServiceProvider = Mock.Of<INuGetTelemetryProvider>();
 
             Mock.Get(settings)
                 .Setup(x => x.GetSection("packageRestore"))
@@ -116,7 +120,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 settings: settings,
                 solutionRestoreChecker: restoreChecker,
                 nuGetProgressReporter: nuGetProgressReporter,
-                auditCheckResultCachingService);
+                auditCheckResultCachingService,
+                telemetryServiceProvider);
 
             var restoreRequest = new SolutionRestoreRequest(
                 forceRestore: true,
