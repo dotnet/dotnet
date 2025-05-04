@@ -5320,8 +5320,6 @@ namespace NuGet.Commands.FuncTest
                     }
                 };
 
-                json.Add("runtimes", JObject.Parse("{ \"uap10-x86\": { }, \"uap10-x86-aot\": { } }"));
-
                 return json;
             }
         }

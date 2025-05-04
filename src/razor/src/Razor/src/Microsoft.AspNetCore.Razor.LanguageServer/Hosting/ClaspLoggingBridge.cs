@@ -71,4 +71,10 @@ internal partial class ClaspLoggingBridge : ILspLogger
     {
         return new LspLoggingScope(context, _logger);
     }
+
+    public IDisposable? CreateLanguageContext(string? language)
+    {
+        // We don't support hosting other languages in our LSP server
+        return null;
+    }
 }

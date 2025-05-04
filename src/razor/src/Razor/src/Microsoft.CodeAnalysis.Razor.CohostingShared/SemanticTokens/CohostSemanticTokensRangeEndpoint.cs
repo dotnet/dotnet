@@ -24,12 +24,12 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostSemanticTokensRangeEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
-    IClientSettingsReader clientSettingsManager,
+    IClientSettingsManager clientSettingsManager,
     ITelemetryReporter telemetryReporter)
     : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IClientSettingsReader _clientSettingsManager = clientSettingsManager;
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     protected override bool MutatesSolutionState => false;
