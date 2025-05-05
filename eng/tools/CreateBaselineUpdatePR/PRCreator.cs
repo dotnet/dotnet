@@ -40,27 +40,60 @@ public class PRCreator
 
         var updatedTestsFiles = GetUpdatedFiles(updatedFilesDirectory);
 
-        // Create a new tree for the originalFilesDirectory based on the target branch
-        var originalTreeResponse = await _client.Git.Tree.GetRecursive(_repoOwner, _repoName, targetBranch);
-        var testResultsTreeItems = originalTreeResponse.Tree
-            .Where(file => file.Path.Contains(originalFilesDirectory) && file.Path != originalFilesDirectory)
-            .Select(file => new NewTreeItem
-            {
-                Path = Path.GetRelativePath(originalFilesDirectory, file.Path),
-                Mode = file.Mode,
-                Type = file.Type.Value,
-                Sha = file.Sha
-            })
-            .ToList();
+        // Fetch the files within the desired path from the original tree
+        TreeResponse originalTreeResponse = await _client.Git.Tree.Get(_repoOwner, _repoName, targetBranch);
+        List<NewTreeItem> originalTreeItems = await FetchOriginalTreeItemsAsync(originalTreeResponse, targetBranch, originalFilesDirectory);
 
         // Update the test results tree based on the pipeline
-        testResultsTreeItems = await UpdateAllFilesAsync(updatedTestsFiles, testResultsTreeItems, pipeline);
-        var testResultsTreeResponse = await CreateTreeFromItemsAsync(testResultsTreeItems);
+        originalTreeItems = await UpdateAllFilesAsync(updatedTestsFiles, originalTreeItems, pipeline);
+        var testResultsTreeResponse = await CreateTreeFromItemsAsync(originalTreeItems);
         var parentTreeResponse = await CreateParentTreeAsync(testResultsTreeResponse, originalTreeResponse, originalFilesDirectory);
 
         await CreateOrUpdatePullRequestAsync(parentTreeResponse, buildId, title, targetBranch);
 
         return Log.GetExitCode();
+    }
+
+    private async Task<List<NewTreeItem>> FetchOriginalTreeItemsAsync(
+        TreeResponse? treeResponse,
+        string targetBranch,
+        string desiredPath,
+        string relativePath = "")
+    {
+        var treeItems = new List<NewTreeItem>();
+        if (treeResponse == null)
+        {
+            return treeItems;
+        }
+
+        foreach (var item in treeResponse.Tree)
+        {
+            string path = Path.Combine(relativePath, item.Path);
+            if (!path.StartsWith(desiredPath) && !desiredPath.StartsWith(path))
+            {
+                continue;
+            }
+
+            if (item.Type == TreeType.Tree)
+            {
+                TreeResponse subTree = await _client.Git.Tree.Get(_repoOwner, _repoName, item.Sha);
+                treeItems.AddRange(await FetchOriginalTreeItemsAsync(subTree, targetBranch, desiredPath, path));
+            }
+            else
+            {
+                var newItem = new NewTreeItem
+                {
+                    Path = Path.GetRelativePath(desiredPath, path),
+                    Mode = item.Mode,
+                    Type = item.Type.Value,
+                    Sha = item.Sha
+                };
+
+                treeItems.Add(newItem);
+            }
+        }
+
+        return treeItems;
     }
 
     // Return a dictionary using the filename without the 
