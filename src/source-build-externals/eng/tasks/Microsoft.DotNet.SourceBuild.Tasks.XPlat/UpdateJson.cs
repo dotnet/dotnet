@@ -1,20 +1,13 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks
 {
-    // Takes a path to a path to a json file and a
-    // string that represents a dotted path to an attribute
-    // and updates that attribute with the new value provided. 
     public class UpdateJson : Task
     {
         [Required]
@@ -30,23 +23,26 @@ namespace Microsoft.DotNet.Build.Tasks
 
         public override bool Execute()
         {
-            JObject jsonObj = JObject.Parse(File.ReadAllText(JsonFilePath));
+            string jsonText = File.ReadAllText(JsonFilePath);
+            JsonNode jsonNode = JsonNode.Parse(jsonText);
 
             string[] escapedPathToAttributeParts = PathToAttribute.Replace("\\.", "\x1F").Split('.');
             for (int i = 0; i < escapedPathToAttributeParts.Length; ++i)
             {
                 escapedPathToAttributeParts[i] = escapedPathToAttributeParts[i].Replace("\x1F", ".");
             }
-            UpdateAttribute(jsonObj, escapedPathToAttributeParts, NewAttributeValue);
 
-            File.WriteAllText(JsonFilePath, jsonObj.ToString());
+            UpdateAttribute(jsonNode, escapedPathToAttributeParts, NewAttributeValue);
+
+            File.WriteAllText(JsonFilePath, jsonNode.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
             return true;
         }
 
-        private void UpdateAttribute(JToken jsonObj, string[] path, string newValue)
+        private void UpdateAttribute(JsonNode node, string[] path, string newValue)
         {
             string pathItem = path[0];
-            if (jsonObj[pathItem] == null)
+
+            if (node is not JsonObject obj || !obj.ContainsKey(pathItem))
             {
                 string message = $"Path item [{nameof(PathToAttribute)}] not found in json file.";
                 if (SkipUpdateIfMissingKey)
@@ -57,13 +53,13 @@ namespace Microsoft.DotNet.Build.Tasks
                 throw new ArgumentException(message, pathItem);
             }
 
-            if (path.Length == 1) 
+            if (path.Length == 1)
             {
-                jsonObj[pathItem] = newValue;
+                obj[pathItem] = newValue;
                 return;
             }
 
-            UpdateAttribute(jsonObj[pathItem], path.Skip(1).ToArray(), newValue);
+            UpdateAttribute(obj[pathItem], path.Skip(1).ToArray(), newValue);
         }
     }
 }
