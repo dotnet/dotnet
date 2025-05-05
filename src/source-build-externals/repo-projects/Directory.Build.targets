@@ -1,4 +1,6 @@
-<Project InitialTargets="SetNuGetPackagesEnvironment">
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
   <PropertyGroup>
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
@@ -7,11 +9,9 @@
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.Config')">$(ProjectDirectory)src\NuGet.Config</NuGetConfigFile>
   </PropertyGroup>
 
-  <UsingTask TaskName="AddSourceToNuGetConfig" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" />
-  <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" />
-
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
+
     <ItemGroup>
       <_DependentProject Include="@(RepositoryReference -> '%(Identity).proj')" />
     </ItemGroup>
@@ -19,15 +19,20 @@
     <MSBuild Projects="@(_DependentProject)" Targets="Build" BuildInParallel="$(BuildInParallel)" StopOnFirstFailure="true" />
   </Target>
 
-  <ItemGroup  Condition="Exists('$(PatchesDir)$(RepositoryName)')" >
-    <PatchesToApply Include="$(PatchesDir)$(RepositoryName)/*.patch" />
-  </ItemGroup>
+  <Target Name="PrepareInnerClone">
+    <ItemGroup>
+      <RepoFileToCopy Include="$(OriginalProjectDirectory)**\*"
+                      Exclude="$(OriginalProjectDirectory)artifacts\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(RepoFileToCopy)" DestinationFolder="$(ProjectDirectory)%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
 
   <Target Name="ApplyPatches"
-          Condition="'@(PatchesToApply)' != '' and '$(SkipPatches)' != 'true'"
-          Inputs="@(PatchesToApply)"
-          Outputs="$(RepoCompletedSemaphorePath)ApplyPatches.complete" >
-
+          Condition="'@(PatchToApply)' != '' and '$(SkipPatches)' != 'true'"
+          DependsOnTargets="PrepareInnerClone"
+          Inputs="@(PatchToApply)"
+          Outputs="$(BaseIntermediateOutputPath)ApplyPatches.complete" >
     <PropertyGroup>
       <PatchCommand>git --work-tree=$(ProjectDirectory) apply --ignore-whitespace --whitespace=nowarn</PatchCommand>
     </PropertyGroup>
@@ -37,12 +42,15 @@
          when we are applying patches in the current directory (which is required due to the way Git
          interprets the paths in a patch).  GIT_DIR=/dev/null short-circuits the .gitdir discovery process
          and lets Git treat the directory like any non-Git-controlled directory instead.            -->
-    <Exec Command="$(PatchCommand) %(PatchesToApply.Identity)"
+    <Exec Command="$(PatchCommand) %(PatchToApply.Identity)"
           WorkingDirectory="$(ProjectDirectory)"
-          Condition="'@(PatchesToApply)' != ''"
+          Condition="'@(PatchToApply)' != ''"
           EnvironmentVariables="GIT_DIR=/dev/null" />
 
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)ApplyPatches.complete" Overwrite="true" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)ApplyPatches.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!--
@@ -52,7 +60,6 @@
   -->
   <Target Name="RemoveNuGetConfig"
           Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != ''">
-
     <ItemGroup>
       <NuGetConfigFiles Include="$(NuGetConfigFile)" />
     </ItemGroup>
@@ -64,9 +71,10 @@
     Add a new nuget config file at the root of the component that includes sources for its dependencies'
     outputs.
   -->
+  <UsingTask TaskName="AddSourceToNuGetConfig" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="AddNewNuGetConfigForDependencies"
-          Condition="'@(RepositoryReference)' != ''">
-
+          Condition="'@(RepositoryReference)' != ''"
+          DependsOnTargets="ResolveProjectReferences">
     <PropertyGroup>
       <NewNuGetConfigFile>$(ProjectDirectory)NuGet.config</NewNuGetConfigFile>
     </PropertyGroup>
@@ -103,20 +111,23 @@
   <!-- Root target for nuget updates. Removes the existing nuget config files, then adds a new one for dependencies
        if necessary. -->
   <Target Name="UpdateNuGetConfig"
-          DependsOnTargets="RemoveNuGetConfig;AddNewNuGetConfigForDependencies"
-          BeforeTargets="Build"
+          DependsOnTargets="PrepareInnerClone;RemoveNuGetConfig;AddNewNuGetConfigForDependencies"
           Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != '' OR '@(RepositoryReference)' != ''"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)UpdateNuGetConfig.complete">
+          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
 
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)UpdateNuGetConfig.complete" Overwrite="true" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
+  <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
-          BeforeTargets="Build"
+          DependsOnTargets="PrepareInnerClone;ResolveProjectReferences"
           Condition="'$(GlobalJsonFile)' != ''"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)UpdateGlobalJsonVersions.complete">
+          Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
       <_PossibleCliVersionJsonPath Include="sdk.version" />
       <_PossibleCliVersionJsonPath Include="tools.dotnet" />
@@ -124,49 +135,51 @@
 
     <UpdateJson JsonFilePath="$(GlobalJsonFile)"
                 PathToAttribute="%(_PossibleCliVersionJsonPath.Identity)"
-                NewAttributeValue="$(SDK_VERSION)"
+                NewAttributeValue="$(NETCoreSdkVersion)"
                 SkipUpdateIfMissingKey="true" />
 
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)UpdateGlobalJsonVersions.complete" Overwrite="true" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
-  <Target Name="EnsureRedirectLogOutputDirExists">
-    <MakeDir Directories="$(LoggingDir)" />
+  <Target Name="PrepareOutputDirectories">
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'))" />
   </Target>
 
-  <Target Name="Build"
-          DependsOnTargets="
-            BuildRepoReferences;
-            ApplyPatches;
-            EnsureRedirectLogOutputDirExists"
+  <Target Name="RepoBuild"
+          DependsOnTargets="PrepareOutputDirectories;PrepareInnerClone"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)Build.complete">
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)" />
+          Outputs="$(BaseIntermediateOutputPath)RepoBuild.complete">
+    <ItemGroup>
+      <EnvironmentVariables Condition="'$(NUGET_PACKAGES)' != ''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
+    </ItemGroup>
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
     <Message Importance="High" Text="  Using custom build target" Condition="'$(BuildCommand)' == ''" />
     <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
     <Message Importance="High" Text="  With Environment Variables:" />
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
-    <CallTarget Targets="RepoBuild" />
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)...done" />
 
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)Build.complete" Overwrite="true" />
-    <OnError ExecuteTargets="ReportRepoError" />
-  </Target>
-
-  <Target Name="RepoBuild">
-    <ItemGroup>
-      <EnvironmentVariables Condition="'$(NUGET_PACKAGES)'!=''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
-    </ItemGroup>
-    <PropertyGroup>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)</FullCommand>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RedirectRepoOutputToLog)</FullCommand>
-    </PropertyGroup>
-    <Exec Command="$(FullCommand)"
+    <Exec Command="$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables)"
-          IgnoreStandardErrorWarningFormat="true" />
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(CustomRepoBuild)' != 'true'" />
+
+    <CallTarget Targets="CustomRepoBuild" Condition="'$(CustomRepoBuild)' == 'true'" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'...done" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)RepoBuild.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+
+    <OnError ExecuteTargets="ReportRepoError" />
   </Target>
 
   <Target Name="ReportRepoError">
@@ -175,68 +188,55 @@
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
   </Target>
 
-  <Target Name="Package" AfterTargets="Build"
+  <Target Name="Package"
           Condition="'$(BuildPackagesCommand)' != ''"
+          DependsOnTargets="PrepareOutputDirectories;PrepareInnerClone"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)Package.complete">
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging $(ProjectBuildReason)" />
+          Outputs="$(BaseIntermediateOutputPath)Package.complete">
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging '$(RepositoryName)'" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildPackagesCommand)" />
     <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
     <Message Importance="High" Text="  With Environment Variables:" />
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
+
     <Exec Command="$(BuildPackagesCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables)"
           IgnoreStandardErrorWarningFormat="true" />
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging $(ProjectBuildReason)...done" />
 
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)Package.complete" Overwrite="true" />
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging '$(RepositoryName)'...done" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)Package.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+
     <OnError ExecuteTargets="ReportRepoError" />
   </Target>
 
-  <Target Name="GatherBuiltPackages">
-    <ItemGroup>
-      <!-- Filter out packages for WriteVersions -->
-      <_BuiltPackages Condition="'$(PackagesOutput)' != ''" Include="$(PackagesOutput)/*.nupkg" Exclude="$(PackagesOutput)/*.symbols.nupkg"/>
-      <_BuiltPackages Condition="'@(PackagesOutputList)' != ''" Include="%(PackagesOutputList.Identity)/*.nupkg" Exclude="%(PackagesOutputList.Identity)/*.symbols.nupkg"/>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="CopyPackage"
-          AfterTargets="Package"
-          Condition="'$(PackagesOutput)' != '' OR '@(PackagesOutputList)' != ''"
-          DependsOnTargets="GatherBuiltPackages"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)CopyPackage.complete">
-    <Copy SourceFiles="@(_BuiltPackages)"
-          DestinationFolder="$(SourceBuiltPackagesPath)"
-          Condition="'@(_BuiltPackages)'!=''" />
-
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)CopyPackage.complete" Overwrite="true" />
-  </Target>
-
-  <Target Name="Clean" Condition="'$(CleanCommand)' != ''" >
-    <Exec Command="$(CleanCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
-          WorkingDirectory="$(ProjectDirectory)"
-          EnvironmentVariables="@(EnvironmentVariables)"
-          IgnoreStandardErrorWarningFormat="true" />
-  </Target>
-
-  <Target Name="SetNuGetPackagesEnvironment" Condition="'$(ArchiveDownloadedPackages)' == 'true'">
-    <PropertyGroup>
-      <LocalNuGetPackagesRootForRepository>$(LocalNuGetPackagesRoot)$(RepositoryName)/</LocalNuGetPackagesRootForRepository>
-    </PropertyGroup>
-
-    <MakeDir Directories="$(LocalNuGetPackagesRootForRepository)" />
+  <Target Name="CopyPackagesOutput">
+    <Error Condition="'$(PackagesOutput)' == ''" Text="The 'PackagesOutput' property must be set to the output directory of the built packages." />
 
     <ItemGroup>
-      <EnvironmentVariables Include="NUGET_PACKAGES=$(LocalNuGetPackagesRootForRepository)" />
+      <_BuiltPackages Include="$(PackagesOutput)/*.nupkg" Exclude="$(PackagesOutput)/*.symbols.nupkg"/>
     </ItemGroup>
+
+    <Copy SourceFiles="@(_BuiltPackages)" DestinationFolder="$(ArtifactsShippingPackagesDir)" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
   </Target>
+
+  <Target Name="Build"
+          DependsOnTargets="
+            BuildRepoReferences;
+            PrepareInnerClone;
+            ApplyPatches;
+            UpdateNuGetConfig;
+            UpdateGlobalJsonVersions;
+            RepoBuild;
+            Package;
+            CopyPackagesOutput" />
 
   <Target Name="GetRepositoryReferences" Outputs="@(RepositoryReference)" />
   <Target Name="GetPackagesOutput" Outputs="$(PackagesOutput)" />
 
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 </Project>
