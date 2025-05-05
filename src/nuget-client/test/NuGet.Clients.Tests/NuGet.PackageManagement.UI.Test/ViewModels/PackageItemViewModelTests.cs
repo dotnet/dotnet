@@ -14,6 +14,8 @@ using FluentAssertions;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Moq;
+using NuGet.PackageManagement.UI.Models.Package;
+using NuGet.PackageManagement.UI.Test.Models.Package;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
@@ -55,13 +57,14 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             .Returns(new ValueTask<INuGetPackageFileService>(new NuGetPackageFileService(_serviceBroker.Object, _telemetryProvider.Object)));
 
             _packageFileService = new NuGetPackageFileService(_serviceBroker.Object, _telemetryProvider.Object);
-
             _testData = testData;
-            _testInstance = new PackageItemViewModel(_searchService.Object)
-            {
-                PackagePath = _testData.TestData.PackagePath,
-                PackageFileService = _packageFileService,
-            };
+            var identity = new PackageIdentity("package", new NuGetVersion("1.0.0"));
+            var packagePath = _testData.TestData.PackagePath;
+            var embeddedCapability = new EmbeddedResourcesCapability(_packageFileService, identity, null);
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedCapability);
+
+            _testInstance = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
             _output = output;
         }
 
@@ -72,21 +75,18 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         }
 
         [Fact]
-        public async Task IconUrl_WithMalformedUrlScheme_ReturnsDefaultInitallyAndFinally()
+        public async Task IconUrl_WithMalformedUrlScheme_ReturnsDefaultInitiallyAndFinally()
         {
+            // Arrange
             var iconUrl = new Uri("httphttphttp://fake.test/image.png");
+            var packageModel = CreateLocalPackageModel(iconUrl: iconUrl);
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Id = "PackageId.IconUrl_WithMalformedUrlScheme_ReturnsDefaultInitallyAndFinally",
-                Version = new NuGetVersion("1.0.0"),
-                IconUrl = iconUrl,
-                PackageFileService = _packageFileService,
-            };
-
+            // Act
             var packageIdentity = new PackageIdentity(packageItemViewModel.Id, packageItemViewModel.Version);
             NuGetPackageFileService.AddIconToCache(packageIdentity, packageItemViewModel.IconUrl);
 
+            // Assert
             // initial result should be fetching and defaultpackageicon
             BitmapSource initialResult = packageItemViewModel.IconBitmap;
             Assert.Same(initialResult, Images.DefaultPackageIcon);
@@ -99,18 +99,16 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         [Fact]
         public async Task IconUrl_WhenFileNotFound_ReturnsDefault()
         {
+            // Arrange
             var iconUrl = new Uri(@"C:\path\to\image.png");
+            var packageModel = CreateLocalPackageModel(iconUrl: iconUrl);
 
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Id = "PackageId.IconUrl_WhenFileNotFound_ReturnsDefault",
-                Version = new NuGetVersion("1.0.0"),
-                IconUrl = iconUrl,
-                PackageFileService = _packageFileService,
-            };
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
+            // Act
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
+            // Assert
             VerifyImageResult(result, packageItemViewModel.BitmapStatus);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
         }
@@ -118,18 +116,17 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         [Fact]
         public async Task IconUrl_RelativeUri_ReturnsDefault()
         {
+            // Arrange
             // relative URIs are not supported in viewmodel.
             var iconUrl = new Uri("resources/testpackageicon.png", UriKind.Relative);
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Id = "PackageId.IconUrl_RelativeUri_ReturnsDefault",
-                Version = new NuGetVersion("1.0.0"),
-                IconUrl = iconUrl,
-                PackageFileService = _packageFileService,
-            };
+            var packageModel = CreateLocalPackageModel(iconUrl: iconUrl);
 
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
+
+            // Act
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
+            // Assert
             VerifyImageResult(result, packageItemViewModel.BitmapStatus);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToRelativeUri, packageItemViewModel.BitmapStatus);
         }
@@ -149,18 +146,16 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         [Fact]
         public async Task IconUrl_WithValidImageUrl_FailsDownloadsImage_ReturnsDefault()
         {
+            // Arrange
             var iconUrl = new Uri("http://fake.test/image.png");
 
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Id = "PackageId.IconUrl_WithValidImageUrl_FailsDownloadsImage_ReturnsDefault",
-                Version = new NuGetVersion("1.0.0"),
-                IconUrl = iconUrl,
-                PackageFileService = _packageFileService,
-            };
+            var packageModel = CreateLocalPackageModel(iconUrl: iconUrl);
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
+            // Act
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
+            // Assert
             VerifyImageResult(result, packageItemViewModel.BitmapStatus);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
         }
@@ -177,6 +172,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         {
             using (var testDir = TestDirectory.Create())
             {
+                // Arrange
                 // Create decoy nuget package
                 var zipPath = Path.Combine(testDir.Path, "file.nupkg");
                 CreateDummyPackage(
@@ -193,14 +189,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                     Fragment = iconElement
                 };
 
-                var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-                {
-                    Id = "PackageId.IconUrl_EmbeddedIcon_HappyPath_LoadsImage",
-                    Version = new NuGetVersion("1.0.0"),
-                    IconUrl = builder.Uri,
-                    PackagePath = zipPath,
-                    PackageFileService = _packageFileService,
-                };
+                var packageModel = CreateLocalPackageModel(iconUrl: builder.Uri);
+                var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 _output.WriteLine($"ZipPath {zipPath}");
                 _output.WriteLine($"File Exists {File.Exists(zipPath)}");
@@ -219,18 +209,14 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         [Fact]
         public async Task IconUrl_FileUri_LoadsImage()
         {
-            // Prepare
             using (var testDir = TestDirectory.Create())
             {
+                // Arrange
                 var imagePath = Path.Combine(testDir, "image.png");
                 CreateNoisePngImage(path: imagePath);
-                var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-                {
-                    Id = "PackageId.IconUrl_FileUri_LoadsImage",
-                    Version = new NuGetVersion("1.0.0"),
-                    IconUrl = new Uri(imagePath, UriKind.Absolute),
-                    PackageFileService = _packageFileService,
-                };
+
+                var packageModel = CreateLocalPackageModel(iconUrl: new Uri(imagePath, UriKind.Absolute));
+                var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 // Act
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
@@ -248,6 +234,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         {
             using (var testDir = TestDirectory.Create())
             {
+                // Arrange
                 // Create decoy nuget package
                 var zipPath = Path.Combine(testDir.Path, "file.nupkg");
                 CreateDummyPackage(zipPath);
@@ -258,14 +245,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                     Fragment = $"..{separator}icon.png"
                 };
 
-                var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-                {
-                    Id = "PackageId.IconUrl_EmbeddedIcon_RelativeParentPath_ReturnsDefault",
-                    Version = new NuGetVersion("1.0.0"),
-                    IconUrl = builder.Uri,
-                    PackagePath = zipPath,
-                    PackageFileService = _packageFileService,
-                };
+                var packageModel = CreateLocalPackageModel(iconUrl: builder.Uri);
+                var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 // Act
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
@@ -324,9 +305,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         }
 
         [Fact]
-        public void UpdateTransitivePackageStatus_WhenGivenInstalledVersion_SetsLatestVersionEqualToInstalledVersion()
+        public async Task UpdateTransitivePackageStatus_WhenGivenInstalledVersion_SetsLatestVersionEqualToInstalledVersionAsync()
         {
-            _testInstance.UpdateTransitivePackageStatus(new NuGetVersion("1.0.0"));
+            await _testInstance.UpdateTransitivePackageStatusAsync();
             Assert.Equal(_testInstance.LatestVersion, _testInstance.InstalledVersion);
         }
 
@@ -364,6 +345,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         {
             using (var testDir = TestDirectory.Create())
             {
+                // Arrange
                 // Create decoy nuget package
                 var zipPath = Path.Combine(testDir.Path, "file.nupkg");
                 CreateDummyPackage(
@@ -380,14 +362,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                     Fragment = iconElement
                 };
 
-                var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-                {
-                    Id = "PackageId.IconUrl_FileUri_LoadsImage" + iconElement,
-                    Version = new NuGetVersion("1.0.0"),
-                    IconUrl = builder.Uri,
-                    PackagePath = zipPath,
-                    PackageFileService = _packageFileService,
-                };
+                var packageModel = CreateLocalPackageModel(packagePath: zipPath, iconUrl: builder.Uri);
+                var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 _output.WriteLine($"ZipPath {zipPath}");
                 _output.WriteLine($"File Exists {File.Exists(zipPath)}");
@@ -414,11 +390,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsNull_AndAuthorIsNullOrWhitespace_IsNull(string emptyAuthor)
         {
             // Arrange
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Author = emptyAuthor,
-                Owner = "owner1, owner2",
-            };
+            var packageModel = CreateLocalPackageModel(authors: emptyAuthor, owners: ["owner1, owner2"]);
+
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
             // Act
             string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
@@ -431,11 +405,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsNull_OnlyContainsAuthor()
         {
             // Arrange
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-            {
-                Author = "author1",
-                Owner = "owner1, owner2",
-            };
+            var packageModel = CreateLocalPackageModel(authors: "author1", owners: ["owner1, owner2"]);
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
             // Act
             string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
@@ -452,10 +423,10 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsEmpty_IsEmpty()
         {
             // Arrange
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            var packageModel = CreateLocalPackageModel(authors: "author1", owners: ["owner1, owner2"]);
+
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel)
             {
-                Author = "author1",
-                Owner = "owner1, owner2",
                 KnownOwnerViewModels = ImmutableList<KnownOwnerViewModel>.Empty,
             };
 
@@ -472,10 +443,10 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         public void ByOwnerOrAuthor_WhenOwnerIsEmpty_IsEmpty()
         {
             // Arrange
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            var packageModel = CreateLocalPackageModel(authors: "author1", owners: [string.Empty]);
+
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel)
             {
-                Author = "author1",
-                Owner = string.Empty,
                 KnownOwnerViewModels = new List<KnownOwnerViewModel>()
                 {
                     new KnownOwnerViewModel(new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"))),
@@ -497,10 +468,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsExist_OnlyContainsOwner()
         {
             // Arrange
-            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            var packageModel = CreateLocalPackageModel(authors: "author1", owners: ["owner1", "owner2"]);
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel)
             {
-                Author = "author1",
-                Owner = "owner1, owner2",
                 KnownOwnerViewModels = new List<KnownOwnerViewModel>()
                 {
                     new KnownOwnerViewModel(new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"))),
@@ -518,6 +488,14 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 .And.NotContain("author1")
                 .And.Contain("owner1")
                 .And.Contain("owner2");
+        }
+
+        private LocalPackageModel CreateLocalPackageModel(string packagePath = null, string authors = null, IReadOnlyList<string> owners = null, Uri iconUrl = null)
+        {
+            var identity = new PackageIdentity("package", new NuGetVersion("1.0.0"));
+            var embeddedCapability = new EmbeddedResourcesCapability(_packageFileService, identity, null);
+
+            return PackageModelCreationTestHelper.CreateLocalPackageModel(identity, _testData.TestData.PackagePath, embeddedCapability, authors: authors, ownersList: owners, iconUrl: iconUrl);
         }
 
         private static void VerifyImageResult(object result, IconBitmapStatus bitmapStatus)
@@ -641,13 +619,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 var imageFilePath = Path.Combine(testDir, imageFile);
                 File.WriteAllBytes(imageFilePath, bytes);
 
-                var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
-                {
-                    Id = "TestPackageId",
-                    Version = new NuGetVersion("1.0.0"),
-                    IconUrl = new Uri(imageFilePath, UriKind.Absolute),
-                    PackageFileService = _packageFileService,
-                };
+                var packageModel = CreateLocalPackageModel(iconUrl: new Uri(imageFilePath, UriKind.Absolute));
+
+                var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 // Act
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);

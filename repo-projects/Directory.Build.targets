@@ -303,12 +303,12 @@
   </Target>
 
   <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
-  <Target Name="UpdateEngCommonFiles">
+  <Target Name="UpdateEngCommonFiles" Condition="'$(UseBootstrapArcade)' != 'true'">
     <ItemGroup>
-      <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
+      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(OrchestratorEngCommonFile)"
+    <Copy SourceFiles="@(InputEngCommonFile)"
           DestinationFolder="$(ProjectDirectory)eng\common\%(RecursiveDir)"
           SkipUnchangedFiles="true" />
   </Target>
@@ -685,23 +685,15 @@
   </Target>
 
   <Target Name="MoveDotNetBuildLogs"
-        Condition="'$(IsUtilityProject)' != 'true' and
-                    Exists('$(RepoArtifactsDir)')">
+        Condition="'$(IsUtilityProject)' != 'true'">
     <ItemGroup>
-      <LogFilesToMove Include="$(RepoArtifactsDir)**/*.log" />
-      <LogFilesToMove Include="$(RepoArtifactsDir)**/*.binlog" />
-      <PrebuiltReportsToMove Include="$(RepoArtifactsDir)sb/prebuilt-report/*" />
+      <LogFilesToMove Include="$(RepoArtifactsDir)log\$(Configuration)\**\*" />
     </ItemGroup>
 
     <!-- Move the build logs -->
     <Move SourceFiles="@(LogFilesToMove)"
           DestinationFolder="$(ArtifactsLogRepoDir)"
           Condition="'@(LogFilesToMove)' != ''" />
-
-    <!-- Move the prebuilt reports -->
-    <Move SourceFiles="@(PrebuiltReportsToMove)"
-          DestinationFolder="$(PackageReportRepoDir)"
-          Condition="'@(PrebuiltReportsToMove)' != ''" />
   </Target>
 
   <!-- Make a copy of project.assets.json files for prebuilt report generation. -->

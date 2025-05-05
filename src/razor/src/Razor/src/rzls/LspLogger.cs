@@ -38,7 +38,7 @@ internal class LspLogger(string categoryName, LogLevelProvider logLevelProvider,
             LogLevel.Error => MessageType.Error,
             LogLevel.Warning => MessageType.Warning,
             LogLevel.Information => MessageType.Info,
-            LogLevel.Debug => MessageType.Log,
+            LogLevel.Debug => MessageType.Debug,
             LogLevel.Trace => MessageType.Log,
             _ => throw new NotImplementedException(),
         };

@@ -24,10 +24,10 @@
     <BuildArgs Condition="'$(IsSpecialFlavorBuild)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
     <!-- Pass the properties for this special build flavor down to the runtime repo build. -->
-    <BuildArgs Condition="'$(DotNetBuildRuntimeWasmEnableThreads)' == 'true'">$(BuildArgs) /p:DotNetBuildRuntimeWasmEnableThreads=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildMonoEnableLLVM)' != ''">$(BuildArgs) /p:DotNetBuildMonoEnableLLVM=$(DotNetBuildMonoEnableLLVM)</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildMonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:DotNetBuildMonoAOTEnableLLVM=$(DotNetBuildMonoAOTEnableLLVM)</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildMonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:DotNetBuildMonoBundleLLVMOptimizer=$(DotNetBuildMonoBundleLLVMOptimizer)</BuildArgs>
+    <BuildArgs Condition="'$(WasmEnableThreads)' == 'true'">$(BuildArgs) /p:WasmEnableThreads=true</BuildArgs>
+    <BuildArgs Condition="'$(MonoEnableLLVM)' != ''">$(BuildArgs) /p:MonoEnableLLVM=$(MonoEnableLLVM)</BuildArgs>
+    <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
+    <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
 
     <BuildArgs Condition="'$(UseSystemLibs)' != ''">$(BuildArgs) /p:UseSystemLibs=$(UseSystemLibs)</BuildArgs>

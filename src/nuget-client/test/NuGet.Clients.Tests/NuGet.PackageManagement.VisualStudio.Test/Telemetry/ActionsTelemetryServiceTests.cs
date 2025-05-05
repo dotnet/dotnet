@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Moq;
 using NuGet.Common;
 using NuGet.VisualStudio;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 
 namespace NuGet.PackageManagement.VisualStudio.Test

@@ -19,6 +19,11 @@
         https://github.com/dotnet/source-build/issues/4922 -->
   <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true'" />
 
+  <!-- The OfficialBuildId in nuget-client.props isn't parse-able. Replace it with the current datetime value. The OfficialBuildId isn't important for source-only builds. -->
+  <PropertyGroup Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true'">
+    <OfficialBuildId Condition="'$(RepositoryName)' == 'nuget-client'">$([System.DateTime]::Now.ToString("yyyyMMdd")).1</OfficialBuildId>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- Fake, to satisfy the SDK. -->
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -56,7 +61,6 @@
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
 
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
-    <PackageReportRepoDir>$([MSBuild]::NormalizeDirectory('$(PackageReportDir)', '$(RepositoryName)'))</PackageReportRepoDir>
 
     <RidAgnosticVerticalName>Windows_x64</RidAgnosticVerticalName>
 
@@ -108,10 +112,7 @@
 
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
-    <!-- TODO: Remove condition when the following PRs are consumed:
-          - https://github.com/NuGet/NuGet.Client/pull/6402 and
-          - https://github.com/dotnet/aspnetcore/pull/61545. -->
-    <CommonArgs Condition="'$(RepositoryName)' != 'nuget-client' and '$(RepositoryName)' != 'aspnetcore'">$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
 
     <!-- Pass through DotNetBuildPass for join point vertical support. -->

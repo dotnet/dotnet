@@ -13,10 +13,8 @@ using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.CodeAnalysis.Razor.Settings;
-
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Extensions;
-using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Threading;
@@ -241,7 +239,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     }
 
     // Internal for testing
-    internal void EditorSettingsManager_Changed(object sender, ClientSettingsChangedEventArgs args)
+    internal void EditorSettingsManager_Changed(object sender, EventArgs args)
         => OnContextChangedAsync(ContextChangeKind.EditorSettingsChanged).Forget();
 
     // Internal for testing

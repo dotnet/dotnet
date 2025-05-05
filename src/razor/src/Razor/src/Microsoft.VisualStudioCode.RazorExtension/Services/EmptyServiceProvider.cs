@@ -11,7 +11,7 @@ internal sealed class EmptyServiceProvider : IRazorDocumentServiceProvider
 
     public bool CanApplyChange => false;
 
-    public bool SupportDiagnostics => false;
+    public bool SupportDiagnostics => true;
 
     public TService? GetService<TService>() where TService : class
     {

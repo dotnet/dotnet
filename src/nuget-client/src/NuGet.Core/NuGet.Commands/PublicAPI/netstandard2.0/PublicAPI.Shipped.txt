@@ -975,7 +975,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.PackCommandRunner.GetInputFile(NuGet.Commands.PackArgs packArgs) -> string
 ~static NuGet.Commands.PackCommandRunner.GetOutputFileName(string packageId, NuGet.Versioning.NuGetVersion version, bool isNupkg, bool symbols, NuGet.Commands.SymbolPackageFormat symbolPackageFormat, bool excludeVersion = false) -> string
 ~static NuGet.Commands.PackCommandRunner.GetOutputPath(NuGet.Packaging.PackageBuilder builder, NuGet.Commands.PackArgs packArgs, bool symbols = false, NuGet.Versioning.NuGetVersion nugetVersion = null, string outputDirectory = null, bool isNupkg = true) -> string
-~static NuGet.Commands.PackCommandRunner.ProcessProjectJsonFile(NuGet.Packaging.PackageBuilder builder, string basePath, string id, NuGet.Versioning.NuGetVersion version, string suffix, System.Func<string, string> propertyProvider) -> bool
 ~static NuGet.Commands.PackCommandRunner.SetupCurrentDirectory(NuGet.Commands.PackArgs packArgs) -> void
 ~static NuGet.Commands.PackageSourceProviderExtensions.ResolveAndValidateSource(this NuGet.Configuration.IPackageSourceProvider sourceProvider, string source) -> string
 ~static NuGet.Commands.PackageSourceProviderExtensions.ResolveSource(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> availableSources, string source) -> NuGet.Configuration.PackageSource

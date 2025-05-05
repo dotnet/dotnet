@@ -622,16 +622,6 @@ jobs:
     condition: failed()
     continueOnError: true
 
-  - ${{ if eq(parameters.buildSourceOnly, 'True') }}:
-    - task: CopyFiles@2
-      displayName: Copy prebuilt-report to BuildLogs
-      inputs:
-        SourceFolder: '$(sourcesPath)'
-        Contents: artifacts/prebuilt-report/**
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs'
-      continueOnError: true
-      condition: succeededOrFailed()
-
   - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - publish: $(Build.ArtifactStagingDirectory)/BuildLogs
       artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
