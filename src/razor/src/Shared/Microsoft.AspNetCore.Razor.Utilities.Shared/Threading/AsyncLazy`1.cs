@@ -285,7 +285,9 @@ internal abstract class AsyncLazy<T>
                 {
                     using (TakeLock(CancellationToken.None))
                     {
+#pragma warning disable CA2025 // task is already completed so we're not disposing too early here
                         task = GetCachedValueAndCacheThisValueIfNoneCached_NoLock(task);
+#pragma warning restore
                     }
 
                     requestToCompleteSynchronously.CompleteFromTask(task);
