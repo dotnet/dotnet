@@ -49,12 +49,6 @@ extends:
       jobs:
       - template: /eng/common/templates-official/jobs/jobs.yml@self
         parameters:
-          enablePublishUsingPipelines: true
-          enablePublishBuildAssets: true
-          artifacts:
-            publish:
-              artifacts: true
-              manifests: true
           jobs:
           - job: SourceBuild_Managed
             displayName: Source-Build (Managed)
@@ -72,9 +66,5 @@ extends:
             - checkout: self
               submodules: recursive
             - template: /eng/common/templates-official/steps/source-build.yml
-    - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
-      - template: /eng/common/templates-official/post-build/post-build.yml@self
-        parameters:
-          publishingInfraVersion: 3
-          enableSourceLinkValidation: true
-          enableSigningValidation: false
+          publishAssetsImmediately: true
+          isAssetlessBuild: true

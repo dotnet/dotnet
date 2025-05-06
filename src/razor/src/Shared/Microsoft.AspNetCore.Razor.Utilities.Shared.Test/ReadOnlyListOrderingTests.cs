@@ -148,6 +148,142 @@ public class ReadOnlyListOrderingTests : ReadOnlyListOrderingTestBase
         AssertEqual(expected, sorted);
     }
 
+    [Theory]
+    [MemberData(nameof(SelectAndOrderTestData))]
+    public void SelectAndOrderAsArray(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var sorted = data.SelectAndOrderAsArray(selector);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderTestData_OddBeforeEven))]
+    public void SelectAndOrderAsArray_OddBeforeEven(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var sorted = data.SelectAndOrderAsArray(selector, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderDescendingTestData))]
+    public void SelectAndOrderDescendingAsArray(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var sorted = data.SelectAndOrderDescendingAsArray(selector);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderDescendingTestData_OddBeforeEven))]
+    public void SelectAndOrderDescendingAsArray_OddBeforeEven(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var sorted = data.SelectAndOrderDescendingAsArray(selector, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByTestData))]
+    public void SelectAndOrderByAsArray(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var sorted = data.SelectAndOrderByAsArray(selector, static x => x.Value);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByTestData_OddBeforeEven))]
+    public void SelectAndOrderByAsArray_OddBeforeEven(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var sorted = data.SelectAndOrderByAsArray(selector, static x => x.Value, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByDescendingTestData))]
+    public void SelectAndOrderByDescendingAsArray(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var sorted = data.SelectAndOrderByDescendingAsArray(selector, static x => x.Value);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByDescendingTestData_OddBeforeEven))]
+    public void SelectAndOrderByDescendingAsArray_OddBeforeEven(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var sorted = data.SelectAndOrderByDescendingAsArray(selector, static x => x.Value, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderTestData))]
+    public void SelectAndOrderAsArray_Enumerable(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var enumerable = (IEnumerable<int>)data;
+        var sorted = enumerable.SelectAndOrderAsArray(selector);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderTestData_OddBeforeEven))]
+    public void SelectAndOrderAsArray_Enumerable_OddBeforeEven(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var enumerable = (IEnumerable<int>)data;
+        var sorted = enumerable.SelectAndOrderAsArray(selector, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderDescendingTestData))]
+    public void SelectAndOrderDescendingAsArray_Enumerable(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var enumerable = (IEnumerable<int>)data;
+        var sorted = enumerable.SelectAndOrderDescendingAsArray(selector);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderDescendingTestData_OddBeforeEven))]
+    public void SelectAndOrderDescendingAsArray_Enumerable_OddBeforeEven(IReadOnlyList<int> data, ImmutableArray<string> expected, Func<int, string> selector)
+    {
+        var enumerable = (IEnumerable<int>)data;
+        var sorted = enumerable.SelectAndOrderDescendingAsArray(selector, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByTestData))]
+    public void SelectAndOrderByAsArray_Enumerable(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var enumerable = (IEnumerable<ValueHolder<int>>)data;
+        var sorted = enumerable.SelectAndOrderByAsArray(selector, static x => x.Value);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByTestData_OddBeforeEven))]
+    public void SelectAndOrderByAsArray_Enumerable_OddBeforeEven(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var enumerable = (IEnumerable<ValueHolder<int>>)data;
+        var sorted = enumerable.SelectAndOrderByAsArray(selector, static x => x.Value, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByDescendingTestData))]
+    public void SelectAndOrderByDescendingAsArray_Enumerable(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var enumerable = (IEnumerable<ValueHolder<int>>)data;
+        var sorted = enumerable.SelectAndOrderByDescendingAsArray(selector, static x => x.Value);
+        AssertEqual(expected, sorted);
+    }
+
+    [Theory]
+    [MemberData(nameof(SelectAndOrderByDescendingTestData_OddBeforeEven))]
+    public void SelectAndOrderByDescendingAsArray_Enumerable_OddBeforeEven(IReadOnlyList<ValueHolder<int>> data, ImmutableArray<ValueHolder<string>> expected, Func<ValueHolder<int>, ValueHolder<string>> selector)
+    {
+        var enumerable = (IEnumerable<ValueHolder<int>>)data;
+        var sorted = enumerable.SelectAndOrderByDescendingAsArray(selector, static x => x.Value, OddBeforeEvenString);
+        AssertEqual(expected, sorted);
+    }
+
 #if NET // Enumerable.Order(...) and Enumerable.OrderDescending(...) were introduced in .NET 7
 
     [Fact]
