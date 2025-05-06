@@ -2,12 +2,6 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
-  <PropertyGroup Condition="'$(UseInnerClone)' == 'true'">
-    <CommonArgs>$(CommonArgs) /p:UseInnerClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopySrcInsteadOfClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</CommonArgs>
-  </PropertyGroup>
-
   <PropertyGroup>
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
@@ -700,8 +694,7 @@
           Condition="'@(_InnerPackageCacheFiles)' != ''" />
   </Target>
 
-  <Target Name="MoveDotNetBuildLogs"
-        Condition="'$(IsUtilityProject)' != 'true'">
+  <Target Name="MoveDotNetBuildLogs" Condition="'$(IsUtilityProject)' != 'true'">
     <ItemGroup>
       <LogFilesToMove Include="$(RepoArtifactsDir)log\$(Configuration)\**\*" />
     </ItemGroup>
@@ -867,14 +860,10 @@
     </Exec>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Testing $(RepositoryName)...done" />
-
-    <OnError ExecuteTargets="MoveDotNetBuildLogs" />
   </Target>
 
   <Target Name="Test"
-          DependsOnTargets="RepoTest;
-                            MoveDotNetBuildLogs;
-                            CleanupRepo" />
+          DependsOnTargets="RepoTest;CleanupRepo" />
   <Target Name="VSTest" DependsOnTargets="Test" />
 
   <!-- Outputs a dependency graph of the repos, in YAML form, to the console. -->

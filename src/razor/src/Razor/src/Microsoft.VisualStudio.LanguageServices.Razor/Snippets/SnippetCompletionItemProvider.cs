@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -64,6 +65,19 @@ internal sealed class SnippetCompletionItemProvider : ISnippetCompletionItemProv
                 Kind = CompletionItemKind.Snippet,
                 CommitCharacters = []
             }));
+    }
+
+    public bool TryResolveInsertString(VSInternalCompletionItem completionItem, [NotNullWhen(true)] out string? insertString)
+    {
+        if (SnippetCompletionData.TryParse(completionItem.Data, out var snippetCompletionData) &&
+            SnippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
+        {
+            insertString = snippetInsertText;
+            return true;
+        }
+
+        insertString = null;
+        return false;
     }
 
     private static SnippetLanguage ConvertLanguageKind(RazorLanguageKind languageKind)

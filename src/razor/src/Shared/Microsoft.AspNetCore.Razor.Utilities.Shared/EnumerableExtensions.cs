@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -11,31 +12,141 @@ namespace System.Collections.Generic;
 
 internal static class EnumerableExtensions
 {
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="source"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="source">A sequence of values to invoke a transform function on.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="source"/>.
+    /// </returns>
     public static ImmutableArray<TResult> SelectAsArray<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector)
     {
+        // If the source is an ImmutableArray<T> boxed as an IEnumerable<T>, it's better to unbox it here and
+        // call the SelectAsArray<T> extension method that takes an ImmutableArray<T>. Otherwise, it'll go
+        // through the IReadOnlyList<T> path.
         if (source is ImmutableArray<T> array)
         {
             return ImmutableArrayExtensions.SelectAsArray(array, selector);
         }
 
+        // If the source is an IReadOnlyList<T>, we should call the SelectAsArray<T> extension method that
+        // takes an IReadOnlyList<T>. This ensures that we don't foreach over it and incur the cost of allocating
+        // or boxing an enumerator.
         if (source is IReadOnlyList<T> list)
         {
-            return list.SelectAsArray(selector);
+            return ReadOnlyListExtensions.SelectAsArray(list, selector);
         }
 
-        return BuildResult(source, selector);
-
-        static ImmutableArray<TResult> BuildResult(IEnumerable<T> items, Func<T, TResult> selector)
+        // PERF: If we can get the count of the sequence, we can allocate the array up front.
+        if (source.TryGetCount(out var count))
         {
-            using var results = new PooledArrayBuilder<TResult>();
-
-            foreach (var item in items)
+            if (count == 0)
             {
-                results.Add(selector(item));
+                return [];
             }
 
-            return results.DrainToImmutable();
+            var result = new TResult[count];
+
+            var index = 0;
+            foreach (var item in source)
+            {
+                result[index++] = selector(item);
+            }
+
+            Debug.Assert(result.Length == count);
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(result);
         }
+
+        // Fall back to a PooledArrayBuilder if we can't get the count up front.
+        // If the enumerable has 4 or fewer items, this will still allocate a single array and fill it.
+        // However, if it has more than 4 items, it will acquire an ImmutableArray<TResult>.Builder from the default pool.
+        using var results = new PooledArrayBuilder<TResult>();
+
+        foreach (var item in source)
+        {
+            results.Add(selector(item));
+        }
+
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
+        // to be the same as the number of items. This is uncommon, but still useful.
+        return results.DrainToImmutable();
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form by incorporating the element's index.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="source"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="source">A sequence of values to invoke a transform function on.</param>
+    /// <param name="selector">
+    ///  A transform function to apply to each source element; the second parameter of
+    ///  the function represents the index of the source element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="source"/>.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAsArray<T, TResult>(this IEnumerable<T> source, Func<T, int, TResult> selector)
+    {
+        // If the source is an ImmutableArray<T> boxed as an IEnumerable<T>, it's better to unbox it here and
+        // call the SelectAsArray<T> extension method that takes an ImmutableArray<T>. Otherwise, it'll go
+        // through the IReadOnlyList<T> path.
+        if (source is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.SelectAsArray(array, selector);
+        }
+
+        // If the source is an IReadOnlyList<T>, we should call the SelectAsArray<T> extension method that
+        // takes an IReadOnlyList<T>. This ensures that we don't foreach over it and incur the cost of allocating
+        // or boxing an enumerator.
+        if (source is IReadOnlyList<T> list)
+        {
+            return ReadOnlyListExtensions.SelectAsArray(list, selector);
+        }
+
+        var index = 0;
+
+        // PERF: If we can get the count of the sequence, we can allocate the array up front.
+        if (source.TryGetCount(out var count))
+        {
+            if (count == 0)
+            {
+                return [];
+            }
+
+            var result = new TResult[count];
+
+            foreach (var item in source)
+            {
+                result[index] = selector(item, index);
+                index++;
+            }
+
+            Debug.Assert(result.Length == count);
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(result);
+        }
+
+        // Fall back to a PooledArrayBuilder if we can't get the count up front.
+        // If the enumerable has 4 or fewer items, this will still allocate a single array and fill it.
+        // However, if it has more than 4 items, it will acquire an ImmutableArray<TResult>.Builder from the default pool.
+        using var results = new PooledArrayBuilder<TResult>();
+
+        foreach (var item in source)
+        {
+            results.Add(selector(item, index++));
+        }
+
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
+        // to be the same as the number of items. This is uncommon, but still useful.
+        return results.DrainToImmutable();
     }
 
     public static bool TryGetCount<T>(this IEnumerable<T> sequence, out int count)
@@ -132,7 +243,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in ascending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
     /// </returns>
@@ -156,7 +267,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in ascending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
@@ -181,7 +292,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in ascending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
@@ -206,7 +317,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in descending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
     /// </returns>
@@ -230,7 +341,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in descending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
@@ -255,7 +366,7 @@ internal static class EnumerableExtensions
     ///  Sorts the elements of an <see cref="IEnumerable{T}"/> in descending order.
     /// </summary>
     /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
@@ -281,7 +392,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order according to a key.
@@ -308,7 +419,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
     /// <returns>
@@ -336,7 +447,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
     /// <returns>
@@ -364,7 +475,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <returns>
     ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order according to a key.
@@ -391,7 +502,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
     /// <returns>
@@ -419,7 +530,7 @@ internal static class EnumerableExtensions
     /// </summary>
     /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
     /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
-    /// <param name="sequence">An <see cref="IEnumerable{T}"/> to ordered.</param>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> whose elements will be sorted.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
     /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
     /// <returns>
@@ -495,5 +606,263 @@ internal static class EnumerableExtensions
 
             return builder.ToArray();
         }
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderAsArray<T, TResult>(this IEnumerable<T> sequence, Func<T, TResult> selector)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().Order();
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderAsArray<T, TResult>(
+        this IEnumerable<T> sequence, Func<T, TResult> selector, IComparer<TResult> comparer)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().Order(comparer);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderAsArray<T, TResult>(
+        this IEnumerable<T> sequence, Func<T, TResult> selector, Comparison<TResult> comparison)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().Order(comparison);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderDescendingAsArray<T, TResult>(this IEnumerable<T> sequence, Func<T, TResult> selector)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderDescending();
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderDescendingAsArray<T, TResult>(
+        this IEnumerable<T> sequence, Func<T, TResult> selector, IComparer<TResult> comparer)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderDescending(comparer);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderDescendingAsArray<T, TResult>(
+        this IEnumerable<T> sequence, Func<T, TResult> selector, Comparison<TResult> comparison)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderDescending(comparison);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderBy(keySelector);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderBy(keySelector, comparer);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderBy(keySelector, comparison);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in decending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByDescendingAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderByDescending(keySelector);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in decending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByDescendingAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderByDescending(keySelector, comparer);
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="IEnumerable{T}"/> into a new form and sorts them in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="sequence"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="sequence">An <see cref="IEnumerable{T}"/> of elements to invoke a transform function on and sort.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="sequence"/> and sorted in decending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAndOrderByDescendingAsArray<TElement, TKey, TResult>(
+        this IEnumerable<TElement> sequence, Func<TElement, TResult> selector, Func<TResult, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = sequence.SelectAsArray(selector);
+        result.Unsafe().OrderByDescending(keySelector, comparison);
+
+        return result;
     }
 }
