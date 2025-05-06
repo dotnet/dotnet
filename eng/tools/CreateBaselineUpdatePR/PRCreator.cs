@@ -6,6 +6,7 @@ namespace CreateBaselineUpdatePR;
 using Octokit;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 public class PRCreator
@@ -60,13 +61,23 @@ public class PRCreator
     private async Task<List<NewTreeItem>> FetchOriginalTreeItemsAsync(
         TreeResponse? treeResponse,
         string targetBranch,
+        string desiredPath)
+    {
+        ConcurrentBag<NewTreeItem> treeItems = [];
+        await FetchOriginalTreeItemsAsync(treeResponse, treeItems, targetBranch, desiredPath);
+        return treeItems.ToList();
+    }
+
+    private async Task FetchOriginalTreeItemsAsync(
+        TreeResponse? treeResponse,
+        ConcurrentBag<NewTreeItem> treeItems,
+        string targetBranch,
         string desiredPath,
         string relativePath = "")
     {
-        List<NewTreeItem> treeItems = [];
         if (treeResponse == null)
         {
-            return treeItems;
+            return;
         }
 
         await Parallel.ForEachAsync(treeResponse.Tree, async (item, cancellationToken) =>
@@ -80,11 +91,7 @@ public class PRCreator
             if (item.Type == TreeType.Tree)
             {
                 TreeResponse subTree = await ApiRequestWithRetries(() => _client.Git.Tree.Get(_repoOwner, _repoName, item.Sha));
-                List<NewTreeItem> subTreeItems = await FetchOriginalTreeItemsAsync(subTree, targetBranch, desiredPath, path);
-                lock (treeItems)
-                {
-                    treeItems.AddRange(subTreeItems);
-                }
+                await FetchOriginalTreeItemsAsync(subTree, treeItems, targetBranch, desiredPath, path);
             }
             else
             {
@@ -96,14 +103,9 @@ public class PRCreator
                     Sha = item.Sha
                 };
 
-                lock (treeItems)
-                {
-                    treeItems.Add(newItem);
-                }
+                treeItems.Add(newItem);
             }
         });
-
-        return treeItems;
     }
 
     // Return a dictionary using the filename without the 
