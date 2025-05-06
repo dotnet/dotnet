@@ -29,6 +29,9 @@
     <!-- TODO: This parameter is only available on the Unix script. Intentional? -->
     <BuildArgs Condition="'$(BuildOS)' != 'windows'">$(BuildArgs) --outputrid $(TargetRid)</BuildArgs>
 
+    <!-- Source-build will use non-portable RIDs. To build for these non-portable RID scenarios, we must do a boostrapped build. -->
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
+
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
     <BuildArgs Condition="'$(PgoInstrument)' != 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
