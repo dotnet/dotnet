@@ -33,6 +33,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      vmrBranch: ${{ parameters.vmrBranch }}
   jobs:
   - ${{ each leg in parameters.legs }}:
     - template: ../jobs/vmr-build.yml
@@ -120,6 +121,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         buildSourceOnly: true
+        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
     - ${{ each leg in parameters.legs }}:
       - template: ../jobs/vmr-build.yml

@@ -32,7 +32,7 @@ stages:
     scope: ${{ parameters.scope }}
     useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    vmrBranch: ${{ variables.VmrBranch }}
+    vmrBranch: ${{ parameters.vmrBranch }}
     
     # Description of the source build legs to run.
     # This is described here as a parameter to allow two separate stages to be produced from this list (one for building
