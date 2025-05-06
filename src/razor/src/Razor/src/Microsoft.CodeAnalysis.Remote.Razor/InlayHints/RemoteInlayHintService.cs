@@ -84,10 +84,20 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                 DocumentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out var hostDocumentPosition, out var hostDocumentIndex))
             {
                 // We know this C# maps to Razor, but does it map to Razor that we like?
+
+                // We don't want inlay hints in tag helper attributes
                 var node = syntaxTree.Root.FindInnermostNode(hostDocumentIndex);
                 if (node?.FirstAncestorOrSelf<MarkupTagHelperAttributeValueSyntax>() is not null)
                 {
                     continue;
+                }
+
+                // Inlay hints in directives are okay, eg '@attribute [Description(description: "Desc")]', but if the hint is going to be
+                // at the very start of the directive, we want to strip any TextEdit as it would make for an invalid document. eg: '// @page template: "/"'
+                if (node?.SpanStart == hostDocumentIndex &&
+                    node.FirstAncestorOrSelf<RazorDirectiveSyntax>(n => n.DirectiveDescriptor.Kind == DirectiveKind.SingleLine) is not null)
+                {
+                    hint.TextEdits = null;
                 }
 
                 if (hint.TextEdits is not null)

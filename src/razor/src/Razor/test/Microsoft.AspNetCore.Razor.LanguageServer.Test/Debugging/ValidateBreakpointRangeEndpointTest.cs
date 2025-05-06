@@ -136,7 +136,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
 
     private async Task<LspRange?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
     {
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ValidateBreakpointRangeEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
 

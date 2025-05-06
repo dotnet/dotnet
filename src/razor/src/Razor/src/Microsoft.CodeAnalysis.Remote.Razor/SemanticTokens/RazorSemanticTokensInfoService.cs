@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 
@@ -23,6 +22,6 @@ internal class RazorSemanticTokensInfoService(
         semanticTokensLegendService,
         csharpSemanticTokensProvider,
         languageServerFeatureOptions,
-        loggerFactory.GetOrCreateLogger<RemoteDocumentMappingService>())
+        loggerFactory.GetOrCreateLogger<RazorSemanticTokensInfoService>())
 {
 }

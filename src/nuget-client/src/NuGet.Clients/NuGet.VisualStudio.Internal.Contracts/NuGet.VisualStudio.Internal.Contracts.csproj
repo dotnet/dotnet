@@ -47,5 +47,6 @@
   <ItemGroup>
     <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
     <InternalsVisibleTo Include="NuGet.VisualStudio.Internal.Contracts.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.Test"/>
   </ItemGroup>
 </Project>

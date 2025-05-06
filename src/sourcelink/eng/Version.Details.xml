@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="sourcelink" Sha="f6351a05de40bebcea2df8a1e3739a17e3f806a5" BarId="264632" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="sourcelink" Sha="3b83017bbef1dd0918f7c2f894cfd07f56bcd689" BarId="266652" />
   <ProductDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25208.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>48bd86bdcd926a194e1581a60d820d12a64ef3c6</Sha>
     </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.620801">
-      <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>48bd86bdcd926a194e1581a60d820d12a64ef3c6</Sha>
-      <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
-    </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.620202">
-      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>8066d7d7a0829b2c7f7de93fef003d9ce50f7fba</Sha>
-      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
-    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25215.103">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25251.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>f6351a05de40bebcea2df8a1e3739a17e3f806a5</Sha>
-    </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.25171.1">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>235443a5c1136571cacdfd40576f263f26bf5b9b</Sha>
-      <SourceBuild RepoName="arcade" ManagedOnly="true" />
+      <Sha>3b83017bbef1dd0918f7c2f894cfd07f56bcd689</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

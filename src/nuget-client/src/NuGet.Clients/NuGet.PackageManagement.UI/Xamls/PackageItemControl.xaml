@@ -256,17 +256,17 @@
             <TextBlock
               Style="{StaticResource TooltipStyle}">
               <Run
-                Text="{Binding Id}"
+                Text="{Binding Id, Mode=OneTime}"
                 FontWeight="Bold" /> <Run Text="{Binding ByOwnerOrAuthor, Mode=OneTime}"/>
             </TextBlock>
             <TextBlock Style="{StaticResource PackageDescriptionToolTipStyle}">
-              <Run Text="{Binding Summary}" />
+              <Run Text="{Binding Summary, Mode=OneTime}" />
             </TextBlock>
             <TextBlock Style="{StaticResource TransitiveInfoToolTipStyle}">
               <Run
                 Text="{x:Static nuget:Resources.ToolTip_TransitiveDependency}"
                 FontWeight="Bold" />
-              <Run Text="{Binding TransitiveToolTipMessage}" />
+              <Run Text="{Binding TransitiveToolTipMessage, Mode=OneTime}" />
               <Run>
                 <Run.Style>
                   <Style TargetType="Run">

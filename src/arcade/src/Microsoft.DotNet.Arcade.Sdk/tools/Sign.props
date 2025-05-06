@@ -78,7 +78,7 @@
     -->
     <FileExtensionSignInfo Include=".deb" CertificateName="LinuxSign" />
     <FileExtensionSignInfo Include=".jar" CertificateName="MicrosoftJARSHA2" />
-    <FileExtensionSignInfo Include=".js;.ps1;.psd1;.psm1;.psc1;.py" CertificateName="Microsoft400" />
+    <FileExtensionSignInfo Include=".ps1;.psd1;.psm1;.psc1;.py" CertificateName="Microsoft400" />
     <FileExtensionSignInfo Include=".dll;.exe;.mibc;.msi" CertificateName="Microsoft400" />
     <FileExtensionSignInfo Include=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Include=".vsix" CertificateName="VsixSHA2" />
@@ -94,6 +94,10 @@
     <FileExtensionSignInfo Include=".app" CertificateName="MacDeveloper" />
     <!-- Runtime hardening is required for notarization. -->
     <FileExtensionSignInfo Include=".dylib" CertificateName="MacDeveloperHarden" />
+
+    <!-- Removing the default .js signing -->
+    <FileExtensionSignInfo Include=".js" CertificateName="BreakingSignatureChange" Condition="'$(NoSignJS)' != 'true'"/>
+    <FileExtensionSignInfo Include=".js" CertificateName="None" Condition="'$(NoSignJS)' == 'true'"/>
 
     <!-- Explicitly use the azure linux cert for azl binaries -->
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />

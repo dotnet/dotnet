@@ -28,18 +28,12 @@ stages:
   jobs:
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
-      enablePublishUsingPipelines: true
-      enablePublishBuildAssets: true
-      artifacts:
-        publish:
-          artifacts: true
-          manifests: true
       jobs:
       - job: SourceBuild_Managed
         displayName: Source-Build (Managed)
         pool:
           name: $(DncEngPublicBuildPool)
-          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+          demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
         container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
         workspace:
           clean: all

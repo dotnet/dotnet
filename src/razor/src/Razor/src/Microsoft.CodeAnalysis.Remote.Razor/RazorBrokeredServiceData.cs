@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -9,4 +10,5 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 internal sealed record class RazorBrokeredServiceData(
     ExportProvider? ExportProvider,
     ILoggerFactory? LoggerFactory,
-    IRazorBrokeredServiceInterceptor? Interceptor);
+    IRazorBrokeredServiceInterceptor? Interceptor,
+    IWorkspaceProvider? WorkspaceProvider);

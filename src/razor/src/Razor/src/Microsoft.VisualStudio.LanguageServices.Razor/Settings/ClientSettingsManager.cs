@@ -6,14 +6,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Razor.Settings;
 
 [Export(typeof(IClientSettingsManager))]
-internal class ClientSettingsManager : IClientSettingsManager
+internal sealed class ClientSettingsManager : IClientSettingsManager
 {
-    public event EventHandler<ClientSettingsChangedEventArgs>? ClientSettingsChanged;
+    public event EventHandler<EventArgs>? ClientSettingsChanged;
 
     private readonly object _settingsUpdateLock = new();
     private readonly IAdvancedSettingsStorage? _advancedSettingsStorage;
@@ -104,8 +105,7 @@ internal class ClientSettingsManager : IClientSettingsManager
         {
             _settings = settings;
 
-            var args = new ClientSettingsChangedEventArgs(_settings);
-            ClientSettingsChanged?.Invoke(this, args);
+            ClientSettingsChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

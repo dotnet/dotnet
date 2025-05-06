@@ -8,30 +8,13 @@
 // More details on this file's mechanics:
 // https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#repository-source-mappings
 {
-    // Location within the VMR where the source-build patches are stored
-    // These patches are applied on top of the code synchronized into the VMR
-    "patchesPath": "src/sdk/src/SourceBuild/patches",
+    "sourceMappingsPath": "src/source-mappings.json",
 
-    "sourceMappingsPath": "src/sdk/src/VirtualMonoRepo/source-mappings.json",
-
-    "thirdPartyNoticesTemplatePath": "src/sdk/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt",
+    "thirdPartyNoticesTemplatePath": "eng/THIRD-PARTY-NOTICES.template.txt",
 
     // Some files are copied outside of the src/ directory into other locations
-    // When files in the source paths are changed, they are automatically synchronized too
-    "additionalMappings": [
-        {
-            "source": "src/sdk/src/SourceBuild/content",
-            "destination": ""
-        },
-        {
-            "source": "src/sdk/eng/common",
-            "destination": "eng/common"
-        },
-        {
-            "source": "src/sdk/src/VirtualMonoRepo/source-mappings.json",
-            "destination": "src"
-        }
-    ],
+    // This is no longer needed with the full code flow between the repos and the VMR
+    "additionalMappings": [],
 
     // These defaults are added to all mappings unless `ignoreDefaults: true` is specified
     // When no "include" filter is specified, "**/*" is used
@@ -54,8 +37,6 @@
                 "src/Aspire.Dashboard/**/*",
                 "samples/**/*"
             ],
-            // Aspire no longer flows/changes, we only keep it for the workload manifest generation
-            "disableSynchronization": true
         },
         {
             "name": "aspnetcore",
@@ -117,8 +98,6 @@
         {
             "name": "scenario-tests",
             "defaultRemote": "https://github.com/dotnet/scenario-tests",
-            // Migrated onto the flat flow
-            "disableSynchronization": true
         },
         {
             "name": "sdk",
@@ -151,8 +130,6 @@
         {
             "name": "sourcelink",
             "defaultRemote": "https://github.com/dotnet/sourcelink",
-            // Migrated onto the flat flow
-            "disableSynchronization": true
         },
         {
             "name": "symreader",
@@ -175,17 +152,6 @@
         {
             "name": "xdt",
             "defaultRemote": "https://github.com/dotnet/xdt"
-        },
-        {
-            // TODO: Remove the xliff-tasks mapping once the synchronization flags it as unused
-            // We no longer synchronize it but we can't remove it yet until
-            // it disappears from all of the Version.Details.xml files.
-            // https://github.com/dotnet/source-build/issues/4359
-            "name": "xliff-tasks",
-            "defaultRemote": "https://github.com/dotnet/xliff-tasks",
-            "ignoreDefaults": true,
-            "exclude": [ "**/*" ],
-            "disableSynchronization": true
         },
         {
             "name": "winforms",

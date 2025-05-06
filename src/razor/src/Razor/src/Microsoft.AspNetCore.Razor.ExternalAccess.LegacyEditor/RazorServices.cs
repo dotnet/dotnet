@@ -3,8 +3,8 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;

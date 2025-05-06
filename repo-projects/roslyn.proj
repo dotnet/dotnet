@@ -11,6 +11,8 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(Sign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
+    <!-- TODO: Re-enable when roslyn fixed all NU1510 errors. -->
+    <BuildArgs>$(BuildArgs) /p:RestoreEnablePackagePruning=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">

@@ -5,13 +5,13 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
-internal class EmptyServiceProvider : IRazorDocumentServiceProvider
+internal sealed class EmptyServiceProvider : IRazorDocumentServiceProvider
 {
     public static readonly EmptyServiceProvider Instance = new();
 
     public bool CanApplyChange => false;
 
-    public bool SupportDiagnostics => false;
+    public bool SupportDiagnostics => true;
 
     public TService? GetService<TService>() where TService : class
     {

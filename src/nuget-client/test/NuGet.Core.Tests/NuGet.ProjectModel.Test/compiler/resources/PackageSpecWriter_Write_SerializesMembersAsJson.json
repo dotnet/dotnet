@@ -1,42 +1,5 @@
 {
-  "title": "title",
   "version": "1.2.3",
-  "description": "description",
-  "authors": [
-    "b",
-    "a",
-    "c"
-  ],
-  "copyright": "copyright",
-  "language": "language",
-  "contentFiles": [
-    "b",
-    "a",
-    "c"
-  ],
-  "packInclude": {
-    "a": "e",
-    "b": "d",
-    "c": "f"
-  },
-  "packOptions": {
-    "owners": [
-      "b",
-      "a",
-      "c"
-    ],
-    "tags": [
-      "b",
-      "a",
-      "c"
-    ],
-    "projectUrl": "projectUrl",
-    "iconUrl": "iconUrl",
-    "summary": "summary",
-    "releaseNotes": "releaseNotes",
-    "licenseUrl": "licenseUrl",
-    "requireLicenseAcceptance": true
-  },
   "restore": {
     "projectUniqueName": "projectUniqueName",
     "projectName": "projectName",
@@ -70,23 +33,6 @@
         "projectReferences": {}
       }
     }
-  },
-  "scripts": {
-    "a": [
-      "b",
-      "a",
-      "c"
-    ],
-    "b": [
-      "b",
-      "a",
-      "c"
-    ],
-    "c": [
-      "b",
-      "a",
-      "c"
-    ]
   },
   "dependencies": {
     "library": {

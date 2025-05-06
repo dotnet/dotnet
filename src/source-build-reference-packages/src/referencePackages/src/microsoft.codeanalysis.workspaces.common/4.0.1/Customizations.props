@@ -1,0 +1,21 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Replace Humanizer reference with the one provided by source-build-externals -->
+    <ProjectReference Remove="../../humanizer.core/2.2.0/Humanizer.Core.2.2.0.csproj" />
+    <PackageReference Include="Humanizer.Core" Version="$(HumanizerCoreVersion)" />
+
+    <!-- 
+      Upgrade System.Composition to a version that has netstandard2.0.
+      Use 9.0 version that is already referenced by roslyn.
+      The metapackage is excluded here.
+    -->
+    <ProjectReference Remove="../../system.composition/1.0.31/System.Composition.1.0.31.csproj" />
+    <ProjectReference Include="../../system.composition.attributedmodel/9.0.0/System.Composition.AttributedModel.9.0.0.csproj" />
+    <ProjectReference Include="../../system.composition.convention/9.0.0/System.Composition.Convention.9.0.0.csproj" />
+    <ProjectReference Include="../../system.composition.hosting/9.0.0/System.Composition.Hosting.9.0.0.csproj" />
+    <ProjectReference Include="../../system.composition.runtime/9.0.0/System.Composition.Runtime.9.0.0.csproj" />
+    <ProjectReference Include="../../system.composition.typedparts/9.0.0/System.Composition.TypedParts.9.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

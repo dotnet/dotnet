@@ -40,18 +40,36 @@ internal abstract class AbstractFileWriter
 
     #region Output helpers
 
-    protected void Indent()
+    protected void IncreaseIndent()
     {
         _indentLevel++;
     }
 
-    protected void Unindent()
+    protected void DescreaseIndent()
     {
         if (_indentLevel <= 0)
         {
             throw new InvalidOperationException("Cannot unindent from base level");
         }
         _indentLevel--;
+    }
+
+    protected IndentScope Indent() => new(this);
+
+    protected readonly ref struct IndentScope
+    {
+        private readonly AbstractFileWriter _writer;
+
+        public IndentScope(AbstractFileWriter writer)
+        {
+            _writer = writer;
+            _writer.IncreaseIndent();
+        }
+
+        public readonly void Dispose()
+        {
+            _writer.DescreaseIndent();
+        }
     }
 
     protected void Write(string msg)
@@ -71,9 +89,30 @@ internal abstract class AbstractFileWriter
         WriteLine("");
     }
 
+    protected void WriteIndentedLine(string msg)
+    {
+        using (Indent())
+        {
+            WriteLine(msg);
+        }
+    }
+
+    protected void WriteIndentedLine(string msg, params object[] args)
+    {
+        using (Indent())
+        {
+            WriteLine(msg, args);
+        }
+    }
+
     protected void WriteLine(string msg)
     {
-        WriteIndentIfNeeded();
+        if (msg.Length > 0)
+        {
+            // Don't write the indent if we're writing a blank line.
+            WriteIndentIfNeeded();
+        }
+
         _writer.WriteLine(msg);
         _needIndent = true; //need an indent after each line break
     }
@@ -94,16 +133,74 @@ internal abstract class AbstractFileWriter
         }
     }
 
+    /// <summary>
+    ///  Writes all <paramref name="values"/> with each value separated by a comma.
+    /// </summary>
+    /// <remarks>
+    ///  Values can be either <see cref="string"/>s or <see cref="IEnumerable{T}"/>s of
+    ///  <see cref="string"/>.  All of these are flattened into a single sequence that is joined.
+    ///  Empty strings are ignored.
+    /// </remarks>
+    protected void WriteCommaSeparatedList(params IEnumerable<object> values)
+    {
+        Write(CommaJoin(values));
+    }
+
+    /// <summary>
+    /// Joins all the values together in <paramref name="values"/> into one string with each
+    /// value separated by a comma.  Values can be either <see cref="string"/>s or <see
+    /// cref="IEnumerable{T}"/>s of <see cref="string"/>.  All of these are flattened into a
+    /// single sequence that is joined. Empty strings are ignored.
+    /// </summary>
+    protected static string CommaJoin(params IEnumerable<object> values)
+        => Join(", ", values);
+
+    protected static string Join(string separator, params IEnumerable<object> values)
+        => string.Join(separator, values.SelectMany(v => (v switch
+        {
+            string s => [s],
+            IEnumerable<string> ss => ss,
+            _ => throw new InvalidOperationException("Join must be passed strings or collections of strings")
+        }).Where(s => s != "")));
+
     protected void OpenBlock()
     {
         WriteLine("{");
-        Indent();
+        IncreaseIndent();
     }
 
-    protected void CloseBlock()
+    protected void CloseBlock(bool addSemicolon = false)
     {
-        Unindent();
-        WriteLine("}");
+        DescreaseIndent();
+
+        if (addSemicolon)
+        {
+            WriteLine("};");
+        }
+        else
+        {
+            WriteLine("}");
+        }
+    }
+
+    protected BlockScope Block(bool addSemicolon = false) => new(this, addSemicolon);
+
+    protected readonly ref struct BlockScope
+    {
+        private readonly AbstractFileWriter _writer;
+        private readonly bool _addSemicolon;
+
+        public BlockScope(AbstractFileWriter writer, bool addSemicolon)
+        {
+            _writer = writer;
+            _addSemicolon = addSemicolon;
+            _writer.OpenBlock();
+        }
+
+        public readonly void Dispose()
+        {
+            _writer.CloseBlock(_addSemicolon);
+        }
     }
 
     #endregion Output helpers
@@ -234,10 +331,16 @@ internal abstract class AbstractFileWriter
 
     protected static string CamelCase(string name)
     {
-        if (char.IsUpper(name[0]))
+        // Special logic to handle 'CSharp' correctly
+        if (name.StartsWith("CSharp", StringComparison.OrdinalIgnoreCase))
         {
-            name = char.ToLowerInvariant(name[0]) + name.Substring(1);
+            name = "csharp" + name[6..];
         }
+        else if (char.IsUpper(name[0]))
+        {
+            name = char.ToLowerInvariant(name[0]) + name[1..];
+        }
+
         return FixKeyword(name);
     }
 

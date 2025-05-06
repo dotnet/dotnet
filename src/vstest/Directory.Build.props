@@ -79,9 +79,9 @@
     <NetPortableTargetFrameworks>$(NetCoreAppMinimum)</NetPortableTargetFrameworks>
     <NetRunnerTargetFrameworks>$(NetSDKTargetFramework);$(NetPortableTargetFrameworks)</NetRunnerTargetFrameworks>
     <RunnerTargetFrameworks>$(NetFrameworkRunnerTargetFramework);$(NetRunnerTargetFrameworks)</RunnerTargetFrameworks>
-    
+
     <!--
-      
+
     -->
     <BundledExtensionTargetFrameworks>$(RunnerTargetFrameworks)</BundledExtensionTargetFrameworks>
     <!--
@@ -112,7 +112,7 @@
       https://learn.microsoft.com/en-us/dotnet/standard/frameworks#supported-target-frameworks
     -->
     <TestHostAllTargetFrameworks>$(TestHostMinimumTargetFrameworks);net47;net471;net472;net48;net481</TestHostAllTargetFrameworks>
-    
+
     <!--
       Library that is loaded by others and by us. We don't know where it will run (e.b. TranslationLayer),
       we need to support all frameworks from minimum, and also netstandard2.0.
@@ -133,8 +133,6 @@
     <DebugType>embedded</DebugType>
     <!-- Default to all packages generating a corresponding symbol package -->
     <IncludeSymbols>true</IncludeSymbols>
-    <!-- Workaround for AD0001 in analyzers with .NET 9. See https://github.com/dotnet/arcade/issues/14311 -->
-    <BuildWithNetFrameworkHostedCompiler>true</BuildWithNetFrameworkHostedCompiler>
   </PropertyGroup>
 
   <!-- Sign config -->

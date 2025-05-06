@@ -226,7 +226,7 @@ namespace NuGet.Commands
                     _success = false;
                 }
 
-                _success &= await ShowHttpSourcesError();
+                _success &= await EvaluateHttpSourceUsageAsync();
 
                 _success &= HasValidPlatformVersions();
 
@@ -249,15 +249,19 @@ namespace NuGet.Commands
                 }
 
                 telemetry.StartIntervalMeasure();
+
                 // Create assets file
                 if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStart(_request.Project.FilePath);
+
                 LockFile assetsFile = BuildAssetsFile(
                     _request.ExistingLockFile,
                     _request.Project,
                     graphs,
                     localRepositories,
                     contextForProject);
+
                 if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStop(_request.Project.FilePath);
+
                 telemetry.EndIntervalMeasure(GenerateAssetsFileDuration);
 
                 telemetry.StartIntervalMeasure();
@@ -290,17 +294,17 @@ namespace NuGet.Commands
                     packagesLockFile,
                     packagesLockFilePath,
                     cacheFile) = await ProcessRestoreResultAsync(
-                    telemetry,
-                    localRepositories,
-                    contextForProject,
-                    isLockFileValid,
-                    regenerateLockFile,
-                    assetsFile,
-                    graphs,
-                    packagesLockFile,
-                    packagesLockFilePath,
-                    cacheFile,
-                    token);
+                        telemetry,
+                        localRepositories,
+                        contextForProject,
+                        isLockFileValid,
+                        regenerateLockFile,
+                        assetsFile,
+                        graphs,
+                        packagesLockFile,
+                        packagesLockFilePath,
+                        cacheFile,
+                        token);
 
                 restoreTime.Stop();
 
@@ -427,9 +431,10 @@ namespace NuGet.Commands
             return (null, noOpCacheFileEvaluation, cacheFile);
         }
 
-        private async Task<bool> ShowHttpSourcesError()
+        private async Task<bool> EvaluateHttpSourceUsageAsync()
         {
             bool error = false;
+
             if (_request.DependencyProviders.RemoteProviders != null)
             {
                 foreach (var remoteProvider in _request.DependencyProviders.RemoteProviders)
@@ -437,24 +442,31 @@ namespace NuGet.Commands
                     var source = remoteProvider.Source;
                     if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                     {
-                        var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(_request.Project.RestoreMetadata.SdkAnalysisLevel,
+                        var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
+                            _request.Project.RestoreMetadata.SdkAnalysisLevel,
                             _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
                             SdkAnalysisLevelMinimums.HttpErrorSdkAnalysisLevelMinimumValue);
 
                         if (isErrorEnabled)
                         {
-                            await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1302,
-                            string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
+                            await _logger.LogAsync(
+                                RestoreLogMessage.CreateError(
+                                    NuGetLogCode.NU1302,
+                                    string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
+
                             error = true;
                         }
                         else
                         {
-                            await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1803,
-                            string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source)));
+                            await _logger.LogAsync(
+                                RestoreLogMessage.CreateWarning(
+                                    NuGetLogCode.NU1803,
+                                    string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source)));
                         }
                     }
                 }
             }
+
             return !error;
         }
 

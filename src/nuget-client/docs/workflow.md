@@ -29,6 +29,7 @@ These are guidelines to follow but unless indicated, they are not required.
   - Try your best not to take feedback personally, we're all working towards the same goals.
   - When conflict arises try to address it directly with the commentor offline, preferably synchronously.
   - Provide an explanation if you decide not to implement a recommendation.
+  - Feel free to resolve conversations for which you've made the suggested code changes.
 
 ### Merging Pull Requests
 

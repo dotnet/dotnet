@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.Logging;
@@ -21,7 +22,7 @@ internal abstract partial class RazorBrokeredServiceBase
     /// Implementors of <see cref="IServiceHubServiceFactory" /> (and thus this class) MUST provide a parameterless constructor
     /// or ServiceHub will fail to construct them.
     /// </remarks>
-    internal abstract class FactoryBase<TService> : IServiceHubServiceFactory
+    internal abstract class FactoryBase<TService> : IServiceHubServiceFactory, IInProcServiceFactory
         where TService : class
     {
         protected abstract TService CreateService(in ServiceArgs args);
@@ -36,6 +37,14 @@ internal abstract partial class RazorBrokeredServiceBase
             // Dispose the AuthorizationServiceClient since we won't be using it
             authorizationServiceClient?.Dispose();
 
+            return CreateAsync(stream, hostProvidedServices, serviceBroker);
+        }
+
+        public Task<object> CreateInProcAsync(IServiceProvider hostProvidedServices)
+            => CreateInternalAsync(stream: null, hostProvidedServices, serviceBroker: null);
+
+        private Task<object> CreateAsync(Stream stream, IServiceProvider hostProvidedServices, IServiceBroker serviceBroker)
+        {
 #if NET
             // So that we can control assembly loading, we re-load ourselves in the shared Razor ALC and perform the creation there.
             // That ensures that the service type we return is in the Razor ALC and any dependencies it needs will be handled by the
@@ -52,9 +61,9 @@ internal abstract partial class RazorBrokeredServiceBase
         }
 
         protected async Task<object> CreateInternalAsync(
-            Stream stream,
+            Stream? stream,
             IServiceProvider hostProvidedServices,
-            IServiceBroker serviceBroker)
+            IServiceBroker? serviceBroker)
         {
             var traceSource = (TraceSource?)hostProvidedServices.GetService(typeof(TraceSource));
 
@@ -75,11 +84,24 @@ internal abstract partial class RazorBrokeredServiceBase
                     ? new TraceSourceLoggerFactory(traceSource)
                     : EmptyLoggerFactory.Instance);
 
+            var workspaceProvider = brokeredServiceData?.WorkspaceProvider ?? RemoteWorkspaceProvider.Instance;
+
+            // Update the MEF composition's IHostServicesAccessor to the target workspace
+            var hostServicesProvider = exportProvider.GetExportedValue<RemoteHostServicesProvider>();
+            hostServicesProvider.SetWorkspaceProvider(workspaceProvider);
+
             // Update the MEF composition's ILoggerFactory to the target ILoggerFactory.
             // Note that this means that the first non-empty ILoggerFactory that we use
             // will be used for MEF component logging for the lifetime of all services.
             var remoteLoggerFactory = exportProvider.GetExportedValue<RemoteLoggerFactory>();
             remoteLoggerFactory.SetTargetLoggerFactory(targetLoggerFactory);
+
+            // In proc services don't use any service hub infra
+            if (stream is null)
+            {
+                var inProcArgs = new ServiceArgs(ServiceBroker: null, exportProvider, targetLoggerFactory, workspaceProvider, ServerConnection: null, brokeredServiceData.AssumeNotNull().Interceptor);
+                return CreateService(in inProcArgs);
+            }
 
             var pipe = stream.UsePipe();
 
@@ -88,7 +110,7 @@ internal abstract partial class RazorBrokeredServiceBase
                 : RazorServices.Descriptors.GetDescriptorForServiceFactory(typeof(TService));
             var serverConnection = descriptor.WithTraceSource(traceSource).ConstructRpcConnection(pipe);
 
-            var args = new ServiceArgs(serviceBroker, exportProvider, targetLoggerFactory, serverConnection, brokeredServiceData?.Interceptor);
+            var args = new ServiceArgs(serviceBroker.AssumeNotNull(), exportProvider, targetLoggerFactory, workspaceProvider, serverConnection, brokeredServiceData?.Interceptor);
 
             var service = CreateService(in args);
 

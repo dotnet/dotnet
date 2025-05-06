@@ -27015,7 +27015,8 @@ public partial class DataGridView
             {
                 int oldCurrentCellX = _ptCurrentCell.X;
                 int oldCurrentCellY = _ptCurrentCell.Y;
-                if (oldCurrentCellX >= 0
+                if (IsHandleCreated
+                    && oldCurrentCellX >= 0
                     && !_dataGridViewState1[State1_TemporarilyResetCurrentCell]
                     && !_dataGridViewOper[OperationInDispose])
                 {

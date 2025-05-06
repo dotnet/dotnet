@@ -33,11 +33,11 @@ parameters:
 - name: desiredSigning
   displayName: 'Sign?'
   type: string
-  default: 'Default (unsigned for manual and non-main/release builds)'
+  default: 'Default (unsigned for non release-branch builds)'
   values:
     - Signed
     - Unsigned
-    - Default (unsigned for manual and non-main/release builds)
+    - Default (unsigned for non release-branch builds)
 
 - name: desiredIBC
   displayName: 'Enable IBC?'
@@ -70,7 +70,7 @@ variables:
     value: false
 
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
-- template: /src/sdk/eng/pipelines/templates/variables/vmr-build.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 resources:
   repositories:
@@ -161,9 +161,8 @@ extends:
     - ${{ if and(ne(variables.isPRTrigger, 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
       - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
 
-    - template: /src/sdk/eng/pipelines/templates/stages/vmr-build.yml@self
+    - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        isBuiltFromVmr: true
         isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}
         desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}

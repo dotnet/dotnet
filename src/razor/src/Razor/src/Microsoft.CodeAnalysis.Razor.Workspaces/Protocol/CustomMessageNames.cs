@@ -64,6 +64,4 @@ internal static class CustomMessageNames
 
     // Called to get C# diagnostics from Roslyn when publishing diagnostics for VS Code
     public const string RazorCSharpPullDiagnosticsEndpointName = "razor/csharpPullDiagnostics";
-
-    public const string ColorPresentationMethodName = "textDocument/colorPresentation";
 }

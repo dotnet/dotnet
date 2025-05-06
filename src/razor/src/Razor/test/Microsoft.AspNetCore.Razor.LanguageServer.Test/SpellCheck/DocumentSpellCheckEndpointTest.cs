@@ -170,7 +170,7 @@ public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : Sing
         var sourceText = codeDocument.Source.Text;
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 

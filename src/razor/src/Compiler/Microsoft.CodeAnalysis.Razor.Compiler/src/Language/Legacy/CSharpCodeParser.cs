@@ -2650,7 +2650,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         chunkGenerator = SpanChunkGenerator.Null;
         CompleteBlock();
         var keyword = OutputAsMetaCode(Output());
-        var directiveBody = SyntaxFactory.RazorDirectiveBody(keyword, cSharpCode: null);
+        var directiveBody = SyntaxFactory.RazorDirectiveBody(keyword, csharpCode: null);
 
         // transition could be null if we're already inside a code block.
         transition = transition ?? SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition), chunkGenerator: null);

@@ -56,6 +56,7 @@
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Microbenchmarks" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension" />
   </ItemGroup>
 
   <ItemGroup Label="String Resources">

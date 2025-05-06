@@ -604,7 +604,7 @@ namespace NuGet.PackageManagement.UI
             _loadingStatusBar.ItemsLoaded = 0;
         }
 
-        public void UpdatePackageStatus(PackageCollectionItem[] installedPackages, bool clearCache = false)
+        public async Task UpdatePackageStatusAsync(PackageCollectionItem[] installedPackages, bool clearCache = false)
         {
             // in this case, we only need to update PackageStatus of
             // existing items in the package list
@@ -612,11 +612,11 @@ namespace NuGet.PackageManagement.UI
             {
                 if (package.PackageLevel == PackageLevel.TopLevel)
                 {
-                    package.UpdatePackageStatus(installedPackages, clearCache);
+                    await package.UpdatePackageStatusAsync(installedPackages, clearCache);
                 }
                 else
                 {
-                    package.UpdateTransitivePackageStatus(package.InstalledVersion);
+                    await package.UpdateTransitivePackageStatusAsync();
                 }
             }
         }
@@ -751,9 +751,7 @@ namespace NuGet.PackageManagement.UI
                 var last = _scrollViewer.ViewportHeight + first;
                 if (_scrollViewer.ViewportHeight > 0 && last >= packagesCount)
                 {
-                    NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                        LoadItemsAsync(selectedPackageItem: null, token: CancellationToken.None)
-                    ).PostOnFailure(nameof(InfiniteScrollList));
+                    _ = LoadItemsAsync(selectedPackageItem: null, token: CancellationToken.None);
                 }
             }
         }

@@ -66,6 +66,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     <InternalsVisibleTo Include="NuGet.PackageManagement.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
     <InternalsVisibleTo Include="NuGet.SolutionRestoreManager.Test" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ namespace Microsoft.DiaSymReader
 {
     /// <summary>
     /// This is a re-definition of COM's IStream interface. The important change is that
-    /// the Read and Write methods take an <see cref="IntPtr"/> instead of a byte[] to avoid the
+    /// the Read and Write methods take a pointer instead of a byte[] to avoid the
     /// allocation cost when called from native code.
     /// </summary>
     [Guid("0000000c-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -42,7 +42,7 @@ namespace Microsoft.DiaSymReader
     }
 
 #if NET9_0_OR_GREATER
-    [NativeMarshalling(typeof(STASTGMarshaller))]
+    [NativeMarshalling(typeof(STATSTGMarshaller))]
     public struct STATSTG
     {
         public string pwcsName;
@@ -58,9 +58,9 @@ namespace Microsoft.DiaSymReader
         public int reserved;
     }
 
-    [CustomMarshaller(typeof(STATSTG), MarshalMode.ManagedToUnmanagedOut, typeof(STASTGMarshaller))]
-    [CustomMarshaller(typeof(STATSTG), MarshalMode.UnmanagedToManagedOut, typeof(STASTGMarshaller))]
-    public static unsafe class STASTGMarshaller
+    [CustomMarshaller(typeof(STATSTG), MarshalMode.ManagedToUnmanagedOut, typeof(STATSTGMarshaller))]
+    [CustomMarshaller(typeof(STATSTG), MarshalMode.UnmanagedToManagedOut, typeof(STATSTGMarshaller))]
+    public static unsafe class STATSTGMarshaller
     {
         public struct Native
         {

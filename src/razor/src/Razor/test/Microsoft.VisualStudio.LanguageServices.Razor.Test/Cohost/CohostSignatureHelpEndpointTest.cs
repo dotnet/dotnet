@@ -96,9 +96,9 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
         var clientSettingsManager = new ClientSettingsManager([], null, null);
         clientSettingsManager.Update(ClientCompletionSettings.Default with { AutoListParams = autoListParams });
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentSignatureHelpName, null)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentSignatureHelpName, null)]);
 
-        var endpoint = new CohostSignatureHelpEndpoint(RemoteServiceInvoker, clientSettingsManager, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
+        var endpoint = new CohostSignatureHelpEndpoint(RemoteServiceInvoker, clientSettingsManager, requestInvoker);
 
         var signatureHelpContext = new SignatureHelpContext()
         {

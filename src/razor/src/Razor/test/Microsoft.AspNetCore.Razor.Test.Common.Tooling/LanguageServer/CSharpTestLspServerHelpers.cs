@@ -53,12 +53,14 @@ internal static class CSharpTestLspServerHelpers
         VSInternalServerCapabilities serverCapabilities,
         IRazorMappingService razorMappingService,
         bool multiTargetProject,
-         Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
-        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
+        var exportProvider = TestComposition.Roslyn
+            .AddParts(typeof(RazorTestLanguageServerFactory))
+            .ExportProviderFactory.CreateExportProvider();
 
         var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
         metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);

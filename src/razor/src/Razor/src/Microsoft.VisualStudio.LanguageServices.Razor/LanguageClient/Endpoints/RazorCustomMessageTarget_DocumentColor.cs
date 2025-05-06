@@ -68,7 +68,7 @@ internal partial class RazorCustomMessageTarget
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<ColorPresentationParams, ColorPresentation[]>(
             htmlTextBuffer,
-            CustomMessageNames.ColorPresentationMethodName,
+            Methods.TextDocumentColorPresentationName,
             colorPresentationParams,
             cancellationToken).ConfigureAwait(false);
 

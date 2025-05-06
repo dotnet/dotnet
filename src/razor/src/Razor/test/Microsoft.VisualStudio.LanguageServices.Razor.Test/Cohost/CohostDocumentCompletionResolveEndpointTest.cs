@@ -36,7 +36,7 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         {
             Label = "ResolvedItem"
         };
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentCompletionResolveName, response)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentCompletionResolveName, response)]);
 
         var completionListCache = new CompletionListCache();
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
@@ -44,7 +44,6 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
             completionListCache,
             RemoteServiceInvoker,
             clientSettingsManager,
-            TestHtmlDocumentSynchronizer.Instance,
             requestInvoker,
             LoggerFactory);
 

@@ -48,9 +48,9 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostTextPresentationEndpoint(TestHtmlDocumentSynchronizer.Instance, FilePathService, requestInvoker);
+        var endpoint = new CohostTextPresentationEndpoint(FilePathService, requestInvoker);
 
         var request = new VSInternalTextPresentationParams()
         {

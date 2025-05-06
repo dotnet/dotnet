@@ -9,6 +9,9 @@ using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Threading;
 using Moq;
+using NuGet.PackageManagement.UI.Models.Package;
+using NuGet.PackageManagement.UI.Test.Models.Package;
+using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -31,11 +34,16 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testData = testData;
             var testVersion = new NuGetVersion(0, 0, 1);
             var searchService = new Mock<INuGetSearchService>();
-            _testViewModel = new PackageItemViewModel(searchService.Object)
+
+            var identity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            // Act
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            _testViewModel = new PackageItemViewModel(searchService.Object, packageModel)
             {
-                Id = "package",
-                PackagePath = _testData.TestData.PackagePath,
-                Version = testVersion,
                 InstalledVersion = testVersion,
             };
         }
@@ -73,46 +81,55 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData(NuGetProjectKind.ProjectK)]
         public void Options_ShowClassicOptions_WhenProjectKindIsNotProjectConfig_ReturnsFalse(NuGetProjectKind projectKind)
         {
+            // Arrange
             var project = new Mock<IProjectContextInfo>();
 
             project.SetupGet(p => p.ProjectKind)
                 .Returns(projectKind);
 
+            // Act
             var model = new PackageDetailControlModel(
                 Mock.Of<IServiceBroker>(),
                 Mock.Of<INuGetSolutionManagerService>(),
                 projects: new[] { project.Object },
                 uiController: Mock.Of<INuGetUI>());
 
+            // Assert
             Assert.False(model.Options.ShowClassicOptions);
         }
 
         [Fact]
         public void Options_ShowClassicOptions_WhenProjectKindIsProjectConfig_ReturnsTrue()
         {
+            // Assert
             var project = new Mock<IProjectContextInfo>();
 
             project.SetupGet(p => p.ProjectKind)
                 .Returns(NuGetProjectKind.PackagesConfig);
 
+            // Act
             var model = new PackageDetailControlModel(
                 Mock.Of<IServiceBroker>(),
                 Mock.Of<INuGetSolutionManagerService>(),
                 projects: new[] { project.Object },
                 uiController: Mock.Of<INuGetUI>());
 
+            // Assert
             Assert.True(model.Options.ShowClassicOptions);
         }
 
         [Fact]
         public void IsSelectedVersionInstalled_WhenSelectedVersionAndInstalledVersionAreNull_ReturnsFalse()
         {
+            // Arrange
+            // Act
             var model = new PackageDetailControlModel(
                 Mock.Of<IServiceBroker>(),
                 Mock.Of<INuGetSolutionManagerService>(),
                 Enumerable.Empty<IProjectContextInfo>(),
                 uiController: Mock.Of<INuGetUI>());
 
+            // Assert
             Assert.Null(model.SelectedVersion);
             Assert.Null(model.InstalledVersion);
             Assert.False(model.IsSelectedVersionInstalled);
@@ -121,6 +138,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Fact]
         public async Task IsSelectedVersionInstalled_WhenSelectedVersionAndInstalledVersionAreNotEqual_ReturnsFalse()
         {
+            // Arrange
             var model = new PackageDetailControlModel(
                 Mock.Of<IServiceBroker>(),
                 Mock.Of<INuGetSolutionManagerService>(),
@@ -130,13 +148,17 @@ namespace NuGet.PackageManagement.UI.Test.Models
             NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
 
             var searchService = new Mock<INuGetSearchService>();
+            var identity = new PackageIdentity("package", installedVersion);
+            var vulnerableCapability = new Mock<IVulnerableCapable>();
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
+            // Act
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
             await model.SetCurrentPackageAsync(
-                new PackageItemViewModel(searchService.Object)
+                new PackageItemViewModel(searchService.Object, packageModel)
                 {
-                    Id = "package",
                     InstalledVersion = installedVersion,
-                    Version = installedVersion
                 },
                 ItemFilter.All,
                 () => null);
@@ -145,6 +167,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             model.SelectedVersion = new DisplayVersion(selectedVersion, additionalInfo: null);
 
+            // Assert
             Assert.NotNull(model.SelectedVersion);
             Assert.NotNull(model.InstalledVersion);
             Assert.False(model.IsSelectedVersionInstalled);
@@ -153,6 +176,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Fact]
         public async Task IsSelectedVersionInstalled_WhenSelectedVersionAndInstalledVersionAreEqual_ReturnsTrue()
         {
+            // Arrange
             var model = new PackageDetailControlModel(
                 Mock.Of<IServiceBroker>(),
                 Mock.Of<INuGetSolutionManagerService>(),
@@ -162,19 +186,26 @@ namespace NuGet.PackageManagement.UI.Test.Models
             NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
 
             var searchService = new Mock<INuGetSearchService>();
+            var identity = new PackageIdentity("package", installedVersion);
+            var vulnerableCapability = new Mock<IVulnerableCapable>();
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
 
+            var packageItemModel = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
+            {
+                InstalledVersion = installedVersion,
+            };
+
+            // Act
             await model.SetCurrentPackageAsync(
-                new PackageItemViewModel(searchService.Object)
-                {
-                    Id = "package",
-                    InstalledVersion = installedVersion,
-                    Version = installedVersion
-                },
+                packageItemModel,
                 ItemFilter.All,
                 () => null);
 
             model.SelectedVersion = new DisplayVersion(installedVersion, additionalInfo: null);
 
+            // Assert
             Assert.NotNull(model.SelectedVersion);
             Assert.NotNull(model.InstalledVersion);
             Assert.True(model.IsSelectedVersionInstalled);

@@ -109,7 +109,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             },
         });
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentImplementationName, htmlResponse)]);
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentImplementationName, htmlResponse)]);
 
         await VerifyGoToImplementationResultAsync(input, document, requestInvoker);
     }
@@ -118,22 +118,22 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
     {
         var document = CreateProjectAndRazorDocument(input.Text);
 
-        var requestInvoker = new TestLSPRequestInvoker();
+        var requestInvoker = new TestHtmlRequestInvoker();
 
         await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
-    private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
+    private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
     {
         await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
     }
 
-    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, TestLSPRequestInvoker requestInvoker)
+    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
     {
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var filePathService = new RemoteFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToImplementationEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, filePathService);
+        var endpoint = new CohostGoToImplementationEndpoint(RemoteServiceInvoker, requestInvoker, filePathService);
 
         var position = inputText.GetPosition(input.Position);
         var textDocumentPositionParams = new TextDocumentPositionParams
