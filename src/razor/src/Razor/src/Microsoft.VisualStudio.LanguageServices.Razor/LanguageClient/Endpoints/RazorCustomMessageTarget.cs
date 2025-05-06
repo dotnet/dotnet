@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -14,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using static Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer;
@@ -30,7 +30,7 @@ internal partial class RazorCustomMessageTarget
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ProjectSnapshotManager _projectManager;
-    private readonly SnippetCompletionItemProvider _snippetCompletionItemProvider;
+    private readonly ISnippetCompletionItemProvider _snippetCompletionItemProvider;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
@@ -49,7 +49,7 @@ internal partial class RazorCustomMessageTarget
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ProjectSnapshotManager projectManager,
-        SnippetCompletionItemProvider snippetCompletionItemProvider,
+        ISnippetCompletionItemProvider snippetCompletionItemProvider,
         ILoggerFactory loggerFactory)
     {
         if (documentManager is not TrackingLSPDocumentManager trackingDocumentManager)
