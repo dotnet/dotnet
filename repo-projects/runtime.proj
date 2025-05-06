@@ -29,7 +29,7 @@
     <!-- TODO: This parameter is only available on the Unix script. Intentional? -->
     <BuildArgs Condition="'$(BuildOS)' != 'windows'">$(BuildArgs) --outputrid $(TargetRid)</BuildArgs>
 
-    <!-- Source-build will use non-portable RIDs. To build for these non-portable RID scenarios, we must do a boostrapped build. -->
+    <!-- Source-build will use non-portable RIDs. To build for these non-portable RID scenarios, we must do a bootstrapped build. -->
     <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
@@ -39,8 +39,8 @@
     <BuildArgs Condition="'$(Sign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
 
     <!-- Pass through special build modes controlled by properties -->
-    <BuildArgs Condition="'$(WasmEnableThreads)' == 'true'">$(BuildArgs) /p:WasmEnableThreads=true</BuildArgs>
-    <BuildArgs Condition="'$(MonoEnableLLVM)' == 'true'">$(BuildArgs) /p:MonoEnableLLVM=true</BuildArgs>
+    <BuildArgs Condition="'$(WasmEnableThreads)' != ''">$(BuildArgs) /p:WasmEnableThreads=$(WasmEnableThreads)</BuildArgs>
+    <BuildArgs Condition="'$(MonoEnableLLVM)' != ''">$(BuildArgs) /p:MonoEnableLLVM=$(MonoEnableLLVM)</BuildArgs>
     <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
     <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
