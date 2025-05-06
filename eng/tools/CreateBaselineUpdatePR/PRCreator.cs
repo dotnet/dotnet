@@ -66,18 +66,22 @@ public class PRCreator
             return treeItems;
         }
 
-        foreach (var item in treeResponse.Tree)
+        await Parallel.ForEachAsync(treeResponse.Tree, async (item, cancellationToken) =>
         {
             string path = Path.Combine(relativePath, item.Path);
             if (!path.StartsWith(desiredPath) && !desiredPath.StartsWith(path))
             {
-                continue;
+                return;
             }
 
             if (item.Type == TreeType.Tree)
             {
                 TreeResponse subTree = await _client.Git.Tree.Get(_repoOwner, _repoName, item.Sha);
-                treeItems.AddRange(await FetchOriginalTreeItemsAsync(subTree, targetBranch, desiredPath, path));
+                List<NewTreeItem> subTreeItems = await FetchOriginalTreeItemsAsync(subTree, targetBranch, desiredPath, path);
+                lock (treeItems)
+                {
+                    treeItems.AddRange(subTreeItems);
+                }
             }
             else
             {
@@ -89,9 +93,12 @@ public class PRCreator
                     Sha = item.Sha
                 };
 
-                treeItems.Add(newItem);
+                lock (treeItems)
+                {
+                    treeItems.Add(newItem);
+                }
             }
-        }
+        });
 
         return treeItems;
     }
