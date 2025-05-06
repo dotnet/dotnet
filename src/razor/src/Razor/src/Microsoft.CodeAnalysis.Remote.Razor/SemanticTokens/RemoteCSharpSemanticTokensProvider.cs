@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -18,8 +19,11 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 
 [Export(typeof(ICSharpSemanticTokensProvider)), Shared]
 [method: ImportingConstructor]
-internal class RemoteCSharpSemanticTokensProvider(ITelemetryReporter telemetryReporter) : ICSharpSemanticTokensProvider
+internal class RemoteCSharpSemanticTokensProvider(
+    IClientCapabilitiesService clientCapabilitiesService,
+    ITelemetryReporter telemetryReporter) : ICSharpSemanticTokensProvider
 {
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     public async Task<int[]?> GetCSharpSemanticTokensResponseAsync(DocumentContext documentContext, ImmutableArray<LinePositionSpan> csharpRanges, Guid correlationId, CancellationToken cancellationToken)
@@ -40,7 +44,7 @@ internal class RemoteCSharpSemanticTokensProvider(ITelemetryReporter telemetryRe
             .GetSemanticTokensAsync(
                 generatedDocument,
                 csharpRanges,
-                supportsVisualStudioExtensions: true,
+                supportsVisualStudioExtensions: _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions,
                 cancellationToken)
             .ConfigureAwait(false);
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -19,10 +20,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(Methods.TextDocumentLinkedEditingRangeName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostLinkedEditingRangeEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostLinkedEditingRangeEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker remoteServiceInvoker)
+internal sealed class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker remoteServiceInvoker)
     : AbstractRazorCohostDocumentRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;

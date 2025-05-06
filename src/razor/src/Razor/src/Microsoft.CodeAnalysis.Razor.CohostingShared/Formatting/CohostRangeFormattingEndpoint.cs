@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -22,7 +23,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(Methods.TextDocumentRangeFormattingName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostRangeFormattingEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostRangeFormattingEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostRangeFormattingEndpoint(
@@ -96,7 +97,7 @@ internal sealed class CohostRangeFormattingEndpoint(
         {
             _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
 
-            return remoteResult.Select(sourceText.GetTextEdit).ToArray();
+            return [.. remoteResult.Select(sourceText.GetTextEdit)];
         }
 
         return null;
