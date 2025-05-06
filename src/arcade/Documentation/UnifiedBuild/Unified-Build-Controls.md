@@ -117,7 +117,7 @@ The following context controls will be implemented. These controls should be use
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator, outer repo build, and inner repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
+| DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
 | DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within repo build. |
 
 ### Resource Controls
