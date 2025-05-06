@@ -60,7 +60,7 @@ public class PRCreator
         string desiredPath,
         string relativePath = "")
     {
-        var treeItems = new List<NewTreeItem>();
+        List<NewTreeItem> treeItems = [];
         if (treeResponse == null)
         {
             return treeItems;
@@ -251,7 +251,7 @@ public class PRCreator
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
     {
-        var newTreeItems = new List<NewTreeItem>();
+        List<NewTreeItem> newTreeItems = [];
 
         var groups = items.GroupBy(item => Path.GetDirectoryName(item.Path));
         foreach (var group in groups)
