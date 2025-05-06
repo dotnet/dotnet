@@ -22,7 +22,7 @@
       differently from the standard MSBuild arg set. Including both args is fine, but the
       custom sourcebuild arg is the one that's required. This avoids running bootstrapping twice.
     -->
-    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)sourceBuild $(FlagParameterPrefix)tfm $(NetCurrent) /p:SourceBuildBootstrapTfm=$(NetCurrent)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)sourceBuild $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

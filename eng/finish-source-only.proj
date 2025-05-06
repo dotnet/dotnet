@@ -159,7 +159,6 @@
                           OutputPath="$(ArtifactsLogDir)" />
   </Target>
 
-
   <Target Name="DetermineSourceBuiltSdkNonStableVersion"
           DependsOnTargets="DetermineSourceBuiltSdkVersion">
     <ItemGroup>
