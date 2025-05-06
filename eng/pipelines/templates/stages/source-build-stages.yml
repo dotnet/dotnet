@@ -14,6 +14,16 @@ parameters:
   type: boolean
   default: true
 
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
+
+# Branch of the VMR to use (to push to for internal builds)
+- name: vmrBranch
+  type: string
+  default: $(Build.SourceBranch)
+
 stages:
 - template: source-build-and-validate.yml
   parameters:
@@ -21,6 +31,8 @@ stages:
     pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
     scope: ${{ parameters.scope }}
     useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
+    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+    vmrBranch: ${{ variables.VmrBranch }}
     
     # Description of the source build legs to run.
     # This is described here as a parameter to allow two separate stages to be produced from this list (one for building

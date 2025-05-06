@@ -114,6 +114,16 @@ parameters:
   type: stepList
   default: []
 
+#### repo parameters ####
+
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -153,6 +163,8 @@ jobs:
     - group: AzureDevOps-Artifact-Feeds-Pats
   - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
     - group: DotNet-VSTS-Infra-Access
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/')), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - group: DotNetBot-GitHub
   - ${{ else }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
@@ -160,8 +172,13 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
-  - name: vmrPath
-    value: $(Build.SourcesDirectory)
+
+  - ${{ if parameters.isBuiltFromVmr }}:
+    - name: vmrPath
+      value: $(Build.SourcesDirectory)
+  - ${{ else }}:
+    - name: vmrPath
+      value: $(Agent.BuildDirectory)/vmr
 
   # Location of the VMR sources
   # We either build the repo directly, or we extract them outside (which is what partners do)
@@ -270,7 +287,7 @@ jobs:
     timeoutInMinutes: 720
   ## Currently, CodeQL slows the build down too much
   ## https://github.com/dotnet/source-build/issues/4276
-  ${{ elseif and(startswith(parameters.buildName, 'Windows'), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  ${{ elseif and(parameters.isBuiltFromVmr, startswith(parameters.buildName, 'Windows'), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     timeoutInMinutes: 720
   ${{ else }}:
     timeoutInMinutes: 240
@@ -311,6 +328,22 @@ jobs:
         sbomEnabled: false
 
   steps:
+  - ${{ if not(parameters.isBuiltFromVmr) }}:
+    - template: ../steps/vmr-prepare.yml@self
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          vmrBranch: $(System.PullRequest.TargetBranch)
+        ${{ else }}:
+          vmrBranch: ${{ parameters.vmrBranch }}
+
+    # Synchronize new content in the VMR during PRs (we expect this to come
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: ../steps/vmr-pull-updates.yml@self
+        parameters:
+          vmrPath: $(vmrPath)
+          vmrBranch: ${{ parameters.vmrBranch }}
+          targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
+
   - ${{ if parameters.buildFromArchive }}:
     - script: |
         set -ex
