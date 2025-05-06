@@ -18,8 +18,7 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
 
-    <BuildCommand>$(DotNetTool) build $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
-    <BuildPackagesCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)pack.binlog $(DotNetToolArgs)</BuildPackagesCommand>
+    <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
   </PropertyGroup>
 
   <ItemGroup>
