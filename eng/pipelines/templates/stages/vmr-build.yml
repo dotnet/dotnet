@@ -2,6 +2,11 @@
 ### If run in a PR, new changes are applied to a local copy of the VMR, then it is built and tested
 
 parameters:
+# Branch of the VMR to use (to push to for internal builds)
+- name: vmrBranch
+  type: string
+  default: $(Build.SourceBranch)
+
 - name: desiredSigning
   type: string
   default: ''
@@ -20,6 +25,11 @@ parameters:
   - lite
   # run everything
   - full
+
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
 
 # True when building the VMR in source-only mode
 - name: isSourceOnlyBuild
@@ -76,11 +86,15 @@ stages:
         parameters:
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          vmrBranch: ${{ parameters.vmrBranch }}
           scope: ${{ parameters.scope }}
           isSourceOnlyBuild: ${{ parameters.isSourceOnlyBuild }}
     finalJoinCondition: ${{ and(not(parameters.isSourceOnlyBuild), eq(parameters.scope, 'full')) }}
+    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+    vmrBranch: ${{ parameters.vmrBranch }}
     postJoinStages:
-    - ${{ if and(not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(parameters.isBuiltFromVmr, not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
