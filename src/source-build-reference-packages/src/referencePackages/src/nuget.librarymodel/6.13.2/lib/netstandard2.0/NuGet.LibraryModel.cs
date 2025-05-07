@@ -28,67 +28,48 @@ namespace NuGet.LibraryModel
     public sealed partial class CentralPackageVersion : System.IEquatable<CentralPackageVersion>
     {
         public CentralPackageVersion(string name, Versioning.VersionRange versionRange) { }
-
         public string Name { get { throw null; } }
-
         public Versioning.VersionRange VersionRange { get { throw null; } }
 
         public bool Equals(CentralPackageVersion? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public sealed partial class CentralPackageVersionNameComparer : System.Collections.Generic.IEqualityComparer<CentralPackageVersion>
     {
         internal CentralPackageVersionNameComparer() { }
-
         public static CentralPackageVersionNameComparer Default { get { throw null; } }
 
         public bool Equals(CentralPackageVersion? x, CentralPackageVersion? y) { throw null; }
-
         public int GetHashCode(CentralPackageVersion obj) { throw null; }
     }
 
     public sealed partial class DownloadDependency : System.IEquatable<DownloadDependency>, System.IComparable<DownloadDependency>
     {
         public DownloadDependency(string name, Versioning.VersionRange versionRange) { }
-
         public string Name { get { throw null; } }
-
         public Versioning.VersionRange VersionRange { get { throw null; } }
 
         [System.Obsolete("This type is immutable, so there is no need or point to clone it.")]
         public DownloadDependency Clone() { throw null; }
-
         public int CompareTo(DownloadDependency? other) { throw null; }
-
         public bool Equals(DownloadDependency? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static implicit operator LibraryRange(DownloadDependency library) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public sealed partial class FrameworkDependency : System.IEquatable<FrameworkDependency>, System.IComparable<FrameworkDependency>
     {
         public FrameworkDependency(string name, FrameworkDependencyFlags privateAssets) { }
-
         public string Name { get { throw null; } }
-
         public FrameworkDependencyFlags PrivateAssets { get { throw null; } }
 
         public int CompareTo(FrameworkDependency? other) { throw null; }
-
         public bool Equals(FrameworkDependency? other) { throw null; }
-
         public override int GetHashCode() { throw null; }
     }
 
@@ -103,12 +84,9 @@ namespace NuGet.LibraryModel
     {
         public static readonly FrameworkDependencyFlags Default;
         public static FrameworkDependencyFlags GetFlags(System.Collections.Generic.IEnumerable<string>? values) { throw null; }
-
         public static FrameworkDependencyFlags GetFlags(string? flags) { throw null; }
-
         public static string GetFlagString(FrameworkDependencyFlags flags) { throw null; }
     }
-
     public static partial class KnownLibraryProperties
     {
         public static readonly string AssemblyPath;
@@ -123,87 +101,57 @@ namespace NuGet.LibraryModel
         public static readonly string ProjectStyle;
         public static readonly string TargetFrameworkInformation;
     }
-
     public partial class Library
     {
         public static readonly System.Collections.Generic.IEqualityComparer<Library> IdentityComparer;
         public Library() { }
-
         public Library(LibraryRange libraryRange, LibraryIdentity identity, System.Collections.Generic.IEnumerable<LibraryDependency> dependencies) { }
-
         public required System.Collections.Generic.IEnumerable<LibraryDependency> Dependencies { get { throw null; } set { } }
-
         public required LibraryIdentity Identity { get { throw null; } set { } }
 
         public object this[string key] { get { throw null; } set { } }
 
         public System.Collections.Generic.IDictionary<string, object> Items { get { throw null; } set { } }
-
         public required LibraryRange LibraryRange { get { throw null; } set { } }
-
         public string? Path { get { throw null; } set { } }
-
         public bool Resolved { get { throw null; } set { } }
 
         public override string ToString() { throw null; }
     }
-
     public partial class LibraryDependency : System.IEquatable<LibraryDependency>
     {
         public LibraryDependency() { }
-
         public LibraryDependency(LibraryDependency other) { }
-
         public LibraryDependency(LibraryRange libraryRange) { }
-
         public string? Aliases { get { throw null; } init { } }
-
         public bool AutoReferenced { get { throw null; } init { } }
-
         public bool GeneratePathProperty { get { throw null; } init { } }
-
         public LibraryIncludeFlags IncludeType { get { throw null; } init { } }
-
         public required LibraryRange LibraryRange { get { throw null; } init { } }
-
         public string Name { get { throw null; } }
-
         public System.Collections.Immutable.ImmutableArray<Common.NuGetLogCode> NoWarn { get { throw null; } init { } }
-
         public LibraryDependencyReferenceType ReferenceType { get { throw null; } init { } }
-
         public LibraryIncludeFlags SuppressParent { get { throw null; } init { } }
-
         public bool VersionCentrallyManaged { get { throw null; } init { } }
-
         public Versioning.VersionRange? VersionOverride { get { throw null; } init { } }
 
         public bool Equals(LibraryDependency? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public partial class LibraryDependencyInfo
     {
         public LibraryDependencyInfo(LibraryIdentity library, bool resolved, Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<LibraryDependency> dependencies) { }
-
         public System.Collections.Generic.IEnumerable<LibraryDependency> Dependencies { get { throw null; } }
-
         public Frameworks.NuGetFramework Framework { get { throw null; } }
-
         public LibraryIdentity Library { get { throw null; } }
-
         public bool Resolved { get { throw null; } }
 
         public static LibraryDependencyInfo Create(LibraryIdentity library, Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<LibraryDependency> dependencies) { throw null; }
-
         public static LibraryDependencyInfo CreateUnresolved(LibraryIdentity library, Frameworks.NuGetFramework framework) { throw null; }
     }
-
     public enum LibraryDependencyReferenceType
     {
         None = 0,
@@ -228,47 +176,30 @@ namespace NuGet.LibraryModel
     public static partial class LibraryDependencyTargetUtils
     {
         public static string AsString(this LibraryDependencyTarget includeFlags) { throw null; }
-
         public static string GetFlagString(LibraryDependencyTarget flags) { throw null; }
-
         public static LibraryDependencyTarget Parse(string? flag) { throw null; }
     }
-
     public static partial class LibraryExtensions
     {
         public static T? GetItem<T>(this Library library, string key) { throw null; }
-
         public static T GetRequiredItem<T>(this Library library, string key) { throw null; }
-
         public static bool IsEclipsedBy(this LibraryRange library, LibraryRange other) { throw null; }
     }
-
     public partial class LibraryIdentity : System.IEquatable<LibraryIdentity>, System.IComparable<LibraryIdentity>
     {
         public LibraryIdentity() { }
-
         public LibraryIdentity(string name, Versioning.NuGetVersion version, LibraryType type) { }
-
         public required string Name { get { throw null; } set { } }
-
         public required LibraryType Type { get { throw null; } set { } }
-
         public required Versioning.NuGetVersion Version { get { throw null; } set { } }
 
         public int CompareTo(LibraryIdentity? other) { throw null; }
-
         public bool Equals(LibraryIdentity? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(LibraryIdentity? left, LibraryIdentity? right) { throw null; }
-
         public static implicit operator LibraryRange(LibraryIdentity library) { throw null; }
-
         public static bool operator !=(LibraryIdentity? left, LibraryIdentity? right) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
@@ -291,48 +222,29 @@ namespace NuGet.LibraryModel
         public static readonly LibraryIncludeFlags DefaultSuppressParent;
         public static readonly LibraryIncludeFlags NoContent;
         public static string AsString(this LibraryIncludeFlags includeFlags) { throw null; }
-
         public static LibraryIncludeFlags GetFlags(System.Collections.Generic.IEnumerable<string> flags) { throw null; }
-
         public static LibraryIncludeFlags GetFlags(string flags, LibraryIncludeFlags defaultFlags) { throw null; }
-
         public static string GetFlagString(LibraryIncludeFlags flags) { throw null; }
     }
-
     public partial class LibraryRange : System.IEquatable<LibraryRange>
     {
         public LibraryRange() { }
-
         public LibraryRange(LibraryRange other) { }
-
         public LibraryRange(string name, LibraryDependencyTarget typeConstraint) { }
-
         public LibraryRange(string name, Versioning.VersionRange? versionRange, LibraryDependencyTarget typeConstraint) { }
-
         public LibraryRange(string name) { }
-
         public required string Name { get { throw null; } init { } }
-
         public LibraryDependencyTarget TypeConstraint { get { throw null; } init { } }
-
         public Versioning.VersionRange? VersionRange { get { throw null; } init { } }
 
         public bool Equals(LibraryRange? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(LibraryRange? left, LibraryRange? right) { throw null; }
-
         public static bool operator !=(LibraryRange? left, LibraryRange? right) { throw null; }
-
         public string ToLockFileDependencyGroupString() { throw null; }
-
         public override string ToString() { throw null; }
-
         public bool TypeConstraintAllows(LibraryDependencyTarget flag) { throw null; }
-
         public bool TypeConstraintAllowsAnyOf(LibraryDependencyTarget flag) { throw null; }
     }
 
@@ -348,42 +260,28 @@ namespace NuGet.LibraryModel
         public static readonly LibraryType Unresolved;
         public static readonly LibraryType WinMD;
         public bool IsKnown { get { throw null; } }
-
         public string Value { get { throw null; } }
 
         public bool Equals(LibraryType other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(LibraryType left, LibraryType right) { throw null; }
-
         public static implicit operator string(LibraryType libraryType) { throw null; }
-
         public static bool operator !=(LibraryType left, LibraryType right) { throw null; }
-
         public static LibraryType Parse(string value) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public sealed partial class PrunePackageReference : System.IEquatable<PrunePackageReference>
     {
         public PrunePackageReference(string name, Versioning.VersionRange versionRange) { }
-
         public string Name { get { throw null; } }
-
         public Versioning.VersionRange VersionRange { get { throw null; } }
 
         public static PrunePackageReference Create(string name, string version) { throw null; }
-
         public bool Equals(PrunePackageReference? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public override string ToString() { throw null; }
     }
 }
