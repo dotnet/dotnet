@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
   <ItemGroup>
-    <!-- Microsoft.WindowsDesktop.App shared framework -->
+    <!-- Microsoft.WindowsDesktop.App shared framework and sentinel project -->
     <ProjectReference Include="src\windowsdesktop\src\sfx\**\*.sfxproj" />
     <ProjectReference Include="src\windowsdesktop\src\bundle\**\*.bundleproj" />
     <ProjectReference Include="src\windowsdesktop\tests\**\*.Tests.csproj" />
+    <ProjectReference Include="src\windowsdesktop\src\Microsoft.WindowsDesktop.App.Internal\Microsoft.WindowsDesktop.App.Internal.csproj" />
 
     <!-- Microsoft.Windows.Compatibility nuget meta package -->
     <ProjectReference Include="src\Microsoft.Windows.Compatibility\src\Microsoft.Windows.Compatibility.csproj" />
+
   </ItemGroup>
 
 </Project>

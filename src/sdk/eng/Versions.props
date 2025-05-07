@@ -102,8 +102,6 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/runtime -->
     <MicrosoftNETCoreAppRefPackageVersion>10.0.0-preview.5.25260.104</MicrosoftNETCoreAppRefPackageVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25260.104</VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>10.0.0-preview.5.25260.104</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0-preview.5.25260.104</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETHostModelVersion>10.0.0-preview.5.25260.104</MicrosoftNETHostModelVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-preview.5.25260.104</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
@@ -115,8 +113,6 @@
     <SystemServiceProcessServiceControllerVersion>10.0.0-preview.5.25260.104</SystemServiceProcessServiceControllerVersion>
     <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-rc.1.23414.4</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.0-preview.5.25260.104</MicrosoftNETCorePlatformsPackageVersion>
-    <VSRedistCommonWindowsDesktopTargetingPackx64100Version>10.0.0-preview.5.25260.104</VSRedistCommonWindowsDesktopTargetingPackx64100Version>
-    <VSRedistCommonNetCoreTargetingPackx64100PackageVersion>10.0.0-preview.5.25260.104</VSRedistCommonNetCoreTargetingPackx64100PackageVersion>
     <MicrosoftNETCoreAppHostwinx64PackageVersion>10.0.0-preview.5.25260.104</MicrosoftNETCoreAppHostwinx64PackageVersion>
     <MicrosoftBclAsyncInterfacesPackageVersion>10.0.0-preview.5.25260.104</MicrosoftBclAsyncInterfacesPackageVersion>
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-preview.5.25260.104</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
@@ -155,9 +151,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/windowsdesktop -->
-    <VSRedistCommonWindowsDesktopSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25260.104</VSRedistCommonWindowsDesktopSharedFrameworkx64100PackageVersion>
-    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>10.0.0-preview.5.25260.104</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
     <MicrosoftWindowsDesktopAppRefPackageVersion>10.0.0-preview.5.25260.104</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.0-preview.5.25260.104</MicrosoftWindowsDesktopAppInternalPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/nuget/nuget.client -->
@@ -247,7 +242,6 @@
     <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
     <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreAnalyzersPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreAppRefInternalPackageVersion>
     <MicrosoftAspNetCoreAuthenticationFacebookVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreAuthenticationFacebookVersion>
     <MicrosoftAspNetCoreAuthenticationGoogleVersion>10.0.0-preview.5.25260.104</MicrosoftAspNetCoreAuthenticationGoogleVersion>
@@ -266,7 +260,6 @@
     <MicrosoftExtensionsFileProvidersEmbeddedVersion>10.0.0-preview.5.25260.104</MicrosoftExtensionsFileProvidersEmbeddedVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-preview.5.25260.104</MicrosoftDotNetWebItemTemplates100PackageVersion>
     <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0-preview.5.25260.104</MicrosoftDotNetWebProjectTemplates100PackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25260.104</VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>
     <dotnetdevcertsPackageVersion>10.0.0-preview.5.25260.104</dotnetdevcertsPackageVersion>
     <dotnetuserjwtsPackageVersion>10.0.0-preview.5.25260.104</dotnetuserjwtsPackageVersion>
     <dotnetusersecretsPackageVersion>10.0.0-preview.5.25260.104</dotnetusersecretsPackageVersion>
