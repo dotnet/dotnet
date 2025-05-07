@@ -37,7 +37,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                         {
                             var sourceRepository = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
                             var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().GetAwaiter().GetResult();
+#pragma warning disable CA2025 // we force GetMetadataAsync to be synchronous so sourceCacheContext can't be disposed early
                             searchMetadata = packageMetadataResource.GetMetadataAsync(packageId, includePrerelease, includeUnlisted, sourceCacheContext, logger, cancellationToken).GetAwaiter().GetResult();
+#pragma warning restore
                             loadedData = true;
                         }
                         catch (Exception e)

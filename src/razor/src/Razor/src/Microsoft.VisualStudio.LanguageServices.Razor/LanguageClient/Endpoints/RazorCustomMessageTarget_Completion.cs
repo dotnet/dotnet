@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Razor.Snippets;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -250,9 +249,7 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(LanguageServerConstants.RazorCompletionResolveEndpointName, UseSingleObjectParameterDeserialization = true)]
     public async Task<VSInternalCompletionItem?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
     {
-        // Check if we're completing a snippet item that we provided
-        if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData) &&
-            _snippetCompletionItemProvider.SnippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
+        if (_snippetCompletionItemProvider.TryResolveInsertString(request.CompletionItem, out var snippetInsertText))
         {
             request.CompletionItem.InsertText = snippetInsertText;
             return request.CompletionItem;

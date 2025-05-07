@@ -8,16 +8,16 @@
     <!-- Enable to remove prerelease label. -->
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
-    <MicrosoftNETSdkWindowsDesktopVersion>10.0.0-preview.5.25251.102</MicrosoftNETSdkWindowsDesktopVersion>
-    <MicrosoftDotNetWpfProjectTemplatesVersion>10.0.0-preview.5.25251.102</MicrosoftDotNetWpfProjectTemplatesVersion>
-    <MicrosoftDotNetBuildTasksFeedVersion>10.0.0-beta.25251.102</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotnetWinFormsProjectTemplatesVersion>10.0.0-preview.5.25251.102</MicrosoftDotnetWinFormsProjectTemplatesVersion>
+    <MicrosoftNETSdkWindowsDesktopVersion>10.0.0-preview.5.25251.105</MicrosoftNETSdkWindowsDesktopVersion>
+    <MicrosoftDotNetWpfProjectTemplatesVersion>10.0.0-preview.5.25251.105</MicrosoftDotNetWpfProjectTemplatesVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>10.0.0-beta.25251.105</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotnetWinFormsProjectTemplatesVersion>10.0.0-preview.5.25251.105</MicrosoftDotnetWinFormsProjectTemplatesVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksArchivesVersion>10.0.0-beta.25251.102</MicrosoftDotNetBuildTasksArchivesVersion>
-    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.25251.102</MicrosoftDotNetBuildTasksInstallersVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.25251.102</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksArchivesVersion>10.0.0-beta.25251.105</MicrosoftDotNetBuildTasksArchivesVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.25251.105</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.25251.105</MicrosoftDotNetBuildTasksTemplatingVersion>
     <!-- corefx -->
     <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
     <!-- The SQL team had deprecated System.Data.SqlClient package and replaced it with Microsoft.Data.SqlClient.
@@ -31,49 +31,49 @@
     <!-- nuget -->
     <NuGetPackagingVersion>6.12.1</NuGetPackagingVersion>
     <!-- runtime -->
-    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>10.0.0-preview.5.25251.102</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
-    <MicrosoftNETCoreAppRefVersion>10.0.0-preview.5.25251.102</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>10.0.0-preview.5.25251.102</MicrosoftNETCoreAppRuntimewinx64Version>
-    <MicrosoftWin32RegistryAccessControlVersion>10.0.0-preview.5.25251.102</MicrosoftWin32RegistryAccessControlVersion>
+    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>10.0.0-preview.5.25251.105</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
+    <MicrosoftNETCoreAppRefVersion>10.0.0-preview.5.25251.105</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRuntimewinx64Version>10.0.0-preview.5.25251.105</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftWin32RegistryAccessControlVersion>10.0.0-preview.5.25251.105</MicrosoftWin32RegistryAccessControlVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
-    <MicrosoftWin32SystemEventsVersion>10.0.0-preview.5.25251.102</MicrosoftWin32SystemEventsVersion>
-    <SystemCodeDomVersion>10.0.0-preview.5.25251.102</SystemCodeDomVersion>
-    <SystemComponentModelCompositionRegistrationVersion>10.0.0-preview.5.25251.102</SystemComponentModelCompositionRegistrationVersion>
-    <SystemComponentModelCompositionVersion>10.0.0-preview.5.25251.102</SystemComponentModelCompositionVersion>
-    <SystemConfigurationConfigurationManagerVersion>10.0.0-preview.5.25251.102</SystemConfigurationConfigurationManagerVersion>
-    <SystemDataOdbcVersion>10.0.0-preview.5.25251.102</SystemDataOdbcVersion>
-    <SystemDataOleDbVersion>10.0.0-preview.5.25251.102</SystemDataOleDbVersion>
-    <SystemDiagnosticsEventLogVersion>10.0.0-preview.5.25251.102</SystemDiagnosticsEventLogVersion>
-    <SystemDiagnosticsPerformanceCounterVersion>10.0.0-preview.5.25251.102</SystemDiagnosticsPerformanceCounterVersion>
-    <SystemDirectoryServicesAccountManagementVersion>10.0.0-preview.5.25251.102</SystemDirectoryServicesAccountManagementVersion>
-    <SystemDirectoryServicesProtocolsVersion>10.0.0-preview.5.25251.102</SystemDirectoryServicesProtocolsVersion>
-    <SystemDirectoryServicesVersion>10.0.0-preview.5.25251.102</SystemDirectoryServicesVersion>
+    <MicrosoftWin32SystemEventsVersion>10.0.0-preview.5.25251.105</MicrosoftWin32SystemEventsVersion>
+    <SystemCodeDomVersion>10.0.0-preview.5.25251.105</SystemCodeDomVersion>
+    <SystemComponentModelCompositionRegistrationVersion>10.0.0-preview.5.25251.105</SystemComponentModelCompositionRegistrationVersion>
+    <SystemComponentModelCompositionVersion>10.0.0-preview.5.25251.105</SystemComponentModelCompositionVersion>
+    <SystemConfigurationConfigurationManagerVersion>10.0.0-preview.5.25251.105</SystemConfigurationConfigurationManagerVersion>
+    <SystemDataOdbcVersion>10.0.0-preview.5.25251.105</SystemDataOdbcVersion>
+    <SystemDataOleDbVersion>10.0.0-preview.5.25251.105</SystemDataOleDbVersion>
+    <SystemDiagnosticsEventLogVersion>10.0.0-preview.5.25251.105</SystemDiagnosticsEventLogVersion>
+    <SystemDiagnosticsPerformanceCounterVersion>10.0.0-preview.5.25251.105</SystemDiagnosticsPerformanceCounterVersion>
+    <SystemDirectoryServicesAccountManagementVersion>10.0.0-preview.5.25251.105</SystemDirectoryServicesAccountManagementVersion>
+    <SystemDirectoryServicesProtocolsVersion>10.0.0-preview.5.25251.105</SystemDirectoryServicesProtocolsVersion>
+    <SystemDirectoryServicesVersion>10.0.0-preview.5.25251.105</SystemDirectoryServicesVersion>
     <SystemIOFileSystemAccessControlVersion>5.0.0</SystemIOFileSystemAccessControlVersion>
-    <SystemIOPackagingVersion>10.0.0-preview.5.25251.102</SystemIOPackagingVersion>
+    <SystemIOPackagingVersion>10.0.0-preview.5.25251.105</SystemIOPackagingVersion>
     <SystemIOPipesAccessControlVersion>5.0.0</SystemIOPipesAccessControlVersion>
-    <SystemIOPortsVersion>10.0.0-preview.5.25251.102</SystemIOPortsVersion>
-    <SystemManagementVersion>10.0.0-preview.5.25251.102</SystemManagementVersion>
-    <SystemReflectionContextVersion>10.0.0-preview.5.25251.102</SystemReflectionContextVersion>
-    <SystemRuntimeCachingVersion>10.0.0-preview.5.25251.102</SystemRuntimeCachingVersion>
+    <SystemIOPortsVersion>10.0.0-preview.5.25251.105</SystemIOPortsVersion>
+    <SystemManagementVersion>10.0.0-preview.5.25251.105</SystemManagementVersion>
+    <SystemReflectionContextVersion>10.0.0-preview.5.25251.105</SystemReflectionContextVersion>
+    <SystemRuntimeCachingVersion>10.0.0-preview.5.25251.105</SystemRuntimeCachingVersion>
     <SystemSecurityAccessControlVersion>6.0.0</SystemSecurityAccessControlVersion>
     <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
-    <SystemSecurityCryptographyPkcsVersion>10.0.0-preview.5.25251.102</SystemSecurityCryptographyPkcsVersion>
-    <SystemSecurityCryptographyProtectedDataVersion>10.0.0-preview.5.25251.102</SystemSecurityCryptographyProtectedDataVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.0-preview.5.25251.102</SystemSecurityCryptographyXmlVersion>
-    <SystemSecurityPermissionsVersion>10.0.0-preview.5.25251.102</SystemSecurityPermissionsVersion>
+    <SystemSecurityCryptographyPkcsVersion>10.0.0-preview.5.25251.105</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyProtectedDataVersion>10.0.0-preview.5.25251.105</SystemSecurityCryptographyProtectedDataVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.0-preview.5.25251.105</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityPermissionsVersion>10.0.0-preview.5.25251.105</SystemSecurityPermissionsVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
-    <SystemServiceModelSyndicationVersion>10.0.0-preview.5.25251.102</SystemServiceModelSyndicationVersion>
-    <SystemServiceProcessServiceControllerVersion>10.0.0-preview.5.25251.102</SystemServiceProcessServiceControllerVersion>
-    <SystemSpeechVersion>10.0.0-preview.5.25251.102</SystemSpeechVersion>
-    <SystemTextEncodingCodePagesVersion>10.0.0-preview.5.25251.102</SystemTextEncodingCodePagesVersion>
-    <SystemThreadingAccessControlVersion>10.0.0-preview.5.25251.102</SystemThreadingAccessControlVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25251.102</VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>
+    <SystemServiceModelSyndicationVersion>10.0.0-preview.5.25251.105</SystemServiceModelSyndicationVersion>
+    <SystemServiceProcessServiceControllerVersion>10.0.0-preview.5.25251.105</SystemServiceProcessServiceControllerVersion>
+    <SystemSpeechVersion>10.0.0-preview.5.25251.105</SystemSpeechVersion>
+    <SystemTextEncodingCodePagesVersion>10.0.0-preview.5.25251.105</SystemTextEncodingCodePagesVersion>
+    <SystemThreadingAccessControlVersion>10.0.0-preview.5.25251.105</SystemThreadingAccessControlVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25251.105</VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
     <!-- winforms -->
-    <MicrosoftPrivateWinformsVersion>10.0.0-preview.5.25251.102</MicrosoftPrivateWinformsVersion>
-    <SystemDrawingCommonVersion>10.0.0-preview.5.25251.102</SystemDrawingCommonVersion>
+    <MicrosoftPrivateWinformsVersion>10.0.0-preview.5.25251.105</MicrosoftPrivateWinformsVersion>
+    <SystemDrawingCommonVersion>10.0.0-preview.5.25251.105</SystemDrawingCommonVersion>
     <!-- WPF -->
-    <MicrosoftDotNetWpfGitHubVersion>10.0.0-preview.5.25251.102</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>10.0.0-preview.5.25251.105</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
