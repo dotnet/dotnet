@@ -1,8 +1,7 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <OutputArgs>/bl</OutputArgs>
+    <OutputArgs>/bl:$(ArtifactsLogRepoDir)build.binlog</OutputArgs>
     <OutputArgs>$(OutputArgs) /v:$(LogVerbosity)</OutputArgs>
     <OutputArgs>$(OutputArgs) /p:OutputPath=$(OutputPath)$(RepositoryName)/</OutputArgs>
     <OutputArgs>$(OutputArgs) /p:BaseIntermediateOutputPath=$(IntermediatePath)$(RepositoryName)</OutputArgs>
@@ -10,22 +9,20 @@
 
     <BuildCommandArgs>pack</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) -c $(Configuration)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) --output $(SourceBuiltPackagesPath)</BuildCommandArgs>
+    <BuildCommandArgs>$(BuildCommandArgs) --output $(ArtifactsShippingPackagesDir)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) --no-build FSharp.NET.Sdk.csproj</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:NuspecFile=FSharp.NET.Sdk.nuspec</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(OutputArgs)</BuildCommandArgs>
-    <BuildCommand>$(DotnetToolCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildCommand>$(DotNetTool) $(BuildCommandArgs)</BuildCommand>
 
-    <PackagesOutput>$(SourceBuiltPackagesPath)</PackagesOutput>
-    <ProjectDirectory>$(SubmoduleDirectory)$(RepositoryName)/</ProjectDirectory>
+    <PackagesOutput>$(ArtifactsShippingPackagesDir)</PackagesOutput>
   </PropertyGroup>
 
-  <Target Name="RepoRestore" BeforeTargets="Build" DependsOnTargets="UpdateNuGetConfig">
-    <Exec Command="$(DotnetToolCommand) restore FSharp.NET.Sdk.csproj $(OutputArgs)"
+  <Target Name="RepoRestore" BeforeTargets="RepoBuild" DependsOnTargets="UpdateNuGetConfig">
+    <Exec Command="$(DotNetTool) restore FSharp.NET.Sdk.csproj $(OutputArgs)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables)"
           IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

@@ -61,6 +61,5 @@ stages:
         dependsOn:
         - Linux
         - Windows
-        publishUsingPipelines: true
         publishAssetsImmediately: true
-        enablePublishBuildArtifacts: true
+        isAssetlessBuild: true
