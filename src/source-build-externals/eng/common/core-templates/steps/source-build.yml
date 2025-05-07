@@ -46,11 +46,6 @@ steps:
       buildConfig='$(_BuildConfig)'
     fi
 
-    officialBuildArgs=
-    if [ '${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}' = 'True' ]; then
-      officialBuildArgs='/p:DotNetPublishUsingPipelines=true /p:OfficialBuildId=$(BUILD.BUILDNUMBER)'
-    fi
-
     targetRidArgs=
     if [ '${{ parameters.platform.targetRID }}' != '' ]; then
       targetRidArgs='/p:TargetRid=${{ parameters.platform.targetRID }}'
@@ -75,7 +70,6 @@ steps:
       --configuration $buildConfig \
       --restore --build --pack -bl \
       ${{ parameters.platform.buildArguments }} \
-      $officialBuildArgs \
       $internalRuntimeDownloadArgs \
       $internalRestoreArgs \
       $targetRidArgs \
