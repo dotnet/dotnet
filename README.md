@@ -58,7 +58,7 @@ For the latest information about Source-Build support for new .NET versions, ple
 
 ### Code flow
 
-The VMR's code flow now operates in two directions. Indivdual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
+The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
 
 ### Contribution
 
@@ -66,13 +66,15 @@ Contribution to the .NET product should currently be done mostly in the constitu
 - We want to slowly ramp up direct VMR changes to avoid surprises
 - The individual repositories still have the best validation for most changes.
 
-If you would like to make a cross-cutting change in the VMR, please see the Unified Build team. However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
+If you would like to make a cross-cutting change in the VMR, please ask the Unified Build team (please tag @dotnet/product-construction in an issue/discussion in your repository). However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
 
 #### Where to make changes:
 
-- src/* - Constituent repositories, except VMR pipeline changes.
-- Non src/* directories - Directly in VMR
-- Arcade common template changes - In Arcade if possible. Can be made in src/arcade/eng/common/*
+- `src/*` - Constituent repositories, except VMR pipeline changes.
+- Non `src/*` directories - Directly in VMR
+- Arcade `eng/common` changes - There are many copies of eng/common in the VMR:
+  - The VMR uses its root eng/common/* to bootstrap the VMR build. These should not be updated manually. They should only be updated via a re-bootrap of the VMR.
+  - A VMR build uses `src/arcade/eng/common/*` for arcade and any repository that builds after arcade. Changes may be made to these files, and they will flow back into arcade as well as to any repository that gets its arcade flow from the VMR. However, due to varying scenarios in which `eng/common/` can be used, it is generally recommended that the VMR only be used to test `eng/common` changes, while actual changes should still be made in the dotnet/arcade repository.
 - VMR pipeline changes - The root pipeline logic lives in eng/* and should be changed in the VMR.
 
 For any questions, please ask the Unified Build team.
@@ -201,13 +203,13 @@ Alternatively, you can also provide a manifest file where this information can b
 
 ### Synchronizing code into the VMR
 
-Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly (locally, as the VMR is read-only for now) but in case it's already available in your repository, you can synchronize it into the VMR (again locally).
+Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
 To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace - you will see instructions right after it starts. Alternatively, you can clone the repository locally and use the [vmr-sync.sh](src/sdk/eng/vmr-sync.sh) or [vmr-sync.ps1](src/sdk/eng/vmr-sync.ps1) script to pull your changes in. Please refer to the documentation in the script for more details.
 
 ## Filing Issues
 
-This repo does not accept issues as of now. Please file issues to the appropriate development repos.
+This repo does not currently accept issues. Please file issues to the appropriate development repos.
 For issues with the VMR itself, please use the [source-build repository](https://github.com/dotnet/source-build).
 
 ## Useful Links

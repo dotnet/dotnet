@@ -179,7 +179,6 @@ src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-component
 src/sdk/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 # Configuration, doesn't apply to source directly
-src/sdk/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
 
 #
 # source-build-externals
@@ -233,7 +232,6 @@ src/sourcelink/docs/GitSpec/GitSpec.md|unknown-license-reference
 src/vstest/src/Microsoft.TestPlatform.Extensions.BlameDataCollector/ProcDumpArgsBuilder.cs|proprietary-license
 
 # Build asset, but not applying to code
-src/vstest/src/package/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI/License.rtf
 
 #
 # wpf
