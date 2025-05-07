@@ -98,7 +98,7 @@ stages:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
-        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+        - template: /eng/common/templates-official/job/publish-build-assets.yml
           parameters:
             publishUsingPipelines: true
             publishAssetsImmediately: true
