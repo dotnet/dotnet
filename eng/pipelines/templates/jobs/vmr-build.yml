@@ -220,8 +220,11 @@ jobs:
     ${{ else }}:
       value: clean-while-building
 
+  - name: brandingArgument
+    value: $(commandPrefix)branding $(brandingType)
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }}
+    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
