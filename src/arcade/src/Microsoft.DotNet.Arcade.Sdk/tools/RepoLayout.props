@@ -57,8 +57,8 @@
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(NUGET_PACKAGES)' != ''">$([MSBuild]::NormalizeDirectory('$(NUGET_PACKAGES)'))</NuGetPackageRoot>
 
     <!-- When building source-only or with the ci flag, don't fallback to default cache locations. -->
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.packages'))</NuGetPackageRoot>
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.packages'))</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 ('$(ContinuousIntegrationBuild)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true')">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.packages'))</NuGetPackageRoot>
 
     <!-- Otherwise, use the current default location -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(UserProfile)', '.nuget', 'packages'))</NuGetPackageRoot>
