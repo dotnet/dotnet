@@ -785,6 +785,10 @@ MII
                         sharedSecret2 = kem.Decapsulate(ciphertext);
                         AssertExtensions.SequenceEqual(sharedSecret1, sharedSecret2);
                         break;
+                    case (SlhDsa slhDsa, SlhDsa slhDsaPem):
+                        byte[] slhDsaSignature = slhDsa.SignData(data);
+                        Assert.True(slhDsaPem.VerifyData(data, slhDsaSignature));
+                        break;
                     default:
                         throw new CryptographicException("Unknown key algorithm");
                 }
