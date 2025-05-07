@@ -873,4 +873,13 @@
     </PropertyGroup>
   </Target>
 
+  <!-- Graph hack -->
+  <PropertyGroup>
+    <BuildProjectReferences>false</BuildProjectReferences>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="@(RepositoryReference -> '%(Identity).proj')" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\eng\tools\tools.proj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
 </Project>
