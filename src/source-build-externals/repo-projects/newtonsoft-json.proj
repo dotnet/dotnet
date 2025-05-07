@@ -14,8 +14,7 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:AdditionalConstants=SIGNED</DotNetToolArgs>
 
-    <BuildCommand>$(DotNetTool) build $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
-    <BuildPackagesCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)pack.binlog $(DotNetToolArgs)</BuildPackagesCommand>
+    <BuildCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
 
     <PackagesOutput>$(NewtonsoftJsonDirectory)bin/$(Configuration)/</PackagesOutput>
   </PropertyGroup>

@@ -36,10 +36,6 @@
     <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)no-build-repo-tasks</BuildArgs>
-  </PropertyGroup>
-
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="runtime" />
