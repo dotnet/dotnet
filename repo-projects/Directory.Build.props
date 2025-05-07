@@ -149,7 +149,7 @@
     <CommonArgs>$(CommonArgs) /p:DotNetBuildSourceOnly=true</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:PrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
   </PropertyGroup>
 
   <!-- Build specific args -->
