@@ -2,10 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <OutputPath>$(XPlatTasksBinDir)</OutputPath>
-  </PropertyGroup>
 
-  <PropertyGroup>
     <!-- Default assembly version causes CS7034. Assembly info is not necessary given this
          msbuild task assembly is for build only purposes. -->
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
@@ -13,14 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="@(SdkAssemblyReference)" />
   </ItemGroup>
 
 </Project>

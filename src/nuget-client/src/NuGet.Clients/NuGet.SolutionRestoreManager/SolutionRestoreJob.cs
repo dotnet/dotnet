@@ -51,6 +51,7 @@ namespace NuGet.SolutionRestoreManager
         private readonly ISolutionRestoreChecker _solutionUpToDateChecker;
         private readonly IVsNuGetProgressReporter _nuGetProgressReporter;
         private readonly IAuditCheckResultCachingService _auditResultCachingService;
+        private readonly INuGetTelemetryProvider _nuGetTelemetryProvider;
 
         private RestoreOperationLogger _logger;
         private INuGetProjectContext _nuGetProjectContext;
@@ -83,7 +84,8 @@ namespace NuGet.SolutionRestoreManager
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
             IVsNuGetProgressReporter nuGetProgressReporter,
-            IAuditCheckResultCachingService auditResultCachingService)
+            IAuditCheckResultCachingService auditResultCachingService,
+            INuGetTelemetryProvider nuGetTelemetryProvider)
             : this(AsyncServiceProvider.GlobalProvider,
                   packageRestoreManager,
                   solutionManager,
@@ -92,9 +94,11 @@ namespace NuGet.SolutionRestoreManager
                   settings,
                   solutionRestoreChecker,
                   nuGetProgressReporter,
-                  auditResultCachingService
+                  auditResultCachingService,
+                  nuGetTelemetryProvider
                 )
-        { }
+        {
+        }
 
         public SolutionRestoreJob(
             IAsyncServiceProvider asyncServiceProvider,
@@ -105,7 +109,8 @@ namespace NuGet.SolutionRestoreManager
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
             IVsNuGetProgressReporter nuGetProgressReporter,
-            IAuditCheckResultCachingService auditResultCachingService)
+            IAuditCheckResultCachingService auditResultCachingService,
+            INuGetTelemetryProvider nuGetTelemetryProvider)
         {
             Assumes.Present(asyncServiceProvider);
             Assumes.Present(packageRestoreManager);
@@ -116,6 +121,7 @@ namespace NuGet.SolutionRestoreManager
             Assumes.Present(solutionRestoreChecker);
             Assumes.Present(nuGetProgressReporter);
             Assumes.Present(auditResultCachingService);
+            Assumes.Present(nuGetTelemetryProvider);
 
             _asyncServiceProvider = asyncServiceProvider;
             _packageRestoreManager = packageRestoreManager;
@@ -127,6 +133,8 @@ namespace NuGet.SolutionRestoreManager
             _solutionUpToDateChecker = solutionRestoreChecker;
             _nuGetProgressReporter = nuGetProgressReporter;
             _auditResultCachingService = auditResultCachingService;
+            _nuGetTelemetryProvider = nuGetTelemetryProvider;
+
         }
 
 
@@ -388,11 +396,11 @@ namespace NuGet.SolutionRestoreManager
                 hasVSOfflineFeed);
             _auditResultCachingService.LastAuditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
 
-            TelemetryActivity.EmitTelemetryEvent(restoreTelemetryEvent);
+            _nuGetTelemetryProvider.EmitEvent(restoreTelemetryEvent);
 
             var sourceEvent = SourceTelemetry.GetRestoreSourceSummaryEvent(_nuGetProjectContext.OperationId, packageSources, protocolDiagnosticTotals);
 
-            TelemetryActivity.EmitTelemetryEvent(sourceEvent);
+            _nuGetTelemetryProvider.EmitEvent(sourceEvent);
         }
 
         private async Task RestorePackageSpecProjectsAsync(

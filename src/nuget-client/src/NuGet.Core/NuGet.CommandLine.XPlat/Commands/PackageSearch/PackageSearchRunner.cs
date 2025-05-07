@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -55,7 +55,14 @@ namespace NuGet.CommandLine.XPlat
                 return ExitCodes.Error;
             }
 
-            WarnForHTTPSources(listEndpoints, packageSearchArgs.Logger);
+            List<PackageSource> httpSources = HttpSourcesUtility.GetDisallowedInsecureHttpSources(listEndpoints.ToList());
+
+            if (httpSources.Count > 0)
+            {
+                packageSearchResultRenderer.Add(new PackageSearchProblem(PackageSearchProblemType.Error, HttpSourcesUtility.BuildHttpSourceErrorMessage(httpSources, "search")));
+                packageSearchResultRenderer.Finish();
+                return ExitCodes.Error;
+            }
 
             if (listEndpoints == null || listEndpoints.Count == 0)
             {
@@ -217,50 +224,6 @@ namespace NuGet.CommandLine.XPlat
             }
 
             return packageSources.ToList();
-        }
-
-        /// <summary>
-        /// Warns the user if the provided package sources use insecure HTTP connections.
-        /// </summary>
-        /// <param name="packageSources">The list of package sources to check.</param>
-        /// <param name="logger">The logger instance to use for logging.</param>
-        private static void WarnForHTTPSources(IList<PackageSource> packageSources, ILogger logger)
-        {
-            List<PackageSource> httpPackageSources = null;
-
-            foreach (PackageSource packageSource in packageSources)
-            {
-                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
-                {
-                    if (httpPackageSources == null)
-                    {
-                        httpPackageSources = new(capacity: packageSources.Count);
-                    }
-                    httpPackageSources.Add(packageSource);
-                }
-            }
-
-            if (httpPackageSources != null && httpPackageSources.Count != 0)
-            {
-                if (httpPackageSources.Count == 1)
-                {
-                    logger.LogWarning(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.Warning_HttpServerUsage,
-                            "search",
-                            httpPackageSources[0]));
-                }
-                else
-                {
-                    logger.LogWarning(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.Warning_HttpServerUsage_MultipleSources,
-                            "search",
-                            Environment.NewLine + string.Join(Environment.NewLine, httpPackageSources.Select(e => e.Name))));
-                }
-            }
         }
     }
 }

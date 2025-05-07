@@ -1,50 +1,36 @@
 <Project>
 
-  <PropertyGroup>
-    <RepositoryName>$(MSBuildProjectName)</RepositoryName>
-  </PropertyGroup>
-
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
 
   <PropertyGroup>
-    <SourceDirectory Condition="'$(SourceDirectory)' == ''">$(RepositoryName)</SourceDirectory>
-    <ProjectDirectory Condition="'$(ProjectDirectory)' == ''">$(SubmoduleDirectory)$(SourceDirectory)/</ProjectDirectory>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+
+    <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(RepositoryName)'))</OriginalProjectDirectory>
+    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(OriginalProjectDirectory)', 'artifacts', 'clone'))</ProjectDirectory>
+    <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
+
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">true</MinimalConsoleLogOutput>
-    <RepoConsoleLogFile>$(LoggingDir)$(RepositoryName).log</RepoConsoleLogFile>
-    <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt;&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
-
-    <!--
-      Repo specific semaphore path for incremental build
-    -->
-    <RepoCompletedSemaphorePath>$(CompletedSemaphorePath)$(RepositoryName)/</RepoCompletedSemaphorePath>
+    <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
+    <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-    <FlagParameterPrefix>-</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
-    <FlagParameterPrefix>--</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
-  </PropertyGroup>
-
-  <!-- A human-readable description of what's building and why. -->
-  <PropertyGroup>
-    <ProjectBuildReason>'$(RepositoryName)'</ProjectBuildReason>
-  </PropertyGroup>
+  <ItemGroup>
+    <PatchToApply Include="$(PatchesDir)$(RepositoryName)/*.patch" />
+  </ItemGroup>
 
   <ItemGroup>
     <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
     <EnvironmentVariables Include="DotNetRestorePackagesPath=$(PackagesDir)" />
 
     <!-- Arcade tools.sh picks up DotNetCoreSdkDir, but we can pass DOTNET_INSTALL_DIR directly. -->
-    <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="DOTNET_PATH=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="DOTNET_HOST_PATH=$(DotNetCliToolDir)dotnet" />
+    <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_PATH=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_HOST_PATH=$(DotNetTool)" />
 
     <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
-    <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetCliToolDir)" />
+    <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
+    <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
     <EnvironmentVariables Include="_InitializeToolset=$(ProjectDir)Tools/source-built/Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
 
     <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.) -->
@@ -66,6 +52,11 @@
     
     <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
     <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
+  </ItemGroup>
+
+  <!-- repo-projects depend on the repo tasks project to invoke custom msbuild tasks -->
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)eng\tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj" />
   </ItemGroup>
 
 </Project>

@@ -588,7 +588,6 @@ namespace System.Security.Cryptography.SLHDsa.Tests
             select new object[] { info };
 
         public static partial SlhDsaGeneratedKeyInfo[] GeneratedKeyInfosRaw { get; }
-
         public record SlhDsaKeyGenTestVector(
             int TestCaseId,
             SlhDsaAlgorithm Algorithm,

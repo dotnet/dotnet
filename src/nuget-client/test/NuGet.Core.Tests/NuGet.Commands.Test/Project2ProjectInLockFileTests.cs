@@ -89,26 +89,6 @@ namespace NuGet.Commands.Test
                 var logger = new TestLogger();
                 var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2, spec3);
 
-                //request.ExternalProjects.Add(new ExternalProjectReference(
-                //    "project1",
-                //    spec1,
-                //    Path.Combine(project1.FullName, "project1.csproj"),
-                //    new string[] { "project2" }));
-
-                //request.ExternalProjects.Add(new ExternalProjectReference(
-                //    "project2",
-                //    spec2,
-                //    Path.Combine(project2.FullName, "project2.xproj"),
-                //    new string[] { "project3" }));
-
-                //request.ExternalProjects.Add(new ExternalProjectReference(
-                //    "project3",
-                //    spec3,
-                //    Path.Combine(project2.FullName, "project3.xproj"),
-                //    new string[] { }));
-
-
-                //request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
                 var format = new LockFileFormat();
 
                 // Act

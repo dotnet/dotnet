@@ -2546,16 +2546,6 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}
-        ///Non-HTTPS access will be removed in a future version. Consider migrating to &apos;HTTPS&apos; sources..
-        /// </summary>
-        internal static string Warning_HttpServerUsage_MultipleSources {
-            get {
-                return ResourceManager.GetString("Warning_HttpServerUsage_MultipleSources", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The following is a &apos;Non-HTTPS&apos; source: {0}
         ///NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>

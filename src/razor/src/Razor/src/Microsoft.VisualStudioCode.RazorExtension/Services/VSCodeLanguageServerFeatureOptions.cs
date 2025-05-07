@@ -63,7 +63,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
                 new ConfigurationItem { Section = "razor.language_server.cohosting_enabled" },
                 new ConfigurationItem { Section = "razor.language_server.use_new_formatting_engine" },
                 new ConfigurationItem { Section = "razor.language_server.force_runtime_code_generation" },
-
             ]
         };
         var options = await razorClientLanguageServerManager.SendRequestAsync<ConfigurationParams, JsonArray>(

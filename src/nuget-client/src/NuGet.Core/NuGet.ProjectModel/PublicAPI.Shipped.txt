@@ -10,6 +10,7 @@ NuGet.ProjectModel.AssetsLogMessage.EndLineNumber.set -> void
 ~NuGet.ProjectModel.AssetsLogMessage.Equals(NuGet.ProjectModel.IAssetsLogMessage other) -> bool
 ~NuGet.ProjectModel.AssetsLogMessage.FilePath.get -> string
 ~NuGet.ProjectModel.AssetsLogMessage.FilePath.set -> void
+NuGet.ProjectModel.PackageSpec.IsDefaultVersion.get -> bool
 NuGet.ProjectModel.AssetsLogMessage.Level.get -> NuGet.Common.LogLevel
 ~NuGet.ProjectModel.AssetsLogMessage.LibraryId.get -> string
 ~NuGet.ProjectModel.AssetsLogMessage.LibraryId.set -> void
@@ -29,12 +30,6 @@ NuGet.ProjectModel.BuildAction.BuildAction() -> void
 NuGet.ProjectModel.BuildAction.Equals(NuGet.ProjectModel.BuildAction other) -> bool
 NuGet.ProjectModel.BuildAction.IsKnown.get -> bool
 ~NuGet.ProjectModel.BuildAction.Value.get -> string
-NuGet.ProjectModel.BuildOptions
-NuGet.ProjectModel.BuildOptions.BuildOptions() -> void
-~NuGet.ProjectModel.BuildOptions.Clone() -> NuGet.ProjectModel.BuildOptions
-~NuGet.ProjectModel.BuildOptions.Equals(NuGet.ProjectModel.BuildOptions other) -> bool
-~NuGet.ProjectModel.BuildOptions.OutputName.get -> string
-~NuGet.ProjectModel.BuildOptions.OutputName.set -> void
 NuGet.ProjectModel.CacheFile
 ~NuGet.ProjectModel.CacheFile.CacheFile(string dgSpecHash) -> void
 ~NuGet.ProjectModel.CacheFile.DgSpecHash.get -> string
@@ -125,19 +120,6 @@ NuGet.ProjectModel.IAssetsLogMessage.WarningLevel.get -> NuGet.Common.WarningLev
 NuGet.ProjectModel.IExternalProjectReferenceProvider
 ~NuGet.ProjectModel.IExternalProjectReferenceProvider.GetEntryPoints() -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.ExternalProjectReference>
 ~NuGet.ProjectModel.IExternalProjectReferenceProvider.GetReferences(string entryPointPath) -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.ExternalProjectReference>
-NuGet.ProjectModel.IncludeExcludeFiles
-~NuGet.ProjectModel.IncludeExcludeFiles.Clone() -> NuGet.ProjectModel.IncludeExcludeFiles
-~NuGet.ProjectModel.IncludeExcludeFiles.Equals(NuGet.ProjectModel.IncludeExcludeFiles other) -> bool
-~NuGet.ProjectModel.IncludeExcludeFiles.Exclude.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.ProjectModel.IncludeExcludeFiles.Exclude.set -> void
-~NuGet.ProjectModel.IncludeExcludeFiles.ExcludeFiles.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.ProjectModel.IncludeExcludeFiles.ExcludeFiles.set -> void
-~NuGet.ProjectModel.IncludeExcludeFiles.HandleIncludeExcludeFiles(Newtonsoft.Json.Linq.JObject jsonObject) -> bool
-~NuGet.ProjectModel.IncludeExcludeFiles.Include.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.ProjectModel.IncludeExcludeFiles.Include.set -> void
-NuGet.ProjectModel.IncludeExcludeFiles.IncludeExcludeFiles() -> void
-~NuGet.ProjectModel.IncludeExcludeFiles.IncludeFiles.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.ProjectModel.IncludeExcludeFiles.IncludeFiles.set -> void
 NuGet.ProjectModel.JTokenExtensions
 NuGet.ProjectModel.JsonPackageSpecReader
 NuGet.ProjectModel.LockFile
@@ -316,78 +298,30 @@ NuGet.ProjectModel.LockFileValidationResult
 ~NuGet.ProjectModel.LockFileValidationResult.InvalidReasons.get -> System.Collections.Generic.IReadOnlyList<string>
 NuGet.ProjectModel.LockFileValidationResult.IsValid.get -> bool
 ~NuGet.ProjectModel.LockFileValidationResult.LockFileValidationResult(bool isValid, System.Collections.Generic.IReadOnlyList<string> invalidReasons) -> void
-NuGet.ProjectModel.PackOptions
-~NuGet.ProjectModel.PackOptions.Clone() -> NuGet.ProjectModel.PackOptions
-~NuGet.ProjectModel.PackOptions.Equals(NuGet.ProjectModel.PackOptions other) -> bool
-~NuGet.ProjectModel.PackOptions.IncludeExcludeFiles.get -> NuGet.ProjectModel.IncludeExcludeFiles
-~NuGet.ProjectModel.PackOptions.IncludeExcludeFiles.set -> void
-~NuGet.ProjectModel.PackOptions.Mappings.get -> System.Collections.Generic.IDictionary<string, NuGet.ProjectModel.IncludeExcludeFiles>
-~NuGet.ProjectModel.PackOptions.Mappings.set -> void
-NuGet.ProjectModel.PackOptions.PackOptions() -> void
-~NuGet.ProjectModel.PackOptions.PackageType.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>
-~NuGet.ProjectModel.PackOptions.PackageType.set -> void
 NuGet.ProjectModel.PackageDependencyType
 NuGet.ProjectModel.PackageDependencyType.CentralTransitive = 3 -> NuGet.ProjectModel.PackageDependencyType
 NuGet.ProjectModel.PackageDependencyType.Direct = 0 -> NuGet.ProjectModel.PackageDependencyType
 NuGet.ProjectModel.PackageDependencyType.Project = 2 -> NuGet.ProjectModel.PackageDependencyType
 NuGet.ProjectModel.PackageDependencyType.Transitive = 1 -> NuGet.ProjectModel.PackageDependencyType
 NuGet.ProjectModel.PackageSpec
-~NuGet.ProjectModel.PackageSpec.Authors.get -> string[]
-~NuGet.ProjectModel.PackageSpec.Authors.set -> void
 ~NuGet.ProjectModel.PackageSpec.BaseDirectory.get -> string
-~NuGet.ProjectModel.PackageSpec.BuildOptions.get -> NuGet.ProjectModel.BuildOptions
-~NuGet.ProjectModel.PackageSpec.BuildOptions.set -> void
 ~NuGet.ProjectModel.PackageSpec.Clone() -> NuGet.ProjectModel.PackageSpec
-~NuGet.ProjectModel.PackageSpec.ContentFiles.get -> System.Collections.Generic.IList<string>
-~NuGet.ProjectModel.PackageSpec.ContentFiles.set -> void
-~NuGet.ProjectModel.PackageSpec.Copyright.get -> string
-~NuGet.ProjectModel.PackageSpec.Copyright.set -> void
 ~NuGet.ProjectModel.PackageSpec.Dependencies.get -> System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency>
 ~NuGet.ProjectModel.PackageSpec.Dependencies.set -> void
-~NuGet.ProjectModel.PackageSpec.Description.get -> string
-~NuGet.ProjectModel.PackageSpec.Description.set -> void
 ~NuGet.ProjectModel.PackageSpec.Equals(NuGet.ProjectModel.PackageSpec other) -> bool
 ~NuGet.ProjectModel.PackageSpec.FilePath.get -> string
 ~NuGet.ProjectModel.PackageSpec.FilePath.set -> void
-NuGet.ProjectModel.PackageSpec.HasVersionSnapshot.get -> bool
-NuGet.ProjectModel.PackageSpec.HasVersionSnapshot.set -> void
-~NuGet.ProjectModel.PackageSpec.IconUrl.get -> string
-~NuGet.ProjectModel.PackageSpec.IconUrl.set -> void
-NuGet.ProjectModel.PackageSpec.IsDefaultVersion.get -> bool
-NuGet.ProjectModel.PackageSpec.IsDefaultVersion.set -> void
-~NuGet.ProjectModel.PackageSpec.Language.get -> string
-~NuGet.ProjectModel.PackageSpec.Language.set -> void
-~NuGet.ProjectModel.PackageSpec.LicenseUrl.get -> string
-~NuGet.ProjectModel.PackageSpec.LicenseUrl.set -> void
 ~NuGet.ProjectModel.PackageSpec.Name.get -> string
 ~NuGet.ProjectModel.PackageSpec.Name.set -> void
-~NuGet.ProjectModel.PackageSpec.Owners.get -> string[]
-~NuGet.ProjectModel.PackageSpec.Owners.set -> void
-~NuGet.ProjectModel.PackageSpec.PackInclude.get -> System.Collections.Generic.IDictionary<string, string>
-~NuGet.ProjectModel.PackageSpec.PackOptions.get -> NuGet.ProjectModel.PackOptions
-~NuGet.ProjectModel.PackageSpec.PackOptions.set -> void
 NuGet.ProjectModel.PackageSpec.PackageSpec() -> void
 ~NuGet.ProjectModel.PackageSpec.PackageSpec(System.Collections.Generic.IList<NuGet.ProjectModel.TargetFrameworkInformation> frameworks) -> void
-~NuGet.ProjectModel.PackageSpec.ProjectUrl.get -> string
-~NuGet.ProjectModel.PackageSpec.ProjectUrl.set -> void
-~NuGet.ProjectModel.PackageSpec.ReleaseNotes.get -> string
-~NuGet.ProjectModel.PackageSpec.ReleaseNotes.set -> void
-NuGet.ProjectModel.PackageSpec.RequireLicenseAcceptance.get -> bool
-NuGet.ProjectModel.PackageSpec.RequireLicenseAcceptance.set -> void
 ~NuGet.ProjectModel.PackageSpec.RestoreMetadata.get -> NuGet.ProjectModel.ProjectRestoreMetadata
 ~NuGet.ProjectModel.PackageSpec.RestoreMetadata.set -> void
 ~NuGet.ProjectModel.PackageSpec.RestoreSettings.get -> NuGet.ProjectModel.ProjectRestoreSettings
 ~NuGet.ProjectModel.PackageSpec.RestoreSettings.set -> void
 ~NuGet.ProjectModel.PackageSpec.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.ProjectModel.PackageSpec.RuntimeGraph.set -> void
-~NuGet.ProjectModel.PackageSpec.Scripts.get -> System.Collections.Generic.IDictionary<string, System.Collections.Generic.IEnumerable<string>>
-~NuGet.ProjectModel.PackageSpec.Summary.get -> string
-~NuGet.ProjectModel.PackageSpec.Summary.set -> void
-~NuGet.ProjectModel.PackageSpec.Tags.get -> string[]
-~NuGet.ProjectModel.PackageSpec.Tags.set -> void
 ~NuGet.ProjectModel.PackageSpec.TargetFrameworks.get -> System.Collections.Generic.IList<NuGet.ProjectModel.TargetFrameworkInformation>
-~NuGet.ProjectModel.PackageSpec.Title.get -> string
-~NuGet.ProjectModel.PackageSpec.Title.set -> void
 ~NuGet.ProjectModel.PackageSpec.Version.get -> NuGet.Versioning.NuGetVersion
 ~NuGet.ProjectModel.PackageSpec.Version.set -> void
 NuGet.ProjectModel.PackageSpecExtensions
@@ -620,8 +554,6 @@ override NuGet.ProjectModel.AssetsLogMessage.GetHashCode() -> int
 ~override NuGet.ProjectModel.BuildAction.Equals(object obj) -> bool
 override NuGet.ProjectModel.BuildAction.GetHashCode() -> int
 ~override NuGet.ProjectModel.BuildAction.ToString() -> string
-~override NuGet.ProjectModel.BuildOptions.Equals(object obj) -> bool
-override NuGet.ProjectModel.BuildOptions.GetHashCode() -> int
 ~override NuGet.ProjectModel.CacheFile.Equals(object obj) -> bool
 override NuGet.ProjectModel.CacheFile.GetHashCode() -> int
 ~override NuGet.ProjectModel.CentralTransitiveDependencyGroup.Equals(object obj) -> bool
@@ -629,8 +561,6 @@ override NuGet.ProjectModel.CentralTransitiveDependencyGroup.GetHashCode() -> in
 ~override NuGet.ProjectModel.ExternalProjectReference.Equals(object obj) -> bool
 override NuGet.ProjectModel.ExternalProjectReference.GetHashCode() -> int
 ~override NuGet.ProjectModel.ExternalProjectReference.ToString() -> string
-~override NuGet.ProjectModel.IncludeExcludeFiles.Equals(object obj) -> bool
-override NuGet.ProjectModel.IncludeExcludeFiles.GetHashCode() -> int
 ~override NuGet.ProjectModel.LockFile.Equals(object obj) -> bool
 override NuGet.ProjectModel.LockFile.GetHashCode() -> int
 ~override NuGet.ProjectModel.LockFileDependency.Equals(object obj) -> bool
@@ -644,8 +574,6 @@ override NuGet.ProjectModel.LockFileLibrary.GetHashCode() -> int
 override NuGet.ProjectModel.LockFileTarget.GetHashCode() -> int
 override NuGet.ProjectModel.LockFileTargetLibrary.Equals(object? obj) -> bool
 override NuGet.ProjectModel.LockFileTargetLibrary.GetHashCode() -> int
-~override NuGet.ProjectModel.PackOptions.Equals(object obj) -> bool
-override NuGet.ProjectModel.PackOptions.GetHashCode() -> int
 ~override NuGet.ProjectModel.PackageSpec.Equals(object obj) -> bool
 override NuGet.ProjectModel.PackageSpec.GetHashCode() -> int
 ~override NuGet.ProjectModel.PackagesConfigProjectRestoreMetadata.Clone() -> NuGet.ProjectModel.ProjectRestoreMetadata
@@ -776,7 +704,6 @@ static readonly NuGet.ProjectModel.LockFileFormat.Version -> int
 ~static readonly NuGet.ProjectModel.LockFileRuntimeTarget.AssetTypeProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileRuntimeTarget.RidProperty -> string
 ~static readonly NuGet.ProjectModel.PackageSpec.DefaultVersion -> NuGet.Versioning.NuGetVersion
-~static readonly NuGet.ProjectModel.PackageSpec.PackageSpecFileName -> string
 ~static readonly NuGet.ProjectModel.PackagesLockFileFormat.LockFileName -> string
 static readonly NuGet.ProjectModel.PackagesLockFileFormat.PackagesLockFileVersion -> int
 static readonly NuGet.ProjectModel.PackagesLockFileFormat.Version -> int

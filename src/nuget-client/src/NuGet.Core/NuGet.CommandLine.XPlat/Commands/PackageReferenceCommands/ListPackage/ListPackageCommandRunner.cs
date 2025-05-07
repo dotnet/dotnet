@@ -127,7 +127,14 @@ namespace NuGet.CommandLine.XPlat
 
                 if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
                 {
-                    WarnForHttpSources(listPackageArgs, projectModel);
+                    List<PackageSource> httpSources = HttpSourcesUtility.GetDisallowedInsecureHttpSources(listPackageArgs.PackageSources);
+                    httpSources.AddRange(HttpSourcesUtility.GetDisallowedInsecureHttpSources(listPackageArgs.AuditSources));
+
+                    if (httpSources.Count > 0)
+                    {
+                        projectModel.AddProjectInformation(ProblemType.Error, HttpSourcesUtility.BuildHttpSourceErrorMessage(httpSources, "list package"));
+                        return;
+                    }
 
                     if (listPackageArgs.ReportType == ReportType.Vulnerable && listPackageArgs.AuditSources != null && listPackageArgs.AuditSources.Count > 0)
                     {
@@ -323,43 +330,6 @@ namespace NuGet.CommandLine.XPlat
             }
 
             return Enumerable.Empty<PackageVulnerabilityMetadata>();
-        }
-
-        private static void WarnForHttpSources(
-            ListPackageArgs listPackageArgs,
-            ListPackageProjectModel projectModel)
-        {
-            var httpPackageSources = new List<PackageSource>();
-
-            AddHttpPackageSources(listPackageArgs.PackageSources, httpPackageSources);
-            AddHttpPackageSources(listPackageArgs.AuditSources, httpPackageSources);
-
-            if (httpPackageSources.Count == 0)
-            {
-                return;
-            }
-
-            string warningMessage = httpPackageSources.Count == 1
-                ? string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "list package", httpPackageSources[0])
-                : string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage_MultipleSources, "list package", Environment.NewLine + string.Join(Environment.NewLine, httpPackageSources.Select(e => e.Name)));
-
-            projectModel.AddProjectInformation(ProblemType.Warning, warningMessage);
-        }
-
-        private static void AddHttpPackageSources(IEnumerable<PackageSource> packageSources, List<PackageSource> httpPackageSources)
-        {
-            if (packageSources == null)
-            {
-                return;
-            }
-
-            foreach (var packageSource in packageSources)
-            {
-                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
-                {
-                    httpPackageSources.Add(packageSource);
-                }
-            }
         }
 
         public static bool FilterPackages(IEnumerable<FrameworkPackages> packages, ListPackageArgs listPackageArgs)

@@ -37,11 +37,10 @@
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <!--
-    In VMR inner-build copy to local storage, do not push to AzDO.
-    Inner-repo builds outside of VMR do not use arcade publishing.
+    In VMR copy to local storage, do not push to AzDO.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -52,7 +51,7 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
@@ -72,11 +71,7 @@
     <IsReleaseOnlyPackageVersion>false</IsReleaseOnlyPackageVersion>
     <IsReleaseOnlyPackageVersion Condition ="'$(SkipPackagePublishingVersionChecks)' == 'true' or ('$(PreReleaseVersionLabel)' == '' and '$(AutoGenerateAssemblyVersion)' == 'true')">true</IsReleaseOnlyPackageVersion>
     
-    <!-- If `AutoGenerateSymbolPackages` is not set we default it to true.
-         Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates.
-         Also do not generate symbol packages if in inner source build, in product build. -->
-    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
-      ('$(DotNetBuildSourceOnly)' != 'true' or (('$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
+    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</AutoGenerateSymbolPackages>
 
     <PreserveRepoOrigin Condition="'$(PreserveRepoOrigin)' == ''">false</PreserveRepoOrigin>
     <PublishManifestOnly Condition="'$(PublishManifestOnly)' == ''">false</PublishManifestOnly>

@@ -86,7 +86,7 @@ fi
 
 ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
-export NUGET_PACKAGES=${repo_root}artifacts/sb/package-cache/
+export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
 if [[ "$source_build" == true ]]; then
   properties="$properties /p:DotNetBuildSourceOnly=true"
@@ -96,4 +96,4 @@ properties="$properties /p:Configuration=$configuration"
 properties="$properties /p:DotNetBuildRepo=true"
 properties="$properties /p:RepoRoot=$repo_root"
 
-"$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/sb/log/source-inner-build.binlog" $properties $args
+"$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/log/${configuration}/Build.binlog" $properties $args

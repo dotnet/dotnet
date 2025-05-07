@@ -316,6 +316,22 @@ inline bool ObjectAllocator::MayIndexPointToStack(unsigned int index)
 }
 
 //------------------------------------------------------------------------
+// MayIndexPointToStack:          Returns true iff the resource described by index may
+//                                 point to a stack-allocated object
+//
+// Arguments:
+//    index   - bv index
+//
+// Return Value:
+//    Returns true if so.
+//
+inline bool ObjectAllocator::MayIndexPointToStack(unsigned int index)
+{
+    assert(m_AnalysisDone);
+    return BitVecOps::IsMember(&m_bitVecTraits, m_PossiblyStackPointingPointers, index);
+}
+
+//------------------------------------------------------------------------
 // MayLclVarPointToStack:          Returns true iff local variable may
 //                                 point to a stack-allocated object
 //

@@ -35,6 +35,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using StreamJsonRpc;
 using Test.Utility;
 using Test.Utility.VisualStudio;
@@ -57,6 +58,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         private TestVsSolutionManager _solutionManager;
         private NuGetProjectManagerServiceState _state;
         private TestDirectory _testDirectory;
+        private ConcurrentQueue<TelemetryEvent> _telemetryEvents;
         private readonly IVsProjectThreadingService _threadingService;
         private readonly TestLogger _logger;
         private readonly Mock<IOutputConsoleProvider> _outputConsoleProviderMock;
@@ -382,15 +384,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 _solutionManager.NuGetProjects.Add(project);
 
-                var telemetrySession = new Mock<ITelemetrySession>();
-                var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-
-                telemetrySession
-                    .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                    .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-                TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
                 IReadOnlyCollection<IPackageReferenceContextInfo> packages = await _projectManager.GetInstalledPackagesAsync(
                     new[] { projectId },
                     CancellationToken.None);
@@ -406,7 +399,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.Equal(expected.IsDevelopmentDependency, actual.IsDevelopmentDependency);
                 Assert.Equal(expected.IsUserInstalled, actual.IsUserInstalled);
 
-                Assert.Equal(1, telemetryEvents.Count);
+                Assert.Equal(1, _telemetryEvents.Count);
             }
         }
 
@@ -553,7 +546,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithLegacyPackageReferenceProject_OneTransitiveOriginAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithLegacyPackageReferenceProject_OneTransitiveOriginAsync()
         {
             // packageA_2.15.3 -> packageB_1.0.0 -> packageC_2.1.43
 
@@ -627,7 +620,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_WithTransitivePackageNotRestored_NoTransitivePackageInfoAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_WithTransitivePackageNotRestored_NoTransitivePackageInfoAsync()
         {
             // packageA_1.0.0 -> packageB_2.0.0
 
@@ -696,7 +689,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        private async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithLegacyPackageReferenceProject_MultipleOriginsAsync(bool useSameVersions)
+        public async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithLegacyPackageReferenceProject_MultipleOriginsAsync(bool useSameVersions)
         {
             // case useSameversions = true
             // packageX_3.0.0 -> packageD_0.1.1
@@ -789,7 +782,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_WithCpsPackageReferenceProject_OneTransitiveReferenceAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_WithCpsPackageReferenceProject_OneTransitiveReferenceAsync()
         {
             // packageA_2.0.0 -> packageB_1.0.0
 
@@ -842,16 +835,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             _solutionManager.NuGetProjects.Add(prProject);
 
-            // Prepare: Create telemetry
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
             // Prepare: Force a nuget Restore
             var command = new RestoreCommand(request);
             // Force writing project.assets.json
@@ -876,7 +859,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultipleCalls_SucceedsAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultipleCalls_SucceedsAsync()
         {
             // packageX_3.0.0 -> packageD_0.1.1
             // packageA_2.0.0 -> packageB_1.0.0 -> packageC_0.0.1
@@ -945,16 +928,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             _solutionManager.NuGetProjects.Add(prProject);
 
-            // Prepare: Create telemetry
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
             // Prepare: Force a nuget Restore
             var command = new RestoreCommand(request);
             // Force writing project.assets.json
@@ -1009,7 +982,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        private async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultitargeting_SucceedsAsync(bool useSameVersions)
+        public async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultitargeting_SucceedsAsync(bool useSameVersions)
         {
             // useSameVersion = true
             // net5.0:
@@ -1101,16 +1074,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             _solutionManager.NuGetProjects.Add(prProject);
 
-            // Prepare: Create telemetry
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
             // Prepare: Force a nuget Restore
             var command = new RestoreCommand(request);
             // Force writing project.assets.json
@@ -1157,7 +1120,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_InvalidInput_ThrowsAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_InvalidInput_ThrowsAsync()
         {
             Initialize();
 
@@ -1183,7 +1146,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_WithCancellationToken_ThrowsAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_WithCancellationToken_ThrowsAsync()
         {
             Initialize();
 
@@ -1196,7 +1159,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultitargetingMultipleCalls_MergedResultsAsync()
+        public async Task GetInstalledAndTransitivePackagesAsync_TransitiveOriginsWithCpsPackageReferenceProjectAndMultitargetingMultipleCalls_MergedResultsAsync()
         {
             // net5.0:
             // packageX_3.0.0 -> packageD_0.1.1
@@ -1286,16 +1249,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             _solutionManager.NuGetProjects.Add(prProject);
 
-            // Prepare: Create telemetry
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
             // Prepare: Force a nuget Restore
             var command = new RestoreCommand(request);
             // Force writing project.assets.json
@@ -1336,7 +1289,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_InvalidInput_ThrowsAsync()
+        public async Task GetPackageFoldersAsync_InvalidInput_ThrowsAsync()
         {
             Initialize();
 
@@ -1352,7 +1305,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_WithCancellationToken_ThowsAsync()
+        public async Task GetPackageFoldersAsync_WithCancellationToken_ThowsAsync()
         {
             Initialize();
 
@@ -1365,7 +1318,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_CpsProject_ReturnsPackageFolderAsync()
+        public async Task GetPackageFoldersAsync_CpsProject_ReturnsPackageFolderAsync()
         {
             string projectName = Guid.NewGuid().ToString();
             string projectId = projectName;
@@ -1421,7 +1374,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_LegacyProject_ReturnsPackageFolderAsync()
+        public async Task GetPackageFoldersAsync_LegacyProject_ReturnsPackageFolderAsync()
         {
             string projectId = Guid.NewGuid().ToString();
 
@@ -1466,7 +1419,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_LegacyProjectWithFallbackFolder_ReturnsPackageFoldersAsync()
+        public async Task GetPackageFoldersAsync_LegacyProjectWithFallbackFolder_ReturnsPackageFoldersAsync()
         {
             string projectId = Guid.NewGuid().ToString();
 
@@ -1515,7 +1468,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        private async Task GetCentralPackageVersionsManagmentEnabled_SucceedsAsync(bool isCentralPackageVersionsEnabled)
+        public async Task GetCentralPackageVersionsManagmentEnabled_SucceedsAsync(bool isCentralPackageVersionsEnabled)
         {
             string projectName = Guid.NewGuid().ToString();
             string projectId = projectName;
@@ -1561,7 +1514,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetPackageFoldersAsync_CpsProjectWithFallbackFolder_ReturnsPackageFoldersAsync()
+        public async Task GetPackageFoldersAsync_CpsProjectWithFallbackFolder_ReturnsPackageFoldersAsync()
         {
             string projectName = Guid.NewGuid().ToString();
             string projectId = projectName;
@@ -1665,11 +1618,25 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _testDirectory = TestDirectory.Create();
             ISettings testSettings = CreateSettings(sourceRepositoryProvider, _testDirectory);
             var deleteOnRestartManager = new TestDeleteOnRestartManager();
+            _telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+
+            var telemetrySession = new Mock<ITelemetrySession>();
+
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            telemetrySession
+                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+            var telemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
+
             _packageManager = new NuGetPackageManager(
                 sourceRepositoryProvider,
                 testSettings,
                 _solutionManager,
-                deleteOnRestartManager);
+                deleteOnRestartManager)
+            {
+                NuGetTelemetryService = telemetryService
+            };
+
             _state = new NuGetProjectManagerServiceState();
             _sharedState = new TestSharedServiceState(
                 new Microsoft.VisualStudio.Threading.AsyncLazy<NuGetPackageManager>(
@@ -1679,10 +1646,17 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 sourceRepositoryProvider,
                 new Microsoft.VisualStudio.Threading.AsyncLazy<IReadOnlyCollection<SourceRepository>>(
                     () => Task.FromResult<IReadOnlyCollection<SourceRepository>>(sourceRepositoryProvider.GetRepositories().ToList())));
+
+            var telemetryProvider = new Mock<INuGetTelemetryProvider>();
+            telemetryProvider
+                .Setup(x => x.EmitEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => _telemetryEvents.Enqueue(x));
+
             _projectManager = new NuGetProjectManagerService(
                 default(ServiceActivationOptions),
                 Mock.Of<IServiceBroker>(),
                 new AuthorizationServiceClient(Mock.Of<IAuthorizationService>()),
+                telemetryProvider.Object,
                 _state,
                 _sharedState);
         }
