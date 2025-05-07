@@ -54,10 +54,6 @@
     <RepositoryReference Include="efcore" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EnvironmentVariables Include="warn_as_error=false" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <!--
       From aspnetcore Versions.props:
