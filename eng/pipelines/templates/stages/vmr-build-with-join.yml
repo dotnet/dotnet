@@ -145,7 +145,7 @@ stages:
                     path: $(Build.ArtifactStagingDirectory)/VerticalArtifacts/${{ vertical.job }}
                     artifactName: ${{ vertical.job }}_Artifacts
         - ${{ if not(parameters.isBuiltFromVmr) }}:
-          - template: ../steps/vmr-prepare.yml@self
+          - template: ../steps/vmr-prepare.yml
             parameters:
               ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
                 vmrBranch: $(System.PullRequest.TargetBranch)
@@ -153,7 +153,7 @@ stages:
                 vmrBranch: ${{ variables.VmrBranch }}
 
           - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-            - template: ../steps/vmr-pull-updates.yml@self
+            - template: ../steps/vmr-pull-updates.yml
               parameters:
                 vmrPath: ${{ variables.vmrPath }}
                 vmrBranch: ${{ variables.VmrBranch }}
