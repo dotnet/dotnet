@@ -122,37 +122,22 @@ namespace Microsoft.CodeAnalysis
     public sealed partial class AdhocWorkspace : Workspace
     {
         public AdhocWorkspace() : base(default!, default) { }
-
         public AdhocWorkspace(Host.HostServices host, string workspaceKind = "Custom") : base(default!, default) { }
-
         public override bool CanOpenDocuments { get { throw null; } }
 
         public Document AddDocument(DocumentInfo documentInfo) { throw null; }
-
         public Document AddDocument(ProjectId projectId, string name, Text.SourceText text) { throw null; }
-
         public Project AddProject(ProjectInfo projectInfo) { throw null; }
-
         public Project AddProject(string name, string language) { throw null; }
-
         public void AddProjects(System.Collections.Generic.IEnumerable<ProjectInfo> projectInfos) { }
-
         public Solution AddSolution(SolutionInfo solutionInfo) { throw null; }
-
         public override bool CanApplyChange(ApplyChangesKind feature) { throw null; }
-
         public new void ClearSolution() { }
-
         public override void CloseAdditionalDocument(DocumentId documentId) { }
-
         public override void CloseAnalyzerConfigDocument(DocumentId documentId) { }
-
         public override void CloseDocument(DocumentId documentId) { }
-
         public override void OpenAdditionalDocument(DocumentId documentId, bool activate = true) { }
-
         public override void OpenAnalyzerConfigDocument(DocumentId documentId, bool activate = true) { }
-
         public override void OpenDocument(DocumentId documentId, bool activate = true) { }
     }
 
@@ -190,10 +175,8 @@ namespace Microsoft.CodeAnalysis
     public static partial class CommandLineProject
     {
         public static ProjectInfo CreateProjectInfo(string projectName, string language, System.Collections.Generic.IEnumerable<string> commandLineArgs, string projectDirectory, Workspace workspace = null) { throw null; }
-
         public static ProjectInfo CreateProjectInfo(string projectName, string language, string commandLine, string baseDirectory, Workspace workspace = null) { throw null; }
     }
-
     public readonly partial struct CompilationOutputInfo : System.IEquatable<CompilationOutputInfo>
     {
         private readonly object _dummy;
@@ -201,167 +184,110 @@ namespace Microsoft.CodeAnalysis
         public string? AssemblyPath { get { throw null; } }
 
         public readonly bool Equals(CompilationOutputInfo other) { throw null; }
-
         public override readonly bool Equals(object? obj) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(in CompilationOutputInfo left, in CompilationOutputInfo right) { throw null; }
-
         public static bool operator !=(in CompilationOutputInfo left, in CompilationOutputInfo right) { throw null; }
-
         public readonly CompilationOutputInfo WithAssemblyPath(string? path) { throw null; }
     }
 
     public partial class Document : TextDocument
     {
         internal Document() { }
-
         public SourceCodeKind SourceCodeKind { get { throw null; } }
-
         public bool SupportsSemanticModel { get { throw null; } }
-
         public bool SupportsSyntaxTree { get { throw null; } }
 
         public System.Collections.Immutable.ImmutableArray<DocumentId> GetLinkedDocumentIds() { throw null; }
-
         public System.Threading.Tasks.Task<Options.DocumentOptionSet> GetOptionsAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<SemanticModel?> GetSemanticModelAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<SyntaxNode?> GetSyntaxRootAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<SyntaxTree?> GetSyntaxTreeAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetSyntaxVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Text.TextChange>> GetTextChangesAsync(Document oldDocument, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public bool TryGetSemanticModel(out SemanticModel? semanticModel) { throw null; }
-
         public bool TryGetSyntaxRoot(out SyntaxNode? root) { throw null; }
-
         public bool TryGetSyntaxTree(out SyntaxTree? syntaxTree) { throw null; }
-
         public bool TryGetSyntaxVersion(out VersionStamp version) { throw null; }
-
         public Document WithFilePath(string filePath) { throw null; }
-
         public Document WithFolders(System.Collections.Generic.IEnumerable<string> folders) { throw null; }
-
         public Document WithName(string name) { throw null; }
-
         public Document WithSourceCodeKind(SourceCodeKind kind) { throw null; }
-
         public Document WithSyntaxRoot(SyntaxNode root) { throw null; }
-
         public Document WithText(Text.SourceText text) { throw null; }
     }
 
     public sealed partial class DocumentActiveContextChangedEventArgs : System.EventArgs
     {
         public DocumentActiveContextChangedEventArgs(Solution solution, Text.SourceTextContainer sourceTextContainer, DocumentId oldActiveContextDocumentId, DocumentId newActiveContextDocumentId) { }
-
         public DocumentId NewActiveContextDocumentId { get { throw null; } }
-
         public DocumentId OldActiveContextDocumentId { get { throw null; } }
-
         public Solution Solution { get { throw null; } }
-
         public Text.SourceTextContainer SourceTextContainer { get { throw null; } }
     }
 
     public partial class DocumentDiagnostic : WorkspaceDiagnostic
     {
         public DocumentDiagnostic(WorkspaceDiagnosticKind kind, string message, DocumentId documentId) : base(default, default!) { }
-
         public DocumentId DocumentId { get { throw null; } }
     }
 
     public partial class DocumentEventArgs : System.EventArgs
     {
         public DocumentEventArgs(Document document) { }
-
         public Document Document { get { throw null; } }
     }
 
     public sealed partial class DocumentId : System.IEquatable<DocumentId>
     {
         internal DocumentId() { }
-
         public System.Guid Id { get { throw null; } }
-
         public ProjectId ProjectId { get { throw null; } }
 
         public static DocumentId CreateFromSerialized(ProjectId projectId, System.Guid id, string? debugName = null) { throw null; }
-
         public static DocumentId CreateNewId(ProjectId projectId, string? debugName = null) { throw null; }
-
         public bool Equals(DocumentId? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(DocumentId? left, DocumentId? right) { throw null; }
-
         public static bool operator !=(DocumentId? left, DocumentId? right) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public sealed partial class DocumentInfo
     {
         internal DocumentInfo() { }
-
         public string? FilePath { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<string> Folders { get { throw null; } }
-
         public DocumentId Id { get { throw null; } }
-
         public bool IsGenerated { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public SourceCodeKind SourceCodeKind { get { throw null; } }
-
         public TextLoader? TextLoader { get { throw null; } }
 
         public static DocumentInfo Create(DocumentId id, string name, System.Collections.Generic.IEnumerable<string>? folders = null, SourceCodeKind sourceCodeKind = SourceCodeKind.Regular, TextLoader? loader = null, string? filePath = null, bool isGenerated = false) { throw null; }
-
         public DocumentInfo WithFilePath(string? filePath) { throw null; }
-
         public DocumentInfo WithFolders(System.Collections.Generic.IEnumerable<string>? folders) { throw null; }
-
         public DocumentInfo WithId(DocumentId id) { throw null; }
-
         public DocumentInfo WithName(string name) { throw null; }
-
         public DocumentInfo WithSourceCodeKind(SourceCodeKind kind) { throw null; }
-
         public DocumentInfo WithTextLoader(TextLoader? loader) { throw null; }
     }
-
     [System.Composition.MetadataAttribute]
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
     public sealed partial class ExtensionOrderAttribute : System.Attribute
     {
         public string After { get { throw null; } set { } }
-
         public string Before { get { throw null; } set { } }
     }
 
     public partial class FileTextLoader : TextLoader
     {
         public FileTextLoader(string path, System.Text.Encoding? defaultEncoding) { }
-
         public System.Text.Encoding? DefaultEncoding { get { throw null; } }
-
         public string Path { get { throw null; } }
 
         protected virtual Text.SourceText CreateText(System.IO.Stream stream, Workspace workspace) { throw null; }
-
         public override System.Threading.Tasks.Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
 
@@ -374,626 +300,355 @@ namespace Microsoft.CodeAnalysis
     public partial class Project
     {
         internal Project() { }
-
         public System.Collections.Generic.IReadOnlyList<DocumentId> AdditionalDocumentIds { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<TextDocument> AdditionalDocuments { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<ProjectReference> AllProjectReferences { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<AnalyzerConfigDocument> AnalyzerConfigDocuments { get { throw null; } }
-
         public Diagnostics.AnalyzerOptions AnalyzerOptions { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<Diagnostics.AnalyzerReference> AnalyzerReferences { get { throw null; } }
-
         public string AssemblyName { get { throw null; } }
-
         public CompilationOptions? CompilationOptions { get { throw null; } }
-
         public CompilationOutputInfo CompilationOutputInfo { get { throw null; } }
-
         public string? DefaultNamespace { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<DocumentId> DocumentIds { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<Document> Documents { get { throw null; } }
-
         public string? FilePath { get { throw null; } }
-
         public bool HasDocuments { get { throw null; } }
-
         public ProjectId Id { get { throw null; } }
-
         public bool IsSubmission { get { throw null; } }
-
         public string Language { get { throw null; } }
-
         public Host.HostLanguageServices LanguageServices { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<MetadataReference> MetadataReferences { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public string? OutputFilePath { get { throw null; } }
-
         public string? OutputRefFilePath { get { throw null; } }
-
         public ParseOptions? ParseOptions { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<ProjectReference> ProjectReferences { get { throw null; } }
-
         public Solution Solution { get { throw null; } }
-
         public bool SupportsCompilation { get { throw null; } }
-
         public VersionStamp Version { get { throw null; } }
 
         public TextDocument AddAdditionalDocument(string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public TextDocument AddAdditionalDocument(string name, string text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public TextDocument AddAnalyzerConfigDocument(string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Project AddAnalyzerReference(Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Project AddAnalyzerReferences(System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferences) { throw null; }
-
         public Document AddDocument(string name, SyntaxNode syntaxRoot, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Document AddDocument(string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Document AddDocument(string name, string text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Project AddMetadataReference(MetadataReference metadataReference) { throw null; }
-
         public Project AddMetadataReferences(System.Collections.Generic.IEnumerable<MetadataReference> metadataReferences) { throw null; }
-
         public Project AddProjectReference(ProjectReference projectReference) { throw null; }
-
         public Project AddProjectReferences(System.Collections.Generic.IEnumerable<ProjectReference> projectReferences) { throw null; }
-
         public bool ContainsAdditionalDocument(DocumentId documentId) { throw null; }
-
         public bool ContainsAnalyzerConfigDocument(DocumentId documentId) { throw null; }
-
         public bool ContainsDocument(DocumentId documentId) { throw null; }
-
         public TextDocument? GetAdditionalDocument(DocumentId documentId) { throw null; }
-
         public AnalyzerConfigDocument? GetAnalyzerConfigDocument(DocumentId documentId) { throw null; }
-
         public ProjectChanges GetChanges(Project oldProject) { throw null; }
-
         public System.Threading.Tasks.Task<Compilation?> GetCompilationAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetDependentSemanticVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetDependentVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public Document? GetDocument(DocumentId documentId) { throw null; }
-
         public Document? GetDocument(SyntaxTree? syntaxTree) { throw null; }
-
         public DocumentId? GetDocumentId(SyntaxTree? syntaxTree) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetLatestDocumentVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetSemanticVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.ValueTask<SourceGeneratedDocument?> GetSourceGeneratedDocumentAsync(DocumentId documentId, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.ValueTask<System.Collections.Generic.IEnumerable<SourceGeneratedDocument>> GetSourceGeneratedDocumentsAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public Project RemoveAdditionalDocument(DocumentId documentId) { throw null; }
-
         public Project RemoveAdditionalDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Project RemoveAnalyzerConfigDocument(DocumentId documentId) { throw null; }
-
         public Project RemoveAnalyzerConfigDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Project RemoveAnalyzerReference(Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Project RemoveDocument(DocumentId documentId) { throw null; }
-
         public Project RemoveDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Project RemoveMetadataReference(MetadataReference metadataReference) { throw null; }
-
         public Project RemoveProjectReference(ProjectReference projectReference) { throw null; }
-
         public bool TryGetCompilation(out Compilation? compilation) { throw null; }
-
         public Project WithAnalyzerReferences(System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferencs) { throw null; }
-
         public Project WithAssemblyName(string assemblyName) { throw null; }
-
         public Project WithCompilationOptions(CompilationOptions options) { throw null; }
-
         public Project WithDefaultNamespace(string defaultNamespace) { throw null; }
-
         public Project WithMetadataReferences(System.Collections.Generic.IEnumerable<MetadataReference> metadataReferences) { throw null; }
-
         public Project WithParseOptions(ParseOptions options) { throw null; }
-
         public Project WithProjectReferences(System.Collections.Generic.IEnumerable<ProjectReference> projectReferences) { throw null; }
     }
-
     public partial struct ProjectChanges
     {
         private object _dummy;
         private int _dummyPrimitive;
         public Project NewProject { get { throw null; } }
-
         public Project OldProject { get { throw null; } }
-
         public ProjectId ProjectId { get { throw null; } }
 
         public System.Collections.Generic.IEnumerable<DocumentId> GetAddedAdditionalDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetAddedAnalyzerConfigDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> GetAddedAnalyzerReferences() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetAddedDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<MetadataReference> GetAddedMetadataReferences() { throw null; }
-
         public System.Collections.Generic.IEnumerable<ProjectReference> GetAddedProjectReferences() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetChangedAdditionalDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetChangedAnalyzerConfigDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetChangedDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetChangedDocuments(bool onlyGetDocumentsWithTextChanges) { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetRemovedAdditionalDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetRemovedAnalyzerConfigDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> GetRemovedAnalyzerReferences() { throw null; }
-
         public System.Collections.Generic.IEnumerable<DocumentId> GetRemovedDocuments() { throw null; }
-
         public System.Collections.Generic.IEnumerable<MetadataReference> GetRemovedMetadataReferences() { throw null; }
-
         public System.Collections.Generic.IEnumerable<ProjectReference> GetRemovedProjectReferences() { throw null; }
     }
 
     public partial class ProjectDependencyGraph
     {
         internal ProjectDependencyGraph() { }
-
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<ProjectId>> GetDependencySets(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Collections.Immutable.IImmutableSet<ProjectId> GetProjectsThatDirectlyDependOnThisProject(ProjectId projectId) { throw null; }
-
         public System.Collections.Immutable.IImmutableSet<ProjectId> GetProjectsThatThisProjectDirectlyDependsOn(ProjectId projectId) { throw null; }
-
         public System.Collections.Immutable.IImmutableSet<ProjectId> GetProjectsThatThisProjectTransitivelyDependsOn(ProjectId projectId) { throw null; }
-
         public System.Collections.Generic.IEnumerable<ProjectId> GetProjectsThatTransitivelyDependOnThisProject(ProjectId projectId) { throw null; }
-
         public System.Collections.Generic.IEnumerable<ProjectId> GetTopologicallySortedProjects(System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
-
     public partial class ProjectDiagnostic : WorkspaceDiagnostic
     {
         public ProjectDiagnostic(WorkspaceDiagnosticKind kind, string message, ProjectId projectId) : base(default, default!) { }
-
         public ProjectId ProjectId { get { throw null; } }
     }
 
     public sealed partial class ProjectId : System.IEquatable<ProjectId>
     {
         internal ProjectId() { }
-
         public System.Guid Id { get { throw null; } }
 
         public static ProjectId CreateFromSerialized(System.Guid id, string? debugName = null) { throw null; }
-
         public static ProjectId CreateNewId(string? debugName = null) { throw null; }
-
         public bool Equals(ProjectId? other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(ProjectId? left, ProjectId? right) { throw null; }
-
         public static bool operator !=(ProjectId? left, ProjectId? right) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public sealed partial class ProjectInfo
     {
         internal ProjectInfo() { }
-
         public System.Collections.Generic.IReadOnlyList<DocumentInfo> AdditionalDocuments { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<DocumentInfo> AnalyzerConfigDocuments { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<Diagnostics.AnalyzerReference> AnalyzerReferences { get { throw null; } }
-
         public string AssemblyName { get { throw null; } }
-
         public CompilationOptions? CompilationOptions { get { throw null; } }
-
         public CompilationOutputInfo CompilationOutputInfo { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<DocumentInfo> Documents { get { throw null; } }
-
         public string? FilePath { get { throw null; } }
-
         public System.Type? HostObjectType { get { throw null; } }
-
         public ProjectId Id { get { throw null; } }
-
         public bool IsSubmission { get { throw null; } }
-
         public string Language { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<MetadataReference> MetadataReferences { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public string? OutputFilePath { get { throw null; } }
-
         public string? OutputRefFilePath { get { throw null; } }
-
         public ParseOptions? ParseOptions { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<ProjectReference> ProjectReferences { get { throw null; } }
-
         public VersionStamp Version { get { throw null; } }
 
         public static ProjectInfo Create(ProjectId id, VersionStamp version, string name, string assemblyName, string language, string? filePath = null, string? outputFilePath = null, CompilationOptions? compilationOptions = null, ParseOptions? parseOptions = null, System.Collections.Generic.IEnumerable<DocumentInfo>? documents = null, System.Collections.Generic.IEnumerable<ProjectReference>? projectReferences = null, System.Collections.Generic.IEnumerable<MetadataReference>? metadataReferences = null, System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference>? analyzerReferences = null, System.Collections.Generic.IEnumerable<DocumentInfo>? additionalDocuments = null, bool isSubmission = false, System.Type? hostObjectType = null, string? outputRefFilePath = null) { throw null; }
-
         public static ProjectInfo Create(ProjectId id, VersionStamp version, string name, string assemblyName, string language, string? filePath, string? outputFilePath, CompilationOptions? compilationOptions, ParseOptions? parseOptions, System.Collections.Generic.IEnumerable<DocumentInfo>? documents, System.Collections.Generic.IEnumerable<ProjectReference>? projectReferences, System.Collections.Generic.IEnumerable<MetadataReference>? metadataReferences, System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference>? analyzerReferences, System.Collections.Generic.IEnumerable<DocumentInfo>? additionalDocuments, bool isSubmission, System.Type? hostObjectType) { throw null; }
-
         public ProjectInfo WithAdditionalDocuments(System.Collections.Generic.IEnumerable<DocumentInfo>? additionalDocuments) { throw null; }
-
         public ProjectInfo WithAnalyzerConfigDocuments(System.Collections.Generic.IEnumerable<DocumentInfo>? analyzerConfigDocuments) { throw null; }
-
         public ProjectInfo WithAnalyzerReferences(System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference>? analyzerReferences) { throw null; }
-
         public ProjectInfo WithAssemblyName(string assemblyName) { throw null; }
-
         public ProjectInfo WithCompilationOptions(CompilationOptions? compilationOptions) { throw null; }
-
         public ProjectInfo WithCompilationOutputInfo(in CompilationOutputInfo info) { throw null; }
-
         public ProjectInfo WithDefaultNamespace(string? defaultNamespace) { throw null; }
-
         public ProjectInfo WithDocuments(System.Collections.Generic.IEnumerable<DocumentInfo>? documents) { throw null; }
-
         public ProjectInfo WithFilePath(string? filePath) { throw null; }
-
         public ProjectInfo WithMetadataReferences(System.Collections.Generic.IEnumerable<MetadataReference>? metadataReferences) { throw null; }
-
         public ProjectInfo WithName(string name) { throw null; }
-
         public ProjectInfo WithOutputFilePath(string? outputFilePath) { throw null; }
-
         public ProjectInfo WithOutputRefFilePath(string? outputRefFilePath) { throw null; }
-
         public ProjectInfo WithParseOptions(ParseOptions? parseOptions) { throw null; }
-
         public ProjectInfo WithProjectReferences(System.Collections.Generic.IEnumerable<ProjectReference>? projectReferences) { throw null; }
-
         public ProjectInfo WithVersion(VersionStamp version) { throw null; }
     }
-
     public sealed partial class ProjectReference : System.IEquatable<ProjectReference>
     {
         public ProjectReference(ProjectId projectId, System.Collections.Immutable.ImmutableArray<string> aliases = default, bool embedInteropTypes = false) { }
-
         public System.Collections.Immutable.ImmutableArray<string> Aliases { get { throw null; } }
-
         public bool EmbedInteropTypes { get { throw null; } }
-
         public ProjectId ProjectId { get { throw null; } }
 
         public bool Equals(ProjectReference reference) { throw null; }
-
         public override bool Equals(object obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(ProjectReference left, ProjectReference right) { throw null; }
-
         public static bool operator !=(ProjectReference left, ProjectReference right) { throw null; }
     }
 
     public partial class Solution
     {
         internal Solution() { }
-
         public System.Collections.Generic.IReadOnlyList<Diagnostics.AnalyzerReference> AnalyzerReferences { get { throw null; } }
-
         public string? FilePath { get { throw null; } }
-
         public SolutionId Id { get { throw null; } }
-
         public Options.OptionSet Options { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<ProjectId> ProjectIds { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<Project> Projects { get { throw null; } }
-
         public VersionStamp Version { get { throw null; } }
-
         public Workspace Workspace { get { throw null; } }
 
         public Solution AddAdditionalDocument(DocumentId documentId, string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Solution AddAdditionalDocument(DocumentId documentId, string name, string text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Solution AddAdditionalDocument(DocumentInfo documentInfo) { throw null; }
-
         public Solution AddAdditionalDocuments(System.Collections.Immutable.ImmutableArray<DocumentInfo> documentInfos) { throw null; }
-
         public Solution AddAnalyzerConfigDocument(DocumentId documentId, string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Solution AddAnalyzerConfigDocuments(System.Collections.Immutable.ImmutableArray<DocumentInfo> documentInfos) { throw null; }
-
         public Solution AddAnalyzerReference(Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Solution AddAnalyzerReference(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Solution AddAnalyzerReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferences) { throw null; }
-
         public Solution AddAnalyzerReferences(System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferences) { throw null; }
-
         public Solution AddDocument(DocumentId documentId, string name, SyntaxNode syntaxRoot, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null, bool isGenerated = false, PreservationMode preservationMode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution AddDocument(DocumentId documentId, string name, Text.SourceText text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null, bool isGenerated = false) { throw null; }
-
         public Solution AddDocument(DocumentId documentId, string name, TextLoader loader, System.Collections.Generic.IEnumerable<string>? folders = null) { throw null; }
-
         public Solution AddDocument(DocumentId documentId, string name, string text, System.Collections.Generic.IEnumerable<string>? folders = null, string? filePath = null) { throw null; }
-
         public Solution AddDocument(DocumentInfo documentInfo) { throw null; }
-
         public Solution AddDocuments(System.Collections.Immutable.ImmutableArray<DocumentInfo> documentInfos) { throw null; }
-
         public Solution AddMetadataReference(ProjectId projectId, MetadataReference metadataReference) { throw null; }
-
         public Solution AddMetadataReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<MetadataReference> metadataReferences) { throw null; }
-
         public Solution AddProject(ProjectId projectId, string name, string assemblyName, string language) { throw null; }
-
         public Solution AddProject(ProjectInfo projectInfo) { throw null; }
-
         public Project AddProject(string name, string assemblyName, string language) { throw null; }
-
         public Solution AddProjectReference(ProjectId projectId, ProjectReference projectReference) { throw null; }
-
         public Solution AddProjectReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<ProjectReference> projectReferences) { throw null; }
-
         public bool ContainsAdditionalDocument(DocumentId? documentId) { throw null; }
-
         public bool ContainsAnalyzerConfigDocument(DocumentId? documentId) { throw null; }
-
         public bool ContainsDocument(DocumentId? documentId) { throw null; }
-
         public bool ContainsProject(ProjectId? projectId) { throw null; }
-
         public TextDocument? GetAdditionalDocument(DocumentId? documentId) { throw null; }
-
         public AnalyzerConfigDocument? GetAnalyzerConfigDocument(DocumentId? documentId) { throw null; }
-
         public SolutionChanges GetChanges(Solution oldSolution) { throw null; }
-
         public Document? GetDocument(DocumentId? documentId) { throw null; }
-
         public Document? GetDocument(SyntaxTree? syntaxTree) { throw null; }
-
         public DocumentId? GetDocumentId(SyntaxTree? syntaxTree, ProjectId? projectId) { throw null; }
-
         public DocumentId? GetDocumentId(SyntaxTree? syntaxTree) { throw null; }
-
         public System.Collections.Immutable.ImmutableArray<DocumentId> GetDocumentIdsWithFilePath(string? filePath) { throw null; }
-
         [System.Obsolete("This method no longer produces a Solution that does not share state and is no longer necessary to call.", false)]
         public Solution GetIsolatedSolution() { throw null; }
-
         public VersionStamp GetLatestProjectVersion() { throw null; }
-
         public Project? GetProject(IAssemblySymbol assemblySymbol, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public Project? GetProject(ProjectId? projectId) { throw null; }
-
         public ProjectDependencyGraph GetProjectDependencyGraph() { throw null; }
-
         public System.Threading.Tasks.ValueTask<SourceGeneratedDocument?> GetSourceGeneratedDocumentAsync(DocumentId documentId, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public Solution RemoveAdditionalDocument(DocumentId documentId) { throw null; }
-
         public Solution RemoveAdditionalDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Solution RemoveAnalyzerConfigDocument(DocumentId documentId) { throw null; }
-
         public Solution RemoveAnalyzerConfigDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Solution RemoveAnalyzerReference(Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Solution RemoveAnalyzerReference(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { throw null; }
-
         public Solution RemoveDocument(DocumentId documentId) { throw null; }
-
         public Solution RemoveDocuments(System.Collections.Immutable.ImmutableArray<DocumentId> documentIds) { throw null; }
-
         public Solution RemoveMetadataReference(ProjectId projectId, MetadataReference metadataReference) { throw null; }
-
         public Solution RemoveProject(ProjectId projectId) { throw null; }
-
         public Solution RemoveProjectReference(ProjectId projectId, ProjectReference projectReference) { throw null; }
-
         public Solution WithAdditionalDocumentText(DocumentId documentId, Text.SourceText text, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithAdditionalDocumentText(DocumentId documentId, TextAndVersion textAndVersion, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithAdditionalDocumentTextLoader(DocumentId documentId, TextLoader loader, PreservationMode mode) { throw null; }
-
         public Solution WithAnalyzerConfigDocumentText(DocumentId documentId, Text.SourceText text, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithAnalyzerConfigDocumentText(DocumentId documentId, TextAndVersion textAndVersion, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithAnalyzerConfigDocumentTextLoader(DocumentId documentId, TextLoader loader, PreservationMode mode) { throw null; }
-
         public Solution WithAnalyzerReferences(System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferences) { throw null; }
-
         public Solution WithDocumentFilePath(DocumentId documentId, string filePath) { throw null; }
-
         public Solution WithDocumentFolders(DocumentId documentId, System.Collections.Generic.IEnumerable<string>? folders) { throw null; }
-
         public Solution WithDocumentName(DocumentId documentId, string name) { throw null; }
-
         public Solution WithDocumentSourceCodeKind(DocumentId documentId, SourceCodeKind sourceCodeKind) { throw null; }
-
         public Solution WithDocumentSyntaxRoot(DocumentId documentId, SyntaxNode root, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithDocumentText(DocumentId documentId, Text.SourceText text, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithDocumentText(DocumentId documentId, TextAndVersion textAndVersion, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithDocumentText(System.Collections.Generic.IEnumerable<DocumentId?> documentIds, Text.SourceText text, PreservationMode mode = PreservationMode.PreserveValue) { throw null; }
-
         public Solution WithDocumentTextLoader(DocumentId documentId, TextLoader loader, PreservationMode mode) { throw null; }
-
         public Solution WithOptions(Options.OptionSet options) { throw null; }
-
         public Solution WithProjectAnalyzerReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> analyzerReferences) { throw null; }
-
         public Solution WithProjectAssemblyName(ProjectId projectId, string assemblyName) { throw null; }
-
         public Solution WithProjectCompilationOptions(ProjectId projectId, CompilationOptions options) { throw null; }
-
         public Solution WithProjectCompilationOutputInfo(ProjectId projectId, in CompilationOutputInfo info) { throw null; }
-
         public Solution WithProjectDefaultNamespace(ProjectId projectId, string? defaultNamespace) { throw null; }
-
         public Solution WithProjectDocumentsOrder(ProjectId projectId, System.Collections.Immutable.ImmutableList<DocumentId> documentIds) { throw null; }
-
         public Solution WithProjectFilePath(ProjectId projectId, string? filePath) { throw null; }
-
         public Solution WithProjectMetadataReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<MetadataReference> metadataReferences) { throw null; }
-
         public Solution WithProjectName(ProjectId projectId, string name) { throw null; }
-
         public Solution WithProjectOutputFilePath(ProjectId projectId, string? outputFilePath) { throw null; }
-
         public Solution WithProjectOutputRefFilePath(ProjectId projectId, string? outputRefFilePath) { throw null; }
-
         public Solution WithProjectParseOptions(ProjectId projectId, ParseOptions options) { throw null; }
-
         public Solution WithProjectReferences(ProjectId projectId, System.Collections.Generic.IEnumerable<ProjectReference>? projectReferences) { throw null; }
     }
-
     public readonly partial struct SolutionChanges
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public readonly System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> GetAddedAnalyzerReferences() { throw null; }
-
         public readonly System.Collections.Generic.IEnumerable<Project> GetAddedProjects() { throw null; }
-
         public readonly System.Collections.Generic.IEnumerable<ProjectChanges> GetProjectChanges() { throw null; }
-
         public readonly System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference> GetRemovedAnalyzerReferences() { throw null; }
-
         public readonly System.Collections.Generic.IEnumerable<Project> GetRemovedProjects() { throw null; }
     }
 
     public sealed partial class SolutionId : System.IEquatable<SolutionId>
     {
         internal SolutionId() { }
-
         public System.Guid Id { get { throw null; } }
 
         public static SolutionId CreateFromSerialized(System.Guid id, string debugName = null) { throw null; }
-
         public static SolutionId CreateNewId(string debugName = null) { throw null; }
-
         public bool Equals(SolutionId other) { throw null; }
-
         public override bool Equals(object obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static bool operator ==(SolutionId left, SolutionId right) { throw null; }
-
         public static bool operator !=(SolutionId left, SolutionId right) { throw null; }
     }
 
     public sealed partial class SolutionInfo
     {
         internal SolutionInfo() { }
-
         public System.Collections.Generic.IReadOnlyList<Diagnostics.AnalyzerReference> AnalyzerReferences { get { throw null; } }
-
         public string? FilePath { get { throw null; } }
-
         public SolutionId Id { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<ProjectInfo> Projects { get { throw null; } }
-
         public VersionStamp Version { get { throw null; } }
 
         public static SolutionInfo Create(SolutionId id, VersionStamp version, string? filePath = null, System.Collections.Generic.IEnumerable<ProjectInfo>? projects = null, System.Collections.Generic.IEnumerable<Diagnostics.AnalyzerReference>? analyzerReferences = null) { throw null; }
-
         public static SolutionInfo Create(SolutionId id, VersionStamp version, string? filePath, System.Collections.Generic.IEnumerable<ProjectInfo>? projects) { throw null; }
     }
-
     public sealed partial class SourceGeneratedDocument : Document
     {
         internal SourceGeneratedDocument() { }
-
         public string HintName { get { throw null; } }
     }
 
     public sealed partial class TextAndVersion
     {
         internal TextAndVersion() { }
-
         public string FilePath { get { throw null; } }
-
         public Text.SourceText Text { get { throw null; } }
-
         public VersionStamp Version { get { throw null; } }
 
         public static TextAndVersion Create(Text.SourceText text, VersionStamp version, string? filePath = null) { throw null; }
     }
-
     public partial class TextDocument
     {
         internal TextDocument() { }
-
         public string? FilePath { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<string> Folders { get { throw null; } }
-
         public DocumentId Id { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public Project Project { get { throw null; } }
 
         public System.Threading.Tasks.Task<Text.SourceText> GetTextAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<VersionStamp> GetTextVersionAsync(System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public bool TryGetText(out Text.SourceText? text) { throw null; }
-
         public bool TryGetTextVersion(out VersionStamp version) { throw null; }
     }
-
     public enum TextDocumentKind
     {
         Document = 0,
@@ -1004,339 +659,202 @@ namespace Microsoft.CodeAnalysis
     public abstract partial class TextLoader
     {
         public static TextLoader From(Text.SourceTextContainer container, VersionStamp version, string? filePath = null) { throw null; }
-
         public static TextLoader From(TextAndVersion textAndVersion) { throw null; }
-
         public abstract System.Threading.Tasks.Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, System.Threading.CancellationToken cancellationToken);
     }
-
     public readonly partial struct VersionStamp : System.IEquatable<VersionStamp>
     {
         private readonly int _dummyPrimitive;
         public static VersionStamp Default { get { throw null; } }
 
         public static VersionStamp Create() { throw null; }
-
         public static VersionStamp Create(System.DateTime utcTimeLastModified) { throw null; }
-
         public readonly bool Equals(VersionStamp version) { throw null; }
-
         public override readonly bool Equals(object? obj) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public readonly VersionStamp GetNewerVersion() { throw null; }
-
         public readonly VersionStamp GetNewerVersion(VersionStamp version) { throw null; }
-
         public static bool operator ==(VersionStamp left, VersionStamp right) { throw null; }
-
         public static bool operator !=(VersionStamp left, VersionStamp right) { throw null; }
-
         public override readonly string ToString() { throw null; }
     }
 
     public abstract partial class Workspace : System.IDisposable
     {
         protected Workspace(Host.HostServices host, string? workspaceKind) { }
-
         public virtual bool CanOpenDocuments { get { throw null; } }
-
         public Solution CurrentSolution { get { throw null; } }
-
         public string? Kind { get { throw null; } }
-
         public Options.OptionSet Options { get { throw null; } set { } }
-
         protected internal virtual bool PartialSemanticsEnabled { get { throw null; } }
-
         public Host.HostWorkspaceServices Services { get { throw null; } }
 
-        public event System.EventHandler<DocumentActiveContextChangedEventArgs> DocumentActiveContextChanged { add { } remove { } }
+        public event System.EventHandler<DocumentActiveContextChangedEventArgs> DocumentActiveContextChanged {
+            add { }
+            remove { }
+        }
 
-        public event System.EventHandler<DocumentEventArgs> DocumentClosed { add { } remove { } }
+        public event System.EventHandler<DocumentEventArgs> DocumentClosed {
+            add { }
+            remove { }
+        }
 
-        public event System.EventHandler<DocumentEventArgs> DocumentOpened { add { } remove { } }
+        public event System.EventHandler<DocumentEventArgs> DocumentOpened {
+            add { }
+            remove { }
+        }
 
-        public event System.EventHandler<WorkspaceChangeEventArgs> WorkspaceChanged { add { } remove { } }
+        public event System.EventHandler<WorkspaceChangeEventArgs> WorkspaceChanged {
+            add { }
+            remove { }
+        }
 
-        public event System.EventHandler<WorkspaceDiagnosticEventArgs> WorkspaceFailed { add { } remove { } }
+        public event System.EventHandler<WorkspaceDiagnosticEventArgs> WorkspaceFailed {
+            add { }
+            remove { }
+        }
 
         protected virtual Project AdjustReloadedProject(Project oldProject, Project reloadedProject) { throw null; }
-
         protected virtual Solution AdjustReloadedSolution(Solution oldSolution, Solution reloadedSolution) { throw null; }
-
         protected virtual void ApplyAdditionalDocumentAdded(DocumentInfo info, Text.SourceText text) { }
-
         protected virtual void ApplyAdditionalDocumentRemoved(DocumentId documentId) { }
-
         protected virtual void ApplyAdditionalDocumentTextChanged(DocumentId id, Text.SourceText text) { }
-
         protected virtual void ApplyAnalyzerConfigDocumentAdded(DocumentInfo info, Text.SourceText text) { }
-
         protected virtual void ApplyAnalyzerConfigDocumentRemoved(DocumentId documentId) { }
-
         protected virtual void ApplyAnalyzerConfigDocumentTextChanged(DocumentId id, Text.SourceText text) { }
-
         protected virtual void ApplyAnalyzerReferenceAdded(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected virtual void ApplyAnalyzerReferenceRemoved(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected virtual void ApplyCompilationOptionsChanged(ProjectId projectId, CompilationOptions options) { }
-
         protected virtual void ApplyDocumentAdded(DocumentInfo info, Text.SourceText text) { }
-
         protected virtual void ApplyDocumentInfoChanged(DocumentId id, DocumentInfo info) { }
-
         protected virtual void ApplyDocumentRemoved(DocumentId documentId) { }
-
         protected virtual void ApplyDocumentTextChanged(DocumentId id, Text.SourceText text) { }
-
         protected virtual void ApplyMetadataReferenceAdded(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected virtual void ApplyMetadataReferenceRemoved(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected virtual void ApplyParseOptionsChanged(ProjectId projectId, ParseOptions options) { }
-
         protected virtual void ApplyProjectAdded(ProjectInfo project) { }
-
         protected virtual void ApplyProjectChanges(ProjectChanges projectChanges) { }
-
         protected virtual void ApplyProjectReferenceAdded(ProjectId projectId, ProjectReference projectReference) { }
-
         protected virtual void ApplyProjectReferenceRemoved(ProjectId projectId, ProjectReference projectReference) { }
-
         protected virtual void ApplyProjectRemoved(ProjectId projectId) { }
-
         public virtual bool CanApplyChange(ApplyChangesKind feature) { throw null; }
-
         protected virtual bool CanApplyCompilationOptionChange(CompilationOptions oldOptions, CompilationOptions newOptions, Project project) { throw null; }
-
         public virtual bool CanApplyParseOptionChange(ParseOptions oldOptions, ParseOptions newOptions, Project project) { throw null; }
-
         protected void CheckAdditionalDocumentIsInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckAdditionalDocumentIsNotInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckAnalyzerConfigDocumentIsInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckAnalyzerConfigDocumentIsNotInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckCanOpenDocuments() { }
-
         protected virtual void CheckDocumentCanBeRemoved(DocumentId documentId) { }
-
         protected void CheckDocumentIsClosed(DocumentId documentId) { }
-
         protected void CheckDocumentIsInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckDocumentIsNotInCurrentSolution(DocumentId documentId) { }
-
         protected void CheckDocumentIsOpen(DocumentId documentId) { }
-
         protected virtual void CheckProjectCanBeRemoved(ProjectId projectId) { }
-
         protected void CheckProjectDoesNotContainOpenDocuments(ProjectId projectId) { }
-
         protected void CheckProjectDoesNotHaveAnalyzerReference(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected void CheckProjectDoesNotHaveMetadataReference(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected void CheckProjectDoesNotHaveProjectReference(ProjectId fromProjectId, ProjectReference projectReference) { }
-
         protected void CheckProjectDoesNotHaveTransitiveProjectReference(ProjectId fromProjectId, ProjectId toProjectId) { }
-
         protected void CheckProjectHasAnalyzerReference(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected void CheckProjectHasMetadataReference(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected void CheckProjectHasProjectReference(ProjectId fromProjectId, ProjectReference projectReference) { }
-
         protected void CheckProjectIsInCurrentSolution(ProjectId projectId) { }
-
         protected void CheckProjectIsNotInCurrentSolution(ProjectId projectId) { }
-
         protected void CheckSolutionIsEmpty() { }
-
         protected internal virtual void ClearDocumentData(DocumentId documentId) { }
-
         [System.Obsolete("The isSolutionClosing parameter is now obsolete. Please call the overload without that parameter.")]
         protected void ClearOpenDocument(DocumentId documentId, bool isSolutionClosing) { }
-
         protected void ClearOpenDocument(DocumentId documentId) { }
-
         protected virtual void ClearProjectData(ProjectId projectId) { }
-
         protected void ClearSolution() { }
-
         protected virtual void ClearSolutionData() { }
-
         public virtual void CloseAdditionalDocument(DocumentId documentId) { }
-
         public virtual void CloseAnalyzerConfigDocument(DocumentId documentId) { }
-
         public virtual void CloseDocument(DocumentId documentId) { }
-
         protected internal Solution CreateSolution(SolutionId id) { throw null; }
-
         protected internal Solution CreateSolution(SolutionInfo solutionInfo) { throw null; }
-
         public void Dispose() { }
-
         protected virtual void Dispose(bool finalize) { }
-
         protected virtual string GetAdditionalDocumentName(DocumentId documentId) { throw null; }
-
         protected virtual string GetAnalyzerConfigDocumentName(DocumentId documentId) { throw null; }
-
         public virtual DocumentId? GetDocumentIdInCurrentContext(Text.SourceTextContainer container) { throw null; }
-
         protected virtual string GetDocumentName(DocumentId documentId) { throw null; }
-
         public virtual System.Collections.Generic.IEnumerable<DocumentId> GetOpenDocumentIds(ProjectId? projectId = null) { throw null; }
-
         protected virtual string GetProjectName(ProjectId projectId) { throw null; }
-
         public virtual System.Collections.Generic.IEnumerable<DocumentId> GetRelatedDocumentIds(Text.SourceTextContainer container) { throw null; }
-
         public static WorkspaceRegistration GetWorkspaceRegistration(Text.SourceTextContainer? textContainer) { throw null; }
-
         public virtual bool IsDocumentOpen(DocumentId documentId) { throw null; }
-
         protected internal void OnAdditionalDocumentAdded(DocumentInfo documentInfo) { }
-
         protected internal void OnAdditionalDocumentClosed(DocumentId documentId, TextLoader reloader) { }
-
         protected internal void OnAdditionalDocumentOpened(DocumentId documentId, Text.SourceTextContainer textContainer, bool isCurrentContext = true) { }
-
         protected internal void OnAdditionalDocumentRemoved(DocumentId documentId) { }
-
         protected internal void OnAdditionalDocumentTextChanged(DocumentId documentId, Text.SourceText newText, PreservationMode mode) { }
-
         protected internal void OnAdditionalDocumentTextLoaderChanged(DocumentId documentId, TextLoader loader) { }
-
         protected internal void OnAnalyzerConfigDocumentAdded(DocumentInfo documentInfo) { }
-
         protected internal void OnAnalyzerConfigDocumentClosed(DocumentId documentId, TextLoader reloader) { }
-
         protected internal void OnAnalyzerConfigDocumentOpened(DocumentId documentId, Text.SourceTextContainer textContainer, bool isCurrentContext = true) { }
-
         protected internal void OnAnalyzerConfigDocumentRemoved(DocumentId documentId) { }
-
         protected internal void OnAnalyzerConfigDocumentTextChanged(DocumentId documentId, Text.SourceText newText, PreservationMode mode) { }
-
         protected internal void OnAnalyzerConfigDocumentTextLoaderChanged(DocumentId documentId, TextLoader loader) { }
-
         protected internal void OnAnalyzerReferenceAdded(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected internal void OnAnalyzerReferenceRemoved(ProjectId projectId, Diagnostics.AnalyzerReference analyzerReference) { }
-
         protected internal void OnAssemblyNameChanged(ProjectId projectId, string assemblyName) { }
-
         protected internal void OnCompilationOptionsChanged(ProjectId projectId, CompilationOptions options) { }
-
         protected internal void OnDocumentAdded(DocumentInfo documentInfo) { }
-
         protected internal void OnDocumentClosed(DocumentId documentId, TextLoader reloader, bool updateActiveContext = false) { }
-
         protected virtual void OnDocumentClosing(DocumentId documentId) { }
-
         protected internal void OnDocumentContextUpdated(DocumentId documentId) { }
-
         protected internal void OnDocumentInfoChanged(DocumentId documentId, DocumentInfo newInfo) { }
-
         protected internal void OnDocumentOpened(DocumentId documentId, Text.SourceTextContainer textContainer, bool isCurrentContext = true) { }
-
         protected internal void OnDocumentReloaded(DocumentInfo newDocumentInfo) { }
-
         protected internal void OnDocumentRemoved(DocumentId documentId) { }
-
         protected internal void OnDocumentsAdded(System.Collections.Immutable.ImmutableArray<DocumentInfo> documentInfos) { }
-
         protected internal void OnDocumentSourceCodeKindChanged(DocumentId documentId, SourceCodeKind sourceCodeKind) { }
-
         protected virtual void OnDocumentTextChanged(Document document) { }
-
         protected internal void OnDocumentTextChanged(DocumentId documentId, Text.SourceText newText, PreservationMode mode) { }
-
         protected internal void OnDocumentTextLoaderChanged(DocumentId documentId, TextLoader loader) { }
-
         protected internal void OnMetadataReferenceAdded(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected internal void OnMetadataReferenceRemoved(ProjectId projectId, MetadataReference metadataReference) { }
-
         protected internal void OnOutputFilePathChanged(ProjectId projectId, string? outputFilePath) { }
-
         protected internal void OnOutputRefFilePathChanged(ProjectId projectId, string? outputFilePath) { }
-
         protected internal void OnParseOptionsChanged(ProjectId projectId, ParseOptions options) { }
-
         protected internal void OnProjectAdded(ProjectInfo projectInfo) { }
-
         protected internal void OnProjectNameChanged(ProjectId projectId, string name, string? filePath) { }
-
         protected internal void OnProjectReferenceAdded(ProjectId projectId, ProjectReference projectReference) { }
-
         protected internal void OnProjectReferenceRemoved(ProjectId projectId, ProjectReference projectReference) { }
-
         protected internal virtual void OnProjectReloaded(ProjectInfo reloadedProjectInfo) { }
-
         protected internal virtual void OnProjectRemoved(ProjectId projectId) { }
-
         protected internal void OnSolutionAdded(SolutionInfo solutionInfo) { }
-
         protected internal void OnSolutionReloaded(SolutionInfo reloadedSolutionInfo) { }
-
         protected internal void OnSolutionRemoved() { }
-
         protected internal virtual void OnWorkspaceFailed(WorkspaceDiagnostic diagnostic) { }
-
         public virtual void OpenAdditionalDocument(DocumentId documentId, bool activate = true) { }
-
         public virtual void OpenAnalyzerConfigDocument(DocumentId documentId, bool activate = true) { }
-
         public virtual void OpenDocument(DocumentId documentId, bool activate = true) { }
-
         [System.Obsolete("This member is obsolete. Use the RaiseDocumentActiveContextChangedEventAsync(SourceTextContainer, DocumentId, DocumentId) overload instead.", true)]
         protected System.Threading.Tasks.Task RaiseDocumentActiveContextChangedEventAsync(Document document) { throw null; }
-
         protected System.Threading.Tasks.Task RaiseDocumentActiveContextChangedEventAsync(Text.SourceTextContainer sourceTextContainer, DocumentId oldActiveContextDocumentId, DocumentId newActiveContextDocumentId) { throw null; }
-
         protected System.Threading.Tasks.Task RaiseDocumentClosedEventAsync(Document document) { throw null; }
-
         protected System.Threading.Tasks.Task RaiseDocumentOpenedEventAsync(Document document) { throw null; }
-
         protected System.Threading.Tasks.Task RaiseWorkspaceChangedEventAsync(WorkspaceChangeKind kind, Solution oldSolution, Solution newSolution, ProjectId projectId = null, DocumentId documentId = null) { throw null; }
-
         protected void RegisterText(Text.SourceTextContainer textContainer) { }
-
         protected internal System.Threading.Tasks.Task ScheduleTask(System.Action action, string? taskName = "Workspace.Task") { throw null; }
-
         protected internal System.Threading.Tasks.Task<T> ScheduleTask<T>(System.Func<T> func, string? taskName = "Workspace.Task") { throw null; }
-
         protected Solution SetCurrentSolution(Solution solution) { throw null; }
-
         public virtual bool TryApplyChanges(Solution newSolution) { throw null; }
-
         public static bool TryGetWorkspace(Text.SourceTextContainer textContainer, out Workspace? workspace) { throw null; }
-
         protected void UnregisterText(Text.SourceTextContainer textContainer) { }
-
         protected void UpdateReferencesAfterAdd() { }
     }
 
     public partial class WorkspaceChangeEventArgs : System.EventArgs
     {
         public WorkspaceChangeEventArgs(WorkspaceChangeKind kind, Solution oldSolution, Solution newSolution, ProjectId? projectId = null, DocumentId? documentId = null) { }
-
         public DocumentId? DocumentId { get { throw null; } }
-
         public WorkspaceChangeKind Kind { get { throw null; } }
-
         public Solution NewSolution { get { throw null; } }
-
         public Solution OldSolution { get { throw null; } }
-
         public ProjectId? ProjectId { get { throw null; } }
     }
 
@@ -1369,18 +887,14 @@ namespace Microsoft.CodeAnalysis
     public partial class WorkspaceDiagnostic
     {
         public WorkspaceDiagnostic(WorkspaceDiagnosticKind kind, string message) { }
-
         public WorkspaceDiagnosticKind Kind { get { throw null; } }
-
         public string Message { get { throw null; } }
 
         public override string ToString() { throw null; }
     }
-
     public partial class WorkspaceDiagnosticEventArgs : System.EventArgs
     {
         public WorkspaceDiagnosticEventArgs(WorkspaceDiagnostic diagnostic) { }
-
         public WorkspaceDiagnostic Diagnostic { get { throw null; } }
     }
 
@@ -1400,24 +914,21 @@ namespace Microsoft.CodeAnalysis
         public const string MSBuild = "MSBuildWorkspace";
         public const string Preview = "Preview";
     }
-
     public sealed partial class WorkspaceRegistration
     {
         internal WorkspaceRegistration() { }
-
         public Workspace? Workspace { get { throw null; } }
 
-        public event System.EventHandler? WorkspaceChanged { add { } remove { } }
+        public event System.EventHandler? WorkspaceChanged {
+            add { }
+            remove { }
+        }
     }
-
     public abstract partial class XmlDocumentationProvider : DocumentationProvider
     {
         public static XmlDocumentationProvider CreateFromBytes(byte[] xmlDocCommentBytes) { throw null; }
-
         public static XmlDocumentationProvider CreateFromFile(string xmlDocCommentFilePath) { throw null; }
-
         protected override string GetDocumentationForSymbol(string documentationMemberID, System.Globalization.CultureInfo preferredCulture, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         protected abstract System.IO.Stream GetSourceStream(System.Threading.CancellationToken cancellationToken);
     }
 }
@@ -1495,30 +1006,23 @@ namespace Microsoft.CodeAnalysis.Classification
         public const string XmlLiteralText = "xml literal - text";
         public static System.Collections.Immutable.ImmutableArray<string> AdditiveTypeNames { get { throw null; } }
     }
-
     public partial struct ClassifiedSpan : System.IEquatable<ClassifiedSpan>
     {
         private object _dummy;
         private int _dummyPrimitive;
         public ClassifiedSpan(Text.TextSpan textSpan, string classificationType) { }
-
         public ClassifiedSpan(string classificationType, Text.TextSpan textSpan) { }
-
         public string ClassificationType { get { throw null; } }
-
         public Text.TextSpan TextSpan { get { throw null; } }
 
         public bool Equals(ClassifiedSpan other) { throw null; }
-
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
     }
 
     public static partial class Classifier
     {
         public static System.Collections.Generic.IEnumerable<ClassifiedSpan> GetClassifiedSpans(SemanticModel semanticModel, Text.TextSpan textSpan, Workspace workspace, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ClassifiedSpan>> GetClassifiedSpansAsync(Document document, Text.TextSpan textSpan, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
 }
@@ -1528,7 +1032,6 @@ namespace Microsoft.CodeAnalysis.CodeActions
     public sealed partial class ApplyChangesOperation : CodeActionOperation
     {
         public ApplyChangesOperation(Solution changedSolution) { }
-
         public Solution ChangedSolution { get { throw null; } }
 
         public override void Apply(Workspace workspace, System.Threading.CancellationToken cancellationToken) { }
@@ -1537,50 +1040,33 @@ namespace Microsoft.CodeAnalysis.CodeActions
     public abstract partial class CodeAction
     {
         public virtual string? EquivalenceKey { get { throw null; } }
-
         public virtual System.Collections.Immutable.ImmutableArray<string> Tags { get { throw null; } }
-
         public abstract string Title { get; }
 
         protected virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CodeActionOperation>> ComputeOperationsAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         protected virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public static CodeAction Create(string title, System.Collections.Immutable.ImmutableArray<CodeAction> nestedActions, bool isInlinable) { throw null; }
-
         public static CodeAction Create(string title, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Document>> createChangedDocument, string? equivalenceKey = null) { throw null; }
-
         public static CodeAction Create(string title, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Solution>> createChangedSolution, string? equivalenceKey = null) { throw null; }
-
         protected virtual System.Threading.Tasks.Task<Document> GetChangedDocumentAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         protected virtual System.Threading.Tasks.Task<Solution?> GetChangedSolutionAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<CodeActionOperation>> GetOperationsAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<CodeActionOperation>> GetPreviewOperationsAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         protected System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<CodeActionOperation>> PostProcessAsync(System.Collections.Generic.IEnumerable<CodeActionOperation> operations, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         protected virtual System.Threading.Tasks.Task<Document> PostProcessChangesAsync(Document document, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         protected System.Threading.Tasks.Task<Solution> PostProcessChangesAsync(Solution changedSolution, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
-
     public abstract partial class CodeActionOperation
     {
         public virtual string? Title { get { throw null; } }
 
         public virtual void Apply(Workspace workspace, System.Threading.CancellationToken cancellationToken) { }
     }
-
     public abstract partial class CodeActionWithOptions : CodeAction
     {
         protected abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CodeActionOperation>> ComputeOperationsAsync(object options, System.Threading.CancellationToken cancellationToken);
         protected override System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CodeActionOperation>> ComputeOperationsAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CodeActionOperation>?> GetOperationsAsync(object? options, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public abstract object? GetOptions(System.Threading.CancellationToken cancellationToken);
     }
 
@@ -1588,14 +1074,11 @@ namespace Microsoft.CodeAnalysis.CodeActions
     {
         public const string Kind = "CodeAction_Conflict";
         public static SyntaxAnnotation Create(string description) { throw null; }
-
         public static string? GetDescription(SyntaxAnnotation annotation) { throw null; }
     }
-
     public sealed partial class OpenDocumentOperation : CodeActionOperation
     {
         public OpenDocumentOperation(DocumentId documentId, bool activateIfAlreadyOpen = false) { }
-
         public DocumentId DocumentId { get { throw null; } }
 
         public override void Apply(Workspace workspace, System.Threading.CancellationToken cancellationToken) { }
@@ -1611,12 +1094,10 @@ namespace Microsoft.CodeAnalysis.CodeActions
         public const string Kind = "CodeAction_Rename";
         public static SyntaxAnnotation Create() { throw null; }
     }
-
     public static partial class WarningAnnotation
     {
         public const string Kind = "CodeAction_Warning";
         public static SyntaxAnnotation Create(string description) { throw null; }
-
         public static string? GetDescription(SyntaxAnnotation annotation) { throw null; }
     }
 }
@@ -1628,21 +1109,14 @@ namespace Microsoft.CodeAnalysis.CodeFixes
         private object _dummy;
         private int _dummyPrimitive;
         public CodeFixContext(Document document, Diagnostic diagnostic, System.Action<CodeActions.CodeAction, System.Collections.Immutable.ImmutableArray<Diagnostic>> registerCodeFix, System.Threading.CancellationToken cancellationToken) { }
-
         public CodeFixContext(Document document, Text.TextSpan span, System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics, System.Action<CodeActions.CodeAction, System.Collections.Immutable.ImmutableArray<Diagnostic>> registerCodeFix, System.Threading.CancellationToken cancellationToken) { }
-
         public System.Threading.CancellationToken CancellationToken { get { throw null; } }
-
         public System.Collections.Immutable.ImmutableArray<Diagnostic> Diagnostics { get { throw null; } }
-
         public Document Document { get { throw null; } }
-
         public Text.TextSpan Span { get { throw null; } }
 
         public void RegisterCodeFix(CodeActions.CodeAction action, Diagnostic diagnostic) { }
-
         public void RegisterCodeFix(CodeActions.CodeAction action, System.Collections.Generic.IEnumerable<Diagnostic> diagnostics) { }
-
         public void RegisterCodeFix(CodeActions.CodeAction action, System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics) { }
     }
 
@@ -1651,17 +1125,13 @@ namespace Microsoft.CodeAnalysis.CodeFixes
         public abstract System.Collections.Immutable.ImmutableArray<string> FixableDiagnosticIds { get; }
 
         public virtual FixAllProvider? GetFixAllProvider() { throw null; }
-
         public abstract System.Threading.Tasks.Task RegisterCodeFixesAsync(CodeFixContext context);
     }
-
     public abstract partial class DocumentBasedFixAllProvider : FixAllProvider
     {
         protected abstract System.Threading.Tasks.Task<Document?> FixAllAsync(FixAllContext fixAllContext, Document document, System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics);
         protected virtual string GetFixAllTitle(FixAllContext fixAllContext) { throw null; }
-
         public sealed override System.Threading.Tasks.Task<CodeActions.CodeAction?> GetFixAsync(FixAllContext fixAllContext) { throw null; }
-
         public sealed override System.Collections.Generic.IEnumerable<FixAllScope> GetSupportedFixAllScopes() { throw null; }
     }
 
@@ -1670,42 +1140,27 @@ namespace Microsoft.CodeAnalysis.CodeFixes
     public sealed partial class ExportCodeFixProviderAttribute : System.Composition.ExportAttribute
     {
         public ExportCodeFixProviderAttribute(string firstLanguage, params string[] additionalLanguages) { }
-
         public string[] Languages { get { throw null; } }
-
         public string? Name { get { throw null; } set { } }
     }
 
     public partial class FixAllContext
     {
         public FixAllContext(Document document, CodeFixProvider codeFixProvider, FixAllScope scope, string codeActionEquivalenceKey, System.Collections.Generic.IEnumerable<string> diagnosticIds, DiagnosticProvider fixAllDiagnosticProvider, System.Threading.CancellationToken cancellationToken) { }
-
         public FixAllContext(Project project, CodeFixProvider codeFixProvider, FixAllScope scope, string codeActionEquivalenceKey, System.Collections.Generic.IEnumerable<string> diagnosticIds, DiagnosticProvider fixAllDiagnosticProvider, System.Threading.CancellationToken cancellationToken) { }
-
         public System.Threading.CancellationToken CancellationToken { get { throw null; } }
-
         public string? CodeActionEquivalenceKey { get { throw null; } }
-
         public CodeFixProvider CodeFixProvider { get { throw null; } }
-
         public System.Collections.Immutable.ImmutableHashSet<string> DiagnosticIds { get { throw null; } }
-
         public Document? Document { get { throw null; } }
-
         public Project Project { get { throw null; } }
-
         public FixAllScope Scope { get { throw null; } }
-
         public Solution Solution { get { throw null; } }
 
         public System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Project project) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Diagnostic>> GetDocumentDiagnosticsAsync(Document document) { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Diagnostic>> GetProjectDiagnosticsAsync(Project project) { throw null; }
-
         public FixAllContext WithCancellationToken(System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public abstract partial class DiagnosticProvider
         {
             public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, System.Threading.CancellationToken cancellationToken);
@@ -1713,17 +1168,13 @@ namespace Microsoft.CodeAnalysis.CodeFixes
             public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, System.Threading.CancellationToken cancellationToken);
         }
     }
-
     public abstract partial class FixAllProvider
     {
         public static FixAllProvider Create(System.Func<FixAllContext, Document, System.Collections.Immutable.ImmutableArray<Diagnostic>, System.Threading.Tasks.Task<Document?>> fixAllAsync) { throw null; }
-
         public abstract System.Threading.Tasks.Task<CodeActions.CodeAction?> GetFixAsync(FixAllContext fixAllContext);
         public virtual System.Collections.Generic.IEnumerable<string> GetSupportedFixAllDiagnosticIds(CodeFixProvider originalCodeFixProvider) { throw null; }
-
         public virtual System.Collections.Generic.IEnumerable<FixAllScope> GetSupportedFixAllScopes() { throw null; }
     }
-
     public enum FixAllScope
     {
         Document = 0,
@@ -1745,11 +1196,8 @@ namespace Microsoft.CodeAnalysis.CodeRefactorings
         private object _dummy;
         private int _dummyPrimitive;
         public CodeRefactoringContext(Document document, Text.TextSpan span, System.Action<CodeActions.CodeAction> registerRefactoring, System.Threading.CancellationToken cancellationToken) { }
-
         public System.Threading.CancellationToken CancellationToken { get { throw null; } }
-
         public Document Document { get { throw null; } }
-
         public Text.TextSpan Span { get { throw null; } }
 
         public void RegisterRefactoring(CodeActions.CodeAction action) { }
@@ -1759,15 +1207,12 @@ namespace Microsoft.CodeAnalysis.CodeRefactorings
     {
         public abstract System.Threading.Tasks.Task ComputeRefactoringsAsync(CodeRefactoringContext context);
     }
-
     [System.Composition.MetadataAttribute]
     [System.AttributeUsage(System.AttributeTargets.Class)]
     public sealed partial class ExportCodeRefactoringProviderAttribute : System.Composition.ExportAttribute
     {
         public ExportCodeRefactoringProviderAttribute(string firstLanguage, params string[] additionalLanguages) { }
-
         public string[] Languages { get { throw null; } }
-
         public string? Name { get { throw null; } set { } }
     }
 }
@@ -1783,39 +1228,29 @@ namespace Microsoft.CodeAnalysis.CodeStyle
         public static readonly Options.PerLanguageOption<CodeStyleOption<bool>> QualifyMethodAccess;
         public static readonly Options.PerLanguageOption<CodeStyleOption<bool>> QualifyPropertyAccess;
     }
-
     public sealed partial class CodeStyleOption<T> : System.IEquatable<CodeStyleOption<T>>
     {
         public CodeStyleOption(T value, NotificationOption notification) { }
-
         public static CodeStyleOption<T> Default { get { throw null; } }
-
         public NotificationOption Notification { get { throw null; } set { } }
-
         public T Value { get { throw null; } set { } }
 
         public bool Equals(CodeStyleOption<T> other) { throw null; }
-
         public override bool Equals(object obj) { throw null; }
-
         public static CodeStyleOption<T> FromXElement(System.Xml.Linq.XElement element) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public System.Xml.Linq.XElement ToXElement() { throw null; }
     }
 
     public partial class NotificationOption
     {
         internal NotificationOption() { }
-
         public static readonly NotificationOption Error;
         public static readonly NotificationOption None;
         public static readonly NotificationOption Silent;
         public static readonly NotificationOption Suggestion;
         public static readonly NotificationOption Warning;
         public string Name { get { throw null; } set { } }
-
         public ReportDiagnostic Severity { get { throw null; } set { } }
 
         [System.Obsolete("Use Severity instead.")]
@@ -1840,12 +1275,9 @@ namespace Microsoft.CodeAnalysis.Differencing
     public sealed partial class EditScript<TNode>
     {
         internal EditScript() { }
-
         public System.Collections.Immutable.ImmutableArray<Edit<TNode>> Edits { get { throw null; } }
-
         public Match<TNode> Match { get { throw null; } }
     }
-
     public partial struct Edit<TNode> : System.IEquatable<Edit<TNode>>
     {
         private TreeComparer<TNode> _comparer;
@@ -1854,49 +1286,34 @@ namespace Microsoft.CodeAnalysis.Differencing
         private object _dummy;
         private int _dummyPrimitive;
         public EditKind Kind { get { throw null; } }
-
         public TNode NewNode { get { throw null; } }
-
         public TNode OldNode { get { throw null; } }
 
         public bool Equals(Edit<TNode> other) { throw null; }
-
         public override bool Equals(object obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
     }
 
     public sealed partial class Match<TNode>
     {
         internal Match() { }
-
         public TreeComparer<TNode> Comparer { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyDictionary<TNode, TNode> Matches { get { throw null; } }
-
         public TNode NewRoot { get { throw null; } }
-
         public TNode OldRoot { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyDictionary<TNode, TNode> ReverseMatches { get { throw null; } }
 
         public System.Collections.Generic.IEnumerable<Edit<TNode>> GetSequenceEdits(System.Collections.Generic.IEnumerable<TNode> oldNodes, System.Collections.Generic.IEnumerable<TNode> newNodes) { throw null; }
-
         public EditScript<TNode> GetTreeEdits() { throw null; }
-
         public bool TryGetNewNode(TNode oldNode, out TNode newNode) { throw null; }
-
         public bool TryGetOldNode(TNode newNode, out TNode oldNode) { throw null; }
     }
-
     public abstract partial class TreeComparer<TNode>
     {
         protected internal abstract int LabelCount { get; }
 
         public EditScript<TNode> ComputeEditScript(TNode oldRoot, TNode newRoot) { throw null; }
-
         public Match<TNode> ComputeMatch(TNode oldRoot, TNode newRoot, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TNode, TNode>>? knownMatches = null) { throw null; }
-
         protected internal abstract System.Collections.Generic.IEnumerable<TNode>? GetChildren(TNode node);
         protected internal abstract System.Collections.Generic.IEnumerable<TNode> GetDescendants(TNode node);
         public abstract double GetDistance(TNode oldNode, TNode newNode);
@@ -1949,152 +1366,86 @@ namespace Microsoft.CodeAnalysis.Editing
     {
         private int _dummyPrimitive;
         public static DeclarationModifiers Abstract { get { throw null; } }
-
         public static DeclarationModifiers Async { get { throw null; } }
-
         public static DeclarationModifiers Const { get { throw null; } }
-
         public static DeclarationModifiers Extern { get { throw null; } }
-
         public bool IsAbstract { get { throw null; } }
-
         public bool IsAsync { get { throw null; } }
-
         public bool IsConst { get { throw null; } }
-
         public bool IsExtern { get { throw null; } }
-
         public bool IsNew { get { throw null; } }
-
         public bool IsOverride { get { throw null; } }
-
         public bool IsPartial { get { throw null; } }
-
         public bool IsReadOnly { get { throw null; } }
-
         public bool IsRef { get { throw null; } }
-
         public bool IsSealed { get { throw null; } }
-
         public bool IsStatic { get { throw null; } }
-
         public bool IsUnsafe { get { throw null; } }
-
         public bool IsVirtual { get { throw null; } }
-
         public bool IsVolatile { get { throw null; } }
-
         public bool IsWithEvents { get { throw null; } }
-
         public bool IsWriteOnly { get { throw null; } }
-
         public static DeclarationModifiers New { get { throw null; } }
-
         public static DeclarationModifiers None { get { throw null; } }
-
         public static DeclarationModifiers Override { get { throw null; } }
-
         public static DeclarationModifiers Partial { get { throw null; } }
-
         public static DeclarationModifiers ReadOnly { get { throw null; } }
-
         public static DeclarationModifiers Ref { get { throw null; } }
-
         public static DeclarationModifiers Sealed { get { throw null; } }
-
         public static DeclarationModifiers Static { get { throw null; } }
-
         public static DeclarationModifiers Unsafe { get { throw null; } }
-
         public static DeclarationModifiers Virtual { get { throw null; } }
-
         public static DeclarationModifiers Volatile { get { throw null; } }
-
         public static DeclarationModifiers WithEvents { get { throw null; } }
-
         public static DeclarationModifiers WriteOnly { get { throw null; } }
 
         public bool Equals(DeclarationModifiers modifiers) { throw null; }
-
         public override bool Equals(object obj) { throw null; }
-
         public static DeclarationModifiers From(ISymbol symbol) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static DeclarationModifiers operator +(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public static DeclarationModifiers operator &(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public static DeclarationModifiers operator |(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public static bool operator ==(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public static bool operator !=(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public static DeclarationModifiers operator -(DeclarationModifiers left, DeclarationModifiers right) { throw null; }
-
         public override string ToString() { throw null; }
-
         public static bool TryParse(string value, out DeclarationModifiers modifiers) { throw null; }
-
         public DeclarationModifiers WithAsync(bool isAsync) { throw null; }
-
         public DeclarationModifiers WithIsAbstract(bool isAbstract) { throw null; }
-
         public DeclarationModifiers WithIsConst(bool isConst) { throw null; }
-
         public DeclarationModifiers WithIsExtern(bool isExtern) { throw null; }
-
         public DeclarationModifiers WithIsNew(bool isNew) { throw null; }
-
         public DeclarationModifiers WithIsOverride(bool isOverride) { throw null; }
-
         public DeclarationModifiers WithIsReadOnly(bool isReadOnly) { throw null; }
-
         public DeclarationModifiers WithIsRef(bool isRef) { throw null; }
-
         public DeclarationModifiers WithIsSealed(bool isSealed) { throw null; }
-
         public DeclarationModifiers WithIsStatic(bool isStatic) { throw null; }
-
         public DeclarationModifiers WithIsUnsafe(bool isUnsafe) { throw null; }
-
         public DeclarationModifiers WithIsVirtual(bool isVirtual) { throw null; }
-
         public DeclarationModifiers WithIsVolatile(bool isVolatile) { throw null; }
-
         public DeclarationModifiers WithIsWriteOnly(bool isWriteOnly) { throw null; }
-
         public DeclarationModifiers WithPartial(bool isPartial) { throw null; }
-
         public DeclarationModifiers WithWithEvents(bool withEvents) { throw null; }
     }
 
     public partial class DocumentEditor : SyntaxEditor
     {
         internal DocumentEditor() : base(default!, default!) { }
-
         public Document OriginalDocument { get { throw null; } }
-
         public SemanticModel SemanticModel { get { throw null; } }
 
         public static System.Threading.Tasks.Task<DocumentEditor> CreateAsync(Document document, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public Document GetChangedDocument() { throw null; }
     }
 
     public static partial class ImportAdder
     {
         public static System.Threading.Tasks.Task<Document> AddImportsAsync(Document document, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> AddImportsAsync(Document document, SyntaxAnnotation annotation, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> AddImportsAsync(Document document, Text.TextSpan span, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> AddImportsAsync(Document document, System.Collections.Generic.IEnumerable<Text.TextSpan> spans, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
-
     public enum OperatorKind
     {
         ImplicitConversion = 0,
@@ -2128,14 +1479,11 @@ namespace Microsoft.CodeAnalysis.Editing
     public partial class SolutionEditor
     {
         public SolutionEditor(Solution solution) { }
-
         public Solution OriginalSolution { get { throw null; } }
 
         public Solution GetChangedSolution() { throw null; }
-
         public System.Threading.Tasks.Task<DocumentEditor> GetDocumentEditorAsync(DocumentId id, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
-
     [System.Flags]
     public enum SpecialTypeConstraintKind
     {
@@ -2148,178 +1496,107 @@ namespace Microsoft.CodeAnalysis.Editing
     public sealed partial class SymbolEditor
     {
         internal SymbolEditor() { }
-
         public Solution ChangedSolution { get { throw null; } }
-
         public Solution OriginalSolution { get { throw null; } }
 
         public static SymbolEditor Create(Document document) { throw null; }
-
         public static SymbolEditor Create(Solution solution) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditAllDeclarationsAsync(ISymbol symbol, AsyncDeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditAllDeclarationsAsync(ISymbol symbol, DeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, AsyncDeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, DeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, ISymbol member, AsyncDeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, ISymbol member, DeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, Location location, AsyncDeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> EditOneDeclarationAsync(ISymbol symbol, Location location, DeclarationEditAction editAction, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Collections.Generic.IEnumerable<Document> GetChangedDocuments() { throw null; }
-
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SyntaxNode>> GetCurrentDeclarationsAsync(ISymbol symbol, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public System.Threading.Tasks.Task<ISymbol> GetCurrentSymbolAsync(ISymbol symbol, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public delegate System.Threading.Tasks.Task AsyncDeclarationEditAction(DocumentEditor editor, SyntaxNode declaration, System.Threading.CancellationToken cancellationToken);
         public delegate void DeclarationEditAction(DocumentEditor editor, SyntaxNode declaration);
     }
-
     public static partial class SymbolEditorExtensions
     {
         public static System.Threading.Tasks.Task<SyntaxNode> GetBaseOrInterfaceDeclarationReferenceAsync(this SymbolEditor editor, ISymbol symbol, ITypeSymbol baseOrInterfaceType, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<ISymbol> SetBaseTypeAsync(this SymbolEditor editor, INamedTypeSymbol symbol, ITypeSymbol newBaseType, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<ISymbol> SetBaseTypeAsync(this SymbolEditor editor, INamedTypeSymbol symbol, System.Func<SyntaxGenerator, SyntaxNode> getNewBaseType, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
-
     public partial class SyntaxEditor
     {
         public SyntaxEditor(SyntaxNode root, Workspace workspace) { }
-
         public SyntaxGenerator Generator { get { throw null; } }
-
         public SyntaxNode OriginalRoot { get { throw null; } }
 
         public SyntaxNode GetChangedRoot() { throw null; }
-
         public void InsertAfter(SyntaxNode node, SyntaxNode newNode) { }
-
         public void InsertAfter(SyntaxNode node, System.Collections.Generic.IEnumerable<SyntaxNode> newNodes) { }
-
         public void InsertBefore(SyntaxNode node, SyntaxNode newNode) { }
-
         public void InsertBefore(SyntaxNode node, System.Collections.Generic.IEnumerable<SyntaxNode> newNodes) { }
-
         public void RemoveNode(SyntaxNode node, SyntaxRemoveOptions options) { }
-
         public void RemoveNode(SyntaxNode node) { }
-
         public void ReplaceNode(SyntaxNode node, SyntaxNode newNode) { }
-
         public void ReplaceNode(SyntaxNode node, System.Func<SyntaxNode, SyntaxGenerator, SyntaxNode> computeReplacement) { }
-
         public void TrackNode(SyntaxNode node) { }
     }
-
     public static partial class SyntaxEditorExtensions
     {
         public static void AddAttribute(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode attribute) { }
-
         public static void AddAttributeArgument(this SyntaxEditor editor, SyntaxNode attributeDeclaration, SyntaxNode attributeArgument) { }
-
         public static void AddBaseType(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode baseType) { }
-
         public static void AddInterfaceType(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode interfaceType) { }
-
         public static void AddMember(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode member) { }
-
         public static void AddParameter(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode parameter) { }
-
         public static void AddReturnAttribute(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode attribute) { }
-
         public static void InsertMembers(this SyntaxEditor editor, SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> members) { }
-
         public static void InsertParameter(this SyntaxEditor editor, SyntaxNode declaration, int index, SyntaxNode parameter) { }
-
         public static void SetAccessibility(this SyntaxEditor editor, SyntaxNode declaration, Accessibility accessibility) { }
-
         public static void SetExpression(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode expression) { }
-
         public static void SetGetAccessorStatements(this SyntaxEditor editor, SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { }
-
         public static void SetModifiers(this SyntaxEditor editor, SyntaxNode declaration, DeclarationModifiers modifiers) { }
-
         public static void SetName(this SyntaxEditor editor, SyntaxNode declaration, string name) { }
-
         public static void SetSetAccessorStatements(this SyntaxEditor editor, SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { }
-
         public static void SetStatements(this SyntaxEditor editor, SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { }
-
         public static void SetType(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode type) { }
-
         public static void SetTypeConstraint(this SyntaxEditor editor, SyntaxNode declaration, string typeParameterName, SpecialTypeConstraintKind kind, System.Collections.Generic.IEnumerable<SyntaxNode> types) { }
-
         public static void SetTypeParameters(this SyntaxEditor editor, SyntaxNode declaration, System.Collections.Generic.IEnumerable<string> typeParameters) { }
     }
-
     public abstract partial class SyntaxGenerator : Host.ILanguageService
     {
         public static SyntaxRemoveOptions DefaultRemoveOptions;
         public SyntaxNode AddAccessors(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> accessors) { throw null; }
-
         public SyntaxNode AddAttributeArguments(SyntaxNode attributeDeclaration, System.Collections.Generic.IEnumerable<SyntaxNode> attributeArguments) { throw null; }
-
         public SyntaxNode AddAttributes(SyntaxNode declaration, params SyntaxNode[] attributes) { throw null; }
-
         public SyntaxNode AddAttributes(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> attributes) { throw null; }
-
         public abstract SyntaxNode AddBaseType(SyntaxNode declaration, SyntaxNode baseType);
         public abstract SyntaxNode AddEventHandler(SyntaxNode @event, SyntaxNode handler);
         public abstract SyntaxNode AddExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode AddInterfaceType(SyntaxNode declaration, SyntaxNode interfaceType);
         public SyntaxNode AddMembers(SyntaxNode declaration, params SyntaxNode[] members) { throw null; }
-
         public SyntaxNode AddMembers(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> members) { throw null; }
-
         public SyntaxNode AddNamespaceImports(SyntaxNode declaration, params SyntaxNode[] imports) { throw null; }
-
         public SyntaxNode AddNamespaceImports(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> imports) { throw null; }
-
         public SyntaxNode AddParameters(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> parameters) { throw null; }
-
         public SyntaxNode AddReturnAttributes(SyntaxNode declaration, params SyntaxNode[] attributes) { throw null; }
-
         public SyntaxNode AddReturnAttributes(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> attributes) { throw null; }
-
         public SyntaxNode AddSwitchSections(SyntaxNode switchStatement, System.Collections.Generic.IEnumerable<SyntaxNode> switchSections) { throw null; }
-
         public SyntaxNode AliasImportDeclaration(string aliasIdentifierName, INamespaceOrTypeSymbol symbol) { throw null; }
-
         public abstract SyntaxNode AliasImportDeclaration(string aliasIdentifierName, SyntaxNode name);
         public SyntaxNode Argument(RefKind refKind, SyntaxNode expression) { throw null; }
-
         public SyntaxNode Argument(SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode Argument(string name, RefKind refKind, SyntaxNode expression);
         public abstract SyntaxNode ArrayCreationExpression(SyntaxNode elementType, SyntaxNode size);
         public abstract SyntaxNode ArrayCreationExpression(SyntaxNode elementType, System.Collections.Generic.IEnumerable<SyntaxNode> elements);
         public abstract SyntaxNode ArrayTypeExpression(SyntaxNode type);
         public abstract SyntaxNode AsPrivateInterfaceImplementation(SyntaxNode declaration, SyntaxNode interfaceType, string interfaceMemberName);
         public SyntaxNode AsPrivateInterfaceImplementation(SyntaxNode declaration, SyntaxNode interfaceType) { throw null; }
-
         public abstract SyntaxNode AsPublicInterfaceImplementation(SyntaxNode declaration, SyntaxNode interfaceType, string interfaceMemberName);
         public SyntaxNode AsPublicInterfaceImplementation(SyntaxNode declaration, SyntaxNode interfaceType) { throw null; }
-
         public abstract SyntaxNode AssignmentStatement(SyntaxNode left, SyntaxNode right);
         public SyntaxNode Attribute(AttributeData attribute) { throw null; }
-
         public abstract SyntaxNode Attribute(SyntaxNode name, System.Collections.Generic.IEnumerable<SyntaxNode> attributeArguments = null);
         public SyntaxNode Attribute(string name, params SyntaxNode[] attributeArguments) { throw null; }
-
         public SyntaxNode Attribute(string name, System.Collections.Generic.IEnumerable<SyntaxNode> attributeArguments = null) { throw null; }
-
         public SyntaxNode AttributeArgument(SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode AttributeArgument(string name, SyntaxNode expression);
         public abstract SyntaxNode AwaitExpression(SyntaxNode expression);
         public abstract SyntaxNode BaseExpression();
@@ -2327,85 +1604,62 @@ namespace Microsoft.CodeAnalysis.Editing
         public abstract SyntaxNode BitwiseNotExpression(SyntaxNode operand);
         public abstract SyntaxNode BitwiseOrExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode CastExpression(ITypeSymbol type, SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode CastExpression(SyntaxNode type, SyntaxNode expression);
         public SyntaxNode CatchClause(ITypeSymbol type, string identifier, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public abstract SyntaxNode CatchClause(SyntaxNode type, string identifier, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode ClassDeclaration(string name, System.Collections.Generic.IEnumerable<string> typeParameters = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, SyntaxNode baseType = null, System.Collections.Generic.IEnumerable<SyntaxNode> interfaceTypes = null, System.Collections.Generic.IEnumerable<SyntaxNode> members = null);
         public abstract TNode ClearTrivia<TNode>(TNode node)
             where TNode : SyntaxNode;
         public abstract SyntaxNode CoalesceExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode CompilationUnit(params SyntaxNode[] declarations) { throw null; }
-
         public abstract SyntaxNode CompilationUnit(System.Collections.Generic.IEnumerable<SyntaxNode> declarations);
         public abstract SyntaxNode ConditionalAccessExpression(SyntaxNode expression, SyntaxNode whenNotNull);
         public abstract SyntaxNode ConditionalExpression(SyntaxNode condition, SyntaxNode whenTrue, SyntaxNode whenFalse);
         public SyntaxNode ConstructorDeclaration(IMethodSymbol constructorMethod, System.Collections.Generic.IEnumerable<SyntaxNode> baseConstructorArguments = null, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null) { throw null; }
-
         public abstract SyntaxNode ConstructorDeclaration(string containingTypeName = null, System.Collections.Generic.IEnumerable<SyntaxNode> parameters = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> baseConstructorArguments = null, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null);
         public SyntaxNode ConvertExpression(ITypeSymbol type, SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode ConvertExpression(SyntaxNode type, SyntaxNode expression);
         public SyntaxNode CustomEventDeclaration(IEventSymbol symbol, System.Collections.Generic.IEnumerable<SyntaxNode> addAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> removeAccessorStatements = null) { throw null; }
-
         public abstract SyntaxNode CustomEventDeclaration(string name, SyntaxNode type, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> parameters = null, System.Collections.Generic.IEnumerable<SyntaxNode> addAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> removeAccessorStatements = null);
         public SyntaxNode Declaration(ISymbol symbol) { throw null; }
-
         public abstract SyntaxNode DefaultExpression(ITypeSymbol type);
         public abstract SyntaxNode DefaultExpression(SyntaxNode type);
         public abstract SyntaxNode DefaultSwitchSection(System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode DelegateDeclaration(string name, System.Collections.Generic.IEnumerable<SyntaxNode> parameters = null, System.Collections.Generic.IEnumerable<string> typeParameters = null, SyntaxNode returnType = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default);
         public abstract SyntaxNode DivideExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode DottedName(string dottedName) { throw null; }
-
         public SyntaxNode ElementAccessExpression(SyntaxNode expression, params SyntaxNode[] arguments) { throw null; }
-
         public abstract SyntaxNode ElementAccessExpression(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> arguments);
         public SyntaxNode ElementBindingExpression(params SyntaxNode[] arguments) { throw null; }
-
         public abstract SyntaxNode ElementBindingExpression(System.Collections.Generic.IEnumerable<SyntaxNode> arguments);
         public abstract SyntaxNode EnumDeclaration(string name, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> members = null);
         public abstract SyntaxNode EnumMember(string name, SyntaxNode expression = null);
         public SyntaxNode EventDeclaration(IEventSymbol symbol) { throw null; }
-
         public abstract SyntaxNode EventDeclaration(string name, SyntaxNode type, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default);
         public abstract SyntaxNode ExitSwitchStatement();
         public abstract SyntaxNode ExpressionStatement(SyntaxNode expression);
         public SyntaxNode FalseLiteralExpression() { throw null; }
-
         public SyntaxNode FieldDeclaration(IFieldSymbol field, SyntaxNode initializer) { throw null; }
-
         public SyntaxNode FieldDeclaration(IFieldSymbol field) { throw null; }
-
         public abstract SyntaxNode FieldDeclaration(string name, SyntaxNode type, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, SyntaxNode initializer = null);
         public SyntaxNode GenericName(string identifier, params ITypeSymbol[] typeArguments) { throw null; }
-
         public SyntaxNode GenericName(string identifier, params SyntaxNode[] typeArguments) { throw null; }
-
         public SyntaxNode GenericName(string identifier, System.Collections.Generic.IEnumerable<ITypeSymbol> typeArguments) { throw null; }
-
         public abstract SyntaxNode GenericName(string identifier, System.Collections.Generic.IEnumerable<SyntaxNode> typeArguments);
         public abstract Accessibility GetAccessibility(SyntaxNode declaration);
         public SyntaxNode GetAccessor(SyntaxNode declaration, DeclarationKind kind) { throw null; }
-
         public abstract SyntaxNode GetAccessorDeclaration(Accessibility accessibility = Accessibility.NotApplicable, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null);
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetAccessors(SyntaxNode declaration);
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetAttributeArguments(SyntaxNode attributeDeclaration);
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetAttributes(SyntaxNode declaration);
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetBaseAndInterfaceTypes(SyntaxNode declaration);
         public SyntaxNode GetDeclaration(SyntaxNode node, DeclarationKind kind) { throw null; }
-
         public SyntaxNode GetDeclaration(SyntaxNode node) { throw null; }
-
         public abstract DeclarationKind GetDeclarationKind(SyntaxNode declaration);
         public abstract SyntaxNode GetExpression(SyntaxNode declaration);
         public static SyntaxGenerator GetGenerator(Document document) { throw null; }
-
         public static SyntaxGenerator GetGenerator(Project project) { throw null; }
-
         public static SyntaxGenerator GetGenerator(Workspace workspace, string language) { throw null; }
-
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetGetAccessorStatements(SyntaxNode declaration);
         public abstract System.Collections.Generic.IReadOnlyList<SyntaxNode> GetMembers(SyntaxNode declaration);
         public abstract DeclarationModifiers GetModifiers(SyntaxNode declaration);
@@ -2421,199 +1675,133 @@ namespace Microsoft.CodeAnalysis.Editing
         public abstract SyntaxNode GreaterThanOrEqualExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode IdentifierName(string identifier);
         public SyntaxNode IfStatement(SyntaxNode condition, System.Collections.Generic.IEnumerable<SyntaxNode> trueStatements, SyntaxNode falseStatement) { throw null; }
-
         public abstract SyntaxNode IfStatement(SyntaxNode condition, System.Collections.Generic.IEnumerable<SyntaxNode> trueStatements, System.Collections.Generic.IEnumerable<SyntaxNode> falseStatements = null);
         public SyntaxNode IndexerDeclaration(IPropertySymbol indexer, System.Collections.Generic.IEnumerable<SyntaxNode> getAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> setAccessorStatements = null) { throw null; }
-
         public abstract SyntaxNode IndexerDeclaration(System.Collections.Generic.IEnumerable<SyntaxNode> parameters, SyntaxNode type, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> getAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> setAccessorStatements = null);
         protected int IndexOf<T>(System.Collections.Generic.IReadOnlyList<T> list, T element) { throw null; }
-
         public abstract SyntaxNode InsertAccessors(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> accessors);
         public abstract SyntaxNode InsertAttributeArguments(SyntaxNode attributeDeclaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> attributeArguments);
         public SyntaxNode InsertAttributes(SyntaxNode declaration, int index, params SyntaxNode[] attributes) { throw null; }
-
         public abstract SyntaxNode InsertAttributes(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> attributes);
         public SyntaxNode InsertMembers(SyntaxNode declaration, int index, params SyntaxNode[] members) { throw null; }
-
         public abstract SyntaxNode InsertMembers(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> members);
         public SyntaxNode InsertNamespaceImports(SyntaxNode declaration, int index, params SyntaxNode[] imports) { throw null; }
-
         public abstract SyntaxNode InsertNamespaceImports(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> imports);
         public virtual SyntaxNode InsertNodesAfter(SyntaxNode root, SyntaxNode node, System.Collections.Generic.IEnumerable<SyntaxNode> newDeclarations) { throw null; }
-
         public virtual SyntaxNode InsertNodesBefore(SyntaxNode root, SyntaxNode node, System.Collections.Generic.IEnumerable<SyntaxNode> newDeclarations) { throw null; }
-
         public abstract SyntaxNode InsertParameters(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> parameters);
         public SyntaxNode InsertReturnAttributes(SyntaxNode declaration, int index, params SyntaxNode[] attributes) { throw null; }
-
         public abstract SyntaxNode InsertReturnAttributes(SyntaxNode declaration, int index, System.Collections.Generic.IEnumerable<SyntaxNode> attributes);
         public abstract SyntaxNode InsertSwitchSections(SyntaxNode switchStatement, int index, System.Collections.Generic.IEnumerable<SyntaxNode> switchSections);
         public abstract SyntaxNode InterfaceDeclaration(string name, System.Collections.Generic.IEnumerable<string> typeParameters = null, Accessibility accessibility = Accessibility.NotApplicable, System.Collections.Generic.IEnumerable<SyntaxNode> interfaceTypes = null, System.Collections.Generic.IEnumerable<SyntaxNode> members = null);
         public SyntaxNode InvocationExpression(SyntaxNode expression, params SyntaxNode[] arguments) { throw null; }
-
         public abstract SyntaxNode InvocationExpression(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> arguments);
         public SyntaxNode IsTypeExpression(SyntaxNode expression, ITypeSymbol type) { throw null; }
-
         public abstract SyntaxNode IsTypeExpression(SyntaxNode expression, SyntaxNode type);
         public SyntaxNode LambdaParameter(string identifier, ITypeSymbol type) { throw null; }
-
         public abstract SyntaxNode LambdaParameter(string identifier, SyntaxNode type = null);
         public abstract SyntaxNode LessThanExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode LessThanOrEqualExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode LiteralExpression(object value);
         public SyntaxNode LocalDeclarationStatement(ITypeSymbol type, string name, SyntaxNode initializer = null, bool isConst = false) { throw null; }
-
         public abstract SyntaxNode LocalDeclarationStatement(SyntaxNode type, string identifier, SyntaxNode initializer = null, bool isConst = false);
         public SyntaxNode LocalDeclarationStatement(string name, SyntaxNode initializer) { throw null; }
-
         public abstract SyntaxNode LockStatement(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode LogicalAndExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode LogicalNotExpression(SyntaxNode expression);
         public abstract SyntaxNode LogicalOrExpression(SyntaxNode left, SyntaxNode right);
         public virtual SyntaxNode MemberAccessExpression(SyntaxNode expression, SyntaxNode memberName) { throw null; }
-
         public SyntaxNode MemberAccessExpression(SyntaxNode expression, string memberName) { throw null; }
-
         public abstract SyntaxNode MemberBindingExpression(SyntaxNode name);
         public SyntaxNode MethodDeclaration(IMethodSymbol method, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null) { throw null; }
-
         public abstract SyntaxNode MethodDeclaration(string name, System.Collections.Generic.IEnumerable<SyntaxNode> parameters = null, System.Collections.Generic.IEnumerable<string> typeParameters = null, SyntaxNode returnType = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null);
         public abstract SyntaxNode ModuloExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode MultiplyExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode NameExpression(INamespaceOrTypeSymbol namespaceOrTypeSymbol);
         public abstract SyntaxNode NameOfExpression(SyntaxNode expression);
         public SyntaxNode NamespaceDeclaration(SyntaxNode name, params SyntaxNode[] declarations) { throw null; }
-
         public abstract SyntaxNode NamespaceDeclaration(SyntaxNode name, System.Collections.Generic.IEnumerable<SyntaxNode> declarations);
         public SyntaxNode NamespaceDeclaration(string name, params SyntaxNode[] declarations) { throw null; }
-
         public SyntaxNode NamespaceDeclaration(string name, System.Collections.Generic.IEnumerable<SyntaxNode> declarations) { throw null; }
-
         public abstract SyntaxNode NamespaceImportDeclaration(SyntaxNode name);
         public SyntaxNode NamespaceImportDeclaration(string name) { throw null; }
-
         public abstract SyntaxNode NegateExpression(SyntaxNode expression);
         public abstract SyntaxNode NullableTypeExpression(SyntaxNode type);
         public SyntaxNode NullLiteralExpression() { throw null; }
-
         public SyntaxNode ObjectCreationExpression(ITypeSymbol type, params SyntaxNode[] arguments) { throw null; }
-
         public SyntaxNode ObjectCreationExpression(ITypeSymbol type, System.Collections.Generic.IEnumerable<SyntaxNode> arguments) { throw null; }
-
         public SyntaxNode ObjectCreationExpression(SyntaxNode type, params SyntaxNode[] arguments) { throw null; }
-
         public abstract SyntaxNode ObjectCreationExpression(SyntaxNode namedType, System.Collections.Generic.IEnumerable<SyntaxNode> arguments);
         public virtual SyntaxNode OperatorDeclaration(OperatorKind kind, System.Collections.Generic.IEnumerable<SyntaxNode> parameters = null, SyntaxNode returnType = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null) { throw null; }
-
         public SyntaxNode OperatorDeclaration(IMethodSymbol method, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null) { throw null; }
-
         public SyntaxNode ParameterDeclaration(IParameterSymbol symbol, SyntaxNode initializer = null) { throw null; }
-
         public abstract SyntaxNode ParameterDeclaration(string name, SyntaxNode type = null, SyntaxNode initializer = null, RefKind refKind = RefKind.None);
-        protected static SyntaxNode PreserveTrivia<TNode>(TNode node, System.Func<TNode, SyntaxNode> nodeChanger)
-            where TNode : SyntaxNode { throw null; }
-
+        protected static SyntaxNode PreserveTrivia<TNode>(TNode node, System.Func<TNode, SyntaxNode> nodeChanger) where TNode : SyntaxNode { throw null; }
         public SyntaxNode PropertyDeclaration(IPropertySymbol property, System.Collections.Generic.IEnumerable<SyntaxNode> getAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> setAccessorStatements = null) { throw null; }
-
         public abstract SyntaxNode PropertyDeclaration(string name, SyntaxNode type, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> getAccessorStatements = null, System.Collections.Generic.IEnumerable<SyntaxNode> setAccessorStatements = null);
         public abstract SyntaxNode QualifiedName(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode ReferenceEqualsExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode ReferenceNotEqualsExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode RemoveAllAttributes(SyntaxNode declaration) { throw null; }
-
         public abstract SyntaxNode RemoveEventHandler(SyntaxNode @event, SyntaxNode handler);
         public virtual SyntaxNode RemoveNode(SyntaxNode root, SyntaxNode node, SyntaxRemoveOptions options) { throw null; }
-
         public virtual SyntaxNode RemoveNode(SyntaxNode root, SyntaxNode node) { throw null; }
-
         public SyntaxNode RemoveNodes(SyntaxNode root, System.Collections.Generic.IEnumerable<SyntaxNode> declarations) { throw null; }
-
-        protected static SeparatedSyntaxList<TNode> RemoveRange<TNode>(SeparatedSyntaxList<TNode> list, int offset, int count)
-            where TNode : SyntaxNode { throw null; }
-
-        protected static SyntaxList<TNode> RemoveRange<TNode>(SyntaxList<TNode> list, int offset, int count)
-            where TNode : SyntaxNode { throw null; }
-
+        protected static SeparatedSyntaxList<TNode> RemoveRange<TNode>(SeparatedSyntaxList<TNode> list, int offset, int count) where TNode : SyntaxNode { throw null; }
+        protected static SyntaxList<TNode> RemoveRange<TNode>(SyntaxList<TNode> list, int offset, int count) where TNode : SyntaxNode { throw null; }
         public virtual SyntaxNode ReplaceNode(SyntaxNode root, SyntaxNode node, SyntaxNode newDeclaration) { throw null; }
-
         protected static SyntaxNode ReplaceRange(SyntaxNode root, SyntaxNode node, System.Collections.Generic.IEnumerable<SyntaxNode> replacements) { throw null; }
-
         protected static SyntaxNode ReplaceWithTrivia(SyntaxNode root, SyntaxNode original, SyntaxNode replacement) { throw null; }
-
         protected static SyntaxNode ReplaceWithTrivia(SyntaxNode root, SyntaxToken original, SyntaxToken replacement) { throw null; }
-
-        protected static SyntaxNode ReplaceWithTrivia<TNode>(SyntaxNode root, TNode original, System.Func<TNode, SyntaxNode> replacer)
-            where TNode : SyntaxNode { throw null; }
-
+        protected static SyntaxNode ReplaceWithTrivia<TNode>(SyntaxNode root, TNode original, System.Func<TNode, SyntaxNode> replacer) where TNode : SyntaxNode { throw null; }
         public abstract SyntaxNode ReturnStatement(SyntaxNode expression = null);
         public abstract SyntaxNode SetAccessorDeclaration(Accessibility accessibility = Accessibility.NotApplicable, System.Collections.Generic.IEnumerable<SyntaxNode> statements = null);
         public abstract SyntaxNode StructDeclaration(string name, System.Collections.Generic.IEnumerable<string> typeParameters = null, Accessibility accessibility = Accessibility.NotApplicable, DeclarationModifiers modifiers = default, System.Collections.Generic.IEnumerable<SyntaxNode> interfaceTypes = null, System.Collections.Generic.IEnumerable<SyntaxNode> members = null);
         public abstract SyntaxNode SubtractExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode SwitchSection(SyntaxNode caseExpression, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public abstract SyntaxNode SwitchSection(System.Collections.Generic.IEnumerable<SyntaxNode> caseExpressions, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public SyntaxNode SwitchStatement(SyntaxNode expression, params SyntaxNode[] sections) { throw null; }
-
         public abstract SyntaxNode SwitchStatement(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> sections);
         public abstract SyntaxNode ThisExpression();
         public abstract SyntaxNode ThrowExpression(SyntaxNode expression);
         public abstract SyntaxNode ThrowStatement(SyntaxNode expression = null);
         public SyntaxNode TrueLiteralExpression() { throw null; }
-
         public SyntaxNode TryCastExpression(SyntaxNode expression, ITypeSymbol type) { throw null; }
-
         public abstract SyntaxNode TryCastExpression(SyntaxNode expression, SyntaxNode type);
         public SyntaxNode TryCatchStatement(System.Collections.Generic.IEnumerable<SyntaxNode> tryStatements, params SyntaxNode[] catchClauses) { throw null; }
-
         public abstract SyntaxNode TryCatchStatement(System.Collections.Generic.IEnumerable<SyntaxNode> tryStatements, System.Collections.Generic.IEnumerable<SyntaxNode> catchClauses, System.Collections.Generic.IEnumerable<SyntaxNode> finallyStatements = null);
         public SyntaxNode TryFinallyStatement(System.Collections.Generic.IEnumerable<SyntaxNode> tryStatements, System.Collections.Generic.IEnumerable<SyntaxNode> finallyStatements) { throw null; }
-
         public SyntaxNode TupleElementExpression(ITypeSymbol type, string name = null) { throw null; }
-
         public abstract SyntaxNode TupleElementExpression(SyntaxNode type, string name = null);
         public abstract SyntaxNode TupleExpression(System.Collections.Generic.IEnumerable<SyntaxNode> arguments);
         public SyntaxNode TupleTypeExpression(params SyntaxNode[] elements) { throw null; }
-
         public SyntaxNode TupleTypeExpression(System.Collections.Generic.IEnumerable<ITypeSymbol> elementTypes, System.Collections.Generic.IEnumerable<string> elementNames = null) { throw null; }
-
         public SyntaxNode TupleTypeExpression(System.Collections.Generic.IEnumerable<SyntaxNode> elements) { throw null; }
-
         public abstract SyntaxNode TypedConstantExpression(TypedConstant value);
         public SyntaxNode TypeExpression(ITypeSymbol typeSymbol, bool addImport) { throw null; }
-
         public abstract SyntaxNode TypeExpression(ITypeSymbol typeSymbol);
         public abstract SyntaxNode TypeExpression(SpecialType specialType);
         public abstract SyntaxNode TypeOfExpression(SyntaxNode type);
         public abstract SyntaxNode UsingStatement(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode UsingStatement(SyntaxNode type, string name, SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public SyntaxNode UsingStatement(string name, SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public abstract SyntaxNode ValueEqualsExpression(SyntaxNode left, SyntaxNode right);
         public abstract SyntaxNode ValueNotEqualsExpression(SyntaxNode left, SyntaxNode right);
         public SyntaxNode ValueReturningLambdaExpression(SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode ValueReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> lambdaParameters, SyntaxNode expression);
         public abstract SyntaxNode ValueReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> lambdaParameters, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public SyntaxNode ValueReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public SyntaxNode ValueReturningLambdaExpression(string parameterName, SyntaxNode expression) { throw null; }
-
         public SyntaxNode ValueReturningLambdaExpression(string parameterName, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public SyntaxNode VoidReturningLambdaExpression(SyntaxNode expression) { throw null; }
-
         public abstract SyntaxNode VoidReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> lambdaParameters, SyntaxNode expression);
         public abstract SyntaxNode VoidReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> lambdaParameters, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public SyntaxNode VoidReturningLambdaExpression(System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public SyntaxNode VoidReturningLambdaExpression(string parameterName, SyntaxNode expression) { throw null; }
-
         public SyntaxNode VoidReturningLambdaExpression(string parameterName, System.Collections.Generic.IEnumerable<SyntaxNode> statements) { throw null; }
-
         public abstract SyntaxNode WhileStatement(SyntaxNode condition, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode WithAccessibility(SyntaxNode declaration, Accessibility accessibility);
         public SyntaxNode WithAccessorDeclarations(SyntaxNode declaration, params SyntaxNode[] accessorDeclarations) { throw null; }
-
         public abstract SyntaxNode WithAccessorDeclarations(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> accessorDeclarations);
         public abstract SyntaxNode WithExpression(SyntaxNode declaration, SyntaxNode expression);
         public abstract SyntaxNode WithGetAccessorStatements(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
@@ -2623,13 +1811,10 @@ namespace Microsoft.CodeAnalysis.Editing
         public abstract SyntaxNode WithStatements(SyntaxNode declaration, System.Collections.Generic.IEnumerable<SyntaxNode> statements);
         public abstract SyntaxNode WithType(SyntaxNode declaration, SyntaxNode type);
         public SyntaxNode WithTypeArguments(SyntaxNode expression, params SyntaxNode[] typeArguments) { throw null; }
-
         public abstract SyntaxNode WithTypeArguments(SyntaxNode expression, System.Collections.Generic.IEnumerable<SyntaxNode> typeArguments);
         public SyntaxNode WithTypeConstraint(SyntaxNode declaration, string typeParameterName, SpecialTypeConstraintKind kinds, params SyntaxNode[] types) { throw null; }
-
         public abstract SyntaxNode WithTypeConstraint(SyntaxNode declaration, string typeParameterName, SpecialTypeConstraintKind kinds, System.Collections.Generic.IEnumerable<SyntaxNode> types = null);
         public SyntaxNode WithTypeConstraint(SyntaxNode declaration, string typeParameterName, params SyntaxNode[] types) { throw null; }
-
         public abstract SyntaxNode WithTypeParameters(SyntaxNode declaration, System.Collections.Generic.IEnumerable<string> typeParameters);
         public SyntaxNode WithTypeParameters(SyntaxNode declaration, params string[] typeParameters) { throw null; }
     }
@@ -2651,38 +1836,25 @@ namespace Microsoft.CodeAnalysis.FindSymbols
     public partial class ReferencedSymbol
     {
         internal ReferencedSymbol() { }
-
         public ISymbol Definition { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<ReferenceLocation> Locations { get { throw null; } }
     }
-
     public readonly partial struct ReferenceLocation : System.IComparable<ReferenceLocation>, System.IEquatable<ReferenceLocation>
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public IAliasSymbol Alias { get { throw null; } }
-
         public CandidateReason CandidateReason { get { throw null; } }
-
         public Document Document { get { throw null; } }
-
         public bool IsCandidateLocation { get { throw null; } }
-
         public bool IsImplicit { get { throw null; } }
-
         public Location Location { get { throw null; } }
 
         public readonly int CompareTo(ReferenceLocation other) { throw null; }
-
         public readonly bool Equals(ReferenceLocation other) { throw null; }
-
         public override readonly bool Equals(object obj) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(ReferenceLocation left, ReferenceLocation right) { throw null; }
-
         public static bool operator !=(ReferenceLocation left, ReferenceLocation right) { throw null; }
     }
 
@@ -2691,78 +1863,44 @@ namespace Microsoft.CodeAnalysis.FindSymbols
         private object _dummy;
         private int _dummyPrimitive;
         public ISymbol CalledSymbol { get { throw null; } }
-
         public ISymbol CallingSymbol { get { throw null; } }
-
         public bool IsDirect { get { throw null; } }
-
         public System.Collections.Generic.IEnumerable<Location> Locations { get { throw null; } }
     }
 
     public static partial class SymbolFinder
     {
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<SymbolCallerInfo>> FindCallersAsync(ISymbol symbol, Solution solution, System.Collections.Immutable.IImmutableSet<Document>? documents, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<SymbolCallerInfo>> FindCallersAsync(ISymbol symbol, Solution solution, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindDeclarationsAsync(Project project, string name, bool ignoreCase, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindDeclarationsAsync(Project project, string name, bool ignoreCase, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<INamedTypeSymbol>> FindDerivedClassesAsync(INamedTypeSymbol type, Solution solution, bool transitive = true, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<INamedTypeSymbol>> FindDerivedClassesAsync(INamedTypeSymbol type, Solution solution, System.Collections.Immutable.IImmutableSet<Project> projects, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<INamedTypeSymbol>> FindDerivedInterfacesAsync(INamedTypeSymbol type, Solution solution, bool transitive = true, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<INamedTypeSymbol>> FindImplementationsAsync(INamedTypeSymbol type, Solution solution, bool transitive = true, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindImplementationsAsync(ISymbol symbol, Solution solution, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindImplementedInterfaceMembersAsync(ISymbol symbol, Solution solution, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindOverridesAsync(ISymbol symbol, Solution solution, System.Collections.Immutable.IImmutableSet<Project> projects = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ReferencedSymbol>> FindReferencesAsync(ISymbol symbol, Solution solution, IFindReferencesProgress? progress, System.Collections.Immutable.IImmutableSet<Document>? documents, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ReferencedSymbol>> FindReferencesAsync(ISymbol symbol, Solution solution, System.Collections.Immutable.IImmutableSet<Document>? documents, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ReferencedSymbol>> FindReferencesAsync(ISymbol symbol, Solution solution, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
-        public static System.Collections.Generic.IEnumerable<TSymbol> FindSimilarSymbols<TSymbol>(TSymbol symbol, Compilation compilation, System.Threading.CancellationToken cancellationToken = default)
-            where TSymbol : ISymbol { throw null; }
-
+        public static System.Collections.Generic.IEnumerable<TSymbol> FindSimilarSymbols<TSymbol>(TSymbol symbol, Compilation compilation, System.Threading.CancellationToken cancellationToken = default) where TSymbol : ISymbol { throw null; }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Project project, System.Func<string, bool> predicate, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Project project, System.Func<string, bool> predicate, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Project project, string name, bool ignoreCase, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Project project, string name, bool ignoreCase, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Solution solution, System.Func<string, bool> predicate, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Solution solution, System.Func<string, bool> predicate, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Solution solution, string name, bool ignoreCase, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsAsync(Solution solution, string name, bool ignoreCase, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsWithPatternAsync(Project project, string pattern, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsWithPatternAsync(Project project, string pattern, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsWithPatternAsync(Solution solution, string pattern, SymbolFilter filter, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> FindSourceDeclarationsWithPatternAsync(Solution solution, string pattern, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<ISymbol?> FindSourceDefinitionAsync(ISymbol? symbol, Solution solution, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         [System.Obsolete("Use FindSymbolAtPositionAsync instead.")]
         public static ISymbol FindSymbolAtPosition(SemanticModel semanticModel, int position, Workspace workspace, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<ISymbol> FindSymbolAtPositionAsync(Document document, int position, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<ISymbol> FindSymbolAtPositionAsync(SemanticModel semanticModel, int position, Workspace workspace, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
 }
@@ -2774,40 +1912,24 @@ namespace Microsoft.CodeAnalysis.Formatting
         public static SyntaxAnnotation Annotation { get { throw null; } }
 
         public static SyntaxNode Format(SyntaxNode node, SyntaxAnnotation annotation, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static SyntaxNode Format(SyntaxNode node, Text.TextSpan span, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static SyntaxNode Format(SyntaxNode node, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static SyntaxNode Format(SyntaxNode node, System.Collections.Generic.IEnumerable<Text.TextSpan>? spans, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> FormatAsync(Document document, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> FormatAsync(Document document, SyntaxAnnotation annotation, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> FormatAsync(Document document, Text.TextSpan span, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> FormatAsync(Document document, System.Collections.Generic.IEnumerable<Text.TextSpan>? spans, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Collections.Generic.IList<Text.TextChange> GetFormattedTextChanges(SyntaxNode node, Text.TextSpan span, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Collections.Generic.IList<Text.TextChange> GetFormattedTextChanges(SyntaxNode node, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Collections.Generic.IList<Text.TextChange> GetFormattedTextChanges(SyntaxNode node, System.Collections.Generic.IEnumerable<Text.TextSpan>? spans, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> OrganizeImportsAsync(Document document, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
-
     public static partial class FormattingOptions
     {
         public static Options.PerLanguageOption<int> IndentationSize { get { throw null; } }
-
         public static Options.PerLanguageOption<string> NewLine { get { throw null; } }
-
         public static Options.PerLanguageOption<IndentStyle> SmartIndent { get { throw null; } }
-
         public static Options.PerLanguageOption<int> TabSize { get { throw null; } }
-
         public static Options.PerLanguageOption<bool> UseTabs { get { throw null; } }
 
         public enum IndentStyle
@@ -2826,43 +1948,30 @@ namespace Microsoft.CodeAnalysis.Host
         public abstract string Language { get; }
         public abstract HostWorkspaceServices WorkspaceServices { get; }
 
-        public TLanguageService GetRequiredService<TLanguageService>()
-            where TLanguageService : ILanguageService { throw null; }
-
+        public TLanguageService GetRequiredService<TLanguageService>() where TLanguageService : ILanguageService { throw null; }
         public abstract TLanguageService? GetService<TLanguageService>()
-            where TLanguageService : ILanguageService;
+                                                                                                                             where TLanguageService : ILanguageService;
     }
-
     public abstract partial class HostServices
     {
         protected internal abstract HostWorkspaceServices CreateWorkspaceServices(Workspace workspace);
     }
-
     public abstract partial class HostWorkspaceServices
     {
         public abstract HostServices HostServices { get; }
-
         public virtual IPersistentStorageService PersistentStorage { get { throw null; } }
-
         public virtual System.Collections.Generic.IEnumerable<string> SupportedLanguages { get { throw null; } }
-
         public virtual ITemporaryStorageService TemporaryStorage { get { throw null; } }
-
         public abstract Workspace Workspace { get; }
 
         public abstract System.Collections.Generic.IEnumerable<TLanguageService> FindLanguageServices<TLanguageService>(MetadataFilter filter);
         public virtual HostLanguageServices GetLanguageServices(string languageName) { throw null; }
-
-        public TWorkspaceService GetRequiredService<TWorkspaceService>()
-            where TWorkspaceService : IWorkspaceService { throw null; }
-
+        public TWorkspaceService GetRequiredService<TWorkspaceService>() where TWorkspaceService : IWorkspaceService { throw null; }
         public abstract TWorkspaceService? GetService<TWorkspaceService>()
-            where TWorkspaceService : IWorkspaceService;
+                                                                                                                                 where TWorkspaceService : IWorkspaceService;
         public virtual bool IsSupported(string languageName) { throw null; }
-
         public delegate bool MetadataFilter(System.Collections.Generic.IReadOnlyDictionary<string, object> metadata);
     }
-
     public partial interface IAnalyzerService : IWorkspaceService
     {
         IAnalyzerAssemblyLoader GetLoader();
@@ -2923,11 +2032,8 @@ namespace Microsoft.CodeAnalysis.Host.Mef
     public partial class ExportLanguageServiceAttribute : System.Composition.ExportAttribute
     {
         public ExportLanguageServiceAttribute(System.Type type, string language, string layer = "Default") { }
-
         public string Language { get { throw null; } }
-
         public string Layer { get { throw null; } }
-
         public string ServiceType { get { throw null; } }
     }
 
@@ -2936,11 +2042,8 @@ namespace Microsoft.CodeAnalysis.Host.Mef
     public partial class ExportLanguageServiceFactoryAttribute : System.Composition.ExportAttribute
     {
         public ExportLanguageServiceFactoryAttribute(System.Type type, string language, string layer = "Default") { }
-
         public string Language { get { throw null; } }
-
         public string Layer { get { throw null; } }
-
         public string ServiceType { get { throw null; } }
     }
 
@@ -2949,9 +2052,7 @@ namespace Microsoft.CodeAnalysis.Host.Mef
     public partial class ExportWorkspaceServiceAttribute : System.Composition.ExportAttribute
     {
         public ExportWorkspaceServiceAttribute(System.Type serviceType, string layer = "Default") { }
-
         public string Layer { get { throw null; } }
-
         public string ServiceType { get { throw null; } }
     }
 
@@ -2960,9 +2061,7 @@ namespace Microsoft.CodeAnalysis.Host.Mef
     public partial class ExportWorkspaceServiceFactoryAttribute : System.Composition.ExportAttribute
     {
         public ExportWorkspaceServiceFactoryAttribute(System.Type serviceType, string layer = "Default") { }
-
         public string Layer { get { throw null; } }
-
         public string ServiceType { get { throw null; } }
     }
 
@@ -2979,15 +2078,11 @@ namespace Microsoft.CodeAnalysis.Host.Mef
     public partial class MefHostServices : HostServices
     {
         public MefHostServices(System.Composition.CompositionContext compositionContext) { }
-
         public static System.Collections.Immutable.ImmutableArray<System.Reflection.Assembly> DefaultAssemblies { get { throw null; } }
-
         public static MefHostServices DefaultHost { get { throw null; } }
 
         public static MefHostServices Create(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies) { throw null; }
-
         public static MefHostServices Create(System.Composition.CompositionContext compositionContext) { throw null; }
-
         protected internal override HostWorkspaceServices CreateWorkspaceServices(Workspace workspace) { throw null; }
     }
 
@@ -3005,11 +2100,8 @@ namespace Microsoft.CodeAnalysis.Options
     public sealed partial class DocumentOptionSet : OptionSet
     {
         internal DocumentOptionSet() { }
-
         public T GetOption<T>(PerLanguageOption<T> option) { throw null; }
-
         public override OptionSet WithChangedOption(OptionKey optionAndLanguage, object? value) { throw null; }
-
         public DocumentOptionSet WithChangedOption<T>(PerLanguageOption<T> option, T value) { throw null; }
     }
 
@@ -3033,100 +2125,68 @@ namespace Microsoft.CodeAnalysis.Options
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public OptionKey(IOption option, string? language = null) { }
-
         public string? Language { get { throw null; } }
-
         public IOption Option { get { throw null; } }
 
         public readonly bool Equals(OptionKey other) { throw null; }
-
         public override readonly bool Equals(object? obj) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(OptionKey left, OptionKey right) { throw null; }
-
         public static bool operator !=(OptionKey left, OptionKey right) { throw null; }
-
         public override readonly string ToString() { throw null; }
     }
 
     public abstract partial class OptionSet
     {
         public object? GetOption(OptionKey optionKey) { throw null; }
-
         public T GetOption<T>(Option<T> option) { throw null; }
-
         public T GetOption<T>(OptionKey optionKey) { throw null; }
-
         public T GetOption<T>(PerLanguageOption<T> option, string? language) { throw null; }
-
         public abstract OptionSet WithChangedOption(OptionKey optionAndLanguage, object? value);
         public OptionSet WithChangedOption<T>(Option<T> option, T value) { throw null; }
-
         public OptionSet WithChangedOption<T>(PerLanguageOption<T> option, string? language, T value) { throw null; }
     }
-
     public abstract partial class OptionStorageLocation
     {
     }
-
     public partial class Option<T> : IOption
     {
         public Option(string feature, string name, T defaultValue, params OptionStorageLocation[] storageLocations) { }
-
         public Option(string feature, string name, T defaultValue) { }
-
         [System.Obsolete("Use a constructor that specifies an explicit default value.")]
         public Option(string feature, string name) { }
-
         public T DefaultValue { get { throw null; } }
-
         public string Feature { get { throw null; } }
 
         object? IOption.DefaultValue { get { throw null; } }
 
         bool IOption.IsPerLanguage { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public System.Collections.Immutable.ImmutableArray<OptionStorageLocation> StorageLocations { get { throw null; } }
-
         public System.Type Type { get { throw null; } }
 
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public static implicit operator OptionKey(Option<T> option) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
     public partial class PerLanguageOption<T> : IOption
     {
         public PerLanguageOption(string feature, string name, T defaultValue, params OptionStorageLocation[] storageLocations) { }
-
         public PerLanguageOption(string feature, string name, T defaultValue) { }
-
         public T DefaultValue { get { throw null; } }
-
         public string Feature { get { throw null; } }
 
         object? IOption.DefaultValue { get { throw null; } }
 
         bool IOption.IsPerLanguage { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public System.Collections.Immutable.ImmutableArray<OptionStorageLocation> StorageLocations { get { throw null; } }
-
         public System.Type Type { get { throw null; } }
 
         public override bool Equals(object? obj) { throw null; }
-
         public override int GetHashCode() { throw null; }
-
         public override string ToString() { throw null; }
     }
 }
@@ -3136,14 +2196,11 @@ namespace Microsoft.CodeAnalysis.Recommendations
     public static partial class RecommendationOptions
     {
         public static Options.PerLanguageOption<bool> FilterOutOfScopeLocals { get { throw null; } }
-
         public static Options.PerLanguageOption<bool> HideAdvancedMembers { get { throw null; } }
     }
-
     public static partial class Recommender
     {
         public static System.Collections.Generic.IEnumerable<ISymbol> GetRecommendedSymbolsAtPosition(SemanticModel semanticModel, int position, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         [System.Obsolete("Use GetRecommendedSymbolsAtPosition")]
         public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ISymbol>> GetRecommendedSymbolsAtPositionAsync(SemanticModel semanticModel, int position, Workspace workspace, Options.OptionSet? options = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
@@ -3160,36 +2217,26 @@ namespace Microsoft.CodeAnalysis.Rename
     public static partial class RenameOptions
     {
         public static Options.Option<bool> PreviewChanges { get { throw null; } }
-
         public static Options.Option<bool> RenameInComments { get { throw null; } }
-
         public static Options.Option<bool> RenameInStrings { get { throw null; } }
-
         public static Options.Option<bool> RenameOverloads { get { throw null; } }
     }
-
     public static partial class Renamer
     {
         public static System.Threading.Tasks.Task<RenameDocumentActionSet> RenameDocumentAsync(Document document, string newDocumentName, System.Collections.Generic.IReadOnlyList<string>? newDocumentFolders = null, Options.OptionSet? optionSet = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Solution> RenameSymbolAsync(Solution solution, ISymbol symbol, string newName, Options.OptionSet optionSet, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public abstract partial class RenameDocumentAction
         {
             internal RenameDocumentAction() { }
-
             public abstract string GetDescription(System.Globalization.CultureInfo? culture = null);
             public System.Collections.Immutable.ImmutableArray<string> GetErrors(System.Globalization.CultureInfo? culture = null) { throw null; }
         }
-
         public sealed partial class RenameDocumentActionSet
         {
             internal RenameDocumentActionSet() { }
-
             public System.Collections.Immutable.ImmutableArray<RenameDocumentAction> ApplicableActions { get { throw null; } }
 
             public System.Threading.Tasks.Task<Solution> UpdateSolutionAsync(Solution solution, System.Collections.Immutable.ImmutableArray<RenameDocumentAction> actions, System.Threading.CancellationToken cancellationToken) { throw null; }
-
             public System.Threading.Tasks.Task<Solution> UpdateSolutionAsync(Solution solution, System.Threading.CancellationToken cancellationToken) { throw null; }
         }
     }
@@ -3238,31 +2285,19 @@ namespace Microsoft.CodeAnalysis.Simplification
         [System.Obsolete("This option is no longer used")]
         public static Options.PerLanguageOption<bool> QualifyPropertyAccess { get { throw null; } }
     }
-
     public static partial class Simplifier
     {
         public static SyntaxAnnotation AddImportsAnnotation { get { throw null; } }
-
         public static SyntaxAnnotation Annotation { get { throw null; } }
-
         public static SyntaxAnnotation SpecialTypeAnnotation { get { throw null; } }
 
         public static SyntaxToken Expand(SyntaxToken token, SemanticModel semanticModel, Workspace workspace, System.Func<SyntaxNode, bool> expandInsideNode = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
-        public static TNode Expand<TNode>(TNode node, SemanticModel semanticModel, Workspace workspace, System.Func<SyntaxNode, bool> expandInsideNode = null, bool expandParameter = false, System.Threading.CancellationToken cancellationToken = default)
-            where TNode : SyntaxNode { throw null; }
-
+        public static TNode Expand<TNode>(TNode node, SemanticModel semanticModel, Workspace workspace, System.Func<SyntaxNode, bool> expandInsideNode = null, bool expandParameter = false, System.Threading.CancellationToken cancellationToken = default) where TNode : SyntaxNode { throw null; }
         public static System.Threading.Tasks.Task<SyntaxToken> ExpandAsync(SyntaxToken token, Document document, System.Func<SyntaxNode, bool> expandInsideNode = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
-        public static System.Threading.Tasks.Task<TNode> ExpandAsync<TNode>(TNode node, Document document, System.Func<SyntaxNode, bool> expandInsideNode = null, bool expandParameter = false, System.Threading.CancellationToken cancellationToken = default)
-            where TNode : SyntaxNode { throw null; }
-
+        public static System.Threading.Tasks.Task<TNode> ExpandAsync<TNode>(TNode node, Document document, System.Func<SyntaxNode, bool> expandInsideNode = null, bool expandParameter = false, System.Threading.CancellationToken cancellationToken = default) where TNode : SyntaxNode { throw null; }
         public static System.Threading.Tasks.Task<Document> ReduceAsync(Document document, Options.OptionSet optionSet = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> ReduceAsync(Document document, SyntaxAnnotation annotation, Options.OptionSet optionSet = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> ReduceAsync(Document document, Text.TextSpan span, Options.OptionSet optionSet = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
-
         public static System.Threading.Tasks.Task<Document> ReduceAsync(Document document, System.Collections.Generic.IEnumerable<Text.TextSpan> spans, Options.OptionSet optionSet = null, System.Threading.CancellationToken cancellationToken = default) { throw null; }
     }
 }
