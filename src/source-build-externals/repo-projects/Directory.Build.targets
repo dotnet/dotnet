@@ -188,33 +188,6 @@
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
   </Target>
 
-  <Target Name="Package"
-          Condition="'$(BuildPackagesCommand)' != ''"
-          DependsOnTargets="PrepareOutputDirectories;PrepareInnerClone"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)Package.complete">
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging '$(RepositoryName)'" />
-    <Message Importance="High" Text="Running command:" />
-    <Message Importance="High" Text="  $(BuildPackagesCommand)" />
-    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
-    <Message Importance="High" Text="  With Environment Variables:" />
-    <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
-
-    <Exec Command="$(BuildPackagesCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
-          WorkingDirectory="$(ProjectDirectory)"
-          EnvironmentVariables="@(EnvironmentVariables)"
-          IgnoreStandardErrorWarningFormat="true" />
-
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging '$(RepositoryName)'...done" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)Package.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-
-    <OnError ExecuteTargets="ReportRepoError" />
-  </Target>
-
   <Target Name="CopyPackagesOutput">
     <Error Condition="'$(PackagesOutput)' == ''" Text="The 'PackagesOutput' property must be set to the output directory of the built packages." />
 
@@ -233,7 +206,6 @@
             UpdateNuGetConfig;
             UpdateGlobalJsonVersions;
             RepoBuild;
-            Package;
             CopyPackagesOutput" />
 
   <Target Name="GetRepositoryReferences" Outputs="@(RepositoryReference)" />

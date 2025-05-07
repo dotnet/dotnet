@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25252.3",
-      "barId": 266703,
+      "packageVersion": "10.0.0-preview.5.25255.2",
+      "barId": 266892,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d12915f18974ae45826ac7475c5c87aaef218615"
+      "commitSha": "b9112907bd7526126a355a895cce9d1ffc8bdc85"
     },
     {
       "packageVersion": "0.11.5-alpha.25252.1",
@@ -36,32 +36,32 @@
       "commitSha": "c07f759f70b5517a7fefb9ac5ac73603cff49f41"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25251.1",
-      "barId": 266637,
+      "packageVersion": "9.0.0-preview.1.25255.1",
+      "barId": 266805,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "150d38efe20041a832482eb69e0d61b5d795e167"
+      "commitSha": "6b4bb9fae2d5c2caa1c5da1b49a045239bbbae3a"
     },
     {
-      "packageVersion": "9.0.625201",
-      "barId": 266704,
+      "packageVersion": "9.0.625501",
+      "barId": 266847,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "565c1f2809b8bb79756136c3e61768bfea19d9d3"
+      "commitSha": "8a951ade8ae70e5fc47345958cf716cc8e9cffe5"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25251.4",
-      "barId": 266638,
+      "packageVersion": "10.0.0-preview.5.25255.1",
+      "barId": 266798,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "4ff9270f21135dba86d678b8515ed2ba2e15089d"
+      "commitSha": "9b42f3657525ea451573d241c86d09f5b08fe6dd"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25224.1",
-      "barId": 265545,
+      "packageVersion": "10.0.0-preview.5.25255.1",
+      "barId": 266875,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "90489ef36c66f4d57ddcc077429699e313eb8d05"
+      "commitSha": "ec33d78d8515c08b528f10ffd9da3b0ed267a89c"
     },
     {
       "packageVersion": "10.0.100-beta.25224.6",
@@ -71,11 +71,11 @@
       "commitSha": "e8bfd3562774b2939c252d907de2f3173a2bd5bd"
     },
     {
-      "packageVersion": "17.15.0-preview-25252-04",
-      "barId": 266665,
+      "packageVersion": "17.15.0-preview-25255-05",
+      "barId": 266818,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "4ad61cce016bcbd825c178a41ea5d8df7a04486d"
+      "commitSha": "17a2cd4231cf3c198aa09d1000b4340e2f6bfd20"
     },
     {
       "packageVersion": "6.15.0-preview.1.37",
@@ -85,18 +85,18 @@
       "commitSha": "41fb88a624e61dce1fa05a5d0771b41ab7aff7a9"
     },
     {
-      "packageVersion": "10.0.0-preview.25252.1",
-      "barId": 266648,
+      "packageVersion": "10.0.0-preview.25255.5",
+      "barId": 266919,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "98e74370f0ac419f80d9c2f1a9050fa84f33bce5"
+      "commitSha": "d87bf4a7f18d1bdfd14cc0964acdf9b5bada301c"
     },
     {
-      "packageVersion": "5.0.0-1.25255.4",
-      "barId": 266844,
+      "packageVersion": "5.0.0-1.25255.5",
+      "barId": 266902,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "e57ec163ea3c7ef815214036e1c0169ed2bb65db"
+      "commitSha": "9cce7288b4f277359e40488eacc1bd8be0f81f34"
     },
     {
       "packageVersion": "10.0.0-preview.25229.1",
@@ -106,32 +106,32 @@
       "commitSha": "ba7afc0f470c9b92b88c9468420942b2d1d57355"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.1",
-      "barId": 266819,
+      "packageVersion": "10.0.0-preview.5.25255.6",
+      "barId": 266915,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "43955cb086eb88dbe78f1764c21dd3362a2427ee"
+      "commitSha": "efee748ff6f18f80154bc6b6e277bd51481c56e3"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
-      "barId": 266298,
+      "barId": 266835,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "da2163776e83f86ea1259ce9e12b9ea48db6ab60"
+      "commitSha": "9eabbcd6e92c63e0539a649238e5a87d73f46065"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25255.1",
-      "barId": 266821,
+      "packageVersion": "10.0.100-preview.5.25255.3",
+      "barId": 266866,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "7eda1e985ae8a2e328ff7b95100ba003c876cc95"
+      "commitSha": "86317d70a92223dff361e28d2874188219c7560b"
     },
     {
       "packageVersion": "10.0.622801",
-      "barId": 266833,
+      "barId": 266898,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "b668a5d168cad290f89b3b1893e64ab570e04bf0"
+      "commitSha": "967f0738ad131b3cb0b76b112618923780aa6048"
     },
     {
       "packageVersion": "",
@@ -155,11 +155,11 @@
       "commitSha": "7f4f9c0ad18fc4dc74a906cec188adacd3847c9a"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25251.2",
-      "barId": 266636,
+      "packageVersion": "10.0.100-preview.5.25255.1",
+      "barId": 266801,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "03eef3b9429ba0975982ca7427274e5986ef328e"
+      "commitSha": "e3f1cf05499c250de847205b51d31a5d1f7639c4"
     },
     {
       "packageVersion": "17.15.0-preview-25224-01",
@@ -176,18 +176,18 @@
       "commitSha": "b88bee3ab8a7ba608d792d30c30dda3366044eec"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25252.3",
-      "barId": 266725,
+      "packageVersion": "10.0.0-preview.5.25255.1",
+      "barId": 266921,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "dafb8c0cc81fb1a8bb3cc7e344817b3fe55dc287"
+      "commitSha": "fc5d461e63815788594bcfd7c35ace5c0958b7bc"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25251.1",
-      "barId": 266633,
+      "packageVersion": "10.0.0-preview.5.25255.1",
+      "barId": 266795,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "c515d857d131f3831d594771f13805e8d75a6e89"
+      "commitSha": "e188e3587630e370a711fe9566a9011a7c5a181b"
     },
     {
       "packageVersion": "10.0.0-preview.25228.1",

@@ -1,0 +1,11 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 razorTransition 0 [@]
+0 1 12 razorDirective 0 [addTagHelper]
+1 0 1 markupTagDelimiter 0 [<]
+0 1 5 razorTagHelperElement 0 [test1]
+0 6 8 markupAttribute 0 [notbound]
+0 8 1 markupTagDelimiter 0 [>]
+0 1 1 markupTagDelimiter 0 [<]
+0 1 1 markupTagDelimiter 0 [/]
+0 1 5 razorTagHelperElement 0 [test1]
+0 5 1 markupTagDelimiter 0 [>]

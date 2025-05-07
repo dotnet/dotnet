@@ -59,7 +59,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_RazorIfNotReady(bool precise)
+    public async Task GetSemanticTokens_CSharp_RazorIfNotReady(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <p></p>@{
@@ -68,12 +68,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             """;
 
         var csharpTokens = new ProvideSemanticTokensResponse(tokens: [], hostDocumentSyncVersion: 1);
-        await AssertSemanticTokensAsync(documentText, precise, csharpTokens: csharpTokens, documentVersion: 1);
+        await AssertSemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, csharpTokens: csharpTokens, documentVersion: 1);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharpBlock_HTML(bool precise)
+    public async Task GetSemanticTokens_CSharpBlock_HTML(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @{
@@ -82,24 +82,24 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Nested_HTML(bool precise)
+    public async Task GetSemanticTokens_CSharp_Nested_HTML(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <!--@{var d = "string";@<a></a>}-->
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_VSCodeWorks(bool precise)
+    public async Task GetSemanticTokens_CSharp_VSCodeWorks(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
@@ -107,12 +107,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             """;
 
         var csharpTokens = new ProvideSemanticTokensResponse(tokens: [], hostDocumentSyncVersion: 1);
-        await AssertSemanticTokensAsync(documentText, precise, csharpTokens: csharpTokens, documentVersion: 1);
+        await AssertSemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, csharpTokens: csharpTokens, documentVersion: 1);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Explicit(bool precise)
+    public async Task GetSemanticTokens_CSharp_Explicit(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -120,12 +120,29 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             @(DateTime.Now)
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Implicit(bool serverSupportsPreciseRanges, bool precise)
+    public async Task GetSemanticTokens_CSharp_Attribute(bool precise, bool supportsVSExtensions)
+    {
+        var documentText = """
+            @using System.Diagnostics
+            @code {
+                [DebuggerDisplay($"{GetDebuggerDisplay,nq}")]
+                public class MyClass
+                {
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, supportsVSExtensions: supportsVSExtensions);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_CSharp_Implicit(bool serverSupportsPreciseRanges, bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
@@ -133,40 +150,40 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             @d
             """;
 
-        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise);
-        await AssertSemanticTokensAsync(documentText, precise, csharpTokens: csharpTokens, serverSupportsPreciseRanges: serverSupportsPreciseRanges);
+        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
+        await AssertSemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, csharpTokens: csharpTokens, serverSupportsPreciseRanges: serverSupportsPreciseRanges);
         VerifyTimesLanguageServerCalled(serverSupportsPreciseRanges, precise);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_VersionMismatch(bool serverSupportsPreciseRanges, bool precise)
+    public async Task GetSemanticTokens_CSharp_VersionMismatch(bool serverSupportsPreciseRanges, bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             @{ var d = }
             """;
 
-        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise);
+        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
         await AssertSemanticTokensAsync(documentText, precise, csharpTokens: csharpTokens, documentVersion: 21, serverSupportsPreciseRanges: serverSupportsPreciseRanges);
         VerifyTimesLanguageServerCalled(serverSupportsPreciseRanges, precise);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_FunctionAsync(bool precise)
+    public async Task GetSemanticTokens_CSharp_FunctionAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             @{ var d = }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_StaticModifier(bool precise)
+    public async Task GetSemanticTokens_CSharp_StaticModifier(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @code
@@ -175,12 +192,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_MultipleBlankLines(bool precise)
+    public async Task GetSemanticTokens_MultipleBlankLines(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
@@ -189,178 +206,178 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             second</p>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_IncompleteTag(bool precise)
+    public async Task GetSemanticTokens_IncompleteTag(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <str class='
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_MinimizedHTMLAttribute(bool precise)
+    public async Task GetSemanticTokens_MinimizedHTMLAttribute(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <p attr />
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_MinimizedHTMLAsync(bool precise)
+    public async Task GetSemanticTokens_MinimizedHTMLAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <input/>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_HTMLCommentAsync(bool precise)
+    public async Task GetSemanticTokens_HTMLCommentAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <!-- comment with comma's -->
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_PartialHTMLCommentAsync(bool precise)
+    public async Task GetSemanticTokens_PartialHTMLCommentAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <!-- comment
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_HTMLIncludesBang(bool precise)
+    public async Task GetSemanticTokens_HTMLIncludesBang(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <!input/>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_HalfOfCommentAsync(bool precise)
+    public async Task GetSemanticTokens_HalfOfCommentAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             @* comment
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_NoAttributesAsync(bool precise)
+    public async Task GetSemanticTokens_NoAttributesAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_WithAttributeAsync(bool precise)
+    public async Task GetSemanticTokens_WithAttributeAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 bool-val='true'></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_MinimizedAttribute_BoundAsync(bool precise)
+    public async Task GetSemanticTokens_MinimizedAttribute_BoundAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 bool-val></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_MinimizedAttribute_NotBoundAsync(bool precise)
+    public async Task GetSemanticTokens_MinimizedAttribute_NotBoundAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 notbound></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_IgnoresNonTagHelperAttributesAsync(bool precise)
+    public async Task GetSemanticTokens_IgnoresNonTagHelperAttributesAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 bool-val='true' class='display:none'></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_TagHelpersNotAvailableInRazorAsync(bool precise)
+    public async Task GetSemanticTokens_TagHelpersNotAvailableInRazorAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 bool-val='true' class='display:none'></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_DoesNotApplyOnNonTagHelpersAsync(bool precise)
+    public async Task GetSemanticTokens_DoesNotApplyOnNonTagHelpersAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <p bool-val='true'></p>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_MinimizedDirectiveAttributeParameters(bool precise)
+    public async Task GetSemanticTokens_Razor_MinimizedDirectiveAttributeParameters(bool precise, bool supportsVSExtensions)
     {
         // Capitalized, non-well-known-HTML elements should not be marked as TagHelpers
         var documentText = """
@@ -368,24 +385,24 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }<NotATagHelp @minimized:something />
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_ComponentAttributeAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_ComponentAttributeAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <Component1 bool-val=""true""></Component1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_ComponentAttribute_DoesntGetABackground(bool precise)
+    public async Task GetSemanticTokens_Razor_ComponentAttribute_DoesntGetABackground(bool precise, bool supportsVSExtensions)
     {
         // Need C# around the component for the C# range to be valid, to correctly validate the attribute handling
         var documentText = """
@@ -396,105 +413,105 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             @DateTime.Now
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_DirectiveAttributesParametersAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_DirectiveAttributesParametersAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <Component1 @test:something='Function'></Component1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_NonComponentsDoNotShowInRazorAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_NonComponentsDoNotShowInRazorAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <test1 bool-val='true'></test1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_DirectivesAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_DirectivesAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <Component1 @test='Function'></Component1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_DirectiveWithExplicitStatementAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_DirectiveWithExplicitStatementAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelper *, TestAssembly
             <Component1 @onclick="@(Function())"></Component1>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_HandleTransitionEscape(bool precise)
+    public async Task GetSemanticTokens_HandleTransitionEscape(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @@text
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_DoNotColorNonTagHelpersAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_DoNotColorNonTagHelpersAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <p @test='Function'></p>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_DoesNotApplyOnNonTagHelpersAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_DoesNotApplyOnNonTagHelpersAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @addTagHelpers *, TestAssembly
             <p></p>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_CodeDirectiveAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_CodeDirectiveAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @code {}
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_CodeDirectiveBodyAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_CodeDirectiveBodyAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -506,34 +523,34 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_UsingDirective(bool precise)
+    public async Task GetSemanticTokens_Razor_UsingDirective(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System.Threading
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_FunctionsDirectiveAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_FunctionsDirectiveAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @functions {}
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool precise)
+    public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -553,12 +570,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_NestedTransitions(bool precise)
+    public async Task GetSemanticTokens_Razor_NestedTransitions(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -567,23 +584,23 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_CommentAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_CommentAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @* A comment *@
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_MultiLineCommentMidlineAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_MultiLineCommentMidlineAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <a />@* kdl
@@ -591,12 +608,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             slf*@
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines(bool precise)
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @* kdl
@@ -607,34 +624,34 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             slf*@
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
     [WorkItem("https://github.com/dotnet/razor/issues/8176")]
-    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines_LF(bool precise)
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines_LF(bool precise, bool supportsVSExtensions)
     {
         var documentText = "@* kdl\n\nskd\n    \n        sdfasdfasdf\nslf*@";
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_MultiLineCommentAsync(bool precise)
+    public async Task GetSemanticTokens_Razor_MultiLineCommentAsync(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @*stuff
             things *@
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Static(bool precise)
+    public async Task GetSemanticTokens_CSharp_Static(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -651,12 +668,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Legacy_Model(bool precise)
+    public async Task GetSemanticTokens_Legacy_Model(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -671,12 +688,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             </div>
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: false);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: false);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_LargeFile(bool precise)
+    public async Task GetSemanticTokens_CSharp_LargeFile(bool precise, bool supportsVSExtensions)
     {
         var start = """
             @page
@@ -751,12 +768,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         var documentText = builder.ToString();
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Static_WithBackground(bool precise)
+    public async Task GetSemanticTokens_CSharp_Static_WithBackground(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -774,12 +791,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_Tabs_Static_WithBackground(bool precise)
+    public async Task GetSemanticTokens_CSharp_Tabs_Static_WithBackground(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -797,12 +814,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_WithBackground(bool precise)
+    public async Task GetSemanticTokens_CSharp_WithBackground(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @using System
@@ -819,12 +836,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_WitRenderFragment(bool precise)
+    public async Task GetSemanticTokens_CSharp_WitRenderFragment(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <div>This is some HTML</div>
@@ -837,12 +854,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_WitRenderFragmentAndBackground(bool precise)
+    public async Task GetSemanticTokens_CSharp_WitRenderFragmentAndBackground(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             <div>This is some HTML</div>
@@ -855,12 +872,12 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             }
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_CSharp_ExplicitStatement_WithBackground(bool precise)
+    public async Task GetSemanticTokens_CSharp_ExplicitStatement_WithBackground(bool precise, bool supportsVSExtensions)
     {
         var documentText = """
             @DateTime.Now
@@ -868,7 +885,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             @("hello" + "\\n" + "world" + Environment.NewLine + "how are you?")
             """;
 
-        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: true, withCSharpBackground: true);
+        await VerifySemanticTokensAsync(documentText, precise, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
     [Theory]
@@ -910,10 +927,10 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         }
     }
 
-    private async Task VerifySemanticTokensAsync(string documentText, bool precise, bool isRazorFile = false, bool withCSharpBackground = false, [CallerMemberName] string? testName = null)
+    private async Task VerifySemanticTokensAsync(string documentText, bool precise, bool isRazorFile = false, bool withCSharpBackground = false, bool supportsVSExtensions = true, [CallerMemberName] string? testName = null)
     {
-        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise, isRazorFile);
-        await AssertSemanticTokensAsync(documentText, precise, csharpTokens, isRazorFile, withCSharpBackground: withCSharpBackground, testName: testName);
+        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, precise, isRazorFile, supportsVSExtensions);
+        await AssertSemanticTokensAsync(documentText, precise, csharpTokens, isRazorFile, withCSharpBackground: withCSharpBackground, supportsVSExtensions: supportsVSExtensions, testName: testName);
     }
 
     private async Task AssertSemanticTokensAsync(
@@ -924,17 +941,19 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         int documentVersion = 0,
         bool withCSharpBackground = false,
         bool serverSupportsPreciseRanges = true,
+        bool supportsVSExtensions = true,
         [CallerMemberName] string? testName = null)
     {
         var documentContext = CreateDocumentContext(documentText, isRazorFile, DefaultTagHelpers, documentVersion);
 
-        var service = await CreateServiceAsync(documentContext, csharpTokens, withCSharpBackground, serverSupportsPreciseRanges, precise);
+        var service = await CreateServiceAsync(documentContext, csharpTokens, withCSharpBackground, serverSupportsPreciseRanges, precise, supportsVSExtensions);
 
         var range = GetSpan(documentText);
         var tokens = await service.GetSemanticTokensAsync(documentContext, range, withCSharpBackground, Guid.Empty, DisposalToken);
 
         var sourceText = await documentContext.GetSourceTextAsync(DisposalToken);
-        AssertSemanticTokensMatchesBaseline(sourceText, tokens, testName.AssumeNotNull());
+
+        AssertSemanticTokensMatchesBaseline(sourceText, tokens, supportsVSExtensions, testName.AssumeNotNull());
     }
 
     private static DocumentContext CreateDocumentContext(
@@ -972,7 +991,8 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         ProvideSemanticTokensResponse? csharpTokens,
         bool withCSharpBackground,
         bool serverSupportsPreciseRanges,
-        bool precise)
+        bool precise,
+        bool supportsVSExtensions)
     {
         _clientConnection
             .Setup(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
@@ -1016,7 +1036,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         var service = new RazorSemanticTokensInfoService(
             documentMappingService,
-            TestRazorSemanticTokensLegendService.Instance,
+            TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions),
             csharpSemanticTokensProvider,
             featureOptions,
             LoggerFactory);
@@ -1024,7 +1044,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         return service;
     }
 
-    private async Task<ProvideSemanticTokensResponse> GetCSharpSemanticTokensResponseAsync(string documentText, bool precise, bool isRazorFile = false)
+    private async Task<ProvideSemanticTokensResponse> GetCSharpSemanticTokensResponseAsync(string documentText, bool precise, bool isRazorFile = false, bool supportsVSExtensions = true)
     {
         var codeDocument = CreateCodeDocument(documentText, isRazorFile, DefaultTagHelpers);
         var csharpDocumentUri = new Uri("C:\\TestSolution\\TestProject\\TestDocument.cs");
@@ -1035,7 +1055,10 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             csharpDocumentUri,
             s_semanticTokensServerCapabilities,
             SpanMappingService,
-            capabilitiesUpdater: null,
+            capabilitiesUpdater: c =>
+            {
+                c.SupportsVisualStudioExtensions = supportsVSExtensions;
+            },
             DisposalToken);
 
         var razorRange = GetSpan(documentText);
@@ -1089,13 +1112,18 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         return new LinePositionSpan(new LinePosition(0, 0), new LinePosition(lineCount, 0));
     }
 
-    private void AssertSemanticTokensMatchesBaseline(SourceText sourceText, int[]? actualSemanticTokens, string testName)
+    private void AssertSemanticTokensMatchesBaseline(SourceText sourceText, int[]? actualSemanticTokens, bool supportsVSExtensions, string testName)
     {
+        if (!supportsVSExtensions)
+        {
+            testName += "_VSCode";
+        }
+
         var fileName = $"Semantic\\TestFiles\\{testName}";
 
         var baselineFileName = Path.ChangeExtension(fileName, ".semantic.txt");
 
-        var actualFileContents = GetFileRepresentationOfTokens(sourceText, actualSemanticTokens);
+        var actualFileContents = GetFileRepresentationOfTokens(sourceText, actualSemanticTokens, supportsVSExtensions);
 
         if (GenerateBaselines.ShouldGenerate)
         {
@@ -1170,7 +1198,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         File.WriteAllText(semanticBaselinePath, actualFileContents);
     }
 
-    private static string GetFileRepresentationOfTokens(SourceText sourceText, int[]? data)
+    private static string GetFileRepresentationOfTokens(SourceText sourceText, int[]? data, bool supportsVSExtensions)
     {
         if (data == null)
         {
@@ -1179,7 +1207,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         builder.AppendLine("//line,characterPos,length,tokenType,modifier,text");
-        var legendArray = TestRazorSemanticTokensLegendService.Instance.TokenTypes.All;
+        var legendArray = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions).TokenTypes.All;
         var prevLength = 0;
         var lineIndex = 0;
         var lineOffset = 0;

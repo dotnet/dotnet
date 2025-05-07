@@ -45,9 +45,9 @@ function Exec-Process([string]$command, [string]$commandArgs) {
 
 $dotnet = Join-Path $env:DOTNET_PATH dotnet.exe
 $repoRoot = Resolve-Path "$PSScriptRoot/../../"
-$binLog = Join-Path $repoRoot "artifacts/sb/log/source-inner-build.binlog"
+$binLog = Join-Path $repoRoot "artifacts/log/$configuration/Build.binlog"
 $dotnetTool = "msbuild"
-$nugetPackagesRoot = Join-Path $repoRoot "artifacts/sb/package-cache/"
+$nugetPackagesRoot = Join-Path $repoRoot "artifacts/.packages/"
 $dotnetArguments = @()
 
 # Environment variables

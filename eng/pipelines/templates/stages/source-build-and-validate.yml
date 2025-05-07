@@ -219,8 +219,8 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Source Build Poison Report
-                downloadFilePatterns: BuildLogs/artifacts/prebuilt-report/poison-usage.xml
-                copyDestination: $(Build.SourcesDirectory)/artifacts/prebuilt-report
+                downloadFilePatterns: BuildLogs/artifacts/log/Release/poison-usage.xml
+                copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:
                   artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
