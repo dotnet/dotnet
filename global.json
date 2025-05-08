@@ -1,6 +1,6 @@
 {
   "tools": {
-    "dotnet": "10.0.100-preview.5.25258.101"
+    "dotnet": "10.0.100-preview.5.25255.3"
   },
   "msbuild-sdks": {
     "Microsoft.Build.NoTargets": "3.7.0",
