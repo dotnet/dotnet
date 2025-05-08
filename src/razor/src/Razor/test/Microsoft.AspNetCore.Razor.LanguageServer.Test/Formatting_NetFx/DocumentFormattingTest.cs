@@ -6082,4 +6082,37 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: code,
             expected: code);
     }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/11777")]
+    public Task RangeFormat_AfterProperty()
+        => RunFormattingTestAsync(
+            input: """
+                @code
+                {
+                    public string S
+                    {
+                        get => _s;
+                        set
+                        {
+                            _s = value;
+                        }
+                    } [|private string _s = "";|]
+                }
+                """,
+            expected: """
+                @code
+                {
+                    public string S
+                    {
+                        get => _s;
+                        set
+                        {
+                            _s = value;
+                        }
+                    } private string _s = "";
+                }
+                """,
+            debugAssertsEnabled: false
+            );
 }

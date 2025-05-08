@@ -31,15 +31,10 @@ namespace System.Composition
     public partial class ExportAttribute : Attribute
     {
         public ExportAttribute() { }
-
         public ExportAttribute(string contractName, Type contractType) { }
-
         public ExportAttribute(string contractName) { }
-
         public ExportAttribute(Type contractType) { }
-
         public string ContractName { get { throw null; } }
-
         public Type ContractType { get { throw null; } }
     }
 
@@ -47,9 +42,7 @@ namespace System.Composition
     public sealed partial class ExportMetadataAttribute : Attribute
     {
         public ExportMetadataAttribute(string name, object value) { }
-
         public string Name { get { throw null; } }
-
         public object Value { get { throw null; } }
     }
 
@@ -57,11 +50,8 @@ namespace System.Composition
     public partial class ImportAttribute : Attribute
     {
         public ImportAttribute() { }
-
         public ImportAttribute(string contractName) { }
-
         public bool AllowDefault { get { throw null; } set { } }
-
         public string ContractName { get { throw null; } }
     }
 
@@ -74,9 +64,7 @@ namespace System.Composition
     public partial class ImportManyAttribute : Attribute
     {
         public ImportManyAttribute() { }
-
         public ImportManyAttribute(string contractName) { }
-
         public string ContractName { get { throw null; } }
     }
 
@@ -84,9 +72,7 @@ namespace System.Composition
     public sealed partial class ImportMetadataConstraintAttribute : Attribute
     {
         public ImportMetadataConstraintAttribute(string name, object value) { }
-
         public string Name { get { throw null; } }
-
         public object Value { get { throw null; } }
     }
 
@@ -104,9 +90,7 @@ namespace System.Composition
     public partial class PartMetadataAttribute : Attribute
     {
         public PartMetadataAttribute(string name, object value) { }
-
         public string Name { get { throw null; } }
-
         public object Value { get { throw null; } }
     }
 
@@ -119,9 +103,7 @@ namespace System.Composition
     public partial class SharedAttribute : PartMetadataAttribute
     {
         public SharedAttribute() : base(default!, default!) { }
-
         public SharedAttribute(string sharingBoundaryName) : base(default!, default!) { }
-
         public string SharingBoundary { get { throw null; } }
     }
 
@@ -131,7 +113,6 @@ namespace System.Composition
     public sealed partial class SharingBoundaryAttribute : Attribute
     {
         public SharingBoundaryAttribute(params string[] sharingBoundaryNames) { }
-
         public Collections.ObjectModel.ReadOnlyCollection<string> SharingBoundaryNames { get { throw null; } }
     }
 }

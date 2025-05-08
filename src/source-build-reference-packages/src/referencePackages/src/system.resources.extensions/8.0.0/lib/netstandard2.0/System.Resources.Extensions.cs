@@ -31,44 +31,27 @@ namespace System.Resources.Extensions
     public sealed partial class DeserializingResourceReader : IResourceReader, Collections.IEnumerable, IDisposable
     {
         public DeserializingResourceReader(IO.Stream stream) { }
-
         public DeserializingResourceReader(string fileName) { }
-
         public void Close() { }
-
         public void Dispose() { }
-
         public Collections.IDictionaryEnumerator GetEnumerator() { throw null; }
-
         Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
     }
 
     public sealed partial class PreserializedResourceWriter : IResourceWriter, IDisposable
     {
         public PreserializedResourceWriter(IO.Stream stream) { }
-
         public PreserializedResourceWriter(string fileName) { }
-
         public void AddActivatorResource(string name, IO.Stream value, string typeName, bool closeAfterWrite = false) { }
-
         public void AddBinaryFormattedResource(string name, byte[] value, string? typeName = null) { }
-
         public void AddResource(string name, byte[]? value) { }
-
         public void AddResource(string name, IO.Stream? value, bool closeAfterWrite = false) { }
-
         public void AddResource(string name, object? value) { }
-
         public void AddResource(string name, string value, string typeName) { }
-
         public void AddResource(string name, string? value) { }
-
         public void AddTypeConverterResource(string name, byte[] value, string typeName) { }
-
         public void Close() { }
-
         public void Dispose() { }
-
         public void Generate() { }
     }
 }
