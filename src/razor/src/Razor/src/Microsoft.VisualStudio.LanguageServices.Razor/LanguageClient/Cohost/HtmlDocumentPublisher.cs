@@ -6,6 +6,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -25,11 +26,9 @@ internal sealed class HtmlDocumentPublisher(
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentPublisher>();
 
-    public async Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)
+    public async Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
     {
-        // TODO: Eventually, for VS Code, the following piece of logic needs to make an LSP call rather than directly update the
-        // buffer, but the assembly this code currently lives in doesn't ship in VS Code, so we need to solve a few other things
-        // before we get there.
+        Assumed.True(synchronizationResult.Synchronized);
 
         var uri = document.CreateUri();
         if (!_documentManager.TryGetDocument(uri, out var documentSnapshot) ||
@@ -55,7 +54,7 @@ internal sealed class HtmlDocumentPublisher(
         }
 
         VisualStudioTextChange[] changes = [new(0, htmlDocument.Snapshot.Length, htmlText)];
-        _documentManager.UpdateVirtualDocument<HtmlVirtualDocument>(uri, changes, documentSnapshot.Version, state: null);
+        _documentManager.UpdateVirtualDocument<HtmlVirtualDocument>(uri, changes, documentSnapshot.Version, state: synchronizationResult.Checksum);
 
         _logger.LogDebug($"Finished Html document generation for {document.FilePath} (into {uri})");
     }

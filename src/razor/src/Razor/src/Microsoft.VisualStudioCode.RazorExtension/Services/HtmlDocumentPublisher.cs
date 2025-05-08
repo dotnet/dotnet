@@ -20,9 +20,11 @@ internal sealed class HtmlDocumentPublisher(
 {
     private readonly RazorClientServerManagerProvider _razorClientServerManagerProvider = razorClientServerManagerProvider;
 
-    public async Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)
+    public async Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
     {
-        var request = new HtmlUpdateParameters(new TextDocumentIdentifier { Uri = document.CreateUri() }, htmlText);
+        Assumed.True(synchronizationResult.Synchronized);
+
+        var request = new HtmlUpdateParameters(new TextDocumentIdentifier { Uri = document.CreateUri() }, synchronizationResult.Checksum.ToString(), htmlText);
 
         var clientConnection = _razorClientServerManagerProvider.ClientLanguageServerManager.AssumeNotNull();
         await clientConnection.SendRequestAsync("razor/updateHtml", request, cancellationToken).ConfigureAwait(false);
@@ -31,6 +33,8 @@ internal sealed class HtmlDocumentPublisher(
     private record HtmlUpdateParameters(
         [property: JsonPropertyName("textDocument")]
         TextDocumentIdentifier TextDocument,
+        [property: JsonPropertyName("checksum")]
+        string Checksum,
         [property: JsonPropertyName("text")]
         string Text);
 }
