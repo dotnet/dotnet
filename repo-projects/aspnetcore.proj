@@ -6,6 +6,8 @@
 
     <BuildActions Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(FlagParameterPrefix)restore $(FlagParameterPrefix)all $(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
     <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(BuildActions) $(FlagParameterPrefix)productBuild</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sourceBuild</BuildActions>
     <!-- On windows, native tooling (JDK) is pre-installed on the machine. -->
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) -NativeToolsOnMachine</BuildActions>
     <!-- On non-windows, we don't have the JDK available and don't need to build those projects anyway because they are not consumed downstream. -->
