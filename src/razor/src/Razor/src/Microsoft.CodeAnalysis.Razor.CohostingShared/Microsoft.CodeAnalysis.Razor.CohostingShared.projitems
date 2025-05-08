@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DocumentSymbol\CohostDocumentSymbolEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostDocumentFormattingEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FindAllReferences\CohostFindAllReferencesEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\SynchronizationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToDefinitionEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToImplementationEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LinkedEditingRange\CohostLinkedEditingRangeEndpoint.cs" />
