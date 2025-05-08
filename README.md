@@ -5,7 +5,7 @@ This repository is a **Virtual Monolithic Repository (VMR)** which includes all 
 What this means:
 
 - **Monolithic** - a join of multiple repositories that make up the whole product, such as [dotnet/runtime](https://github.com/dotnet/runtime) or [dotnet/sdk](https://github.com/dotnet/sdk).
-- **Virtual** - a mirror (not replacement) of product repos where sources from those repositories are synchronized into.
+- **Virtual** - a mirror (not replacement) of product repos where sources from those repositories are synchronized with.
 
 In the VMR, you can find:
 
@@ -14,8 +14,8 @@ In the VMR, you can find:
 - small customizations, in the form of [patches](https://github.com/dotnet/dotnet/tree/main/src/sdk/src/SourceBuild/patches), applied on top of the original code to make the build possible,
 - *[in future]* E2E tests for the whole .NET product.
 
-Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/8.0.1xx`).
-Similarly, VMR's `main` branch will follow `main` branches of product repositories (see [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
+Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/10.0.1xx`).
+Similarly, VMR's `main` branch will follow default branches of product repositories (see [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
 
 More in-depth documentation about the VMR can be found in [VMR Design And Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#layout).
 See also [dotnet/source-build](https://github.com/dotnet/source-build) for more information about our whole-product source-build.
@@ -40,13 +40,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 
 We will achieve these goals while keeping active coding work in the separate repos where it happens today. For example: ASP.NET features will continue to be developed in `dotnet/aspnetcore` and CLR features will be continue to be developed in `dotnet/runtime`. Each of these repos have their own distinct communities and processes, and aggregating development into a true mono-repo would work against that. Hence, the "virtual" monolithic repo: the VMR gives us the simplicity of a mono-repo for building and servicing the product, while active development of components of that product stays in its various existing repos. The day to day experience for typical contributors will not change.
 
-## Limitations
-
-**This is a work-in-progress.**
-There are considerable limitations to what is possible at the moment. For an extensive list of current limitations, please see [Temporary Mechanics](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#temporary-mechanics).  
-See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md) for more details.
-
-### Supported platforms
+## Supported platforms
 
 - 8.0 and 9.0
   - source-build configuration on Linux
@@ -56,23 +50,25 @@ See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md
 
 For the latest information about Source-Build support for new .NET versions, please check our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions) for announcements.
 
-### Code flow
+## Code flow
 
-The VMR's code flow now operates in two directions. Indivdual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
+The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
 
-### Contribution
+## Contribution
 
 Contribution to the .NET product should currently be done mostly in the constituent repositories. The reasons for this are two-fold:
-- We want to slowly ramp up direct VMR changes to avoid surprises
+- We want to slowly ramp up direct VMR changes to avoid surprises.
 - The individual repositories still have the best validation for most changes.
 
-If you would like to make a cross-cutting change in the VMR, please see the Unified Build team. However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
+If you would like to make a cross-cutting change in the VMR, please ask the Unified Build team (please tag @dotnet/product-construction in an issue/discussion in your repository). However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
 
 #### Where to make changes:
 
-- src/* - Constituent repositories, except VMR pipeline changes.
-- Non src/* directories - Directly in VMR
-- Arcade common template changes - In Arcade if possible. Can be made in src/arcade/eng/common/*
+- `src/*` - Constituent repositories, except VMR pipeline changes.
+- Non `src/*` directories - Directly in VMR
+- Arcade `eng/common` changes - There are many copies of eng/common in the VMR:
+  - The VMR uses its root eng/common/* to bootstrap the VMR build. These should not be updated manually. They should only be updated via a re-bootrap of the VMR.
+  - A VMR build uses `src/arcade/eng/common/*` for arcade and any repository that builds after arcade. Changes may be made to these files, and they will flow back into arcade as well as to any repository that gets its arcade flow from the VMR. However, due to varying scenarios in which `eng/common/` can be used, it is generally recommended that the VMR only be used to test `eng/common` changes, while actual changes should still be made in the dotnet/arcade repository.
 - VMR pipeline changes - The root pipeline logic lives in eng/* and should be changed in the VMR.
 
 For any questions, please ask the Unified Build team.
@@ -145,7 +141,7 @@ git config --global core.longpaths true
 
     ```bash
     mkdir -p $HOME/dotnet
-    tar zxf artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz -C $HOME/dotnet
+    tar zxf artifacts/assets/Release/dotnet-sdk-10.0.100-[your-RID].tar.gz -C $HOME/dotnet
     ln -s $HOME/dotnet/dotnet /usr/bin/dotnet
     ```
 
@@ -153,7 +149,7 @@ git config --global core.longpaths true
 
     ```cmd
     mkdir %userprofile%\dotnet
-    tar -xf artifacts/assets/Release/dotnet-sdk-9.0.100-[your RID].zip -C %userprofile%\dotnet
+    tar -xf artifacts/assets/Release/dotnet-sdk-10.0.100-[your RID].zip -C %userprofile%\dotnet
     set "PATH=%userprofile%\dotnet;%PATH%"
     ```
 
@@ -201,13 +197,13 @@ Alternatively, you can also provide a manifest file where this information can b
 
 ### Synchronizing code into the VMR
 
-Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly (locally, as the VMR is read-only for now) but in case it's already available in your repository, you can synchronize it into the VMR (again locally).
+Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
 To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace - you will see instructions right after it starts. Alternatively, you can clone the repository locally and use the [vmr-sync.sh](src/sdk/eng/vmr-sync.sh) or [vmr-sync.ps1](src/sdk/eng/vmr-sync.ps1) script to pull your changes in. Please refer to the documentation in the script for more details.
 
 ## Filing Issues
 
-This repo does not accept issues as of now. Please file issues to the appropriate development repos.
+This repo does not currently accept issues. Please file issues to the appropriate development repos.
 For issues with the VMR itself, please use the [source-build repository](https://github.com/dotnet/source-build).
 
 ## Useful Links

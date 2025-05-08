@@ -49,7 +49,7 @@
     <RepoAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(AssetManifestsIntermediateDir)', '$(RepositoryName)'))</RepoAssetManifestsDir>
 
     <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
-    <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', 'sb', 'package-cache'))</RepoArtifactsPackageCache>
+    <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', '.packages'))</RepoArtifactsPackageCache>
 
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
 
@@ -99,7 +99,7 @@
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
-    <BuildActions Condition="'$(Sign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
     <TestActions>$(FlagParameterPrefix)test</TestActions>
   </PropertyGroup>
@@ -124,12 +124,20 @@
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder=$(OfficialBuilder)</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
+    <!-- TODO: Remove when the bootstrap Arcade SDK removed the ArPow build infra: https://github.com/dotnet/source-build/issues/5138 -->
+    <CommonArgs>$(CommonArgs) /p:UseArPowBuildInfra=false</CommonArgs>
 
     <!-- Pass locations for assets -->
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildRepo=true</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
+
+    <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
+    <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
+    <CommonArgs>$(CommonArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</CommonArgs>
 
     <!-- PGO assets by default are "Vertical" visibilty. Each repo will enable the specific artifacts it must publish externally -->
     <DefaultArtifactVisibility Condition="'$(PgoInstrument)' == 'true'">Vertical</DefaultArtifactVisibility>
@@ -137,21 +145,16 @@
     <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">Vertical</DefaultArtifactVisibility>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildSourceOnly=true</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
+  </PropertyGroup>
+
   <!-- Build specific args -->
   <PropertyGroup>
     <BuildArgs>$(BuildArgs) -bl</BuildArgs>
-    <!-- Don't flow these control properties during testing to avoid the outer/inner complexity. -->
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildRepo=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildOrchestrator=true</BuildArgs>
-    <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
-    <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
-    <BuildArgs>$(BuildArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</BuildArgs>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildSourceOnly=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:SourceBuildPrebuiltReportDir="$(ArtifactsLogRepoDir)"</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 
@@ -25,9 +26,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class DocumentPullDiagnosticsEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlRequestInvoker requestInvoker,
+    IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : CohostDocumentPullDiagnosticsEndpointBase<DocumentDiagnosticParams, FullDocumentDiagnosticReport?>(remoteServiceInvoker, requestInvoker, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
+    : CohostDocumentPullDiagnosticsEndpointBase<DocumentDiagnosticParams, FullDocumentDiagnosticReport?>(remoteServiceInvoker, requestInvoker, clientCapabilitiesService, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
 {
     protected override string LspMethodName => Methods.TextDocumentDiagnosticName;
     protected override bool SupportsHtmlDiagnostics => false;

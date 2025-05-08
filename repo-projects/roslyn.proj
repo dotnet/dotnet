@@ -8,9 +8,11 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(FlagParameterPrefix)restore</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
-    <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(Sign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
+    <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
+    <!-- TODO: Re-enable when roslyn fixed all NU1510 errors. -->
+    <BuildArgs>$(BuildArgs) /p:RestoreEnablePackagePruning=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
@@ -27,6 +29,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="command-line-api" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">

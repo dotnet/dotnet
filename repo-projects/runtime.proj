@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
+    <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
+
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
@@ -12,37 +15,45 @@
     <SkipSetTargetOS>true</SkipSetTargetOS>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
 
-    <IsSpecialFlavorBuild Condition="'$(PgoInstrument)' == 'true'">true</IsSpecialFlavorBuild>
     <!--
       When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
       This is generally used in source-build scenarios where the target RID is only supported on Mono
       or Mono-LLVMAOT runtime pack builds.
     -->
-    <IsSpecialFlavorBuild Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">true</IsSpecialFlavorBuild>
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)usemonoruntime</BuildArgs>
+
+    <!-- Mobile builds and windows host (for Android-on-windows etc.) are never "cross" builds as they don't have a rootfs-based filesystem build. -->
+    <TargetsMobile Condition="'$(TargetOS)' == 'ios' or '$(TargetOS)' == 'iossimulator' or '$(TargetOS)' == 'maccatalyst' or '$(TargetOS)' == 'tvos' or '$(TargetOS)' == 'tvossimulator' or '$(TargetOS)' == 'android' or '$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi'">true</TargetsMobile>
+    <BuildArgs Condition="'$(CrossBuild)' == 'true' or ('$(TargetOS)-$(TargetArchitecture)' != '$(TargetOS)-$(BuildArchitecture)' and '$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'windows' and '$(TargetOS)' != 'linux-bionic')">$(BuildArgs) $(FlagParameterPrefix)cross</BuildArgs>
+
+    <!-- TODO: This parameter is only available on the Unix script. Intentional? -->
+    <BuildArgs Condition="'$(BuildOS)' != 'windows'">$(BuildArgs) --outputrid $(TargetRid)</BuildArgs>
+
+    <!-- Source-build will use non-portable RIDs. To build for these non-portable RID scenarios, we must do a bootstrapped build. -->
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
-    <BuildArgs Condition="'$(IsSpecialFlavorBuild)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
+    <BuildArgs Condition="'$(PgoInstrument)' != 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
-    <!-- Pass the properties for this special build flavor down to the runtime repo build. -->
-    <BuildArgs Condition="'$(WasmEnableThreads)' == 'true'">$(BuildArgs) /p:WasmEnableThreads=true</BuildArgs>
+    <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
+    <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
+
+    <!-- Pass through special build modes controlled by properties -->
+    <BuildArgs Condition="'$(WasmEnableThreads)' != ''">$(BuildArgs) /p:WasmEnableThreads=$(WasmEnableThreads)</BuildArgs>
     <BuildArgs Condition="'$(MonoEnableLLVM)' != ''">$(BuildArgs) /p:MonoEnableLLVM=$(MonoEnableLLVM)</BuildArgs>
     <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
     <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
 
-    <BuildArgs Condition="'$(UseSystemLibs)' != ''">$(BuildArgs) /p:UseSystemLibs=$(UseSystemLibs)</BuildArgs>
-
-    <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
-    <BuildArgs Condition="'$(Sign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
-
-    <!-- Needed until https://github.com/dotnet/runtime/issues/109329 is fixed. -->
-    <BuildArgs>$(BuildArgs) /p:NetCoreAppToolCurrentVersion=10.0</BuildArgs>
-
-    <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
-    <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
-
-    <!-- Explicitly disable RID-specific artifacts when it's not enabled. Runtime's build defaults to using RID-specific artifacts, so we must explicitly opt-out. -->
-    <EnableDefaultRidSpecificArtifacts Condition="'$(EnableDefaultRidSpecificArtifacts)' != 'true'">false</EnableDefaultRidSpecificArtifacts>
+    <!-- Handle system libraries -->
+    <UseSystemLibs Condition="'$(UseSystemLibs)' != ''">+$(UseSystemLibs)</UseSystemLibs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+libunwind'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</BuildArgs>
+    <!-- TODO: llvm-libunwind -->
+    <!-- TODO: LinuxTracepoints -->
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+zlib'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('-lttng'))">$(BuildArgs) /p:FeatureXplatEventSource=false</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
