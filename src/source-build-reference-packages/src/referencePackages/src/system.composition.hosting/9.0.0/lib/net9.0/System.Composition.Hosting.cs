@@ -30,13 +30,9 @@ namespace System.Composition.Hosting
     public sealed partial class CompositionHost : CompositionContext, IDisposable
     {
         internal CompositionHost() { }
-
         public static CompositionHost CreateCompositionHost(Collections.Generic.IEnumerable<Core.ExportDescriptorProvider> providers) { throw null; }
-
         public static CompositionHost CreateCompositionHost(params Core.ExportDescriptorProvider[] providers) { throw null; }
-
         public void Dispose() { }
-
         public override bool TryGetExport(Core.CompositionContract contract, out object export) { throw null; }
     }
 }
@@ -47,34 +43,22 @@ namespace System.Composition.Hosting.Core
     public partial class CompositionDependency
     {
         internal CompositionDependency() { }
-
         public CompositionContract Contract { get { throw null; } }
-
         public bool IsPrerequisite { get { throw null; } }
-
         public object Site { get { throw null; } }
-
         public ExportDescriptorPromise Target { get { throw null; } }
 
         public static CompositionDependency Missing(CompositionContract contract, object site) { throw null; }
-
         public static CompositionDependency Oversupplied(CompositionContract contract, Collections.Generic.IEnumerable<ExportDescriptorPromise> targets, object site) { throw null; }
-
         public static CompositionDependency Satisfied(CompositionContract contract, ExportDescriptorPromise target, bool isPrerequisite, object site) { throw null; }
-
         public override string ToString() { throw null; }
     }
-
     public sealed partial class CompositionOperation : IDisposable
     {
         internal CompositionOperation() { }
-
         public void AddNonPrerequisiteAction(Action action) { }
-
         public void AddPostCompositionAction(Action action) { }
-
         public void Dispose() { }
-
         public static object Run(LifetimeContext outermostLifetimeContext, CompositeActivator compositionRootActivator) { throw null; }
     }
 
@@ -82,12 +66,9 @@ namespace System.Composition.Hosting.Core
     {
         protected abstract Collections.Generic.IEnumerable<ExportDescriptorPromise> GetPromises(CompositionContract exportKey);
         public Collections.Generic.IEnumerable<CompositionDependency> ResolveDependencies(object site, CompositionContract contract, bool isPrerequisite) { throw null; }
-
         public CompositionDependency ResolveRequiredDependency(object site, CompositionContract contract, bool isPrerequisite) { throw null; }
-
         public bool TryResolveOptionalDependency(object site, CompositionContract contract, bool isPrerequisite, out CompositionDependency dependency) { throw null; }
     }
-
     public abstract partial class ExportDescriptor
     {
         public abstract CompositeActivator Activator { get; }
@@ -95,24 +76,17 @@ namespace System.Composition.Hosting.Core
 
         public static ExportDescriptor Create(CompositeActivator activator, Collections.Generic.IDictionary<string, object> metadata) { throw null; }
     }
-
     public partial class ExportDescriptorPromise
     {
         public ExportDescriptorPromise(CompositionContract contract, string origin, bool isShared, Func<Collections.Generic.IEnumerable<CompositionDependency>> dependencies, Func<Collections.Generic.IEnumerable<CompositionDependency>, ExportDescriptor> getDescriptor) { }
-
         public CompositionContract Contract { get { throw null; } }
-
         public Collections.ObjectModel.ReadOnlyCollection<CompositionDependency> Dependencies { get { throw null; } }
-
         public bool IsShared { get { throw null; } }
-
         public string Origin { get { throw null; } }
 
         public ExportDescriptor GetDescriptor() { throw null; }
-
         public override string ToString() { throw null; }
     }
-
     public abstract partial class ExportDescriptorProvider
     {
         protected static readonly Func<Collections.Generic.IEnumerable<CompositionDependency>> NoDependencies;
@@ -120,23 +94,15 @@ namespace System.Composition.Hosting.Core
         protected static readonly Collections.Generic.IDictionary<string, object> NoMetadata;
         public abstract Collections.Generic.IEnumerable<ExportDescriptorPromise> GetExportDescriptors(CompositionContract contract, DependencyAccessor descriptorAccessor);
     }
-
     public sealed partial class LifetimeContext : CompositionContext, IDisposable
     {
         internal LifetimeContext() { }
-
         public void AddBoundInstance(IDisposable instance) { }
-
         public static int AllocateSharingId() { throw null; }
-
         public void Dispose() { }
-
         public LifetimeContext FindContextWithin(string sharingBoundary) { throw null; }
-
         public object GetOrCreate(int sharingId, CompositionOperation operation, CompositeActivator creator) { throw null; }
-
         public override string ToString() { throw null; }
-
         public override bool TryGetExport(CompositionContract contract, out object export) { throw null; }
     }
 }
