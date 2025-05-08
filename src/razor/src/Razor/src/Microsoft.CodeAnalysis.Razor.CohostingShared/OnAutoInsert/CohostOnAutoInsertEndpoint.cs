@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -26,10 +27,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 [Shared]
 [CohostEndpoint(VSInternalMethods.OnAutoInsertName)]
 [Export(typeof(IDynamicRegistrationProvider))]
-[ExportCohostStatelessLspService(typeof(CohostOnAutoInsertEndpoint))]
+[ExportRazorStatelessLspService(typeof(CohostOnAutoInsertEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostOnAutoInsertEndpoint(
+internal sealed class CohostOnAutoInsertEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
 #pragma warning disable RS0030 // Do not use banned APIs
@@ -52,7 +53,10 @@ internal class CohostOnAutoInsertEndpoint(
 
         ImmutableArray<string> triggerCharacters = [
             .. providerTriggerCharacters,
+#if !VSCODE
+            // VS Code's auto insert functionality is poly-filled by Roslyn. The Html server has no support for it.
             .. AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters,
+#endif
             .. AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters ];
 
         return triggerCharacters;
@@ -64,7 +68,7 @@ internal class CohostOnAutoInsertEndpoint(
 
     public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
-        if (clientCapabilities.SupportsVisualStudioExtensions)
+        if ((clientCapabilities.TextDocument as VSInternalTextDocumentClientCapabilities)?.OnAutoInsert?.DynamicRegistration == true)
         {
             return [new Registration
             {

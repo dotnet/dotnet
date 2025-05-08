@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using NuGet.Common;
+using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.ProjectManagement;
@@ -269,7 +270,7 @@ namespace NuGet.PackageManagement.UI
                 string solutionDirectory = await _solutionManager.GetSolutionDirectoryAsync(token);
                 await _packageRestoreManager.RestoreMissingPackagesInSolutionAsync(solutionDirectory,
                     this,
-                    new LoggerAdapter(this),
+                    new RestoreBarLogger(this),
                     token);
 
                 if (_restoreException == null)
