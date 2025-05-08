@@ -12,7 +12,8 @@ internal class HtmlVirtualDocumentSnapshot : VirtualDocumentSnapshot
     public HtmlVirtualDocumentSnapshot(
         Uri uri,
         ITextSnapshot snapshot,
-        long? hostDocumentSyncVersion)
+        long? hostDocumentSyncVersion,
+        object? state)
     {
         if (uri is null)
         {
@@ -27,6 +28,7 @@ internal class HtmlVirtualDocumentSnapshot : VirtualDocumentSnapshot
         Uri = uri;
         Snapshot = snapshot;
         HostDocumentSyncVersion = hostDocumentSyncVersion;
+        State = state;
     }
 
     public override Uri Uri { get; }
@@ -34,4 +36,6 @@ internal class HtmlVirtualDocumentSnapshot : VirtualDocumentSnapshot
     public override ITextSnapshot Snapshot { get; }
 
     public override long? HostDocumentSyncVersion { get; }
+
+    public object? State { get; }
 }
