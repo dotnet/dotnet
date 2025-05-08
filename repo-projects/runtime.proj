@@ -36,7 +36,7 @@
     <BuildArgs Condition="'$(PgoInstrument)' != 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
     <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
-    <BuildArgs Condition="'$(Sign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
 
     <!-- Pass through special build modes controlled by properties -->
     <BuildArgs Condition="'$(WasmEnableThreads)' != ''">$(BuildArgs) /p:WasmEnableThreads=$(WasmEnableThreads)</BuildArgs>

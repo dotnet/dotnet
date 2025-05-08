@@ -42,7 +42,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
         }
     }
 
-    public async Task<bool> TrySynchronizeAsync(TextDocument document, CancellationToken cancellationToken)
+    public async Task<SynchronizationResult> TrySynchronizeAsync(TextDocument document, CancellationToken cancellationToken)
     {
         var requestedVersion = await RazorDocumentVersion.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
@@ -56,7 +56,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
         return await GetSynchronizationRequestTaskAsync(document, requestedVersion).ConfigureAwait(false);
     }
 
-    private Task<bool> GetSynchronizationRequestTaskAsync(TextDocument document, RazorDocumentVersion requestedVersion)
+    private Task<SynchronizationResult> GetSynchronizationRequestTaskAsync(TextDocument document, RazorDocumentVersion requestedVersion)
     {
         lock (_gate)
         {
@@ -71,7 +71,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
 
 #pragma warning disable VSTHRD103 // Use await instead of .Result
 #pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
-                    if (request.Task.IsCompleted && request.Task.Result == false)
+                    if (request.Task.IsCompleted && request.Task.Result.Equals(default))
                     {
                         _logger.LogDebug($"Already finished that version for {document.FilePath}, but was unsuccessful, so will recompute");
                         request.Dispose();
@@ -92,7 +92,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
                     // for a different checksum, but the same workspace version, we assume the new request is the newer document.
 
                     _logger.LogDebug($"We've already seen {request.RequestedVersion} for {document.FilePath} so that's a no from me");
-                    return SpecializedTasks.False;
+                    return SpecializedTasks.Default<SynchronizationResult>();
                 }
                 else if (!request.Task.IsCompleted)
                 {
@@ -110,7 +110,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
         }
     }
 
-    private async Task<bool> PublishHtmlDocumentAsync(TextDocument document, CancellationToken cancellationToken)
+    private async Task<SynchronizationResult> PublishHtmlDocumentAsync(TextDocument document, RazorDocumentVersion requestedVersion, CancellationToken cancellationToken)
     {
         string? htmlText;
         try
@@ -122,30 +122,31 @@ internal sealed partial class HtmlDocumentSynchronizer(
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error getting Html text for {document.FilePath}. Html document contents will be stale");
-            return false;
+            return default;
         }
 
         if (cancellationToken.IsCancellationRequested)
         {
             // Checking cancellation before logging, as a new request coming in doesn't count as "Couldn't get Html"
-            return false;
+            return default;
         }
 
         if (htmlText is null)
         {
             _logger.LogError($"Couldn't get Html text for {document.FilePath}. Html document contents will be stale");
-            return false;
+            return default;
         }
 
         try
         {
-            await _htmlDocumentPublisher.PublishAsync(document, htmlText, cancellationToken).ConfigureAwait(false);
-            return true;
+            var result = new SynchronizationResult(true, requestedVersion.Checksum);
+            await _htmlDocumentPublisher.PublishAsync(document, result, htmlText, cancellationToken).ConfigureAwait(false);
+            return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error publishing Html text for {document.FilePath}. Html document contents will be stale");
-            return false;
+            return default;
         }
     }
 
@@ -163,7 +164,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
             _instance = instance;
         }
 
-        public Task<bool> GetSynchronizationRequestTaskAsync(TextDocument document, RazorDocumentVersion requestedVersion)
+        public Task<SynchronizationResult> GetSynchronizationRequestTaskAsync(TextDocument document, RazorDocumentVersion requestedVersion)
             => _instance.GetSynchronizationRequestTaskAsync(document, requestedVersion);
     }
 }

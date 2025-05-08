@@ -40,13 +40,13 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         var remoteServiceInvoker = new RemoteServiceInvoker(document);
         var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.True((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
             });
     }
 
@@ -59,23 +59,26 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         var remoteServiceInvoker = new RemoteServiceInvoker(document);
         var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        var syncResult = await synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        Assert.True(syncResult.Synchronized);
 
         // "Close" the document
         synchronizer.DocumentRemoved(document.CreateUri());
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.True((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
+                Assert.Equal(syncResult.Checksum, i.Checksum);
             },
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
+                Assert.Equal(syncResult.Checksum, i.Checksum); // Same document, so same checksum, even though its a different publish
             });
     }
 
@@ -89,16 +92,16 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         remoteServiceInvoker.OOPReturnsNull = true;
-        Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.False((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         remoteServiceInvoker.OOPReturnsNull = false;
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.True((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
             });
     }
 
@@ -111,17 +114,17 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         var remoteServiceInvoker = new RemoteServiceInvoker(document, () => throw new Exception());
         var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
-        Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.False((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         // Stop throwing exceptions :)
         remoteServiceInvoker.GenerateTask = null;
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        Assert.True((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
             });
     }
 
@@ -136,7 +139,8 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         var version1 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        var syncResult = await synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        Assert.True(syncResult.Synchronized);
 
         // Add a new document, moving the workspace forward but leaving our document unaffected
         Assert.True(Workspace.TryApplyChanges(document.Project.AddAdditionalDocument("Foo2.razor", SourceText.From(""), filePath: "file://Foo2.razor").Project.Solution));
@@ -144,7 +148,9 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
         var version2 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        var syncResult2 = await synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        Assert.True(syncResult2.Synchronized);
+        Assert.Equal(syncResult.Checksum, syncResult2.Checksum);
 
         // Validate that the workspace moved forward
         Assert.NotEqual(version1.WorkspaceVersion, version2.WorkspaceVersion);
@@ -153,8 +159,9 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
+                Assert.Equal(syncResult.Checksum, i.Checksum);
             });
     }
 
@@ -169,29 +176,34 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         var version1 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        var syncResult = await synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        Assert.True(syncResult.Synchronized);
 
         // Change our document directly, but without applying changes (equivalent to LSP didChange)
         var solution = Workspace.CurrentSolution.WithAdditionalDocumentText(_documentId.AssumeNotNull(), SourceText.From("<span></span>"));
         document = solution.GetAdditionalDocument(_documentId).AssumeNotNull();
         var version2 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
-        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+        var syncResult2 = await synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        Assert.True(syncResult2.Synchronized);
 
         // Validate that the workspace hasn't moved forward
         Assert.Equal(version1.WorkspaceVersion, version2.WorkspaceVersion);
+        Assert.NotEqual(syncResult.Checksum, syncResult2.Checksum);
 
         // We should have two publishes
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
+                Assert.Equal(syncResult.Checksum, i.Checksum);
             },
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<span></span>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<span></span>", i.Text);
+                Assert.Equal(syncResult2.Checksum, i.Checksum);
             });
     }
 
@@ -212,18 +224,18 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         var task = synchronizer.TrySynchronizeAsync(document2, DisposalToken);
 
-        Assert.False(await synchronizer.TrySynchronizeAsync(document1, DisposalToken));
+        Assert.False((await synchronizer.TrySynchronizeAsync(document1, DisposalToken)).Synchronized);
 
         tcs.SetResult(true);
 
-        Assert.True(await task);
+        Assert.True((await task).Synchronized);
 
         // We should have two publishes
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<span></span>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<span></span>", i.Text);
             });
     }
 
@@ -247,8 +259,8 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<div></div>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
             });
     }
 
@@ -274,14 +286,14 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         await Task.WhenAll(task1, task2);
 #pragma warning disable xUnit1031 // Do not use blocking task operations in test method
-        Assert.False(task1.Result);
+        Assert.False(task1.Result.Synchronized);
 #pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
         Assert.Collection(publisher.Publishes,
             i =>
             {
-                Assert.Equal(_documentId, i.Item1.Id);
-                Assert.Equal("<span></span>", i.Item2);
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<span></span>", i.Text);
             });
     }
 
@@ -337,13 +349,13 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
     private class TestHtmlDocumentPublisher : IHtmlDocumentPublisher
     {
-        private List<(TextDocument, string)> _publishes = [];
+        private List<(TextDocument, string, ChecksumWrapper)> _publishes = [];
 
-        public List<(TextDocument, string)> Publishes => _publishes;
+        public List<(TextDocument Document, string Text, ChecksumWrapper Checksum)> Publishes => _publishes;
 
-        public Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)
+        public Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
         {
-            _publishes.Add((document, htmlText));
+            _publishes.Add((document, htmlText, synchronizationResult.Checksum));
             return Task.CompletedTask;
         }
     }
