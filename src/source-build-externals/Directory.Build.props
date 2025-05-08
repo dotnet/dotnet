@@ -10,10 +10,7 @@
     <!-- This repo's projects are entirely infrastructure and do not ship. -->
     <IsShipping>false</IsShipping>
 
-    <ProjectDir>$(MSBuildThisFileDirectory)</ProjectDir>
-    <KeysDir>$(ProjectDir)keys/</KeysDir>
-    <SubmoduleDirectory>$(ProjectDir)src/</SubmoduleDirectory>
-    <PatchesDir>$(ProjectDir)patches/</PatchesDir>
+    <SrcDir>$(MSBuildThisFileDirectory)src/</SrcDir>
     <XPlatSourceBuildTasksAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', 'Microsoft.DotNet.SourceBuild.Tasks.XPlat', '$(Configuration)', '$(NetCurrent)', 'Microsoft.DotNet.SourceBuild.Tasks.XPlat.dll'))</XPlatSourceBuildTasksAssembly>
 
     <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
