@@ -6,6 +6,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -32,7 +33,7 @@ internal sealed class HtmlRequestInvoker(
     public async Task<TResponse?> MakeHtmlLspRequestAsync<TRequest, TResponse>(TextDocument razorDocument, string method, TRequest request, TimeSpan threshold, Guid correlationId, CancellationToken cancellationToken) where TRequest : notnull
     {
         var syncResult = await _htmlDocumentSynchronizer.TrySynchronizeAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-        if (!syncResult)
+        if (!syncResult.Synchronized)
         {
             _logger.LogDebug($"Couldn't synchronize for {razorDocument.FilePath}");
             return default;
@@ -50,6 +51,13 @@ internal sealed class HtmlRequestInvoker(
             return default;
         }
 
+        var existingChecksum = (ChecksumWrapper)htmlDocument.State.AssumeNotNull();
+        if (!existingChecksum.Equals(syncResult.Checksum))
+        {
+            _logger.LogError($"Checksum for {snapshot.Uri}, {htmlDocument.State} doesn't match {syncResult.Checksum}.");
+            return default;
+        }
+
         // If the request is for a text document, we need to update the Uri to point to the Html document,
         // and most importantly set it back again before leaving the method in case a caller uses it.
         Uri? originalUri = null;
@@ -62,8 +70,7 @@ internal sealed class HtmlRequestInvoker(
 
         try
         {
-
-            _logger.LogDebug($"Making LSP request for {method} from {htmlDocument.Uri}{(request is ITextDocumentPositionParams positionParams ? $" at {positionParams.Position}" : "")}.");
+            _logger.LogDebug($"Making LSP request for {method} from {htmlDocument.Uri}{(request is ITextDocumentPositionParams positionParams ? $" at {positionParams.Position}" : "")}, checksum {syncResult.Checksum}.");
 
             // Passing Guid.Empty to this method will mean no tracking
             using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, RazorLSPConstants.HtmlLanguageServerName, threshold, correlationId);
