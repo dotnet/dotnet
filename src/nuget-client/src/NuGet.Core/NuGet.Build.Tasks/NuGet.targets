@@ -73,7 +73,8 @@ Copyright (c) .NET Foundation. All rights reserved.
     <!-- Report all severity vulnerabilities (low severity and higher). Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
     <!-- Report known vulnerabilities on direct and transitive dependencies for .NET 10 and higher, direct only otherwise -->
-    <NuGetAuditMode Condition=" '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == ''
+                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
                     AND '$(TargetFrameworkIdentifier)' == '.NETCoreApp'
                     AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0'))">all</NuGetAuditMode>
     <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
