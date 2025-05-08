@@ -8,20 +8,20 @@
 
   <Target Name="WritePrebuiltUsageData" AfterTargets="Build">
     <PropertyGroup>
-      <PrebuiltUsageRootDir Condition="'$(PrebuiltUsageRootDir)' == ''">$(RepoRoot)</PrebuiltUsageRootDir>
-      <PrebuiltUsagePackageCache Condition="'$(PrebuiltUsagePackageCache)' == ''">$(NuGetPackageRoot)</PrebuiltUsagePackageCache>
-      <PrebuiltUsageReportDir Condition="'$(PrebuiltUsageReportDir)' == ''">$(ArtifactsLogDir)</PrebuiltUsageReportDir>
-      <PackageReportDataFile Condition="'$(PackageReportDataFile)' == ''">$(PrebuiltUsageReportDir)prebuilt-usage.xml</PackageReportDataFile>
+      <TrackPrebuiltUsageRootDir Condition="'$(TrackPrebuiltUsageRootDir)' == ''">$(RepoRoot)</TrackPrebuiltUsageRootDir>
+      <TrackPrebuiltUsagePackageCache Condition="'$(TrackPrebuiltUsagePackageCache)' == ''">$(NuGetPackageRoot)</TrackPrebuiltUsagePackageCache>
+      <TrackPrebuiltUsageReportDir Condition="'$(TrackPrebuiltUsageReportDir)' == ''">$(ArtifactsLogDir)</TrackPrebuiltUsageReportDir>
+      <TrackPrebuiltUsageReportFile Condition="'$(TrackPrebuiltUsageReportFile)' == ''">$(TrackPrebuiltUsageReportDir)prebuilt-usage.xml</TrackPrebuiltUsageReportFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <AllRestoredPackageFiles Include="$(PrebuiltUsagePackageCache)**/*.nupkg" />
+      <AllRestoredPackageFiles Include="$(TrackPrebuiltUsagePackageCache)**/*.nupkg" />
       <SourceBuiltPackageFiles Include="$(AdditionalSourceBuiltNupkgCacheDir)**/*.nupkg" Condition="'$(AdditionalSourceBuiltNupkgCacheDir)' != ''" />
       <SourceBuiltPackageFiles Include="$(ReferencePackageNupkgCacheDir)**/*.nupkg" Condition="'$(ReferencePackageNupkgCacheDir)' != ''" />
       <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltNupkgCacheDir)**/*.nupkg" Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' != ''" />
 
-      <!-- Scan entire PrebuiltUsageRootDir, in case project.assets.json ends up in an unexpected place. -->
-      <ProjectDirectories Include="$(PrebuiltUsageRootDir)" />
+      <!-- Scan entire TrackPrebuiltUsageRootDir, in case project.assets.json ends up in an unexpected place. -->
+      <ProjectDirectories Include="$(TrackPrebuiltUsageRootDir)" />
     </ItemGroup>
 
     <WritePackageUsageData
@@ -32,15 +32,15 @@
       PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
       TargetRid="$(TargetRid)"
       ProjectDirectories="@(ProjectDirectories)"
-      RootDir="$(PrebuiltUsageRootDir)"
+      RootDir="$(TrackPrebuiltUsageRootDir)"
       IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
-      DataFile="$(PackageReportDataFile)"
+      DataFile="$(TrackPrebuiltUsageReportFile)"
       ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
 
     <WriteUsageReports
-      DataFile="$(PackageReportDataFile)"
+      DataFile="$(TrackPrebuiltUsageReportFile)"
       PoisonedReportFile="$(PoisonedReportFile)"
-      OutputDirectory="$(PrebuiltUsageReportDir)" />
+      OutputDirectory="$(TrackPrebuiltUsageReportDir)" />
   </Target>
 
 </Project>
