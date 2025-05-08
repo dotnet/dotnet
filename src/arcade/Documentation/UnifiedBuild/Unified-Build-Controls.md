@@ -111,21 +111,14 @@ The following context controls will be implemented. These controls should be use
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuild | "true", "false", "" | "" | This is a general identification control that essentially identifies whether the infrastructure is building in any kind of Unified Build mode. This serves as a way to conditionalize non-phase specific infrastructure in a general manner.<br/>Generally, this is `DotNetBuildPhase != ‘’`<br/>In general, uses of this switch should be limited to infrastructure, though it is possible that those infrastructure uses may affect the build output, especially in cases where a repo maintains a separate official build. |
-
-#### Exclusive Context Controls
-
-| **Name** | **Values** | **Default** | **Description** |
-| -------- | -------- | -------- | -------- |
-| DotNetBuildPhase | "Orchestrator", "Repo", "InnerRepo", "" | "" | Exclusive phase control identifying the phase currently executing.<br/>Generally, this replaces uses of `ArcadeInnerBuildFromSource` (exclusive inner build) as well as common conditionals like `ArcadeBuildFromSource && !ArcadeInnerBuildFromSource`. |
+| DotNetBuild | "true", "false", "" | "" | This is a general identification control that essentially identifies whether the infrastructure is building in any kind of Unified Build mode. This serves as a way to conditionalize non-phase specific infrastructure in a general manner.<br/>In general, uses of this switch should be limited to infrastructure, though it is possible that those infrastructure uses may affect the build output, especially in cases where a repo maintains a separate official build. |
 
  #### Inclusive Context Controls
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuildInnerRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the inner repo build. This is equivalent to `ArcadeInnerBuildFromSource``. |
-| DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator, outer repo build, and inner repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
-| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within outer repo build or inner repo build phases.<br/>This is essentially the same as the legacy `ArcadeBuildFromSource`. |
+| DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
+| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within repo build. |
 
 ### Resource Controls
 
@@ -149,8 +142,9 @@ In addition to these default high level controls, there may be additional compon
 | TargetOS | Same as `BuildOS` | `BuildOS` | The operating system of the machine that will run the binary -> the end user’s machine. |
 | HostOS | Same as `BuildOS` | `TargetOS` | The operating system of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
 | BuildRid | Valid RIDs | RID of the the currently executing runtime | The RID of the runtime that is running the build |
-| TargetRid | Valid RIDs | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
-| HostRid | Valid RIDs | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| TargetRid | Valid RIDs or custom RID | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
+| HostRid | Valid RIDs or `TargetRid` | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| BaseRid | Valid RIDs | OS portion of `NETCoreSdkPortableRuntimeIdentifier` appended with `-TargetArchitecture` | A known RID to use as a parent of a custom RID specified in `TargetRid` if `TargetRid` is unknown. |
 | BuildArchitecture | "x64", "x86", "arm", "arm64", ... | The architecture of the build environment | The architecture of the machine that is built on. Lower-case string. |
 | TargetArchitecture | Same as `BuildArchitecture` | `BuildArchitecture` | The architecture of the machine that will run the binary -> the end user's machine. |
 | HostArchitecture | Same as `BuildArchitecture` | `TargetArchitecture` | The architecture of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target architecture |

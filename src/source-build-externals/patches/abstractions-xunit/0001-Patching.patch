@@ -4,24 +4,10 @@ Date: Wed, 19 Jul 2023 11:47:26 -0700
 Subject: [PATCH] Patching
 
 ---
- global.json                                       |  6 ------
  src/xunit.abstractions/Properties/AssemblyInfo.cs |  2 +-
  src/xunit.abstractions/xunit.abstractions.csproj  | 11 +++--------
- 3 files changed, 4 insertions(+), 15 deletions(-)
- delete mode 100644 global.json
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/global.json b/global.json
-deleted file mode 100644
-index 9f78419..0000000
---- a/global.json
-+++ /dev/null
-@@ -1,6 +0,0 @@
--{
--  "sdk": {
--    "version": "6.0.0",
--    "rollForward": "latestMinor"
--  }
--}
 diff --git a/src/xunit.abstractions/Properties/AssemblyInfo.cs b/src/xunit.abstractions/Properties/AssemblyInfo.cs
 index 041f22b..c5b5124 100644
 --- a/src/xunit.abstractions/Properties/AssemblyInfo.cs
@@ -56,6 +42,3 @@ index fa4cf23..5d61131 100644
 -  </ItemGroup>
 -
  </Project>
--- 
-2.41.0.windows.2
-
