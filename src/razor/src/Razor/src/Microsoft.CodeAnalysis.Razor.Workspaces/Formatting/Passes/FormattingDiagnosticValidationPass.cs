@@ -14,14 +14,14 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFactory) : IFormattingValidationPass
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<FormattingDiagnosticValidationPass>();
 
     // Internal for testing.
     internal bool DebugAssertsEnabled { get; set; } = true;
 
-    public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
+    public async Task<bool> IsValidAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var originalDiagnostics = context.CodeDocument.GetSyntaxTree().Diagnostics;
 
@@ -55,10 +55,10 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
                 Debug.Fail("A formatting result was rejected because the formatted text produced different diagnostics compared to the original text.");
             }
 
-            return [];
+            return false;
         }
 
-        return changes;
+        return true;
     }
 
     private class LocationIgnoringDiagnosticComparer : IEqualityComparer<RazorDiagnostic>
