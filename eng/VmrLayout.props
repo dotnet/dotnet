@@ -71,11 +71,4 @@
     <MergedAssetManifestOutputPath>$(ArtifactsStagingDir)/manifests/$(Configuration)/$(MergedAssetManifestName)</MergedAssetManifestOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- In source-only non-official builds, specifically stage 2, the test project needs access to the previously source built feed
-        in order to restore the Microsoft.DotNet.Build.Tasks.Feed package for the Arcade SDK located in BootstrapPackages. This needs
-        to be defined at a scope that will be imported at the repo root since it needs to take effect when restoring the Arcade SDK. -->
-    <RestoreAdditionalProjectSources Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(RestoreAdditionalProjectSources);$(PreviouslySourceBuiltPackagesPath)</RestoreAdditionalProjectSources>
-  </PropertyGroup>
-
 </Project>
