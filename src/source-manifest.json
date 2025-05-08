@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.2",
-      "barId": 266892,
+      "packageVersion": "10.0.0-preview.5.25257.5",
+      "barId": 267292,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "b9112907bd7526126a355a895cce9d1ffc8bdc85"
+      "commitSha": "2f2a94698d8c32e223cd6b7ee5bdaadd0a3810d9"
     },
     {
       "packageVersion": "0.11.5-alpha.25252.1",
@@ -29,39 +29,39 @@
       "commitSha": "ace481b2c118341192e9ac0caceb17cede03ed47"
     },
     {
-      "packageVersion": "0.1.625201",
-      "barId": 266678,
+      "packageVersion": "0.1.625601",
+      "barId": 266966,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "c07f759f70b5517a7fefb9ac5ac73603cff49f41"
+      "commitSha": "493a1d270887d7c51372fd17f774ea44b0c3101a"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25255.1",
-      "barId": 266805,
+      "packageVersion": "9.0.0-preview.1.25257.2",
+      "barId": 267231,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "6b4bb9fae2d5c2caa1c5da1b49a045239bbbae3a"
+      "commitSha": "03d18156191c4e44e05c476d9636435965703ebb"
     },
     {
-      "packageVersion": "9.0.625501",
-      "barId": 266847,
+      "packageVersion": "9.0.625601",
+      "barId": 267066,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "8a951ade8ae70e5fc47345958cf716cc8e9cffe5"
+      "commitSha": "aebf15d23e5a25ab718e780a29d8aca9a5280425"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.1",
-      "barId": 266798,
+      "packageVersion": "10.0.0-preview.4.25257.4",
+      "barId": 267281,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "9b42f3657525ea451573d241c86d09f5b08fe6dd"
+      "commitSha": "e89b0621f6719b7423b579e563501157bf7ca0b8"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.1",
-      "barId": 266875,
+      "packageVersion": "10.0.0-preview.5.25257.1",
+      "barId": 267213,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "ec33d78d8515c08b528f10ffd9da3b0ed267a89c"
+      "commitSha": "6689bf9a1750c88d5b2ca872b270814a301402e4"
     },
     {
       "packageVersion": "10.0.100-beta.25224.6",
@@ -71,60 +71,60 @@
       "commitSha": "e8bfd3562774b2939c252d907de2f3173a2bd5bd"
     },
     {
-      "packageVersion": "17.15.0-preview-25255-05",
-      "barId": 266818,
+      "packageVersion": "17.15.0-preview-25257-08",
+      "barId": 267201,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "17a2cd4231cf3c198aa09d1000b4340e2f6bfd20"
+      "commitSha": "695b1ef88c242c19a95c9f6a504a2376661762c2"
     },
     {
-      "packageVersion": "6.15.0-preview.1.37",
-      "barId": 266635,
+      "packageVersion": "6.15.0-preview.1.44",
+      "barId": 267029,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "41fb88a624e61dce1fa05a5d0771b41ab7aff7a9"
+      "commitSha": "b1a4da9a233f3f518961778ce2dc2df85c1cd795"
     },
     {
-      "packageVersion": "10.0.0-preview.25255.5",
-      "barId": 266919,
+      "packageVersion": "10.0.0-preview.25257.4",
+      "barId": 267270,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "d87bf4a7f18d1bdfd14cc0964acdf9b5bada301c"
+      "commitSha": "ddcd02f08f9ab3c57598550c15a7ce501341a5dd"
     },
     {
-      "packageVersion": "5.0.0-1.25255.5",
-      "barId": 266902,
+      "packageVersion": "5.0.0-1.25258.2",
+      "barId": 267418,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "9cce7288b4f277359e40488eacc1bd8be0f81f34"
+      "commitSha": "bbde1463899cf70a0b7f0e66e3a51ed5a203ed08"
     },
     {
-      "packageVersion": "10.0.0-preview.25229.1",
-      "barId": 266348,
+      "packageVersion": "10.0.0-preview.25256.1",
+      "barId": 267097,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "ba7afc0f470c9b92b88c9468420942b2d1d57355"
+      "commitSha": "5ba91adccafb091d41d4ab7e98d77b5b0557494b"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.6",
-      "barId": 266915,
+      "packageVersion": "10.0.0-preview.5.25257.12",
+      "barId": 267275,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "efee748ff6f18f80154bc6b6e277bd51481c56e3"
+      "commitSha": "fadf8839b98291018f4f2a95439869d8c2eb2b74"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
-      "barId": 266835,
+      "barId": 266989,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "9eabbcd6e92c63e0539a649238e5a87d73f46065"
+      "commitSha": "3ba55042a88ef20d2aba4475d7622d3fa14c0527"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25255.3",
-      "barId": 266866,
+      "packageVersion": "10.0.100-preview.5.25257.3",
+      "barId": 267251,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "86317d70a92223dff361e28d2874188219c7560b"
+      "commitSha": "5457ad3bc2e637802d660fe015d6ceeeefc4a43c"
     },
     {
       "packageVersion": "10.0.622801",
@@ -135,31 +135,31 @@
     },
     {
       "packageVersion": "",
-      "barId": 266802,
+      "barId": 267115,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e6e60523801abc7c581434b4cd7ba1f8ee34347c"
+      "commitSha": "3ffb4153a8ae7b0dacf680e578ebdd59c5c1c347"
     },
     {
-      "packageVersion": "10.0.0-beta.25252.2",
-      "barId": 266721,
+      "packageVersion": "10.0.0-beta.25256.2",
+      "barId": 267094,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "d6ff9e72e3a48d39b19a1b2d7cbf63a0a79a6409"
+      "commitSha": "a90f9e3167b0a4c4a3baef96d9c49a706c49b878"
     },
     {
-      "packageVersion": "2.2.0-beta.25228.1",
-      "barId": 266119,
+      "packageVersion": "2.2.0-beta.25256.1",
+      "barId": 266957,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "7f4f9c0ad18fc4dc74a906cec188adacd3847c9a"
+      "commitSha": "6565fef44c1528244224690207a3f0c2a4b9295a"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25255.1",
-      "barId": 266801,
+      "packageVersion": "10.0.100-preview.5.25256.1",
+      "barId": 267101,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e3f1cf05499c250de847205b51d31a5d1f7639c4"
+      "commitSha": "81c860dfb429ddb3441db9bfc4b7040a1b52c722"
     },
     {
       "packageVersion": "17.15.0-preview-25224-01",
@@ -169,39 +169,39 @@
       "commitSha": "2e6d9288d3aa0269ae710844f3aa9e0a3981b26e"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25252.1",
-      "barId": 266720,
+      "packageVersion": "10.0.0-preview.5.25256.3",
+      "barId": 267089,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "b88bee3ab8a7ba608d792d30c30dda3366044eec"
+      "commitSha": "1c4d249a68bf853926ca7cb9604f918ab93248c4"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.1",
-      "barId": 266921,
+      "packageVersion": "10.0.0-preview.5.25256.3",
+      "barId": 267099,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "fc5d461e63815788594bcfd7c35ace5c0958b7bc"
+      "commitSha": "a5a50fe1a5c6fb00eec67a7680a9e7b905ac6c84"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25255.1",
-      "barId": 266795,
+      "packageVersion": "10.0.0-preview.5.25256.3",
+      "barId": 267109,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "e188e3587630e370a711fe9566a9011a7c5a181b"
+      "commitSha": "8846c0f80b20ccf48670ac870d6226dfc5db913d"
     },
     {
-      "packageVersion": "10.0.0-preview.25228.1",
-      "barId": 266118,
+      "packageVersion": "10.0.0-preview.25256.1",
+      "barId": 266956,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "378b75e3a2f200439c3f4ac074afe71076b3797e"
+      "commitSha": "5098b3b8971f7ac5951b7dad57ca72ac56de1a87"
     }
   ],
   "submodules": [
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "cd430b47a54841ec45d64d2377d7cabaf0eba610"
+      "commitSha": "90a41521142c978131f38c6da07b4eb96a9f1ff6"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -214,42 +214,42 @@
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
     },
     {
-      "path": "source-build-externals/src/abstractions-xunit",
+      "path": "source-build-externals/src/repos/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
     },
     {
-      "path": "source-build-externals/src/application-insights",
+      "path": "source-build-externals/src/repos/src/application-insights",
       "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
       "commitSha": "2faa7e8b157a431daa2e71785d68abd5fa817b53"
     },
     {
-      "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
+      "path": "source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
       "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
     },
     {
-      "path": "source-build-externals/src/cssparser",
+      "path": "source-build-externals/src/repos/src/cssparser",
       "remoteUri": "https://github.com/dotnet/cssparser",
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-externals/src/docker-creds-provider",
+      "path": "source-build-externals/src/repos/src/docker-creds-provider",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
       "commitSha": "6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e"
     },
     {
-      "path": "source-build-externals/src/humanizer",
+      "path": "source-build-externals/src/repos/src/humanizer",
       "remoteUri": "https://github.com/Humanizr/Humanizer",
       "commitSha": "3ebc38de585fc641a04b0e78ed69468453b0f8a1"
     },
     {
-      "path": "source-build-externals/src/MSBuildLocator",
+      "path": "source-build-externals/src/repos/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
       "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
     },
     {
-      "path": "source-build-externals/src/newtonsoft-json",
+      "path": "source-build-externals/src/repos/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
     },
@@ -315,31 +315,6 @@
     },
     {
       "path": "source-build-externals/src/repos/src/xunit/tools/media",
-      "remoteUri": "https://github.com/xunit/media",
-      "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
-    },
-    {
-      "path": "source-build-externals/src/vs-solutionpersistence",
-      "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
-      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
-    },
-    {
-      "path": "source-build-externals/src/xunit",
-      "remoteUri": "https://github.com/xunit/xunit",
-      "commitSha": "82543a6df6f5f13b5b70f8a9f9ccb41cd676084f"
-    },
-    {
-      "path": "source-build-externals/src/xunit/src/xunit.assert/Asserts",
-      "remoteUri": "https://github.com/xunit/assert.xunit",
-      "commitSha": "cac8b688c193c0f244a0bedf3bb60feeb32d377a"
-    },
-    {
-      "path": "source-build-externals/src/xunit/tools/builder/common",
-      "remoteUri": "https://github.com/xunit/build-tools-v3",
-      "commitSha": "90dba1f5638a4f00d4978a73e23edde5b85061d9"
-    },
-    {
-      "path": "source-build-externals/src/xunit/tools/media",
       "remoteUri": "https://github.com/xunit/media",
       "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
     }

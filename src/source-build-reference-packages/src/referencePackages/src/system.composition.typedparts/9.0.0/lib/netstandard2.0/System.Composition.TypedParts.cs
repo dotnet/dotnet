@@ -30,7 +30,6 @@ namespace System.Composition
     public static partial class CompositionContextExtensions
     {
         public static void SatisfyImports(this CompositionContext compositionContext, object objectWithLooseImports, Convention.AttributedModelProvider conventions) { }
-
         public static void SatisfyImports(this CompositionContext compositionContext, object objectWithLooseImports) { }
     }
 }
@@ -40,39 +39,22 @@ namespace System.Composition.Hosting
     public partial class ContainerConfiguration
     {
         public CompositionHost CreateContainer() { throw null; }
-
         public ContainerConfiguration WithAssemblies(Collections.Generic.IEnumerable<Reflection.Assembly> assemblies, Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithAssemblies(Collections.Generic.IEnumerable<Reflection.Assembly> assemblies) { throw null; }
-
         public ContainerConfiguration WithAssembly(Reflection.Assembly assembly, Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithAssembly(Reflection.Assembly assembly) { throw null; }
-
         public ContainerConfiguration WithDefaultConventions(Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithExport(Type contractType, object exportedInstance, string contractName = null, Collections.Generic.IDictionary<string, object> metadata = null) { throw null; }
-
         public ContainerConfiguration WithExport(Type contractType, object exportedInstance) { throw null; }
-
         public ContainerConfiguration WithExport<TExport>(TExport exportedInstance, string contractName = null, Collections.Generic.IDictionary<string, object> metadata = null) { throw null; }
-
         public ContainerConfiguration WithExport<TExport>(TExport exportedInstance) { throw null; }
-
         public ContainerConfiguration WithPart(Type partType, Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithPart(Type partType) { throw null; }
-
         public ContainerConfiguration WithPart<TPart>() { throw null; }
-
         public ContainerConfiguration WithPart<TPart>(Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithParts(Collections.Generic.IEnumerable<Type> partTypes, Convention.AttributedModelProvider conventions) { throw null; }
-
         public ContainerConfiguration WithParts(Collections.Generic.IEnumerable<Type> partTypes) { throw null; }
-
         public ContainerConfiguration WithParts(params Type[] partTypes) { throw null; }
-
         public ContainerConfiguration WithProvider(Core.ExportDescriptorProvider exportDescriptorProvider) { throw null; }
     }
 }
