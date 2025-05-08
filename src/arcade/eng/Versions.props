@@ -67,7 +67,7 @@
     <!-- Do not move too far ahead of what Microsoft.Build.Tasks.Core depends on (currently >=6.0.0). -->
     <SystemSecurityCryptographyXmlVersion>6.0.1</SystemSecurityCryptographyXmlVersion>
     <SystemTextEncodingsWebVersion>7.0.0</SystemTextEncodingsWebVersion>
-    <SystemTextJsonVersion>7.0.2</SystemTextJsonVersion>
+    <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
     <!-- sdk -->
     <MicrosoftNetSdkWorkloadManifestReaderVersion>8.0.100-preview.3.23178.3</MicrosoftNetSdkWorkloadManifestReaderVersion>
     <!-- symreader-converter -->
