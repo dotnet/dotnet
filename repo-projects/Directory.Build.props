@@ -99,7 +99,7 @@
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
-    <BuildActions Condition="'$(Sign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
     <TestActions>$(FlagParameterPrefix)test</TestActions>
   </PropertyGroup>
@@ -149,7 +149,7 @@
     <CommonArgs>$(CommonArgs) /p:DotNetBuildSourceOnly=true</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:PrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
   </PropertyGroup>
 
   <!-- Build specific args -->

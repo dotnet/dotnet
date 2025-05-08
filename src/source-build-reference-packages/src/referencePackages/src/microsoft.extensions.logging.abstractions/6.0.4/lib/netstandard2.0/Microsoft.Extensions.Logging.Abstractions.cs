@@ -35,23 +35,15 @@ namespace Microsoft.Extensions.Logging
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public EventId(int id, string? name = null) { }
-
         public int Id { get { throw null; } }
-
         public string? Name { get { throw null; } }
 
         public readonly bool Equals(EventId other) { throw null; }
-
         public override readonly bool Equals(object? obj) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(EventId left, EventId right) { throw null; }
-
         public static implicit operator EventId(int i) { throw null; }
-
         public static bool operator !=(EventId left, EventId right) { throw null; }
-
         public override readonly string ToString() { throw null; }
     }
 
@@ -92,153 +84,90 @@ namespace Microsoft.Extensions.Logging
     {
         public bool SkipEnabledCheck { get { throw null; } set { } }
     }
-
     public static partial class LoggerExtensions
     {
         public static System.IDisposable BeginScope(this ILogger logger, string messageFormat, params object?[] args) { throw null; }
-
         public static void Log(this ILogger logger, LogLevel logLevel, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void Log(this ILogger logger, LogLevel logLevel, EventId eventId, string? message, params object?[] args) { }
-
         public static void Log(this ILogger logger, LogLevel logLevel, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void Log(this ILogger logger, LogLevel logLevel, string? message, params object?[] args) { }
-
         public static void LogCritical(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogCritical(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogCritical(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogCritical(this ILogger logger, string? message, params object?[] args) { }
-
         public static void LogDebug(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogDebug(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogDebug(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogDebug(this ILogger logger, string? message, params object?[] args) { }
-
         public static void LogError(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogError(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogError(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogError(this ILogger logger, string? message, params object?[] args) { }
-
         public static void LogInformation(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogInformation(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogInformation(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogInformation(this ILogger logger, string? message, params object?[] args) { }
-
         public static void LogTrace(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogTrace(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogTrace(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogTrace(this ILogger logger, string? message, params object?[] args) { }
-
         public static void LogWarning(this ILogger logger, EventId eventId, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogWarning(this ILogger logger, EventId eventId, string? message, params object?[] args) { }
-
         public static void LogWarning(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
-
         public static void LogWarning(this ILogger logger, string? message, params object?[] args) { }
     }
-
     public partial class LoggerExternalScopeProvider : IExternalScopeProvider
     {
         public void ForEachScope<TState>(System.Action<object?, TState> callback, TState state) { }
-
         public System.IDisposable Push(object? state) { throw null; }
     }
 
     public static partial class LoggerFactoryExtensions
     {
         public static ILogger CreateLogger(this ILoggerFactory factory, System.Type type) { throw null; }
-
         public static ILogger<T> CreateLogger<T>(this ILoggerFactory factory) { throw null; }
     }
-
     public static partial class LoggerMessage
     {
         public static System.Action<ILogger, System.Exception?> Define(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, System.Exception?> Define(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, System.Exception?> Define<T1>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, System.Exception?> Define<T1>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, T2, System.Exception?> Define<T1, T2>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, T2, System.Exception?> Define<T1, T2>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, System.Exception?> Define<T1, T2, T3>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, System.Exception?> Define<T1, T2, T3>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, System.Exception?> Define<T1, T2, T3, T4>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, System.Exception?> Define<T1, T2, T3, T4>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, T5, System.Exception?> Define<T1, T2, T3, T4, T5>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, T5, System.Exception?> Define<T1, T2, T3, T4, T5>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, T5, T6, System.Exception?> Define<T1, T2, T3, T4, T5, T6>(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
-
         public static System.Action<ILogger, T1, T2, T3, T4, T5, T6, System.Exception?> Define<T1, T2, T3, T4, T5, T6>(LogLevel logLevel, EventId eventId, string formatString) { throw null; }
-
         public static System.Func<ILogger, System.IDisposable> DefineScope(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, System.IDisposable> DefineScope<T1>(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, T2, System.IDisposable> DefineScope<T1, T2>(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, T2, T3, System.IDisposable> DefineScope<T1, T2, T3>(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, T2, T3, T4, System.IDisposable> DefineScope<T1, T2, T3, T4>(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, T2, T3, T4, T5, System.IDisposable> DefineScope<T1, T2, T3, T4, T5>(string formatString) { throw null; }
-
         public static System.Func<ILogger, T1, T2, T3, T4, T5, T6, System.IDisposable> DefineScope<T1, T2, T3, T4, T5, T6>(string formatString) { throw null; }
     }
-
     [System.AttributeUsage(System.AttributeTargets.Method)]
     public sealed partial class LoggerMessageAttribute : System.Attribute
     {
         public LoggerMessageAttribute() { }
-
         public LoggerMessageAttribute(int eventId, LogLevel level, string message) { }
-
         public int EventId { get { throw null; } set { } }
-
         public string? EventName { get { throw null; } set { } }
-
         public LogLevel Level { get { throw null; } set { } }
-
         public string Message { get { throw null; } set { } }
-
         public bool SkipEnabledCheck { get { throw null; } set { } }
     }
 
     public partial class Logger<T> : ILogger<T>, ILogger
     {
         public Logger(ILoggerFactory factory) { }
-
         System.IDisposable ILogger.BeginScope<TState>(TState state) { throw null; }
-
         bool ILogger.IsEnabled(LogLevel logLevel) { throw null; }
-
         void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) { }
     }
 
@@ -263,30 +192,21 @@ namespace Microsoft.Extensions.Logging.Abstractions
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public LogEntry(LogLevel logLevel, string category, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter) { }
-
         public string Category { get { throw null; } }
-
         public EventId EventId { get { throw null; } }
-
         public System.Exception? Exception { get { throw null; } }
-
         public System.Func<TState, System.Exception?, string>? Formatter { get { throw null; } }
-
         public LogLevel LogLevel { get { throw null; } }
-
         public TState State { get { throw null; } }
     }
 
     public partial class NullLogger : ILogger
     {
         internal NullLogger() { }
-
         public static NullLogger Instance { get { throw null; } }
 
         public System.IDisposable BeginScope<TState>(TState state) { throw null; }
-
         public bool IsEnabled(LogLevel logLevel) { throw null; }
-
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter) { }
     }
 
@@ -294,20 +214,16 @@ namespace Microsoft.Extensions.Logging.Abstractions
     {
         public static readonly NullLoggerFactory Instance;
         public void AddProvider(ILoggerProvider provider) { }
-
         public ILogger CreateLogger(string name) { throw null; }
-
         public void Dispose() { }
     }
 
     public partial class NullLoggerProvider : ILoggerProvider, System.IDisposable
     {
         internal NullLoggerProvider() { }
-
         public static NullLoggerProvider Instance { get { throw null; } }
 
         public ILogger CreateLogger(string categoryName) { throw null; }
-
         public void Dispose() { }
     }
 
@@ -315,9 +231,7 @@ namespace Microsoft.Extensions.Logging.Abstractions
     {
         public static readonly NullLogger<T> Instance;
         public System.IDisposable BeginScope<TState>(TState state) { throw null; }
-
         public bool IsEnabled(LogLevel logLevel) { throw null; }
-
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter) { }
     }
 }
