@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IRemoteJsonServiceParameterDescription" xml:space="preserve">
+    <value>Methods in interfaces inheriting from IRemoteJsonService should not have parameters of type RazorPinnedSolutionInfoWrapper or DocumentId as they are not Json serializable.</value>
+  </data>
+  <data name="IRemoteJsonServiceParameterMessage" xml:space="preserve">
+    <value>'{0}' parameter in '{1}.{2}' has a parameter of type '{3}' which is not allowed in a Json service</value>
+  </data>
+  <data name="IRemoteJsonServiceParameterTitle" xml:space="preserve">
+    <value>Invalid parameter type in IRemoteJsonService method</value>
+  </data>
   <data name="PooledArrayBuilderAsRefDescription" xml:space="preserve">
     <value>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable.</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
