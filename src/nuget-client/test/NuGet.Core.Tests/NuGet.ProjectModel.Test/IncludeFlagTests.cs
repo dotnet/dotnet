@@ -143,7 +143,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.SuppressParent == LibraryIncludeFlags.All);
+            Assert.Equal(dependency.SuppressParent, LibraryIncludeFlags.All);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.SuppressParent == LibraryIncludeFlagUtils.DefaultSuppressParent);
+            Assert.Equal(dependency.SuppressParent, LibraryIncludeFlagUtils.DefaultSuppressParent);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.IncludeType == LibraryIncludeFlags.None);
+            Assert.Equal(dependency.IncludeType, LibraryIncludeFlags.None);
         }
 
         [Fact]
@@ -221,7 +221,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.IncludeType == LibraryIncludeFlags.All);
+            Assert.Equal(dependency.IncludeType, LibraryIncludeFlags.All);
         }
 
         [Fact]
@@ -247,7 +247,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.IncludeType == LibraryIncludeFlags.None);
+            Assert.Equal(dependency.IncludeType, LibraryIncludeFlags.None);
         }
 
         [Fact]
@@ -299,8 +299,8 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.IncludeType
-                == LibraryIncludeFlagUtils.GetFlags(new string[] { "contentFiles" }));
+            Assert.Equal(dependency.IncludeType
+, LibraryIncludeFlagUtils.GetFlags(new string[] { "contentFiles" }));
         }
 
         [Fact]
@@ -327,7 +327,7 @@ namespace NuGet.ProjectModel.Test
             var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
-            Assert.True(dependency.IncludeType == LibraryIncludeFlags.None);
+            Assert.Equal(dependency.IncludeType, LibraryIncludeFlags.None);
         }
 
         [Fact]

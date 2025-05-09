@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-   <PropertyGroup>
-      <PublishingVersion>3</PublishingVersion>
-      <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages> <!-- we don't need symbol packages for emsdk -->
-      <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
-   </PropertyGroup>
 
   <PropertyGroup>
+    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages> <!-- we don't need symbol packages for emsdk -->
+    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
+
     <_UploadPathRoot>emsdk</_UploadPathRoot>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <PublishDependsOnTargets>$(PublishDependsOnTargets);_PublishInstallers</PublishDependsOnTargets>
   </PropertyGroup>
 

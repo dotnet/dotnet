@@ -792,17 +792,46 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Package content hash validation failed for {0}. Expected: {1} Actual: {2}</value>
     <comment>0 - package ID, 1 - expected Sha, 2 - actual sha</comment>
   </data>
-  <data name="Error_CentralPackageVersions_VersionsNotAllowed" xml:space="preserve">
-    <value>Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}.</value>
+  <data name="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed" xml:space="preserve">
+    <value>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</value>
+    <comment>
+      0 - Comma delimited list of the package IDs that specified a Version
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </comment>
   </data>
-  <data name="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed" xml:space="preserve">
-    <value>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</value>
+  <data name="Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed" xml:space="preserve">
+    <value>The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs</value>
+    <comment>
+      0 - Comma delimited list of the package IDs that were implicitly defined and should not have a PackageVersion item
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+  </comment>
   </data>
-  <data name="Error_CentralPackageVersions_VersionOverrideDisabled" xml:space="preserve">
-    <value>The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.</value>
-    <comment>0 - The name of a package reference.</comment>
+  <data name="Error_CentralPackageManagement_MissingPackageVersion" xml:space="preserve">
+    <value>The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</value>
+    <comment>
+      0 - The comma delimited list of package names that did not have a version specified.
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </comment>
   </data>
-  <data name="Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping" xml:space="preserve">
+  <data name="Error_CentralPackageManagement_FloatingVersionsNotAllowed" xml:space="preserve">
+    <value>The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011</value>
+    <comment>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageVersion`
+  </comment>
+  </data>
+  <data name="Error_CentralPackageManagement_VersionOverrideNotAllowed" xml:space="preserve">
+    <value>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</value>
+    <comment>
+      0 - The comma delimited list of package names that specified a value for VersionOverride.
+      Do not localize `PackageReference`
+      Do not localize `VersionOverride`
+    </comment>
+  </data>
+  <data name="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping" xml:space="preserve">
     <value>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</value>
     <comment>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</comment>
   </data>
@@ -982,12 +1011,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Log_CPVM_DowngradeError" xml:space="preserve">
     <value>Detected package downgrade: {0} from {1} to centrally defined {2}. Update the centrally managed package version to a higher version.</value>
     <comment>{0} is package id, {1} is the package version, {2} is the downgraded package version.</comment>
-  </data>
-  <data name="Error_CentralPackageVersions_MissingPackageVersion" xml:space="preserve">
-    <value>The PackageReference items {0} do not have corresponding PackageVersion.</value>
-  </data>
-  <data name="Error_CentralPackageVersions_FloatingVersionsAreNotAllowed" xml:space="preserve">
-    <value>Centrally defined floating package versions are not allowed.</value>
   </data>
   <data name="SpecValidation_OriginalTargetFrameworksMustMatchAliases" xml:space="preserve">
     <value>The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}.</value>

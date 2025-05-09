@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +27,7 @@ internal sealed class CohostStartupService(
     {
         var clientCapabilities = JsonSerializer.Deserialize<VSInternalClientCapabilities>(clientCapabilitiesString, JsonHelpers.JsonSerializerOptions) ?? new();
 
-        var providers = _lazyStartupServices.Select(p => p.Value).OrderByAsArray(p => p.Order);
+        var providers = _lazyStartupServices.SelectAndOrderByAsArray(p => p.Value, p => p.Order);
 
         foreach (var provider in providers)
         {
