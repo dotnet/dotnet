@@ -142,8 +142,9 @@ In addition to these default high level controls, there may be additional compon
 | TargetOS | Same as `BuildOS` | `BuildOS` | The operating system of the machine that will run the binary -> the end user’s machine. |
 | HostOS | Same as `BuildOS` | `TargetOS` | The operating system of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
 | BuildRid | Valid RIDs | RID of the the currently executing runtime | The RID of the runtime that is running the build |
-| TargetRid | Valid RIDs | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
-| HostRid | Valid RIDs | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| TargetRid | Valid RIDs or custom RID | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
+| HostRid | Valid RIDs or `TargetRid` | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| BaseRid | Valid RIDs | OS portion of `NETCoreSdkPortableRuntimeIdentifier` appended with `-TargetArchitecture` | A known RID to use as a parent of a custom RID specified in `TargetRid` if `TargetRid` is unknown. |
 | BuildArchitecture | "x64", "x86", "arm", "arm64", ... | The architecture of the build environment | The architecture of the machine that is built on. Lower-case string. |
 | TargetArchitecture | Same as `BuildArchitecture` | `BuildArchitecture` | The architecture of the machine that will run the binary -> the end user's machine. |
 | HostArchitecture | Same as `BuildArchitecture` | `TargetArchitecture` | The architecture of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target architecture |

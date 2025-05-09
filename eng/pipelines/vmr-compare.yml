@@ -14,6 +14,8 @@ resources:
         - refs/heads/main
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.1xx*
+      stages:
+      - Publish_Build_Assets
 
   repositories:
   - repository: 1ESPipelineTemplates

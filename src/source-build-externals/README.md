@@ -20,19 +20,19 @@ infrastructure. Since this repo is intended solely for source build, it usually
 
 ## Adding a New External Component
 
-1. Add the repo as a submodule to `./src`
+1. Add the repo as a submodule to `./src/repos/src`
 
     ```bash
-    git submodule add <remote_url> ./src/<destination_dir>
+    git submodule add <remote_url> ./src/repos/src/<destination_dir>
     git commit -m "<commit_message>"
     ```
 
-1. Define a [project](repo-projects) for the new component. The project
+1. Define a [project](src/repos/projects) for the new component. The project
 is responsible for building the submodule with the appropriate configuration for
-source build. See the [existing projects](repo-projects) for examples.
+source build. See the [existing projects](src/repos/projects) for examples.
 
 1. [Build](#how-to-build) locally and resolve any build errors. Source changes
-must be applied via [patches](patches). See [below](#patches) for more info on patches.
+must be applied via [patches](src/repos/patches). See [below](#patches) for more info on patches.
 
 1. Validate the version of the NuGet packages and binaries produced by the build. See the contents of
 `./artifacts/packages/<build_configuration>/NonShipping/Microsoft.SourceBuild.Intermediate.source-build-externals.x.y.z-dev.nupkg`.
@@ -41,10 +41,10 @@ must be applied via [patches](patches). See [below](#patches) for more info on p
 
 ## Updating an External Component to a Newer Version
 
-1. Update the `src/<external_repo_dir>` to the desired sha
+1. Update the `./src/repos/src/<external_repo_dir>` to the desired sha
 
     ``` bash
-    cd src/<external_repo_dir>
+    cd src/repos/src/<external_repo_dir>
     git fetch
     git checkout <updated_sha>
     cd ..
@@ -54,13 +54,13 @@ must be applied via [patches](patches). See [below](#patches) for more info on p
 
 1. [Build](#how-to-build) locally
 
-    1. Update any [patches](patches) as needed.
+    1. Update any [patches](src/repos/patches) as needed.
 
-    1. Review the [repo's project](repo-projects) to ensure it is appropriate for the new version.
+    1. Review the [repo's project](src/repos/projects) to ensure it is appropriate for the new version.
     There are a number of projects that utilize MSBuild properties to specify the version.
     These need to be manually updated with each upgrade.
 
-    1. Resolve build errors. Source changes must be applied via [patches](patches).  See [below](#patches) for more info on patches.
+    1. Resolve build errors. Source changes must be applied via [patches](src/repos/patches).  See [below](#patches) for more info on patches.
 
 1. Validate the version of the NuGet packages and binaries produced by the build. See the contents of
 `./artifacts/packages/<build_configuration>/NonShipping/Microsoft.SourceBuild.Intermediate.source-build-externals.x.y.z-dev.nupkg`
@@ -74,7 +74,7 @@ A _Pre-SBE_ repo is a repo that is built before source-build-externals during th
 
 > [!NOTE]
 >
-> You can view the current pre-SBE repos by running `dotnet msbuild repo-projects/source-build-externals.proj -target:ShowDependencyGraph /p:DotNetBuildSourceOnly=true` from the root of the VMR.
+> You can view the current pre-SBE repos by running `dotnet msbuild src/repos/projects/source-build-externals.proj -target:ShowDependencyGraph /p:DotNetBuildSourceOnly=true` from the root of the VMR.
 
 The steps outlined below will enable source-build to adjust the package version to match the N-1 artifacts in the product build. If you prefer to maintain a fixed version of the dependency and prevent source-build from making any changes, please follow the instructions provided [here](https://github.com/dotnet/source-build-externals/blob/83566118e44922c30d146654d42c7c3745cc119d/README.md?plain=1#L81). However, if you are comfortable with source-build infrastructure adjusting your package version, please proceed with the following steps:
 
@@ -107,7 +107,7 @@ the maintenance burden when [updating a component to a newer version](#updating-
 
     1. Commit changes in the submodule.
 
-    1. From the root directory of the submodule, run [extract-patches.sh](extract-patches.sh)/[extract-patches.ps1](extract-patches.ps1).
+    1. From the root directory of the submodule, run [extract-patches.sh](src/repos/patches/extract-patches.sh)/[extract-patches.ps1](src/repos/patches/extract-patches.ps1).
        The script will prepare a patch based on the base sha of the submodule and the latest committed changes. The patch
        will be added to patches/<component>/*.patch
 
