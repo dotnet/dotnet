@@ -23,10 +23,10 @@ stages:
         displayName: Run restore.cmd
 
       - task: UseDotNet@2
-        displayName: Install .NET 6 runtime
+        displayName: Install .NET 8 runtime
         inputs:
           packageType: runtime
-          version: 6.x
+          version: 8.x
           installationPath: $(Build.SourcesDirectory)/.dotnet
 
       - script: $(Build.SourcesDirectory)/.dotnet/dotnet.exe tool restore

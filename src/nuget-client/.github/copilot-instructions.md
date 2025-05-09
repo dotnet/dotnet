@@ -1,0 +1,1 @@
+For both new and existing code, help enforce a maximum line length of 120 characters.
