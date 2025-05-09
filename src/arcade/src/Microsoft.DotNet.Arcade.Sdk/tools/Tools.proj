@@ -38,8 +38,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <_ImportOrUseTooling>false</_ImportOrUseTooling>
-    <_ImportOrUseTooling Condition="'$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true')">true</_ImportOrUseTooling>
+    <!-- Don't restore the below nuget packages, repo tools and additional global.json runtimes when building source-only. -->
+    <_ImportOrUseTooling Condition="'$(_ImportOrUseTooling)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</_ImportOrUseTooling>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
