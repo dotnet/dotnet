@@ -29,6 +29,9 @@
     <EmbeddedResource Include="Resources\TestPackageF.1.0.0-beta.12345.1.nupkg">
       <LogicalName>TestPackageF.1.0.0-beta.12345.1.nupkg</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageG.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\TestPackageA.1.0.0-beta-final.nupkg">
       <LogicalName>TestPackageA.1.0.0-beta-final.nupkg</LogicalName>
     </EmbeddedResource>
@@ -47,6 +50,9 @@
     <EmbeddedResource Include="Resources\TestPackageF.1.0.0-beta.final.nupkg">
       <LogicalName>TestPackageF.1.0.0-beta.final.nupkg</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageG.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\TestPackageA.1.0.0.nupkg">
       <LogicalName>TestPackageA.1.0.0.nupkg</LogicalName>
     </EmbeddedResource>
@@ -64,6 +70,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\TestPackageF.1.0.0.nupkg">
       <LogicalName>TestPackageF.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0.nupkg">
+      <LogicalName>TestPackageG.1.0.0.nupkg</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Signed.1.2.3.nupkg">
       <LogicalName>Signed.1.2.3.nupkg</LogicalName>

@@ -52,46 +52,51 @@ namespace Microsoft.DotNet.Tools.Tests
         // change to match the platform that is executing. The reference packages that we use to validate
         // the SemVer tests were built on Windows which makes these test only valid for Windows.
         //
-        // This can be removed when https://github.com/dotnet/corefx/issues/39931 is fixed. 
-        [WindowsOnlyFact(Skip = "https://github.com/dotnet/arcade/issues/3794")]
+        // This can be removed when https://github.com/dotnet/corefx/issues/39931 is fixed.
+        [WindowsOnlyFact()]
         public void TestPackagesSemVer1()
         {
             var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dir);
 
-            string a_daily, b_daily, c_daily, d_daily;
+            string a_daily, b_daily, c_daily, d_daily, g_daily;
             File.WriteAllBytes(a_daily = Path.Combine(dir, TestResources.DailyBuildPackages.NameA), TestResources.DailyBuildPackages.TestPackageA);
             File.WriteAllBytes(b_daily = Path.Combine(dir, TestResources.DailyBuildPackages.NameB), TestResources.DailyBuildPackages.TestPackageB);
             File.WriteAllBytes(c_daily = Path.Combine(dir, TestResources.DailyBuildPackages.NameC), TestResources.DailyBuildPackages.TestPackageC);
             File.WriteAllBytes(d_daily = Path.Combine(dir, TestResources.DailyBuildPackages.NameD), TestResources.DailyBuildPackages.TestPackageD);
+            File.WriteAllBytes(g_daily = Path.Combine(dir, TestResources.DailyBuildPackages.NameG), TestResources.DailyBuildPackages.TestPackageG);
 
             var a_pre = Path.Combine(dir, TestResources.PreReleasePackages.NameA);
             var b_pre = Path.Combine(dir, TestResources.PreReleasePackages.NameB);
             var c_pre = Path.Combine(dir, TestResources.PreReleasePackages.NameC);
             var d_pre = Path.Combine(dir, TestResources.PreReleasePackages.NameD);
+            var g_pre = Path.Combine(dir, TestResources.PreReleasePackages.NameG);
 
             var a_rel = Path.Combine(dir, TestResources.ReleasePackages.NameA);
             var b_rel = Path.Combine(dir, TestResources.ReleasePackages.NameB);
             var c_rel = Path.Combine(dir, TestResources.ReleasePackages.NameC);
             var d_rel = Path.Combine(dir, TestResources.ReleasePackages.NameD);
+            var g_rel = Path.Combine(dir, TestResources.ReleasePackages.NameG);
 
-            NuGetVersionUpdater.Run(new[] { a_daily, b_daily, c_daily, d_daily }, dir, VersionTranslation.Release, exactVersions: false);
-            NuGetVersionUpdater.Run(new[] { a_daily, b_daily, c_daily, d_daily }, dir, VersionTranslation.PreRelease, exactVersions: false);
+            NuGetVersionUpdater.Run(new[] { a_daily, b_daily, c_daily, d_daily, g_daily }, dir, VersionTranslation.Release, exactVersions: false);
+            NuGetVersionUpdater.Run(new[] { a_daily, b_daily, c_daily, d_daily, g_daily }, dir, VersionTranslation.PreRelease, exactVersions: false);
 
             AssertPackagesEqual(TestResources.ReleasePackages.TestPackageA, File.ReadAllBytes(a_rel));
             AssertPackagesEqual(TestResources.ReleasePackages.TestPackageB, File.ReadAllBytes(b_rel));
             AssertPackagesEqual(TestResources.ReleasePackages.TestPackageC, File.ReadAllBytes(c_rel));
             AssertPackagesEqual(TestResources.ReleasePackages.TestPackageD, File.ReadAllBytes(d_rel));
+            AssertPackagesEqual(TestResources.ReleasePackages.TestPackageG, File.ReadAllBytes(g_rel));
 
             AssertPackagesEqual(TestResources.PreReleasePackages.TestPackageA, File.ReadAllBytes(a_pre));
             AssertPackagesEqual(TestResources.PreReleasePackages.TestPackageB, File.ReadAllBytes(b_pre));
             AssertPackagesEqual(TestResources.PreReleasePackages.TestPackageC, File.ReadAllBytes(c_pre));
             AssertPackagesEqual(TestResources.PreReleasePackages.TestPackageD, File.ReadAllBytes(d_pre));
+            AssertPackagesEqual(TestResources.PreReleasePackages.TestPackageG, File.ReadAllBytes(g_pre));
 
             Directory.Delete(dir, recursive: true);
         }
 
-        [WindowsOnlyFact(Skip = "https://github.com/dotnet/arcade/issues/3794")]
+        [WindowsOnlyFact()]
         public void TestPackagesSemVer2()
         {
             var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -119,7 +124,7 @@ namespace Microsoft.DotNet.Tools.Tests
             Directory.Delete(dir, recursive: true);
         }
 
-        [WindowsOnlyFact(Skip = "https://github.com/dotnet/arcade/issues/3794")]
+        [WindowsOnlyFact()]
         public void TestValidation()
         {
             var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -158,7 +163,7 @@ namespace Microsoft.DotNet.Tools.Tests
             Directory.Delete(dir, recursive: true);
         }
 
-        [WindowsOnlyFact(Skip = "https://github.com/dotnet/arcade/issues/3794")]
+        [WindowsOnlyFact()]
         public void TestDotnetToolValidation()
         {
             var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
