@@ -39,7 +39,7 @@ public class ValidationTests
         string[] packages = GetPackages();
 
         HashSet<string> textOnlyPacks = new(
-            Directory.GetDirectories(Path.Combine(PathUtilities.GetSourceBuildRepoRoot(), "src/textOnlyPackages/src"))
+            Directory.GetDirectories(Path.Combine(PathUtilities.GetRepoRoot(), "src/textOnlyPackages/src"))
                 .Select(x => Path.GetFileName(x).ToLower())
         );
 
@@ -99,7 +99,7 @@ public class ValidationTests
 
     private static string[] GetPackages()
     {
-        string buildPackagesDirectory = PathUtilities.GetSourceBuildPackagesShippingDir();
+        string buildPackagesDirectory = PathUtilities.GetArtifactsShippingPackagesDir();
 
         string[] packages = Directory.GetFiles(buildPackagesDirectory, "*.nupkg", SearchOption.AllDirectories);
 

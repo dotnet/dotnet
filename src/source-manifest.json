@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 266802,
+      "barId": 267423,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e6e60523801abc7c581434b4cd7ba1f8ee34347c"
+      "commitSha": "804fed8577d3f6226b1a12966af5ddde6928106b"
     },
     {
       "packageVersion": "10.0.0-beta.25252.2",
