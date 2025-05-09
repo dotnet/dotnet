@@ -23,7 +23,7 @@ steps:
                 -DependencyVersion Highest -OutputDirectory $(Build.StagingDirectory)'
 
   - powershell: |
-      eng/pipelines/install-diagnostic-certs.ps1 "${{ join(',', parameters.certNames) }}"
+      eng/install-diagnostic-certs.ps1 "${{ join(',', parameters.certNames) }}"
       $esrpclient = Get-ChildItem -Path '$(Build.StagingDirectory)\microsoft.esrpclient*' -Filter esrpclient.exe -Recurse | Select-Object -First 1 | select -ExpandProperty FullName
 
       if ($esrpclient -eq $null) {
