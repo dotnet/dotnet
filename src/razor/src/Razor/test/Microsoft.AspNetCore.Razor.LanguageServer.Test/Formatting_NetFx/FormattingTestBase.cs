@@ -64,13 +64,14 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         ImmutableArray<TagHelperDescriptor> tagHelpers = default,
         bool allowDiagnostics = false,
         bool codeBlockBraceOnNextLine = false,
-        bool inGlobalNamespace = false)
+        bool inGlobalNamespace = false,
+        bool debugAssertsEnabled = true)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
         var razorLSPOptions = RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine };
 
-        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace);
+        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled);
     }
 
     private async Task RunFormattingTestInternalAsync(
@@ -82,7 +83,8 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         ImmutableArray<TagHelperDescriptor> tagHelpers,
         bool allowDiagnostics,
         RazorLSPOptions? razorLSPOptions,
-        bool inGlobalNamespace)
+        bool inGlobalNamespace,
+        bool debugAssertsEnabled)
     {
         // Arrange
         var fileKindValue = fileKind ?? RazorFileKind.Component;
@@ -109,7 +111,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         var client = new FormattingLanguageServerClient(_htmlFormattingService, LoggerFactory);

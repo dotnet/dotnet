@@ -34,7 +34,7 @@ steps:
       ./build.sh \
       --ci \
       -t \
-      --projects test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj \
+      --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj \
       /p:TestRpmPackages=true \
       /p:TestDebPackages=true
     displayName: Validate installer packages

@@ -1127,5 +1127,39 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             Assert.True(actual.IsValid);
             Assert.Empty(actual.InvalidReasons);
         }
+
+        [Fact]
+        public void IsLockFileValid_WithNullVersionRange_DoesNotThrow()
+        {
+            // Arrange
+            var framework = CommonFrameworks.NetStandard20;
+
+            PackageSpec projectA = ProjectTestHelpers.GetPackageSpec(
+                projectName: "A",
+                rootPath: @"C:\",
+                framework: framework.GetShortFolderName(),
+                dependencyName: "PackageA",
+                dependencyVersion: "1.0.0")
+                    .WithTestRestoreMetadata()
+                    .WithDependency(new LibraryDependency(new LibraryRange("PackageA", LibraryDependencyTarget.Package))
+                    {
+                        ReferenceType = LibraryDependencyReferenceType.Direct,
+                    });
+
+            // A -> B
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA);
+
+            var lockFile = new PackagesLockFileBuilder()
+                .WithTarget(target => target
+                    .WithFramework(framework))
+                .Build();
+
+            var actual = PackagesLockFileUtilities.IsLockFileValid(dgSpec, lockFile);
+            Assert.False(actual.IsValid);
+            Assert.NotNull(actual.InvalidReasons);
+            Assert.Equal(1, actual.InvalidReasons.Count);
+            var invalidReason = actual.InvalidReasons.Single();
+            Assert.Contains("PackageA", invalidReason);
+        }
     }
 }
