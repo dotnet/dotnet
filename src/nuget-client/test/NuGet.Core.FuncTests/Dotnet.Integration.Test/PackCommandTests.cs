@@ -1899,11 +1899,11 @@ namespace Dotnet.Integration.Test
 
                     if (expectedIncludeString == null)
                     {
-                        Assert.True(contentFiles.Count() == 0);
+                        Assert.Equal(0, contentFiles.Count());
                     }
                     else
                     {
-                        Assert.True(contentFiles.Count() == 1);
+                        Assert.Equal(1, contentFiles.Count());
                         var contentFile = contentFiles[0];
                         Assert.Equal(expectedIncludeString, contentFile.Include);
                         Assert.Equal("Content", contentFile.BuildAction);
@@ -1991,12 +1991,12 @@ namespace Dotnet.Integration.Test
 
                     if (expectedIncludeString == null)
                     {
-                        Assert.True(contentFiles.Count() == 0);
+                        Assert.Equal(0, contentFiles.Count());
                     }
                     else
                     {
                         var expectedStrings = expectedIncludeString.Split(';');
-                        Assert.True(contentFiles.Count() == 2);
+                        Assert.Equal(2, contentFiles.Count());
                         var contentFileSet = contentFiles.Select(p => p.Include);
                         var files = nupkgReader.GetFiles("contentFiles");
                         foreach (var expected in expectedStrings)
@@ -2637,7 +2637,7 @@ namespace ClassLibrary
                     var nuspecReader = nupkgReader.NuspecReader;
                     // Validate the assets.
                     var srcItems = nupkgReader.GetFiles("src").ToArray();
-                    Assert.True(srcItems.Length == 4);
+                    Assert.Equal(4, srcItems.Length);
                     Assert.Contains("src/ClassLibrary1/ClassLibrary1.csproj", srcItems);
                     Assert.Contains("src/ClassLibrary1/Class1.cs", srcItems);
                     Assert.Contains("src/ClassLibrary1/Extensions/ExtensionMethods.cs", srcItems);
@@ -3258,7 +3258,7 @@ namespace ClassLibrary
                     var nuspecReader = nupkgReader.NuspecReader;
                     var contentFiles = nuspecReader.GetContentFiles().ToArray();
 
-                    Assert.True(contentFiles.Count() == 1);
+                    Assert.Equal(1, contentFiles.Count());
                     var contentFile = contentFiles[0];
                     Assert.Equal(expectedBuildAction, contentFile.BuildAction);
                 }
@@ -4735,7 +4735,7 @@ namespace ClassLibrary
                     Assert.Equal(FrameworkConstants.CommonFrameworks.NetStandard20, libItems[0].TargetFramework);
                     Assert.Equal(new[] { "lib/netstandard2.0/ClassLibrary1.dll" }, libItems[0].Items);
                     Assert.Equal(new[] { "lib/netstandard2.0/ClassLibrary1.dll", "lib/netstandard2.0/ClassLibrary1.pdb" }, libSymItems[0].Items);
-                    Assert.True(symbolReader.GetEntry(symbolReader.NuspecReader.GetLicenseMetadata().License) != null);
+                    Assert.NotNull(symbolReader.GetEntry(symbolReader.NuspecReader.GetLicenseMetadata().License));
                 }
             }
         }
