@@ -20,7 +20,8 @@ internal static class TestRazorFormattingService
         ILoggerFactory loggerFactory,
         RazorCodeDocument? codeDocument = null,
         RazorLSPOptions? razorLSPOptions = null,
-        LanguageServerFeatureOptions? languageServerFeatureOptions = null)
+        LanguageServerFeatureOptions? languageServerFeatureOptions = null,
+        bool debugAssertsEnabled = false)
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
@@ -43,6 +44,8 @@ internal static class TestRazorFormattingService
 
         var hostServicesProvider = new DefaultHostServicesProvider();
 
-        return new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
+        var service = new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
+        service.GetTestAccessor().SetDebugAssertsEnabled(debugAssertsEnabled);
+        return service;
     }
 }

@@ -5,7 +5,7 @@ This repository is a **Virtual Monolithic Repository (VMR)** which includes all 
 What this means:
 
 - **Monolithic** - a join of multiple repositories that make up the whole product, such as [dotnet/runtime](https://github.com/dotnet/runtime) or [dotnet/sdk](https://github.com/dotnet/sdk).
-- **Virtual** - a mirror (not replacement) of product repos where sources from those repositories are synchronized into.
+- **Virtual** - a mirror (not replacement) of product repos where sources from those repositories are synchronized with.
 
 In the VMR, you can find:
 
@@ -14,8 +14,8 @@ In the VMR, you can find:
 - small customizations, in the form of [patches](https://github.com/dotnet/dotnet/tree/main/src/sdk/src/SourceBuild/patches), applied on top of the original code to make the build possible,
 - *[in future]* E2E tests for the whole .NET product.
 
-Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/8.0.1xx`).
-Similarly, VMR's `main` branch will follow `main` branches of product repositories (see [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
+Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/10.0.1xx`).
+Similarly, VMR's `main` branch will follow default branches of product repositories (see [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
 
 More in-depth documentation about the VMR can be found in [VMR Design And Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#layout).
 See also [dotnet/source-build](https://github.com/dotnet/source-build) for more information about our whole-product source-build.
@@ -40,13 +40,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 
 We will achieve these goals while keeping active coding work in the separate repos where it happens today. For example: ASP.NET features will continue to be developed in `dotnet/aspnetcore` and CLR features will be continue to be developed in `dotnet/runtime`. Each of these repos have their own distinct communities and processes, and aggregating development into a true mono-repo would work against that. Hence, the "virtual" monolithic repo: the VMR gives us the simplicity of a mono-repo for building and servicing the product, while active development of components of that product stays in its various existing repos. The day to day experience for typical contributors will not change.
 
-## Limitations
-
-**This is a work-in-progress.**
-There are considerable limitations to what is possible at the moment. For an extensive list of current limitations, please see [Temporary Mechanics](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#temporary-mechanics).  
-See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md) for more details.
-
-### Supported platforms
+## Supported platforms
 
 - 8.0 and 9.0
   - source-build configuration on Linux
@@ -56,14 +50,14 @@ See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md
 
 For the latest information about Source-Build support for new .NET versions, please check our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions) for announcements.
 
-### Code flow
+## Code flow
 
 The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
 
-### Contribution
+## Contribution
 
 Contribution to the .NET product should currently be done mostly in the constituent repositories. The reasons for this are two-fold:
-- We want to slowly ramp up direct VMR changes to avoid surprises
+- We want to slowly ramp up direct VMR changes to avoid surprises.
 - The individual repositories still have the best validation for most changes.
 
 If you would like to make a cross-cutting change in the VMR, please ask the Unified Build team (please tag @dotnet/product-construction in an issue/discussion in your repository). However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
@@ -147,7 +141,7 @@ git config --global core.longpaths true
 
     ```bash
     mkdir -p $HOME/dotnet
-    tar zxf artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz -C $HOME/dotnet
+    tar zxf artifacts/assets/Release/dotnet-sdk-10.0.100-[your-RID].tar.gz -C $HOME/dotnet
     ln -s $HOME/dotnet/dotnet /usr/bin/dotnet
     ```
 
@@ -155,7 +149,7 @@ git config --global core.longpaths true
 
     ```cmd
     mkdir %userprofile%\dotnet
-    tar -xf artifacts/assets/Release/dotnet-sdk-9.0.100-[your RID].zip -C %userprofile%\dotnet
+    tar -xf artifacts/assets/Release/dotnet-sdk-10.0.100-[your RID].zip -C %userprofile%\dotnet
     set "PATH=%userprofile%\dotnet;%PATH%"
     ```
 

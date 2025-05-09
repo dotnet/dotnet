@@ -50,13 +50,15 @@
     <VisualStudioBuildPackagesDir>$([MSBuild]::NormalizeDirectory('$(VisualStudioSetupOutputPath)', 'DevDivPackages'))</VisualStudioBuildPackagesDir>
   </PropertyGroup>
 
+  <!-- Keep in sync with eng/common/tools NUGET_PACKAGES env var defines. -->
   <PropertyGroup>
     <!-- Respect environment variable for the NuGet Packages Root if set. -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)'))</NuGetPackageRoot>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(NUGET_PACKAGES)' != ''">$([MSBuild]::NormalizeDirectory('$(NUGET_PACKAGES)'))</NuGetPackageRoot>
 
-    <!-- If the PrebultUsage feature is enabled, don't fallback to default cache locations. -->
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(PrebuiltUsage)' == 'true'">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', '.prebuilt-packages'))</NuGetPackageRoot>
+    <!-- When building source-only or with the ci flag, don't fallback to default cache locations. -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 ('$(ContinuousIntegrationBuild)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true')">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.packages'))</NuGetPackageRoot>
 
     <!-- Otherwise, use the current default location -->
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(UserProfile)', '.nuget', 'packages'))</NuGetPackageRoot>
