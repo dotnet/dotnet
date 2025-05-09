@@ -261,8 +261,10 @@ internal class DotNetHelper
 
     private static string GetProjectDirectory(string projectName) => Path.Combine(ProjectsDirectory, projectName);
 
+    // Complex publish requires a portable RID, which is not available on all architectures. It's also not supported from non-official builds
+    // because it requires packages produced by the Microsoft build which are not available.
     public static bool ShouldPublishComplex() =>
-        !string.Equals(Config.TargetArchitecture,"ppc64le") && !string.Equals(Config.TargetArchitecture,"s390x");
+        !string.Equals(Config.TargetArchitecture,"ppc64le") && !string.Equals(Config.TargetArchitecture,"s390x") && Config.IsOfficialBuild;
 
     private class WebAppValidator
     {

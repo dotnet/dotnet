@@ -264,9 +264,8 @@ namespace ScenarioTests
                 filters.ExcludedTraits.Add(kvp.Key, kvp.Value);
             }
 
-            filters.ExcludedTraits.Add("SkipIfPlatform", new List<string>() {$"{platform}"});
-
-            filters.ExcludedTraits.Add("SkipIfBuild", CreateBuildTraits(dotnetRoot, targetRid));
+            UpdateOrAddToDictionary("SkipIfPlatform", [platform.ToString()], filters.ExcludedTraits);
+            UpdateOrAddToDictionary("SkipIfBuild", CreateBuildTraits(dotnetRoot, targetRid), filters.ExcludedTraits);
 
             Dictionary<string, List<string>> includedTraitsMap = ParseTraitKeyValuePairs(includedTraits);
             foreach (KeyValuePair<string, List<string>> kvp in includedTraitsMap)
@@ -275,6 +274,19 @@ namespace ScenarioTests
             }
 
             return filters;
+        }
+
+        private static void UpdateOrAddToDictionary(
+            string key, List<string> value, Dictionary<string, List<string>> dictionary)
+        {
+            if (dictionary.TryGetValue(key, out List<string>? list))
+            {
+                list.AddRange(value);
+            }
+            else
+            {
+                dictionary.Add(key, value);
+            }
         }
 
         private static List<string> CreateBuildTraits(string dotnetRoot, string targetRid)
