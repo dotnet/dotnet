@@ -1,0 +1,65 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+
+    <SrcReposDir>$(SrcDir)repos/</SrcReposDir>
+    <KeysDir>$(SrcReposDir)keys/</KeysDir>
+    <SubmoduleDirectory>$(SrcReposDir)src/</SubmoduleDirectory>
+    <PatchesDir>$(SrcReposDir)patches/</PatchesDir>
+    <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(RepositoryName)'))</OriginalProjectDirectory>
+    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(OriginalProjectDirectory)', 'artifacts', 'clone'))</ProjectDirectory>
+    <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
+
+    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">true</MinimalConsoleLogOutput>
+    <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
+    <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PatchToApply Include="$(PatchesDir)$(RepositoryName)/*.patch" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
+    <EnvironmentVariables Include="DotNetRestorePackagesPath=$(PackagesDir)" />
+
+    <!-- Arcade tools.sh picks up DotNetCoreSdkDir, but we can pass DOTNET_INSTALL_DIR directly. -->
+    <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_PATH=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_HOST_PATH=$(DotNetTool)" />
+
+    <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
+    <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
+    <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
+
+    <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.) -->
+    <EnvironmentVariables Include="ContinuousIntegrationBuild=true" />
+
+    <!-- Turn off node reuse for source build because repos use conflicting versions
+         of compilers which cause assembly load errors.
+         See https://github.com/dotnet/source-build/issues/541 -->
+    <EnvironmentVariables Include="MSBUILDDISABLENODEREUSE=1" />
+
+    <!--
+      Apply official build versioning to match Microsoft build. These are based on build date, so
+      need to be parsed from Maestro++ auto-update and passed through.
+    -->
+    <EnvironmentVariables Include="OfficialBuildId=$(OfficialBuildId)" />
+    <EnvironmentVariables Include="BUILD_BUILDNUMBER=$(OfficialBuildId)" />
+
+    <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
+    
+    <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
+    <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
+  </ItemGroup>
+
+  <!-- repo-projects depend on the repo tasks project to invoke custom msbuild tasks -->
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)eng\tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj" />
+  </ItemGroup>
+
+</Project>
