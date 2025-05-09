@@ -4,16 +4,16 @@
     {
       "_justification": "Third party repositories, no control over the content and these are not actual secrets.",
       "file": [
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA1.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA256.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256_2.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA384.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA512.pfx",
-        "src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Microsoft.IdentityModel.TestUtils/KeyingMaterial.cs",
-        "src/humanizer/src/Humanizer.Tests.Uwp/Humanizer.Tests.Uwp_TemporaryKey.pfx",
-        "src/humanizer/src/Humanizer.Tests.Uwp.Runner/Humanizer.Tests.Uwp.Runner_TemporaryKey.pfx",
-        "src/xunit/appveyor.yml"
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA1.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA256.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256_2.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA384.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA512.pfx",
+        "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Microsoft.IdentityModel.TestUtils/KeyingMaterial.cs",
+        "src/repos/src/humanizer/src/Humanizer.Tests.Uwp/Humanizer.Tests.Uwp_TemporaryKey.pfx",
+        "src/repos/src/humanizer/src/Humanizer.Tests.Uwp.Runner/Humanizer.Tests.Uwp.Runner_TemporaryKey.pfx",
+        "src/repos/src/xunit/appveyor.yml"
       ]
     }
   ]

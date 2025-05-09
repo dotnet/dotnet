@@ -40,67 +40,53 @@ namespace System.Media
     public partial class SoundPlayer : ComponentModel.Component, Runtime.Serialization.ISerializable
     {
         public SoundPlayer() { }
-
         public SoundPlayer(IO.Stream? stream) { }
-
         protected SoundPlayer(Runtime.Serialization.SerializationInfo serializationInfo, Runtime.Serialization.StreamingContext context) { }
-
         public SoundPlayer(string soundLocation) { }
-
         public bool IsLoadCompleted { get { throw null; } }
-
         public int LoadTimeout { get { throw null; } set { } }
-
         public string SoundLocation { get { throw null; } set { } }
-
         public IO.Stream? Stream { get { throw null; } set { } }
-
         public object? Tag { get { throw null; } set { } }
 
-        public event ComponentModel.AsyncCompletedEventHandler? LoadCompleted { add { } remove { } }
+        public event ComponentModel.AsyncCompletedEventHandler? LoadCompleted {
+            add { }
+            remove { }
+        }
 
-        public event EventHandler? SoundLocationChanged { add { } remove { } }
+        public event EventHandler? SoundLocationChanged {
+            add { }
+            remove { }
+        }
 
-        public event EventHandler? StreamChanged { add { } remove { } }
+        public event EventHandler? StreamChanged {
+            add { }
+            remove { }
+        }
 
         public void Load() { }
-
         public void LoadAsync() { }
-
         protected virtual void OnLoadCompleted(ComponentModel.AsyncCompletedEventArgs e) { }
-
         protected virtual void OnSoundLocationChanged(EventArgs e) { }
-
         protected virtual void OnStreamChanged(EventArgs e) { }
-
         public void Play() { }
-
         public void PlayLooping() { }
-
         public void PlaySync() { }
-
         public void Stop() { }
-
         void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
     }
 
     public partial class SystemSound
     {
         internal SystemSound() { }
-
         public void Play() { }
     }
-
     public static partial class SystemSounds
     {
         public static SystemSound Asterisk { get { throw null; } }
-
         public static SystemSound Beep { get { throw null; } }
-
         public static SystemSound Exclamation { get { throw null; } }
-
         public static SystemSound Hand { get { throw null; } }
-
         public static SystemSound Question { get { throw null; } }
     }
 }
@@ -110,14 +96,10 @@ namespace System.Security.Cryptography.X509Certificates
     public sealed partial class X509Certificate2UI
     {
         public static void DisplayCertificate(X509Certificate2 certificate, nint hwndParent) { }
-
         public static void DisplayCertificate(X509Certificate2 certificate) { }
-
         public static X509Certificate2Collection SelectFromCollection(X509Certificate2Collection certificates, string? title, string? message, X509SelectionFlag selectionFlag, nint hwndParent) { throw null; }
-
         public static X509Certificate2Collection SelectFromCollection(X509Certificate2Collection certificates, string? title, string? message, X509SelectionFlag selectionFlag) { throw null; }
     }
-
     public enum X509SelectionFlag
     {
         SingleSelection = 0,
@@ -130,17 +112,12 @@ namespace System.Xaml.Permissions
     public partial class XamlAccessLevel
     {
         internal XamlAccessLevel() { }
-
         public Reflection.AssemblyName AssemblyAccessToAssemblyName { get { throw null; } }
-
         public string? PrivateAccessToTypeName { get { throw null; } }
 
         public static XamlAccessLevel AssemblyAccessTo(Reflection.Assembly assembly) { throw null; }
-
         public static XamlAccessLevel AssemblyAccessTo(Reflection.AssemblyName assemblyName) { throw null; }
-
         public static XamlAccessLevel PrivateAccessTo(string assemblyQualifiedTypeName) { throw null; }
-
         public static XamlAccessLevel PrivateAccessTo(Type type) { throw null; }
     }
 }
