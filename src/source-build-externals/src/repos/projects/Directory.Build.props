@@ -6,6 +6,10 @@
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
 
+    <SrcReposDir>$(SrcDir)repos/</SrcReposDir>
+    <KeysDir>$(SrcReposDir)keys/</KeysDir>
+    <SubmoduleDirectory>$(SrcReposDir)src/</SubmoduleDirectory>
+    <PatchesDir>$(SrcReposDir)patches/</PatchesDir>
     <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(RepositoryName)'))</OriginalProjectDirectory>
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(OriginalProjectDirectory)', 'artifacts', 'clone'))</ProjectDirectory>
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
@@ -31,7 +35,6 @@
     <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
     <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
     <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
-    <EnvironmentVariables Include="_InitializeToolset=$(ProjectDir)Tools/source-built/Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
 
     <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.) -->
     <EnvironmentVariables Include="ContinuousIntegrationBuild=true" />
