@@ -21,9 +21,12 @@ namespace Microsoft.Build.UnitTests
 {
     public class UtilitiesTestStandard : UtilitiesTest
     {
-        public UtilitiesTestStandard()
+        private readonly ITestOutputHelper _output;
+
+        public UtilitiesTestStandard(ITestOutputHelper output)
         {
             this.loadAsReadOnly = false;
+            _output = output;
         }
 
         [Fact]

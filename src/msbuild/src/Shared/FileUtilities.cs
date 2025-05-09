@@ -1239,7 +1239,7 @@ namespace Microsoft.Build.Shared
             return FixFilePath(path);
         }
 
-        public static bool IsPathTooLong(string path)
+        private static bool IsPathTooLong(string path)
         {
             // >= not > because MAX_PATH assumes a trailing null
             return path.Length >= NativeMethodsShared.MaxPath;
