@@ -48,8 +48,6 @@
   -->
   <PropertyGroup Label="Automated">
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>3.12.0-beta1.25230.6</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.25223.3</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
-    <MicrosoftSourceBuildIntermediatearcadePackageVersion>9.0.0-beta.25208.6</MicrosoftSourceBuildIntermediatearcadePackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-1.25230.6</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.0.0-1.25230.6</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
@@ -70,7 +68,6 @@
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftSourceBuildIntermediateroslynPackageVersion>5.0.0-1.25230.6</MicrosoftSourceBuildIntermediateroslynPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-1.25230.6</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,

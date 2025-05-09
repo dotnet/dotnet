@@ -28,7 +28,6 @@ namespace System.Runtime.CompilerServices
     public sealed partial class AsyncMethodBuilderAttribute : Attribute
     {
         public AsyncMethodBuilderAttribute(Type builderType) { }
-
         public Type BuilderType { get { throw null; } }
     }
 
@@ -37,22 +36,13 @@ namespace System.Runtime.CompilerServices
         private int _dummyPrimitive;
         public Threading.Tasks.ValueTask Task { get { throw null; } }
 
-        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
-
-        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
-
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public static AsyncValueTaskMethodBuilder Create() { throw null; }
-
         public void SetException(Exception exception) { }
-
         public void SetResult() { }
-
         public void SetStateMachine(IAsyncStateMachine stateMachine) { }
-
-        public void Start<TStateMachine>(ref TStateMachine stateMachine)
-            where TStateMachine : IAsyncStateMachine { }
+        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine { }
     }
 
     public partial struct AsyncValueTaskMethodBuilder<TResult>
@@ -62,22 +52,13 @@ namespace System.Runtime.CompilerServices
         private int _dummyPrimitive;
         public Threading.Tasks.ValueTask<TResult> Task { get { throw null; } }
 
-        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
-
-        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
-
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public static AsyncValueTaskMethodBuilder<TResult> Create() { throw null; }
-
         public void SetException(Exception exception) { }
-
         public void SetResult(TResult result) { }
-
         public void SetStateMachine(IAsyncStateMachine stateMachine) { }
-
-        public void Start<TStateMachine>(ref TStateMachine stateMachine)
-            where TStateMachine : IAsyncStateMachine { }
+        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine { }
     }
 
     public readonly partial struct ConfiguredValueTaskAwaitable
@@ -85,7 +66,6 @@ namespace System.Runtime.CompilerServices
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public readonly ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
-
         public readonly partial struct ConfiguredValueTaskAwaiter : ICriticalNotifyCompletion, INotifyCompletion
         {
             private readonly object _dummy;
@@ -93,9 +73,7 @@ namespace System.Runtime.CompilerServices
             public bool IsCompleted { get { throw null; } }
 
             public readonly void GetResult() { }
-
             public readonly void OnCompleted(Action continuation) { }
-
             public readonly void UnsafeOnCompleted(Action continuation) { }
         }
     }
@@ -106,7 +84,6 @@ namespace System.Runtime.CompilerServices
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public readonly ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
-
         public readonly partial struct ConfiguredValueTaskAwaiter : ICriticalNotifyCompletion, INotifyCompletion
         {
             private readonly Threading.Tasks.ValueTask<TResult> _value;
@@ -115,9 +92,7 @@ namespace System.Runtime.CompilerServices
             public bool IsCompleted { get { throw null; } }
 
             public readonly TResult GetResult() { throw null; }
-
             public readonly void OnCompleted(Action continuation) { }
-
             public readonly void UnsafeOnCompleted(Action continuation) { }
         }
     }
@@ -129,9 +104,7 @@ namespace System.Runtime.CompilerServices
         public bool IsCompleted { get { throw null; } }
 
         public readonly void GetResult() { }
-
         public readonly void OnCompleted(Action continuation) { }
-
         public readonly void UnsafeOnCompleted(Action continuation) { }
     }
 
@@ -143,9 +116,7 @@ namespace System.Runtime.CompilerServices
         public bool IsCompleted { get { throw null; } }
 
         public readonly TResult GetResult() { throw null; }
-
         public readonly void OnCompleted(Action continuation) { }
-
         public readonly void UnsafeOnCompleted(Action continuation) { }
     }
 }
@@ -158,33 +129,20 @@ namespace System.Threading.Tasks
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public ValueTask(Sources.IValueTaskSource source, short token) { }
-
         public ValueTask(Task task) { }
-
         public bool IsCanceled { get { throw null; } }
-
         public bool IsCompleted { get { throw null; } }
-
         public bool IsCompletedSuccessfully { get { throw null; } }
-
         public bool IsFaulted { get { throw null; } }
 
         public readonly Task AsTask() { throw null; }
-
         public readonly Runtime.CompilerServices.ConfiguredValueTaskAwaitable ConfigureAwait(bool continueOnCapturedContext) { throw null; }
-
         public override readonly bool Equals(object obj) { throw null; }
-
         public readonly bool Equals(ValueTask other) { throw null; }
-
         public readonly Runtime.CompilerServices.ValueTaskAwaiter GetAwaiter() { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(ValueTask left, ValueTask right) { throw null; }
-
         public static bool operator !=(ValueTask left, ValueTask right) { throw null; }
-
         public readonly ValueTask Preserve() { throw null; }
     }
 
@@ -195,39 +153,23 @@ namespace System.Threading.Tasks
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public ValueTask(TResult result) { }
-
         public ValueTask(Sources.IValueTaskSource<TResult> source, short token) { }
-
         public ValueTask(Task<TResult> task) { }
-
         public bool IsCanceled { get { throw null; } }
-
         public bool IsCompleted { get { throw null; } }
-
         public bool IsCompletedSuccessfully { get { throw null; } }
-
         public bool IsFaulted { get { throw null; } }
-
         public TResult Result { get { throw null; } }
 
         public readonly Task<TResult> AsTask() { throw null; }
-
         public readonly Runtime.CompilerServices.ConfiguredValueTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) { throw null; }
-
         public override readonly bool Equals(object obj) { throw null; }
-
         public readonly bool Equals(ValueTask<TResult> other) { throw null; }
-
         public readonly Runtime.CompilerServices.ValueTaskAwaiter<TResult> GetAwaiter() { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool operator ==(ValueTask<TResult> left, ValueTask<TResult> right) { throw null; }
-
         public static bool operator !=(ValueTask<TResult> left, ValueTask<TResult> right) { throw null; }
-
         public readonly ValueTask<TResult> Preserve() { throw null; }
-
         public override readonly string ToString() { throw null; }
     }
 }
