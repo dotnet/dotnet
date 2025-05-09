@@ -53,7 +53,7 @@ extends:
     containers:
       azurelinuxSourceBuildTestContainer:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
-        options: '--memory=6g --privileged'
+        options: '--memory=6g'
     sdl:
       sourceAnalysisPool:
           name: NetCore1ESPool-Svc-Internal
