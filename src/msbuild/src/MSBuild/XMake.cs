@@ -1045,13 +1045,6 @@ namespace Microsoft.Build.CommandLine
 
                 exitType = ExitType.Unexpected;
             }
-            catch (PathTooLongException e)
-            {
-                Console.WriteLine(
-                    $"{e.Message}{(e.InnerException != null ? $" {e.InnerException.Message}" : string.Empty)}");
-
-                exitType = ExitType.Unexpected;
-            }
             // handle fatal errors
             catch (Exception e)
             {

@@ -1188,7 +1188,7 @@ namespace Microsoft.Build.Execution
 
                 public void ExecutionStarted()
                 {
-                    _memoryConsumptionOnStart = GetMemoryAllocated();
+                    _memoryConsumptionOnStart = GC.GetTotalMemory(false);
                     _executedSw.Start();
                     ExecutedCount++;
                 }
@@ -1196,16 +1196,7 @@ namespace Microsoft.Build.Execution
                 public void ExecutionStopped()
                 {
                     _executedSw.Stop();
-                    TotalMemoryConsumption += GetMemoryAllocated() - _memoryConsumptionOnStart;
-                }
-
-                private static long GetMemoryAllocated()
-                {
-#if NET
-                    return GC.GetTotalAllocatedBytes(false);
-#else
-                    return GC.GetTotalMemory(false);
-#endif
+                    TotalMemoryConsumption += GC.GetTotalMemory(false) - _memoryConsumptionOnStart;
                 }
 
                 public void Reset()

@@ -26,6 +26,8 @@ namespace Microsoft.Build.UnitTests.Definition
     /// </summary>
     public class ToolsetRegistryReader_Tests : IDisposable
     {
+        // The registry key that is passed as the baseKey parameter to the ToolsetRegistryReader class
+        private RegistryKey _testRegistryKey = null;
         // Subkey "3.5"
         private RegistryKey _currentVersionRegistryKey = null;
         // Subkey "ToolsVersions"
@@ -47,6 +49,7 @@ namespace Microsoft.Build.UnitTests.Definition
         public ToolsetRegistryReader_Tests()
         {
             DeleteTestRegistryKey();
+            _testRegistryKey = Registry.CurrentUser.CreateSubKey(testRegistryPath);
             _currentVersionRegistryKey = Registry.CurrentUser.CreateSubKey(testRegistryPath + "\\" + Constants.AssemblyVersion);
             _toolsVersionsRegistryKey = Registry.CurrentUser.CreateSubKey(testRegistryPath + "\\ToolsVersions");
 

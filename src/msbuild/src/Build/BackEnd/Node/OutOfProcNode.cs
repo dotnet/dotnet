@@ -562,6 +562,9 @@ namespace Microsoft.Build.Execution
                 // We'll experiment here and ship with the best default.
                 s_projectRootElementCacheBase = null;
             }
+
+            // Since we aren't going to be doing any more work, lets clean up all our memory usage.
+            GC.Collect();
         }
 
         /// <summary>
