@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.Composition;
+using System.Threading;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Utilities;
 
@@ -20,7 +21,7 @@ internal sealed partial class HtmlDocumentRemoveListener(
     {
         if (kind == LSPDocumentChangeKind.Removed && old is not null)
         {
-            _htmlDocumentSynchronizer.DocumentRemoved(old.Uri);
+            _htmlDocumentSynchronizer.DocumentRemoved(old.Uri, CancellationToken.None);
         }
     }
 }
