@@ -1570,7 +1570,7 @@ namespace NuGet.DependencyResolver.Tests
                 {
                     // No D node expected in the graph
                     // all downgrades shoudl have been removed
-                    Assert.True(n.Key.Name != "D");
+                    Assert.NotEqual("D", n.Key.Name);
 
                     if ((n.Key.Name == "C" && n.Key.VersionRange.OriginalString == "1.0.0") ||
                         (n.Key.Name == "H" && n.Key.VersionRange.OriginalString == "1.0.0"))
@@ -1666,7 +1666,7 @@ namespace NuGet.DependencyResolver.Tests
                 {
                     // No D node expected in the graph
                     // all downgrades should have been removed
-                    Assert.True(n.Key.Name != "D");
+                    Assert.NotEqual("D", n.Key.Name);
 
                     if ((n.Key.Name == "C" && n.Key.VersionRange.OriginalString == "1.0.0") ||
                         (n.Key.Name == "H" && n.Key.VersionRange.OriginalString == "1.0.0"))
@@ -1759,7 +1759,7 @@ namespace NuGet.DependencyResolver.Tests
                 {
                     // No D node expected in the graph
                     // all downgrades should have been removed
-                    Assert.True(n.Key.Name != "D");
+                    Assert.NotEqual("D", n.Key.Name);
 
                     if ((n.Key.Name == "C" && n.Key.VersionRange.OriginalString == "1.0.0"))
                     {

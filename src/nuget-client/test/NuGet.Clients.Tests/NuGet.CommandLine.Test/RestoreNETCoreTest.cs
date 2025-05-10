@@ -1003,7 +1003,7 @@ namespace NuGet.CommandLine.Test
                 var output = r.Output + " " + r.Errors;
 
                 // Assert
-                Assert.True(r.ExitCode == 1);
+                Assert.Equal(1, r.ExitCode);
                 Assert.Contains("no run-time assembly compatible", output);
             }
         }
@@ -1047,7 +1047,7 @@ namespace NuGet.CommandLine.Test
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(r.ExitCode == 0);
+                Assert.Equal(0, r.ExitCode);
                 Assert.DoesNotContain("no run-time assembly compatible", r.Errors);
             }
         }
@@ -1093,7 +1093,7 @@ namespace NuGet.CommandLine.Test
                 var output = r.Output + " " + r.Errors;
 
                 // Assert
-                Assert.True(r.ExitCode == 1);
+                Assert.Equal(1, r.ExitCode);
                 Assert.Contains("no run-time assembly compatible", output);
             }
         }
@@ -2913,7 +2913,7 @@ namespace NuGet.CommandLine.Test
                 Assert.Equal(1, msbuildTargetsItems.Count);
                 Assert.Equal(1, msbuildPropsItems.Count);
 
-                Assert.True(r.ExitCode == 0);
+                Assert.Equal(0, r.ExitCode);
             }
         }
 
@@ -2966,7 +2966,7 @@ namespace NuGet.CommandLine.Test
 
                 // Act
                 r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
-                Assert.True(r.ExitCode == 0);
+                Assert.Equal(0, r.ExitCode);
                 Assert.True(File.Exists(projectA.TargetsOutput), r.Output);
             }
         }
@@ -7199,8 +7199,8 @@ namespace NuGet.CommandLine.Test
                 Assert.Equal(1, lockFile.Targets.First().Libraries.Count);
                 Assert.Equal("FrameworkRef", string.Join(",", lockFile.Targets.First().Libraries.First().FrameworkReferences));
                 Assert.True(Directory.Exists(Path.Combine(pathContext.UserPackagesFolder, packageX.Identity.Id, packageX.Version)), $"{packageX.ToString()} is not installed");
-                Assert.True(1 == lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "all"));
-                Assert.True(1 == lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "none"));
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "all"));
+                Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Single().FrameworkReferences.Count(dep => FrameworkDependencyFlagsUtils.GetFlagString(dep.PrivateAssets) == "none"));
 
                 // Assert 2
                 Assert.True(File.Exists(projectB.AssetsFileOutputPath), r.AllOutput);
@@ -8705,7 +8705,7 @@ namespace NuGet.CommandLine.Test
                 //The orders are not equal.  Then resave the lock file and project.
                 //The null RID must be the first one otherwise this fails
                 Assert.False(originalTargets.SequenceEqual(reorderedTargets));
-                Assert.True(packagesLockFile.Targets[0].RuntimeIdentifier == null);
+                Assert.Null(packagesLockFile.Targets[0].RuntimeIdentifier);
                 PackagesLockFileFormat.Write(projectA.NuGetLockFileOutputPath, packagesLockFile);
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Save();
