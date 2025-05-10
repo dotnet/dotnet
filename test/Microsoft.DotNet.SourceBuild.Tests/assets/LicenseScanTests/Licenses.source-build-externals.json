@@ -1,8 +1,240 @@
 {
   "files": [
     {
-      "path": "src/application-insights/LOGGING/ThirdPartyNotices.txt",
+      "path": "src/repos/src/abstractions-xunit/README.md",
+      "detected_license_expression": "free-unknown AND apache-2.0"
+    },
+    {
+      "path": "src/repos/src/application-insights/LOGGING/ThirdPartyNotices.txt",
       "detected_license_expression": "unknown AND apache-2.0 AND mit AND bsd-new"
+    },
+    {
+      "path": "src/repos/src/application-insights/NETCORE/ThirdPartyNotices.txt",
+      "detected_license_expression": "unknown AND apache-2.0"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.af.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ar.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.az.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.bg.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.bn-BD.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.cs.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.da.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.de.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.el.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.es.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.fa.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.fi-FI.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.fil-PH.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.fr-BE.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.fr.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.he.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.hr.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.hu.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.hy.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.id.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.is.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.it.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ja.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ko-KR.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ku.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.lv.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ms-MY.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.mt.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.nb-NO.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.nb.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.nl.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.pl.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.pt.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ro.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ru.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.sk.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.sl.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.sr-Latn.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.sr.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.sv.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.ta.nuspec.unused",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.th-TH.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.tr.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.uk.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.vi.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.zh-CN.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.zh-Hans.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.Core.zh-Hant.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/humanizer/NuSpecs/Humanizer.nuspec",
+      "detected_license_expression": "(digia-qt-commercial OR lgpl-2.1 WITH qt-lgpl-exception-1.1 OR gpl-3.0) AND mit"
+    },
+    {
+      "path": "src/repos/src/vs-solutionpersistence/stylecop.json",
+      "detected_license_expression": "unknown"
+    },
+    {
+      "path": "src/repos/src/xunit/README.md",
+      "detected_license_expression": "free-unknown AND apache-2.0"
+    },
+    {
+      "path": "src/repos/src/xunit/src/xunit.assert/Asserts/README.md",
+      "detected_license_expression": "free-unknown AND apache-2.0"
+    },
+    {
+      "path": "src/repos/src/xunit/tools/builder/common/README.md",
+      "detected_license_expression": "free-unknown AND apache-2.0"
     }
   ]
 }
