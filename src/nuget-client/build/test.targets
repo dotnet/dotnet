@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CS1701;xUnit1012;xUnit1014;xUnit2000;xUnit2009;xUnit2013</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);xUnit2024</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

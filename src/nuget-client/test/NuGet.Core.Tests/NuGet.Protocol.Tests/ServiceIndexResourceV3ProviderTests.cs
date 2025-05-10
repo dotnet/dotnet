@@ -189,7 +189,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 0, 0), "Citrus");
 
-            Assert.True(endpoints.Count == 1);
+            Assert.Equal(1, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/orange", endpointSet);
@@ -219,7 +219,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 0, 0), "Fruit");
 
-            Assert.True(endpoints.Count == 3);
+            Assert.Equal(3, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/banana", endpointSet);
@@ -251,7 +251,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 0, 0), "Chocolate", "Vegetable");
 
-            Assert.True(endpoints.Count == 1);
+            Assert.Equal(1, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/chocolate", endpointSet);
@@ -281,7 +281,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 0, 0), "A", "B");
 
-            Assert.True(endpoints.Count == 1);
+            Assert.Equal(1, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/A/4.0.0", endpointSet);
@@ -311,7 +311,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(NuGetVersion.Parse("0.0.0-beta"), "A");
 
-            Assert.True(endpoints.Count == 0);
+            Assert.Equal(0, endpoints.Count);
         }
 
         [Fact]
@@ -338,7 +338,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 1, 0), "A", "B");
 
-            Assert.True(endpoints.Count == 1);
+            Assert.Equal(1, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/A/4.0.0", endpointSet);
@@ -368,7 +368,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(4, 1, 0), "A", "B");
 
-            Assert.True(endpoints.Count == 1);
+            Assert.Equal(1, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/B", endpointSet);
@@ -398,7 +398,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 
             var endpoints = resource.GetServiceEntryUris(new NuGetVersion(5, 0, 0), "A", "B");
 
-            Assert.True(endpoints.Count == 2);
+            Assert.Equal(2, endpoints.Count);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
             Assert.Contains("http://tempuri.org/A/5.0.0/1", endpointSet);

@@ -64,29 +64,31 @@ public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task
         KnownPackages = xDocuments
             .SelectMany(doc => doc.Root!.Descendants(PackageElementName))
             .Where(ShouldIncludeElement)
-            .Select(package => new TaskItem(package.Attribute(IdAttributeName)!.Value, new Dictionary<string, string>
-            {
-                { PackageVersionAttributeName, package.Attribute(PackageVersionAttributeName)!.Value },
-                { RepoOriginAttributeName, package.Attribute(RepoOriginAttributeName)?.Value ?? string.Empty },
-                { NonShippingAttributeName, package.Attribute(NonShippingAttributeName)?.Value ?? string.Empty },
-                { DotNetReleaseShippingAttributeName, package.Attribute(DotNetReleaseShippingAttributeName)?.Value ?? string.Empty },
-                { VisibilityAttributeName, package.Attribute(VisibilityAttributeName)?.Value ?? DefaultVisibility },
-            }))
+            .Select(package => CreateTaskItemFromElement(package))
             .Distinct(TaskItemManifestEqualityComparer.Instance)
             .ToArray();
 
         KnownBlobs = xDocuments
             .SelectMany(doc => doc.Root!.Descendants(BlobElementName))
             .Where(ShouldIncludeElement)
-            .Select(blob => new TaskItem(blob.Attribute(IdAttributeName)!.Value, new Dictionary<string, string>
-            {
-                { RepoOriginAttributeName, blob.Attribute(RepoOriginAttributeName)?.Value ?? string.Empty },
-                { NonShippingAttributeName, blob.Attribute(NonShippingAttributeName)?.Value ?? string.Empty },
-                { DotNetReleaseShippingAttributeName, blob.Attribute(DotNetReleaseShippingAttributeName)?.Value ?? string.Empty },
-                { VisibilityAttributeName, blob.Attribute(VisibilityAttributeName)?.Value ?? DefaultVisibility },
-            }))
+            .Select(blob => CreateTaskItemFromElement(blob))
             .Distinct(TaskItemManifestEqualityComparer.Instance)
             .ToArray();
+
+        TaskItem CreateTaskItemFromElement(XElement element)
+        {
+            var metadata = element
+                .Attributes()
+                .Where(a => a.Name.LocalName != IdAttributeName)
+                .ToDictionary(a => a.Name.LocalName, a => a.Value);
+
+            if (!metadata.ContainsKey(VisibilityAttributeName))
+            {
+                metadata[VisibilityAttributeName] = DefaultVisibility;
+            }
+
+            return new TaskItem(element.Attribute(IdAttributeName)!.Value, metadata);
+        }
 
         return true;
     }
