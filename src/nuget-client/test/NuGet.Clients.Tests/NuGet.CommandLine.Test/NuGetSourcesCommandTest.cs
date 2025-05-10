@@ -1205,7 +1205,7 @@ namespace NuGet.CommandLine.Test
 
                 // test to ensure detailed format is the default
                 Assert.True(result.Output.StartsWith("Registered Sources:"));
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 Assert.Contains("encyclopaedia [Enabled]", result.Output);
                 Assert.Contains("encyclopædia [Enabled]", result.Output);
                 Assert.DoesNotContain("Encyclopaedia", result.Output);
