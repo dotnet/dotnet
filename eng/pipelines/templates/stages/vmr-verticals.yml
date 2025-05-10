@@ -89,6 +89,8 @@ stages:
     dependsOn: []
     variables:
     - template: ../variables/vmr-build.yml
+      parameters:
+        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
 
     - template: ../jobs/vmr-build.yml
@@ -125,6 +127,7 @@ stages:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}
+        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
 
     - template: ../jobs/vmr-build.yml
