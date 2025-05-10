@@ -1,1 +1,1 @@
-For both new and existing code, help enforce a maximum line length of 120 characters.
+Use the following coding guidelines: https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md

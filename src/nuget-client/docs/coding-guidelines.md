@@ -44,6 +44,8 @@ The general rule we follow is "use Visual Studio defaults".
 
 1. Avoid more than one empty line at any time. For example, do not have two blank lines between members of a type.
 
+1. Avoid lines of code longer than 120 characters.
+
 1. Avoid spurious free spaces. For example avoid `if (someVar == 0)...`, where the dots mark the spurious free spaces. Consider enabling "View White Space (Ctrl+R, Ctrl+W)" or "Edit -> Advanced -> View White Space" if using Visual Studio to aid detection.
 
 1. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member` rather than `_member`), the existing style in that file takes precedence. Changes/refactorings are possible, but depending on the complexity, change frequency of the file, might need to be considered on their own merits in a separate pull request.
