@@ -259,48 +259,15 @@ internal abstract class GreenNode
                 continue;
             }
 
-            var firstIndex = GetFirstNonNullChildIndex(node);
-            var lastIndex = GetLastNonNullChildIndex(node);
+            var slotCount = node.SlotCount;
 
-            for (var i = lastIndex; i >= firstIndex; i--)
+            for (var i = slotCount - 1; i >= 0; i--)
             {
                 if (node.GetSlot(i) is GreenNode child)
                 {
                     stack.Push(child);
                 }
             }
-        }
-
-        static int GetFirstNonNullChildIndex(GreenNode node)
-        {
-            var slotCount = node.SlotCount;
-            var firstIndex = 0;
-
-            for (; firstIndex < slotCount; firstIndex++)
-            {
-                if (node.GetSlot(firstIndex) is not null)
-                {
-                    break;
-                }
-            }
-
-            return firstIndex;
-        }
-
-        static int GetLastNonNullChildIndex(GreenNode node)
-        {
-            var slotCount = node.SlotCount;
-            var lastIndex = slotCount - 1;
-
-            for (; lastIndex >= 0; lastIndex--)
-            {
-                if (node.GetSlot(lastIndex) is not null)
-                {
-                    break;
-                }
-            }
-
-            return lastIndex;
         }
     }
 

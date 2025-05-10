@@ -22,7 +22,15 @@ using Models;
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.Grid<WeatherForecast>>(0);
+            __builder.OpenComponent<global::Test.Grid<
+#nullable restore
+#line (3,14)-(3,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+WeatherForecast
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
             __builder.AddComponentParameter(1, "Items", 
 #nullable restore
 #line (3,40)-(3,70) "x:\dir\subdir\Test\TestComponent.cshtml"

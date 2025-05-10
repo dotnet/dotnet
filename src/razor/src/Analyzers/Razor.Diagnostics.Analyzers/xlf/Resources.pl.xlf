@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="IRemoteJsonServiceParameterDescription">
         <source>Methods in interfaces inheriting from IRemoteJsonService should not have parameters of type RazorPinnedSolutionInfoWrapper or DocumentId as they are not Json serializable.</source>
-        <target state="new">Methods in interfaces inheriting from IRemoteJsonService should not have parameters of type RazorPinnedSolutionInfoWrapper or DocumentId as they are not Json serializable.</target>
+        <target state="translated">Metody w interfejsach dziedziczących po IRemoteJsonService nie powinny mieć parametrów typu RazorPinnedSolutionInfoWrapper ani DocumentId, ponieważ nie są one serializowalne w formacie JSON.</target>
         <note />
       </trans-unit>
       <trans-unit id="IRemoteJsonServiceParameterMessage">
         <source>'{0}' parameter in '{1}.{2}' has a parameter of type '{3}' which is not allowed in a Json service</source>
-        <target state="new">'{0}' parameter in '{1}.{2}' has a parameter of type '{3}' which is not allowed in a Json service</target>
+        <target state="translated">Parametr „{0}” w „{1}.{2}” ma typ „{3}”, co jest niedozwolone w usłudze JSON</target>
         <note />
       </trans-unit>
       <trans-unit id="IRemoteJsonServiceParameterTitle">
         <source>Invalid parameter type in IRemoteJsonService method</source>
-        <target state="new">Invalid parameter type in IRemoteJsonService method</target>
+        <target state="translated">Nieprawidłowy typ parametru w metodzie IRemoteJsonService</target>
         <note />
       </trans-unit>
       <trans-unit id="PooledArrayBuilderAsRefDescription">

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <Tree Root="SyntaxNode">
   <PredefinedNode Name="RazorSyntaxNode" Base="SyntaxNode" />
@@ -104,14 +104,7 @@
     <Field Name="Prefix" Type="MarkupTextLiteralSyntax" Optional="true" />
     <Field Name="Value" Type="RazorBlockSyntax" />
   </Node>
-  <Node Name="MarkupElementSyntax" Base="MarkupSyntaxNode">
-    <Kind Name="MarkupElement" />
-    <Field Name="StartTag" Type="MarkupStartTagSyntax" Optional="true" />
-    <Field Name="Body" Type="SyntaxList&lt;RazorSyntaxNode&gt;" />
-    <Field Name="EndTag" Type="MarkupEndTagSyntax" Optional="true" />
-  </Node>
-  <Node Name="MarkupStartTagSyntax" Base="MarkupSyntaxNode">
-    <Kind Name="MarkupStartTag" />
+  <AbstractNode Name="BaseMarkupStartTagSyntax" Base="MarkupSyntaxNode">
     <Field Name="OpenAngle" Type="SyntaxToken">
       <Kind Name="OpenAngle" />
     </Field>
@@ -129,9 +122,8 @@
       <Kind Name="CloseAngle" />
     </Field>
     <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
-  </Node>
-  <Node Name="MarkupEndTagSyntax" Base="MarkupSyntaxNode">
-    <Kind Name="MarkupEndTag" />
+  </AbstractNode>
+  <AbstractNode Name="BaseMarkupEndTagSyntax" Base="MarkupSyntaxNode">
     <Field Name="OpenAngle" Type="SyntaxToken">
       <Kind Name="OpenAngle" />
     </Field>
@@ -149,6 +141,52 @@
       <Kind Name="CloseAngle" />
     </Field>
     <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
+  </AbstractNode>
+  <Node Name="MarkupElementSyntax" Base="MarkupSyntaxNode">
+    <Kind Name="MarkupElement" />
+    <Field Name="StartTag" Type="MarkupStartTagSyntax" Optional="true" />
+    <Field Name="Body" Type="SyntaxList&lt;RazorSyntaxNode&gt;" />
+    <Field Name="EndTag" Type="MarkupEndTagSyntax" Optional="true" />
+  </Node>
+  <Node Name="MarkupStartTagSyntax" Base="BaseMarkupStartTagSyntax">
+    <Kind Name="MarkupStartTag" />
+    <Field Name="OpenAngle" Type="SyntaxToken" Override="true">
+      <Kind Name="OpenAngle" />
+    </Field>
+    <Field Name="Bang" Type="SyntaxToken" Optional="true" Override="true">
+      <Kind Name="Bang" />
+    </Field>
+    <Field Name="Name" Type="SyntaxToken" Override="true">
+      <Kind Name="Text" />
+    </Field>
+    <Field Name="Attributes" Type="SyntaxList&lt;RazorSyntaxNode&gt;" Override="true" />
+    <Field Name="ForwardSlash" Type="SyntaxToken" Optional="true" Override="true">
+      <Kind Name="ForwardSlash" />
+    </Field>
+    <Field Name="CloseAngle" Type="SyntaxToken" Override="true">
+      <Kind Name="CloseAngle" />
+    </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" Override="true" />
+  </Node>
+  <Node Name="MarkupEndTagSyntax" Base="BaseMarkupEndTagSyntax">
+    <Kind Name="MarkupEndTag" />
+    <Field Name="OpenAngle" Type="SyntaxToken" Override="true">
+      <Kind Name="OpenAngle" />
+    </Field>
+    <Field Name="ForwardSlash" Type="SyntaxToken" Override="true">
+      <Kind Name="ForwardSlash" />
+    </Field>
+    <Field Name="Bang" Type="SyntaxToken" Optional="true" Override="true">
+      <Kind Name="Bang" />
+    </Field>
+    <Field Name="Name" Type="SyntaxToken" Override="true">
+      <Kind Name="Text" />
+    </Field>
+    <Field Name="MiscAttributeContent" Type="MarkupMiscAttributeContentSyntax" Optional="true" Override="true" />
+    <Field Name="CloseAngle" Type="SyntaxToken" Override="true">
+      <Kind Name="CloseAngle" />
+    </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" Override="true" />
   </Node>
   <Node Name="MarkupTagHelperElementSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTagHelperElement" />
@@ -156,45 +194,45 @@
     <Field Name="Body" Type="SyntaxList&lt;RazorSyntaxNode&gt;" Optional="true" />
     <Field Name="EndTag" Type="MarkupTagHelperEndTagSyntax" Optional="true" />
   </Node>
-  <Node Name="MarkupTagHelperStartTagSyntax" Base="MarkupSyntaxNode">
+  <Node Name="MarkupTagHelperStartTagSyntax" Base="BaseMarkupStartTagSyntax">
     <Kind Name="MarkupTagHelperStartTag" />
-    <Field Name="OpenAngle" Type="SyntaxToken">
+    <Field Name="OpenAngle" Type="SyntaxToken" Override="true">
       <Kind Name="OpenAngle" />
     </Field>
-    <Field Name="Bang" Type="SyntaxToken" Optional="true">
+    <Field Name="Bang" Type="SyntaxToken" Optional="true" Override="true">
       <Kind Name="Bang" />
     </Field>
-    <Field Name="Name" Type="SyntaxToken">
+    <Field Name="Name" Type="SyntaxToken" Override="true">
       <Kind Name="Text" />
     </Field>
-    <Field Name="Attributes" Type="SyntaxList&lt;RazorSyntaxNode&gt;" />
-    <Field Name="ForwardSlash" Type="SyntaxToken" Optional="true">
+    <Field Name="Attributes" Type="SyntaxList&lt;RazorSyntaxNode&gt;" Override="true" />
+    <Field Name="ForwardSlash" Type="SyntaxToken" Optional="true" Override="true">
       <Kind Name="ForwardSlash" />
     </Field>
-    <Field Name="CloseAngle" Type="SyntaxToken">
+    <Field Name="CloseAngle" Type="SyntaxToken" Override="true">
       <Kind Name="CloseAngle" />
     </Field>
-    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" Override="true" />
   </Node>
-  <Node Name="MarkupTagHelperEndTagSyntax" Base="MarkupSyntaxNode">
+  <Node Name="MarkupTagHelperEndTagSyntax" Base="BaseMarkupEndTagSyntax">
     <Kind Name="MarkupTagHelperEndTag" />
-    <Field Name="OpenAngle" Type="SyntaxToken">
+    <Field Name="OpenAngle" Type="SyntaxToken" Override="true">
       <Kind Name="OpenAngle" />
     </Field>
-    <Field Name="ForwardSlash" Type="SyntaxToken">
+    <Field Name="ForwardSlash" Type="SyntaxToken" Override="true">
       <Kind Name="ForwardSlash" />
     </Field>
-    <Field Name="Bang" Type="SyntaxToken" Optional="true">
+    <Field Name="Bang" Type="SyntaxToken" Optional="true" Override="true">
       <Kind Name="Bang" />
     </Field>
-    <Field Name="Name" Type="SyntaxToken">
+    <Field Name="Name" Type="SyntaxToken" Override="true">
       <Kind Name="Text" />
     </Field>
-    <Field Name="MiscAttributeContent" Type="MarkupMiscAttributeContentSyntax" Optional="true" />
-    <Field Name="CloseAngle" Type="SyntaxToken">
+    <Field Name="MiscAttributeContent" Type="MarkupMiscAttributeContentSyntax" Optional="true" Override="true" />
+    <Field Name="CloseAngle" Type="SyntaxToken" Override="true">
       <Kind Name="CloseAngle" />
     </Field>
-    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" Override="true" />
   </Node>
   <Node Name="MarkupTagHelperAttributeSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTagHelperAttribute" />

@@ -6,6 +6,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Test.Legacy;
@@ -281,7 +282,7 @@ public class CodeBlockEditHandlerTest
 
     private static SyntaxNode GetSpan(SourceLocation start, string content)
     {
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+        using PooledArrayBuilder<SyntaxToken> builder = [];
 
         var tokens = NativeCSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
         foreach (var token in tokens)

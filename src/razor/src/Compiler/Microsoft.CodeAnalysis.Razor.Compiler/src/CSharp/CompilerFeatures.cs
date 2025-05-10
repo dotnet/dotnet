@@ -32,8 +32,6 @@ public static class CompilerFeatures
             builder.Features.Add(new RefTagHelperDescriptorProvider());
             builder.Features.Add(new KeyTagHelperDescriptorProvider());
             builder.Features.Add(new SplatTagHelperDescriptorProvider());
-
-            builder.Features.Add(new DefaultTypeNameFeature());
         }
 
         if (builder.Configuration.LanguageVersion >= RazorLanguageVersion.Version_8_0)

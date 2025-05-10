@@ -47,7 +47,23 @@ where TValue : struct
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.TestComponent<decimal, decimal>>(0);
+            __builder.OpenComponent<global::Test.TestComponent<
+#nullable restore
+#line (4,37)-(4,44) "x:\dir\subdir\Test\TestComponent.cshtml"
+decimal
+
+#line default
+#line hidden
+#nullable disable
+            , 
+#nullable restore
+#line (4,54)-(4,61) "x:\dir\subdir\Test\TestComponent.cshtml"
+decimal
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
             __builder.AddComponentParameter(1, nameof(global::Test.TestComponent<decimal, decimal>.
 #nullable restore
 #line (4,16)-(4,20) "x:\dir\subdir\Test\TestComponent.cshtml"

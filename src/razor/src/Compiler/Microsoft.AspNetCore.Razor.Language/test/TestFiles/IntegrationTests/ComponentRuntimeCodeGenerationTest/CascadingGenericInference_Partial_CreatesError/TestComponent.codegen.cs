@@ -28,7 +28,7 @@ Array.Empty<DateTime>()
 #nullable disable
                 , out var __typeInferenceArg_0___arg0);
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
-                    __builder2.OpenComponent<global::Test.Column<TItem, TChildOther>>(3);
+                    __builder2.OpenComponent<global::Test.Column>(3);
                     __builder2.CloseComponent();
                 }
                 );

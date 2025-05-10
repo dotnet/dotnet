@@ -4,8 +4,7 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
-using Microsoft.AspNetCore.Razor.Language.Components;
+using System.Diagnostics;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -22,10 +21,14 @@ public sealed class ComponentTypeArgumentIntermediateNode : IntermediateNode
         Source = propertyNode.Source;
         TagHelper = propertyNode.TagHelper;
 
-        for (var i = 0; i < propertyNode.Children.Count; i++)
+        Debug.Assert(propertyNode.Children.Count == 1);
+        Value = propertyNode.Children[0] switch
         {
-            Children.Add(propertyNode.Children[i]);
-        }
+            IntermediateToken t => t,
+            CSharpExpressionIntermediateNode c => (IntermediateToken)c.Children[0], // TODO: can we break this in error cases?
+            _ => Assumed.Unreachable<IntermediateToken>()
+        };
+        Children = [Value];
 
         for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
         {
@@ -33,13 +36,15 @@ public sealed class ComponentTypeArgumentIntermediateNode : IntermediateNode
         }
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get; }
 
     public BoundAttributeDescriptor BoundAttribute { get; set; }
 
     public string TypeParameterName => BoundAttribute.Name;
 
     public TagHelperDescriptor TagHelper { get; set; }
+
+    public IntermediateToken Value { get; set; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

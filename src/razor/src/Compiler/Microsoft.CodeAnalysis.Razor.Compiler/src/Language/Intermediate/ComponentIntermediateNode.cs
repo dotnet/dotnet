@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -31,6 +32,8 @@ public sealed class ComponentIntermediateNode : IntermediateNode
     public string ChildContentParameterName { get; set; }
 
     public IEnumerable<ComponentTypeArgumentIntermediateNode> TypeArguments => Children.OfType<ComponentTypeArgumentIntermediateNode>();
+
+    public ImmutableArray<ComponentTypeArgumentIntermediateNode> OrderedTypeArguments { get; set; }
 
     public string TagName { get; set; }
 

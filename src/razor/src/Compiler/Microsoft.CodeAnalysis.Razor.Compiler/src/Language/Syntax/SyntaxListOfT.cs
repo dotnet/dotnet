@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -35,13 +36,8 @@ internal readonly struct SyntaxList<TNode>(SyntaxNode? node) : IReadOnlyList<TNo
 
     private static SyntaxNode? CreateNode(SyntaxList<TNode> nodes)
     {
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<TNode>(out var builder);
-        builder.SetCapacityIfLarger(nodes.Count);
-
-        foreach (var node in nodes)
-        {
-            builder.Add(node);
-        }
+        using var builder = new PooledArrayBuilder<TNode>(nodes.Count);
+        builder.AddRange(nodes);
 
         return builder.ToList().Node;
     }
@@ -299,8 +295,7 @@ internal readonly struct SyntaxList<TNode>(SyntaxNode? node) : IReadOnlyList<TNo
 
     public SyntaxList<TNode> Where(Func<TNode, bool> predicate)
     {
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<TNode>(out var builder);
-        builder.SetCapacityIfLarger(Count);
+        using var builder = new PooledArrayBuilder<TNode>(Count);
 
         foreach (var node in this)
         {

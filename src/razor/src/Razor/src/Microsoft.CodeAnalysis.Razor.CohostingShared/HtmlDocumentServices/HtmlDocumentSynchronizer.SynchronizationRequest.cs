@@ -21,18 +21,20 @@ internal sealed partial class HtmlDocumentSynchronizer
 
         public RazorDocumentVersion RequestedVersion => _requestedVersion;
 
-        internal static SynchronizationRequest CreateAndStart(TextDocument document, RazorDocumentVersion requestedVersion, Func<TextDocument, RazorDocumentVersion, CancellationToken, Task<SynchronizationResult>> syncFunction)
+        internal static SynchronizationRequest CreateAndStart(TextDocument document, RazorDocumentVersion requestedVersion, Func<TextDocument, RazorDocumentVersion, CancellationToken, Task<SynchronizationResult>> syncFunction, CancellationToken cancellationToken)
         {
             var request = new SynchronizationRequest(requestedVersion);
-            request.Start(document, syncFunction);
+            request.Start(document, syncFunction, cancellationToken);
             return request;
         }
 
-        private void Start(TextDocument document, Func<TextDocument, RazorDocumentVersion, CancellationToken, Task<SynchronizationResult>> syncFunction)
+        private void Start(TextDocument document, Func<TextDocument, RazorDocumentVersion, CancellationToken, Task<SynchronizationResult>> syncFunction, CancellationToken cancellationToken)
         {
-            _cts = new(TimeSpan.FromMinutes(1));
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var token = _cts.Token;
+            _cts.CancelAfter(TimeSpan.FromMilliseconds(500));
             _cts.Token.Register(Dispose);
-            _ = syncFunction.Invoke(document, _requestedVersion, _cts.Token).ContinueWith((t, state) =>
+            _ = syncFunction.Invoke(document, _requestedVersion, token).ContinueWith((t, state) =>
             {
                 var tcs = (TaskCompletionSource<SynchronizationResult>)state.AssumeNotNull();
                 if (t.IsCanceled)
@@ -50,7 +52,7 @@ internal sealed partial class HtmlDocumentSynchronizer
 
                 _cts?.Dispose();
                 _cts = null;
-            }, _tcs, _cts.Token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+            }, _tcs, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
         }
 
         public void Dispose()

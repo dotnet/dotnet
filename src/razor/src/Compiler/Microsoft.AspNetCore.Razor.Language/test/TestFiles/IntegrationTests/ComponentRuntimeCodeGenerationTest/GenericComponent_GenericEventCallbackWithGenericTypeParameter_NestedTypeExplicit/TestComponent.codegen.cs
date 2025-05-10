@@ -31,7 +31,15 @@ TChild
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.MyComponent<TChild>>(0);
+            __builder.OpenComponent<global::Test.MyComponent<
+#nullable restore
+#line (3,21)-(3,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+TChild
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
             __builder.AddComponentParameter(1, nameof(global::Test.MyComponent<TChild>.
 #nullable restore
 #line (3,29)-(3,36) "x:\dir\subdir\Test\TestComponent.cshtml"

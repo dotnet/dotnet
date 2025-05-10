@@ -5,22 +5,43 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class SpanEditHandler
 {
+    internal static readonly Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> NoTokenizer = _ => [];
+
+    private static readonly ImmutableArray<SpanEditHandler> s_defaultEditHandlers =
+    [
+        // AcceptedCharactersInternal consists up of 3 bit flags.
+        // So, there are 8 possible combinations from 0 to 7.
+        CreateDefault(NoTokenizer, AcceptedCharactersInternal.None),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)1),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)2),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)3),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)4),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)5),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)6),
+        CreateDefault(NoTokenizer, (AcceptedCharactersInternal)7)
+    ];
+
     private static readonly int TypeHashCode = typeof(SpanEditHandler).GetHashCode();
 
     public required AcceptedCharactersInternal AcceptedCharacters { get; init; }
     public required Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> Tokenizer { get; init; }
 
-    public static SpanEditHandler CreateDefault(AcceptedCharactersInternal acceptedCharacters)
+    public static SpanEditHandler GetDefault(AcceptedCharactersInternal acceptedCharacters)
     {
-        return CreateDefault(static c => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), acceptedCharacters);
+        var index = (int)acceptedCharacters;
+
+        ArgHelper.ThrowIfNegative(index, nameof(acceptedCharacters));
+        ArgHelper.ThrowIfGreaterThanOrEqual(index, 8, nameof(acceptedCharacters));
+
+        return s_defaultEditHandlers[index];
     }
 
     public static SpanEditHandler CreateDefault(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, AcceptedCharactersInternal acceptedCharacters)

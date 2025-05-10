@@ -56,7 +56,7 @@ internal class RazorSyntaxTreePartialParser
         // Try the last change owner
         if (_lastChangeOwner is not null)
         {
-            var editHandler = _lastChangeOwner.GetEditHandler() ?? SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+            var editHandler = _lastChangeOwner.GetEditHandler() ?? SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any);
             if (editHandler.OwnsChange(_lastChangeOwner, change))
             {
                 var editResult = editHandler.ApplyChange(_lastChangeOwner, change);
@@ -82,7 +82,7 @@ internal class RazorSyntaxTreePartialParser
         }
         else if (_lastChangeOwner is not null)
         {
-            var editHandler = _lastChangeOwner.GetEditHandler() ?? SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+            var editHandler = _lastChangeOwner.GetEditHandler() ?? SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any);
             var editResult = editHandler.ApplyChange(_lastChangeOwner, change);
             result = editResult.Result;
             if ((editResult.Result & PartialParseResultInternal.Rejected) != PartialParseResultInternal.Rejected)

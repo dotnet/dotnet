@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -32,6 +33,11 @@ internal class GlobalQualifiedTypeNameRewriter : TypeNameRewriter
         var parsed = SyntaxFactory.ParseTypeName(typeName);
         var rewritten = (TypeSyntax)new Visitor(_ignore).Visit(parsed);
         return rewritten.ToFullString();
+    }
+
+    public override void RewriteComponentTypeName(ComponentIntermediateNode node)
+    {
+        node.TypeName = Rewrite(node.TypeName);
     }
 
     private class Visitor : CSharpSyntaxRewriter
