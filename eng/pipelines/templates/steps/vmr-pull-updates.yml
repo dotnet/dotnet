@@ -36,7 +36,15 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - script: |
-    git checkout -B ${{ parameters.vmrBranch }}
+    vmr_sha=$(grep -oP '(?<=Sha=")[^"]*' $(Agent.BuildDirectory)/repo/eng/Version.Details.xml)
+    echo "##vso[task.setvariable variable=vmr_sha]$vmr_sha"
+  displayName: Obtain the vmr sha from Version.Details.xml (Linux)
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
+  workingDirectory: $(Agent.BuildDirectory)/repo
+
+- script: |
+    git checkout $(vmr_sha)
+    git checkout -B ${{ parameters.vmrBranch }}-$(vmr_sha)
     echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
   displayName: Prepare branch ${{ parameters.vmrBranch }}
   workingDirectory: ${{ parameters.vmrPath }}
