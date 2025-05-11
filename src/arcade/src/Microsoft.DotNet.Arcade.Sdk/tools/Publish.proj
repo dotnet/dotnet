@@ -111,9 +111,16 @@
       - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
       
       These packages are always non-shipping, so only look there.
+
+      As these installer packages are inserted into VS as-is, .NET doesn't ship them
+      but must ensure that they're validated as though they were shipped by .NET (so they don't break when inserted into VS).
     -->
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+    <VSRedistArtifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+    <VSRedistArtifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+
+    <Artifact Include="@(VSRedistArtifact)">
+      <DotNetReleaseShipping Condition="'$(ProducesDotNetReleaseShippingAssets)' == 'true'">true</DotNetReleaseShipping>
+    </Artifact>
 
     <!--
       In the VMR, don't publish packages that didn't match the above conditions externally.
@@ -312,6 +319,8 @@
              An item is a Package if Kind wasn't already set, and PublishFlatContainer is not set. -->
         <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' == 'true'">Blob</Kind>
         <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' != 'true'">Package</Kind>
+        <!-- DotNetReleaseShipping=true if IsShipping=true and ProducesDotNetReleaseShippingAssets=true-->
+        <DotNetReleaseShipping Condition="'%(ItemsToPushToBlobFeed.DotNetReleaseShipping)' == '' and '%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">true</DotNetReleaseShipping>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
@@ -319,7 +328,7 @@
     <ItemGroup>
       <ItemsToPushToBlobFeed>
         <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
-        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.DotNetReleaseShipping)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
