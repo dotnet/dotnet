@@ -43,6 +43,7 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - script: |
+    git fetch --all
     git checkout $(vmr_sha)
     git checkout -B ${{ parameters.vmrBranch }}-$(vmr_sha)
     echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
@@ -60,7 +61,6 @@ steps:
       --vmr ${{ parameters.vmrPath }}         \
       --tmp $(Agent.TempDirectory)            \
       --azdev-pat '$(dn-bot-all-orgs-code-r)' \
-      --branch ${{ parameters.vmrBranch }}    \
       --ci                                    \
       --debug
 
