@@ -207,7 +207,8 @@ namespace Microsoft.Build.UnitTests.OM.ObjectModelRemoting
 
     internal sealed class ProjectXmlPair : ElementLinkPair<ProjectRootElement>
     {
-        public ProjectXmlPair(ProjectPair pair) : base(null, pair.View.Xml, pair.Real.Xml) { this.PRE = this; }
+        private ProjectPair Project { get; }
+        public ProjectXmlPair(ProjectPair pair) : base(null, pair.View.Xml, pair.Real.Xml) { this.Project = pair; this.PRE = this; }
         public ProjectXmlPair(ProjectRootElement viewXml, ProjectRootElement realXml) : base(null, viewXml, realXml) { this.PRE = this; }
 
         public ElementLinkPair<CT> CreateWithVerify<CT>(Func<ProjectRootElement, CT> creator)
