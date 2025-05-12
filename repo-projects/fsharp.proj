@@ -12,17 +12,7 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(BuildActions) $(FlagParameterPrefix)noVisualStudio</BuildActions>
 
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
-
-    <!-- This makes sure that the fsharp scripts understand that the build is executed in product build mode.
-         Important as it picks a different solution to build based on that.
-         This flag can get removed when the VMR passes it in globally to all repos. -->
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)productBuild</BuildArgs>
-    <!--
-      dotnet/fsharp has a custom eng/build.sh script that handles its own sourcebuild arg
-      differently from the standard MSBuild arg set. Including both args is fine, but the
-      custom sourcebuild arg is the one that's required. This avoids running bootstrapping twice.
-    -->
-    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)sourceBuild $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
