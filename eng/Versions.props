@@ -24,7 +24,7 @@
       are not necessary, and this property is removed from the file.
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-preview.5.25258.18</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.5.25258.1</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.5.25258.18</PrivateSourceBuiltArtifactsVersion>
     <!-- arcade dependencies -->
     <MicrosoftDotNetVersionToolsVersion>10.0.0-beta.25110.3</MicrosoftDotNetVersionToolsVersion>
     <!-- command-line-api dependencies -->
