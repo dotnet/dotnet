@@ -99,8 +99,6 @@
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
     <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
-    <BuildActions Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(BuildActions) $(FlagParameterPrefix)productBuild</BuildActions>
-    <BuildActions Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sourceBuild</BuildActions>
     <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
     <TestActions>$(FlagParameterPrefix)test</TestActions>
@@ -155,6 +153,8 @@
   <!-- Build specific args -->
   <PropertyGroup>
     <BuildArgs>$(BuildArgs) -bl</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)productBuild</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)sourceBuild</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->
