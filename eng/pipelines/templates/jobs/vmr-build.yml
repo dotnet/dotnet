@@ -329,13 +329,6 @@ jobs:
 
   steps:
   - ${{ if not(parameters.isBuiltFromVmr) }}:
-    - template: ../steps/vmr-prepare.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          vmrBranch: $(System.PullRequest.TargetBranch)
-        ${{ else }}:
-          vmrBranch: ${{ parameters.vmrBranch }}
-
     # Synchronize new content in the VMR during PRs (we expect this to come
     - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
       parameters:

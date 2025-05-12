@@ -145,19 +145,11 @@ stages:
                     path: $(Build.ArtifactStagingDirectory)/VerticalArtifacts/${{ vertical.job }}
                     artifactName: ${{ vertical.job }}_Artifacts
         - ${{ if not(parameters.isBuiltFromVmr) }}:
-          - template: ../steps/vmr-prepare.yml
+          - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
             parameters:
-              ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-                vmrBranch: $(System.PullRequest.TargetBranch)
-              ${{ else }}:
-                vmrBranch: ${{ variables.VmrBranch }}
-
-          - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-            - template: ../steps/vmr-pull-updates.yml
-              parameters:
-                vmrPath: ${{ variables.vmrPath }}
-                vmrBranch: ${{ variables.VmrBranch }}
-                targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
+              vmrPath: ${{ variables.vmrPath }}
+              vmrBranch: ${{ variables.VmrBranch }}
+              targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
         - template: ../steps/vmr-join-verticals.yml
           parameters:
             dotNetBuildPass: final
