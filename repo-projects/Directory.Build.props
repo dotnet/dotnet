@@ -106,6 +106,8 @@
 
   <!-- Common args used for building and testing. -->
   <PropertyGroup>
+    <CommonArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)productBuild</CommonArgs>
+
     <!-- TODO: Remove the DisableDevBuildAsDefaultForSourceOnly condition when dev builds are the default for source only.
          https://github.com/dotnet/source-build/issues/4922 -->
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true' or ('$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true')">$(FlagParameterPrefix)ci</CommonArgs>
@@ -145,6 +147,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)sourceBuild</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
@@ -153,8 +156,6 @@
   <!-- Build specific args -->
   <PropertyGroup>
     <BuildArgs>$(BuildArgs) -bl</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)productBuild</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)sourceBuild</BuildArgs>
   </PropertyGroup>
 
   <!-- Test specific args-->
