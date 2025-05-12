@@ -14,6 +14,9 @@ parameters:
   type: boolean
   default: true
 
+- name: fakeOfficialBuildId
+  type: string
+
 stages:
 - template: source-build-and-validate.yml
   parameters:
@@ -40,6 +43,7 @@ stages:
         runOnline: true                    # ✅
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
+        fakeOfficialBuildId: ${{ parameters.fakeOfficialBuildId }}
       
       - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
         distro: centos
@@ -50,6 +54,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
+        fakeOfficialBuildId: ${{ parameters.fakeOfficialBuildId }}
       
       ### Additional legs for lite/full builds ###
       - ${{ if in(parameters.scope, 'lite', 'full') }}:
