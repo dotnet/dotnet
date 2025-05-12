@@ -24,11 +24,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         public string RepositoryName { get; set; } = "";
 
         /// <summary>
-        /// Returns metadata about the repository from source-manifest.json:
-        /// - PackageVersion
-        /// - BarId
-        /// - RemoteUri
-        /// - CommitSha
+        /// Returns metadata about the repository from source-manifest.json.
         /// </summary>
         [Output]
         public ITaskItem? RepoInfo { get; set; }
@@ -43,7 +39,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
             JsonArray? repositories = JsonNode.Parse(File.OpenRead(SourceManifest))?["repositories"]?.AsArray();
 
-            JsonNode? repo = repositories
+            JsonObject? repo = repositories
                 ?.Where(p => p?["path"]?.ToString() == RepositoryName)
                 .FirstOrDefault()
                 ?.AsObject();
@@ -54,15 +50,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 return false;
             }
 
-            RepoInfo = new TaskItem(
-                        RepositoryName,
-                        new Dictionary<string, string?>
-                        {
-                            ["PackageVersion"] = repo?["packageVersion"]?.ToString(),
-                            ["BarId"] = repo?["barId"]?.ToString(),
-                            ["RemoteUri"] = repo?["remoteUri"]?.ToString(),
-                            ["CommitSha"] = repo?["commitSha"]?.ToString()
-                        });
+            RepoInfo = new TaskItem(RepositoryName, repo.ToDictionary(p => p.Key, p => p.Value?.ToString()));
 
             return true;
         }
