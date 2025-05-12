@@ -447,8 +447,23 @@
     </ItemGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReadRepoInfoFromSourceManifest" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="SetRepoOriginalSourceRevisionId">
+    <ReadRepoInfoFromSourceManifest SourceManifest="$(SrcDir)/source-manifest.json"
+                                    RepositoryName="$(RepositoryName)">
+      <Output TaskParameter="RepoInfo" ItemName="RepoInfo" />
+    </ReadRepoInfoFromSourceManifest>
+
+    <Error Condition="'%(RepoInfo.CommitSha)' == ''"
+           Text="Unable to find the commit SHA for the repository $(RepositoryName) in the source-manifest.json file." />
+
+    <PropertyGroup>
+      <CommonArgs>$(CommonArgs) /p:RepoOriginalSourceRevisionId=%(RepoInfo.CommitSha)</CommonArgs>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="SetBuildProperties"
-          DependsOnTargets="GetTransitiveRepositoryReferences">
+          DependsOnTargets="GetTransitiveRepositoryReferences;SetRepoOriginalSourceRevisionId">
     <PropertyGroup>
       <!-- Infer the projects runtime identifier as the vertical's RID when doing a vertical build
            and filter down RID lists to the target RID in such a scenario. This is necessary when the host (SDK) rid
