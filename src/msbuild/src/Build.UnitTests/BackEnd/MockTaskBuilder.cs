@@ -20,6 +20,11 @@ namespace Microsoft.Build.UnitTests.BackEnd
     internal sealed class MockTaskBuilder : ITaskBuilder, IBuildComponent
     {
         /// <summary>
+        /// The component host.
+        /// </summary>
+        private IBuildComponentHost _host;
+
+        /// <summary>
         /// The current task number.
         /// </summary>
         private int _taskNumber;
@@ -132,6 +137,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
         /// <param name="host">The component host</param>
         public void InitializeComponent(IBuildComponentHost host)
         {
+            _host = host;
         }
 
         /// <summary>
@@ -139,6 +145,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
         /// </summary>
         public void ShutdownComponent()
         {
+            _host = null;
         }
 
         #endregion

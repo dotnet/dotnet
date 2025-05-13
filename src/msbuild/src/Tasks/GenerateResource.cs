@@ -16,7 +16,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Resources;
 using System.Resources.Extensions;
 using System.Reflection;
@@ -42,6 +41,7 @@ using Microsoft.Build.Tasks.ResourceHandling;
 using Microsoft.Build.Utilities;
 #if FEATURE_RESXREADER_LIVEDESERIALIZATION
 using Microsoft.Win32;
+using System.Linq;
 #endif
 
 #nullable disable
@@ -1705,7 +1705,7 @@ namespace Microsoft.Build.Tasks
 
             // Check the timestamp of each of the passed-in references to find the newest;
             // and then the additional inputs
-            var inputs = (this.References ?? []).Concat(this.AdditionalInputs ?? []);
+            ITaskItem[] inputs = this.References ?? [.. (this.AdditionalInputs ?? [])];
 
             foreach (ITaskItem input in inputs)
             {
