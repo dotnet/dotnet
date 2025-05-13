@@ -484,6 +484,7 @@ try {
             /p:Configuration=Release `
             /p:Restore=$RunRestore `
             /p:Build=true `
+            /p:DotNetBuildRepo=$ProductBuild `
             /clp:NoSummary `
             @ToolsetBuildArguments `
             @CommandLineArguments

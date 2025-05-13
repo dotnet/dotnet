@@ -424,6 +424,8 @@ if [ "$build_repo_tasks" = true ]; then
         -p:Restore=$run_restore \
         -p:Build=true \
         -clp:NoSummary \
+        $productBuildArg \
+        $sourceBuildArg \
         ${toolset_build_args[@]+"${toolset_build_args[@]}"}
 fi
 
