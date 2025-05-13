@@ -54,100 +54,53 @@ namespace Microsoft.CodeAnalysis.CSharp.Formatting
     public static partial class CSharpFormattingOptions
     {
         public static Options.Option<bool> IndentBlock { get { throw null; } }
-
         public static Options.Option<bool> IndentBraces { get { throw null; } }
-
         public static Options.Option<bool> IndentSwitchCaseSection { get { throw null; } }
-
         public static Options.Option<bool> IndentSwitchCaseSectionWhenBlock { get { throw null; } }
-
         public static Options.Option<bool> IndentSwitchSection { get { throw null; } }
-
         public static Options.Option<LabelPositionOptions> LabelPositioning { get { throw null; } }
-
         public static Options.Option<bool> NewLineForCatch { get { throw null; } }
-
         public static Options.Option<bool> NewLineForClausesInQuery { get { throw null; } }
-
         public static Options.Option<bool> NewLineForElse { get { throw null; } }
-
         public static Options.Option<bool> NewLineForFinally { get { throw null; } }
-
         public static Options.Option<bool> NewLineForMembersInAnonymousTypes { get { throw null; } }
-
         public static Options.Option<bool> NewLineForMembersInObjectInit { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInAccessors { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInAnonymousMethods { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInAnonymousTypes { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInControlBlocks { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInLambdaExpressionBody { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInMethods { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInObjectCollectionArrayInitializers { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInProperties { get { throw null; } }
-
         public static Options.Option<bool> NewLinesForBracesInTypes { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterCast { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterColonInBaseTypeDeclaration { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterComma { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterControlFlowStatementKeyword { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterDot { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterMethodCallName { get { throw null; } }
-
         public static Options.Option<bool> SpaceAfterSemicolonsInForStatement { get { throw null; } }
-
         public static Options.Option<bool> SpaceBeforeColonInBaseTypeDeclaration { get { throw null; } }
-
         public static Options.Option<bool> SpaceBeforeComma { get { throw null; } }
-
         public static Options.Option<bool> SpaceBeforeDot { get { throw null; } }
-
         public static Options.Option<bool> SpaceBeforeOpenSquareBracket { get { throw null; } }
-
         public static Options.Option<bool> SpaceBeforeSemicolonsInForStatement { get { throw null; } }
-
         public static Options.Option<bool> SpaceBetweenEmptyMethodCallParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceBetweenEmptyMethodDeclarationParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceBetweenEmptySquareBrackets { get { throw null; } }
-
         public static Options.Option<bool> SpacesIgnoreAroundVariableDeclaration { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinCastParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinExpressionParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinMethodCallParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinMethodDeclarationParenthesis { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinOtherParentheses { get { throw null; } }
-
         public static Options.Option<bool> SpaceWithinSquareBrackets { get { throw null; } }
-
         public static Options.Option<bool> SpacingAfterMethodDeclarationName { get { throw null; } }
-
         public static Options.Option<BinaryOperatorSpacingOptions> SpacingAroundBinaryOperator { get { throw null; } }
-
         public static Options.Option<bool> WrappingKeepStatementsOnSingleLine { get { throw null; } }
-
         public static Options.Option<bool> WrappingPreserveSingleLine { get { throw null; } }
     }
-
     public enum LabelPositionOptions
     {
         LeftMost = 0,

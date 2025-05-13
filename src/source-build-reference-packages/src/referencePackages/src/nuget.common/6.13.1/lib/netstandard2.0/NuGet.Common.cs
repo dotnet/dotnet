@@ -30,21 +30,17 @@ namespace NuGet.Common
         public static string Current { get { throw null; } }
 
         public static void Clear() { }
-
         public static void StartNew() { }
     }
-
     public partial class AggregateEnumerableAsync<T> : IEnumerableAsync<T>
     {
         public AggregateEnumerableAsync(System.Collections.Generic.IList<IEnumerableAsync<T>> asyncEnumerables, System.Collections.Generic.IComparer<T>? comparer, System.Collections.Generic.IEqualityComparer<T>? equalityComparer) { }
-
         public IEnumeratorAsync<T> GetEnumeratorAsync() { throw null; }
     }
 
     public partial class AggregateEnumeratorAsync<T> : IEnumeratorAsync<T>
     {
         public AggregateEnumeratorAsync(System.Collections.Generic.IList<IEnumerableAsync<T>> asyncEnumerables, System.Collections.Generic.IComparer<T>? orderingComparer, System.Collections.Generic.IEqualityComparer<T>? equalityComparer) { }
-
         public T Current { get { throw null; } }
 
         public System.Threading.Tasks.Task<bool> MoveNextAsync() { throw null; }
@@ -53,32 +49,22 @@ namespace NuGet.Common
     public static partial class AsyncLazy
     {
         public static AsyncLazy<T> New<T>(T innerData) { throw null; }
-
         public static AsyncLazy<T> New<T>(System.Func<T> valueFactory) { throw null; }
-
         public static AsyncLazy<T> New<T>(System.Func<System.Threading.Tasks.Task<T>> asyncValueFactory) { throw null; }
-
         public static AsyncLazy<T> New<T>(System.Lazy<System.Threading.Tasks.Task<T>> inner) { throw null; }
     }
-
     [System.CLSCompliant(true)]
     public partial class AsyncLazy<T>
     {
         public AsyncLazy(System.Func<System.Threading.Tasks.Task<T>> valueFactory) { }
-
         public AsyncLazy(System.Lazy<System.Threading.Tasks.Task<T>> inner) { }
-
         public System.Runtime.CompilerServices.TaskAwaiter<T> GetAwaiter() { throw null; }
-
         public static implicit operator System.Lazy<System.Threading.Tasks.Task<T>>(AsyncLazy<T> outer) { throw null; }
     }
-
     public partial class AuthTypeFilteredCredentials : System.Net.ICredentials
     {
         public AuthTypeFilteredCredentials(System.Net.NetworkCredential innerCredential, System.Collections.Generic.IEnumerable<string> authTypes) { }
-
         public System.Collections.Generic.IReadOnlyList<string> AuthTypes { get { throw null; } }
-
         public System.Net.NetworkCredential InnerCredential { get { throw null; } }
 
         public System.Net.NetworkCredential? GetCredential(System.Uri uri, string authType) { throw null; }
@@ -88,11 +74,9 @@ namespace NuGet.Common
     {
         public static string GetNuGetAssemblyVersion() { throw null; }
     }
-
     public partial class CommandLineArgumentCombinationException : System.Exception, ILogMessageException
     {
         public CommandLineArgumentCombinationException(string message) { }
-
         public virtual ILogMessage AsLogMessage() { throw null; }
     }
 
@@ -100,68 +84,44 @@ namespace NuGet.Common
     {
         public static readonly System.StringComparer FrameworkReferenceNameComparer;
     }
-
     public static partial class ConcurrencyUtilities
     {
         public static void ExecuteWithFileLocked(string filePath, System.Action action) { }
-
         public static System.Threading.Tasks.Task<T> ExecuteWithFileLockedAsync<T>(string filePath, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>> action, System.Threading.CancellationToken token) { throw null; }
     }
-
     public partial class CryptoHashProvider
     {
         public CryptoHashProvider() { }
-
         public CryptoHashProvider(string? hashAlgorithm) { }
-
         public byte[] CalculateHash(byte[] data) { throw null; }
-
         public byte[] CalculateHash(System.IO.Stream stream) { throw null; }
-
         public bool VerifyHash(byte[] data, byte[] hash) { throw null; }
     }
-
     public static partial class CryptoHashUtility
     {
         public static byte[] ComputeHash(this HashAlgorithmName hashAlgorithmName, byte[] data) { throw null; }
-
         public static byte[] ComputeHash(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data, bool leaveStreamOpen) { throw null; }
-
         public static byte[] ComputeHash(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data) { throw null; }
-
         public static string ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data, bool leaveStreamOpen) { throw null; }
-
         public static string ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data) { throw null; }
-
         public static System.Security.Cryptography.Oid ConvertToOid(this HashAlgorithmName hashAlgorithm) { throw null; }
-
         public static string ConvertToOidString(this HashAlgorithmName hashAlgorithmName) { throw null; }
-
         public static string ConvertToOidString(this SignatureAlgorithmName signatureAlgorithmName) { throw null; }
-
         public static System.Security.Cryptography.HashAlgorithmName ConvertToSystemSecurityHashAlgorithmName(this HashAlgorithmName hashAlgorithmName) { throw null; }
-
         public static System.Security.Cryptography.HashAlgorithm GetHashAlgorithm(HashAlgorithmName hashAlgorithmName) { throw null; }
-
         public static System.Security.Cryptography.HashAlgorithm GetHashAlgorithm(string hashAlgorithmName) { throw null; }
-
         public static HashAlgorithmName GetHashAlgorithmName(string hashAlgorithm) { throw null; }
-
         public static System.Security.Cryptography.HashAlgorithm GetHashProvider(this HashAlgorithmName hashAlgorithmName) { throw null; }
-
         public static HashAlgorithmName OidToHashAlgorithmName(string oid) { throw null; }
     }
-
     public static partial class CultureUtility
     {
         public static void DisableLocalization() { }
     }
-
     public static partial class DatetimeUtility
     {
         public static string ToReadableTimeFormat(System.TimeSpan time) { throw null; }
     }
-
     public partial class EnvironmentVariableWrapper : IEnvironmentVariableReader
     {
         public static IEnvironmentVariableReader Instance { get { throw null; } }
@@ -172,54 +132,34 @@ namespace NuGet.Common
     public partial class ExceptionLogger
     {
         public ExceptionLogger(IEnvironmentVariableReader reader) { }
-
         public static ExceptionLogger Instance { get { throw null; } }
-
         public bool ShowStack { get { throw null; } }
     }
-
     public static partial class ExceptionUtilities
     {
         public static string DisplayMessage(System.AggregateException exception) { throw null; }
-
         public static string DisplayMessage(System.Exception exception, bool indent) { throw null; }
-
         public static string DisplayMessage(System.Exception exception) { throw null; }
-
         public static string DisplayMessage(System.Reflection.TargetInvocationException exception) { throw null; }
-
         public static void LogException(System.Exception ex, ILogger logger, bool logStackAsError) { }
-
         public static void LogException(System.Exception ex, ILogger logger) { }
-
         public static System.Exception Unwrap(System.Exception exception) { throw null; }
     }
-
     public static partial class FileUtility
     {
         public static readonly System.IO.FileShare FileSharePermissions;
         public static readonly int MaxTries;
         public static void Delete(string path) { }
-
         public static System.Threading.Tasks.Task DeleteWithLock(string filePath) { throw null; }
-
         public static string GetTempFilePath(string directory) { throw null; }
-
         public static void Move(string sourceFileName, string destFileName) { }
-
         public static void Replace(System.Action<string> writeSourceFile, string destFilePath) { }
-
         public static void Replace(string sourceFileName, string destFileName) { }
-
         public static System.Threading.Tasks.Task ReplaceAsync(System.Func<string, System.Threading.Tasks.Task> writeSourceFile, string destFilePath) { throw null; }
-
         public static System.Threading.Tasks.Task ReplaceWithLock(System.Action<string> writeSourceFile, string destFilePath) { throw null; }
-
         public static T SafeRead<T>(string filePath, System.Func<System.IO.FileStream, string, T> read) { throw null; }
-
         public static System.Threading.Tasks.Task<T> SafeReadAsync<T>(string filePath, System.Func<System.IO.FileStream, string, System.Threading.Tasks.Task<T>> read) { throw null; }
     }
-
     public enum HashAlgorithmName
     {
         Unknown = 0,
@@ -342,13 +282,9 @@ namespace NuGet.Common
     public abstract partial class LegacyLoggerAdapter : ILogger
     {
         public virtual void Log(ILogMessage message) { }
-
         public void Log(LogLevel level, string data) { }
-
         public virtual System.Threading.Tasks.Task LogAsync(ILogMessage message) { throw null; }
-
         public System.Threading.Tasks.Task LogAsync(LogLevel level, string data) { throw null; }
-
         public abstract void LogDebug(string data);
         public abstract void LogError(string data);
         public abstract void LogInformation(string data);
@@ -362,49 +298,33 @@ namespace NuGet.Common
     {
         public static void DeleteDirectoryTree(string folderPath, System.Collections.Generic.List<string> failedDeletes) { }
     }
-
     public abstract partial class LoggerBase : ILogger
     {
         public LoggerBase() { }
-
         public LoggerBase(LogLevel verbosityLevel) { }
-
         public LogLevel VerbosityLevel { get { throw null; } set { } }
 
         protected virtual bool CollectMessage(LogLevel messageLevel) { throw null; }
-
         protected virtual bool DisplayMessage(LogLevel messageLevel) { throw null; }
-
         public abstract void Log(ILogMessage message);
         public virtual void Log(LogLevel level, string data) { }
-
         public abstract System.Threading.Tasks.Task LogAsync(ILogMessage message);
         public virtual System.Threading.Tasks.Task LogAsync(LogLevel level, string data) { throw null; }
-
         public virtual void LogDebug(string data) { }
-
         public virtual void LogError(string data) { }
-
         public virtual void LogInformation(string data) { }
-
         public virtual void LogInformationSummary(string data) { }
-
         public virtual void LogMinimal(string data) { }
-
         public virtual void LogVerbose(string data) { }
-
         public virtual void LogWarning(string data) { }
     }
 
     public static partial class LoggingExtensions
     {
         public static string FormatWithCode(this ILogMessage message) { throw null; }
-
         public static string? GetName(this NuGetLogCode code) { throw null; }
-
         public static bool TryGetName(this NuGetLogCode code, out string? codeString) { throw null; }
     }
-
     public enum LogLevel
     {
         Debug = 0,
@@ -418,27 +338,17 @@ namespace NuGet.Common
     public partial class LogMessage : ILogMessage
     {
         public LogMessage(LogLevel level, string message, NuGetLogCode code) { }
-
         public LogMessage(LogLevel level, string message) { }
-
         public NuGetLogCode Code { get { throw null; } set { } }
-
         public LogLevel Level { get { throw null; } set { } }
-
         public string Message { get { throw null; } set { } }
-
         public string? ProjectPath { get { throw null; } set { } }
-
         public System.DateTimeOffset Time { get { throw null; } set { } }
-
         public WarningLevel WarningLevel { get { throw null; } set { } }
 
         public static LogMessage Create(LogLevel level, string message) { throw null; }
-
         public static LogMessage CreateError(NuGetLogCode code, string message) { throw null; }
-
         public static LogMessage CreateWarning(NuGetLogCode code, string message) { throw null; }
-
         public override string ToString() { throw null; }
     }
 
@@ -456,44 +366,30 @@ namespace NuGet.Common
         public const string TARGET_GRAPHS = "targetGraphs";
         public const string WARNING_LEVEL = "warningLevel";
     }
-
     public static partial class MSBuildStringUtility
     {
         public static string? Convert(string? value) { throw null; }
-
         public static bool? GetBooleanOrNull(string? value) { throw null; }
-
         public static System.Collections.Immutable.ImmutableArray<NuGetLogCode> GetNuGetLogCodes(string s) { throw null; }
-
         public static bool IsTrue(string? value) { throw null; }
-
         public static bool IsTrueOrEmpty(string? value) { throw null; }
-
         public static string[] Split(string s, params char[] chars) { throw null; }
-
         public static string[] Split(string s) { throw null; }
-
         public static string[] TrimAndExcludeNullOrEmpty(string?[]? strings) { throw null; }
-
         public static string? TrimAndGetNullForEmpty(string? s) { throw null; }
     }
-
     public static partial class NetworkProtocolUtility
     {
         public static void SetConnectionLimit() { }
     }
-
     public static partial class NuGetEnvironment
     {
         public static string GetDotNetLocation() { throw null; }
-
         public static string GetFolderPath(NuGetFolderPath folder) { throw null; }
     }
-
     public static partial class NuGetEventSource
     {
         public static System.Diagnostics.Tracing.EventSource Instance { get { throw null; } }
-
         public static bool IsEnabled { get { throw null; } }
 
         public static partial class Keywords
@@ -506,7 +402,6 @@ namespace NuGet.Common
             public const System.Diagnostics.Tracing.EventKeywords SdkResolver = (System.Diagnostics.Tracing.EventKeywords)16L;
         }
     }
-
     public enum NuGetFolderPath
     {
         MachineWideSettingsBaseDirectory = 0,
@@ -733,218 +628,131 @@ namespace NuGet.Common
         public static ILogger Instance { get { throw null; } }
 
         public override void Log(ILogMessage message) { }
-
         public override void Log(LogLevel level, string data) { }
-
         public override System.Threading.Tasks.Task LogAsync(ILogMessage message) { throw null; }
-
         public override System.Threading.Tasks.Task LogAsync(LogLevel level, string data) { throw null; }
     }
 
     public partial class PackagingLogMessage : IPackLogMessage, INuGetLogMessage, ILogMessage, ILogFileContext
     {
         internal PackagingLogMessage() { }
-
         public NuGetLogCode Code { get { throw null; } set { } }
-
         public int EndColumnNumber { get { throw null; } set { } }
-
         public int EndLineNumber { get { throw null; } set { } }
-
         public string? FilePath { get { throw null; } set { } }
-
         public Frameworks.NuGetFramework? Framework { get { throw null; } set { } }
-
         public LogLevel Level { get { throw null; } set { } }
-
         public string? LibraryId { get { throw null; } set { } }
-
         public string Message { get { throw null; } set { } }
-
         public string? ProjectPath { get { throw null; } set { } }
-
         public int StartColumnNumber { get { throw null; } set { } }
-
         public int StartLineNumber { get { throw null; } set { } }
-
         public System.DateTimeOffset Time { get { throw null; } set { } }
-
         public WarningLevel WarningLevel { get { throw null; } set { } }
 
         public static PackagingLogMessage CreateError(string message, NuGetLogCode code) { throw null; }
-
         public static PackagingLogMessage CreateMessage(string message, LogLevel logLevel) { throw null; }
-
         public static PackagingLogMessage CreateWarning(string message, NuGetLogCode code, string? libraryId, Frameworks.NuGetFramework? framework) { throw null; }
-
         public static PackagingLogMessage CreateWarning(string message, NuGetLogCode code) { throw null; }
     }
 
     public static partial class PathResolver
     {
         public static void FilterPackageFiles<T>(System.Collections.Generic.ICollection<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) { }
-
         public static System.Collections.Generic.IEnumerable<T> GetFilteredPackageFiles<T>(System.Collections.Generic.ICollection<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) { throw null; }
-
         public static System.Collections.Generic.IEnumerable<T> GetMatches<T>(System.Collections.Generic.IEnumerable<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) { throw null; }
-
         public static bool IsDirectoryPath(string? path) { throw null; }
-
         public static bool IsWildcardSearch(string filter) { throw null; }
-
         public static string NormalizeWildcardForExcludedFiles(string basePath, string wildcard) { throw null; }
-
         public static System.Collections.Generic.IEnumerable<SearchPathResult> PerformWildcardSearch(string basePath, string searchPath, bool includeEmptyDirectories, out string normalizedBasePath) { throw null; }
-
         public static System.Collections.Generic.IEnumerable<string> PerformWildcardSearch(string basePath, string searchPath) { throw null; }
-
         public partial struct SearchPathResult
         {
             private object _dummy;
             private int _dummyPrimitive;
             public SearchPathResult(string path, bool isFile) { }
-
             public bool IsFile { get { throw null; } }
-
             public string Path { get { throw null; } }
         }
     }
-
     public static partial class PathUtility
     {
         public static bool IsFileSystemCaseInsensitive { get { throw null; } }
 
         public static void EnsureParentDirectory(string filePath) { }
-
         public static string EnsureTrailingForwardSlash(string path) { throw null; }
-
         public static string EnsureTrailingSlash(string path) { throw null; }
-
         public static string EscapePSPath(string path) { throw null; }
-
         public static string GetAbsolutePath(string basePath, string relativePath) { throw null; }
-
         public static string GetDirectoryName(string path) { throw null; }
-
         public static System.IO.Compression.ZipArchiveEntry? GetEntry(System.IO.Compression.ZipArchive archive, string path) { throw null; }
-
         public static string GetPath(System.Uri uri) { throw null; }
-
         public static string GetPathWithBackSlashes(string path) { throw null; }
-
         public static string GetPathWithDirectorySeparator(string path) { throw null; }
-
         public static string GetPathWithForwardSlashes(string path) { throw null; }
-
         public static string GetRelativePath(string path1, string path2, char separator) { throw null; }
-
         public static string GetRelativePath(string path1, string path2) { throw null; }
-
         public static System.StringComparer GetStringComparerBasedOnOS() { throw null; }
-
         public static System.StringComparison GetStringComparisonBasedOnOS() { throw null; }
-
         public static System.Collections.Generic.IEnumerable<string> GetUniquePathsBasedOnOS(System.Collections.Generic.IEnumerable<string> paths) { throw null; }
-
         public static bool HasTrailingDirectorySeparator(string? path) { throw null; }
-
         public static bool IsChildOfDirectory(string dir, string candidate) { throw null; }
-
         public static bool IsDirectorySeparatorChar(char ch) { throw null; }
-
         public static bool IsSubdirectory(string basePath, string path) { throw null; }
-
         public static string ReplaceAltDirSeparatorWithDirSeparator(string path) { throw null; }
-
         public static string ReplaceDirSeparatorWithAltDirSeparator(string path) { throw null; }
-
         public static string SmartTruncate(string path, int maxWidth) { throw null; }
-
         public static string StripLeadingDirectorySeparators(string filename) { throw null; }
     }
-
     public static partial class PathValidator
     {
         public static bool IsValidLocalPath(string path) { throw null; }
-
         public static bool IsValidRelativePath(string path) { throw null; }
-
         public static bool IsValidSource(string source) { throw null; }
-
         public static bool IsValidUncPath(string path) { throw null; }
-
         public static bool IsValidUrl(string url) { throw null; }
     }
-
     public static partial class Preprocessor
     {
         public static string Process(System.IO.Stream stream, System.Func<string, string> tokenReplacement) { throw null; }
-
         public static System.Threading.Tasks.Task<string> ProcessAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, System.Func<string, string> tokenReplacement, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
-
     public static partial class ProjectJsonPathUtilities
     {
         public static readonly string ProjectConfigFileEnding;
         public static readonly string ProjectConfigFileName;
         public static readonly string ProjectLockFileName;
         public static string GetLockFilePath(string configFilePath) { throw null; }
-
         public static string GetProjectConfigPath(string directoryPath, string projectName) { throw null; }
-
         public static string GetProjectConfigWithProjectName(string projectName) { throw null; }
-
         public static string GetProjectLockFileNameWithProjectName(string projectName) { throw null; }
-
         public static string? GetProjectNameFromConfigFileName(string configPath) { throw null; }
-
         public static bool IsProjectConfig(string configPath) { throw null; }
     }
-
     public partial class RestoreLogMessage : IRestoreLogMessage, INuGetLogMessage, ILogMessage, ILogFileContext
     {
         public RestoreLogMessage(LogLevel logLevel, NuGetLogCode errorCode, string errorString, string? targetGraph, bool logToInnerLogger) { }
-
         public RestoreLogMessage(LogLevel logLevel, NuGetLogCode errorCode, string errorString, string? targetGraph) { }
-
         public RestoreLogMessage(LogLevel logLevel, NuGetLogCode errorCode, string errorString) { }
-
         public RestoreLogMessage(LogLevel logLevel, string errorString) { }
-
         public NuGetLogCode Code { get { throw null; } set { } }
-
         public int EndColumnNumber { get { throw null; } set { } }
-
         public int EndLineNumber { get { throw null; } set { } }
-
         public string? FilePath { get { throw null; } set { } }
-
         public LogLevel Level { get { throw null; } set { } }
-
         public string? LibraryId { get { throw null; } set { } }
-
         public string Message { get { throw null; } set { } }
-
         public string? ProjectPath { get { throw null; } set { } }
-
         public bool ShouldDisplay { get { throw null; } set { } }
-
         public int StartColumnNumber { get { throw null; } set { } }
-
         public int StartLineNumber { get { throw null; } set { } }
-
         public System.Collections.Generic.IReadOnlyList<string> TargetGraphs { get { throw null; } set { } }
-
         public System.DateTimeOffset Time { get { throw null; } set { } }
-
         public WarningLevel WarningLevel { get { throw null; } set { } }
 
         public static RestoreLogMessage CreateError(NuGetLogCode code, string message, string? libraryId, params string[] targetGraphs) { throw null; }
-
         public static RestoreLogMessage CreateError(NuGetLogCode code, string message) { throw null; }
-
         public static RestoreLogMessage CreateWarning(NuGetLogCode code, string message, string? libraryId, params string[] targetGraphs) { throw null; }
-
         public static RestoreLogMessage CreateWarning(NuGetLogCode code, string message) { throw null; }
     }
 
@@ -957,16 +765,11 @@ namespace NuGet.Common
     public static partial class RuntimeEnvironmentHelper
     {
         public static bool IsLinux { get { throw null; } }
-
         public static bool IsMacOSX { get { throw null; } }
-
         public static bool IsMono { get { throw null; } }
-
         public static bool IsRunningInVisualStudio { get { throw null; } }
-
         public static bool IsWindows { get { throw null; } }
     }
-
     public enum SignatureAlgorithmName
     {
         Unknown = 0,
@@ -984,44 +787,28 @@ namespace NuGet.Common
     public partial class TelemetryActivity : System.IDisposable
     {
         internal TelemetryActivity() { }
-
         public static INuGetTelemetryService? NuGetTelemetryService { get { throw null; } set { } }
-
         public System.Guid OperationId { get { throw null; } }
-
         public System.Guid ParentId { get { throw null; } }
-
         public TelemetryEvent TelemetryEvent { get { throw null; } set { } }
 
         public static TelemetryActivity Create(TelemetryEvent telemetryEvent) { throw null; }
-
         public static TelemetryActivity Create(System.Guid parentId, TelemetryEvent telemetryEvent) { throw null; }
-
         public static TelemetryActivity Create(System.Guid parentId, string eventName) { throw null; }
-
         public static TelemetryActivity Create(string eventName) { throw null; }
-
         public void Dispose() { }
-
         protected virtual void Dispose(bool disposing) { }
-
         public static void EmitTelemetryEvent(TelemetryEvent TelemetryEvent) { }
-
         public void EndIntervalMeasure(string propertyName) { }
-
         public System.IDisposable StartIndependentInterval(string propertyName) { throw null; }
-
         public void StartIntervalMeasure() { }
     }
 
     public partial class TelemetryEvent
     {
         public TelemetryEvent(string eventName, System.Collections.Generic.Dictionary<string, object?> properties) { }
-
         public TelemetryEvent(string eventName) { }
-
         public System.Collections.Generic.IDictionary<string, object?> ComplexData { get { throw null; } }
-
         public int Count { get { throw null; } }
 
         public object? this[string key] { get { throw null; } set { } }
@@ -1029,32 +816,22 @@ namespace NuGet.Common
         public string Name { get { throw null; } }
 
         public void AddPiiData(string key, object? value) { }
-
         public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, object?>> GetEnumerator() { throw null; }
-
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object?>> GetPiiData() { throw null; }
     }
-
     public static partial class TelemetryServiceUtility
     {
         public static System.TimeSpan GetTimerElapsedTime() { throw null; }
-
         public static double GetTimerElapsedTimeInSeconds() { throw null; }
-
         public static void StartOrResumeTimer() { }
-
         public static void StopTimer() { }
     }
-
     public partial class Token
     {
         public Token(TokenCategory category, string value) { }
-
         public TokenCategory Category { get { throw null; } }
-
         public string Value { get { throw null; } }
     }
-
     public enum TokenCategory
     {
         Text = 0,
@@ -1064,27 +841,18 @@ namespace NuGet.Common
     public partial class Tokenizer
     {
         public Tokenizer(string text) { }
-
         public Token? Read() { throw null; }
     }
-
     public static partial class UriUtility
     {
         public static System.Uri CreateSourceUri(string source, System.UriKind kind = System.UriKind.Absolute) { throw null; }
-
         public static string? GetAbsolutePath(string? rootDirectory, string? path) { throw null; }
-
         public static string GetAbsolutePathFromFile(string? sourceFile, string path) { throw null; }
-
         public static string GetLocalPath(string localOrUriPath) { throw null; }
-
         public static bool IsNuGetOrg(string? source) { throw null; }
-
         public static System.Uri? TryCreateSourceUri(string source, System.UriKind kind) { throw null; }
-
         public static string UrlEncodeOdataParameter(string value) { throw null; }
     }
-
     public enum WarningLevel
     {
         Severe = 1,

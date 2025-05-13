@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="razor" Sha="721dc7a2a59416b21fc49447d264009d708d6000" BarId="265489" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="razor" Sha="025e4e597746eafc5a736195b66aeb321455d64c" BarId="267041" />
   <ProductDependencies>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.25223.3">
-      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>19eb5ea4e5f9c4e5256843a92805c8c9e942207d</Sha>
-      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
-    </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="5.0.0-1.25230.6">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>ded867328249b5a9b9e6e29e3f07abc19111f5d1</Sha>
@@ -76,12 +70,6 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>ded867328249b5a9b9e6e29e3f07abc19111f5d1</Sha>
     </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="5.0.0-1.25230.6">
-      <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>ded867328249b5a9b9e6e29e3f07abc19111f5d1</Sha>
-      <SourceBuild RepoName="roslyn" ManagedOnly="true" />
-    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" Version="5.0.0-1.25230.6">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>ded867328249b5a9b9e6e29e3f07abc19111f5d1</Sha>
@@ -104,15 +92,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25208.6">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25255.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aa61e8c20a869bcc994f8b29eb07d927d2bec6f4</Sha>
-    </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.25208.6">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aa61e8c20a869bcc994f8b29eb07d927d2bec6f4</Sha>
-      <SourceBuild RepoName="arcade" ManagedOnly="true" />
+      <Sha>1cfa39f82d00b3659a3d367bc344241946e10681</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages
          to be retrieved from live source-build and their content consumed by packages produced by razor.

@@ -285,7 +285,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 // Asert
                 var exists = packages.Where(a => a.PackageIdentity.Equals(new PackageIdentity("packageA", new NuGetVersion("4.0.0"))));
-                Assert.True(exists.Count() == 1);
+                Assert.Equal(1, exists.Count());
             }
         }
 
@@ -4673,10 +4673,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await result.CommitAsync(logger, CancellationToken.None);
             var packages = await project.GetInstalledPackagesAsync(CancellationToken.None);
 
-            // Asert
+            // Assert
             result.Success.Should().BeFalse();
             result.LockFile.LogMessages.Should().HaveCount(1);
-            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1008);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1010);
             packages.Should().HaveCount(1);
             packages.Should().Contain(a => a.PackageIdentity.Equals(new PackageIdentity("packageA", new NuGetVersion("0.0.0"))));
         }

@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "microsoft.dnceng.secretmanager": {
-      "version": "1.1.0-beta.25205.1",
+      "version": "1.1.0-beta.25230.4",
       "commands": [
         "secret-manager"
       ]

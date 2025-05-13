@@ -202,7 +202,7 @@ namespace NuGet.Commands.FuncTest
                 result.Success.Should().BeFalse();
                 logger.ErrorMessages.Count.Should().Be(1);
                 logger.ErrorMessages.Single().Should().Contain("NU1004");
-                logger.ErrorMessages.Single().Should().Contain("The package references have changed for net46. Lock file's package references: a:[1.0.0, ), project's package references: a:[1.0.0, ), b:[1.0.0, )");
+                logger.ErrorMessages.Single().Should().Contain("The package references have changed for net46. Lock file's package references: a:[1.0.0, ), project's package references: a >= 1.0.0, b >= 1.0.0");
             }
         }
 

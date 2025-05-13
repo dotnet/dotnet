@@ -9,5 +9,5 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal interface IHtmlDocumentPublisher
 {
-    Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken);
+    Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken);
 }
