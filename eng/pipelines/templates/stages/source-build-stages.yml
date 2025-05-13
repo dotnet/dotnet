@@ -19,11 +19,6 @@ parameters:
   type: boolean
   default: true
 
-# Branch of the VMR to use (to push to for internal builds)
-- name: vmrBranch
-  type: string
-  default: $(Build.SourceBranch)
-
 stages:
 - template: source-build-and-validate.yml
   parameters:
@@ -32,7 +27,6 @@ stages:
     scope: ${{ parameters.scope }}
     useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    vmrBranch: ${{ parameters.vmrBranch }}
     
     # Description of the source build legs to run.
     # This is described here as a parameter to allow two separate stages to be produced from this list (one for building

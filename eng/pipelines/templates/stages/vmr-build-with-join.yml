@@ -15,10 +15,6 @@ parameters:
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
-- name: vmrBranch
-  displayName: dotnet/dotnet branch to use
-  type: string
-
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -82,8 +78,6 @@ stages:
       - name: vmrPath
         value: $(Agent.BuildDirectory)/vmr
     - template: ../variables/vmr-build.yml
-      parameters:
-        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
       - job: FinalJoin
         displayName: Final Build Pass
@@ -148,7 +142,6 @@ stages:
           - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
             parameters:
               vmrPath: ${{ variables.vmrPath }}
-              vmrBranch: ${{ variables.VmrBranch }}
               targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
         - template: ../steps/vmr-join-verticals.yml
           parameters:
