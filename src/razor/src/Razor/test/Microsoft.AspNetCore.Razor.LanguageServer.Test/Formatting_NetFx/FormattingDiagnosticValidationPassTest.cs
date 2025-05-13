@@ -28,14 +28,13 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
             """;
         var context = CreateFormattingContext(source);
         var edits = ImmutableArray.Create(new TextChange(source.Span, "    "));
-        var input = edits;
         var pass = GetPass();
 
         // Act
-        var result = await pass.ExecuteAsync(context, input, DisposalToken);
+        var result = await pass.IsValidAsync(context, edits, DisposalToken);
 
         // Assert
-        Assert.Equal(input, result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -53,10 +52,10 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
         var pass = GetPass();
 
         // Act
-        var result = await pass.ExecuteAsync(context, [badEdit], DisposalToken);
+        var result = await pass.IsValidAsync(context, [badEdit], DisposalToken);
 
         // Assert
-        Assert.Empty(result);
+        Assert.False(result);
     }
 
     private FormattingDiagnosticValidationPass GetPass()

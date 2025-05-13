@@ -278,4 +278,48 @@ public class ReadOnlyListExtensionsTest
         public static CustomReadOnlyList Create(ReadOnlySpan<int> span)
             => new(span);
     }
+
+    [Fact]
+    public void SelectAsArray()
+    {
+        IReadOnlyList<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+
+        var actual = data.SelectAsArray(static x => x * 2);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void SelectAsArray_Enumerable()
+    {
+        IReadOnlyList<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+
+        var enumerable = (IEnumerable<int>)data;
+
+        var actual = enumerable.SelectAsArray(static x => x * 2);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void SelectAsArray_Index()
+    {
+        IReadOnlyList<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+
+        var actual = data.SelectAsArray(static (x, index) => x + index);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void SelectAsArray_Index_Enumerable()
+    {
+        IReadOnlyList<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+
+        var enumerable = (IEnumerable<int>)data;
+
+        var actual = enumerable.SelectAsArray(static (x, index) => x + index);
+        Assert.Equal<int>(expected, actual);
+    }
 }

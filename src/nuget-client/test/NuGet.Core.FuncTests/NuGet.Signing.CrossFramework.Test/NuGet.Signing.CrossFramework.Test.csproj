@@ -14,11 +14,5 @@
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <!-- tests disabled temporarily to enable System.CommandLine update flow -->
-    <Compile Remove="CrossFrameworkVerificationTest.cs" />
-  </ItemGroup>
-
 </Project>
 

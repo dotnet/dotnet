@@ -37,11 +37,10 @@
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <!--
-    In VMR inner-build copy to local storage, do not push to AzDO.
-    Inner-repo builds outside of VMR do not use arcade publishing.
+    In VMR copy to local storage, do not push to AzDO.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -52,7 +51,7 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="('$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
@@ -72,11 +71,7 @@
     <IsReleaseOnlyPackageVersion>false</IsReleaseOnlyPackageVersion>
     <IsReleaseOnlyPackageVersion Condition ="'$(SkipPackagePublishingVersionChecks)' == 'true' or ('$(PreReleaseVersionLabel)' == '' and '$(AutoGenerateAssemblyVersion)' == 'true')">true</IsReleaseOnlyPackageVersion>
     
-    <!-- If `AutoGenerateSymbolPackages` is not set we default it to true.
-         Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates.
-         Also do not generate symbol packages if in inner source build, in product build. -->
-    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and 
-      ('$(DotNetBuildSourceOnly)' != 'true' or (('$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false') and '$(DotNetBuildOrchestrator)' != 'true'))">true</AutoGenerateSymbolPackages>
+    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</AutoGenerateSymbolPackages>
 
     <PreserveRepoOrigin Condition="'$(PreserveRepoOrigin)' == ''">false</PreserveRepoOrigin>
     <PublishManifestOnly Condition="'$(PublishManifestOnly)' == ''">false</PublishManifestOnly>
@@ -116,9 +111,16 @@
       - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
       
       These packages are always non-shipping, so only look there.
+
+      As these installer packages are inserted into VS as-is, .NET doesn't ship them
+      but must ensure that they're validated as though they were shipped by .NET (so they don't break when inserted into VS).
     -->
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+    <VSRedistArtifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+    <VSRedistArtifact Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" IsShipping="false" Kind="Package" />
+
+    <Artifact Include="@(VSRedistArtifact)">
+      <DotNetReleaseShipping Condition="'$(ProducesDotNetReleaseShippingAssets)' == 'true'">true</DotNetReleaseShipping>
+    </Artifact>
 
     <!--
       In the VMR, don't publish packages that didn't match the above conditions externally.
@@ -317,6 +319,8 @@
              An item is a Package if Kind wasn't already set, and PublishFlatContainer is not set. -->
         <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' == 'true'">Blob</Kind>
         <Kind Condition="'%(ItemsToPushToBlobFeed.Kind)' == '' and '%(ItemsToPushToBlobFeed.PublishFlatContainer)' != 'true'">Package</Kind>
+        <!-- DotNetReleaseShipping=true if IsShipping=true and ProducesDotNetReleaseShippingAssets=true-->
+        <DotNetReleaseShipping Condition="'%(ItemsToPushToBlobFeed.DotNetReleaseShipping)' == '' and '%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">true</DotNetReleaseShipping>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 
@@ -324,7 +328,7 @@
     <ItemGroup>
       <ItemsToPushToBlobFeed>
         <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
-        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.DotNetReleaseShipping)' == 'true'">%(ItemsToPushToBlobFeed.ManifestArtifactData);DotNetReleaseShipping=true</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 

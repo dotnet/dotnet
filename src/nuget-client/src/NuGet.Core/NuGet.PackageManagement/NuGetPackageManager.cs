@@ -70,6 +70,11 @@ namespace NuGet.PackageManagement
         public event EventHandler<PackageProjectEventArgs> BatchEnd;
 
         /// <summary>
+        /// The telemetry service to use for telemetry events. The setter is exposed for test purposes.
+        /// </summary>
+        internal INuGetTelemetryService NuGetTelemetryService { get; set; }
+
+        /// <summary>
         /// To construct a NuGetPackageManager that does not need a SolutionManager like NuGet.exe
         /// </summary>
         public NuGetPackageManager(
@@ -96,6 +101,7 @@ namespace NuGet.PackageManagement
             InstallationCompatibility = PackageManagement.InstallationCompatibility.Instance;
 
             InitializePackagesFolderInfo(packagesFolderPath, excludeVersion);
+            NuGetTelemetryService = TelemetryActivity.NuGetTelemetryService;
         }
 
         /// <summary>
@@ -146,6 +152,7 @@ namespace NuGet.PackageManagement
             InitializePackagesFolderInfo(PackagesFolderPathUtility.GetPackagesFolderPath(SolutionManager, Settings), excludeVersion);
             DeleteOnRestartManager = deleteOnRestartManager ?? throw new ArgumentNullException(nameof(deleteOnRestartManager));
             RestoreProgressReporter = reporter;
+            NuGetTelemetryService = TelemetryActivity.NuGetTelemetryService;
         }
 
         /// <summary>
@@ -1172,7 +1179,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.GatherDependencyStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(gatherTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(gatherTelemetryEvent);
                 stopWatch.Restart();
 
                 if (!availablePackageDependencyInfoWithSourceSet.Any())
@@ -1265,7 +1272,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.ResolveDependencyStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(resolveTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(resolveTelemetryEvent);
                 stopWatch.Restart();
 
                 if (newListOfInstalledPackages == null)
@@ -1304,7 +1311,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.ResolvedActionsStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
                 if (nuGetProjectActions.Count == 0)
                 {
@@ -1871,7 +1878,7 @@ namespace NuGet.PackageManagement
                         TelemetryConstants.GatherDependencyStepName,
                         stopWatch.Elapsed.TotalSeconds);
 
-                    TelemetryActivity.EmitTelemetryEvent(gatherTelemetryEvent);
+                    NuGetTelemetryService?.EmitTelemetryEvent(gatherTelemetryEvent);
 
                     stopWatch.Restart();
 
@@ -1940,7 +1947,7 @@ namespace NuGet.PackageManagement
                         TelemetryConstants.ResolveDependencyStepName,
                         stopWatch.Elapsed.TotalSeconds);
 
-                    TelemetryActivity.EmitTelemetryEvent(resolveTelemetryEvent);
+                    NuGetTelemetryService?.EmitTelemetryEvent(resolveTelemetryEvent);
 
                     stopWatch.Restart();
 
@@ -2034,7 +2041,7 @@ namespace NuGet.PackageManagement
                 TelemetryConstants.ResolvedActionsStepName,
                 stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             nuGetProjectContext.Log(MessageLevel.Info, Strings.ResolvedActionsToInstallPackage, packageIdentity);
             return nuGetProjectActions;
@@ -2815,7 +2822,7 @@ namespace NuGet.PackageManagement
                 nuGetProjectContext.OperationId.ToString(),
                 TelemetryConstants.ExecuteActionStepName, stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             if (exceptionInfo != null)
             {
@@ -3189,7 +3196,7 @@ namespace NuGet.PackageManagement
                 nuGetProjectContext.OperationId.ToString(),
                 TelemetryConstants.PreviewBuildIntegratedStepName, stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             return result;
         }

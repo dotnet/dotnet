@@ -169,6 +169,15 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpServerUsage {
+            get {
+                return ResourceManager.GetString("Error_HttpServerUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server responded with HTTP &apos;403 Forbidden&apos; when accessing the source &apos;{0}&apos;. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource..
         /// </summary>
         internal static string Http_CredentialsForForbidden {
@@ -1038,15 +1047,6 @@ namespace NuGet.Protocol {
         internal static string VulnerabilityPage_UrlNotHttp {
             get {
                 return ResourceManager.GetString("VulnerabilityPage_UrlNotHttp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
-        /// </summary>
-        internal static string Warning_HttpServerUsage {
-            get {
-                return ResourceManager.GetString("Warning_HttpServerUsage", resourceCulture);
             }
         }
         

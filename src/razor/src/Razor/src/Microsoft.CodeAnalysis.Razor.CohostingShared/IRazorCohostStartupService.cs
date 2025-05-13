@@ -9,5 +9,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal interface IRazorCohostStartupService
 {
+    int Order { get; }
+
     Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken);
 }

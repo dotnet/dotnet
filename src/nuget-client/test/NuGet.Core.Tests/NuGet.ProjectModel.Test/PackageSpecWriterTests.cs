@@ -98,38 +98,7 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-  ""title"": ""My Title"",
   ""version"": ""1.2.3"",
-  ""description"": ""test"",
-  ""authors"": [
-    ""author1"",
-    ""author2""
-  ],
-  ""copyright"": ""2016"",
-  ""language"": ""en-US"",
-  ""packInclude"": {
-    ""file"": ""file.txt""
-  },
-  ""packOptions"": {
-    ""owners"": [
-      ""owner1"",
-      ""owner2""
-    ],
-    ""tags"": [
-      ""tag1"",
-      ""tag2""
-    ],
-    ""projectUrl"": ""http://my.url.com"",
-    ""iconUrl"": ""http://my.url.com"",
-    ""summary"": ""Sum"",
-    ""releaseNotes"": ""release noted"",
-    ""licenseUrl"": ""http://my.url.com""
-  },
-  ""scripts"": {
-    ""script1"": [
-      ""script.js""
-    ]
-  },
   ""dependencies"": {
     ""packageA"": {
       ""suppressParent"": ""All"",
@@ -140,37 +109,6 @@ namespace NuGet.ProjectModel.Test
     ""net46"": {}
   }
 }";
-            // Act & Assert
-            VerifyJsonPackageSpecRoundTrip(json);
-        }
-
-        [Fact]
-        public void Write_ReadWriteSinglePackageType()
-        {
-            // Arrange
-            var json = @"{
-  ""packOptions"": {
-    ""packageType"": ""DotNetTool""
-  }
-}";
-
-            // Act & Assert
-            VerifyJsonPackageSpecRoundTrip(json);
-        }
-
-        [Fact]
-        public void Write_ReadWriteMultiplePackageType()
-        {
-            // Arrange
-            var json = @"{
-  ""packOptions"": {
-    ""packageType"": [
-      ""Dependency"",
-      ""DotNetTool""
-    ]
-  }
-}";
-
             // Act & Assert
             VerifyJsonPackageSpecRoundTrip(json);
         }
@@ -275,7 +213,7 @@ namespace NuGet.ProjectModel.Test
             var actualJson = GetJsonString(packageSpec);
 
             // Assert
-            Assert.Equal(expectedJson, actualJson);
+            expectedJson.Should().Be(actualJson);
         }
 
         [Fact]
@@ -890,35 +828,7 @@ namespace NuGet.ProjectModel.Test
 
             var packageSpec = new PackageSpec()
             {
-#pragma warning disable CS0612 // Type or member is obsolete
-                Authors = unsortedArray,
-                BuildOptions = new BuildOptions() { OutputName = "outputName" },
-                ContentFiles = new List<string>(unsortedArray),
-                Copyright = "copyright",
                 Dependencies = new List<LibraryDependency>() { libraryDependency, libraryDependencyWithNoWarnGlobal },
-                Description = "description",
-                HasVersionSnapshot = true,
-                IconUrl = "iconUrl",
-                IsDefaultVersion = false,
-                Language = "language",
-                LicenseUrl = "licenseUrl",
-                Owners = unsortedArray,
-                PackOptions = new PackOptions()
-                {
-                    IncludeExcludeFiles = new IncludeExcludeFiles()
-                    {
-                        Exclude = unsortedReadOnlyList,
-                        ExcludeFiles = unsortedReadOnlyList,
-                        Include = unsortedReadOnlyList,
-                        IncludeFiles = unsortedReadOnlyList
-                    }
-                },
-                ProjectUrl = "projectUrl",
-                ReleaseNotes = "releaseNotes",
-                RequireLicenseAcceptance = true,
-                Summary = "summary",
-                Tags = unsortedArray,
-#pragma warning restore CS0612 // Type or member is obsolete
                 Name = "name",
                 FilePath = "filePath",
                 RestoreMetadata = new ProjectRestoreMetadata()
@@ -944,7 +854,6 @@ namespace NuGet.ProjectModel.Test
                             new ProjectRestoreMetadataFrameworkInfo(nugetFramework)
                         }
                 },
-                Title = "title",
                 Version = new NuGetVersion("1.2.3")
             };
 
@@ -957,12 +866,6 @@ namespace NuGet.ProjectModel.Test
             {
                 packageSpec.RestoreMetadata.ProjectWideWarningProperties = warningProperties;
             }
-
-#pragma warning disable CS0612 // Type or member is obsolete
-            packageSpec.PackInclude.Add("b", "d");
-            packageSpec.PackInclude.Add("a", "e");
-            packageSpec.PackInclude.Add("c", "f");
-#pragma warning restore CS0612 // Type or member is obsolete
 
             var runtimeDependencySet = new RuntimeDependencySet("id", new[]
             {
@@ -978,12 +881,6 @@ namespace NuGet.ProjectModel.Test
             };
 
             packageSpec.RuntimeGraph = new RuntimeGraph(runtimes, compatibilityProfiles);
-
-#pragma warning disable CS0612 // Type or member is obsolete
-            packageSpec.Scripts.Add("b", unsortedArray);
-            packageSpec.Scripts.Add("a", unsortedArray);
-            packageSpec.Scripts.Add("c", unsortedArray);
-#pragma warning restore CS0612 // Type or member is obsolete
 
             packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation()
             {

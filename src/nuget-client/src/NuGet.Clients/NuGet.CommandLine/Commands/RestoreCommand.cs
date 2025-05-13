@@ -834,8 +834,7 @@ namespace NuGet.CommandLine
             {
                 packageRestoreInputs.RestoreV3Context.Inputs.Add(projectFilePath);
             }
-            else if (projectFileName.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)
-                || projectFileName.EndsWith(".slnf", StringComparison.OrdinalIgnoreCase))
+            else if (projectFileName.IsSolutionFile())
             {
                 ProcessSolutionFile(projectFilePath, packageRestoreInputs);
             }
@@ -859,9 +858,7 @@ namespace NuGet.CommandLine
             var topLevelFiles = Directory.GetFiles(directory, "*.*", SearchOption.TopDirectoryOnly);
 
             //  Solution files
-            var solutionFiles = topLevelFiles.Where(file =>
-                file.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
-                    .ToArray();
+            var solutionFiles = topLevelFiles.Where(file => file.IsSolutionFile()).ToArray();
 
             if (solutionFiles.Length > 0)
             {
@@ -925,7 +922,7 @@ namespace NuGet.CommandLine
                     lastFourCharacters = extension.Substring(length - 4);
                 }
 
-                return (string.Equals(extension, ".sln", StringComparison.OrdinalIgnoreCase)
+                return (fileName.IsSolutionFile()
                         || string.Equals(lastFourCharacters, "proj", StringComparison.OrdinalIgnoreCase));
             }
             return false;
@@ -998,6 +995,16 @@ namespace NuGet.CommandLine
 
         private void ProcessSolutionFile(string solutionFileFullPath, PackageRestoreInputs restoreInputs)
         {
+            var msBuildToolset = MsBuildDirectory.Value;
+            if (Path.GetExtension(solutionFileFullPath).Equals(".slnx", StringComparison.OrdinalIgnoreCase)
+                && msBuildToolset.ParsedVersion < new Version(17, 13))
+            {
+                throw new InvalidOperationException(string.Format(
+                    CultureInfo.InvariantCulture,
+                    LocalizedResourceManager.GetString(nameof(NuGetResources.Error_UnsupportedMsBuildForSlnx)),
+                    msBuildToolset.Version));
+            }
+
             restoreInputs.DirectoryOfSolutionFile = Path.GetDirectoryName(solutionFileFullPath);
             restoreInputs.NameOfSolutionFile = Path.GetFileNameWithoutExtension(solutionFileFullPath);
 

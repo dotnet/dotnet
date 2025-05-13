@@ -37,14 +37,9 @@
     <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="$(MicrosoftDotnetNuGetRepackTasksVersion)" Condition="'$(UsingToolNuGetRepack)' == 'true'" IsImplicitlyDefined="true" />
   </ItemGroup>
 
-  <!-- These package references should only be included when:
-       - Not in source-only mode OR
-       - When in source-only mode in the outer repo build but not launched from the orchestrator.
-  -->
-
   <PropertyGroup>
-    <_ImportOrUseTooling>false</_ImportOrUseTooling>
-    <_ImportOrUseTooling Condition="'$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true')">true</_ImportOrUseTooling>
+    <!-- Don't restore the below nuget packages, repo tools and additional global.json runtimes when building source-only. -->
+    <_ImportOrUseTooling Condition="'$(_ImportOrUseTooling)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</_ImportOrUseTooling>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
@@ -101,7 +96,7 @@
     <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks"
                       Version="$(MicrosoftDotNetSourceBuildTasksVersion)"
                       IsImplicitlyDefined="true"
-                      Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildRepo)' == 'true'" />
+                      Condition="'$(TrackPrebuiltUsage)' == 'true'" />
   </ItemGroup>
 
   <!-- Repository extensibility point -->

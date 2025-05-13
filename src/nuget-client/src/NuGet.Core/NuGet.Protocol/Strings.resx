@@ -478,8 +478,8 @@ The "ms" should be localized to the abbreviation for milliseconds.</comment>
   <data name="StringCannotBeNullOrEmpty" xml:space="preserve">
     <value>String argument '{0}' cannot be null or empty</value>
   </data>
-  <data name="Warning_HttpServerUsage" xml:space="preserve">
-    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+  <data name="Error_HttpServerUsage" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</value>
     <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
   </data>
   <data name="Http_ResponseLogWithRetryAfter" xml:space="preserve">

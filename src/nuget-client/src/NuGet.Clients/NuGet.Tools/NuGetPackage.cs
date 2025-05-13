@@ -23,7 +23,7 @@ using NuGet.PackageManagement;
 using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.UI.Options;
 using NuGet.PackageManagement.VisualStudio;
-using NuGet.PackageManagement.VisualStudio.Services;
+using NuGet.PackageManagement.VisualStudio.Options;
 using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
 using NuGet.Tools.Commands;
@@ -55,10 +55,8 @@ namespace NuGetVSExtension
         Window = "{34E76E81-EE4A-11D0-AE2E-00A0C90FFFC3}", // this is the guid of the Output tool window, which is present in both VS and VWD
         Orientation = ToolWindowOrientation.Right)]
     [ProvideOptionPage(typeof(GeneralOptionPage), "NuGet Package Manager", "General", 113, 115, true, IsInUnifiedSettings = true)]
-    [ProvideOptionPage(typeof(StubGeneralOptionsPage), "NuGet Package Manager", "GeneralStub", 113, 115, true, IsInUnifiedSettings = false, Sort = 0,
-        // Only show the stub legacy settings General page by using a visibility context indicating when the unified settings feature is enabled.
-        VisibilityCmdUIContexts = "13b56f17-0b98-4a51-a9a0-9767d84796da")]
-    [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, Sort = 1)]
+    [ProvideOptionPage(typeof(StubGeneralOptionsPage), "NuGet Package Manager", "GeneralStub", 113, 115, true, IsInUnifiedSettings = false, Sort = 0)]
+    [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, IsInUnifiedSettings = true, Sort = 1)]
     [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, Sort = 2)]
     [ProvideOptionPage(typeof(PackageSourceMappingOptionsPage), "NuGet Package Manager", "Package Source Mapping", 113, 116, true, Sort = 3)]
     [ProvideSettingsManifest]
@@ -86,7 +84,8 @@ namespace NuGetVSExtension
     [ProvideBrokeredService(BrokeredServicesUtilities.ProjectUpgraderServiceName, BrokeredServicesUtilities.ProjectUpgraderServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.PackageFileServiceName, BrokeredServicesUtilities.PackageFileServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.SearchServiceName, BrokeredServicesUtilities.SearchServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
-    [ProvideService(typeof(ExternalSettingsProviderService), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
+    [ProvideService(typeof(GeneralPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
+    [ProvideService(typeof(ConfigurationFilesPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
     [Guid(GuidList.guidNuGetPkgString)]
     public sealed partial class NuGetPackage : AsyncPackage, IVsPackageExtensionProvider, IVsPersistSolutionOpts
     {
@@ -165,7 +164,7 @@ namespace NuGetVSExtension
         {
             NuGetVSTelemetryService.Initialize();
 
-            _nuGetPowerShellUsageCollector = new NuGetPowerShellUsageCollector();
+            _nuGetPowerShellUsageCollector = new NuGetPowerShellUsageCollector(NuGet.Common.TelemetryActivity.NuGetTelemetryService);
 
             await base.InitializeAsync(cancellationToken, progress);
             // Add our command handlers for menu (commands must exist in the .vsct file)
@@ -199,10 +198,6 @@ namespace NuGetVSExtension
                 },
                 ThreadHelper.JoinableTaskFactory);
 
-            AddService(typeof(ExternalSettingsProviderService),
-                (container, ct, serviceType) => Task.FromResult<object>(new ExternalSettingsProviderService()),
-                promote: true);
-
             await NuGetBrokeredServiceFactory.ProfferServicesAsync(this);
 
             VsShellUtilities.ShutdownToken.Register(InstanceCloseTelemetryEmitter.OnShutdown);
@@ -210,6 +205,15 @@ namespace NuGetVSExtension
             var componentModel = await this.GetServiceAsync<SComponentModel, IComponentModel>();
             Assumes.Present(componentModel);
             componentModel.DefaultCompositionService.SatisfyImportsOnce(this);
+
+            VSSettings vsSettings = Settings.Value as VSSettings;
+
+            AddService(typeof(GeneralPage),
+                (container, ct, serviceType) => Task.FromResult<object>(new GeneralPage()),
+                promote: true);
+            AddService(typeof(ConfigurationFilesPage),
+                (container, ct, serviceType) => Task.FromResult<object>(new ConfigurationFilesPage(vsSettings)),
+                promote: true);
 
             ClearNuGetLocalResourcesCommand clearNuGetLocalResourcesCommand = new(oleMenuCommandService: _mcs, OutputConsoleLogger);
             clearNuGetLocalResourcesCommand.Initialize();

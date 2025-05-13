@@ -617,6 +617,15 @@ Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""proj1"",
 EndProject";
         }
 
+        public static string CreateSlnxFileContent()
+        {
+            return """
+                   <Solution>
+                   <Project Path="proj1.csproj" />
+                   </Solution>
+                   """;
+        }
+
         public static void VerifyResultSuccess(CommandRunnerResult result, string expectedOutputMessage = null, string extraDebugInfo = null)
         {
             result.ExitCode.Should().Be(0, $"nuget.exe should have succeeded with exit code 0 but returned exit code {result.ExitCode}{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Errors:{Environment.NewLine}{result.Errors}{extraDebugInfo}");

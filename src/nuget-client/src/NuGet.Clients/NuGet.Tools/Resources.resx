@@ -193,4 +193,14 @@
     <value>These settings are stored in %NuGet.Config% files</value>
     <comment>Do not translate % % or what is between them</comment>
   </data>
+  <data name="Text_ConfigurationFiles_Priority" xml:space="preserve">
+    <value>Configuration files are listed in order from highest to lowest priority.</value>
+  </data>
+  <data name="Text_ConfigurationFiles_CommonLink" xml:space="preserve">
+    <value>Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/)</value>
+    <comment>Please leave the [ and ] brackets in place and do translate the words between them. Do not translate the URL inside ( ).</comment>
+  </data>
+  <data name="Text_FilePath_Header" xml:space="preserve">
+    <value>File Path</value>
+  </data>
 </root>

@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.FindAllReferences;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -27,6 +28,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
     }
 
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
+    private readonly IWorkspaceProvider _workspaceProvider = args.WorkspaceProvider;
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
@@ -67,7 +69,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
 
         var results = await ExternalHandlers.FindAllReferences
             .FindReferencesAsync(
-                RemoteWorkspaceAccessor.GetWorkspace(),
+                _workspaceProvider.GetWorkspace(),
                 generatedDocument,
                 positionInfo.Position.ToLinePosition(),
                 _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions,

@@ -14,7 +14,7 @@ namespace NuGet.VisualStudio.Telemetry
     [Export(typeof(INuGetTelemetryProvider))]
     internal sealed class NuGetTelemetryProvider : INuGetTelemetryProvider, IDisposable
     {
-        ExtensibilityTelemetryCollector _extensibilityTelemetryCollector;
+        private ExtensibilityTelemetryCollector _extensibilityTelemetryCollector;
 
         public NuGetTelemetryProvider()
         {

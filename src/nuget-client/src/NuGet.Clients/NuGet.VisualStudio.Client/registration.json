@@ -75,6 +75,51 @@
           "title": "@PackageManagement;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
         }
       }
+    },
+    "nuGetPackageManager.configurationFiles.externalSettings": {
+      "type": "external",
+      "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@Text_ConfigurationFiles_Priority;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "4F0DC114-28A6-4888-84E7-766D6E7DE456"
+      },
+
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "configurationFiles": {
+          "type": "array",
+          "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "filePath": {
+                "type": "string",
+                "title": "@Text_FilePath_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": false,
+          "allowAdditionsAndRemovals": false,
+          "messages": [
+            {
+              "text": "@Text_ConfigurationFiles_CommonLink;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+            }
+          ]
+        }
+      }
     }
   },
   "categories": {
@@ -84,6 +129,7 @@
     "nuGetPackageManager.general": {
       "title": "@115;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "legacyOptionPageId": "0F052CF7-BF62-4743-B190-87FA4D49421E",
+      "order": 0,
       "commands": [
         {
           "vsct": {
@@ -93,6 +139,11 @@
           }
         }
       ]
+    },
+    "nuGetPackageManager.configurationFiles": {
+      "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "C17B308A-00BB-446E-9212-2D14E1005985",
+      "order": 1
     }
   }
 }

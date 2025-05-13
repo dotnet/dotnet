@@ -29,15 +29,12 @@ namespace NuGet.CommandLine
 {
     public class ProjectFactory : IProjectFactory, CoreV2.NuGet.IPropertyProvider, IDisposable
     {
-        private const string NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK = nameof(NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK);
         private const string NUGET_ENABLE_LEGACY_CSPROJ_PACK = nameof(NUGET_ENABLE_LEGACY_CSPROJ_PACK);
 
         // Its type is Microsoft.Build.Evaluation.Project
         private dynamic _project;
 
         private ILogger _logger;
-
-        private bool _usingJsonFile;
 
         private IEnvironmentVariableReader _environmentVariableReader;
 
@@ -289,36 +286,8 @@ namespace NuGet.CommandLine
                 }
             }
 
-            Manifest manifest = null;
-
-            // If there is a project.json file, load that and skip any nuspec that may exist
-#pragma warning disable CS0612 // Type or member is obsolete
-            if (!PackCommandRunner.ProcessProjectJsonFile(builder, _project.DirectoryPath as string, builder.Id, version, suffix, GetPropertyValue))
-#pragma warning restore CS0612 // Type or member is obsolete
-            {
-                // If the package contains a nuspec file then use it for metadata
-                manifest = ProcessNuspec(builder, basePath);
-            }
-            else
-            {
-                Logger.Log(
-                    PackagingLogMessage.CreateWarning(
-                        string.Format(CultureInfo.CurrentCulture, NuGetResources.ProjectJsonPack_Deprecated, builder.Id),
-                        NuGetLogCode.NU5126));
-                _usingJsonFile = true;
-
-                _ = bool.TryParse(_environmentVariableReader.GetEnvironmentVariable(NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK), out bool enableLegacyProjectJsonPack);
-
-                if (!enableLegacyProjectJsonPack)
-                {
-                    Logger.Log(
-                        PackagingLogMessage.CreateError(
-                            string.Format(CultureInfo.CurrentCulture, NuGetResources.Error_ProjectJson_Deprecated_And_Removed, builder.Id, NUGET_ENABLE_LEGACY_PROJECT_JSON_PACK),
-                            NuGetLogCode.NU5042));
-                    return null;
-                }
-
-            }
+            // If the package contains a nuspec file then use it for metadata
+            Manifest manifest = ProcessNuspec(builder, basePath);
 
             // Remove the extra author
             if (builder.Authors.Count > 1)
@@ -723,12 +692,6 @@ namespace NuGet.CommandLine
             }
         }
 
-        [Obsolete]
-        private bool ProcessJsonFile(PackageBuilder builder, string basePath, string id)
-        {
-            return PackCommandRunner.ProcessProjectJsonFile(builder, basePath, id, null, null, GetPropertyValue);
-        }
-
         // Creates a package dependency from the given project, which has a corresponding
         // nuspec file.
         private PackageDependency CreateDependencyFromProject(dynamic project, Dictionary<string, Packaging.Core.PackageDependency> dependencies)
@@ -740,25 +703,11 @@ namespace NuGet.CommandLine
                 projectFactory.ProjectProperties = ProjectProperties;
                 projectFactory.SymbolPackageFormat = SymbolPackageFormat;
                 projectFactory.BuildProject();
-                var builder = new Packaging.PackageBuilder();
+                var builder = new PackageBuilder();
 
                 projectFactory.ExtractMetadata(builder);
-
                 projectFactory.InitializeProperties(builder);
-
-#pragma warning disable CS0612 // Type or member is obsolete
-                if (!projectFactory.ProcessJsonFile(builder, project.DirectoryPath, null))
-#pragma warning restore CS0612 // Type or member is obsolete
-                {
-                    projectFactory.ProcessNuspec(builder, null);
-                }
-                else
-                {
-                    Logger.Log(
-                    PackagingLogMessage.CreateWarning(
-                        string.Format(CultureInfo.CurrentCulture, NuGetResources.ProjectJsonPack_Deprecated, builder.Id),
-                        NuGetLogCode.NU5126));
-                }
+                projectFactory.ProcessNuspec(builder, null);
 
                 VersionRange versionRange = null;
                 if (dependencies.TryGetValue(builder.Id, out PackageDependency dependency))
@@ -824,22 +773,7 @@ namespace NuGet.CommandLine
         private void AddOutputFiles(Packaging.PackageBuilder builder)
         {
             // Get the target framework of the project
-            NuGetFramework nugetFramework;
-            if (_usingJsonFile && builder.TargetFrameworks.Any())
-            {
-                if (builder.TargetFrameworks.Count > 1)
-                {
-                    var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    LocalizedResourceManager.GetString("Error_MultipleTargetFrameworks"));
-                    throw new PackagingException(NuGetLogCode.NU5015, message);
-                }
-                nugetFramework = builder.TargetFrameworks.First();
-            }
-            else
-            {
-                nugetFramework = TargetFramework;
-            }
+            NuGetFramework nugetFramework = TargetFramework;
 
             var projectOutputDirectory = Path.GetDirectoryName(TargetPath);
             string targetFileName;
@@ -922,12 +856,10 @@ namespace NuGet.CommandLine
             // Add the transform file to the package builder
             ProcessTransformFiles(builder, packages.SelectMany(GetTransformFiles));
 
-            var dependencies = new Dictionary<string, Packaging.Core.PackageDependency>();
-            if (!_usingJsonFile)
-            {
-                dependencies = builder.DependencyGroups.SelectMany(d => d.Packages)
+            var dependencies = new Dictionary<string, PackageDependency>();
+            dependencies = builder.DependencyGroups.SelectMany(d => d.Packages)
                 .ToDictionary(d => d.Id, StringComparer.OrdinalIgnoreCase);
-            }
+
 
             // Reduce the set of packages we want to include as dependencies to the minimal set.
             // Normally, packages.config has the full closure included, we only add top level
@@ -951,45 +883,11 @@ namespace NuGet.CommandLine
                 AddProjectReferenceDependencies(dependencies);
             }
 
-            if (_usingJsonFile)
-            {
-                if (dependencies.Any())
-                {
-                    if (builder.DependencyGroups.Any())
-                    {
-                        var i = 0;
-                        foreach (var group in builder.DependencyGroups.ToList())
-                        {
-                            ISet<Packaging.Core.PackageDependency> newPackagesList = new HashSet<Packaging.Core.PackageDependency>(group.Packages);
-                            foreach (var dependency in dependencies)
-                            {
-                                if (!newPackagesList.Contains(dependency.Value))
-                                {
-                                    newPackagesList.Add(dependency.Value);
-                                }
-                            }
+            builder.DependencyGroups.Clear();
 
-                            var dependencyGroup = new PackageDependencyGroup(group.TargetFramework, newPackagesList);
+            var targetFramework = TargetFramework ?? NuGetFramework.AnyFramework;
+            builder.DependencyGroups.Add(new PackageDependencyGroup(targetFramework, new HashSet<PackageDependency>(dependencies.Values)));
 
-                            builder.DependencyGroups.RemoveAt(i);
-                            builder.DependencyGroups.Insert(i, dependencyGroup);
-
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        builder.DependencyGroups.Add(new PackageDependencyGroup(NuGetFramework.AnyFramework, new HashSet<Packaging.Core.PackageDependency>(dependencies.Values)));
-                    }
-                }
-            }
-            else
-            {
-                builder.DependencyGroups.Clear();
-
-                var targetFramework = TargetFramework ?? NuGetFramework.AnyFramework;
-                builder.DependencyGroups.Add(new PackageDependencyGroup(targetFramework, new HashSet<PackageDependency>(dependencies.Values)));
-            }
         }
 
         private bool FindDependency(PackageIdentity projectPackage, IEnumerable<Tuple<PackageReaderBase, Packaging.Core.PackageDependency>> packagesAndDependencies)

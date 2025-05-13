@@ -10,6 +10,6 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal interface IHtmlDocumentSynchronizer
 {
-    void DocumentRemoved(Uri uri);
-    Task<bool> TrySynchronizeAsync(TextDocument document, CancellationToken cancellationToken);
+    void DocumentRemoved(Uri uri, CancellationToken cancellationToken);
+    Task<SynchronizationResult> TrySynchronizeAsync(TextDocument document, CancellationToken cancellationToken);
 }

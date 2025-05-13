@@ -6,8 +6,8 @@ using System.Linq;
 using Moq;
 using NuGet.Common;
 using NuGet.PackageManagement.Telemetry;
-using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 
 namespace NuGet.PackageManagement.VisualStudio.Test

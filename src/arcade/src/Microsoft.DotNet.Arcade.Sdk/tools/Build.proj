@@ -11,7 +11,6 @@
     Configuration                   Build configuration: "Debug", "Release", etc.
 
     DotNetBuildRepo                 Build the repo as part of the entire .NET stack.
-    DotNetBuildInnerRepo            Build the repo as part of the entire .NET stack. This switch is used on the inner repo invocation and should not be passed by the user.
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
@@ -53,8 +52,6 @@
   <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
-  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(DotNetBuildRepo)' == 'true' and '$(UseArPowBuildInfra)' != 'false'" />
-
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
 
@@ -79,7 +76,7 @@
     Don't do this filtering in non-unified builds to allow repos to define how different build passes are handled
     in their own repo-specific builds.
   -->
-  <ItemGroup Condition="'$(DotNetBuildInnerRepo)' == 'true' or '$(UseArPowBuildInfra)' == 'false'">
+  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true'">
     <_ProjectToBuildCurrentBuildPass Include="@(ProjectToBuild->WithMetadataValue('DotNetBuildPass', '$(_DotNetBuildPassNormalized)'))" />
     <ProjectToBuild Remove="@(ProjectToBuild)" />
     <ProjectToBuild Include="@(_ProjectToBuildCurrentBuildPass)" />
@@ -264,7 +261,7 @@
     <MSBuild Projects="AfterSolutionBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Build"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')" />
+             Condition="'@(_SolutionBuildTargets)' != ''" />
 
     <!--
       Sign artifacts.
@@ -272,41 +269,12 @@
     <MSBuild Projects="Sign.proj"
              Properties="@(_CommonProps)"
              Targets="Sign"
-             Condition="'$(Sign)' == 'true' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')"/>
+             Condition="'$(Sign)' == 'true'"/>
 
     <MSBuild Projects="AfterSigning.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != '' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo' or '$(UseArPowBuildInfra)' == 'false')" />
-
-    <!--
-      Perform post-source-build tasks. Validate source-build requirements, such as the prebuilt
-      usage baseline, and generate the source-build intermediate nupkg.
-
-      Only run this when we are actually building/packing something (vs. just restoring).
-    -->
-    <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
-             Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildRepo)' == 'true'" />
-
-    <!--
-      Publish artifacts. This should run in the following situations:
-      - Regular single repo builds
-        - When running in the outer build phase of a source-only repo build, to properly publish the source-build intermediate nupkg.
-      - VMR builds
-        - When running in the inner build phase
-
-      It shouldn't run:
-      - In an inner build if running from single repo build.
-      - In an outer build if running from the full product build.
-    -->
-
-    <PropertyGroup>
-      <!-- Run publish in inner VMR builds, or outer non-VMR builds. -->
-      <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">true</_ShouldRunPublish>
-      <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' != 'InnerRepo' and '$(DotNetBuildOrchestrator)' != 'true'">true</_ShouldRunPublish>
-      <_ShouldRunPublish Condition="'$(UseArPowBuildInfra)' == 'false'">true</_ShouldRunPublish>
-    </PropertyGroup>
+             Condition="'@(_SolutionBuildTargets)' != ''" />
 
     <ItemGroup>
       <_PublishProps Include="@(_CommonProps)"/>
@@ -318,7 +286,7 @@
     <MSBuild Projects="Publish.proj"
              Properties="@(_PublishProps);_NETCORE_ENGINEERING_TELEMETRY=Publish"
              Targets="Publish"
-             Condition="'$(Publish)' == 'true' and '$(_ShouldRunPublish)' == 'true'"/>
+             Condition="'$(Publish)' == 'true'"/>
   </Target>
 
   <Target Name="ExecuteBuildTargets"

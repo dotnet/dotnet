@@ -1,11 +1,12 @@
 
 # The VMR orchestrator passes a number of stnadar
 param (
-    [string]$Configuration,
-    [switch]$ci,
-    [switch]$bl,
-    [Parameter(ValueFromRemainingArguments = $true)]
-    [string[]]$AdditionalArgs
+  [string][Alias('c')]$configuration = "Release",
+  [string][Alias('v')]$verbosity = "minimal",
+  [switch]$ci,
+  [switch]$bl,
+  [Parameter(ValueFromRemainingArguments = $true)]
+  [string[]]$AdditionalArgs
 )
 
 # This will exec a process using the console and return it's exit code.
@@ -44,9 +45,9 @@ function Exec-Process([string]$command, [string]$commandArgs) {
 
 $dotnet = Join-Path $env:DOTNET_PATH dotnet.exe
 $repoRoot = Resolve-Path "$PSScriptRoot/../../"
-$binLog = Join-Path $repoRoot "artifacts/sb/log/source-inner-build.binlog"
+$binLog = Join-Path $repoRoot "artifacts/log/$configuration/Build.binlog"
 $dotnetTool = "msbuild"
-$nugetPackagesRoot = Join-Path $repoRoot "artifacts/sb/package-cache/"
+$nugetPackagesRoot = Join-Path $repoRoot "artifacts/.packages/"
 $dotnetArguments = @()
 
 # Environment variables
@@ -55,6 +56,8 @@ $env:NUGET_PACKAGES=$nugetPackagesRoot
 # MSBuild arguments
 # Add the dotnet tool...
 $dotnetArguments += $dotnetTool
+# Add the verbosity flag
+$dotnetArguments += "-v:$verbosity"
 # Then project file...
 $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
 # Then remaining arguments.

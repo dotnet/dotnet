@@ -322,10 +322,6 @@ namespace NuGet.XPlat.FuncTest
             solution.Projects.Add(projectB);
             solution.Create(pathContext.SolutionRoot);
 
-            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, isPrivateFeed: true);
-            mockServer.Start();
-            pathContext.Settings.AddSource(sourceName: "private-source", sourceUri: mockServer.ServiceIndexUri, allowInsecureConnectionsValue: bool.TrueString);
-
             // List package command requires restore to be run before it can list packages.
             await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
 
@@ -337,9 +333,9 @@ namespace NuGet.XPlat.FuncTest
             ListPackageCommandRunner listPackageCommandRunner = new();
             var packageRefArgs = new ListPackageArgs(
                                         path: solution.SolutionPath,
-                                        packageSources: [new(mockServer.ServiceIndexUri)],
+                                        packageSources: [new PackageSource(pathContext.PackageSource)],
                                         frameworks: ["net6.0"],
-                                        reportType: ReportType.Vulnerable,
+                                        reportType: ReportType.Outdated,
                                         renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                                         includeTransitive: false,
                                         prerelease: false,
@@ -384,6 +380,51 @@ namespace NuGet.XPlat.FuncTest
 
             var listPackageCommandRunner = new ListPackageCommandRunner();
 
+
+            // Act
+            var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
+
+            // Assert
+            Assert.Equal(1, result.Item2.Projects.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.Count);
+            Assert.Equal(1, result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().Vulnerabilities.Count);
+            Assert.Equal("0.0.9", result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().RequestedVersion);
+            Assert.Equal("1.0.0", result.Item2.Projects.First().TargetFrameworkPackages.First().TopLevelPackages.First().ResolvedVersion);
+            Assert.Equal(2, result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().Severity);
+            Assert.Equal("https://test/", result.Item2.Projects[0].TargetFrameworkPackages[0].TopLevelPackages.First().Vulnerabilities.First().AdvisoryUrl.ToString());
+        }
+
+        [Fact]
+        public async Task GetReportDataAsync_WithSolutionFilePassed_ShouldList()
+        {
+            // Arrange
+            using var mockServer = SetupMockServer();
+            var auditSource = new PackageSource(mockServer.Uri + "v3/index.json") { AllowInsecureConnections = true };
+
+            var mockRenderer = new Mock<IReportRenderer>();
+            var mockLogger = new Mock<ILogger>();
+
+            using var pathContext = new SimpleTestPathContext();
+            var solution = SetupTestSolution(pathContext);
+            SetupAssetsAndProps(solution.Projects[0]);
+
+            var listPackageArgs = new ListPackageArgs(
+                path: solution.SolutionPath,
+                packageSources: new List<PackageSource> { new PackageSource(pathContext.PackageSource) },
+                frameworks: new List<string>(),
+                ReportType.Vulnerable,
+                mockRenderer.Object,
+                includeTransitive: true,
+                prerelease: false,
+                highestPatch: false,
+                highestMinor: false,
+                new List<PackageSource> { auditSource },
+                mockLogger.Object,
+                CancellationToken.None
+            );
+
+            var listPackageCommandRunner = new ListPackageCommandRunner();
 
             // Act
             var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
@@ -500,6 +541,22 @@ namespace NuGet.XPlat.FuncTest
             Assert.True(13 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
         }
 
+        private static SimpleTestSolutionContext SetupTestSolution(SimpleTestPathContext pathContext)
+        {
+            var package = new SimpleTestPackageContext { Id = "task", Version = "0.0.9" };
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var project = SimpleTestProjectContext.CreateNETCore("ProjectA", pathContext.SolutionRoot, NuGetFramework.Parse("net8.0"));
+            project.Type = ProjectStyle.PackageReference;
+            project.SingleTargetFramework = true;
+            project.AddPackageToAllFrameworks(package);
+
+            solution.Projects.Add(project);
+            solution.Create(pathContext.SolutionRoot);
+
+            return solution;
+        }
+
         private static SimpleTestProjectContext SetupTestProject(SimpleTestPathContext pathContext)
         {
             var package = new SimpleTestPackageContext { Id = "task", Version = "0.0.9" };
@@ -518,11 +575,10 @@ namespace NuGet.XPlat.FuncTest
 
         private void SetupAssetsAndProps(SimpleTestProjectContext project)
         {
-            string objFolder = Path.Combine(Path.GetDirectoryName(project.ProjectPath), "obj");
-            Directory.CreateDirectory(objFolder);
+            Directory.CreateDirectory(project.ProjectExtensionsPath);
 
-            string assetsPath = Path.Combine(objFolder, "project.assets.json");
-            string propsPath = Path.Combine(objFolder, "ProjectA.csproj.nuget.g.props");
+            string assetsPath = Path.Combine(project.ProjectExtensionsPath, "project.assets.json");
+            string propsPath = Path.Combine(project.ProjectExtensionsPath, "ProjectA.csproj.nuget.g.props");
 
             string assetsContent = ResourceTestUtility.GetResource(
                 "NuGet.XPlat.FuncTest.compiler.resources.Test.OnePackage.project.assets.json",

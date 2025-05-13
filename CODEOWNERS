@@ -9,3 +9,7 @@
 
 # Exclude the src folder which is team specific
 /src/
+
+# Exclude forward flow file changes to common files to reduce noise.
+/src/source-manifest.json
+/prereqs/git-info/

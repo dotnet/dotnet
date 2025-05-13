@@ -13,6 +13,8 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Export(typeof(IClientCapabilitiesService))]
 internal sealed class RazorCohostClientCapabilitiesService : AbstractClientCapabilitiesService, IRazorCohostStartupService
 {
+    public int Order => WellKnownStartupOrder.ClientCapabilities;
+
     public Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
         SetCapabilities(clientCapabilities);
