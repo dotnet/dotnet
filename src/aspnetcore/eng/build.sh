@@ -335,11 +335,6 @@ msbuild_args[${#msbuild_args[*]}]="-p:Sign=$run_sign"
 msbuild_args[${#msbuild_args[*]}]="-p:TargetArchitecture=$target_arch"
 msbuild_args[${#msbuild_args[*]}]="-p:TargetOsName=$target_os_name"
 
-sourceBuildArg="/p:DotNetBuildSourceOnly=$source_build"
-productBuildArg="/p:DotNetBuildRepo=$product_build"
-msbuild_args[${#msbuild_args[*]}]=$sourceBuildArg
-msbuild_args[${#msbuild_args[*]}]=$productBuildArg
-
 if [ -z "$configuration" ]; then
     if [ "$ci" = true ]; then
         configuration='Release'
@@ -428,8 +423,6 @@ if [ "$build_repo_tasks" = true ]; then
         -p:Restore=$run_restore \
         -p:Build=true \
         -clp:NoSummary \
-        $productBuildArg \
-        $sourceBuildArg \
         ${toolset_build_args[@]+"${toolset_build_args[@]}"}
 fi
 
