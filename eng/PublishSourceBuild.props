@@ -9,7 +9,8 @@
           Outputs="$(BaseIntermediateOutputPath)ReportPoisonUsage.complete">
     <ItemGroup>
       <!-- Include dotnet-sdk-*.tar.gz -->
-      <SdkArchive Include="$(ArtifactsAssetsDir)**/dotnet-sdk-*$(ArchiveExtension)" />
+      <!-- Explicitly pick the archive from 'Sdk' dir, to avoid noise in poison baseline tests. -->
+      <SdkArchive Include="$(ArtifactsAssetsDir)Sdk/**/dotnet-sdk-*$(ArchiveExtension)" />
       <!-- Include shipping nuget packages. -->
       <ShippingPackageToCheck Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" />
       <!-- Add and mark SBRP packages to validate that they have the correct poison attribute. -->
