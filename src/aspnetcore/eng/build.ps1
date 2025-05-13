@@ -282,7 +282,7 @@ $MSBuildArguments += "/p:Publish=$Publish"
 $MSBuildArguments += "/p:TargetArchitecture=$Architecture"
 $MSBuildArguments += "/p:TargetOsName=win"
 
-$MSBuildArguments += "/p:DotNetBuildRepo=$ProductBuild"
+if ($ProductBuild) { $MSBuildArguments += "/p:DotNetBuildRepo=$ProductBuild" }
 
 if (-not $Configuration) {
     $Configuration = if ($CI) { 'Release' } else { 'Debug' }

@@ -316,6 +316,8 @@ fi
 [ ! -z "$build_nodejs" ] && msbuild_args[${#msbuild_args[*]}]="-p:BuildNodeJSUnlessSourcebuild=$build_nodejs"
 [ ! -z "$build_managed" ] && msbuild_args[${#msbuild_args[*]}]="-p:BuildManaged=$build_managed"
 [ ! -z "$build_installers" ] && msbuild_args[${#msbuild_args[*]}]="-p:BuildInstallers=$build_installers"
+[ ! -z "$product_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildRepo=$product_build"
+[ ! -z "$source_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
 
 # Run restore by default unless --no-restore or --no-build was specified.
 [ -z "$run_restore" ] && run_restore=true
@@ -332,11 +334,6 @@ msbuild_args[${#msbuild_args[*]}]="-p:Sign=$run_sign"
 
 msbuild_args[${#msbuild_args[*]}]="-p:TargetArchitecture=$target_arch"
 msbuild_args[${#msbuild_args[*]}]="-p:TargetOsName=$target_os_name"
-
-sourceBuildArg="/p:DotNetBuildSourceOnly=$source_build"
-productBuildArg="/p:DotNetBuildRepo=$product_build"
-msbuild_args[${#msbuild_args[*]}]=$sourceBuildArg
-msbuild_args[${#msbuild_args[*]}]=$productBuildArg
 
 if [ -z "$configuration" ]; then
     if [ "$ci" = true ]; then
