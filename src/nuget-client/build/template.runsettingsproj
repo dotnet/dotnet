@@ -16,7 +16,7 @@
     <TestRunParametersLogger Condition=" '$(TestRunParametersLogger)' == '' ">enabled</TestRunParametersLogger>
     <VideoRecorderCollector Condition=" '$(VideoRecorderCollector)' == '' ">enabled</VideoRecorderCollector>
     <TRXLogger>enabled</TRXLogger>
-    <VsConfigPath Condition=" '$(VsConfigPath)' == '' ">tests.dev$(VsTargetMajorVersion).vsconfig</VsConfigPath>
+    <VsConfigPath Condition=" '$(VsConfigPath)' == '' ">tests.vsconfig</VsConfigPath>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
