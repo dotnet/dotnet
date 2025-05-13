@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <PropertyGroup>
+    <!-- https://github.com/dotnet/source-build/issues/4115. -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
@@ -8,10 +13,4 @@
     <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
-
-  <ItemGroup>
-    <!-- https://github.com/dotnet/source-build/issues/4115. -->
-    <EnvironmentVariables Include="PublishWindowsPdb=false" />
-  </ItemGroup>
-
 </Project>

@@ -144,6 +144,9 @@
     <DefaultArtifactVisibility Condition="'$(PgoInstrument)' == 'true'">Vertical</DefaultArtifactVisibility>
     <!-- ShortStack builds only publish new assets from the root repository. All other assets are duplicates. -->
     <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">Vertical</DefaultArtifactVisibility>
+
+    <!-- Don't publish loose Windows PDBs for PGO assets. They're never used and they slow down publishing. -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">

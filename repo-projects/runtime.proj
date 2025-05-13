@@ -15,6 +15,9 @@
     <SkipSetTargetOS>true</SkipSetTargetOS>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
 
+    <!-- Don't publish Windows PDBs from the runtime repo. They're not used and they slow down publishing. -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
+
     <!--
       When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
       This is generally used in source-build scenarios where the target RID is only supported on Mono
