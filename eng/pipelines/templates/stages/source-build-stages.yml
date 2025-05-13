@@ -18,6 +18,7 @@ parameters:
 # This parameter should be removed with https://github.com/dotnet/dotnet/pull/400
 - name: officialBuildId
   type: string
+  default: ''
 
 stages:
 - template: source-build-and-validate.yml
