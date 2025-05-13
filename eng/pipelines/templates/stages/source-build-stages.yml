@@ -14,7 +14,7 @@ parameters:
   type: boolean
   default: true
 
-- name: fakeOfficialBuildId
+- name: officialBuildId
   type: string
 
 stages:
@@ -43,7 +43,7 @@ stages:
         runOnline: true                    # ✅
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
-        fakeOfficialBuildId: ${{ parameters.fakeOfficialBuildId }}
+        officialBuildId: ${{ parameters.officialBuildId }}
       
       - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
         distro: centos
@@ -54,7 +54,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
-        fakeOfficialBuildId: ${{ parameters.fakeOfficialBuildId }}
+        officialBuildId: ${{ parameters.officialBuildId }}
       
       ### Additional legs for lite/full builds ###
       - ${{ if in(parameters.scope, 'lite', 'full') }}:

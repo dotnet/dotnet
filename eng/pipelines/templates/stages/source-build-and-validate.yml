@@ -89,9 +89,9 @@ stages:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
         ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, false) }}:
-          extraProperties: "${{ leg.fakeOfficialBuildId }} /p:DisableDevBuildAsDefaultForSourceOnly=true"
+          extraProperties: "${{ leg.officialBuildId }} /p:DisableDevBuildAsDefaultForSourceOnly=true"
         ${{ else }}:
-          extraProperties: ${{ leg.fakeOfficialBuildId }}
+          extraProperties: ${{ leg.officialBuildId }}
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
@@ -162,7 +162,7 @@ stages:
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >
-            ${{ leg.fakeOfficialBuildId }}
+            ${{ leg.officialBuildId }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
