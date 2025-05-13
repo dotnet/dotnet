@@ -14,6 +14,8 @@ parameters:
   type: boolean
   default: true
 
+# Temporarily needed to enable SB PR legs from the unified build pipeline
+# This parameter should be removed with https://github.com/dotnet/dotnet/pull/400
 - name: officialBuildId
   type: string
 
