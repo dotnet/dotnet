@@ -275,7 +275,6 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             builder =>
             {
                 builder.SetRootNamespace(inGlobalNamespace ? string.Empty : "Test");
-                builder.Features.Add(new DefaultTypeNameFeature());
 
                 builder.ConfigureParserOptions(builder =>
                 {

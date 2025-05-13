@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.Language.Legacy;
+
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static partial class SyntaxFactory
@@ -21,4 +23,12 @@ internal static partial class SyntaxFactory
     {
         return new SyntaxToken(InternalSyntax.SyntaxFactory.MissingToken(kind, diagnostics), parent: null, position: 0);
     }
+
+#nullable enable
+
+    public static MarkupTextLiteralSyntax MarkupTextLiteral(SyntaxToken token, ISpanChunkGenerator? chunkGenerator)
+        => MarkupTextLiteral(new SyntaxList<SyntaxToken>(token), chunkGenerator);
+
+    public static RazorMetaCodeSyntax RazorMetaCode(SyntaxToken token, ISpanChunkGenerator? chunkGenerator)
+        => RazorMetaCode(new SyntaxList<SyntaxToken>(token), chunkGenerator);
 }

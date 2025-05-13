@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -414,7 +415,23 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(".");
             context.CodeWriter.Write(ComponentsApi.RenderTreeBuilder.OpenComponent);
             context.CodeWriter.Write("<");
-            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, TypeNameHelper.GetNonGenericTypeName(node.TypeName));
+            if (!node.OrderedTypeArguments.IsDefaultOrEmpty)
+            {
+                context.CodeWriter.Write("<");
+                for (var i = 0; i < node.OrderedTypeArguments.Length; i++)
+                {
+                    var typeArg = node.OrderedTypeArguments[i];
+                    WriteComponentTypeArgument(context, typeArg);
+                    if (i != node.OrderedTypeArguments.Length - 1)
+                    {
+                        context.CodeWriter.Write(", ");
+                    }
+                }
+                context.CodeWriter.Write(">");
+            }
+
             context.CodeWriter.Write(">(");
             context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
             context.CodeWriter.Write(");");
@@ -874,8 +891,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
     public override void WriteComponentTypeArgument(CodeRenderingContext context, ComponentTypeArgumentIntermediateNode node)
     {
-        // We can skip type arguments during runtime codegen, they are handled in the
-        // type/parameter declarations.
+        WriteCSharpToken(context, node.Value);
     }
 
     public override void WriteTemplate(CodeRenderingContext context, TemplateIntermediateNode node)

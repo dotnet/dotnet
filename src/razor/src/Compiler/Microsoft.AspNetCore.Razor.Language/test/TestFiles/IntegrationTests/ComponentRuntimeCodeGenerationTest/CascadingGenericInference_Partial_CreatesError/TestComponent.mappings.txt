@@ -5,6 +5,6 @@ Generated Location: (850:23,0 [23] )
 
 Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (2071:51,0 [5] )
+Generated Location: (2051:51,0 [5] )
 |Items|
 
