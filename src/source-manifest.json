@@ -43,11 +43,11 @@
       "commitSha": "c97b44a3c5d3504ae98d3499bcdce4828d3d7230"
     },
     {
-      "packageVersion": "9.0.625601",
-      "barId": 267066,
+      "packageVersion": "9.0.626202",
+      "barId": 267916,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "aebf15d23e5a25ab718e780a29d8aca9a5280425"
+      "commitSha": "3a08702ea8e0083a74e10556c60c0bccd868b64a"
     },
     {
       "packageVersion": "10.0.0-preview.4.25262.1",
