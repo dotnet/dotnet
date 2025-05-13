@@ -35,8 +35,8 @@ target_arch='x64'
 configuration=''
 runtime_source_feed=''
 runtime_source_feed_key=''
-source_build=false
-product_build=false
+source_build=''
+product_build=''
 
 if [ "$(uname)" = "Darwin" ]; then
     target_os_name='osx'
@@ -347,13 +347,15 @@ msbuild_args[${#msbuild_args[*]}]="-p:Configuration=$configuration"
 # Set up additional runtime args
 toolset_build_args=()
 if [ ! -z "$runtime_source_feed$runtime_source_feed_key" ]; then
-    runtimeFeedArg="/p:DotNetRuntimeSourceFeed=$runtime_source_feed"
-    runtimeFeedKeyArg="/p:DotNetRuntimeSourceFeedKey=$runtime_source_feed_key"
+    runtimeFeedArg="-p:DotNetRuntimeSourceFeed=$runtime_source_feed"
+    runtimeFeedKeyArg="-p:DotNetRuntimeSourceFeedKey=$runtime_source_feed_key"
     msbuild_args[${#msbuild_args[*]}]=$runtimeFeedArg
     msbuild_args[${#msbuild_args[*]}]=$runtimeFeedKeyArg
     toolset_build_args[${#toolset_build_args[*]}]=$runtimeFeedArg
     toolset_build_args[${#toolset_build_args[*]}]=$runtimeFeedKeyArg
 fi
+[ ! -z "$product_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildRepo=$product_build"
+[ ! -z "$source_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
 
 # Initialize global variables need to be set before the import of Arcade is imported
 restore=$run_restore

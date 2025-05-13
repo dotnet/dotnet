@@ -298,6 +298,7 @@ if ($RuntimeSourceFeed -or $RuntimeSourceFeedKey) {
     $ToolsetBuildArguments += $runtimeFeedArg
     $ToolsetBuildArguments += $runtimeFeedKeyArg
 }
+if ($ProductBuild) { $ToolsetBuildArguments += "/p:DotNetBuildRepo=$ProductBuild" }
 
 # Split build categories between dotnet msbuild and desktop msbuild. Use desktop msbuild as little as possible.
 [string[]]$dotnetBuildArguments = ''
