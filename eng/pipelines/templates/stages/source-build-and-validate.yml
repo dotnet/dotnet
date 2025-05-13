@@ -20,11 +20,6 @@ parameters:
   type: boolean
   default: true
 
-# Branch of the VMR to use (to push to for internal builds)
-- name: vmrBranch
-  type: string
-  default: $(Build.SourceBranch)
-
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -33,7 +28,6 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
-      vmrBranch: ${{ parameters.vmrBranch }}
   jobs:
   - ${{ each leg in parameters.legs }}:
     - template: ../jobs/vmr-build.yml
@@ -95,7 +89,6 @@ stages:
         
         targetArchitecture: ${{ leg.targetArchitecture }}
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ variables.VmrBranch }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
         ${{ else }}:
@@ -121,7 +114,6 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         buildSourceOnly: true
-        vmrBranch: ${{ parameters.vmrBranch }}
     jobs:
     - ${{ each leg in parameters.legs }}:
       - template: ../jobs/vmr-build.yml
@@ -166,7 +158,6 @@ stages:
 
           targetArchitecture: ${{ leg.targetArchitecture }}
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          vmrBranch: ${{ variables.VmrBranch }}
           ${{ if eq(leg.targetArchitecture, 'arm64') }}:
             pool: ${{ parameters.pool_LinuxArm64 }}
           ${{ else }}:

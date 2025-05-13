@@ -6,11 +6,6 @@ parameters:
 - name: desiredIbc
   type: string
   default: ''
-
-# Branch of the VMR to use (to push to for internal builds)
-- name: vmrBranch
-  type: string
-  default: $(Build.SourceBranch)
   
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
@@ -51,7 +46,6 @@ stages:
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
-      vmrBranch: ${{ parameters.vmrBranch }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredIbc: ${{ parameters.desiredIbc }}
   - group: Release-Pipeline
