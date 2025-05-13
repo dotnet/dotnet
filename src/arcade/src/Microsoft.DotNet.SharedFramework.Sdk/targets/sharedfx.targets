@@ -169,7 +169,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <FilesToPackage Include="$(LicenseFile)" GeneratedBuildFile="true" TargetPath="" />
+      <!-- Don't include the license file in the package as that's already handled via PackageLicenseFile above in L5. -->
+      <FilesToPackage Include="$(LicenseFile)" GeneratedBuildFile="true" TargetPath="" PublishOnly="true" />
     </ItemGroup>
 
     <RemoveDuplicates Inputs="@(FilesToPackage)">
