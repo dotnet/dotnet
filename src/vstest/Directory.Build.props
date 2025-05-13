@@ -10,6 +10,7 @@
     <IsSourceFile Condition="$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src/')) OR $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src\'))">true</IsSourceFile>
     <SrcPackageFolder>$(RepoRoot)src\package\</SrcPackageFolder>
     <Nullable>enable</Nullable>
+    <PublishWindowsPdb Condition="'$(DotNetBuildOrchestrator)' == 'true'">false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup>

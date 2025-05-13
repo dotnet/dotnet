@@ -41,6 +41,7 @@
     <PackageTags>MSBuild</PackageTags>
 
     <TargetMSBuildToolsVersion>Current</TargetMSBuildToolsVersion>
+    <PublishWindowsPdb Condition="'$(DotNetBuildOrchestrator)' == 'true'">false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -146,7 +146,7 @@
     <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">Vertical</DefaultArtifactVisibility>
 
     <!-- Don't publish loose Windows PDBs for PGO assets. They're never used and they slow down publishing. -->
-    <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PublishWindowsPdb=$(PublishWindowsPdb)</BuildArgs>
+    <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PublishWindowsPdb=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">

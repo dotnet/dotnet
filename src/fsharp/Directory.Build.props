@@ -8,6 +8,7 @@
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
     <FSharpNetCoreProductDefaultTargetFramework>net9.0</FSharpNetCoreProductDefaultTargetFramework>
     <IgnoreMibc Condition="'$(IgnoreMibc)' == ''">$(DotNetBuildSourceOnly)</IgnoreMibc>
+    <PublishWindowsPdb Condition="'$(DotNetBuildOrchestrator)' == 'true'">false</PublishWindowsPdb>
   </PropertyGroup>
 
   <!--
