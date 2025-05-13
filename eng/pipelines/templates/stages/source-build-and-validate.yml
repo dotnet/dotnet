@@ -88,10 +88,8 @@ stages:
         ${{ else }}:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
-        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, false) }}:
-          extraProperties: "${{ leg.officialBuildId }} /p:DisableDevBuildAsDefaultForSourceOnly=true"
-        ${{ else }}:
-          extraProperties: ${{ leg.officialBuildId }}
+        extraProperties: ${{ leg.officialBuildId }}
+        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
