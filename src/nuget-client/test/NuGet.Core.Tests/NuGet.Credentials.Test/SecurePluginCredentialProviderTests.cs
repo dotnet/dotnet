@@ -105,7 +105,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.Success);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.Success);
                 Assert.NotNull(credentialResponse.Credentials);
                 Assert.Equal(_username, credentialResponse.Credentials.GetCredential(_uri, authType: null).UserName);
                 Assert.Equal(_password, credentialResponse.Credentials.GetCredential(_uri, authType: null).Password);
@@ -140,11 +140,11 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.ProviderNotApplicable);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.ProviderNotApplicable);
                 Assert.Null(credentialResponse.Credentials);
 
                 var credentialResponse2 = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
-                Assert.True(credentialResponse2.Status == CredentialStatus.ProviderNotApplicable);
+                Assert.Equal(credentialResponse2.Status, CredentialStatus.ProviderNotApplicable);
                 Assert.Null(credentialResponse2.Credentials);
             }
         }
@@ -177,7 +177,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.Success);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.Success);
                 Assert.NotNull(credentialResponse.Credentials);
                 Assert.Equal(_username, credentialResponse.Credentials.GetCredential(_uri, authType: null).UserName);
                 Assert.Equal(_password, credentialResponse.Credentials.GetCredential(_uri, authType: null).Password);
@@ -219,7 +219,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.Success);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.Success);
                 Assert.NotNull(credentialResponse.Credentials);
                 Assert.Equal(_username, credentialResponse.Credentials.GetCredential(_uri, authType: null).UserName);
                 Assert.Equal(_password, credentialResponse.Credentials.GetCredential(_uri, authType: null).Password);
@@ -254,7 +254,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.ProviderNotApplicable);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.ProviderNotApplicable);
                 Assert.Null(credentialResponse.Credentials);
             }
 
@@ -284,7 +284,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.ProviderNotApplicable);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.ProviderNotApplicable);
                 Assert.Null(credentialResponse.Credentials);
             }
         }
@@ -322,7 +322,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.Success);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.Success);
                 Assert.NotNull(credentialResponse.Credentials);
                 Assert.Equal(_username, credentialResponse.Credentials.GetCredential(_uri, authType: null).UserName);
                 Assert.Equal(_password, credentialResponse.Credentials.GetCredential(_uri, authType: null).Password);
@@ -390,7 +390,7 @@ namespace NuGet.Credentials.Test
                 var token = CancellationToken.None;
                 var credentialResponse = await provider.GetAsync(_uri, proxy, credType, message, isRetry, isInteractive, token);
 
-                Assert.True(credentialResponse.Status == CredentialStatus.UserCanceled);
+                Assert.Equal(credentialResponse.Status, CredentialStatus.UserCanceled);
                 Assert.Null(credentialResponse.Credentials);
             }
         }

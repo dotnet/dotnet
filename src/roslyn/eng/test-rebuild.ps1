@@ -46,7 +46,6 @@ try {
 
 # Rebuilds with output differences
   " --exclude net472\Microsoft.CodeAnalysis.EditorFeatures.dll" +
-  " --exclude net472\Microsoft.CodeAnalysis.EditorFeatures.Wpf.dll" +
   " --exclude net472\Microsoft.VisualStudio.LanguageServices.CSharp.dll" +
   " --exclude net472\Microsoft.VisualStudio.LanguageServices.dll" +
   " --exclude net472\Microsoft.VisualStudio.LanguageServices.Implementation.dll" +
@@ -74,6 +73,7 @@ try {
   # The assemblies are not marked with ReferenceAssemblyAttribute attribute.
   " --exclude net8.0\GeneratedRefAssemblies\Microsoft.CodeAnalysis.dll" +
   " --exclude net8.0\GeneratedRefAssemblies\Microsoft.CodeAnalysis.CSharp.dll" +
+  " --exclude net8.0\GeneratedRefAssemblies\Microsoft.CodeAnalysis.VisualBasic.dll" +
   " --exclude net8.0\GeneratedRefAssemblies\System.Collections.Immutable.dll" +
 
   " --debugPath `"$ArtifactsDir/BuildValidator`"" +

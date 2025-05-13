@@ -71,7 +71,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
         var clientCapabilities = new VSInternalClientCapabilities()
         {
             SupportsVisualStudioExtensions = true,
-            TextDocument = new TextDocumentClientCapabilities()
+            TextDocument = new VSInternalTextDocumentClientCapabilities()
             {
                 CodeAction = new() { DynamicRegistration = true },
                 CodeLens = new() { DynamicRegistration = true },
@@ -87,6 +87,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
                 Implementation = new() { DynamicRegistration = true },
                 InlayHint = new() { DynamicRegistration = true },
                 LinkedEditingRange = new() { DynamicRegistration = true },
+                OnAutoInsert = new() { DynamicRegistration = true },
                 OnTypeFormatting = new() { DynamicRegistration = true },
                 RangeFormatting = new() { DynamicRegistration = true },
                 References = new() { DynamicRegistration = true },

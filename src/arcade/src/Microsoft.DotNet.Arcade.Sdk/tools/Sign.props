@@ -41,12 +41,12 @@
       Integration with Microsoft.DotNet.Build.Tasks.Installers: Publish packages of the following formats as well.
       These are arch-specific Visual Studio insertion packages. As they're Windows-only, they only include architecture in the name:
       - VS.Redist.Common.*.$(TargetArchitecture).*.nupkg
-      - VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg
+      - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
       
       These packages are always non-shipping, so only look there.
     -->
     <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" />
-    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture)-*.*.nupkg" />
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" />
 
     <!-- Always sign all vsix packages and VS Build Packages. These may be arch specific or agnostic, but they likely won't have the RID included. -->
     <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />

@@ -223,47 +223,47 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs.
+        ///   Looks up a localized string similar to The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011.
         /// </summary>
-        internal static string Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed {
+        internal static string Error_CentralPackageManagement_FloatingVersionsNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_FloatingVersionsNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Centrally defined floating package versions are not allowed..
+        ///   Looks up a localized string similar to The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs.
         /// </summary>
-        internal static string Error_CentralPackageVersions_FloatingVersionsAreNotAllowed {
+        internal static string Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_FloatingVersionsAreNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The PackageReference items {0} do not have corresponding PackageVersion..
+        ///   Looks up a localized string similar to The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted.
         /// </summary>
-        internal static string Error_CentralPackageVersions_MissingPackageVersion {
+        internal static string Error_CentralPackageManagement_MissingPackageVersion {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_MissingPackageVersion", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_MissingPackageVersion", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled..
+        ///   Looks up a localized string similar to The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted.
         /// </summary>
-        internal static string Error_CentralPackageVersions_VersionOverrideDisabled {
+        internal static string Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_VersionOverrideDisabled", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}..
+        ///   Looks up a localized string similar to The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride.
         /// </summary>
-        internal static string Error_CentralPackageVersions_VersionsNotAllowed {
+        internal static string Error_CentralPackageManagement_VersionOverrideNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_VersionsNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_VersionOverrideNotAllowed", resourceCulture);
             }
         }
         
@@ -2512,9 +2512,9 @@ namespace NuGet.Commands {
         /// <summary>
         ///   Looks up a localized string similar to There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}.
         /// </summary>
-        internal static string Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping {
+        internal static string Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping {
             get {
-                return ResourceManager.GetString("Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping", resourceCulture);
+                return ResourceManager.GetString("Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping", resourceCulture);
             }
         }
         
