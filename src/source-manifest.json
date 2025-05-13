@@ -176,11 +176,11 @@
       "commitSha": "2736c90fe4a9e7397341e9288ca5a0b9caa0533f"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25260.1",
-      "barId": 267790,
+      "packageVersion": "10.0.0-preview.5.25262.1",
+      "barId": 267887,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "5821493f0b62aac1f34ed28e386868d5bbc710ce"
+      "commitSha": "10c8369f4fa2a945b7477b9f91e04ddea968c23c"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.1",
