@@ -45,6 +45,10 @@
 
   <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->
   <Import Project="$(RepositoryEngineeringDir)Versions.props" Condition="'$(SkipArcadeSdkImport)' == 'true'" />
+  <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
+  <!-- For source only builds, override the version props with previously built artifacts.
+       If a version should be pinned, declare it after this import. -->
+  <Import Project="$(PreviouslySourceBuiltPackageVersionsPropsFile)" Condition="'$(DotNetBuildSourceOnly)' == 'true' and Exists('$(PreviouslySourceBuiltPackageVersionsPropsFile)')" />
 
   <PropertyGroup>
     <!-- TODO: Remove when Arcade updated NetCurrent to net10.0. -->
@@ -73,5 +77,4 @@
     <ShellExtension Condition="'$(BuildOS)' != 'windows'">.sh</ShellExtension>
   </PropertyGroup>
 
-  <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
 </Project>
