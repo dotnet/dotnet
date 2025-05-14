@@ -128,7 +128,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 var contosoRestorePath = Path.Combine(projectAPackages, packageOpenSourceContosoMvc.ToString(), packageOpenSourceContosoMvc.ToString() + ".nupkg");
                 using (var nupkgReader = new PackageArchiveReader(contosoRestorePath))
                 {
@@ -228,7 +228,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 1);
+                Assert.Equal(1, result.ExitCode);
                 var packageContosoBuffersPath = Path.Combine(projectAPackages, packageContosoBuffersOpenSource.ToString(), packageContosoBuffersOpenSource.ToString() + ".nupkg");
                 Assert.True(File.Exists(packageContosoBuffersPath));
                 // Assert Contoso.MVC.ASP is not restored.
@@ -338,7 +338,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 var contosoRestorePath = Path.Combine(projectAPackages, packageOpenSourceContosoMvc.ToString(), packageOpenSourceContosoMvc.ToString() + ".nupkg");
                 using (var nupkgReader = new PackageArchiveReader(contosoRestorePath))
                 {
@@ -438,7 +438,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 1);
+                Assert.Equal(1, result.ExitCode);
                 var packageContosoBuffersPath = Path.Combine(projectAPackages, packageContosoBuffersOpenSource.ToString(), packageContosoBuffersOpenSource.ToString() + ".nupkg");
                 Assert.True(File.Exists(packageContosoBuffersPath));
                 // Assert Contoso.MVC.ASP is not restored.
@@ -550,7 +550,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore -v:d {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 var contosoRestorePath = Path.Combine(projectAPackages, packageOpenSourceContosoMvc.ToString(), packageOpenSourceContosoMvc.ToString() + ".nupkg");
                 using (var nupkgReader = new PackageArchiveReader(contosoRestorePath))
                 {
@@ -559,7 +559,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     Assert.Contains("lib/net461/realA.dll", allFiles);
                 }
 
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 Assert.Contains("Package source mapping matches found for package ID 'Contoso.MVC.ASP' are: 'SharedRepository'", result.Output);
             }
         }
@@ -740,7 +740,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 0);
+                Assert.Equal(0, result.ExitCode);
                 var contosoRestorePath = Path.Combine(projectAPackages, packageContosoMvcReal1.ToString(), packageContosoMvcReal1.ToString() + ".nupkg");
                 using (var nupkgReader = new PackageArchiveReader(contosoRestorePath))
                 {
@@ -877,7 +877,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             var r = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore -v:d {pathContext.SolutionRoot}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
             // Assert
-            Assert.True(r.ExitCode == 0);
+            Assert.Equal(0, r.ExitCode);
             Assert.Contains($"Package source mapping matches found for package ID 'Contoso.MVC.ASP' are: 'PrivateRepository'", r.Output);
             Assert.Contains($"Package source mapping matches found for package ID 'Contoso.Opensource.A' are: 'PublicRepository'", r.Output);
             var localResolver = new VersionFolderPathResolver(pathContext.UserPackagesFolder);
@@ -963,7 +963,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             var r = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore -v:d {pathContext.SolutionRoot}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
             // Assert
-            Assert.True(r.ExitCode == 1);
+            Assert.Equal(1, r.ExitCode);
             Assert.Contains($"Package source mapping match not found for package ID 'Contoso.MVC.ASP'.", r.Output);
             Assert.Contains($"Package source mapping matches found for package ID 'Contoso.Opensource.A' are: 'PublicRepository'", r.Output);
         }

@@ -3895,7 +3895,8 @@ namespace NuGet.Commands.FuncTest
             result.Success.Should().BeFalse(because: logger.ShowMessages());
             result.LockFile.Libraries.Should().HaveCount(0);
             result.LockFile.LogMessages.Should().HaveCount(1);
-            result.LockFile.LogMessages.Select(e => e.Code).Should().AllBeEquivalentTo(NuGetLogCode.NU1301);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1301);
+            result.LockFile.LogMessages[0].LibraryId.Should().BeNull();
             result.LockFile.Targets.Should().HaveCount(1);
         }
 
@@ -3927,8 +3928,8 @@ namespace NuGet.Commands.FuncTest
             // Assert
             result.Success.Should().BeTrue(because: logger.ShowMessages());
             result.LockFile.Libraries.Should().HaveCount(1);
-            result.LockFile.LogMessages.Select(e => e.Code).Should().AllBeEquivalentTo(NuGetLogCode.NU1801);
-
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1801);
+            result.LockFile.LogMessages[0].LibraryId.Should().BeNull();
             static TestRestoreRequest CreateRestoreRequest(PackageSpec spec, string userPackagesFolder, List<PackageSource> sources, ILogger logger)
             {
                 return new TestRestoreRequest(spec, sources, userPackagesFolder, new TestSourceCacheContext { IgnoreFailedSources = true }, logger)
@@ -4351,9 +4352,14 @@ namespace NuGet.Commands.FuncTest
 
         // P -> A 1.0.0 -> B 1.0.0
         // P -> C 1.0.0
-        // Prune C 1.0.0
-        [Fact]
-        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependenciesAndWarns()
+        // Do not Prune C 1.0.0
+        [Theory]
+        [InlineData("net10.0", "10.0.100", true, true)]
+        [InlineData("net10.0", "9.0.100", true, false)]
+        [InlineData("net10.0", "", false, true)]
+        [InlineData("net472", "", false, false)]
+        [InlineData("net472", "10.0.100", false, false)]
+        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependencies(string framework, string sdkAnalysisLevel, bool usingMicrosoftNETSdk, bool shouldWarn)
         {
             using var pathContext = new SimpleTestPathContext();
 
@@ -4374,7 +4380,7 @@ namespace NuGet.Commands.FuncTest
             var rootProject = @"
         {
           ""frameworks"": {
-            ""net10.0"": {
+            ""FRAMEWORK"": {
                 ""dependencies"": {
                         ""A"": {
                             ""version"": ""[1.0.0,)"",
@@ -4390,10 +4396,12 @@ namespace NuGet.Commands.FuncTest
                 }
             }
           }
-        }";
+        }".Replace("FRAMEWORK", framework);
 
             // Setup project
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
+            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = usingMicrosoftNETSdk;
 
             // Act & Assert
             var result = await RunRestoreAsync(pathContext, projectSpec);
@@ -4406,8 +4414,14 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[1].Dependencies.Should().HaveCount(0);
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("C");
             result.LockFile.Targets[0].Libraries[2].Dependencies.Should().HaveCount(0);
-            result.LockFile.LogMessages.Should().HaveCount(1);
-            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1510);
+            if (shouldWarn)
+            {
+                result.LockFile.LogMessages.Should().HaveCount(1);
+                result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1510);
+                result.LockFile.LogMessages[0].LibraryId.Should().Be("C");
+                result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(1);
+                result.LockFile.LogMessages[0].TargetGraphs[0].Should().Be(framework);
+            }
             ISet<LibraryIdentity> installedPackages = result.GetAllInstalled();
             installedPackages.Should().HaveCount(3);
         }
@@ -4722,6 +4736,9 @@ namespace NuGet.Commands.FuncTest
             {
                 result.LockFile.LogMessages.Should().HaveCount(1);
                 result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1511);
+                result.LockFile.LogMessages[0].LibraryId.Should().Be("Project2");
+                result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(1);
+                result.LockFile.LogMessages[0].TargetGraphs[0].Should().Be(framework);
             }
             ISet<LibraryIdentity> installedPackages = result.GetAllInstalled();
             installedPackages.Should().HaveCount(1);
