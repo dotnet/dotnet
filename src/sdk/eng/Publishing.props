@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <!-- Temporarily remove the .Msi workload pack nugets in non .NET product build mode (until the repo official build gets removed), but keep the manifest .Msi packages. -->
-  <ItemGroup Condition="'$(DotNetBuild= 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
     <MsiPackages Include="$(ArtifactsShippingPackagesDir)*.Msi.*.nupkg" />
     <MsiPackages Remove="$(ArtifactsShippingPackagesDir)*.Manifest-*.Msi.*.nupkg" />
     <Artifact Remove="@(MsiPackages)" />
