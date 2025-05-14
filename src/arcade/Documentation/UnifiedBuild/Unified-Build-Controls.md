@@ -107,18 +107,12 @@ The following controls apply to msbuild infrastructure. These controls may be in
 
 The following context controls will be implemented. These controls should be used for **infrastructure purposes (exceptions may be made on a case-by-case basis).**
 
-#### General Context Controls
-
-| **Name** | **Values** | **Default** | **Description** |
-| -------- | -------- | -------- | -------- |
-| DotNetBuild | "true", "false", "" | "" | This is a general identification control that essentially identifies whether the infrastructure is building in any kind of Unified Build mode. This serves as a way to conditionalize non-phase specific infrastructure in a general manner.<br/>In general, uses of this switch should be limited to infrastructure, though it is possible that those infrastructure uses may affect the build output, especially in cases where a repo maintains a separate official build. |
-
  #### Inclusive Context Controls
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
 | DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
-| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within repo build. |
+| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing in product build mode. Not "true" for repo builds withouts the `--source-build` or `--product-build` switch. |
 
 ### Resource Controls
 
@@ -151,8 +145,8 @@ In addition to these default high level controls, there may be additional compon
 | Configuration | Debug, Release | Release | Defaults produces a shipping product. |
 | DotNetBuildTests | "true", "false", "" | "" is the default. | When "true", the build should include test projects.<br/>Not "true" is essentially the default behavior for source build today. This is essentially equivalent to ExcludeFromBuild being set to true when `DotNetBuildTests` == false and Arcade’s `IsTestProject` or `IsTestUtilityProject`` is true. |
 | ShortStack | "true", "false", "" | "" | If true, the build is a 'short stack' (runtime and its dependencies only). Other repo builds are skipped. |
-| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true".<br/>This control applies to project properties. |
-| ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
+| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuildOrchestrator` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildOrchestrator` == "true".<br/>This control applies to project properties. |
+| ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildSourceONly` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
 | PortableBuild | "true", "false", "" | "" | When "false", the build is non-portable. |
 
 ### Organizational Controls
@@ -162,20 +156,3 @@ These controls may be used for **infrastructure or product purposes**.
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
 | OfficialBuilder | "Microsoft", "<org name>", ""  | "" | May be used to differentiate product or infrastructure behavior between organizations. This is equivalent to the `OfficialBuilder` switch currently in place. See use in `dotnet/sdk` |
-
-## Rollout Plan
-
-The rollout of this plan should happen in three stages: Add new controls, transition existing usages to new controls, then remove old controls. The goal is to have a seamless transition that does not break repo or VMR builds at any point. Because changes cannot yet be made solely in the VMR, these changes must flow from the individual repos.
-
-### Add new controls
-
-In this stage, the new control sets are implemented, and the switches are made available within the infrastructure. No old switches are removed.
-
-### Re-evaluation and transition to new controls
-
-Once new controls are available, we walk through the existing control set and replace usages one by one. Some transitions will be relatively straightforward (e.g. `DotNetBuildFromSourceFlavor` -> `DotNetBuildOrchestrated`), while others may be more involved. Each control usage location should be evaluated to determine the correct control to switch to (if any). The biggest shift here will be a re-evaluation of the existing `DotNetBuildFromSource` switch. There are many cases where this should transition to `DotNetBuildFromSourceOnly`, as well as plenty of cases where this should transition to `DotNetBuild`. Similar cases exist for `ExcludeFromSourceBuild`.
-In general, usages should be removed first from the inner repo builds, then the outer, then the orchestrated build.
-
-### Removal of old controls
-
-Once all usages of existing controls are transitioned, the old controls are removed. Again, we start with the inner repo build, then the outer, then the orchestrator. Note, since some repos may not be able to get on newer version of arcade immediately, removal will happen late in .NET 9.

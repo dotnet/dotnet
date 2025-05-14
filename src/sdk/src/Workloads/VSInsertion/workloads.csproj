@@ -10,7 +10,7 @@
     <WorkloadOutputPath>$(ArtifactsBinDir)workloads/</WorkloadOutputPath>
 
     <ManifestsPackageSource>$(ArtifactsShippingPackagesDir)/</ManifestsPackageSource>
-    <ManifestsPackageSource Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '2'">$(SourceBuiltShippingPackagesDir)/</ManifestsPackageSource>
+    <ManifestsPackageSource Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildPass)' == '2'">$(SourceBuiltShippingPackagesDir)/</ManifestsPackageSource>
 
     <WorkloadPacksSource>$(WorkloadIntermediateOutputPath)packs</WorkloadPacksSource>
 
@@ -27,8 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- in the VMR build in the second build pass we don't need to build the manifests since they're already downloaded from another vertical -->
-    <ProjectReference Include="$(RepoRoot)\src\Workloads\Manifests\manifest-packages.proj" ReferenceOutputAssembly="false" Condition="'$(DotNetBuild)' != 'true'" />
+    <!-- In .NET product build mode in the second build pass, there's no need to build the manifests since they're already downloaded from another vertical -->
+    <ProjectReference Include="$(RepoRoot)\src\Workloads\Manifests\manifest-packages.proj" ReferenceOutputAssembly="false" Condition="'$(DotNetBuildRepo)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildWorkloads)' == 'true'">

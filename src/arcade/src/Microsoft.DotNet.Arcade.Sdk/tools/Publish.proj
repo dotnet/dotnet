@@ -40,7 +40,7 @@
     In VMR copy to local storage, do not push to AzDO.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -369,8 +369,8 @@
            Text="Visibility 'Vertical' is not supported for shipping artifacts." />
     <Error Condition="'@(ItemsToPublishToBlobFeed->WithMetadataValue('IsShipping','true')->AnyHaveMetadataValue('Visibility','Internal'))' == 'true'"
            Text="Visibility 'Internal' is not supported for shipping artifacts." />
-    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuild)' != 'true'"
-           Text="Visibility 'Vertical' is only supported in vertical builds." />
+    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'"
+           Text="Visibility 'Vertical' is only supported in vertical builds inside the VMR." />
 
     <!--
       The user can set `PublishingVersion` via eng\Publishing.props

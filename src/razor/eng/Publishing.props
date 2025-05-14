@@ -30,9 +30,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <!-- Packages can be built on all platforms, but are only published on Windows to avoid collisions from the other
-           platforms. This does not affect the SB intermediate package. -->
-      <ItemsToPushToBlobFeed Remove="$(ArtifactsDir)**\*.nupkg" Condition="'$(OS)' != 'Windows_NT' and '$(DotNetBuild)' != 'true'" />
+      <!-- Packages can be built on all platforms, but are only published on Windows to avoid collisions from the other platforms. -->
+      <ItemsToPushToBlobFeed Remove="$(ArtifactsDir)**\*.nupkg" Condition="'$(OS)' != 'Windows_NT' and '$(DotNetBuildRepo)' != 'true'" />
 
       <ItemsToPushToBlobFeed Include="@(_ItemsToPublish)">
         <IsShipping>false</IsShipping>

@@ -13,7 +13,7 @@
     <DefineConstants>$(DefineConstants);MICROSOFT_BUILD_TASKS</DefineConstants>
     <!-- Do not create Tlbs when building in .NET product mode. The packages are not shipped to VS,
          only their contents redisted within the SDK. -->
-    <CreateTlb Condition="'$(DotNetBuild)' != 'true'">true</CreateTlb>
+    <CreateTlb Condition="'$(DotNetBuildRepo)' != 'true'">true</CreateTlb>
     <IsPackable>true</IsPackable>
     <PackageDescription>This package contains the $(MSBuildProjectName) assembly which implements the commonly used tasks of MSBuild.</PackageDescription>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>

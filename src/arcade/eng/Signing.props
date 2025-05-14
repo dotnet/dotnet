@@ -34,7 +34,7 @@
     while building the VMR. Therefore, we can safely skip signing the artifacts.
    -->
   <Choose>
-    <When Condition="'$(DotNetBuild)' == 'true'">
+    <When Condition="'$(DotNetBuildRepo)' == 'true'">
       <ItemGroup>
         <ItemsToSign Remove="@(ItemsToSign)" />
       </ItemGroup>

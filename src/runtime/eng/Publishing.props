@@ -5,7 +5,7 @@
     <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetFinalPublish)' != 'true' and '$(DotNetBuild)' != 'true'">
+  <PropertyGroup Condition="'$(DotNetFinalPublish)' != 'true' and '$(DotNetBuildRepo)' != 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
     <ArtifactsStagingDir>$(ArtifactsDir)staging/</ArtifactsStagingDir>
     <SourceBuiltPdbArtifactsDir>$(ArtifactsStagingDir)SymStore</SourceBuiltPdbArtifactsDir>

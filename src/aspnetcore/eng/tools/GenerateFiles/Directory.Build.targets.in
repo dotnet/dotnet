@@ -64,8 +64,8 @@
 
   <ItemGroup>
     <!-- Use the same NETCore shared framework as repo built against except when building product code in servicing. -->
-    <!-- We cannot use live shims when building tool packs in VMR - only package for current arch is available. -->
-    <KnownFrameworkReference Update="Microsoft.NETCore.App" Condition=" '$(DotNetBuild)' != 'true' OR '$(PackAsToolShimRuntimeIdentifiers)' == '' ">
+    <!-- We cannot use live shims when building tool packs in the .NET product mode as only packages for the current arch are available. -->
+    <KnownFrameworkReference Update="Microsoft.NETCore.App" Condition=" '$(DotNetBuildRepo)' != 'true' OR '$(PackAsToolShimRuntimeIdentifiers)' == '' ">
       <LatestRuntimeFrameworkVersion
           Condition=" '%(TargetFramework)' == '${DefaultNetCoreTargetFramework}' ">${MicrosoftNETCoreAppRefVersion}</LatestRuntimeFrameworkVersion>
       <TargetingPackVersion
@@ -81,11 +81,11 @@
       <DefaultRuntimeFrameworkVersion Condition=" '$(IsServicingBuild)' != 'true' AND
           '%(TargetFramework)' == '${DefaultNetCoreTargetFramework}' AND
           '$(TargetLatestDotNetRuntime)' != 'false' ">${MicrosoftNETCoreAppRefVersion}</DefaultRuntimeFrameworkVersion>
-      <RuntimePackRuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true'">%(RuntimePackRuntimeIdentifiers);$(TargetRuntimeIdentifier)</RuntimePackRuntimeIdentifiers>
+      <RuntimePackRuntimeIdentifiers Condition="'$(DotNetBuildRepo)' == 'true'">%(RuntimePackRuntimeIdentifiers);$(TargetRuntimeIdentifier)</RuntimePackRuntimeIdentifiers>
     </KnownFrameworkReference>
 
-    <!-- We cannot use live shims when building tool packs in VMR - only package for current arch is available. -->
-    <KnownAppHostPack Update="Microsoft.NETCore.App" Condition=" '$(DotNetBuild)' != 'true' OR '$(PackAsToolShimRuntimeIdentifiers)' == '' ">
+    <!-- We cannot use live shims when building tool packs in .NET product build mode as only packages for the current arch are available. -->
+    <KnownAppHostPack Update="Microsoft.NETCore.App" Condition=" '$(DotNetBuildRepo)' != 'true' OR '$(PackAsToolShimRuntimeIdentifiers)' == '' ">
       <AppHostPackVersion
         Condition=" '%(TargetFramework)' == '${DefaultNetCoreTargetFramework}' ">${MicrosoftNETCoreAppRefVersion}</AppHostPackVersion>
       <AppHostRuntimeIdentifiers Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">$(TargetRuntimeIdentifier)</AppHostRuntimeIdentifiers>
@@ -110,7 +110,7 @@
     <KnownCrossgen2Pack Update="Microsoft.NETCore.App.Crossgen2">
       <Crossgen2PackVersion
           Condition=" '%(TargetFramework)' == '${DefaultNetCoreTargetFramework}' ">${MicrosoftNETCoreAppRefVersion}</Crossgen2PackVersion>
-      <Crossgen2RuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true'">%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
+      <Crossgen2RuntimeIdentifiers Condition="'$(DotNetBuildRepo)' == 'true'">%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
     </KnownCrossgen2Pack>
 
     <KnownILLinkPack Update="Microsoft.NET.ILLink.Tasks" Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">

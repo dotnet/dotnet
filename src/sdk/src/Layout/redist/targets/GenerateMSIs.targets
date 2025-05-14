@@ -41,8 +41,8 @@
     <!-- Directory for the zipped up light command package -->
     <LightCommandPackagesDir>$(ArtifactsNonShippingPackagesDir)</LightCommandPackagesDir>
 
-    <!-- for local SDK builds we allow skipping the workload manifest msi generation to save build time, the sdk bundle won't contain the manifest msis in that case. -->
-    <AllowEmptyBuiltinWorkloadManifestMsi Condition="'$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' != 'true'">true</AllowEmptyBuiltinWorkloadManifestMsi>
+    <!-- For local non .NET SDK product builds, allow skipping the workload manifest msi generation to save build time. The sdk bundle won't contain the manifest msis in that case. -->
+    <AllowEmptyBuiltinWorkloadManifestMsi Condition="'$(DotNetBuildRepo)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' != 'true'">true</AllowEmptyBuiltinWorkloadManifestMsi>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -239,8 +239,8 @@
   <Target Name="UnzipBuiltinWorkloadManifestMsiNuPkg">
     <PropertyGroup>
       <BuiltinManifestMsiPackageSourceDirectory>$(ArtifactsShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
-      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' == 'true'">$(ArtifactsDir)downloaded-manifest-msi-packages\PackageArtifacts</BuiltinManifestMsiPackageSourceDirectory>
-      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '3'">$(SourceBuiltShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
+      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuildRepo)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' == 'true'">$(ArtifactsDir)downloaded-manifest-msi-packages\PackageArtifacts</BuiltinManifestMsiPackageSourceDirectory>
+      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildPass)' == '3'">$(SourceBuiltShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
     </PropertyGroup>
 
     <ItemGroup>
@@ -298,7 +298,7 @@
 
   <Target Name="GenerateSdkBundle"
           DependsOnTargets="$(GenerateSdkBundleDependsOn)"
-          Condition="'$(DotNetBuild)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true'"
+          Condition="'$(DotNetBuildOrchestrator)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true'"
           Inputs="$(SdkMSIInstallerFile);
                   $(DownloadedSharedFrameworkInstallerFile);
                   $(DownloadedHostFxrInstallerFile);

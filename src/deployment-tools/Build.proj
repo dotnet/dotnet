@@ -7,7 +7,8 @@
     <DisableNativeProjects>false</DisableNativeProjects>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
+  <!-- Only build the below components in non .NET product build mode.-->
+  <ItemGroup Condition="'$(DotNetBuildRepo)' != 'true'">
     <ClickOnceProjectToBuild Include="src/clickonce/**/*.csproj" Pack="true" />
     <ClickOnceProjectToBuild Include="src/clickonce/native/build-native.proj" Pack="false" Condition="'$(DisableNativeProjects)' != 'true'"/>
     <ProjectReference Include="@(ClickOnceProjectToBuild)"

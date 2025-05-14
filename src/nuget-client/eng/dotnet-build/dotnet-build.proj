@@ -13,7 +13,7 @@
     <ItemGroup>
       <_CommonProperties Include="Configuration=$(Configuration)" />
       <_CommonProperties Include="DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)" Condition="'$(DotNetBuildOrchestrator)' != ''" />
-      <_CommonProperties Include="DotNetBuildRepo=true" />
+      <_CommonProperties Include="DotNetBuildRepo=$(DotNetBuildRepo)" Condition="'$(DotNetBuildRepo)' != ''" />
       <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
 
       <!-- NuGet uses a pre-release string that is dependent on the build revision. This is normally set via their
