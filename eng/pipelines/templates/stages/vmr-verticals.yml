@@ -155,8 +155,8 @@ stages:
       targetOS: iossimulator
       targetArchitecture: arm64
 
-### Additional jobs for full build ###
-- ${{ if in(parameters.scope, 'full') }}:
+  ### Additional jobs for full build ###
+  - ${{ if in(parameters.scope, 'full') }}:
 
     - template: ../jobs/vmr-build.yml
       parameters:
