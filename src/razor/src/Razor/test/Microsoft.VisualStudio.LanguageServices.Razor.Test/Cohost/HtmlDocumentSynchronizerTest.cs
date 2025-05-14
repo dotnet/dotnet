@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -63,7 +64,7 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.True(syncResult.Synchronized);
 
         // "Close" the document
-        synchronizer.DocumentRemoved(document.CreateUri());
+        synchronizer.DocumentRemoved(document.CreateUri(), DisposalToken);
 
         Assert.True((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
 
@@ -230,7 +231,6 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         Assert.True((await task).Synchronized);
 
-        // We should have two publishes
         Assert.Collection(publisher.Publishes,
             i =>
             {
@@ -285,9 +285,7 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         tcs.SetResult(true);
 
         await Task.WhenAll(task1, task2);
-#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
-        Assert.False(task1.Result.Synchronized);
-#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
+        Assert.False(task1.VerifyCompleted().Synchronized);
 
         Assert.Collection(publisher.Publishes,
             i =>
@@ -298,22 +296,28 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     }
 
     [Fact]
-    public async Task GetSynchronizationRequestTask_RequestSameVersion_ReturnsSameTask()
+    public async Task GetSynchronizationRequestTask_RequestSameVersion_InvokedRemoteOnce()
     {
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
 
         var tcs = new TaskCompletionSource<bool>();
         var publisher = new TestHtmlDocumentPublisher();
-        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => tcs.Task);
+
+        var remoteInvocations = 0;
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () =>
+        {
+            remoteInvocations++;
+            return tcs.Task;
+        });
         var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
 
         var version = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
 
         var accessor = synchronizer.GetTestAccessor();
-        var task1 = accessor.GetSynchronizationRequestTaskAsync(document, version);
-        var task2 = accessor.GetSynchronizationRequestTaskAsync(document, version);
+        var task1 = accessor.GetSynchronizationRequestTaskAsync(document, version, DisposalToken);
+        var task2 = accessor.GetSynchronizationRequestTaskAsync(document, version, DisposalToken);
 
-        Assert.Same(task1, task2);
+        Assert.Equal(1, remoteInvocations);
     }
 
     private class RemoteServiceInvoker(TextDocument document, Func<Task>? generateTask = null) : IRemoteServiceInvoker
@@ -349,7 +353,7 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
     private class TestHtmlDocumentPublisher : IHtmlDocumentPublisher
     {
-        private List<(TextDocument, string, ChecksumWrapper)> _publishes = [];
+        private readonly List<(TextDocument, string, ChecksumWrapper)> _publishes = [];
 
         public List<(TextDocument Document, string Text, ChecksumWrapper Checksum)> Publishes => _publishes;
 
