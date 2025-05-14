@@ -1094,6 +1094,60 @@ internal sealed partial class MarkupDynamicAttributeValueSyntax : MarkupSyntaxNo
         => new MarkupDynamicAttributeValueSyntax(Kind, _prefix, _value, GetDiagnostics(), annotations);
 }
 
+internal abstract partial class BaseMarkupStartTagSyntax : MarkupSyntaxNode
+{
+    internal BaseMarkupStartTagSyntax(SyntaxKind kind, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
+        : base(kind, diagnostics, annotations)
+    {
+    }
+
+    internal BaseMarkupStartTagSyntax(SyntaxKind kind)
+        : base(kind)
+    {
+    }
+
+    public abstract SyntaxToken OpenAngle { get; }
+
+    public abstract SyntaxToken Bang { get; }
+
+    public abstract SyntaxToken Name { get; }
+
+    public abstract SyntaxList<RazorSyntaxNode> Attributes { get; }
+
+    public abstract SyntaxToken ForwardSlash { get; }
+
+    public abstract SyntaxToken CloseAngle { get; }
+
+    public abstract ISpanChunkGenerator ChunkGenerator { get; }
+}
+
+internal abstract partial class BaseMarkupEndTagSyntax : MarkupSyntaxNode
+{
+    internal BaseMarkupEndTagSyntax(SyntaxKind kind, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
+        : base(kind, diagnostics, annotations)
+    {
+    }
+
+    internal BaseMarkupEndTagSyntax(SyntaxKind kind)
+        : base(kind)
+    {
+    }
+
+    public abstract SyntaxToken OpenAngle { get; }
+
+    public abstract SyntaxToken ForwardSlash { get; }
+
+    public abstract SyntaxToken Bang { get; }
+
+    public abstract SyntaxToken Name { get; }
+
+    public abstract MarkupMiscAttributeContentSyntax MiscAttributeContent { get; }
+
+    public abstract SyntaxToken CloseAngle { get; }
+
+    public abstract ISpanChunkGenerator ChunkGenerator { get; }
+}
+
 internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
 {
     private readonly MarkupStartTagSyntax _startTag;
@@ -1184,7 +1238,7 @@ internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
         => new MarkupElementSyntax(Kind, _startTag, _body, _endTag, GetDiagnostics(), annotations);
 }
 
-internal sealed partial class MarkupStartTagSyntax : MarkupSyntaxNode
+internal sealed partial class MarkupStartTagSyntax : BaseMarkupStartTagSyntax
 {
     private readonly SyntaxToken _openAngle;
     private readonly SyntaxToken _bang;
@@ -1250,13 +1304,13 @@ internal sealed partial class MarkupStartTagSyntax : MarkupSyntaxNode
         _chunkGenerator = chunkGenerator;
     }
 
-    public SyntaxToken OpenAngle => _openAngle;
-    public SyntaxToken Bang => _bang;
-    public SyntaxToken Name => _name;
-    public SyntaxList<RazorSyntaxNode> Attributes => new SyntaxList<RazorSyntaxNode>(_attributes);
-    public SyntaxToken ForwardSlash => _forwardSlash;
-    public SyntaxToken CloseAngle => _closeAngle;
-    public ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
+    public override SyntaxToken OpenAngle => _openAngle;
+    public override SyntaxToken Bang => _bang;
+    public override SyntaxToken Name => _name;
+    public override SyntaxList<RazorSyntaxNode> Attributes => new SyntaxList<RazorSyntaxNode>(_attributes);
+    public override SyntaxToken ForwardSlash => _forwardSlash;
+    public override SyntaxToken CloseAngle => _closeAngle;
+    public override ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
 
     internal override GreenNode GetSlot(int index)
         => index switch
@@ -1299,7 +1353,7 @@ internal sealed partial class MarkupStartTagSyntax : MarkupSyntaxNode
         => new MarkupStartTagSyntax(Kind, _openAngle, _bang, _name, _attributes, _forwardSlash, _closeAngle, _chunkGenerator, GetDiagnostics(), annotations);
 }
 
-internal sealed partial class MarkupEndTagSyntax : MarkupSyntaxNode
+internal sealed partial class MarkupEndTagSyntax : BaseMarkupEndTagSyntax
 {
     private readonly SyntaxToken _openAngle;
     private readonly SyntaxToken _forwardSlash;
@@ -1359,13 +1413,13 @@ internal sealed partial class MarkupEndTagSyntax : MarkupSyntaxNode
         _chunkGenerator = chunkGenerator;
     }
 
-    public SyntaxToken OpenAngle => _openAngle;
-    public SyntaxToken ForwardSlash => _forwardSlash;
-    public SyntaxToken Bang => _bang;
-    public SyntaxToken Name => _name;
-    public MarkupMiscAttributeContentSyntax MiscAttributeContent => _miscAttributeContent;
-    public SyntaxToken CloseAngle => _closeAngle;
-    public ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
+    public override SyntaxToken OpenAngle => _openAngle;
+    public override SyntaxToken ForwardSlash => _forwardSlash;
+    public override SyntaxToken Bang => _bang;
+    public override SyntaxToken Name => _name;
+    public override MarkupMiscAttributeContentSyntax MiscAttributeContent => _miscAttributeContent;
+    public override SyntaxToken CloseAngle => _closeAngle;
+    public override ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
 
     internal override GreenNode GetSlot(int index)
         => index switch
@@ -1492,7 +1546,7 @@ internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
         => new MarkupTagHelperElementSyntax(Kind, _startTag, _body, _endTag, GetDiagnostics(), annotations);
 }
 
-internal sealed partial class MarkupTagHelperStartTagSyntax : MarkupSyntaxNode
+internal sealed partial class MarkupTagHelperStartTagSyntax : BaseMarkupStartTagSyntax
 {
     private readonly SyntaxToken _openAngle;
     private readonly SyntaxToken _bang;
@@ -1558,13 +1612,13 @@ internal sealed partial class MarkupTagHelperStartTagSyntax : MarkupSyntaxNode
         _chunkGenerator = chunkGenerator;
     }
 
-    public SyntaxToken OpenAngle => _openAngle;
-    public SyntaxToken Bang => _bang;
-    public SyntaxToken Name => _name;
-    public SyntaxList<RazorSyntaxNode> Attributes => new SyntaxList<RazorSyntaxNode>(_attributes);
-    public SyntaxToken ForwardSlash => _forwardSlash;
-    public SyntaxToken CloseAngle => _closeAngle;
-    public ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
+    public override SyntaxToken OpenAngle => _openAngle;
+    public override SyntaxToken Bang => _bang;
+    public override SyntaxToken Name => _name;
+    public override SyntaxList<RazorSyntaxNode> Attributes => new SyntaxList<RazorSyntaxNode>(_attributes);
+    public override SyntaxToken ForwardSlash => _forwardSlash;
+    public override SyntaxToken CloseAngle => _closeAngle;
+    public override ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
 
     internal override GreenNode GetSlot(int index)
         => index switch
@@ -1607,7 +1661,7 @@ internal sealed partial class MarkupTagHelperStartTagSyntax : MarkupSyntaxNode
         => new MarkupTagHelperStartTagSyntax(Kind, _openAngle, _bang, _name, _attributes, _forwardSlash, _closeAngle, _chunkGenerator, GetDiagnostics(), annotations);
 }
 
-internal sealed partial class MarkupTagHelperEndTagSyntax : MarkupSyntaxNode
+internal sealed partial class MarkupTagHelperEndTagSyntax : BaseMarkupEndTagSyntax
 {
     private readonly SyntaxToken _openAngle;
     private readonly SyntaxToken _forwardSlash;
@@ -1667,13 +1721,13 @@ internal sealed partial class MarkupTagHelperEndTagSyntax : MarkupSyntaxNode
         _chunkGenerator = chunkGenerator;
     }
 
-    public SyntaxToken OpenAngle => _openAngle;
-    public SyntaxToken ForwardSlash => _forwardSlash;
-    public SyntaxToken Bang => _bang;
-    public SyntaxToken Name => _name;
-    public MarkupMiscAttributeContentSyntax MiscAttributeContent => _miscAttributeContent;
-    public SyntaxToken CloseAngle => _closeAngle;
-    public ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
+    public override SyntaxToken OpenAngle => _openAngle;
+    public override SyntaxToken ForwardSlash => _forwardSlash;
+    public override SyntaxToken Bang => _bang;
+    public override SyntaxToken Name => _name;
+    public override MarkupMiscAttributeContentSyntax MiscAttributeContent => _miscAttributeContent;
+    public override SyntaxToken CloseAngle => _closeAngle;
+    public override ISpanChunkGenerator ChunkGenerator => _chunkGenerator;
 
     internal override GreenNode GetSlot(int index)
         => index switch
