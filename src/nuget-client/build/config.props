@@ -22,22 +22,22 @@
     <!-- Preview 3 is typically the last "main branch" preview, so we start using rc at this time -->
     <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">preview.1</ReleaseLabel>
 
-    <IsEscrowMode>false</IsEscrowMode>
+    <IsEscrowMode Condition="'$(IsEscrowMode)' == ''">false</IsEscrowMode>
 
     <!-- Visual Studio Insertion Logic -->
-    <VsTargetMajorVersion>$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
-    <VsTargetBranch>main</VsTargetBranch>
-    <VsTargetChannel>int.$(VsTargetBranch)</VsTargetChannel>
-    <VsTargetChannelForTests>int.$(VsTargetBranch)</VsTargetChannelForTests>
+    <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
+    <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' != 'true'">main</VsTargetBranch>
+    <VsTargetChannel Condition="'$(VsTargetChannel)' == '' And '$(IsEscrowMode)' != 'true'">int.$(VsTargetBranch)</VsTargetChannel>
+    <VsTargetChannelForTests Condition="'$(VsTargetChannelForTests)' == ''">int.$(VsTargetBranch)</VsTargetChannelForTests>
 
     <!-- NuGet SDK VS package Semantic Version -->
-    <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
+    <NuGetSdkVsSemanticVersion>$([MSBuild]::Add(11, $(MajorNuGetVersion))).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
 
     <!-- This branches are used for creating insertion PRs -->
-    <VsTargetBranch Condition="'$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
-    <VsTargetChannel Condition="'$(IsEscrowMode)' == 'true'">int.d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetChannel>
+    <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
+    <VsTargetChannel Condition="'$(VsTargetChannel)' == '' And '$(IsEscrowMode)' == 'true'">int.d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetChannel>
     <!-- Run Apex/E2E tests on the target release branch -->
-    <VsTargetChannelForTests Condition="'$(IsEscrowMode)' == 'true'">$(VsTargetChannel)</VsTargetChannelForTests>
+    <VsTargetChannelForTests Condition="'$(VsTargetChannelForTests)' == '' And '$(IsEscrowMode)' == 'true'">$(VsTargetChannel)</VsTargetChannelForTests>
   </PropertyGroup>
 
  <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">

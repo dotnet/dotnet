@@ -79,6 +79,34 @@ namespace NuGet.Common
             };
         }
 
+#if DEBUG
+        [Obsolete("An argument for 'targetGraphs' must be provided. " +
+                "If the argument is not provided, the solution explorer will not add the surface the warning on the package node.", error: true)]
+
+#pragma warning disable RS0016 // Add public types and members to the declared API
+        public static RestoreLogMessage CreateWarning(
+#pragma warning restore RS0016 // Add public types and members to the declared API
+            NuGetLogCode code,
+            string message,
+            string? libraryId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Obsolete("An argument for 'targetGraphs' must be provided. " +
+        "If the argument is not provided, the solution explorer will not add the surface the warning on the package node.", error: true)]
+
+#pragma warning disable RS0016 // Add public types and members to the declared API
+        public static RestoreLogMessage CreateError(
+#pragma warning restore RS0016 // Add public types and members to the declared API
+    NuGetLogCode code,
+    string message,
+    string? libraryId)
+        {
+            throw new NotImplementedException();
+        }
+#endif
+
         /// <summary>
         /// Create a warning log message.
         /// </summary>
