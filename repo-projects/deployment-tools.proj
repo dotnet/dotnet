@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
@@ -7,4 +8,5 @@
     <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
+
 </Project>
