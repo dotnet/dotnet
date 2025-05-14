@@ -3,13 +3,18 @@
 Generated Location: (372:12,0 [13] )
 |using Models;|
 
+Source Location: (29:1,13 [15] x:\dir\subdir\Test\TestComponent.cshtml)
+|WeatherForecast|
+Generated Location: (909:27,0 [15] )
+|WeatherForecast|
+
 Source Location: (55:1,39 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |Array.Empty<WeatherForecast>()|
-Generated Location: (988:28,0 [30] )
+Generated Location: (1136:36,0 [30] )
 |Array.Empty<WeatherForecast>()|
 
 Source Location: (142:3,29 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |FieldName|
-Generated Location: (2347:56,0 [9] )
+Generated Location: (2495:64,0 [9] )
 |FieldName|
 

@@ -3,14 +3,16 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.Snippets;
 
-[Export(typeof(SnippetCompletionItemProvider))]
-internal sealed class SnippetCompletionItemProvider
+[Export(typeof(ISnippetCompletionItemProvider))]
+internal sealed class SnippetCompletionItemProvider : ISnippetCompletionItemProvider
 {
     [ImportingConstructor]
     public SnippetCompletionItemProvider(SnippetCache snippetCache)
@@ -21,10 +23,10 @@ internal sealed class SnippetCompletionItemProvider
     public SnippetCache SnippetCache { get; }
 
     public void AddSnippetCompletions(
+        ref PooledArrayBuilder<VSInternalCompletionItem> builder,
         RazorLanguageKind projectedKind,
         VSInternalCompletionInvokeKind invokeKind,
-        string? triggerCharacter,
-        ref PooledArrayBuilder<VSInternalCompletionItem> builder)
+        string? triggerCharacter)
     {
         // Temporary fix: snippets are broken in CSharp. We're investigating
         // but this is very disruptive. This quick fix unblocks things.
@@ -63,6 +65,19 @@ internal sealed class SnippetCompletionItemProvider
                 Kind = CompletionItemKind.Snippet,
                 CommitCharacters = []
             }));
+    }
+
+    public bool TryResolveInsertString(VSInternalCompletionItem completionItem, [NotNullWhen(true)] out string? insertString)
+    {
+        if (SnippetCompletionData.TryParse(completionItem.Data, out var snippetCompletionData) &&
+            SnippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
+        {
+            insertString = snippetInsertText;
+            return true;
+        }
+
+        insertString = null;
+        return false;
     }
 
     private static SnippetLanguage ConvertLanguageKind(RazorLanguageKind languageKind)

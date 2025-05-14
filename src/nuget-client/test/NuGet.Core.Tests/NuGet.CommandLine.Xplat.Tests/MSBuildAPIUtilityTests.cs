@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
@@ -543,6 +544,32 @@ namespace NuGet.CommandLine.Xplat.Tests
             Assert.Equal(projectList.Count(), 2);
             Assert.Contains(projectA.ProjectPath, projectList);
             Assert.Contains(projectB.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public async Task GetProjectsFromSolution_WithSolutionFile_ReturnsCorrectAbsolutePaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = await MSBuildAPIUtility.GetProjectsFromSolution(solution.SolutionPath);
+
+            // Assert
+            projectList.Count().Should().Be(2);
+            projectList.Should().Contain(projectA.ProjectPath);
+            projectList.Should().Contain(projectB.ProjectPath);
+            Path.IsPathRooted(projectList.First()).Should().BeTrue();
+            Path.IsPathRooted(projectList.Last()).Should().BeTrue();
         }
 
         [Theory]

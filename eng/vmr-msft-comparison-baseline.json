@@ -295,11 +295,6 @@
   },
   {
     "issueType": "MissingNonShipping",
-    "idMatch": ".*dotnet-runtime-pgo.*",
-    "justification": "PGO blobs for runtime are not required. Only SDK"
-  },
-  {
-    "issueType": "MissingNonShipping",
     "idMatch": ".*containerize.UnitTests.*",
     "justification": "sdk non-shipping test packages are not published"
   },
@@ -511,5 +506,17 @@
     "idMatch": "VS\\.Redist\\..*",
     "descriptionMatch": "ProjectUrl",
     "justification": "VS redist packages do not ship and should have their project url set to the VMR to identify where they came from."
+  },
+  {
+    "issueType": "Unsigned",
+    "idMatch": ".*/dotnet-sdk-pgo-.*.zip",
+    "descriptionMatch": ".* is Excluded in the VMR but should be Signed",
+    "justification": "The VMR build purposely excludes signing the PGO builds."
+  },
+  {
+    "issueType": "Unsigned",
+    "idMatch": ".*/dotnet-sdk-pgo-.*.tar.gz",
+    "descriptionMatch": ".* is Excluded in the VMR but should be Signed",
+    "justification": "The VMR build purposely excludes signing the PGO builds."
   }
 ]

@@ -16,7 +16,10 @@ internal partial class RazorCustomMessageTarget
         var delegationDetails = await GetProjectedRequestDetailsAsync(request, cancellationToken).ConfigureAwait(false);
         if (delegationDetails is null)
         {
-            return default;
+            // Normally when things are out of sync (eg C# is ahead due to fast typing) we return null so the LSP client will
+            // ask us again. For breakpoint range though, null means "remove this breakpoint" which is bad for the user. Instead
+            // we signal to our server what is going on with an undefined range.
+            return LspFactory.UndefinedRange;
         }
 
         var validateBreakpointRangeParams = new VSInternalValidateBreakableRangeParams

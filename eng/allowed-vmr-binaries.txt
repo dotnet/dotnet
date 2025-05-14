@@ -122,7 +122,7 @@ src/sdk/test/dotnet.Tests/ShellShimTests/WpfBinaryTestAssets/*.dll
 src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 
 # source-build-externals
-src/source-build-externals/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
+src/source-build-externals/src/repos/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
 
 # symreader
 src/symreader/src/PdbTestResources/Resources/*

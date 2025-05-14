@@ -149,6 +149,14 @@ namespace NuGet.Commands.Test
             return updated;
         }
 
+        public static PackageSpec WithDependency(this PackageSpec spec, LibraryDependency libraryDependency)
+        {
+            AddDependency(spec, libraryDependency);
+
+            return spec;
+
+        }
+
         /// <summary>
         /// Creates a restore request for the first project in the <paramref name="projects"/> list. If <see cref="ProjectRestoreMetadata.Sources"/> has any values, it is used for creating the providers, otherwise <see cref="SimpleTestPathContext.PackageSource"/> from <paramref name="pathContext"/> will be used.
         /// </summary>

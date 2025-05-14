@@ -17,7 +17,12 @@ steps:
         } else {
           $targetChannelForTests = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannelForTests) | Out-String).Trim()
         }
-        $targetMajorVersion = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion) | Out-String).Trim()
+        if ([System.String]::IsNullOrEmpty($env:VsTargetMajorVersion) -eq $false) {
+          $targetMajorVersion = $env:VsTargetMajorVersion
+        } else {
+          $targetMajorVersion = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion) | Out-String).Trim()
+        }
+        
         Write-Host "##vso[task.setvariable variable=VsTargetChannel;isOutput=true]$targetChannel"
         Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests;isOutput=true]$targetChannelForTests"
         Write-Host "##vso[task.setvariable variable=VsTargetMajorVersion;isOutput=true]$targetMajorVersion"

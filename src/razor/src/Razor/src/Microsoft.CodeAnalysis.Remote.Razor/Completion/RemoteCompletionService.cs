@@ -199,7 +199,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         var mappedLinePosition = mappedPosition.ToLinePosition();
 
         VSInternalCompletionList? completionList = null;
-        using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, "Razor.ExternalAccess", TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
+        using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, Constants.ExternalAccessServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
         {
             completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
                 generatedDocument,

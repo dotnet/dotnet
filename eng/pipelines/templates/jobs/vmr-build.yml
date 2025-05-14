@@ -69,12 +69,6 @@ parameters:
   type: object
   default: ''
 
-# Names of jobs that this job depends on. This only provides a job dependency and does not automatically
-# download artifacts from the other job. Use reuseBuildArtifactsFrom for that.
-- name: dependsOn
-  type: object
-  default: ''
-
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -88,10 +82,6 @@ parameters:
   default: false
 
 - name: enablePoison
-  type: boolean
-  default: false
-
-- name: excludeOmniSharpTests
   type: boolean
   default: false
 
@@ -144,7 +134,7 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if or(ne(parameters.reuseBuildArtifactsFrom, ''), ne(parameters.dependsOn, '')) }}:
+  ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
     ${{ if eq(parameters.buildPass, '') }}:
       # For PR builds, skip the stage 2 build if the stage 1 build fails.
       # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
@@ -158,8 +148,6 @@ jobs:
     dependsOn:
     - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
       - ${{ parameters.reuseBuildArtifactsFrom }}
-    - ${{ if ne(parameters.dependsOn, '') }}:
-      - ${{ parameters.dependsOn }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -186,6 +174,9 @@ jobs:
 
   - name: artifactsStagingDir
     value: $(Build.ArtifactStagingDirectory)/artifacts
+
+  - name: artifactsPrepublishDir
+    value: $(Build.ArtifactStagingDirectory)/prepublish
 
   - name: successfulJobArtifactName
     value: $(Agent.JobName)_Artifacts
@@ -305,7 +296,7 @@ jobs:
       sbomEnabled: true
 
     - output: pipelineArtifact
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(artifactsPrepublishDir)
       artifact: $(failedJobArtifactName)
       displayName: Publish Artifacts (On Failure)
       condition: failed()
@@ -580,7 +571,7 @@ jobs:
             if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
               customBuildArgs="$customBuildArgs --poison"
             fi
-            customBuildArgs="$customBuildArgs --source-only /p:SourceBuildTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}"
+            customBuildArgs="$customBuildArgs --source-only"
           fi
 
           if [[ -n "${{ parameters.targetRid }}" ]]; then
@@ -617,16 +608,19 @@ jobs:
       CleanTargetFolder: true
     continueOnError: true
     condition: succeededOrFailed()
-
-  - ${{ if eq(parameters.buildSourceOnly, 'True') }}:
-    - task: CopyFiles@2
-      displayName: Copy prebuilt-report to BuildLogs
-      inputs:
-        SourceFolder: '$(sourcesPath)'
-        Contents: artifacts/prebuilt-report/**
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs'
-      continueOnError: true
-      condition: succeededOrFailed()
+    
+  - task: CopyFiles@2
+    displayName: Copy unmerged artifacts to staging directory
+    inputs:
+      SourceFolder: '$(sourcesPath)/artifacts'
+      Contents: |
+        packages/**/*
+        assets/**/*
+        obj/manifests/**/*
+      TargetFolder: '$(artifactsPrepublishDir)'
+      CleanTargetFolder: true
+    condition: failed()
+    continueOnError: true
 
   - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - publish: $(Build.ArtifactStagingDirectory)/BuildLogs
@@ -671,7 +665,7 @@ jobs:
       condition: succeeded()
       continueOnError: true
 
-    - publish: $(Build.ArtifactStagingDirectory)
+    - publish:  $(artifactsPrepublishDir)
       artifact: $(failedJobArtifactName)
       displayName: Publish Artifacts (On Failure)
       condition: failed()

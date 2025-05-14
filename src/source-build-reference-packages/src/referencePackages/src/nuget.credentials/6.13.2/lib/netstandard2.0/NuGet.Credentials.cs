@@ -28,29 +28,22 @@ namespace NuGet.Credentials
     public partial class CredentialResponse
     {
         public CredentialResponse(CredentialStatus status) { }
-
         public CredentialResponse(System.Net.ICredentials credentials) { }
-
         public System.Net.ICredentials Credentials { get { throw null; } }
-
         public CredentialStatus Status { get { throw null; } }
     }
-
     public static partial class CredentialsConstants
     {
         public static readonly int ProviderTimeoutSecondsDefault;
         public static readonly string ProviderTimeoutSecondsEnvar;
         public static readonly string ProviderTimeoutSecondsSetting;
     }
-
     public partial class CredentialService : Configuration.ICredentialService
     {
         public CredentialService(Common.AsyncLazy<System.Collections.Generic.IEnumerable<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials) { }
-
         public bool HandlesDefaultCredentials { get { throw null; } }
 
         public System.Threading.Tasks.Task<System.Net.ICredentials?> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy? proxy, Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { throw null; }
-
         public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials? credentials) { throw null; }
     }
 
@@ -64,10 +57,8 @@ namespace NuGet.Credentials
     public static partial class DefaultCredentialServiceUtility
     {
         public static void SetupDefaultCredentialService(Common.ILogger logger, bool nonInteractive) { }
-
         public static void UpdateCredentialServiceDelegatingLogger(Common.ILogger log) { }
     }
-
     public partial class DefaultNetworkCredentialsCredentialProvider : ICredentialProvider
     {
         public string Id { get { throw null; } }
@@ -85,51 +76,35 @@ namespace NuGet.Credentials
     public partial class PluginCredentialProvider : ICredentialProvider
     {
         public PluginCredentialProvider(Common.ILogger logger, string path, int timeoutSeconds, string verbosity) { }
-
         public string Id { get { throw null; } }
-
         public string Path { get { throw null; } }
-
         public int TimeoutSeconds { get { throw null; } }
 
         public virtual int Execute(System.Diagnostics.ProcessStartInfo startInfo, System.Threading.CancellationToken cancellationToken, out string stdOut) { throw null; }
-
         public System.Threading.Tasks.Task<CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy proxy, Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
 
     public partial class PluginCredentialProviderBuilder
     {
         public PluginCredentialProviderBuilder(Configuration.IExtensionLocator extensionLocator, Configuration.ISettings settings, Common.ILogger logger, Common.IEnvironmentVariableReader envarReader) { }
-
         public PluginCredentialProviderBuilder(Configuration.IExtensionLocator extensionLocator, Configuration.ISettings settings, Common.ILogger logger) { }
-
         public System.Collections.Generic.IEnumerable<ICredentialProvider> BuildAll(string verbosity) { throw null; }
     }
-
     public partial class PluginCredentialRequest
     {
         public bool IsRetry { get { throw null; } set { } }
-
         public bool NonInteractive { get { throw null; } set { } }
-
         public string Uri { get { throw null; } set { } }
-
         public string Verbosity { get { throw null; } set { } }
     }
-
     public partial class PluginCredentialResponse
     {
         public System.Collections.Generic.IList<string> AuthTypes { get { throw null; } set { } }
-
         public bool IsValid { get { throw null; } }
-
         public string Message { get { throw null; } set { } }
-
         public string Password { get { throw null; } set { } }
-
         public string Username { get { throw null; } set { } }
     }
-
     public enum PluginCredentialResponseExitCode
     {
         Success = 0,
@@ -140,34 +115,22 @@ namespace NuGet.Credentials
     public partial class PluginException : System.Exception
     {
         public PluginException() { }
-
         public PluginException(string message, System.Exception inner) { }
-
         public PluginException(string message) { }
-
         public static PluginException Create(string path, System.Exception inner) { throw null; }
-
         public static PluginException CreateAbortMessage(string path, string message) { throw null; }
-
         public static PluginException CreateInvalidResponseExceptionMessage(string path, PluginCredentialResponseExitCode status, PluginCredentialResponse response) { throw null; }
-
         public static PluginException CreateNotStartedMessage(string path) { throw null; }
-
         public static PluginException CreatePathNotFoundMessage(string path, string attempted) { throw null; }
-
         public static PluginException CreateTimeoutMessage(string path, int timeoutMillis) { throw null; }
-
         public static PluginException CreateUnreadableResponseExceptionMessage(string path, PluginCredentialResponseExitCode status) { throw null; }
     }
 
     public partial class PluginUnexpectedStatusException : PluginException
     {
         public PluginUnexpectedStatusException() { }
-
         public PluginUnexpectedStatusException(string message, System.Exception inner) { }
-
         public PluginUnexpectedStatusException(string message) { }
-
         public static PluginException CreateUnexpectedStatusMessage(string path, PluginCredentialResponseExitCode status) { throw null; }
     }
 
@@ -176,20 +139,16 @@ namespace NuGet.Credentials
         public const string DefaultCredentialsAfterCredentialProvidersEnvironmentVariableName = "NUGET_CREDENTIAL_PROVIDER_OVERRIDE_DEFAULT";
         public static bool DefaultCredentialsAfterCredentialProviders { get { throw null; } set { } }
     }
-
     public partial class ProviderException : System.Exception
     {
         public ProviderException() { }
-
         public ProviderException(string message, System.Exception inner) { }
-
         public ProviderException(string message) { }
     }
 
     public sealed partial class SecurePluginCredentialProvider : ICredentialProvider
     {
         public SecurePluginCredentialProvider(Protocol.Plugins.IPluginManager pluginManager, Protocol.Plugins.PluginDiscoveryResult pluginDiscoveryResult, bool canShowDialog, Common.ILogger logger) { }
-
         public string Id { get { throw null; } }
 
         public System.Threading.Tasks.Task<CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy proxy, Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { throw null; }
@@ -198,7 +157,6 @@ namespace NuGet.Credentials
     public partial class SecurePluginCredentialProviderBuilder
     {
         public SecurePluginCredentialProviderBuilder(Protocol.Plugins.IPluginManager pluginManager, bool canShowDialog, Common.ILogger logger) { }
-
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ICredentialProvider>> BuildAllAsync() { throw null; }
     }
 }

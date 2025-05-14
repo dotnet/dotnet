@@ -706,6 +706,8 @@ namespace System.Diagnostics.CodeAnalysis
 ";
 
         internal static readonly string CompilerFeatureRequiredAttribute = """
+            #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
             namespace System.Runtime.CompilerServices
             {
                 [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
@@ -719,7 +721,86 @@ namespace System.Diagnostics.CodeAnalysis
                     public bool IsOptional { get; set; }
                 }
             }
+
+            #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
             """;
+
+        internal const string CompilerFeatureRequiredAttributeIL = @"
+.class public auto ansi sealed beforefieldinit System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute
+     extends [mscorlib]System.Attribute
+ {
+     .custom instance void [mscorlib]System.AttributeUsageAttribute::.ctor(valuetype [mscorlib]System.AttributeTargets) = (
+         01 00 ff 7f 00 00 02 00 54 02 0d 41 6c 6c 6f 77
+         4d 75 6c 74 69 70 6c 65 01 54 02 09 49 6e 68 65
+         72 69 74 65 64 00
+     )
+     // Fields
+     .field private initonly string '<FeatureName>k__BackingField'
+     .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = (
+         01 00 00 00
+     )
+     .field private initonly bool '<IsOptional>k__BackingField'
+     .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = (
+         01 00 00 00
+     )
+
+     .field public static literal string RefStructs = ""RefStructs""
+     .field public static literal string RequiredMembers = ""RequiredMembers""
+ 
+     // Methods
+     .method public hidebysig specialname rtspecialname 
+         instance void .ctor (
+             string featureName
+         ) cil managed 
+     {
+         ldarg.0
+         call instance void [mscorlib]System.Attribute::.ctor()
+         ldarg.0
+         ldarg.1
+         stfld string System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::'<FeatureName>k__BackingField'
+         ret
+     } // end of method CompilerFeatureRequiredAttribute::.ctor
+ 
+     .method public hidebysig specialname 
+         instance string get_FeatureName () cil managed 
+     {
+         ldarg.0
+         ldfld string System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::'<FeatureName>k__BackingField'
+         ret
+     } // end of method CompilerFeatureRequiredAttribute::get_FeatureName
+ 
+     .method public hidebysig specialname 
+         instance bool get_IsOptional () cil managed 
+     {
+         ldarg.0
+         ldfld bool System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::'<IsOptional>k__BackingField'
+         ret
+     } // end of method CompilerFeatureRequiredAttribute::get_IsOptional
+ 
+     .method public hidebysig specialname 
+         instance void modreq([mscorlib]System.Runtime.CompilerServices.IsExternalInit) set_IsOptional (
+             bool 'value'
+         ) cil managed 
+     {
+         ldarg.0
+         ldarg.1
+         stfld bool System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::'<IsOptional>k__BackingField'
+         ret
+     } // end of method CompilerFeatureRequiredAttribute::set_IsOptional
+ 
+     // Properties
+     .property instance string FeatureName()
+     {
+         .get instance string System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::get_FeatureName()
+     }
+     .property instance bool IsOptional()
+     {
+         .get instance bool System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::get_IsOptional()
+         .set instance void modreq([mscorlib]System.Runtime.CompilerServices.IsExternalInit) System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute::set_IsOptional(bool)
+     }
+ 
+ } // end of class System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute
+";
 
         internal static readonly string CollectionBuilderAttributeDefinition = """
             namespace System.Runtime.CompilerServices
@@ -1262,7 +1343,7 @@ namespace System.Diagnostics.CodeAnalysis
             string? assemblyName = null,
             string sourceFileName = "")
         {
-            parseOptions = parseOptions != null ? parseOptions.WithDocumentationMode(DocumentationMode.Diagnose) : TestOptions.RegularWithDocumentationComments;
+            parseOptions = parseOptions != null ? parseOptions.WithDocumentationMode(DocumentationMode.Diagnose) : TestOptions.RegularPreviewWithDocumentationComments;
             options = (options ?? TestOptions.ReleaseDll).WithXmlReferenceResolver(XmlFileResolver.Default);
             return CreateCompilation(source, references, options, parseOptions, TargetFramework.Mscorlib40, assemblyName, sourceFileName);
         }
@@ -1907,6 +1988,39 @@ namespace System.Diagnostics.CodeAnalysis
             }
         }
 
+        internal static IEnumerable<CrefSyntax> GetCrefSyntaxes(Compilation compilation) => GetCrefSyntaxes((CSharpCompilation)compilation);
+
+        internal static IEnumerable<CrefSyntax> GetCrefSyntaxes(CSharpCompilation compilation)
+        {
+            return compilation.SyntaxTrees.SelectMany(tree =>
+            {
+                var docComments = tree.GetCompilationUnitRoot().DescendantTrivia().Select(trivia => trivia.GetStructure()).OfType<DocumentationCommentTriviaSyntax>();
+                return docComments.SelectMany(docComment => docComment.DescendantNodes().OfType<XmlCrefAttributeSyntax>().Select(attr => attr.Cref));
+            });
+        }
+
+        internal static Symbol? GetReferencedSymbol(CrefSyntax crefSyntax, CSharpCompilation compilation, params DiagnosticDescription[] expectedDiagnostics)
+        {
+            Symbol ambiguityWinner;
+            var references = GetReferencedSymbols(crefSyntax, compilation, out ambiguityWinner, expectedDiagnostics);
+            Assert.Null(ambiguityWinner);
+            Assert.InRange(references.Length, 0, 1); //Otherwise, call GetReferencedSymbols
+
+            return references.FirstOrDefault();
+        }
+
+        internal static ImmutableArray<Symbol> GetReferencedSymbols(CrefSyntax crefSyntax, CSharpCompilation compilation, out Symbol ambiguityWinner, params DiagnosticDescription[] expectedDiagnostics)
+        {
+            var binderFactory = compilation.GetBinderFactory(crefSyntax.SyntaxTree);
+            var binder = binderFactory.GetBinder(crefSyntax);
+
+            DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
+            var references = binder.BindCref(crefSyntax, out ambiguityWinner, diagnostics);
+            diagnostics.Verify(expectedDiagnostics);
+            diagnostics.Free();
+            return references;
+        }
+
         #endregion
 
         #region IL Validation
@@ -1999,6 +2113,8 @@ namespace System.Diagnostics.CodeAnalysis
             {
                 return ImmutableArray.Create<ILVisualizer.LocalInfo>();
             }
+
+            Debug.Assert(builder.LocalSlotManager != null);
 
             var result = new ILVisualizer.LocalInfo[localInfos.Length];
             for (int i = 0; i < result.Length; i++)

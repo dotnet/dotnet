@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
@@ -11,5 +12,6 @@ internal readonly record struct ServiceArgs(
     IServiceBroker? ServiceBroker,
     ExportProvider ExportProvider,
     ILoggerFactory ServiceLoggerFactory,
+    IWorkspaceProvider WorkspaceProvider,
     ServiceRpcDescriptor.RpcConnection? ServerConnection = null,
     IRazorBrokeredServiceInterceptor? Interceptor = null);

@@ -12,7 +12,7 @@
             TestCaseFilter=TestCategory=OptProf;
             OptProfCollector=enabled;
             IncludeProfilingInputs=true;
-            VsConfigPath=tests.optprof.dev$(VsTargetMajorVersion).vsconfig;" />
+            VsConfigPath=tests.optprof.vsconfig;" />
 
         <!-- NuGet.Tests.Apex.runsettings -->
         <MSBuild

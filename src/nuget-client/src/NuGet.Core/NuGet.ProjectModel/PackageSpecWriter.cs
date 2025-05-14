@@ -44,26 +44,12 @@ namespace NuGet.ProjectModel
                 throw new ArgumentNullException(nameof(writer));
             }
 
-            SetValue(writer, "title", packageSpec.Title);
-
-#pragma warning disable CS0612 // Type or member is obsolete
             if (!packageSpec.IsDefaultVersion)
             {
                 SetValue(writer, "version", packageSpec.Version?.ToFullString());
             }
 
-            SetValue(writer, "description", packageSpec.Description);
-            SetArrayValue(writer, "authors", packageSpec.Authors);
-            SetValue(writer, "copyright", packageSpec.Copyright);
-            SetValue(writer, "language", packageSpec.Language);
-            SetArrayValue(writer, "contentFiles", packageSpec.ContentFiles);
-            SetDictionaryValue(writer, "packInclude", packageSpec.PackInclude);
-            SetPackOptions(writer, packageSpec);
-#pragma warning restore CS0612 // Type or member is obsolete
             SetMSBuildMetadata(writer, packageSpec, environmentVariableReader);
-#pragma warning disable CS0612 // Type or member is obsolete
-            SetDictionaryValues(writer, "scripts", packageSpec.Scripts);
-#pragma warning restore CS0612 // Type or member is obsolete
 
             if (packageSpec.Dependencies.Count > 0)
             {
@@ -390,53 +376,6 @@ namespace NuGet.ProjectModel
 
                 writer.WriteObjectEnd();
             }
-        }
-
-        [Obsolete]
-        private static void SetPackOptions(IObjectWriter writer, PackageSpec packageSpec)
-        {
-            var packOptions = packageSpec.PackOptions;
-            if (packOptions == null)
-            {
-                return;
-            }
-
-            if ((packageSpec.Owners == null || packageSpec.Owners.Length == 0)
-                && (packageSpec.Tags == null || packageSpec.Tags.Length == 0)
-                && packageSpec.ProjectUrl == null && packageSpec.IconUrl == null && packageSpec.Summary == null
-                && packageSpec.ReleaseNotes == null && packageSpec.LicenseUrl == null
-                && !packageSpec.RequireLicenseAcceptance
-                && (packOptions.PackageType == null || packOptions.PackageType.Count == 0))
-            {
-                return;
-            }
-
-            writer.WriteObjectStart(JsonPackageSpecReader.PackOptions);
-
-            SetArrayValue(writer, "owners", packageSpec.Owners);
-            SetArrayValue(writer, "tags", packageSpec.Tags);
-            SetValue(writer, "projectUrl", packageSpec.ProjectUrl);
-            SetValue(writer, "iconUrl", packageSpec.IconUrl);
-            SetValue(writer, "summary", packageSpec.Summary);
-            SetValue(writer, "releaseNotes", packageSpec.ReleaseNotes);
-            SetValue(writer, "licenseUrl", packageSpec.LicenseUrl);
-
-            SetValueIfTrue(writer, "requireLicenseAcceptance", packageSpec.RequireLicenseAcceptance);
-
-            if (packOptions.PackageType != null)
-            {
-                if (packOptions.PackageType.Count == 1)
-                {
-                    SetValue(writer, JsonPackageSpecReader.PackageType, packOptions.PackageType[0].Name);
-                }
-                else if (packOptions.PackageType.Count > 1)
-                {
-                    var packageTypeNames = packOptions.PackageType.Select(p => p.Name);
-                    SetArrayValue(writer, JsonPackageSpecReader.PackageType, packageTypeNames);
-                }
-            }
-
-            writer.WriteObjectEnd();
         }
 
         private static void SetDependencies(IObjectWriter writer, IEnumerable<LibraryDependency> libraryDependencies)

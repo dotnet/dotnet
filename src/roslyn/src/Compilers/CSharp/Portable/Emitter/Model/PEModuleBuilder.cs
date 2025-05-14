@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Roslyn.Utilities;
-using ReferenceEqualityComparer = Roslyn.Utilities.ReferenceEqualityComparer;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit
 {
@@ -74,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             ThreadSafeFlagOperations.Set(ref _needsGeneratedAttributes, (int)attributes);
         }
 
-        internal PEModuleBuilder(
+        protected PEModuleBuilder(
             SourceModuleSymbol sourceModule,
             EmitOptions emitOptions,
             OutputKind outputKind,

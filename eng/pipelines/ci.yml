@@ -29,6 +29,13 @@
 #   - PR: lite build
 #   - CI: release/*, internal/release/* and main only, every batched commit, full build
 
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+
 parameters:
 - name: desiredSigning
   displayName: 'Sign?'
@@ -42,11 +49,11 @@ parameters:
 - name: desiredIBC
   displayName: 'Enable IBC?'
   type: string
-  default: 'Default (disabled for manual and non-main/release builds)'
+  default: 'Default (disabled for non-release branch builds)'
   values:
     - Enabled
     - Disabled
-    - Default (disabled for manual and non-main/release builds)
+    - Default (disabled for non-release branch builds)
 
 variables:
 # enable source-only build for pipelines that contain the -source-build string

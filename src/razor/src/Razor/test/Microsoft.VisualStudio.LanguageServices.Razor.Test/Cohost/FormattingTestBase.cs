@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
@@ -42,7 +43,8 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         bool codeBlockBraceOnNextLine = false,
         bool insertSpaces = true,
         int tabSize = 4,
-        bool allowDiagnostics = false)
+        bool allowDiagnostics = false,
+        bool debugAssertsEnabled = true)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
@@ -58,6 +60,9 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
             //var csharpDocument = codeDocument.GetCSharpDocument();
             //Assert.False(csharpDocument.Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, csharpDocument.Diagnostics));
         }
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetDebugAssertsEnabled(debugAssertsEnabled);
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),

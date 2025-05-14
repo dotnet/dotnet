@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using NuGet.Common;
 
 namespace NuGet.Test.Utility
 {
@@ -76,7 +77,7 @@ namespace NuGet.Test.Utility
                 foreach (var project in Projects)
                 {
                     sb.AppendLine("Project(\"{" + "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC" + "}"
-                        + $"\") = \"{project.ProjectName}\", " + "\"" + project.ProjectPath + "\", \"{" + project.ProjectGuid.ToString().ToUpperInvariant() + "}\"");
+                        + $"\") = \"{project.ProjectName}\", " + "\"" + PathUtility.GetRelativePath(SolutionPath, project.ProjectPath) + "\", \"{" + project.ProjectGuid.ToString().ToUpperInvariant() + "}\"");
                     sb.AppendLine("EndProject");
                 }
 
@@ -112,7 +113,7 @@ namespace NuGet.Test.Utility
                 sb.AppendLine("<Solution>");
                 foreach (var project in Projects)
                 {
-                    sb.AppendLine($"<Project Path=\"{project.ProjectPath}\" />");
+                    sb.AppendLine($"<Project Path=\"{PathUtility.GetRelativePath(SolutionPath, project.ProjectPath)}\" />");
                 }
                 sb.AppendLine("</Solution>");
 

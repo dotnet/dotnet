@@ -54,12 +54,19 @@ namespace NuGet.ProjectModel
             _buffer = _bufferPool.Rent(bufferSize);
             _disposed = false;
             _stream = stream;
-#pragma warning disable CA2022 // Avoid inexact read
-            _stream.Read(_buffer, 0, 3);
-#pragma warning restore CA2022
-            if (!Utf8Bom.AsSpan().SequenceEqual(_buffer.AsSpan(0, 3)))
+
+            if (_stream.Read(_buffer, offset: 0, count: 1) == 1 &&
+                _stream.Read(_buffer, offset: ++_bufferUsed, count: 1) == 1 &&
+                _stream.Read(_buffer, offset: ++_bufferUsed, count: 1) == 1)
             {
-                _bufferUsed = 3;
+                ++_bufferUsed;
+
+                bool hasUtf8Bom = Utf8Bom.AsSpan().SequenceEqual(_buffer.AsSpan(start: 0, length: 3));
+
+                if (hasUtf8Bom)
+                {
+                    _bufferUsed = 0;
+                }
             }
 
             var initialJsonReaderState = new JsonReaderState(DefaultJsonReaderOptions);

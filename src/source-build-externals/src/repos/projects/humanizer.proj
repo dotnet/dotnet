@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)src/Humanizer/bin/Release</PackagesOutput>
+    <NuGetConfigFile>$(ProjectDirectory)src/NuGet.config</NuGetConfigFile>
+    <CustomRepoBuild>true</CustomRepoBuild>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)src/Humanizer/Humanizer.csproj</BuildCommandArgs>
+      <!-- Always build release mode: nuspecs in repo are hard-coded to Release config outputs. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=Release</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+
+      <PackCommandArgs>$(BuildCommandArgs)</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecFile=$(ProjectDirectory)NuSpecs/Humanizer.Core.nuspec</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecBasePath=$(ProjectDirectory)src/</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecProperties=Version=$(HumanizerReleaseVersion)</PackCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(PackCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

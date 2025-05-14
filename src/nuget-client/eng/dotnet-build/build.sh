@@ -6,7 +6,9 @@ git config --global protocol.file.allow always
 source="${BASH_SOURCE[0]}"
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 configuration='Release'
+verbosity='minimal'
 source_build=false
+product_build=false
 properties=''
 
 # resolve $SOURCE until the file is no longer a symlink
@@ -25,12 +27,21 @@ repo_root="${repo_root}/"
 while [[ $# > 0 ]]; do
     lowerI="$(echo $1 | awk '{print tolower($0)}')"
     case $lowerI in
+        --verbosity|-v)
+            verbosity=$2
+            shift
+            ;;
         --configuration|-c)
             configuration=$2
             shift
             ;;
-        --source-build|-sb)
+        --source-build|--sourcebuild|-sb)
             source_build=true
+            product_build=true
+            shift
+            ;;
+        --product-build|--productbuild|-pb)
+            product_build=true
             shift
             ;;
         -*)
@@ -81,14 +92,12 @@ fi
 
 ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
-export NUGET_PACKAGES=${repo_root}artifacts/sb/package-cache/
+export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
-if [[ "$source_build" == true ]]; then
-  properties="$properties /p:DotNetBuildSourceOnly=true"
-fi
+properties="$properties /p:DotNetBuildRepo=$product_build"
+properties="$properties /p:DotNetBuildSourceOnly=$source_build"
 
 properties="$properties /p:Configuration=$configuration"
-properties="$properties /p:DotNetBuildRepo=true"
 properties="$properties /p:RepoRoot=$repo_root"
 
-"$DOTNET" msbuild "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/sb/log/source-inner-build.binlog" $properties $args
+"$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/log/${configuration}/Build.binlog" $properties $args

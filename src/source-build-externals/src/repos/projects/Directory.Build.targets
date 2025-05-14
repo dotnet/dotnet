@@ -1,0 +1,214 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.config')">$(ProjectDirectory)src\NuGet.config</NuGetConfigFile>
+    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.Config')">$(ProjectDirectory)src\NuGet.Config</NuGetConfigFile>
+  </PropertyGroup>
+
+  <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
+    <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
+
+    <ItemGroup>
+      <_DependentProject Include="@(RepositoryReference -> '%(Identity).proj')" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(_DependentProject)" Targets="Build" BuildInParallel="$(BuildInParallel)" StopOnFirstFailure="true" />
+  </Target>
+
+  <Target Name="PrepareInnerClone">
+    <ItemGroup>
+      <RepoFileToCopy Include="$(OriginalProjectDirectory)**\*"
+                      Exclude="$(OriginalProjectDirectory)artifacts\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(RepoFileToCopy)" DestinationFolder="$(ProjectDirectory)%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="ApplyPatches"
+          Condition="'@(PatchToApply)' != '' and '$(SkipPatches)' != 'true'"
+          DependsOnTargets="PrepareInnerClone"
+          Inputs="@(PatchToApply)"
+          Outputs="$(BaseIntermediateOutputPath)ApplyPatches.complete" >
+    <PropertyGroup>
+      <PatchCommand>git --work-tree=$(ProjectDirectory) apply --ignore-whitespace --whitespace=nowarn</PatchCommand>
+    </PropertyGroup>
+
+    <!-- in the installer tarball, we want to remove the objects directory from the .gitdir to save space.
+         This causes a problem specifically in the combination of submodules which have redirected .gitdirs
+         when we are applying patches in the current directory (which is required due to the way Git
+         interprets the paths in a patch).  GIT_DIR=/dev/null short-circuits the .gitdir discovery process
+         and lets Git treat the directory like any non-Git-controlled directory instead.            -->
+    <Exec Command="$(PatchCommand) %(PatchToApply.Identity)"
+          WorkingDirectory="$(ProjectDirectory)"
+          Condition="'@(PatchToApply)' != ''"
+          EnvironmentVariables="GIT_DIR=/dev/null" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)ApplyPatches.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <!--
+    If a NuGet.config exists in the project, delete it, so the dotnet/source-build nuget.config is
+    found instead. This lets the subrepo use the incoming intermediate nupkg contents and avoids the
+    need to do subrepo-specific fixups like removing internet sources.
+  -->
+  <Target Name="RemoveNuGetConfig"
+          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != ''">
+    <ItemGroup>
+      <NuGetConfigFiles Include="$(NuGetConfigFile)" />
+    </ItemGroup>
+
+    <Delete Files="@(NuGetConfigFiles)" />
+  </Target>
+
+  <!--
+    Add a new nuget config file at the root of the component that includes sources for its dependencies'
+    outputs.
+  -->
+  <UsingTask TaskName="AddSourceToNuGetConfig" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="AddNewNuGetConfigForDependencies"
+          Condition="'@(RepositoryReference)' != ''"
+          DependsOnTargets="ResolveProjectReferences">
+    <PropertyGroup>
+      <NewNuGetConfigFile>$(ProjectDirectory)NuGet.config</NewNuGetConfigFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_DependentProjectSources Include="@(RepositoryReference -> '%(Identity).proj')">
+        <RepositoryName>%(Identity)</RepositoryName>
+      </_DependentProjectSources>
+    </ItemGroup>
+
+    <MSBuild Projects="@(_DependentProjectSources)"
+          Targets="GetPackagesOutput">
+      <Output TaskParameter="TargetOutputs" ItemName="_DependencyProjectsPackagesOutput" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <NewNuGetConfigContent>
+<![CDATA[
+<configuration>
+  <packageSources>
+    <clear />
+  </packageSources>
+</configuration>
+]]>
+      </NewNuGetConfigContent>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NewNuGetConfigFile)" />
+
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NewNuGetConfigFile)"
+                            SourceName="%(_DependencyProjectsPackagesOutput.RepositoryName)"
+                            SourcePath="%(_DependencyProjectsPackagesOutput.Identity)" />
+  </Target>
+
+  <!-- Root target for nuget updates. Removes the existing nuget config files, then adds a new one for dependencies
+       if necessary. -->
+  <Target Name="UpdateNuGetConfig"
+          DependsOnTargets="PrepareInnerClone;RemoveNuGetConfig;AddNewNuGetConfigForDependencies"
+          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != '' OR '@(RepositoryReference)' != ''"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="UpdateGlobalJsonVersions"
+          DependsOnTargets="PrepareInnerClone;ResolveProjectReferences"
+          Condition="'$(GlobalJsonFile)' != ''"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
+    <ItemGroup>
+      <_PossibleCliVersionJsonPath Include="sdk.version" />
+      <_PossibleCliVersionJsonPath Include="tools.dotnet" />
+    </ItemGroup>
+
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="%(_PossibleCliVersionJsonPath.Identity)"
+                NewAttributeValue="$(NETCoreSdkVersion)"
+                SkipUpdateIfMissingKey="true" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <Target Name="PrepareOutputDirectories">
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'))" />
+  </Target>
+
+  <Target Name="RepoBuild"
+          DependsOnTargets="PrepareOutputDirectories;PrepareInnerClone"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)RepoBuild.complete">
+    <ItemGroup>
+      <EnvironmentVariables Condition="'$(NUGET_PACKAGES)' != ''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
+    </ItemGroup>
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'" />
+    <Message Importance="High" Text="Running command:" />
+    <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
+    <Message Importance="High" Text="  Using custom build target" Condition="'$(BuildCommand)' == ''" />
+    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
+    <Message Importance="High" Text="  With Environment Variables:" />
+    <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
+
+    <Exec Command="$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
+          WorkingDirectory="$(ProjectDirectory)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(CustomRepoBuild)' != 'true'" />
+
+    <CallTarget Targets="CustomRepoBuild" Condition="'$(CustomRepoBuild)' == 'true'" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'...done" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)RepoBuild.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+
+    <OnError ExecuteTargets="ReportRepoError" />
+  </Target>
+
+  <Target Name="ReportRepoError">
+    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
+    <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
+    <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
+  </Target>
+
+  <Target Name="CopyPackagesOutput">
+    <Error Condition="'$(PackagesOutput)' == ''" Text="The 'PackagesOutput' property must be set to the output directory of the built packages." />
+
+    <ItemGroup>
+      <_BuiltPackages Include="$(PackagesOutput)/*.nupkg" Exclude="$(PackagesOutput)/*.symbols.nupkg"/>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_BuiltPackages)" DestinationFolder="$(ArtifactsShippingPackagesDir)" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+  </Target>
+
+  <Target Name="Build"
+          DependsOnTargets="
+            BuildRepoReferences;
+            PrepareInnerClone;
+            ApplyPatches;
+            UpdateNuGetConfig;
+            UpdateGlobalJsonVersions;
+            RepoBuild;
+            CopyPackagesOutput" />
+
+  <Target Name="GetRepositoryReferences" Outputs="@(RepositoryReference)" />
+  <Target Name="GetPackagesOutput" Outputs="$(PackagesOutput)" />
+
+</Project>

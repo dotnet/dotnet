@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
+
 namespace Microsoft.AspNetCore.Razor.Language;
 
 // Razor.Language doesn't reference Microsoft.CodeAnalysis.CSharp so we
@@ -10,4 +12,6 @@ namespace Microsoft.AspNetCore.Razor.Language;
 internal abstract class TypeNameRewriter
 {
     public abstract string Rewrite(string typeName);
+
+    public abstract void RewriteComponentTypeName(ComponentIntermediateNode node);
 }

@@ -33,6 +33,8 @@ namespace Dotnet.Integration.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 // Arrange
+                string source = $"{_packageSearchRunnerFixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+                pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
                 var args = new string[] { "package", "search", "json", "--take", "10", "--prerelease", "--source", $"{_packageSearchRunnerFixture.ServerWithMultipleEndpoints.Uri}v3/index.json", "--format", "json" };
 
                 // Act

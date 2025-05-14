@@ -123,8 +123,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
             b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
 
-            b.Features.Add(new DefaultTypeNameFeature());
-
             b.Features.Add(new CompilationTagHelperFeature());
             b.Features.Add(new DefaultMetadataReferenceFeature()
             {

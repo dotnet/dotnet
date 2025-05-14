@@ -5,8 +5,9 @@ using System.Composition;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -15,12 +16,16 @@ using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
 [Shared]
+[Export(typeof(IRazorCohostStartupService))]
 [Export(typeof(LanguageServerFeatureOptions))]
-internal class VSCodeLanguageServerFeatureOptions : LanguageServerFeatureOptions, IRazorCohostStartupService
+[method: ImportingConstructor]
+internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvider razorClientServerManagerProvider) : LanguageServerFeatureOptions, IRazorCohostStartupService
 {
     private bool _useRazorCohostServer = false;
     private bool _useNewFormattingEngine = true;
     private bool _forceRuntimeCodeGeneration = false;
+
+    private readonly RazorClientServerManagerProvider _razorClientServerManagerProvider = razorClientServerManagerProvider;
 
     // Options that are set to their defaults
     public override bool SupportsFileManipulation => true;
@@ -44,9 +49,11 @@ internal class VSCodeLanguageServerFeatureOptions : LanguageServerFeatureOptions
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration;
     public override bool UseNewFormattingEngine => _useNewFormattingEngine;
 
+    public int Order => WellKnownStartupOrder.LanguageServerFeatureOptions;
+
     public async Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var razorClientLanguageServerManager = requestContext.GetRequiredService<IRazorClientLanguageServerManager>();
+        var razorClientLanguageServerManager = _razorClientServerManagerProvider.ClientLanguageServerManager.AssumeNotNull();
 
         // Attempt to get configurations from the client.  If this throws we'll get NFW reports.
         var configurationParams = new ConfigurationParams()
@@ -56,7 +63,6 @@ internal class VSCodeLanguageServerFeatureOptions : LanguageServerFeatureOptions
                 new ConfigurationItem { Section = "razor.language_server.cohosting_enabled" },
                 new ConfigurationItem { Section = "razor.language_server.use_new_formatting_engine" },
                 new ConfigurationItem { Section = "razor.language_server.force_runtime_code_generation" },
-
             ]
         };
         var options = await razorClientLanguageServerManager.SendRequestAsync<ConfigurationParams, JsonArray>(

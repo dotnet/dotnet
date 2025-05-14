@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
+using NuGet.PackageManagement.UI.Models.Package;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Protocol.Core.Types;
@@ -42,6 +42,7 @@ namespace NuGet.PackageManagement.UI
         public IItemLoaderState State => _state;
         private IServiceBroker _serviceBroker;
         private INuGetPackageFileService _packageFileService;
+        private PackageModelFactory _packageModelFactory;
 
         public bool IsMultiSource => _packageSources.Count > 1;
 
@@ -274,7 +275,7 @@ namespace NuGet.PackageManagement.UI
                 {
                     if (packageLevel == PackageLevel.Transitive)
                     {
-                        UpdateTransitiveInfo(existingListItem, metadataContextInfo);
+                        existingListItem.UpdateTransitiveInfo(metadataContextInfo);
                     }
 
                     existingListItem.UpdateInstalledPackagesVulnerabilities(metadataContextInfo.Identity);
@@ -318,25 +319,16 @@ namespace NuGet.PackageManagement.UI
                         knownOwnerViewModels = LoadKnownOwnerViewModels(metadataContextInfo);
                     }
 
-                    var listItem = new PackageItemViewModel(_searchService, _packageVulnerabilityService)
+                    _packageModelFactory ??= new PackageModelFactory(_searchService, _packageFileService, _packageVulnerabilityService, _includePrerelease, _packageSources);
+                    PackageModel packageModel = _packageModelFactory.Create(metadataContextInfo, _itemFilter);
+
+                    var listItem = new PackageItemViewModel(_searchService, packageModel, _packageVulnerabilityService)
                     {
-                        Id = metadataContextInfo.Identity.Id,
-                        Version = metadataContextInfo.Identity.Version,
-                        IconUrl = metadataContextInfo.IconUrl,
-                        Owner = metadataContextInfo.Owners,
                         KnownOwnerViewModels = knownOwnerViewModels,
-                        Author = metadataContextInfo.Authors,
-                        DownloadCount = metadataContextInfo.DownloadCount,
-                        Summary = metadataContextInfo.Summary,
                         AllowedVersions = allowedVersions,
                         VersionOverride = versionOverride,
                         PrefixReserved = metadataContextInfo.PrefixReserved && !IsMultiSource,
-                        Recommended = metadataContextInfo.IsRecommended,
-                        RecommenderVersion = metadataContextInfo.RecommenderVersion,
-                        Vulnerabilities = metadataContextInfo.Vulnerabilities,
                         Sources = _packageSources,
-                        PackagePath = metadataContextInfo.PackagePath,
-                        PackageFileService = _packageFileService,
                         IncludePrerelease = _includePrerelease,
                         PackageLevel = packageLevel,
                         AutoReferenced = autoReferenced,
@@ -344,12 +336,14 @@ namespace NuGet.PackageManagement.UI
 
                     if (listItem.PackageLevel == PackageLevel.TopLevel)
                     {
-                        listItem.UpdatePackageStatus(_installedPackages);
+                        listItem.UpdatePackageStatusAsync(_installedPackages)
+                            .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
                     else
                     {
-                        UpdateTransitiveInfo(listItem, metadataContextInfo);
-                        listItem.UpdateTransitivePackageStatus(metadataContextInfo.Identity.Version);
+                        listItem.UpdateTransitiveInfo(metadataContextInfo);
+                        listItem.UpdateTransitivePackageStatusAsync()
+                            .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
 
                     listItemViewModels[packageId] = listItem;
@@ -357,13 +351,6 @@ namespace NuGet.PackageManagement.UI
             }
 
             return listItemViewModels.Values.ToArray();
-        }
-
-        private static void UpdateTransitiveInfo(PackageItemViewModel listItem, PackageSearchMetadataContextInfo metadataContextInfo)
-        {
-            listItem.TransitiveInstalledVersions.Add(metadataContextInfo.Identity.Version);
-            listItem.TransitiveOrigins.AddRange(metadataContextInfo.TransitiveOrigins);
-            listItem.TransitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, string.Join(", ", listItem.TransitiveInstalledVersions), string.Join(", ", listItem.TransitiveOrigins));
         }
 
         private static ImmutableList<KnownOwnerViewModel> LoadKnownOwnerViewModels(PackageSearchMetadataContextInfo metadataContextInfo)

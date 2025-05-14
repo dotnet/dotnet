@@ -23,7 +23,7 @@
         <!-- Humanizer version overridden to the version provided by source-build-externals -->
         <dependency id="Humanizer.Core" version="2.14.1" include="Runtime,Build,Native,ContentFiles,Analyzers,BuildTransitive" />
         <dependency id="Microsoft.Bcl.AsyncInterfaces" version="5.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Composition" version="1.1.0" exclude="Build,Analyzers" />
+        <dependency id="System.Composition" version="9.0.0" exclude="Build,Analyzers" />
         <dependency id="System.IO.Pipelines" version="5.0.1" exclude="Build,Analyzers" />
       </group>
     </dependencies>

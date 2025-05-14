@@ -41,8 +41,4 @@ extends:
       jobs:
       - template: /eng/common/templates-official/jobs/jobs.yml@self
         parameters:
-          artifacts:
-            publish:
-              manifests: true
           isAssetlessBuild: true
-          publishAssetsImmediately: true

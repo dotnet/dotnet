@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using FormattingOptions = Microsoft.CodeAnalysis.Formatting.FormattingOptions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;

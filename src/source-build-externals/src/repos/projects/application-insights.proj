@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)bin/$(Configuration)</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <NuGetConfigFiles Include="$(ProjectDirectory)NuGet.config" />
+    <NuGetConfigFiles Include="$(ProjectDirectory)BASE/NuGet.config" />
+  </ItemGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:StableRelease=True</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:RelativeOutputPathBase=</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+
+      <!-- Re-assign path properties so output directories end up under src/application-insights -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:BinRoot=$(ProjectDirectory)bin</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:ObjRoot=$(ProjectDirectory)obj</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PackageOutputDir=$(ProjectDirectory)bin/$(Configuration)</BuildCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

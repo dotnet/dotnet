@@ -1539,7 +1539,7 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
                 Assert.Equal(0, logger.Errors);
                 Assert.Equal(0, logger.Warnings);
-                Assert.True(contentFile.Properties["buildAction"] == "None");
+                Assert.Equal("None", contentFile.Properties["buildAction"]);
             }
         }
 

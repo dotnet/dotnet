@@ -10,7 +10,7 @@ internal sealed class LspDocumentServiceProvider(IRazorClientLanguageServerManag
 {
     public bool CanApplyChange => true;
 
-    public bool SupportDiagnostics => false;
+    public bool SupportDiagnostics => true;
 
     private IRazorMappingService? _mappingService;
 

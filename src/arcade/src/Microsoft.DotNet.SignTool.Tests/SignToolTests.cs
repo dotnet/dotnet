@@ -259,6 +259,8 @@ namespace Microsoft.DotNet.SignTool.Tests
             }
         }
 
+        public static bool PlatformSupportsStrongNameAlgorithm { get; } = StrongNameSupportHelper.GetPlatformSupportsRSASHA1();
+
         public SignToolTests(ITestOutputHelper output)
         {
             _tmpDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -703,7 +705,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             });
         }
 
-        [Fact]
+        [ConditionalFact(nameof(PlatformSupportsStrongNameAlgorithm))]
         public void SkipStrongNamingBinaryButDontSkipAuthenticode()
         {
             // List of files to be considered for signing
@@ -3076,7 +3078,7 @@ $@"
         /// <summary>
         /// Verify that flipbit works properly by flipping twice.
         /// </summary>
-        [Fact]
+        [ConditionalFact(nameof(PlatformSupportsStrongNameAlgorithm))]
         public void NoFlipButWriteShouldVerify()
         {
             // We're going to open the file and flip a bit in the checksum
@@ -3106,7 +3108,7 @@ $@"
 
         // This binary has had a resource added after it was strong name. This invalidated the checksum too,
         // so we write the expected checksum.
-        [Fact]
+        [ConditionalFact(nameof(PlatformSupportsStrongNameAlgorithm))]
         public void InvalidatedSNSignatureDoesNotValidate()
         {
             using var inputStream = File.OpenRead(GetResourcePath("InvalidatedStrongName.dll"));
@@ -3122,7 +3124,7 @@ $@"
             StrongNameHelper.IsSigned(outputStream).Should().BeFalse();
         }
 
-        [Fact]
+        [ConditionalFact(nameof(PlatformSupportsStrongNameAlgorithm))]
         public void ValidStrongNameSignaturesValidate()
         {
             StrongNameHelper.IsSigned(GetResourcePath("SignedLibrary.dll")).Should().BeTrue();
@@ -3136,7 +3138,7 @@ $@"
             StrongNameHelper.IsSigned_Legacy(GetResourcePath("StrongNamedWithEcmaKey.dll"), s_snPath).Should().BeTrue();
         }
 
-        [Theory]
+        [ConditionalTheory(nameof(PlatformSupportsStrongNameAlgorithm))]
         [InlineData("OpenSigned.dll", "OpenSignedCorrespondingKey.snk", true)]
         [InlineData("DelaySignedWithOpen.dll", "OpenSignedCorrespondingKey.snk", false)]
         public void SigningSignsAsExpected(string file, string key, bool initiallySigned)

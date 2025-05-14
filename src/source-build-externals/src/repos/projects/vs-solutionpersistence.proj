@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <!-- Project Paths -->
+    <SlnPersistenceKeyFilePath>$(KeysDir)vs-solutionpersistence.snk</SlnPersistenceKeyFilePath>
+    <SlnPersistenceDirectory>$(ProjectDirectory)src/Microsoft.VisualStudio.SolutionPersistence/</SlnPersistenceDirectory>
+    <SlnPersistenceProjectPath>$(SlnPersistenceDirectory)Microsoft.VisualStudio.SolutionPersistence.csproj</SlnPersistenceProjectPath>
+    <PackagesOutput>$(ProjectDirectory)bin/Packages/$(Configuration)/NuGet/</PackagesOutput>
+
+    <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
+    <NuGetConfigFile>$(ProjectDirectory)nuget.config</NuGetConfigFile>
+
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyOriginatorKeyFile=$(SlnPersistenceKeyFilePath)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:SignAssembly=true</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
+
+    <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Override default TargetFrameworks to skip building net framework. -->
+    <EnvironmentVariables Include="TargetFrameworks=$(NetCurrent)" />
+
+    <!-- Flag to remove analyzers -->
+    <EnvironmentVariables Include="SourceBuild=true" />
+  </ItemGroup>
+
+</Project>

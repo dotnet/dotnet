@@ -37,10 +37,10 @@ internal abstract class AbstractWorkspacePullDiagnosticsHandler<TDiagnosticsPara
     protected AbstractWorkspacePullDiagnosticsHandler(
         LspWorkspaceManager workspaceManager,
         LspWorkspaceRegistrationService registrationService,
-        IDiagnosticAnalyzerService diagnosticAnalyzerService,
         IDiagnosticSourceManager diagnosticSourceManager,
         IDiagnosticsRefresher diagnosticRefresher,
-        IGlobalOptionService globalOptions) : base(diagnosticAnalyzerService, diagnosticRefresher, globalOptions)
+        IGlobalOptionService globalOptions)
+        : base(diagnosticRefresher, globalOptions)
     {
         DiagnosticSourceManager = diagnosticSourceManager;
         _workspaceManager = workspaceManager;
@@ -114,7 +114,7 @@ internal abstract class AbstractWorkspacePullDiagnosticsHandler<TDiagnosticsPara
         }
 
         // We've hit a change, so we close the current request to allow the client to open a new one.
-        context.TraceInformation($"Closing workspace/diagnostics request for {category}");
+        context.TraceDebug($"Closing workspace/diagnostics request for {category}");
         return;
 
         bool HasChanged()

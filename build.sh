@@ -135,7 +135,7 @@ while [[ $# > 0 ]]; do
       test=true
       ;;
     -sign)
-      properties+=( "/p:Sign=true" )
+      properties+=( "/p:DotNetBuildSign=true" )
       ;;
 
     # Source-only settings
@@ -222,13 +222,12 @@ fi
 . "$scriptroot/eng/common/tools.sh"
 
 project="$scriptroot/build.proj"
-targets="/t:Build"
+actions=( "/p:Restore=true" "/p:Build=true" "/p:Publish=true")
 
-# This repo uses the VSTest integration instead of the Arcade Test target
 if [[ "$test" == true ]]; then
   project="$scriptroot/test/tests.proj"
-  targets="$targets;VSTest"
-  properties+=( "/p:Test=true" )
+  actions=( "/p:Restore=true" "/p:Build=true" "/p:Test=true" )
+  properties+=( "/p:IsTestRun=true" )
 
   # Workaround for vstest hangs (https://github.com/microsoft/vstest/issues/5091) [TODO]
   export MSBUILDENSURESTDOUTFORTASKPROCESSES=1
@@ -252,10 +251,13 @@ function Build {
     fi
 
     MSBuild --restore \
-      $project \
-      $targets \
+      $_InitializeToolset \
+      "/p:Projects=$project" \
       $bl \
       /p:Configuration=$configuration \
+      "/p:RepoRoot=$scriptroot/" \
+      "-tl:off" \
+      "${actions[@]}" \
       "${properties[@]}"
 
     ExitWithExitCode 0
@@ -275,6 +277,9 @@ function Build {
     # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
     "$CLI_ROOT/dotnet" build-server shutdown --msbuild
 
+    local bootstrapArcadeDir=$(cat "$scriptroot/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
+    local arcadeBuildStepsDir="$bootstrapArcadeDir/tools/"
+
     # Point MSBuild to the custom SDK resolvers folder, so it will pick up our custom SDK Resolver
     export MSBUILDADDITIONALSDKRESOLVERSFOLDER="$scriptroot/artifacts/toolset/VSSdkResolvers/"
 
@@ -283,7 +288,17 @@ function Build {
       bl="/bl:\"$log_dir/Build.binlog\""
     fi
 
-    "$CLI_ROOT/dotnet" msbuild --restore "$project" $bl $targets "${properties[@]}"
+    "$CLI_ROOT/dotnet" \
+      msbuild \
+      --restore \
+      "$arcadeBuildStepsDir/Build.proj" \
+      "/p:Projects=$project" \
+      /p:Configuration=$configuration \
+      "/p:RepoRoot=$scriptroot/" \
+      "-tl:off" \
+      $bl \
+      "${actions[@]}" \
+      "${properties[@]}"
   fi
 }
 
@@ -316,6 +331,12 @@ if [[ "$sourceOnly" == "true" ]]; then
 
   # For build purposes, we need to make sure we have all the SourceLink information
   if [ "$test" != "true" ]; then
+    get_property() {
+      local json_file_path="$1"
+      local property_name="$2"
+      grep -oP '(?<="'$property_name'": ")[^"]*' "$json_file_path"
+    }
+
     GIT_DIR="$scriptroot/.git"
     if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
       if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
@@ -334,12 +355,6 @@ if [[ "$sourceOnly" == "true" ]]; then
           exit 1
         fi
 
-        get_property() {
-          local json_file_path="$1"
-          local property_name="$2"
-          grep -oP '(?<="'$property_name'": ")[^"]*' "$json_file_path"
-        }
-
         sourceRepository=$(get_property "$releaseManifest" sourceRepository) \
           || (echo "ERROR: Failed to find sourceRepository in $releaseManifest" && exit 1)
         sourceVersion=$(get_property "$releaseManifest" sourceVersion) \
@@ -356,6 +371,25 @@ if [[ "$sourceOnly" == "true" ]]; then
       echo '[remote "origin"]' > "$GIT_DIR/config"
       echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
       echo "$sourceVersion" > "$GIT_DIR/HEAD"
+    fi
+
+    # If the release manifest is provided
+    if [ -n "$releaseManifest" ] ; then
+      # Check if OfficialBuildId was explicitly provided as an MSBuild property. This overrides any value in the release manifest.
+      officialBuildIdProvided=false
+      for prop in "${properties[@]}"; do
+        if [[ $prop =~ ^[-/]p:OfficialBuildId=[^\s]+$ ]]; then
+          officialBuildIdProvided=true
+          break
+        fi
+      done
+
+      # If OfficialBuildId was not provided, extract it from the release manifest
+      if [ "$officialBuildIdProvided" == "false" ]; then
+        officialBuildId=$(get_property "$releaseManifest" officialBuildId) \
+            || (echo "ERROR: Failed to find officialBuildId in $releaseManifest" && exit 1)
+        properties+=( "/p:OfficialBuildId=$officialBuildId" )
+      fi
     fi
   fi
 
