@@ -14,7 +14,7 @@
     Directory.Build.targets you would run it for every single integration tests project. So running it after
     pack is probably the best. Don't invoke in .NET product build mode.
   -->
-  <Target Name="_InstallAdditionalDotnetSdk" AfterTargets="Pack" Condition="'$(OS)' == 'Windows_NT' and '$(DotNetBuildRepo)' != 'true'">
+  <Target Name="_InstallAdditionalDotnetSdk" AfterTargets="Pack" Condition="'$(OS)' == 'Windows_NT' and '$(DotNetBuild)' != 'true'">
     <Exec Command="powershell -NoProfile -NoLogo -ExecutionPolicy Bypass $(RepositoryEngineeringDir)\install-additional-dotnet-sdks.ps1 -dotnetInstallDir $(DOTNET_INSTALL_DIR) -RepoRoot $(RepoRoot)" />
   </Target>
 </Project>

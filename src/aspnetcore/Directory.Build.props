@@ -192,7 +192,7 @@
   <!-- The location of the local installation of the .NET Core shared framework. -->
   <PropertyGroup>
     <LocalDotNetRoot>$(RepoRoot).dotnet\</LocalDotNetRoot>
-    <LocalDotNetRoot Condition="'$(DotNetBuildRepo)' == 'true'">DontDareMutateThisSDK</LocalDotNetRoot>
+    <LocalDotNetRoot Condition="'$(DotNetBuild)' == 'true'">DontDareMutateThisSDK</LocalDotNetRoot>
 
     <!--
       Override the SDK default and point to local .dotnet folder. This is done to work around
@@ -205,7 +205,7 @@
       to restore the AppHost pack as a prebuilt rather than using the one that's present in the SDK.
       The dotnet product build doesn't run tests, so the property is simply conditioned out.
     -->
-    <NetCoreTargetingPackRoot Condition="'$(DotNetBuildRepo)' != 'true'">$(LocalDotNetRoot)packs\</NetCoreTargetingPackRoot>
+    <NetCoreTargetingPackRoot Condition="'$(DotNetBuild)' != 'true'">$(LocalDotNetRoot)packs\</NetCoreTargetingPackRoot>
   </PropertyGroup>
 
   <Import Project="eng\tools\RepoTasks\RepoTasks.tasks" Condition="'$(MSBuildProjectName)' != 'RepoTasks' AND '$(DesignTimeBuild)' != 'true'" />
@@ -244,7 +244,7 @@
 
   <!-- Try various places to find the runtime. It's either released (use official version),
         public but un-released (use dotnetbuilds/public), or internal and unreleased (use dotnetbuilds/internal) -->
-  <ItemGroup Condition="'$(DotNetBuildRepo)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
     <RemoteAssetBaseURL Include="$(OfficialBaseURL)" />
     <RemoteAssetBaseURL Include="$(PublicBaseURL)" />
     <!-- Include the token here as we'll generate the URLs to download based on this item group. -->
@@ -258,7 +258,7 @@
     Only try downloading from the "public" base URL when doing a vertical build.
     In a vertical build, the public URL will be overwritten to point to local build artifacts.
   -->
-  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
     <!-- MSBuild removes the '//' slashes when passing PublicBaseURL from the outer to the inner build. -->
     <RemoteAssetBaseURL Condition="$(PublicBaseURL.StartsWith('file:')) and '$(OS)' != 'Windows_NT'" Include="$([System.Text.RegularExpressions.Regex]::Replace('$(PublicBaseURL)', '%28file:\/{1,}%29%28.+%29', 'file:///%242'))" />
     <RemoteAssetBaseURL Condition="!$(PublicBaseURL.StartsWith('file:')) or '$(OS)' == 'Windows_NT'" Include="$(PublicBaseURL)" />

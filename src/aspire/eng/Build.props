@@ -1,6 +1,6 @@
 <Project>
 
-  <ItemGroup Condition="'$(DotNetBuildRepo)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
     <ProjectToBuild Include="$(RepoRoot)src\**\*.csproj" Exclude="$(RepoRoot)src\Aspire.ProjectTemplates\templates\**\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)eng\dcppack\**\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)eng\dashboardpack\**\*.csproj" />
@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <!-- In .NET product build mode, only build the Aspire manifest package. -->
-  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
     <ProjectToBuild Include="$(RepoRoot)src\Microsoft.NET.Sdk.Aspire\Microsoft.NET.Sdk.Aspire.csproj" />
   </ItemGroup>
 

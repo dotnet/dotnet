@@ -98,7 +98,7 @@
               Kind="Package" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildRepo)' != 'true' or '$(BuildWorkloads)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' != 'true' or '$(BuildWorkloads)' == 'true'">
     <Artifact Include="$(VisualStudioSetupInsertionPath)\**\*.zip"
               IsShipping="true"
               Kind="Blob" />

@@ -6,7 +6,7 @@
         - Source-build mode and "ExcludeFromSourceOnlyBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
-        - .NET product build (DotNetBuildRepo) and "ExcludeFromDotNetBuild" is set.
+        - .NET product build (DotNetBuild) and "ExcludeFromDotNetBuild" is set.
         - .NET product build in source-only mode and "ExcludeFromSourceOnlyBuild" is set.
 
         To exclude a project from building, Arcade must do two things:
@@ -49,7 +49,7 @@
     <_SuppressAllTargets>false</_SuppressAllTargets>
     <!-- New .NET build switches -->
     <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
-    <_SuppressAllTargets Condition="'$(DotNetBuildRepo)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>
     <!-- General exclusion -->
     <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
 

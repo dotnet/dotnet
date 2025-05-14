@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <!-- Don't produce this package when building the .NET product as it relies on a VS license. -->
-    <IsPackable Condition="'$(DotNetBuildRepo)' != 'true'">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform</PackageId>

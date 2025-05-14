@@ -216,14 +216,14 @@
 
     <!-- These are apphosts from a different vertical which require a join in the VMR. -->
     <BundledInstallerComponent Include="DownloadedAlternateNetCoreAppHostPackInstallerFile"
-                                Condition="'$(InstallerExtension)' == '.msi' and !$(TargetArchitecture.StartsWith('arm')) and ('$(DotNetBuildRepo)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true')">
+                                Condition="'$(InstallerExtension)' == '.msi' and !$(TargetArchitecture.StartsWith('arm')) and ('$(DotNetBuild)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true')">
       <BaseUrl>$(NetRuntimeRootUrl)</BaseUrl>
       <DownloadFileName>$(DownloadedAlternateNetCoreAppHostPackInstallerFileName)</DownloadFileName>
     </BundledInstallerComponent>
 
     <!-- These are apphosts from a different vertical which require a join in the VMR. -->
     <BundledInstallerComponent Include="DownloadedArm64NetCoreAppHostPackInstallerFile"
-                                Condition="'$(InstallerExtension)' == '.msi' And !$(TargetArchitecture.StartsWith('arm'))  and ('$(DotNetBuildRepo)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true')">
+                                Condition="'$(InstallerExtension)' == '.msi' And !$(TargetArchitecture.StartsWith('arm'))  and ('$(DotNetBuild)' != 'true' or '$(GenerateSdkBundleOnly)' == 'true')">
       <BaseUrl>$(NetRuntimeRootUrl)</BaseUrl>
       <DownloadFileName>$(DownloadedArm64NetCoreAppHostPackInstallerFileName)</DownloadFileName>
     </BundledInstallerComponent>

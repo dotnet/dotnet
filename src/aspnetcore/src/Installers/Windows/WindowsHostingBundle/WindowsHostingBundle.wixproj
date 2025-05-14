@@ -71,7 +71,7 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true'" >
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'" >
     <ProjectReference Include="..\AspNetCoreModule-Setup\ANCMIISExpressV2\AncmIISExpressV2.wixproj">
       <SetPlatform>Platform=x86</SetPlatform>
       <Name>AspNetCoreModuleV2IISExpress_x86</Name>

@@ -5,7 +5,7 @@
     <GenerateReferenceAssemblySource>true</GenerateReferenceAssemblySource>
     <!-- Do not create Tlbs when building in .NET product mode. The packages are not shipped to VS,
          only their contents redisted within the SDK. -->
-    <CreateTlb Condition="'$(DotNetBuildRepo)' != 'true'">true</CreateTlb>
+    <CreateTlb Condition="'$(DotNetBuild)' != 'true'">true</CreateTlb>
     <IsPackable>true</IsPackable>
     <PackageDescription>This package contains the $(MSBuildProjectName) assembly which is a common assembly used by other MSBuild assemblies.</PackageDescription>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>

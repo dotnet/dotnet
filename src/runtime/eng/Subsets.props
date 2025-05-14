@@ -84,7 +84,7 @@
 
   <PropertyGroup>
     <!-- In .NET product build mode we want to build all of the assets even in a PGO-instrumented build as downstream repos will not be able to pull assets from a matching non-PGO-instrumented build. -->
-    <BuildOnlyPgoInstrumentedAssets Condition="'$(PgoInstrument)' == 'true' and '$(DotNetBuildRepo)' != 'true'">true</BuildOnlyPgoInstrumentedAssets>
+    <BuildOnlyPgoInstrumentedAssets Condition="'$(PgoInstrument)' == 'true' and '$(DotNetBuild)' != 'true'">true</BuildOnlyPgoInstrumentedAssets>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildMonoAOTCrossCompilerOnly)' == 'true' or ('$(DotNetBuildAllRuntimePacks)' == 'true' and '$(MonoAOTCrossCompilerSupported)' == 'true')">

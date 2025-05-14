@@ -60,14 +60,14 @@
     <ProjectToExclude Include="
                       $(RepoRoot)src\Installers\**\*.vcxproj;
                       "
-                      Condition=" '$(BuildNative)' == 'true' and '$(DotNetBuildRepo)' == 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') " />
+                      Condition=" '$(BuildNative)' == 'true' and '$(DotNetBuild)' == 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') " />
 
 
     <!-- This project requires inputs from x64, x86, and arm64 on Windows - therefore in the .NET product build mode, build it in pass 2 -->
     <ProjectToExclude Include="
                       $(RepoRoot)src\Servers\IIS/IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj;
                       "
-                      Condition=" '$(TargetOsName)' == 'win' and '$(DotNetBuildRepo)' == 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') " />
+                      Condition=" '$(TargetOsName)' == 'win' and '$(DotNetBuild)' == 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') " />
   </ItemGroup>
 
   <Choose>
@@ -85,7 +85,7 @@
     </When>
     <!-- Projects to build in .NET product build pass 2 -->
     <When Condition="'$(DotNetBuildPass)' == '2'">
-      <ItemGroup Condition=" '$(DotNetBuildRepo)' == 'true' AND '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
+      <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
         <!-- Build Hosting Bundle -->
         <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj">
           <AdditionalProperties>Platform=x86</AdditionalProperties>
@@ -102,13 +102,13 @@
     </When>
     <Otherwise>
       <!-- BuildNative -->
-      <ItemGroup Condition=" '$(TargetOsName)' == 'win' AND '$(DotNetBuildRepo)' == 'true' ">
+      <ItemGroup Condition=" '$(TargetOsName)' == 'win' AND '$(DotNetBuild)' == 'true' ">
         <NativeProjects Condition="'$(TargetArchitecture)' == 'x64'" Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=x64" />
         <NativeProjects Condition="'$(TargetArchitecture)' == 'x86'" Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=Win32" />
         <NativeProjects Condition="'$(TargetArchitecture)' == 'arm64'" Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=arm64" />
       </ItemGroup>
 
-      <ItemGroup Condition=" '$(TargetOsName)' == 'win' AND '$(DotNetBuildRepo)' != 'true' AND ('$(TargetArchitecture)' == 'x86' OR '$(TargetArchitecture)' == 'x64' OR '$(TargetArchitecture)' == 'arm64') ">
+      <ItemGroup Condition=" '$(TargetOsName)' == 'win' AND '$(DotNetBuild)' != 'true' AND ('$(TargetArchitecture)' == 'x86' OR '$(TargetArchitecture)' == 'x64' OR '$(TargetArchitecture)' == 'arm64') ">
         <NativeProjects Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=x64" />
         <NativeProjects Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=Win32" />
         <NativeProjects Include="$(RepoRoot)src\**\*.vcxproj" Exclude="@(ProjectToExclude)" AdditionalProperties="Platform=arm64" />
@@ -265,7 +265,7 @@
       </PropertyGroup>
 
       <!-- In .NET product build mode, build the installers entirely via HostingBundle ProjectReferences in pass 2 -->
-      <ItemGroup Condition="'$(DotNetBuildRepo)' != 'true' and '$(_BuildWindowsInstallers)' == 'true' ">
+      <ItemGroup Condition="'$(DotNetBuild)' != 'true' and '$(_BuildWindowsInstallers)' == 'true' ">
         <!-- Build the ANCM custom action -->
         <InstallerProject Include="$(RepoRoot)src\Installers\Windows\AspNetCoreModule-Setup\CustomAction\aspnetcoreCA.vcxproj" AdditionalProperties="Platform=x64" />
         <InstallerProject Include="$(RepoRoot)src\Installers\Windows\AspNetCoreModule-Setup\CustomAction\aspnetcoreCA.vcxproj" AdditionalProperties="Platform=Win32" />

@@ -42,7 +42,7 @@
     <LightCommandPackagesDir>$(ArtifactsNonShippingPackagesDir)</LightCommandPackagesDir>
 
     <!-- For local non .NET SDK product builds, allow skipping the workload manifest msi generation to save build time. The sdk bundle won't contain the manifest msis in that case. -->
-    <AllowEmptyBuiltinWorkloadManifestMsi Condition="'$(DotNetBuildRepo)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' != 'true'">true</AllowEmptyBuiltinWorkloadManifestMsi>
+    <AllowEmptyBuiltinWorkloadManifestMsi Condition="'$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' != 'true'">true</AllowEmptyBuiltinWorkloadManifestMsi>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -239,8 +239,8 @@
   <Target Name="UnzipBuiltinWorkloadManifestMsiNuPkg">
     <PropertyGroup>
       <BuiltinManifestMsiPackageSourceDirectory>$(ArtifactsShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
-      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuildRepo)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' == 'true'">$(ArtifactsDir)downloaded-manifest-msi-packages\PackageArtifacts</BuiltinManifestMsiPackageSourceDirectory>
-      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildPass)' == '3'">$(SourceBuiltShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
+      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' == 'true'">$(ArtifactsDir)downloaded-manifest-msi-packages\PackageArtifacts</BuiltinManifestMsiPackageSourceDirectory>
+      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '3'">$(SourceBuiltShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
     </PropertyGroup>
 
     <ItemGroup>

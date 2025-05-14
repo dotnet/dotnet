@@ -63,7 +63,7 @@ $dotnetArguments += "-v:$verbosity"
 $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
 # Then remaining arguments.
 $dotnetArguments += "/p:Configuration=$configuration"
-$dotnetArguments += "/p:DotNetBuildRepo=$productBuild"
+$dotnetArguments += "/p:DotNetBuild=$productBuild"
 $dotnetArguments += "/p:RepoRoot=$repoRoot"
 if ($bl){
     $dotnetArguments += "/bl:${binLog}"

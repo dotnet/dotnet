@@ -291,6 +291,8 @@ function BuildSolution {
   # We don't pass /warnaserror to msbuild (warn_as_error is set to false by default above), but set 
   # /p:TreatWarningsAsErrors=true so that compiler reported warnings, other than IDE0055 are treated as errors. 
   # Warnings reported from other msbuild tasks are not treated as errors for now.
+
+  # TODO: Remove DotNetBuildRepo property when fsharp is on Arcade 10
   MSBuild $toolset_build_proj \
     $bl \
     /p:Configuration=$configuration \
@@ -310,6 +312,7 @@ function BuildSolution {
     /p:TestRuntimeAdditionalArguments=$test_runtime_args \
     /p:DotNetBuildSourceOnly=$source_build \
     /p:DotNetBuildRepo=$product_build \
+    /p:DotNetBuild=$product_build \
     $test_runtime \
     $mono_tool \
     $generate_documentation_file \

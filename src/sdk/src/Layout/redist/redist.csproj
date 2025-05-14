@@ -79,7 +79,7 @@
 
   <!-- In .NET product build mode, explicitly build workloads in build pass 2.
        In the SDK official build, build workloads as part of win-x64. -->
-  <ItemGroup Condition="'$(OS)' == 'Windows_NT' and '$(SkipBuildingInstallers)' != 'true' and '$(DotNetBuildRepo)' != 'true' and '$(BuildWorkloads)' == 'true'">
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT' and '$(SkipBuildingInstallers)' != 'true' and '$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' == 'true'">
     <ProjectReference Include="$(RepoRoot)src\Workloads\VSInsertion\workloads.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Private="false" />
   </ItemGroup>
 

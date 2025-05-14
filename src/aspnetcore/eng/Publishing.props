@@ -8,7 +8,7 @@
          the nupkgs pushed. -->
     <EnableDefaultArtifacts Condition="'$(OS)' != 'Windows_NT' and
                                        '$(PostBuildSign)' != 'true' and
-                                       '$(DotNetBuildRepo)' != 'true'">false</EnableDefaultArtifacts>
+                                       '$(DotNetBuild)' != 'true'">false</EnableDefaultArtifacts>
 
     <!-- This avoids creating VS.*.symbols.nupkg packages that are identical to the original package. -->
     <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
