@@ -45,7 +45,7 @@ variables:
 resources:
   containers:
   - container: LinuxContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-fpm-amd64
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net8.0-fpm-amd64
 
 stages:
 - stage: build
