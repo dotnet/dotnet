@@ -323,7 +323,7 @@ jobs:
 
   steps:
   - ${{ if not(parameters.isBuiltFromVmr) }}:
-    # Synchronize new content in the VMR during PRs (we expect this to come
+    # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
       parameters:
         vmrPath: $(vmrPath)
