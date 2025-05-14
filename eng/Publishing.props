@@ -39,11 +39,6 @@
     <ArtifactVisibilityToPublish Include="Internal;External" />
   </ItemGroup>
 
-  <!-- Build task assembly paths -->
-  <PropertyGroup>
-    <MicrosoftDotNetUnifiedBuildTasksAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', 'Microsoft.DotNet.UnifiedBuild.Tasks', '$(Configuration)', 'Microsoft.DotNet.UnifiedBuild.Tasks.dll'))</MicrosoftDotNetUnifiedBuildTasksAssembly>
-  </PropertyGroup>
-
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
 
   <Target Name="DiscoverArtifacts">

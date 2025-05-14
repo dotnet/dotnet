@@ -22,13 +22,12 @@ using Microsoft.VisualStudio.Editor.Razor;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
-
 internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) : IRazorCodeActionProvider
 {
     private readonly IFileSystem _fileSystem = fileSystem;
 
-    public async Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(
+        RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         // Locate cursor
         var node = context.CodeDocument.GetSyntaxTree().Root.FindInnermostNode(context.StartAbsoluteIndex);
@@ -42,7 +41,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         // We also check for tag helper start tags here, because an invalid start tag with a valid tag helper
         // anywhere in it  would otherwise not match. We rely on the IsTagUnknown method below, to ensure we
         // only offer on actual potential component tags (because it checks for the compiler diagnostic)
-        var startTag = (IStartTagSyntaxNode?)node.FirstAncestorOrSelf<SyntaxNode>(n => n is IStartTagSyntaxNode);
+        var startTag = node.FirstAncestorOrSelf<BaseMarkupStartTagSyntax>();
         if (startTag is null)
         {
             return [];
@@ -79,7 +78,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         return [.. codeActions];
     }
 
-    private static bool IsApplicableTag(IStartTagSyntaxNode startTag)
+    private static bool IsApplicableTag(BaseMarkupStartTagSyntax startTag)
     {
         if (startTag.Name.Width == 0)
         {
@@ -90,7 +89,8 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         return true;
     }
 
-    private void AddCreateComponentFromTag(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container)
+    private void AddCreateComponentFromTag(
+        RazorCodeActionContext context, BaseMarkupStartTagSyntax startTag, List<RazorVSInternalCodeAction> container)
     {
         if (!context.SupportsFileCreation)
         {
@@ -127,7 +127,11 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         container.Add(codeAction);
     }
 
-    private static async Task AddComponentAccessFromTagAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container, CancellationToken cancellationToken)
+    private static async Task AddComponentAccessFromTagAsync(
+        RazorCodeActionContext context,
+        BaseMarkupStartTagSyntax startTag,
+        List<RazorVSInternalCodeAction> container,
+        CancellationToken cancellationToken)
     {
         var haveAddedNonQualifiedFix = false;
 
@@ -196,7 +200,8 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         }
     }
 
-    private static async Task<ImmutableArray<TagHelperPair>> FindMatchingTagHelpersAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<TagHelperPair>> FindMatchingTagHelpersAsync(
+        RazorCodeActionContext context, BaseMarkupStartTagSyntax startTag, CancellationToken cancellationToken)
     {
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
@@ -240,7 +245,12 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         return [.. matching.Values];
     }
 
-    private static bool SatisfiesRules(ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules, ReadOnlySpan<char> tagNameWithoutPrefix, ReadOnlySpan<char> parentTagNameWithoutPrefix, ImmutableArray<KeyValuePair<string, string>> tagAttributes, out bool caseInsensitiveMatch)
+    private static bool SatisfiesRules(
+        ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules,
+        ReadOnlySpan<char> tagNameWithoutPrefix,
+        ReadOnlySpan<char> parentTagNameWithoutPrefix,
+        ImmutableArray<KeyValuePair<string, string>> tagAttributes,
+        out bool caseInsensitiveMatch)
     {
         caseInsensitiveMatch = false;
 
@@ -277,7 +287,8 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         return true;
     }
 
-    private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, IStartTagSyntaxNode startTag, string newTagName)
+    private static WorkspaceEdit CreateRenameTagEdit(
+        RazorCodeActionContext context, BaseMarkupStartTagSyntax startTag, string newTagName)
     {
         using var textEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
@@ -306,7 +317,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         };
     }
 
-    private static bool IsTagUnknown(IStartTagSyntaxNode startTag, RazorCodeActionContext context)
+    private static bool IsTagUnknown(BaseMarkupStartTagSyntax startTag, RazorCodeActionContext context)
     {
         foreach (var diagnostic in context.CodeDocument.GetCSharpDocument().Diagnostics)
         {
