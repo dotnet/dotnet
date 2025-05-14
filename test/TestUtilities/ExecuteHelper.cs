@@ -40,7 +40,7 @@ public static class ExecuteHelper
 
         // The `dotnet test` execution context sets a number of dotnet related ENVs that cause issues when executing
         // dotnet commands.  Clear these to avoid side effects.
-        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key != "HOME").ToList())
+        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key != "HOME" && key != "PATH").ToList())
         {
             process.StartInfo.Environment.Remove(key);
         }
@@ -109,15 +109,15 @@ public static class ExecuteHelper
         return (process, output, error);
     }
 
-    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper)
+    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper, string additionalOutput = "")
     {
         (Process Process, string StdOut, string StdErr) result = ExecuteHelper.ExecuteProcess(fileName, args, outputHelper);
-        ValidateExitCode(result);
+        ValidateExitCode(result, additionalOutput: additionalOutput);
 
         return result.StdOut;
     }
 
-    public static void ValidateExitCode((Process Process, string StdOut, string StdErr) result, int expectedExitCode = 0)
+    public static void ValidateExitCode((Process Process, string StdOut, string StdErr) result, int expectedExitCode = 0, string additionalOutput = "")
     {
         if (result.Process.ExitCode != expectedExitCode)
         {
@@ -125,7 +125,9 @@ public static class ExecuteHelper
             string msg = $"Failed to execute {startInfo.FileName} {startInfo.Arguments}" +
                 $"{Environment.NewLine}Exit code: {result.Process.ExitCode}" +
                 $"{Environment.NewLine}{result.StdOut}" +
-                $"{Environment.NewLine}{result.StdErr}";
+                $"{Environment.NewLine}{result.StdErr}" +
+                (!string.IsNullOrWhiteSpace(additionalOutput) ? $"{Environment.NewLine}{additionalOutput}" : "");
+  
             throw new InvalidOperationException(msg);
         }
     }
