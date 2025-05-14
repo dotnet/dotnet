@@ -93,6 +93,7 @@ public class LicenseScanTests : TestBase
         "ms-rl", // https://opensource.org/license/ms-rl-html/
         "newton-king-cla", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/newton-king-cla.LICENSE
         "ngpl", // https://opensource.org/license/nethack-php/
+        "nist-software", // https://github.com/aboutcode-org/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/nist-software.LICENSE
         "object-form-exception-to-mit", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/object-form-exception-to-mit.LICENSE
         "ofl-1.1", // https://opensource.org/license/ofl-1-1/
         "osf-1990", // https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#HP_Variant
@@ -138,7 +139,7 @@ public class LicenseScanTests : TestBase
         Assert.NotNull(Config.LicenseScanPath);
 
         // Indicates how long until a timeout occurs for scanning a given file
-        const int FileScanTimeoutSeconds = 300;
+        const int FileScanTimeoutSeconds = 1800;
 
         string scancodeResultsPath = Path.Combine(Config.LogsDirectory, "scancode-results.json");
 

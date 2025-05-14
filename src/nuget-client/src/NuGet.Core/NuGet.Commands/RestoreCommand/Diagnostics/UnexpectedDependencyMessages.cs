@@ -328,7 +328,7 @@ namespace NuGet.Commands
             }
 
             // Convert framework to target graph name.
-            return infos.Select(e => e.FrameworkName.DotNetFrameworkName).ToArray();
+            return infos.Select(e => e.FrameworkName.ToString()).ToArray();
         }
 
     }

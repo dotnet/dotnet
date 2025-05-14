@@ -580,7 +580,7 @@ namespace NuGet.Commands.Test
         [Fact]
         public void GivenAProjectWithADependencyOnAPackageWithANullRangeVerifyWarningMessage()
         {
-            var tfi = GetTFI(NuGetFramework.Parse("net46"), new LibraryRange("x", null, LibraryDependencyTarget.Package));
+            var tfi = GetTFI(NuGetFramework.Parse("net9.0"), new LibraryRange("x", null, LibraryDependencyTarget.Package));
             var project = new PackageSpec(tfi)
             {
                 Name = "proj"
@@ -589,6 +589,8 @@ namespace NuGet.Commands.Test
             var log = UnexpectedDependencyMessages.GetProjectDependenciesMissingVersion(project).Single();
 
             log.Code.Should().Be(NuGetLogCode.NU1604);
+            log.TargetGraphs.Should().HaveCount(1);
+            log.TargetGraphs[0].Should().Be("net9.0");
             log.Message.Should().Be("Project dependency 'x' does not specify a version. Include a version for the dependency to ensure consistent restore results.");
         }
 
@@ -596,7 +598,7 @@ namespace NuGet.Commands.Test
         public void GivenAProjectWithADependencyOnAPackageWithNoLowerBoundVerifyWarningMessage()
         {
             var range = VersionRange.Parse("(, 2.0.0)");
-            var tfi = GetTFI(NuGetFramework.Parse("net46"), new LibraryRange("x", range, LibraryDependencyTarget.Package));
+            var tfi = GetTFI(NuGetFramework.Parse("net9.0"), new LibraryRange("x", range, LibraryDependencyTarget.Package));
             var project = new PackageSpec(tfi)
             {
                 Name = "proj"
@@ -605,6 +607,8 @@ namespace NuGet.Commands.Test
             var log = UnexpectedDependencyMessages.GetProjectDependenciesMissingLowerBounds(project).Single();
 
             log.Code.Should().Be(NuGetLogCode.NU1604);
+            log.TargetGraphs.Should().HaveCount(1);
+            log.TargetGraphs[0].Should().Be("net9.0");
             log.Message.Should().Be("Project dependency x (< 2.0.0) does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.");
         }
 

@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../Resources.resx">
     <body>
+      <trans-unit id="IRemoteJsonServiceParameterDescription">
+        <source>Methods in interfaces inheriting from IRemoteJsonService should not have parameters of type RazorPinnedSolutionInfoWrapper or DocumentId as they are not Json serializable.</source>
+        <target state="translated">Los métodos de las interfaces que heredan de IRemoteJsonService no deben tener parámetros de tipo RazorPinnedSolutionInfoWrapper o DocumentId, ya que no son serializables en JSON.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IRemoteJsonServiceParameterMessage">
+        <source>'{0}' parameter in '{1}.{2}' has a parameter of type '{3}' which is not allowed in a Json service</source>
+        <target state="translated">El parámetro "{0}" de "{1}.{2}" tiene un parámetro de tipo "{3}" que no se permite en un servicio JSON</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IRemoteJsonServiceParameterTitle">
+        <source>Invalid parameter type in IRemoteJsonService method</source>
+        <target state="translated">Tipo de parámetro no válido en el método IRemoteJsonService</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PooledArrayBuilderAsRefDescription">
         <source>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable.</source>
         <target state="translated">La instancia de PooledArrayBuilder&lt;T&gt;.AsRef() debe ser una variable "using".</target>

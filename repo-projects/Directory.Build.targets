@@ -35,10 +35,9 @@
     <RuntimeOS>$(NETCoreSdkRuntimeIdentifier.Substring(0, $(_platformIndex)))</RuntimeOS>
 
     <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
-    <BaseOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))-$(TargetArchitecture)</BaseOS>
+    <BaseRid>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))-$(TargetArchitecture)</BaseRid>
     <CommonArgs>$(CommonArgs) /p:PortableBuild=$(PortableBuild)</CommonArgs>
-    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:RuntimeOS=$(RuntimeOS)</CommonArgs>
-    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:BaseOS=$(BaseOS)</CommonArgs>
+    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:BaseRid=$(BaseRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
@@ -448,8 +447,23 @@
     </ItemGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReadRepoInfoFromSourceManifest" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="SetRepoOriginalSourceRevisionId" Condition="'$(IsUtilityProject)' != 'true'">
+    <ReadRepoInfoFromSourceManifest SourceManifest="$(SrcDir)source-manifest.json"
+                                    RepositoryName="$(RepositoryName)">
+      <Output TaskParameter="RepoInfo" ItemName="RepoInfo" />
+    </ReadRepoInfoFromSourceManifest>
+
+    <Error Condition="'%(RepoInfo.CommitSha)' == ''"
+           Text="Unable to find the commit SHA for the repository $(RepositoryName) in the source-manifest.json file." />
+
+    <PropertyGroup>
+      <CommonArgs>$(CommonArgs) /p:RepoOriginalSourceRevisionId=%(RepoInfo.CommitSha)</CommonArgs>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="SetBuildProperties"
-          DependsOnTargets="GetTransitiveRepositoryReferences">
+          DependsOnTargets="GetTransitiveRepositoryReferences;SetRepoOriginalSourceRevisionId">
     <PropertyGroup>
       <!-- Infer the projects runtime identifier as the vertical's RID when doing a vertical build
            and filter down RID lists to the target RID in such a scenario. This is necessary when the host (SDK) rid
@@ -502,7 +516,8 @@
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true">
+          IgnoreStandardErrorWarningFormat="true"
+          YieldDuringToolExecution="true">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
@@ -576,22 +591,6 @@
       <Output TaskParameter="KnownPackages" ItemName="ProducedPackage" />
       <Output TaskParameter="KnownBlobs" ItemName="ProducedAsset" />
     </GetKnownArtifactsFromAssetManifests>
-
-    <!-- Mark the artifacts so that they get binplaced. -->
-    <ItemGroup>
-      <ProducedPackage>
-        <ShippingFolder Condition="%(ProducedPackage.NonShipping) == 'true'">NonShipping</ShippingFolder>
-        <ShippingFolder Condition="%(ProducedPackage.NonShipping) != 'true'">Shipping</ShippingFolder>
-      </ProducedPackage>
-
-      <!--
-        When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages so no need to binplace.
-        In addition, don't binplace any packages or blobs with vertical visibility. These are only used for building other repos within this vertical
-        and shouldn't be staged for upload.
-      -->
-      <BinPlaceFile Include="@(ProducedPackage->'$(ArtifactsPackagesDir)%(ShippingFolder)/$(RepositoryName)/%(Identity).%(Version).nupkg')" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Visibility)' != 'Vertical'" />
-      <BinPlaceFile Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')" Condition="'%(Visibility)' != 'Vertical'"/>
-    </ItemGroup>
 
     <ItemGroup>
       <ProducedPackage ReferenceOnly="$([MSBuild]::ValueOrDefault('$(ReferenceOnlyRepoArtifacts)', 'false'))" />

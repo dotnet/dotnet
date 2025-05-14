@@ -10,7 +10,6 @@ NuGet.VisualStudio.Contracts.dll
 NuGet.VisualStudio.Implementation.dll
 NuGet.VisualStudio.Internal.Contracts.dll
 NuGet.VisualStudio.Interop.dll
-NuGet.VisualStudio.OnlineEnvironment.Client.dll
 NuGet.VisualStudio.dll
 
 # MS delay signed assemblies

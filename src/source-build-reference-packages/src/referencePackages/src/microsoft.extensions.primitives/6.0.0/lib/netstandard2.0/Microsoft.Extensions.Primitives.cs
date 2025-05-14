@@ -32,9 +32,7 @@ namespace Microsoft.Extensions.Primitives
     public partial class CancellationChangeToken : IChangeToken
     {
         public CancellationChangeToken(System.Threading.CancellationToken cancellationToken) { }
-
         public bool ActiveChangeCallbacks { get { throw null; } }
-
         public bool HasChanged { get { throw null; } }
 
         public System.IDisposable RegisterChangeCallback(System.Action<object> callback, object state) { throw null; }
@@ -43,18 +41,13 @@ namespace Microsoft.Extensions.Primitives
     public static partial class ChangeToken
     {
         public static System.IDisposable OnChange(System.Func<IChangeToken> changeTokenProducer, System.Action changeTokenConsumer) { throw null; }
-
         public static System.IDisposable OnChange<TState>(System.Func<IChangeToken> changeTokenProducer, System.Action<TState> changeTokenConsumer, TState state) { throw null; }
     }
-
     public partial class CompositeChangeToken : IChangeToken
     {
         public CompositeChangeToken(System.Collections.Generic.IReadOnlyList<IChangeToken> changeTokens) { }
-
         public bool ActiveChangeCallbacks { get { throw null; } }
-
         public System.Collections.Generic.IReadOnlyList<IChangeToken> ChangeTokens { get { throw null; } }
-
         public bool HasChanged { get { throw null; } }
 
         public System.IDisposable RegisterChangeCallback(System.Action<object> callback, object state) { throw null; }
@@ -64,7 +57,6 @@ namespace Microsoft.Extensions.Primitives
     {
         public static System.Text.StringBuilder Append(this System.Text.StringBuilder builder, StringSegment segment) { throw null; }
     }
-
     public partial interface IChangeToken
     {
         bool ActiveChangeCallbacks { get; }
@@ -80,108 +72,63 @@ namespace Microsoft.Extensions.Primitives
         private readonly int _dummyPrimitive;
         public static readonly StringSegment Empty;
         public StringSegment(string buffer, int offset, int length) { }
-
         public StringSegment(string buffer) { }
-
         public string Buffer { get { throw null; } }
-
         public bool HasValue { get { throw null; } }
 
         public char this[int index] { get { throw null; } }
 
         public int Length { get { throw null; } }
-
         public int Offset { get { throw null; } }
-
         public string Value { get { throw null; } }
 
         public readonly System.ReadOnlyMemory<char> AsMemory() { throw null; }
-
         public readonly System.ReadOnlySpan<char> AsSpan() { throw null; }
-
         public readonly System.ReadOnlySpan<char> AsSpan(int start, int length) { throw null; }
-
         public readonly System.ReadOnlySpan<char> AsSpan(int start) { throw null; }
-
         public static int Compare(StringSegment a, StringSegment b, System.StringComparison comparisonType) { throw null; }
-
         public readonly bool EndsWith(string text, System.StringComparison comparisonType) { throw null; }
-
         public static bool Equals(StringSegment a, StringSegment b, System.StringComparison comparisonType) { throw null; }
-
         public readonly bool Equals(StringSegment other, System.StringComparison comparisonType) { throw null; }
-
         public readonly bool Equals(StringSegment other) { throw null; }
-
         public override readonly bool Equals(object obj) { throw null; }
-
         public readonly bool Equals(string text, System.StringComparison comparisonType) { throw null; }
-
         public readonly bool Equals(string text) { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public readonly int IndexOf(char c, int start, int count) { throw null; }
-
         public readonly int IndexOf(char c, int start) { throw null; }
-
         public readonly int IndexOf(char c) { throw null; }
-
         public readonly int IndexOfAny(char[] anyOf, int startIndex, int count) { throw null; }
-
         public readonly int IndexOfAny(char[] anyOf, int startIndex) { throw null; }
-
         public readonly int IndexOfAny(char[] anyOf) { throw null; }
-
         public static bool IsNullOrEmpty(StringSegment value) { throw null; }
-
         public readonly int LastIndexOf(char value) { throw null; }
-
         public static bool operator ==(StringSegment left, StringSegment right) { throw null; }
-
         public static implicit operator System.ReadOnlyMemory<char>(StringSegment segment) { throw null; }
-
         public static implicit operator System.ReadOnlySpan<char>(StringSegment segment) { throw null; }
-
         public static implicit operator StringSegment(string value) { throw null; }
-
         public static bool operator !=(StringSegment left, StringSegment right) { throw null; }
-
         public readonly StringTokenizer Split(char[] chars) { throw null; }
-
         public readonly bool StartsWith(string text, System.StringComparison comparisonType) { throw null; }
-
         public readonly StringSegment Subsegment(int offset, int length) { throw null; }
-
         public readonly StringSegment Subsegment(int offset) { throw null; }
-
         public readonly string Substring(int offset, int length) { throw null; }
-
         public readonly string Substring(int offset) { throw null; }
-
         readonly bool System.IEquatable<string>.Equals(string other) { throw null; }
-
         public override readonly string ToString() { throw null; }
-
         public readonly StringSegment Trim() { throw null; }
-
         public readonly StringSegment TrimEnd() { throw null; }
-
         public readonly StringSegment TrimStart() { throw null; }
     }
 
     public partial class StringSegmentComparer : System.Collections.Generic.IComparer<StringSegment>, System.Collections.Generic.IEqualityComparer<StringSegment>
     {
         internal StringSegmentComparer() { }
-
         public static StringSegmentComparer Ordinal { get { throw null; } }
-
         public static StringSegmentComparer OrdinalIgnoreCase { get { throw null; } }
 
         public int Compare(StringSegment x, StringSegment y) { throw null; }
-
         public bool Equals(StringSegment x, StringSegment y) { throw null; }
-
         public int GetHashCode(StringSegment obj) { throw null; }
     }
 
@@ -190,29 +137,21 @@ namespace Microsoft.Extensions.Primitives
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public StringTokenizer(StringSegment value, char[] separators) { }
-
         public StringTokenizer(string value, char[] separators) { }
-
         public readonly Enumerator GetEnumerator() { throw null; }
-
         readonly System.Collections.Generic.IEnumerator<StringSegment> System.Collections.Generic.IEnumerable<StringSegment>.GetEnumerator() { throw null; }
-
         readonly System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-
         public partial struct Enumerator : System.Collections.Generic.IEnumerator<StringSegment>, System.Collections.IEnumerator, System.IDisposable
         {
             private object _dummy;
             private int _dummyPrimitive;
             public Enumerator(ref StringTokenizer tokenizer) { }
-
             public StringSegment Current { get { throw null; } }
 
             object System.Collections.IEnumerator.Current { get { throw null; } }
 
             public void Dispose() { }
-
             public bool MoveNext() { throw null; }
-
             public void Reset() { }
         }
     }
@@ -223,9 +162,7 @@ namespace Microsoft.Extensions.Primitives
         private readonly int _dummyPrimitive;
         public static readonly StringValues Empty;
         public StringValues(string value) { }
-
         public StringValues(string[] values) { }
-
         public int Count { get { throw null; } }
 
         public string this[int index] { get { throw null; } }
@@ -235,109 +172,61 @@ namespace Microsoft.Extensions.Primitives
         string System.Collections.Generic.IList<string>.this[int index] { get { throw null; } set { } }
 
         public static StringValues Concat(StringValues values1, StringValues values2) { throw null; }
-
         public static StringValues Concat(in StringValues values, string value) { throw null; }
-
         public static StringValues Concat(string value, in StringValues values) { throw null; }
-
         public static bool Equals(StringValues left, StringValues right) { throw null; }
-
         public static bool Equals(StringValues left, string right) { throw null; }
-
         public static bool Equals(StringValues left, string[] right) { throw null; }
-
         public readonly bool Equals(StringValues other) { throw null; }
-
         public override readonly bool Equals(object obj) { throw null; }
-
         public static bool Equals(string left, StringValues right) { throw null; }
-
         public readonly bool Equals(string other) { throw null; }
-
         public static bool Equals(string[] left, StringValues right) { throw null; }
-
         public readonly bool Equals(string[] other) { throw null; }
-
         public readonly Enumerator GetEnumerator() { throw null; }
-
         public override readonly int GetHashCode() { throw null; }
-
         public static bool IsNullOrEmpty(StringValues value) { throw null; }
-
         public static bool operator ==(StringValues left, StringValues right) { throw null; }
-
         public static bool operator ==(StringValues left, object right) { throw null; }
-
         public static bool operator ==(StringValues left, string right) { throw null; }
-
         public static bool operator ==(StringValues left, string[] right) { throw null; }
-
         public static bool operator ==(object left, StringValues right) { throw null; }
-
         public static bool operator ==(string left, StringValues right) { throw null; }
-
         public static bool operator ==(string[] left, StringValues right) { throw null; }
-
         public static implicit operator string(StringValues values) { throw null; }
-
         public static implicit operator string[](StringValues value) { throw null; }
-
         public static implicit operator StringValues(string value) { throw null; }
-
         public static implicit operator StringValues(string[] values) { throw null; }
-
         public static bool operator !=(StringValues left, StringValues right) { throw null; }
-
         public static bool operator !=(StringValues left, object right) { throw null; }
-
         public static bool operator !=(StringValues left, string right) { throw null; }
-
         public static bool operator !=(StringValues left, string[] right) { throw null; }
-
         public static bool operator !=(object left, StringValues right) { throw null; }
-
         public static bool operator !=(string left, StringValues right) { throw null; }
-
         public static bool operator !=(string[] left, StringValues right) { throw null; }
-
         readonly void System.Collections.Generic.ICollection<string>.Add(string item) { }
-
         readonly void System.Collections.Generic.ICollection<string>.Clear() { }
-
         readonly bool System.Collections.Generic.ICollection<string>.Contains(string item) { throw null; }
-
         readonly void System.Collections.Generic.ICollection<string>.CopyTo(string[] array, int arrayIndex) { }
-
         readonly bool System.Collections.Generic.ICollection<string>.Remove(string item) { throw null; }
-
         readonly System.Collections.Generic.IEnumerator<string> System.Collections.Generic.IEnumerable<string>.GetEnumerator() { throw null; }
-
         readonly int System.Collections.Generic.IList<string>.IndexOf(string item) { throw null; }
-
         readonly void System.Collections.Generic.IList<string>.Insert(int index, string item) { }
-
         readonly void System.Collections.Generic.IList<string>.RemoveAt(int index) { }
-
         readonly System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-
         public readonly string[] ToArray() { throw null; }
-
         public override readonly string ToString() { throw null; }
-
         public partial struct Enumerator : System.Collections.Generic.IEnumerator<string>, System.Collections.IEnumerator, System.IDisposable
         {
             private object _dummy;
             private int _dummyPrimitive;
             public Enumerator(ref StringValues values) { }
-
             public string Current { get { throw null; } }
 
             object System.Collections.IEnumerator.Current { get { throw null; } }
 
             public void Dispose() { }
-
             public bool MoveNext() { throw null; }
-
             void System.Collections.IEnumerator.Reset() { }
         }
     }

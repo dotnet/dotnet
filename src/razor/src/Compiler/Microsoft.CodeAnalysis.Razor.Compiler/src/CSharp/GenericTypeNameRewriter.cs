@@ -4,8 +4,11 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -13,27 +16,40 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal class GenericTypeNameRewriter : TypeNameRewriter
 {
-    private readonly Dictionary<string, string> _bindings;
+    private readonly Dictionary<string, ComponentTypeArgumentIntermediateNode> _bindings;
 
-    public GenericTypeNameRewriter(Dictionary<string, string> bindings)
+    public GenericTypeNameRewriter(Dictionary<string, ComponentTypeArgumentIntermediateNode> bindings)
     {
         _bindings = bindings;
     }
 
-    public override string Rewrite(string typeName)
+    public override string Rewrite(string typeName) => Rewrite(typeName, out _);
+
+    public override void RewriteComponentTypeName(ComponentIntermediateNode node)
     {
+        node.TypeName = Rewrite(node.TypeName, out var usedBindings);
+        node.OrderedTypeArguments = usedBindings;
+    }
+
+    private string Rewrite(string typeName, out ImmutableArray<ComponentTypeArgumentIntermediateNode> usedTypeArguments)
+    {
+        using var _ = ArrayBuilderPool<ComponentTypeArgumentIntermediateNode>.GetPooledObject(out var builder);
+
         var parsed = SyntaxFactory.ParseTypeName(typeName);
-        var rewritten = (TypeSyntax)new Visitor(_bindings).Visit(parsed);
+        var rewritten = (TypeSyntax)new Visitor(_bindings, builder).Visit(parsed);
+        usedTypeArguments = builder.ToImmutable();
         return rewritten.ToFullString();
     }
 
     private class Visitor : CSharpSyntaxRewriter
     {
-        private readonly Dictionary<string, string> _bindings;
+        private readonly Dictionary<string, ComponentTypeArgumentIntermediateNode> _bindings;
+        private readonly ImmutableArray<ComponentTypeArgumentIntermediateNode>.Builder _usedBindings;
 
-        public Visitor(Dictionary<string, string> bindings)
+        public Visitor(Dictionary<string, ComponentTypeArgumentIntermediateNode> bindings, ImmutableArray<ComponentTypeArgumentIntermediateNode>.Builder usedBindings)
         {
             _bindings = bindings;
+            _usedBindings = usedBindings;
         }
 
         public override SyntaxNode Visit(SyntaxNode node)
@@ -44,11 +60,13 @@ internal class GenericTypeNameRewriter : TypeNameRewriter
             {
                 if (_bindings.TryGetValue(identifier.Identifier.Text, out var binding))
                 {
+                    _usedBindings.Add(binding);
+
                     // If we don't have a valid replacement, use object. This will make the code at least reasonable
                     // compared to leaving the type parameter in place.
                     //
                     // We add our own diagnostics for missing/invalid type parameters anyway.
-                    var replacement = binding ?? "object";
+                    var replacement = binding?.Value?.Content ?? "object";
                     return identifier.Update(SyntaxFactory.Identifier(replacement).WithTriviaFrom(identifier.Identifier));
                 }
             }

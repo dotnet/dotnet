@@ -5,12 +5,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Test.Utilities;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.VisualBasic;
@@ -919,7 +922,7 @@ public static partial class Extensions
     }
 
     [Fact]
-    public void ExtensionIndex_TwoExtensions_SameSignatures_01()
+    public void ExtensionIndex_TwoExtensions_01()
     {
         var src = """
 public static class Extensions
@@ -1560,7 +1563,7 @@ public static class IntExt
     }
 
     [Fact]
-    public void ExtensionIndex_TwoExtensions_SameSignatures_02()
+    public void ExtensionIndex_TwoExtensions_02()
     {
         var src = """
 public static class Extensions
@@ -1585,12 +1588,12 @@ public static class Extensions
         var extension2 = tree.GetRoot().DescendantNodes().OfType<ExtensionDeclarationSyntax>().Last();
         var symbol2 = model.GetDeclaredSymbol(extension2);
         var sourceExtension2 = symbol2.GetSymbol<SourceNamedTypeSymbol>();
-        Assert.Equal("<>E__2`1", symbol2.MetadataName);
-        Assert.Equal("Extensions.<>E__2<T>", symbol2.ToTestDisplayString());
+        Assert.Equal("<>E__1`1", symbol2.MetadataName);
+        Assert.Equal("Extensions.<>E__1<T>", symbol2.ToTestDisplayString());
     }
 
     [Fact]
-    public void ExtensionIndex_TwoExtensions_SameSignatures_03()
+    public void ExtensionIndex_TwoExtensions_03()
     {
         var src = """
 extension<T>(T) { }
@@ -1618,12 +1621,12 @@ extension<T>(T) { }
         var extension2 = tree.GetRoot().DescendantNodes().OfType<ExtensionDeclarationSyntax>().Last();
         var symbol2 = model.GetDeclaredSymbol(extension2);
         var sourceExtension2 = symbol2.GetSymbol<SourceNamedTypeSymbol>();
-        Assert.Equal("<>E__2`1", symbol2.MetadataName);
-        Assert.Equal("<>E__2<T>", symbol2.ToTestDisplayString());
+        Assert.Equal("<>E__1`1", symbol2.MetadataName);
+        Assert.Equal("<>E__1<T>", symbol2.ToTestDisplayString());
     }
 
     [Fact]
-    public void ExtensionIndex_TwoExtensions_DifferentSignatures_01()
+    public void ExtensionIndex_TwoExtensions_05()
     {
         var src = """
 public static class Extensions
@@ -1652,7 +1655,7 @@ public static class Extensions
     }
 
     [Fact]
-    public void ExtensionIndex_TwoExtensions_DifferentSignatures_02()
+    public void ExtensionIndex_TwoExtensions_06()
     {
         var src = """
 public static class Extensions
@@ -1695,6 +1698,7 @@ public static class Extensions
     extension<T8>(T8 o8) { }
     extension<T9>(T9 o9) { }
     extension<T10>(T10 o10) { }
+    class C { }
     extension<T11>(T11 o11) { }
 }
 """;
@@ -23945,7 +23949,6 @@ static class Extensions
 """;
         var comp = CreateCompilation(src);
 
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Despite the fact that we do not complain about M6, should we report an error for M2 (the only difference is receiver ref-ness)?
         comp.VerifyDiagnostics(
             // (10,21): error CS0111: Type 'Extensions' already defines a member called 'M1' with the same parameter types
             //         public void M1() {}
@@ -24150,22 +24153,15 @@ static class Extensions
             // (46,28): error CS0111: Type 'Extensions' already defines a member called 'M5' with the same parameter types
             //         static public void M5() {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M5").WithArguments("M5", "Extensions").WithLocation(46, 28),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : It feels unfortunate that we generate conflicting signatures, the methods extend different types (refer to M6 and M7 cases)
-
             // (56,28): error CS0111: Type 'Extensions' already defines a member called 'M6' with the same parameter types
             //         static public void M6() {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M6").WithArguments("M6", "Extensions").WithLocation(56, 28),
             // (66,28): error CS0111: Type 'Extensions' already defines a member called 'M7' with the same parameter types
             //         static public long M7() => 0;
-            Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M7").WithArguments("M7", "Extensions").WithLocation(66, 28), // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Signatures in metadata are different in this case (return type is different), consider if we want to enable this specific case 
-
+            Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M7").WithArguments("M7", "Extensions").WithLocation(66, 28),
             // (76,28): error CS0111: Type 'Extensions' already defines a member called 'M8' with the same parameter types
             //         public static void M8() {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M8").WithArguments("M8", "Extensions").WithLocation(76, 28),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Are we comfortable with these four conflicts?
-
             // (86,28): error CS0111: Type 'Extensions' already defines a member called 'M9' with the same parameter types
             //         public static void M9(int x) {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M9").WithArguments("M9", "Extensions").WithLocation(86, 28),
@@ -24517,7 +24513,6 @@ static class Extensions
 """;
         var comp = CreateCompilation(src);
 
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Should we report an error for M2 (the only difference is receiver ref-ness)?
         comp.VerifyDiagnostics(
             // (5,21): error CS0111: Type 'Extensions' already defines a member called 'M1' with the same parameter types
             //         public void M1() {}
@@ -24646,7 +24641,6 @@ static class Extensions
 """;
         var comp = CreateCompilation(src);
 
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Should we report an error for M2 (the only difference is receiver ref-ness)?
         comp.VerifyDiagnostics(
             // (7,21): error CS0111: Type 'Extensions' already defines a member called 'M1' with the same parameter types
             //         public void M1() {}
@@ -24765,15 +24759,9 @@ static class Extensions
             // (26,28): error CS0663: 'Extensions' cannot define an overloaded method that differs only on parameter modifiers 'ref' and 'in'
             //         static public void M4(ref int x) {}
             Diagnostic(ErrorCode.ERR_OverloadRefKind, "M4").WithArguments("Extensions", "method", "ref", "in").WithLocation(26, 28),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : It feels unfortunate that we generate conflicting signatures
-
             // (34,27): error CS0111: Type 'Extensions' already defines a member called 'M7' with the same parameter types
             //         static public int M7() => 0;
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M7").WithArguments("M7", "Extensions").WithLocation(34, 27),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Are we comfortable with these two conflicts?
-
             // (44,28): error CS0111: Type 'Extensions' already defines a member called 'M9' with the same parameter types
             //         public static void M9(int x) {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M9").WithArguments("M9", "Extensions").WithLocation(44, 28),
@@ -24889,15 +24877,9 @@ static class Extensions
             // (28,28): error CS0663: 'Extensions' cannot define an overloaded method that differs only on parameter modifiers 'ref' and 'in'
             //         static public void M4(ref int x) {}
             Diagnostic(ErrorCode.ERR_OverloadRefKind, "M4").WithArguments("Extensions", "method", "ref", "in").WithLocation(28, 28),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : It feels unfortunate that we generate conflicting signatures
-
             // (35,27): error CS0111: Type 'Extensions' already defines a member called 'M7' with the same parameter types
             //         static public int M7() => 0;
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M7").WithArguments("M7", "Extensions").WithLocation(35, 27),
-
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Are we comfortable with these two conflicts?
-
             // (40,28): error CS0111: Type 'Extensions' already defines a member called 'M9' with the same parameter types
             //         public static void M9(int x) {}
             Diagnostic(ErrorCode.ERR_MemberAlreadyExists, "M9").WithArguments("M9", "Extensions").WithLocation(40, 28),
@@ -25045,12 +25027,9 @@ static class Extensions
         var comp = CreateCompilation(src);
 
         comp.VerifyDiagnostics(
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Are we comfortable reporting an error like this?
-
             // (8,23): error CS0082: Type 'Extensions' already reserves a member called 'get_P1' with the same parameter types
             //     public static int P1 {set{}}
             Diagnostic(ErrorCode.ERR_MemberReserved, "P1").WithArguments("get_P1", "Extensions").WithLocation(8, 23),
-
             // (11,23): error CS0082: Type 'Extensions' already reserves a member called 'get_P2' with the same parameter types
             //     public static int P2 {set{}}
             Diagnostic(ErrorCode.ERR_MemberReserved, "P2").WithArguments("get_P2", "Extensions").WithLocation(11, 23)
@@ -25077,12 +25056,9 @@ static class Extensions
         var comp = CreateCompilation(src);
 
         comp.VerifyDiagnostics(
-            // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Are we comfortable reporting an error like this?
-
             // (8,23): error CS0082: Type 'Extensions' already reserves a member called 'set_P1' with the same parameter types
             //     public static int P1 => 4;
             Diagnostic(ErrorCode.ERR_MemberReserved, "P1").WithArguments("set_P1", "Extensions").WithLocation(8, 23),
-
             // (11,23): error CS0082: Type 'Extensions' already reserves a member called 'set_P2' with the same parameter types
             //     public static int P2 => 4;
             Diagnostic(ErrorCode.ERR_MemberReserved, "P2").WithArguments("set_P2", "Extensions").WithLocation(11, 23)
@@ -26801,7 +26777,6 @@ interface I<out T> { }
 class C1 { }
 class C2 : C1 { }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm whether we want this betterness behavior (for methods and/or properties)
         var comp = CreateCompilation(src);
         comp.VerifyEmitDiagnostics();
 
@@ -26923,7 +26898,6 @@ static class E2
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm whether we want this betterness behavior (for methods and/or properties)
         var comp = CreateCompilation(src);
         comp.VerifyEmitDiagnostics();
 
@@ -26954,7 +26928,6 @@ static class E2
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm whether we want this betterness behavior for methods
         var comp = CreateCompilation(src);
         comp.VerifyEmitDiagnostics(
             // (1,5): error CS0121: The call is ambiguous between the following methods or properties: 'E1.extension(int).M<T>(T)' and 'E2.extension<T>(T).M(int)'
@@ -26986,7 +26959,6 @@ static class E2
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm whether we want this betterness behavior for methods when the receiver is a type
         var comp = CreateCompilation(src);
         CompileAndVerify(comp, expectedOutput: "ran ran2").VerifyDiagnostics();
 
@@ -28075,7 +28047,6 @@ static class E2
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm what betterness behavior we want for static properties
         var comp = CreateCompilation(source);
         CompileAndVerify(comp, expectedOutput: "42").VerifyDiagnostics();
 
@@ -28107,14 +28078,13 @@ static class E
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm what betterness behavior we want for properties
         var comp = CreateCompilation(src);
         CompileAndVerify(comp, expectedOutput: "42").VerifyDiagnostics();
 
         var tree = comp.SyntaxTrees.Single();
         var model = comp.GetSemanticModel(tree);
         var memberAccess = GetSyntax<MemberAccessExpressionSyntax>(tree, "i.P");
-        Assert.Equal("System.Int32 E.<>E__0.P { get; }", model.GetSymbolInfo(memberAccess).Symbol.ToTestDisplayString());
+        Assert.Equal("E.extension(I<string>).P", model.GetSymbolInfo(memberAccess).Symbol.ToDisplayString());
         Assert.Equal([], model.GetSymbolInfo(memberAccess).CandidateSymbols.ToTestDisplayStrings());
     }
 
@@ -28139,14 +28109,13 @@ static class E
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm what betterness behavior we want for properties
         var comp = CreateCompilation(src);
         CompileAndVerify(comp, expectedOutput: "42").VerifyDiagnostics();
 
         var tree = comp.SyntaxTrees.Single();
         var model = comp.GetSemanticModel(tree);
         var memberAccess = GetSyntax<MemberAccessExpressionSyntax>(tree, "i.P");
-        Assert.Equal("System.Int32 E.<>E__1.P { get; }", model.GetSymbolInfo(memberAccess).Symbol.ToTestDisplayString());
+        Assert.Equal("E.extension(I<string>).P", model.GetSymbolInfo(memberAccess).Symbol.ToDisplayString());
         Assert.Equal([], model.GetSymbolInfo(memberAccess).CandidateSymbols.ToTestDisplayStrings());
     }
 
@@ -28171,7 +28140,6 @@ static class E2
     }
 }
 """;
-        // Tracked by https://github.com/dotnet/roslyn/issues/76130 : confirm what betterness behavior we want for properties
         var comp = CreateCompilation(src);
         CompileAndVerify(comp, expectedOutput: "42").VerifyDiagnostics();
 
@@ -37321,5 +37289,238 @@ static class E
         var tree = comp.SyntaxTrees.Single();
         var model = comp.GetSemanticModel(tree);
         Assert.Equal(["(T, null)", "(T, T)"], PrintXmlNameSymbols(tree, model));
+    }
+
+    [Fact]
+    public void AnalyzerActions_01()
+    {
+        var src = """
+static class E
+{
+    extension<T>([Attr] T t)
+    {
+        [Attr2]
+        public void M() { }
+
+        [Attr3]
+        public int P => 0;
+    }
+}
+""";
+
+        var analyzer = new AnalyzerActions_01_Analyzer();
+        var comp = CreateCompilation(src);
+        comp.GetAnalyzerDiagnostics([analyzer], null).Verify();
+
+        AssertEx.SetEqual([
+            "Attr2 -> void E.<>E__0<T>.M()",
+            "M -> void E.<>E__0<T>.M()",
+            "Attr3 -> System.Int32 E.<>E__0<T>.P { get; }",
+            "P -> System.Int32 E.<>E__0<T>.P { get; }",
+            "T -> E.<>E__0<T>",
+            "Attr -> E.<>E__0<T>",
+            "extension -> E.<>E__0<T>"],
+            analyzer._results.ToArray());
+    }
+
+    private class AnalyzerActions_01_Analyzer : DiagnosticAnalyzer
+    {
+        public ConcurrentQueue<string> _results = new ConcurrentQueue<string>();
+
+        private static readonly DiagnosticDescriptor Descriptor =
+           new DiagnosticDescriptor("XY0000", "Test", "Test", "Test", DiagnosticSeverity.Warning, true, "Test", "Test");
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Descriptor];
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(handle, SyntaxKind.ExtensionDeclaration);
+            context.RegisterSyntaxNodeAction(handle, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeAction(handle, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(handle, SyntaxKind.PropertyDeclaration);
+
+            void handle(SyntaxNodeAnalysisContext context)
+            {
+                _results.Enqueue(print(context));
+                Assert.Same(context.Node.SyntaxTree, context.ContainingSymbol!.DeclaringSyntaxReferences.Single().SyntaxTree);
+            }
+
+            static string print(SyntaxNodeAnalysisContext context)
+            {
+                var syntaxString = context.Node switch
+                {
+                    ExtensionDeclarationSyntax => "extension",
+                    MethodDeclarationSyntax method => method.Identifier.ValueText,
+                    PropertyDeclarationSyntax property => property.Identifier.ValueText,
+                    _ => context.Node.ToString()
+                };
+
+                return $"{syntaxString} -> {context.ContainingSymbol.ToTestDisplayString()}";
+            }
+        }
+    }
+
+    [Fact]
+    public void AnalyzerActions_02()
+    {
+        var src = """
+static class E
+{
+    extension<T>(T t)
+    {
+        public void M(int i) { }
+        public int P => 0;
+    }
+    extension(__arglist) { }
+    extension(object o1, object o2) { }
+}
+""";
+
+        var analyzer = new AnalyzerActions_02_Analyzer();
+        var comp = CreateCompilation(src);
+        comp.GetAnalyzerDiagnostics([analyzer], null).Verify();
+
+        AssertEx.SetEqual([
+            "E",
+            "E.<>E__0<T>",
+            "System.Int32 E.<>E__0<T>.P { get; }",
+            "T t",
+            "E.<>E__1",
+            "E.<>E__2",
+            "System.Object o1",
+            "void E.<>E__0<T>.M(System.Int32 i)",
+            "System.Int32 i",
+            "System.Int32 E.<>E__0<T>.P.get"],
+            analyzer._results.ToArray());
+    }
+
+    private class AnalyzerActions_02_Analyzer : DiagnosticAnalyzer
+    {
+        public ConcurrentQueue<string> _results = new ConcurrentQueue<string>();
+
+        private static readonly DiagnosticDescriptor Descriptor =
+           new DiagnosticDescriptor("XY0000", "Test", "Test", "Test", DiagnosticSeverity.Warning, true, "Test", "Test");
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Descriptor];
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSymbolAction(handle, SymbolKind.NamedType);
+            context.RegisterSymbolAction(handle, SymbolKind.Parameter);
+            context.RegisterSymbolAction(handle, SymbolKind.TypeParameter);
+            context.RegisterSymbolAction(handle, SymbolKind.Method);
+            context.RegisterSymbolAction(handle, SymbolKind.Property);
+
+            void handle(SymbolAnalysisContext context)
+            {
+                _results.Enqueue(context.Symbol.ToTestDisplayString());
+            }
+        }
+    }
+
+    [Fact]
+    public void AnalyzerActions_03()
+    {
+        var src = """
+static class E
+{
+    extension<T>(T t)
+    {
+        public void M() { }
+        public int P { get { return 0; } }
+    }
+}
+""";
+
+        var analyzer = new AnalyzerActions_03_Analyzer();
+        var comp = CreateCompilation(src);
+        comp.GetAnalyzerDiagnostics([analyzer], null).Verify();
+
+        AssertEx.SetEqual([
+            "public void M() { } -> void E.<>E__0<T>.M()",
+            "get { return 0; } -> System.Int32 E.<>E__0<T>.P.get"],
+            analyzer._results.ToArray());
+    }
+
+    private class AnalyzerActions_03_Analyzer : DiagnosticAnalyzer
+    {
+        public ConcurrentQueue<string> _results = new ConcurrentQueue<string>();
+
+        private static readonly DiagnosticDescriptor Descriptor =
+           new DiagnosticDescriptor("XY0000", "Test", "Test", "Test", DiagnosticSeverity.Warning, true, "Test", "Test");
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Descriptor];
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterOperationAction(handle, OperationKind.MethodBody);
+
+            void handle(OperationAnalysisContext context)
+            {
+                _results.Enqueue($"{context.Operation.Syntax.ToString()} -> {context.ContainingSymbol.ToTestDisplayString()}");
+            }
+        }
+    }
+
+    [Fact]
+    public void AnalyzerActions_04()
+    {
+        var src = """
+static class E
+{
+    extension<T>(T t)
+    {
+        public void M(int i) { }
+        public int P { get { return 0; } }
+    }
+}
+""";
+
+        var analyzer = new AnalyzerActions_04_Analyzer();
+        var comp = CreateCompilation(src);
+        comp.GetAnalyzerDiagnostics([analyzer], null).Verify();
+
+        AssertEx.SetEqual([
+            "Start: E",
+            "Start: E.<>E__0<T>",
+            "Start: void E.<>E__0<T>.M(System.Int32 i)",
+            "Start: System.Int32 E.<>E__0<T>.P { get; }",
+            "Start: System.Int32 E.<>E__0<T>.P.get",
+            "End: System.Int32 E.<>E__0<T>.P { get; }",
+            "End: System.Int32 E.<>E__0<T>.P.get",
+            "End: void E.<>E__0<T>.M(System.Int32 i)",
+            "End: E.<>E__0<T>",
+            "End: E"],
+            analyzer._results.ToArray());
+    }
+
+    private class AnalyzerActions_04_Analyzer : DiagnosticAnalyzer
+    {
+        public ConcurrentQueue<string> _results = new ConcurrentQueue<string>();
+
+        private static readonly DiagnosticDescriptor Descriptor =
+           new DiagnosticDescriptor("XY0000", "Test", "Test", "Test", DiagnosticSeverity.Warning, true, "Test", "Test");
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Descriptor];
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSymbolStartAction(handleStart, SymbolKind.NamedType);
+            context.RegisterSymbolStartAction(handleStart, SymbolKind.Method);
+            context.RegisterSymbolStartAction(handleStart, SymbolKind.Property);
+            context.RegisterSymbolStartAction(handleStart, SymbolKind.Parameter);
+            context.RegisterSymbolStartAction(handleStart, SymbolKind.TypeParameter);
+
+            void handleStart(SymbolStartAnalysisContext context)
+            {
+                _results.Enqueue($"Start: {context.Symbol.ToTestDisplayString()}");
+                context.RegisterSymbolEndAction(handleEnd);
+            }
+
+            void handleEnd(SymbolAnalysisContext context)
+            {
+                _results.Enqueue($"End: {context.Symbol.ToTestDisplayString()}");
+            }
+        }
     }
 }
