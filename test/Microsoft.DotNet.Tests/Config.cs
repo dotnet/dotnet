@@ -1,0 +1,16 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.IO;
+using System.Runtime.Versioning;
+
+namespace Microsoft.DotNet.Tests;
+
+internal static class Config
+{
+    const string ConfigSwitchPrefix = "Microsoft.DotNet.Tests.";
+
+    public static string RepoRoot => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(RepoRoot))! ?? throw new InvalidOperationException("RepoRoot must be specified");
+}
