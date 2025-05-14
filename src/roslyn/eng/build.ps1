@@ -264,7 +264,7 @@ function BuildSolution() {
   $roslynUseHardLinks = if ($ci) { "/p:ROSLYNUSEHARDLINKS=true" } else { "" }
 
   try {
-    # TODO: Remove DotNetBuildRepo property when fsharp is on Arcade 10
+    # TODO: Remove DotNetBuildRepo property when roslyn is on Arcade 10
     MSBuild $toolsetBuildProj `
       $bl `
       /p:Configuration=$configuration `

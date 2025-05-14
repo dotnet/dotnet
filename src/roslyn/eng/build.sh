@@ -292,7 +292,7 @@ function BuildSolution {
   # /p:TreatWarningsAsErrors=true so that compiler reported warnings, other than IDE0055 are treated as errors. 
   # Warnings reported from other msbuild tasks are not treated as errors for now.
 
-  # TODO: Remove DotNetBuildRepo property when fsharp is on Arcade 10
+  # TODO: Remove DotNetBuildRepo property when roslyn is on Arcade 10
   MSBuild $toolset_build_proj \
     $bl \
     /p:Configuration=$configuration \
