@@ -46,8 +46,7 @@
   <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->
   <Import Project="$(RepositoryEngineeringDir)Versions.props" Condition="'$(SkipArcadeSdkImport)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
-  <!-- For source only builds, override the version props with previously built artifacts.
-       If a version should be pinned, declare it after this import. -->
+  <!-- For source only builds, override the version props with previously built artifacts. -->
   <Import Project="$(PreviouslySourceBuiltPackageVersionsPropsFile)" Condition="'$(DotNetBuildSourceOnly)' == 'true' and Exists('$(PreviouslySourceBuiltPackageVersionsPropsFile)')" />
 
   <PropertyGroup>
