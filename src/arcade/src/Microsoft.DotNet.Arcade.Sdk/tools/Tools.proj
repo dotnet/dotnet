@@ -57,7 +57,7 @@
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="$(MicrosoftDotNetBuildTasksVisualStudioVersion)" Condition="'$(UsingToolVSSDK)' == 'true'" IsImplicitlyDefined="true" />
   </ItemGroup>
 
-  <!-- Unlike the items above, we should restore M.D.B.T.F in source build scenarios since it's used in the inner build.
+  <!-- Unlike the items above, we should restore M.D.B.T.F in source build scenarios.
       Only reference this if publishing is enabled as that is the only scenario where the targets file which this package
       provides is being imported (from Publish.proj). -->
   <ItemGroup Condition="'$(RestoreBuildTaskFeed)' == 'true'">

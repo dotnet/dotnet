@@ -33,7 +33,7 @@
     <!-- runtime -->
     <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>10.0.0-preview.5.25260.104</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
     <MicrosoftNETCoreAppRefVersion>10.0.0-preview.5.25260.104</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>10.0.0-preview.5.25260.104</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftNETCorePlatformsVersion>10.0.0-preview.5.25260.104</MicrosoftNETCorePlatformsVersion>
     <MicrosoftWin32RegistryAccessControlVersion>10.0.0-preview.5.25260.104</MicrosoftWin32RegistryAccessControlVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <MicrosoftWin32SystemEventsVersion>10.0.0-preview.5.25260.104</MicrosoftWin32SystemEventsVersion>
@@ -67,7 +67,6 @@
     <SystemSpeechVersion>10.0.0-preview.5.25260.104</SystemSpeechVersion>
     <SystemTextEncodingCodePagesVersion>10.0.0-preview.5.25260.104</SystemTextEncodingCodePagesVersion>
     <SystemThreadingAccessControlVersion>10.0.0-preview.5.25260.104</SystemThreadingAccessControlVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25260.104</VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
     <!-- winforms -->
