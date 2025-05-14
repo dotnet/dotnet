@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace Microsoft.DotNet.UnifiedBuild.Tests;
+namespace TestUtilities;
 
-internal static class ExecuteHelper
+public static class ExecuteHelper
 {
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
         string fileName,
