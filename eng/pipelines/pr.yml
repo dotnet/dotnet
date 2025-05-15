@@ -1,4 +1,4 @@
-# This yml is used by these pipelines and triggers:
+# This yml is used by these pipelines:
 # - dotnet-unified-build (public)
 # - dotnet-unified-build-full (public)
 
