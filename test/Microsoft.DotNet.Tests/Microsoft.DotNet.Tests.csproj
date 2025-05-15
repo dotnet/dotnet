@@ -36,8 +36,8 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).PortableRid">
         <Value>$(PortableRid)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).RepoRoot">
-        <Value>$(RepoRoot)</Value>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).BinariesReportFile">
+        <Value>$(BinariesReportFile)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

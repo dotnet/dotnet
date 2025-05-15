@@ -16,7 +16,6 @@ namespace Microsoft.DotNet.Tests
     public class BinaryScanTest
     {
         private ITestOutputHelper OutputHelper { get; }
-        private static readonly string DetectBinariesScriptPath = Path.Combine(Config.RepoRoot, "eng", "detect-binaries.sh");
         public static bool IncludeBinaryScanTest => !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         public BinaryScanTest(ITestOutputHelper outputHelper)
@@ -27,13 +26,17 @@ namespace Microsoft.DotNet.Tests
         [ConditionalFact(typeof(BinaryScanTest), nameof(IncludeBinaryScanTest))]
         public void ScanForBinaries()
         {
-            ExecuteHelper.ExecuteProcessValidateExitCode(
-                "/bin/bash",
-                $"-c \"{DetectBinariesScriptPath}\"",
-                OutputHelper,
-                "See https://github.com/dotnet/dotnet/blob/main/src/arcade/Documentation/UnifiedBuild/VMR-Permissible-Sources.md " +
-                "for information on how to resolve these failures."
-            );
+            Assert.True(
+                File.Exists(Config.BinariesReportFile),
+                "The binaries report file does not exist. Binary detection may have failed with build errors.");
+
+            string detectedBinaries = File.ReadAllText(Config.BinariesReportFile);
+
+            Assert.True(
+                string.IsNullOrWhiteSpace(detectedBinaries),
+                "The following binaries were detected:\n" + detectedBinaries +
+                "\nSee https://github.com/dotnet/dotnet/blob/main/src/arcade/Documentation/UnifiedBuild/VMR-Permissible-Sources.md " +
+                "for information on how to resolve these failures.");
         }
     }
 }
