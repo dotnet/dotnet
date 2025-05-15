@@ -6,11 +6,4 @@
     <VSTestResultsDirectory>$(ArtifactsTestResultsDir)</VSTestResultsDirectory>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <MicrosoftBuildFrameworkVersion>17.12.36</MicrosoftBuildFrameworkVersion>
-    <MicrosoftBuildTasksCoreVersion>17.12.36</MicrosoftBuildTasksCoreVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>17.12.36</MicrosoftBuildUtilitiesCoreVersion>
-    <MicrosoftBuildVersion>17.12.36</MicrosoftBuildVersion>
-  </PropertyGroup>
-
 </Project>
