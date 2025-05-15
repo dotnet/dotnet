@@ -98,7 +98,6 @@ properties="$properties /p:DotNetBuildRepo=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
 
 properties="$properties /p:Configuration=$configuration"
-properties="$properties /p:DotNetBuildRepo=true"
 properties="$properties /p:RepoRoot=$repo_root"
 
 "$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/log/${configuration}/Build.binlog" $properties $args

@@ -40,6 +40,7 @@
   <PropertyGroup>
     <!-- Don't restore the below nuget packages, repo tools and additional global.json runtimes when building source-only. -->
     <_ImportOrUseTooling Condition="'$(_ImportOrUseTooling)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</_ImportOrUseTooling>
+    <RestoreBuildTaskFeed>$(Publish)</RestoreBuildTaskFeed>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
@@ -56,8 +57,10 @@
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="$(MicrosoftDotNetBuildTasksVisualStudioVersion)" Condition="'$(UsingToolVSSDK)' == 'true'" IsImplicitlyDefined="true" />
   </ItemGroup>
 
-  <!-- Unlike the items above, we should restore M.D.B.T.F in source build scenarios since it's used in the inner build. -->
-  <ItemGroup>
+  <!-- Unlike the items above, we should restore M.D.B.T.F in source build scenarios.
+      Only reference this if publishing is enabled as that is the only scenario where the targets file which this package
+      provides is being imported (from Publish.proj). -->
+  <ItemGroup Condition="'$(RestoreBuildTaskFeed)' == 'true'">
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
