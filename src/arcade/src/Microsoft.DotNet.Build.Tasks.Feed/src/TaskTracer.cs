@@ -25,7 +25,7 @@ sealed internal class TaskTracer : Microsoft.SymbolStore.ITracer
 
     public void WriteLine(string format, params object[] arguments)
     {
-        _log.LogMessage(MessageImportance.High, format, arguments);
+        _log.LogMessage(MessageImportance.Low, format, arguments);
     }
 
     public void Information(string message)
