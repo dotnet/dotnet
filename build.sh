@@ -213,6 +213,10 @@ while [[ $# > 0 ]]; do
   shift
 done
 
+if [ ! -d "$packagesPreviouslySourceBuiltDir" ] && [ ! -d "$CUSTOM_PACKAGES_DIR" ]; then
+  "$scriptroot/prep-source-build.sh"
+fi
+
 if [[ "$ci" == true ]]; then
   if [[ "$exclude_ci_binary_log" == false ]]; then
     binary_log=true
