@@ -79,7 +79,7 @@ stages:
     finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     postJoinStages:
-    - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
