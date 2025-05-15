@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <!-- TrackPrebuiltUsage is enabled by default when building source-only. -->
-    <TrackPrebuiltUsage Condition="'$(TrackPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">true</TrackPrebuiltUsage>
+    <TrackPrebuiltUsage Condition="'$(TrackPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuild)' == 'true'">true</TrackPrebuiltUsage>
   </PropertyGroup>
 
 </Project>
