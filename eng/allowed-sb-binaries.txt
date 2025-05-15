@@ -53,6 +53,7 @@ src/runtime/src/libraries/System.Diagnostics.EventLog/src/Messages/EventLogMessa
 src/runtime/src/libraries/System.Speech/src/**/*.upsmap # https://github.com/dotnet/runtime/issues/81692
 src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp # https://github.com/dotnet/runtime/issues/81693
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
+src/runtime/src/coreclr/scripts/__pycache__/ # build artifacts
 
 # source-build-externals
 src/source-build-externals/src/repos/src/humanizer/src/Humanizer.Tests**/*.pfx
@@ -61,3 +62,4 @@ src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-ext
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer
+src/source-build-externals/src/repos/src/*/artifacts/ # build artifacts
