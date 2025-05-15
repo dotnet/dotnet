@@ -19,6 +19,11 @@ parameters:
   # run everything
   - full
 
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
+
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -77,6 +82,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: ${{ format('{0}_Ubuntu_BuildTests', variables.ubuntuName) }}
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         pool: ${{ parameters.pool_Linux }}
         container:
           name: ${{ variables.ubuntuContainerName }}
@@ -89,6 +95,7 @@ stages:
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Windows_BuildTests
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -108,6 +115,7 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: Windows
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       sign: ${{ variables.signEnabled }}
       signDac: ${{ variables.signDacEnabled }}
       pool: ${{ parameters.pool_Windows }}
@@ -118,6 +126,7 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: Windows
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       sign: ${{ variables.signEnabled }}
       signDac: ${{ variables.signDacEnabled }}
       pool: ${{ parameters.pool_Windows }}
@@ -127,6 +136,7 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: Android_Shortstack
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       sign: ${{ variables.signEnabled }}
       pool: ${{ parameters.pool_Linux_Shortstack }}
       container:
@@ -138,6 +148,7 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: Browser_Shortstack
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       sign: ${{ variables.signEnabled }}
       pool: ${{ parameters.pool_Linux_Shortstack }}
       container:
@@ -150,6 +161,7 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: iOSSimulator_Shortstack
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       sign: ${{ variables.signEnabled }}
       pool: ${{ parameters.pool_Mac }}
       targetOS: iossimulator
@@ -161,6 +173,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Android_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -172,6 +185,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Android_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -183,6 +197,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Android_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -194,6 +209,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Browser_Multithreaded_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -207,6 +223,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: LinuxBionic_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -218,6 +235,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: LinuxBionic_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -229,6 +247,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: LinuxBionic_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -240,6 +259,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: iOS_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: ios
@@ -248,6 +268,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: iOSSimulator_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: iossimulator
@@ -256,6 +277,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: MacCatalyst_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: maccatalyst
@@ -264,6 +286,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: MacCatalyst_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: maccatalyst
@@ -272,6 +295,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: tvOS_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: tvos
@@ -280,6 +304,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: tvOSSimulator_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: tvossimulator
@@ -288,6 +313,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: tvOSSimulator_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: tvossimulator
@@ -296,6 +322,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Wasi_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -308,6 +335,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: OSX
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: osx
@@ -316,6 +344,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: OSX_Shortstack_Mono_LLVMAOT
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         useMonoRuntime: true
@@ -326,6 +355,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -338,6 +368,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Pgo
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: false
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -351,6 +382,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -365,6 +397,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -377,6 +410,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -389,6 +423,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Pgo
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: false
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -402,6 +437,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Alpine
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -415,6 +451,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Alpine
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -428,6 +465,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Alpine
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux }}
         container:
@@ -441,6 +479,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Linux_Shortstack }}
         container:
@@ -455,6 +494,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: OSX
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Mac }}
         targetOS: osx
@@ -463,6 +503,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
@@ -473,6 +514,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows_Pgo
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: false
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -482,6 +524,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows_Pgo
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: false
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -492,6 +535,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows_Pgo
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: false
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -504,6 +548,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
@@ -525,6 +570,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -539,6 +585,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows_Workloads
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -571,6 +618,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -585,6 +633,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -599,6 +648,7 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows

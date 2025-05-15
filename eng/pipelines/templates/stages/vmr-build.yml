@@ -19,6 +19,11 @@ parameters:
   # run everything
   - full
 
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
+
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -69,14 +74,16 @@ stages:
         parameters:
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           scope: ${{ parameters.scope }}
     finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
+    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     postJoinStages:
     - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
-        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+        - template: /eng/common/templates-official/job/publish-build-assets.yml
           parameters:
             publishUsingPipelines: true
             publishAssetsImmediately: true
@@ -100,3 +107,4 @@ stages:
       # are available from the subset of jobs that get build in PRs compared to the full build. Instead, we run
       # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.
       useMicrosoftBuildAssetsForTests: false
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
