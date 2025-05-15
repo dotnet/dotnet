@@ -310,7 +310,7 @@
       <ShippingPackagesLocalStorageDir Condition="'$(ShippingPackagesLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)packages/shipping</ShippingPackagesLocalStorageDir>
 
       <!-- Directory where nonshipping packages are copied during publishing. -->
-      <NonShippingPackagesLocalStorageDir Condition="'$(NonShippingPackagesLocalStorageDir)' == ''">$(SourceBuiltShippingPackagesDir)</NonShippingPackagesLocalStorageDir>
+      <NonShippingPackagesLocalStorageDir Condition="'$(NonShippingPackagesLocalStorageDir)' == ''">$(SourceBuiltNonShippingPackagesDir)</NonShippingPackagesLocalStorageDir>
       <NonShippingPackagesLocalStorageDir  Condition="'$(NonShippingPackagesLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)packages/nonshipping</NonShippingPackagesLocalStorageDir>
 
       <!-- Directory where asset manifests are copied during publishing. -->
