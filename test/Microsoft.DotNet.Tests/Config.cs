@@ -10,7 +10,7 @@ namespace Microsoft.DotNet.Tests;
 
 internal static class Config
 {
-    const string ConfigSwitchPrefix = "Microsoft.DotNet.Tests.";
+    private const string ConfigSwitchPrefix = "Microsoft.DotNet.Tests.";
 
     public static string RepoRoot => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(RepoRoot))! ?? throw new InvalidOperationException("RepoRoot must be specified");
 }
