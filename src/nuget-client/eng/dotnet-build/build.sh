@@ -94,7 +94,7 @@ ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
 export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
-properties="$properties /p:DotNetBuildRepo=$product_build"
+properties="$properties /p:DotNetBuild=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
 
 properties="$properties /p:Configuration=$configuration"
