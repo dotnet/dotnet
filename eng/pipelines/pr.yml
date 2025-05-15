@@ -1,3 +1,7 @@
+# This yml is used by these pipelines and triggers:
+# - dotnet-unified-build (public)
+# - dotnet-unified-build-full (public)
+
 # Only run daily on schedule to save resources
 trigger: none
 

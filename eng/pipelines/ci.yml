@@ -1,3 +1,6 @@
+# This yml is used by these pipelines and triggers:
+# - dotnet-unified-build (internal)
+
 trigger:
   batch: true
   branches:
