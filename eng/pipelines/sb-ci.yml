@@ -1,19 +1,16 @@
-# This is the main build definition (PR+CI) for dotnet/dotnet
+# This yml is used by these pipelines and triggers:
+#
+# - dotnet-source-build (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1219
+#   - CI: release/* and internal/release/* only, every batched commit, full build
 
 trigger:
   batch: true
   branches:
     include:
-    - main
-    - release/*
-    - internal/release/*
-
-pr:
-  branches:
-    include:
-    - main
-    - release/*
-    - internal/release/*
+      - main
+      - release/*
+      - internal/release/*
 
 resources:
   repositories:
