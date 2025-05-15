@@ -15,6 +15,11 @@ parameters:
 - name: legs
   type: object
 
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -83,6 +88,7 @@ stages:
           targetRid: ${{ variables.alpineX64Rid }}
         
         targetArchitecture: ${{ leg.targetArchitecture }}
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
         ${{ else }}:
@@ -150,6 +156,7 @@ stages:
             targetRid: ${{ variables.alpineX64Rid }}
 
           targetArchitecture: ${{ leg.targetArchitecture }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           ${{ if eq(leg.targetArchitecture, 'arm64') }}:
             pool: ${{ parameters.pool_LinuxArm64 }}
           ${{ else }}:
