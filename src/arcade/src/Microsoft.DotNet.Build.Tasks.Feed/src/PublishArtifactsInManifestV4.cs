@@ -190,15 +190,15 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 await Task.WhenAll(new Task[]
                 {
-                    HandlePackagePublishingAsync(buildAssets, clientThrottle),
-                    HandleBlobPublishingAsync(buildAssets, clientThrottle),
-                    HandleSymbolPublishingAsync(
+                    Task.Run(async () => await HandlePackagePublishingAsync(buildAssets, clientThrottle)),
+                    Task.Run(async () => await HandleBlobPublishingAsync(buildAssets, clientThrottle)),
+                    Task.Run(async () => await HandleSymbolPublishingAsync(
                         buildInformation,
                         buildAssets,
                         PdbArtifactsBasePath,
                         SymbolPublishingExclusionsFile,
                         PublishSpecialClrFiles,
-                        clientThrottle)
+                        clientThrottle))
                 });
 
                 await PersistPendingAssetLocationAsync(client);
