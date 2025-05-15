@@ -54,6 +54,8 @@ src/runtime/src/libraries/System.Speech/src/**/*.upsmap # https://github.com/dot
 src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp # https://github.com/dotnet/runtime/issues/81693
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 src/runtime/src/coreclr/scripts/__pycache__/ # build artifacts
+src/runtime/src/mono/browser/runtime/node_modules/ # build artifacts
+src/runtime/src/mono/browser/emsdk/ # build artifacts
 
 # source-build-externals
 src/source-build-externals/src/repos/src/humanizer/src/Humanizer.Tests**/*.pfx
