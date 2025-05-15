@@ -1,6 +1,9 @@
 # This yml is used by these pipelines:
 # - dotnet-unified-build (public)
+#   https://dev.azure.com/dnceng-public/public/_build?definitionId=278
 # - dotnet-unified-build-full (public)
+#   https://dev.azure.com/dnceng-public/public/_build?definitionId=303
+#   Comment trigger only
 
 # Only run daily on schedule to save resources
 trigger: none
