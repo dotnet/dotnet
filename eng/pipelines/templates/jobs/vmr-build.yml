@@ -311,6 +311,7 @@ jobs:
       artifact: $(failedJobArtifactName)
       displayName: Publish Artifacts (On Failure)
       condition: failed()
+      continueOnError: true
       sbomEnabled: true
 
     # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
