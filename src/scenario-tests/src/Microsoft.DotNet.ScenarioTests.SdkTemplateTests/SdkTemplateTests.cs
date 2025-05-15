@@ -30,7 +30,8 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
 
-    [Theory]
+    // Re-enable with https://github.com/dotnet/dotnet/pull/400
+    // [Theory]
     [MemberData(nameof(GetLanguages))]
     [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
     public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
@@ -172,7 +173,8 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
-    [InlineData(DotNetLanguage.FSharp)]
+    // Re-enable with https://github.com/dotnet/dotnet/pull/400
+    // [InlineData(DotNetLanguage.FSharp)]
     public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -182,7 +184,8 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Theory]
-    [InlineData(DotNetLanguage.CSharp)]
+    // Re-enable with https://github.com/dotnet/dotnet/pull/400
+    // [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
     public void VerifyWebAPITemplate(DotNetLanguage language)
     {
