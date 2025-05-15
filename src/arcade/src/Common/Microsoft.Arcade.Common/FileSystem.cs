@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.IO;
 
 #nullable enable
@@ -25,7 +26,11 @@ namespace Microsoft.Arcade.Common
 
         public string? GetExtension(string? path) => Path.GetExtension(path);
 
+        public string GetFullPath(string path) => Path.GetFullPath(path);
+
         public string PathCombine(string path1, string path2) => Path.Combine(path1, path2);
+
+        public string PathCombine(string path1, string path2, string path3) => Path.Combine(path1, path2, path3);
 
         public void WriteToFile(string path, string content)
         {
@@ -34,10 +39,19 @@ namespace Microsoft.Arcade.Common
             File.WriteAllText(path, content);
         }
 
-        public void CopyFile(string sourceFileName, string destFileName, bool overwrite = false) => File.Copy(sourceFileName, destFileName, overwrite);
+        public virtual void CopyFile(string sourceFileName, string destFileName, bool overwrite = false) => File.Copy(sourceFileName, destFileName, overwrite);
 
         public Stream GetFileStream(string path, FileMode mode, FileAccess access) => new FileStream(path, mode, access);
 
         public FileAttributes GetAttributes(string path) => File.GetAttributes(path);
+
+        /// <summary>
+        /// Intentionally NYI since the backing API is not supported on framework and core.
+        /// We use this in the PushToBuildStorage task under a limited set of circumstances.
+        /// </summary>
+        /// <param name="basePath">Base path</param>
+        /// <param name="targetPath">Target path that is relative to base path.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual string GetRelativePath(string basePath, string targetPath) => throw new NotImplementedException("Not supported in default FileSystem implementation");
     }
 }
