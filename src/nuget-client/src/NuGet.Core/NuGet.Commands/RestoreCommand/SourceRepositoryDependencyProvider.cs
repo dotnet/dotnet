@@ -664,7 +664,7 @@ namespace NuGet.Commands
         {
             if (!_ignoreWarning)
             {
-                await logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1801, e.Message, id));
+                await logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1801, e.Message));
             }
         }
 
@@ -681,7 +681,7 @@ namespace NuGet.Commands
                 }
                 else
                 {
-                    await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1301, ExceptionUtilities.DisplayMessage(e), id));
+                    await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1301, ExceptionUtilities.DisplayMessage(e)));
                 }
             }
 

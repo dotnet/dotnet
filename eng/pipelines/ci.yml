@@ -29,6 +29,13 @@
 #   - PR: lite build
 #   - CI: release/*, internal/release/* and main only, every batched commit, full build
 
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+
 parameters:
 - name: desiredSigning
   displayName: 'Sign?'
