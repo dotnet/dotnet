@@ -27,7 +27,7 @@
 
     <!-- The final stage of the runtime official build should publish everything. -->
     <EnableDefaultRidSpecificArtifacts Condition="'$(DotNetFinalPublish)' != ''">false</EnableDefaultRidSpecificArtifacts>
-    <EnableDefaultRidSpecificArtifacts Condition="'$(EnableDefaultRidSpecificArtifacts)' == '' and '$(DotNetBuildOrchestrator)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
+    <EnableDefaultRidSpecificArtifacts Condition="'$(EnableDefaultRidSpecificArtifacts)' == '' and '$(DotNetBuildFromOrchestrator)' != 'true'">true</EnableDefaultRidSpecificArtifacts>
 
     <UseDotNetCertificate>true</UseDotNetCertificate>
   </PropertyGroup>

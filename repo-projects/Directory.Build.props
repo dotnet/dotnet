@@ -138,6 +138,8 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
+    <!-- TODO: Remove both properties and replace with '-from-orchestrator' CLI arg with the next re-bootstrap. -->
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildFromOrchestrator=true</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->

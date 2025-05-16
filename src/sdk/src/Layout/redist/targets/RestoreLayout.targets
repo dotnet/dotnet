@@ -15,7 +15,7 @@
     <AspNetCoreBlobVersion>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</AspNetCoreBlobVersion>
     <NetRuntimeBlobVersion>$(MicrosoftNETCorePlatformsPackageVersion)</NetRuntimeBlobVersion>
     <WindowsDesktopBlobVersion>$(VSRedistCommonWindowsDesktopSharedFrameworkx64100PackageVersion)</WindowsDesktopBlobVersion>
-    <WindowsDesktopBlobVersion Condition="'$(DotNetBuildOrchestrator)' == 'true'">$(MicrosoftWindowsDesktopAppRuntimePackageVersion)</WindowsDesktopBlobVersion>
+    <WindowsDesktopBlobVersion Condition="'$(DotNetBuildFromOrchestrator)' == 'true'">$(MicrosoftWindowsDesktopAppRuntimePackageVersion)</WindowsDesktopBlobVersion>
     <NETStandardTargetingPackBlobVersion>3.0.0</NETStandardTargetingPackBlobVersion>
 
     <AlternateArchitecture Condition="'$(TargetArchitecture)' == 'x86'">x64</AlternateArchitecture>
@@ -304,7 +304,7 @@
             For example, the dotnetbuilds uri for 'file:///vmr/dotnet2/artifacts/obj/x64/Release/blob-feed/assets//aspnetcore_base_runtime.version'
             would end up 'https://ci.dot.net/public//dotnet-runtime-8.0.0-rc.1.23381.3-centos.8-x64.tar.gz'. This is
             missing the runtime version number directory. -->
-    <ItemGroup Condition="'$(DotNetBuildOrchestrator)' != 'true'">
+    <ItemGroup Condition="'$(DotNetBuildFromOrchestrator)' != 'true'">
       <UrisToDownload Include="$([System.String]::Copy('%(ComponentToDownload.BaseUrl)').Replace($(PublicBaseURL), 'https://ci.dot.net/public/'))/%(ComponentToDownload.DownloadFileName)"
                       Condition="'%(ComponentToDownload.ShouldDownload)' == 'true'">
         <ShouldDownload>%(ComponentToDownload.ShouldDownload)</ShouldDownload>
