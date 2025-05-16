@@ -133,7 +133,7 @@
                 "type": "nuget",
                 "nuget": {
                     "name": "Microsoft.VisualStudio.CoreUtility",
-                    "version": "{MicrosoftVisualStudioCoreUtilityVersion}"
+                    "version": "15.0.26201"
                 }
             }
         },
