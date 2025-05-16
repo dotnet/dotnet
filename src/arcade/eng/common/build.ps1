@@ -21,6 +21,7 @@ Param(
   [switch] $publish,
   [switch] $clean,
   [switch][Alias('pb')]$productBuild,
+  [switch]$fromOrchestrator,
   [switch][Alias('bl')]$binaryLog,
   [switch][Alias('nobl')]$excludeCIBinarylog,
   [switch] $ci,
@@ -74,6 +75,7 @@ function Print-Usage() {
   Write-Host "  -nativeToolsOnMachine   Sets the native tools on machine environment variable (indicating that the script should use native tools on machine)"
   Write-Host "  -nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   Write-Host "  -buildCheck             Sets /check msbuild parameter"
+  Write-Host "  -fromOrchestrator       Set when building from within the .NET orchestrator"
   Write-Host ""
 
   Write-Host "Command line arguments not listed above are passed thru to msbuild."
@@ -128,6 +130,7 @@ function Build {
     /p:Test=$test `
     /p:Pack=$pack `
     /p:DotNetBuild=$productBuild `
+    /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
     /p:IntegrationTest=$integrationTest `
     /p:PerformanceTest=$performanceTest `
     /p:Sign=$sign `
