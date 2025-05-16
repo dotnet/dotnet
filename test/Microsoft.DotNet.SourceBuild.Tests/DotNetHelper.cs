@@ -194,7 +194,7 @@ internal class DotNetHelper
 
     public void ExecuteRunWeb(string projectName, DotNetTemplate template)
     {
-        int expectedExitCode = 0;
+        int expectedExitCode = 143; // Expected exit code of a process terminated by `kill -s TERM`
 
         ExecuteWeb(
             projectName,
