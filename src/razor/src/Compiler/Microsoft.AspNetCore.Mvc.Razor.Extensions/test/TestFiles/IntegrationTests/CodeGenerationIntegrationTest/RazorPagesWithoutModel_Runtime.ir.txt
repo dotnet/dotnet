@@ -115,5 +115,4 @@
             Inject - 
             CSharpCode - 
                 IntermediateToken -  - CSharp - #nullable restore\npublic global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel>)PageContext?.ViewData!;\n#nullable disable
-            CSharpCode - 
-                IntermediateToken -  - CSharp - #nullable restore\npublic TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel Model => ViewData.Model!;\n#nullable disable
+            PropertyDeclaration -  - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel - Model - ViewData.Model

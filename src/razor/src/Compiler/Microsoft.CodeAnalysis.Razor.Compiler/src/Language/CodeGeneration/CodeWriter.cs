@@ -323,14 +323,20 @@ public sealed partial class CodeWriter : IDisposable
 
     public SourceText GetText()
     {
-        using var reader = new Reader(this);
+        using var reader = new Reader(_pages, Length);
         return SourceText.From(reader, Length, Encoding.UTF8);
     }
 
-    private sealed class Reader(CodeWriter codeWriter) : TextReader
+    // Internal for testing
+    internal static TextReader GetTestTextReader(LinkedList<ReadOnlyMemory<char>[]> pages)
     {
-        private LinkedListNode<ReadOnlyMemory<char>[]>? _page = codeWriter._pages.First;
-        private int _remainingLength = codeWriter.Length;
+        return new Reader(pages, pages.Count);
+    }
+
+    private sealed class Reader(LinkedList<ReadOnlyMemory<char>[]> pages, int length) : TextReader
+    {
+        private LinkedListNode<ReadOnlyMemory<char>[]>? _page = pages.First;
+        private int _remainingLength = length;
         private int _chunkIndex;
         private int _charIndex;
 
@@ -413,7 +419,7 @@ public sealed partial class CodeWriter : IDisposable
                 return -1;
             }
 
-            var destination = buffer.AsSpan(index);
+            var destination = buffer.AsSpan(index, count);
             var charsWritten = 0;
 
             var page = _page;
@@ -443,18 +449,17 @@ public sealed partial class CodeWriter : IDisposable
                         }
                     }
 
-                    var endOfChunkWritten = true;
-
                     // Are we about to write past the end of the buffer? If so, adjust source.
                     // This will be the last chunk we write, so be sure to update charIndex.
                     if (source.Length > destination.Length)
                     {
                         source = source[..destination.Length];
                         charIndex += source.Length;
-
-                        // There's more to this chunk to write! Note this so that we don't update
-                        // chunkIndex later.
-                        endOfChunkWritten = false;
+                    }
+                    else
+                    {
+                        chunkIndex++;
+                        charIndex = 0;
                     }
 
                     source.CopyTo(destination);
@@ -462,19 +467,11 @@ public sealed partial class CodeWriter : IDisposable
 
                     charsWritten += source.Length;
 
-                    // Be careful not to increment chunkIndex unless we actually wrote to the end of the chunk.
-                    if (endOfChunkWritten)
-                    {
-                        chunkIndex++;
-                    }
-
                     // Break if we are done writing. chunkIndex and charIndex should have their correct values at this point.
                     if (destination.IsEmpty)
                     {
                         break;
                     }
-
-                    charIndex = 0;
                 }
 
                 if (destination.IsEmpty)
