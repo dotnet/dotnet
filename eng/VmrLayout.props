@@ -67,7 +67,6 @@
 
   <PropertyGroup>
     <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
-    <RepoSourceBuiltAssetsDir>$(ArtifactsStagingDir)/assets/$(Configuration)</RepoSourceBuiltAssetsDir>
     <!-- Respect the VerticalName property which is set to a unique identifier in CI.
          Don't use that when building source-only to allow the build to find the previously built manifest file regardless of the vertical name.
          Default to VerticalManifest.xml. -->
