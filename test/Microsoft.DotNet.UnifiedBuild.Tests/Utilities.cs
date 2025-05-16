@@ -12,6 +12,7 @@ using System.IO.Enumeration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
