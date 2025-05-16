@@ -23,8 +23,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25256.5</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25256.5</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25263.2</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25263.2</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta5.25210.1</SystemCommandLineVersion>
     <!-- corefx -->
@@ -35,10 +35,10 @@
     <MicrosoftSymbolUploaderBuildTaskVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderBuildTaskVersion>
     <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderVersion>
     <!-- msbuild -->
-    <MicrosoftBuildFrameworkVersion>17.8.3</MicrosoftBuildFrameworkVersion>
-    <MicrosoftBuildTasksCoreVersion>17.8.3</MicrosoftBuildTasksCoreVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>17.8.3</MicrosoftBuildUtilitiesCoreVersion>
-    <MicrosoftBuildVersion>17.8.3</MicrosoftBuildVersion>
+    <MicrosoftBuildFrameworkVersion>17.12.36</MicrosoftBuildFrameworkVersion>
+    <MicrosoftBuildTasksCoreVersion>17.12.36</MicrosoftBuildTasksCoreVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>17.12.36</MicrosoftBuildUtilitiesCoreVersion>
+    <MicrosoftBuildVersion>17.12.36</MicrosoftBuildVersion>
     <!-- netstandard -->
     <NETStandardLibraryVersion>2.0.3</NETStandardLibraryVersion>
     <!-- nuget -->
@@ -99,6 +99,6 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25225.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25255.1</MicrosoftDotNetXHarnessCLIVersion>
   </PropertyGroup>
 </Project>
