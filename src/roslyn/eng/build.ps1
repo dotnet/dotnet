@@ -44,6 +44,7 @@ param (
   [switch]$useGlobalNuGetCache = $true,
   [switch]$warnAsError = $false,
   [switch][Alias('pb')]$productBuild = $false,
+  [switch]$fromOrchestrator = $false,
   [switch]$oop64bit = $true,
   [switch]$lspEditor = $false,
   [string]$solution = "Roslyn.sln",
@@ -113,6 +114,7 @@ function Print-Usage() {
   Write-Host "  -useGlobalNuGetCache      Use global NuGet cache."
   Write-Host "  -warnAsError              Treat all warnings as errors"
   Write-Host "  -productBuild             Build the repository in product-build mode"
+  Write-Host "  -fromOrchestrator         Set when building from within the .NET orchestrator"
   Write-Host "  -solution                 Solution to build (default is Roslyn.sln)"
   Write-Host ""
   Write-Host "Official build settings:"
@@ -287,6 +289,7 @@ function BuildSolution() {
       /p:VisualStudioDropAccessToken=$officialVisualStudioDropAccessToken `
       /p:DotNetBuildRepo=$productBuild `
       /p:DotNetBuild=$productBuild `
+      /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
       $suppressExtensionDeployment `
       $msbuildWarnAsError `
       $generateDocumentationFile `

@@ -9,6 +9,7 @@ configuration='Release'
 verbosity='minimal'
 source_build=false
 product_build=false
+from_orchestrator=false
 properties=''
 
 # resolve $SOURCE until the file is no longer a symlink
@@ -42,6 +43,10 @@ while [[ $# > 0 ]]; do
             ;;
         --product-build|--productbuild|-pb)
             product_build=true
+            shift
+            ;;
+        --from-orchestrator|--fromOrchestrator)
+            from_orchestrator=true
             shift
             ;;
         -*)
@@ -96,6 +101,7 @@ export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
 properties="$properties /p:DotNetBuild=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
+properties="$properties /p:DotNetBuildFromOrchestrator=$from_orchestrator"
 
 properties="$properties /p:Configuration=$configuration"
 properties="$properties /p:RepoRoot=$repo_root"

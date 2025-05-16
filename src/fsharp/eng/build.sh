@@ -37,6 +37,7 @@ usage()
   echo "  --prepareMachine               Prepare machine for CI run, clean up processes after build"
   echo "  --sourceBuild                  Build the repository in source-only mode."
   echo "  --productBuild                 Build the repository in product-build mode."
+  echo "  --fromOrchestrator             Set when building from within the .NET orchestrator"
   echo "  --buildnorealsig               Build product with realsig- (default use realsig+ where necessary)"
   echo "  --tfm                          Override the default target framework"
   echo ""
@@ -75,6 +76,7 @@ skip_build=false
 prepare_machine=false
 source_build=false
 product_build=false
+from_orchestrator=false
 buildnorealsig=true
 properties=""
 
@@ -169,6 +171,9 @@ while [[ $# > 0 ]]; do
       ;;
     --productbuild|--product-build|-pb)
       product_build=true
+      ;;
+    --fromOrchestrator|--from-orchestrator)
+      from_orchestrator=true
       ;;
     --buildnorealsig)
       buildnorealsig=true
@@ -290,7 +295,7 @@ function BuildSolution {
 
     BuildMessage="Error building tools"
     # TODO: Remove DotNetBuildRepo property when fsharp is on Arcade 10
-    local args=" publish $repo_root/proto.proj $blrestore $bltools /p:Configuration=Proto /p:DotNetBuildRepo=$product_build /p:DotNetBuild=$product_build /p:DotNetBuildSourceOnly=$source_build $properties"
+    local args=" publish $repo_root/proto.proj $blrestore $bltools /p:Configuration=Proto /p:DotNetBuildRepo=$product_build /p:DotNetBuild=$product_build /p:DotNetBuildSourceOnly=$source_build /p:DotNetBuildFromOrchestrator=$from_orchestrator $properties"
     echo $args
     "$DOTNET_INSTALL_DIR/dotnet" $args  #$args || exit $?
   fi
@@ -319,6 +324,7 @@ function BuildSolution {
       /p:DotNetBuildRepo=$product_build \
       /p:DotNetBuild=$product_build \
       /p:DotNetBuildSourceOnly=$source_build \
+      /p:DotNetBuildFromOrchestrator=$from_orchestrator \
       $properties
   fi
 }

@@ -69,6 +69,7 @@ param (
     [string]$officialSkipTests = "false",
     [switch]$noVisualStudio,
     [switch][Alias('pb')]$productBuild,
+    [switch]$fromOrchestrator,
     [switch]$skipBuild,
     [switch]$compressAllMetadata,
     [switch]$buildnorealsig = $true,
@@ -134,6 +135,7 @@ function Print-Usage() {
     Write-Host "  -dontUseGlobalNuGetCache      Do not use the global NuGet cache"
     Write-Host "  -noVisualStudio               Only build fsc and fsi as .NET Core applications. No Visual Studio required. '-configuration', '-verbosity', '-norestore', '-rebuild' are supported."
     Write-Host "  -productBuild                 Build the repository in product-build mode."
+    Write-Host "  -fromOrchestrator             Set when building from within the .NET orchestrator."
     Write-Host "  -skipbuild                    Skip building product"
     Write-Host "  -compressAllMetadata          Build product with compressed metadata"
     Write-Host "  -buildnorealsig               Build product with realsig- (default use realsig+, where necessary)"
@@ -304,6 +306,7 @@ function BuildSolution([string] $solutionName, $packSolution) {
         /p:Build=$build `
         /p:DotNetBuildRepo=$productBuild `
         /p:DotNetBuild=$productBuild `
+        /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
         /p:Rebuild=$rebuild `
         /p:Pack=$pack `
         /p:Sign=$sign `
