@@ -22,7 +22,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         private const string _testSymbolPackage = "test-package-a.1.0.0.symbols.nupkg";
 
         [Fact]
-        public void DownloadFileAsyncSucceedsForValidUrl_BlobArtifact()
+        public async Task DownloadFileAsyncSucceedsForValidUrl_BlobArtifact()
         {
             var buildEngine = new MockBuildEngine();
             var publishTask = new PublishArtifactsInManifestV3
@@ -76,7 +76,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             using HttpClient client = FakeHttpClient.WithResponsesGivenUris(fakeHttpResponses);
             var path = TestInputs.GetFullPath(Guid.NewGuid().ToString());
 
-            var test = publishTask.DownloadFileAsync(
+            await publishTask.DownloadFileAsync(
                 client,
                 PublishArtifactsInManifestBase.BlobArtifactsArtifactName,
                 _testTextFile,
@@ -90,7 +90,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         }
 
         [Fact]
-        public void DownloadFileAsyncSucceedsForValidUrl_PipelineArtifact()
+        public async Task DownloadFileAsyncSucceedsForValidUrl_PipelineArtifact()
         {
             var buildEngine = new MockBuildEngine();
             var publishTask = new PublishArtifactsInManifestV3
@@ -145,7 +145,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             using HttpClient client = FakeHttpClient.WithResponsesGivenUris(fakeHttpResponses);
             var path = TestInputs.GetFullPath(Guid.NewGuid().ToString());
 
-            var test = publishTask.DownloadFileAsync(
+            await publishTask.DownloadFileAsync(
                 client,
                 PublishArtifactsInManifestBase.PackageArtifactsArtifactName,
                 _testTextFile,
@@ -159,7 +159,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         }
 
         [Fact]
-        public void DownloadFileAsyncSucceedsForValidUrl_CachedURLHelper()
+        public async Task DownloadFileAsyncSucceedsForValidUrl_CachedURLHelper()
         {
             var buildEngine = new MockBuildEngine();
             var publishTask = new PublishArtifactsInManifestV3
@@ -222,7 +222,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             using HttpClient client = FakeHttpClient.WithResponsesGivenUris(fakeHttpResponses);
             var path = TestInputs.GetFullPath(Guid.NewGuid().ToString());
 
-            var test = publishTask.DownloadFileAsync(
+            await publishTask.DownloadFileAsync(
                 client,
                 PublishArtifactsInManifestBase.PackageArtifactsArtifactName,
                 _testTextFile,
@@ -232,7 +232,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var path2 = TestInputs.GetFullPath(Guid.NewGuid().ToString());
 
-            var test2 = publishTask.DownloadFileAsync(
+            await publishTask.DownloadFileAsync(
                 client,
                 PublishArtifactsInManifestBase.PackageArtifactsArtifactName,
                 "test-package-a.1.0.0.symbols.nupkg",

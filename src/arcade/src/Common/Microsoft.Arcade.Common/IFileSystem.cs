@@ -26,6 +26,10 @@ namespace Microsoft.Arcade.Common
 
         string PathCombine(string path1, string path2);
 
+        string PathCombine(string path1, string path2, string path3);
+
+        string GetFullPath(string path);
+
         void DeleteFile(string path);
 
         void CopyFile(string sourceFileName, string destFileName, bool overwrite = false);
@@ -33,5 +37,7 @@ namespace Microsoft.Arcade.Common
         Stream GetFileStream(string path, FileMode mode, FileAccess access);
 
         FileAttributes GetAttributes(string path);
+
+        string GetRelativePath(string basePath, string targetPath);
     }
 }

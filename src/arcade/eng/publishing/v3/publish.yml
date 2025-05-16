@@ -32,7 +32,7 @@ stages:
           -DarcVersion $(DarcVersion)
 
     - task: DownloadPipelineArtifact@2
-      displayName: Download Merged Manifest
+      displayName: Download V3 Merged Manifest
       continueOnError: true
       enabled: true
       inputs:
@@ -44,11 +44,11 @@ stages:
         downloadType: 'specific'
         artifact: BlobArtifacts
         itemPattern: |
-          BlobArtifacts/MergedManifest.xml
+          **/MergedManifest.xml
         downloadPath: '$(Build.ArtifactStagingDirectory)/BlobArtifacts'
 
     - task: DownloadPipelineArtifact@2
-      displayName: Download PDB Artifacts
+      displayName: Download V4 Merged Manifest
       continueOnError: true
       enabled: true
       inputs:
@@ -58,8 +58,10 @@ stages:
         pipeline: $(AzDOPipelineId)
         buildId: $(AzDOBuildId)
         downloadType: 'specific'
-        artifact: PdbArtifacts
-        downloadPath: '$(Build.ArtifactStagingDirectory)/PdbArtifacts'
+        artifact: AssetManifests
+        itemPattern: |
+          **/MergedManifest.xml
+        downloadPath: '$(Build.ArtifactStagingDirectory)/BlobArtifacts'
 
     - task: DownloadPipelineArtifact@2
       displayName: Download Release Configs
