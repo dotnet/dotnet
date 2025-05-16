@@ -184,7 +184,7 @@ jobs:
       value: $(vmrPath)
 
   - name: artifactsStagingDir
-    value: $(Build.ArtifactStagingDirectory)/artifacts
+    value: $(Build.ArtifactStagingDirectory)
 
   - name: artifactsPrepublishDir
     value: $(Build.ArtifactStagingDirectory)/prepublish
