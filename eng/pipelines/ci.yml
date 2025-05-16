@@ -1,16 +1,6 @@
-# This yml is used by these pipelines and triggers:
-# NOTE: the triggers are defined in the Azure DevOps UI as they are too complex
-#
-# - dotnet-unified-build (public)
-#   https://dev.azure.com/dnceng-public/public/_build?definitionId=278
-#   - PR: lite build
-#   - CI: release/* only, every batched commit, full build
-#   - Schedule: main only, full build
-#
+# This yml is used by these pipelines:
 # - dotnet-unified-build (internal)
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
-#   - PR: lite build
-#   - CI: release/*, internal/release/* and main only, every batched commit, full build
 
 trigger:
   batch: true
@@ -18,6 +8,7 @@ trigger:
     include:
       - main
       - release/*
+      - internal/release/*
 
 parameters:
 - name: desiredSigning
