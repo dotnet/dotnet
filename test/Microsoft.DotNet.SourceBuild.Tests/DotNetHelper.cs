@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
