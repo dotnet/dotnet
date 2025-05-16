@@ -5,15 +5,16 @@ parameters:
 - name: pool_LinuxArm64
   type: object
 
-# Scope of jobs which are executed
-- name: scope
-  type: string
-
 - name: useMicrosoftBuildAssetsForTests
   type: boolean
 
 - name: legs
   type: object
+
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
 
 stages:
 - stage: VMR_SourceOnly_Build
@@ -83,14 +84,14 @@ stages:
           targetRid: ${{ variables.alpineX64Rid }}
         
         targetArchitecture: ${{ leg.targetArchitecture }}
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
         ${{ else }}:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
-        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, false) }}:
-          extraProperties: "/p:DisableDevBuildAsDefaultForSourceOnly=true"
-        ${{ else }}:
+        extraProperties: ${{ leg.officialBuildId }}
+        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
@@ -151,6 +152,7 @@ stages:
             targetRid: ${{ variables.alpineX64Rid }}
 
           targetArchitecture: ${{ leg.targetArchitecture }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           ${{ if eq(leg.targetArchitecture, 'arm64') }}:
             pool: ${{ parameters.pool_LinuxArm64 }}
           ${{ else }}:
@@ -161,6 +163,7 @@ stages:
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >
+            ${{ leg.officialBuildId }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs

@@ -44,6 +44,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AssetVersion { get; set; }
 
+        public string MergedManifestArtifactName { get; set; } = "AssetManifests";
+
         [Output]
         public int BuildId { get; set; }
 
@@ -130,7 +132,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             return !Log.HasLoggedErrors;
                         }
 
-                        buildModel = _buildModelFactory.CreateMergedModel(parsedManifests, ArtifactVisibility.All);
+                        // Always drop Internal artifacts when pushing a build to Maestro.
+                        buildModel = _buildModelFactory.CreateMergedModel(parsedManifests,
+                            ArtifactVisibility.External);
 
                         FillInMissingBuildIdentityProperties(buildModel.Identity);
 
@@ -142,8 +146,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         // Write the merged manifest
                         _fileSystem.WriteToFile(mergedManifestPath, buildModel.ToXml().ToString());
 
-                        Log.LogMessage(MessageImportance.High,
-                                    $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{mergedManifestPath}");
+                        // If V3 publishing, then upload the merged manifest to AzDO via logging command.
+                        // If V4 publishing then we rely on the AzDO pipeline to upload the merged manifest to the "AssetManifests" artifact.
+                        if (buildModel.Identity.PublishingVersion == PublishingInfraVersion.V3)
+                        {
+                            Log.LogMessage(MessageImportance.High,
+                                        $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{mergedManifestPath}");
+                        }
                     }
                     // populate buildData and assetData using merged manifest data 
                     BuildData buildData = GetMaestroBuildDataFromMergedManifest(buildModel, mergedManifestAsset, cancellationToken);
@@ -213,6 +222,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             buildIdentity.AzureDevOpsProject = buildIdentity.AzureDevOpsProject ?? azDevProject;
             buildIdentity.AzureDevOpsBuildNumber = buildIdentity.AzureDevOpsBuildNumber ?? GetAzDevBuildNumber();
             buildIdentity.AzureDevOpsBuildId = buildIdentity.AzureDevOpsBuildId ?? GetAzDevBuildId();
+            buildIdentity.AzureDevOpsBuildDefinitionId = buildIdentity.AzureDevOpsBuildDefinitionId ?? GetAzDevBuildDefinitionId();
             buildIdentity.AzureDevOpsRepository = buildIdentity.AzureDevOpsRepository 
                 ?? $"https://dev.azure.com/{azDevAccount}/{azDevProject}/_git/{GetAzDevRepositoryName()}";
             buildIdentity.AzureDevOpsBranch = buildIdentity.AzureDevOpsBranch ?? GetAzDevBranch();
@@ -615,6 +625,15 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 NonShipping = true,
                 RepoOrigin = repoName,
             };
+
+            // If using V4, set the future pipeline artifact name and relative path.
+            // The artifact is just going to sit in a flat layout.
+
+            if (mergedModel.Identity.PublishingVersion >= PublishingInfraVersion.V4)
+            {
+                mergedManifestAsset.PipelineArtifactName = MergedManifestArtifactName;
+                mergedManifestAsset.PipelineArtifactPath = Path.GetFileName(manifestFileName);
+            }
 
             mergedModel.Artifacts.Blobs.Add(mergedManifestAsset);
 
