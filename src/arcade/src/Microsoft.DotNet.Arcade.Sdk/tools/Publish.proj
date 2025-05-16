@@ -40,7 +40,7 @@
     In VMR copy to local storage, do not push to AzDO.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -51,7 +51,7 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
@@ -268,11 +268,17 @@
 		
 			<!-- When we have <account>.visualstudio.com -->
       <AzureDevOpsAccount Condition="$(CollectionUri.IndexOf('visualstudio.com')) >= 0">$(CollectionUri.Split('.')[0].Split('/')[2])</AzureDevOpsAccount>
-      
-      <!-- Directory where pdbs pointed in `FilesToPublishToSymbolServer` are copied before publishing to AzDO artifacts. -->
-      <PDBsToPublishTempLocation>$(ArtifactsTmpDir)PDBsToPublish/</PDBsToPublishTempLocation>
-      <PdbArtifactsSourceBuiltOrTempDir Condition="'$(PushToLocalStorage)' == 'true'">$(SourceBuiltPdbArtifactsDir)</PdbArtifactsSourceBuiltOrTempDir>
-      <PdbArtifactsSourceBuiltOrTempDir Condition="'$(PushToLocalStorage)' != 'true'">$(PDBsToPublishTempLocation)</PdbArtifactsSourceBuiltOrTempDir>
+    </PropertyGroup>
+
+    <!-- Asset output locations
+         When V4 publishing is enabled, there are two primary scenarios:
+         1. The build is running as part of an inner build in the VMR, and the future artifacts location is NOT yet know.
+            Publishing is primarily used to propagate assets between repos in a vertical.
+         2. Publishing at the end of a vertical, or the end of a normal build, where the future artifacts needs to be known.
+    -->
+    <PropertyGroup>
+      <LocallyStageArtifacts>false</LocallyStageArtifacts>
+      <LocallyStageArtifacts Condition="'$(PublishingVersion)' == '4' or '$(PushToLocalStorage)' == 'true'">true</LocallyStageArtifacts>
 
       <!-- Use the SYSTEM_PHASENAME variable when available as that is guaranteed to be a unique identifier.
            For local scenarios and when the variable isn't available, use "<os>-<arch>-<buildpass>"" as the manifest name. -->
@@ -280,6 +286,46 @@
       <AssetManifestFileName Condition="'$(AssetManifestFileName)' == ''">$(AssetManifestOS)-$(AssetManifestArch)$(AssetManifestPass).xml</AssetManifestFileName>
       <AssetManifestFilePath Condition="'$(AssetManifestFilePath)' == ''">$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
 
+      <!-- PDBs are special in that they require a local staging location even if LocallyStageArtifacts is false.-->
+      <PdbArtifactsLocalStorageDir Condition="'$(PdbArtifactsLocalStorageDir)' == '' and '$(LocallyStageArtifacts)' != 'true'">$(ArtifactsTmpDir)PDBsToPublish/</PdbArtifactsLocalStorageDir>
+    </PropertyGroup>
+
+    <!-- Set up local staging artifact paths if we're going to locally stage artifacts.
+         NOTE! The SourceBuilt* setups can be removed after this change has flowed to the VMR and the bootstrap.
+         arcade is updated. -->
+    <PropertyGroup Condition="'$(LocallyStageArtifacts)' == 'true'">
+      <!-- Publish staging defaults.
+           This is intended to be the location that a build will publish its pipeline artifacts. We avoid
+           using the repo source layout for better compatibility with various scanning tools.
+           Since not all CI builds are in AzDO, ensure that there is a reasonable default under the repo source layout. -->
+      <ArtifactsPublishStagingDir Condition="'$(ArtifactsPublishStagingDir)' == '' and '$(Build_ArtifactStagingDirectory)' != ''">$([MSBuild]::NormalizeDirectory('$(Build_ArtifactStagingDirectory)', 'artifacts'))</ArtifactsPublishStagingDir>
+      <ArtifactsPublishStagingDir Condition="'$(ArtifactsPublishStagingDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'staging'))</ArtifactsPublishStagingDir>
+
+      <!-- Directory where pdbs pointed in `FilesToPublishToSymbolServer` are copied during publishing. -->
+      <PdbArtifactsLocalStorageDir Condition="'$(PdbArtifactsLocalStorageDir)' == ''">$(SourceBuiltPdbArtifactsDir)</PdbArtifactsLocalStorageDir>
+      <PdbArtifactsLocalStorageDir Condition="'$(PdbArtifactsLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)pdbs</PdbArtifactsLocalStorageDir>
+
+      <!-- Directory where shipping packages are copied during publishing. -->
+      <ShippingPackagesLocalStorageDir Condition="'$(ShippingPackagesLocalStorageDir)' == ''">$(SourceBuiltShippingPackagesDir)</ShippingPackagesLocalStorageDir>
+      <ShippingPackagesLocalStorageDir Condition="'$(ShippingPackagesLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)packages/shipping</ShippingPackagesLocalStorageDir>
+
+      <!-- Directory where nonshipping packages are copied during publishing. -->
+      <NonShippingPackagesLocalStorageDir Condition="'$(NonShippingPackagesLocalStorageDir)' == ''">$(SourceBuiltNonShippingPackagesDir)</NonShippingPackagesLocalStorageDir>
+      <NonShippingPackagesLocalStorageDir  Condition="'$(NonShippingPackagesLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)packages/nonshipping</NonShippingPackagesLocalStorageDir>
+
+      <!-- Directory where asset manifests are copied during publishing. -->
+      <AssetManifestsLocalStorageDir Condition="'$(AssetManifestsLocalStorageDir)' == ''">$(SourceBuiltAssetManifestsDir)</AssetManifestsLocalStorageDir>
+      <AssetManifestsLocalStorageDir Condition="'$(AssetManifestsLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)manifests</AssetManifestsLocalStorageDir>
+
+      <!-- Directory where blob assets are copied during publishing. -->
+      <AssetsLocalStorageDir Condition="'$(AssetsLocalStorageDir)' == ''">$(SourceBuiltAssetsDir)</AssetsLocalStorageDir>
+      <AssetsLocalStorageDir Condition="'$(AssetsLocalStorageDir)' == ''">$(ArtifactsPublishStagingDir)assets</AssetsLocalStorageDir>
+
+      <!-- Default values for the future artifact name and publish locations if not provided.
+           VMR builds would typically specify these globally. Only used when publishing V4 is active. -->
+      <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)_Artifacts</FutureArtifactName>
+      <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == ''">$(AssetManifestOS)_$(AssetManifestArch)$(AssetManifestPass)_Artifacts</FutureArtifactName>
+      <FutureArtifactPublishBasePath Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactPublishBasePath)' == ''">$(ArtifactsPublishStagingDir)</FutureArtifactPublishBasePath>
     </PropertyGroup>
     
     <!--
@@ -369,8 +415,8 @@
            Text="Visibility 'Vertical' is not supported for shipping artifacts." />
     <Error Condition="'@(ItemsToPublishToBlobFeed->WithMetadataValue('IsShipping','true')->AnyHaveMetadataValue('Visibility','Internal'))' == 'true'"
            Text="Visibility 'Internal' is not supported for shipping artifacts." />
-    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuild)' != 'true'"
-           Text="Visibility 'Vertical' is only supported in vertical builds." />
+    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'"
+           Text="Visibility 'Vertical' is only supported in vertical builds inside the VMR." />
 
     <!--
       The user can set `PublishingVersion` via eng\Publishing.props
@@ -391,15 +437,16 @@
       AssetManifestPath="$(AssetManifestFilePath)" 
       IsReleaseOnlyPackageVersion="$(IsReleaseOnlyPackageVersion)"
       PushToLocalStorage="$(PushToLocalStorage)"
-      AssetsLocalStorageDir="$(SourceBuiltAssetsDir)"
+      AssetsLocalStorageDir="$(AssetsLocalStorageDir)"
       PreserveRepoOrigin="$(PreserveRepoOrigin)"
-      ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
-      NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
-      AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)"
-      PdbArtifactsLocalStorageDir="$(PdbArtifactsSourceBuiltOrTempDir)"
+      ShippingPackagesLocalStorageDir="$(ShippingPackagesLocalStorageDir)"
+      NonShippingPackagesLocalStorageDir="$(NonShippingPackagesLocalStorageDir)"
+      AssetManifestsLocalStorageDir="$(AssetManifestsLocalStorageDir)"
+      PdbArtifactsLocalStorageDir="$(PdbArtifactsLocalStorageDir)"
       ArtifactVisibilitiesToPublish="@(ArtifactVisibilityToPublish)"
       UseHardlinksIfPossible="$(PublishingUseHardlinksIfPossible)"
-      PublishManifestOnly="$(PublishManifestOnly)" />
+      FutureArtifactName="$(FutureArtifactName)"
+      FutureArtifactPublishBasePath="$(FutureArtifactPublishBasePath)" />
   </Target>
 
 </Project>
