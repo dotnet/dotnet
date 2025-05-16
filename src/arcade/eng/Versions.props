@@ -98,7 +98,7 @@
     <MicrosoftApplicationInsightsVersion>2.21.0</MicrosoftApplicationInsightsVersion>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
     <MicrosoftDataODataVersion>5.8.4</MicrosoftDataODataVersion>
-    <MicrosoftIdentityClientVersion>4.60.3</MicrosoftIdentityClientVersion>
+    <MicrosoftIdentityClientVersion>4.60.4</MicrosoftIdentityClientVersion>
     <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
     <MicrosoftDiagnosticsRuntimeVersion>1.0.5</MicrosoftDiagnosticsRuntimeVersion>
