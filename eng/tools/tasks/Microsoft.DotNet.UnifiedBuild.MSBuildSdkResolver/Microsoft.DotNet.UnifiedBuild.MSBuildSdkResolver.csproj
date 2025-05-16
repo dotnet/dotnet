@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <!-- IncludeAssets=compile to treat these packages as targeting-packs only. The assemblies are available in the SDK. -->
-    <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="compile" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
   <Target Name="InstallResolver" BeforeTargets="PrepareForRun">
