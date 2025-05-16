@@ -14,7 +14,7 @@ namespace Microsoft.DotNet.Build.Manifest
         V3 = 3,
         V4 = 4,
         Latest = V3,
-        Dev = 4
+        Dev = V4
     }
 
     public class BuildIdentity

@@ -6,6 +6,7 @@
     <Copyright>$(CopyrightMicrosoft)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup>

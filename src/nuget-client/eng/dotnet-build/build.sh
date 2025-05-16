@@ -8,6 +8,7 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 configuration='Release'
 verbosity='minimal'
 source_build=false
+product_build=false
 properties=''
 
 # resolve $SOURCE until the file is no longer a symlink
@@ -34,8 +35,13 @@ while [[ $# > 0 ]]; do
             configuration=$2
             shift
             ;;
-        --source-build|-sb)
+        --source-build|--sourcebuild|-sb)
             source_build=true
+            product_build=true
+            shift
+            ;;
+        --product-build|--productbuild|-pb)
+            product_build=true
             shift
             ;;
         -*)
@@ -88,12 +94,10 @@ ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
 export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
-if [[ "$source_build" == true ]]; then
-  properties="$properties /p:DotNetBuildSourceOnly=true"
-fi
+properties="$properties /p:DotNetBuild=$product_build"
+properties="$properties /p:DotNetBuildSourceOnly=$source_build"
 
 properties="$properties /p:Configuration=$configuration"
-properties="$properties /p:DotNetBuildRepo=true"
 properties="$properties /p:RepoRoot=$repo_root"
 
 "$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/log/${configuration}/Build.binlog" $properties $args
