@@ -43,10 +43,10 @@
       "commitSha": "513150c2f25077b1fcb194407e53c433c975f39b"
     },
     {
-      "packageVersion": "9.0.4",
+      "packageVersion": "9.0.5",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "9275e9ac55e413546a09551c29d5227d6d009747"
+      "commitSha": "6765359588e8b38bab2a7974db9398432703828f"
     },
     {
       "packageVersion": "9.0.5-servicing.25212.1",
