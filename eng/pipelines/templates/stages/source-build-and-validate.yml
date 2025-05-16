@@ -216,6 +216,22 @@ stages:
                 artifactName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'alpine') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.alpineName) }}_${{ leg.targetArchitecture}}_Artifacts
+          - template: ../steps/download-artifacts.yml
+            parameters:
+              artifactDescription: Binary Report
+              downloadFilePatterns: BuildLogs/artifacts/log/Release/binary-report/NewBinaries.txt
+              copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
+              flattenDirs: true
+              ${{ if eq(leg.distro, 'centos') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'fedora') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'ubuntu') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'almalinux') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'alpine') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.alpineName) }}_${{ leg.targetArchitecture}}_Artifacts
           - ${{ if eq(leg.enablePoison, true) }}:
             - template: ../steps/download-artifacts.yml
               parameters:
