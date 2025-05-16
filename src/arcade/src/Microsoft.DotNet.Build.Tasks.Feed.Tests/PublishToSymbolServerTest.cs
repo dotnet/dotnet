@@ -107,10 +107,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var path = TestInputs.GetFullPath("Symbol");
             var buildAsset = ReadOnlyDictionary<string, Asset>.Empty;
+            // Clear the symbol packages added by the s
+            task.BlobsByCategory.Clear();
 
             await task.HandleSymbolPublishingAsync(
                 buildInfo: buildInfo,
-                buildAssets: buildAsset,
+                assetNameToBARAssetMapping: buildAsset,
                 pdbArtifactsBasePath: path,
                 symbolPublishingExclusionsFile: "",
                 publishSpecialClrFiles: false,
@@ -163,8 +165,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             // have interesting observable state.
             Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("Publishing Symbols to Symbol server"));
             var message = buildEngine.BuildMessageEvents.Single(x => x.Message.StartsWith("Publishing Symbols to Symbol server"));
-            Assert.Contains("Symbol package count: 1", message.Message);
-            Assert.Contains("Loose symbol file count: 1", message.Message);
+            Assert.Contains("Symbol packages (1):", message.Message);
+            Assert.Contains("Loose symbol files (1)", message.Message);
 
             Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.Contains("Creating symbol request"));
             Assert.Equal(2, buildEngine.BuildMessageEvents.Where(x => x.Message.Contains("Adding directory")).Count());
@@ -186,10 +188,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
         private static (MockBuildEngine, PublishArtifactsInManifestV3, ReadOnlyDictionary<string, Asset>, string, string, ProductConstructionService.Client.Models.Build) GetCanonicalSymbolTestAssets(SymbolPublishVisibility targetServer = SymbolPublishVisibility.Public)
         {
+            const string symbolPackageName= "test-package-a.1.0.0.symbols.nupkg";
+
             var symbolPackages = new Dictionary<string, Asset>()
             {
-                { "test-package-a.1.0.0.symbols.nupkg",  new(id: 0, buildId: 0, nonShipping: true, name: "test-package-a.1.0.0.symbols.nupkg", version: "1.0.0", locations: [])}
+                { symbolPackageName,  new(id: 0, buildId: 0, nonShipping: true, name: symbolPackageName, version: "1.0.0", locations: [])}
             }.AsReadOnly();
+            
             var exclusionFile = TestInputs.GetFullPath("Symbols/SymbolPublishingExclusionsFile.txt");
             var symbolFilesDir = TestInputs.GetFullPath("Symbols");
 
@@ -221,6 +226,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 SymbolRequestProject = "dotnettest"
             };
             task.FeedConfigs.Add(TargetFeedContentType.Symbols, feedConfigsForSymbols);
+            task.BlobsByCategory.Add(TargetFeedContentType.Symbols, new HashSet<Manifest.BlobArtifactModel>()
+            {
+                new Manifest.BlobArtifactModel()
+                {
+                    Id = symbolPackageName,
+                }
+            });
 
             ProductConstructionService.Client.Models.Build buildInfo = new(id: 4242, DateTimeOffset.Now, staleness: 0, released: false, stable: true, commit: "abcd", [], [], [], []);
 
