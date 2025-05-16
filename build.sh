@@ -35,6 +35,7 @@ usage()
   echo "  --source-version <SHA>          Source Link revision, required when building from tarball"
   echo "  --with-packages <DIR>           Use the specified directory of previously-built packages"
   echo "  --with-sdk <DIR>                Use the SDK in the specified directory for bootstrapping"
+  echo "  --auto-prep                     Automatically prepare the environment before building (replaces manual prep-source-build.sh call)"
   echo ""
 
   echo "Non-source-only settings:"
@@ -181,6 +182,9 @@ while [[ $# > 0 ]]; do
       fi
       shift
       ;;
+    -auto-prep)
+      "$scriptroot/prep-source-build.sh"
+      ;;
 
     # Advanced settings
     -build-repo-tests)
@@ -212,10 +216,6 @@ while [[ $# > 0 ]]; do
 
   shift
 done
-
-if [ ! -d "$packagesPreviouslySourceBuiltDir" ] && [ ! -d "$CUSTOM_PACKAGES_DIR" ]; then
-  "$scriptroot/prep-source-build.sh"
-fi
 
 if [[ "$ci" == true ]]; then
   if [[ "$exclude_ci_binary_log" == false ]]; then
