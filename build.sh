@@ -35,7 +35,7 @@ usage()
   echo "  --source-version <SHA>          Source Link revision, required when building from tarball"
   echo "  --with-packages <DIR>           Use the specified directory of previously-built packages"
   echo "  --with-sdk <DIR>                Use the SDK in the specified directory for bootstrapping"
-  echo "  --auto-prep                     Automatically prepare the environment before building (replaces manual prep-source-build.sh call)"
+  echo "  --prep                          Run prep-source-build.sh to download bootstrap binaries before building"
   echo ""
 
   echo "Non-source-only settings:"
@@ -182,7 +182,7 @@ while [[ $# > 0 ]]; do
       fi
       shift
       ;;
-    -auto-prep)
+    -prep)
       "$scriptroot/prep-source-build.sh"
       ;;
 
