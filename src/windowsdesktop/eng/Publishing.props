@@ -10,13 +10,11 @@
 
   <!--
     Only generate the productVersion.txt and windowsdesktop-productVersion.txt files when we're building
-    either the full VMR repo or not building in the VMR infrastructure.
-    This ensures that we don't produce these files in the "Repo source build" builds,
-    but we do produce them in both the VMR and the runtime official build.
+    the .NET product (DotNetBuild=true) in BP1 or when building the repository standalone not as part of the .NET product.
   -->
   <PropertyGroup>
-    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuildOrchestrator)' == 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')">true</ShouldGenerateProductVersionFiles>
-    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuildOrchestrator)' != 'true' and '$(EnableDefaultArtifacts)' == 'true'">true</ShouldGenerateProductVersionFiles>
+    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuild)' == 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true' and ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')">true</ShouldGenerateProductVersionFiles>
+    <ShouldGenerateProductVersionFiles Condition="'$(DotNetBuild)' != 'true' and '$(EnableDefaultArtifacts)' == 'true'">true</ShouldGenerateProductVersionFiles>
   </PropertyGroup>
 
   <Target Name="GetNonStableProductVersion">

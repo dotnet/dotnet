@@ -8,6 +8,9 @@
 
     <!-- Microsoft.Windows.Compatibility nuget meta package -->
     <ProjectReference Include="src\Microsoft.Windows.Compatibility\src\Microsoft.Windows.Compatibility.csproj" />
+
+    <!-- Internal sentil project for transporting a non-stable version. -->
+    <ProjectReference Include="src\Microsoft.WindowsDesktop.App.Internal\Microsoft.WindowsDesktop.App.Internal.proj" />
   </ItemGroup>
 
 </Project>

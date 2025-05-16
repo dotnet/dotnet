@@ -265,10 +265,11 @@
     </Touch>
   </Target>
 
-  <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
-  <Target Name="UpdateEngCommonFiles" Condition="'$(UseBootstrapArcade)' != 'true'">
+  <!-- Don't update arcade's eng/common layout as that is considered live even though it uses bootstrap Arcade. -->
+  <Target Name="UpdateEngCommonFiles" Condition="'$(RepositoryName)' != 'arcade'">
     <ItemGroup>
-      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" />
+      <InputEngCommonFile Include="$(RepoRoot)eng\common\**\*" Condition="'$(UseBootstrapArcade)' == 'true'" />
+      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" Condition="'$(UseBootstrapArcade)' != 'true'" />
     </ItemGroup>
 
     <Copy SourceFiles="@(InputEngCommonFile)"
