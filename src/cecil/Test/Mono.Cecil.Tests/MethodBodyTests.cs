@@ -284,8 +284,6 @@ namespace Mono.Cecil.Tests {
 		[Test]
 		public void BranchOutsideMethod ()
 		{
-			OnlyOnWindows (); // Mono's ilasm doesn't support branching outside of method
-
 			TestIL ("branch-out.il", module => {
 				var type = module.GetType ("Foo");
 				var method = type.GetMethod ("BranchOutside");

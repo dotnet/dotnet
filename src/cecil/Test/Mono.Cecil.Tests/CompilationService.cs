@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 #if NET_CORE
@@ -318,11 +319,10 @@ namespace Mono.Cecil.Tests {
 
 		public static ProcessOutput ILAsm (string source, string output)
 		{
-			var ilasm = "ilasm";
-			if (Platform.OnWindows)
-				ilasm = NetFrameworkTool ("ilasm");
+			// get ilasm from the test execution directory
+			var ilasmPath = Path.Combine (AppContext.BaseDirectory, "runtimes", RuntimeInformation.RuntimeIdentifier, "native" , Platform.OnWindows ? "ilasm.exe" : "ilasm");
 
-			return RunProcess (ilasm, "/nologo", "/dll", "/out:" + Quote (output), Quote (source));
+			return RunProcess (ilasmPath, "-nologo", "-dll", "-output=" + Quote (output), Quote (source));
 		}
 
 		static string Quote (string file)
@@ -330,6 +330,7 @@ namespace Mono.Cecil.Tests {
 			return "\"" + file + "\"";
 		}
 
+#if !NET_CORE
 		public static ProcessOutput PEVerify (string source)
 		{
 			return RunProcess (WinSdkTool ("peverify"), "/nologo", Quote (source));
@@ -338,17 +339,6 @@ namespace Mono.Cecil.Tests {
 		public static ProcessOutput PEDump (string source)
 		{
 			return RunProcess ("pedump", "--verify code,metadata", Quote (source));
-		}
-
-		static string NetFrameworkTool (string tool)
-		{
-#if NET_CORE
-			return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework", "v4.0.30319", tool + ".exe");
-#else
-			return Path.Combine (
-				Path.GetDirectoryName (typeof (object).Assembly.Location),
-				tool + ".exe");
-#endif
 		}
 
 		static string WinSdkTool (string tool)
@@ -381,5 +371,6 @@ namespace Mono.Cecil.Tests {
 
 			return tool;
 		}
+#endif
 	}
 }
