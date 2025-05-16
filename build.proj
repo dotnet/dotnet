@@ -17,6 +17,9 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)init-poison.proj"
                       Condition="'$(EnablePoison)' == 'true'"
                       BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
+                      Condition="'$(BuildOS)' != 'windows'"
+                      BuildInParallel="true" />
     <ProjectReference Include="$(ToolsDir)tools.proj" BuildInParallel="true" />
 
     <ProjectReference Include="$(RepoProjectsDir)$(RootRepo).proj" />

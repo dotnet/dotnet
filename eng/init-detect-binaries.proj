@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <Target Name="DetectBinaries"
+          BeforeTargets="Build">
+    
+    <PropertyGroup>
+      <DetectBinariesLogLevel Condition="'$(DetectBinariesLogLevel)' == ''">None</DetectBinariesLogLevel>
+      <DetectBinariesAdditionalArgs>--with-sdk $(DotNetRoot)</DetectBinariesAdditionalArgs>
+      <DetectBinariesAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(DetectBinariesAdditionalArgs) --with-packages $(PreviouslySourceBuiltPackagesPath)</DetectBinariesAdditionalArgs>
+    </PropertyGroup>
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Detecting binaries." />
+
+    <Exec Command="$(RepositoryEngineeringDir)/detect-binaries.sh --output-dir &quot;$(BinariesReportDir)&quot; --log-level $(DetectBinariesLogLevel) $(DetectBinariesAdditionalArgs)"
+        IgnoreExitCode="true" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done detecting binaries." />
+  </Target>
+
+</Project>

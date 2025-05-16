@@ -3,6 +3,10 @@
   <PropertyGroup>
     <!-- Use a prebuilt Arcade to build Arcade -->
     <UseBootstrapArcade>true</UseBootstrapArcade>
+
+    <!-- TODO: Remove after the next re-bootstrap which includes
+         https://github.com/dotnet/dotnet/commit/b1ecb85a159b533cda852c2e90fb12c348982ee1 -->
+    <BuildArgs>$(BuildArgs) /p:DotNetBuildRepo=true</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
