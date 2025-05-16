@@ -32,5 +32,4 @@
             Inject - 
             CSharpCode - 
                 IntermediateToken -  - CSharp - #nullable restore\npublic global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData!;\n#nullable disable
-            CSharpCode - 
-                IntermediateToken -  - CSharp - #nullable restore\npublic TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model!;\n#nullable disable
+            PropertyDeclaration -  - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective - Model - ViewData.Model

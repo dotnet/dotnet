@@ -19,12 +19,6 @@ stages:
         .dotnet/dotnet tool restore
       displayName: Initialize tooling
 
-    - script: |
-        ./eng/detect-binaries.sh
-      displayName: Scan for binaries
-      workingDirectory: $(Build.SourcesDirectory)
-      continueOnError: true
-
     - script: >
         .dotnet/dotnet darc vmr scan-cloaked-files
         --vmr "$(Build.SourcesDirectory)"

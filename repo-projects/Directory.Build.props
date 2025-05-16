@@ -128,8 +128,6 @@
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder=$(OfficialBuilder)</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
-    <!-- TODO: Remove when the bootstrap Arcade SDK removed the ArPow build infra: https://github.com/dotnet/source-build/issues/5138 -->
-    <CommonArgs>$(CommonArgs) /p:UseArPowBuildInfra=false</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)</CommonArgs>
 

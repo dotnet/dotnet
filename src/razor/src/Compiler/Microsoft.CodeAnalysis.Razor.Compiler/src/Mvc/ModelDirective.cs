@@ -36,7 +36,7 @@ public static class ModelDirective
         return builder;
     }
 
-    public static string GetModelType(DocumentIntermediateNode document)
+    public static IntermediateToken GetModelType(DocumentIntermediateNode document)
     {
         if (document == null)
         {
@@ -44,7 +44,7 @@ public static class ModelDirective
         }
 
         var visitor = new Visitor();
-        return GetModelType(document, visitor).Content;
+        return GetModelType(document, visitor);
     }
 
     private static IntermediateToken GetModelType(DocumentIntermediateNode document, Visitor visitor)

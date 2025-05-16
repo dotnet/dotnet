@@ -50,9 +50,7 @@ namespace AspNetCoreGeneratedDocument
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model!;
-#nullable disable
+        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

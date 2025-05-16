@@ -79,9 +79,15 @@ MyModel
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public MyModel Model => ViewData.Model!;
+        public 
+#nullable restore
+#line (2,8)-(2,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsWithViewImports.cshtml"
+MyModel
+
+#line default
+#line hidden
 #nullable disable
+         Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

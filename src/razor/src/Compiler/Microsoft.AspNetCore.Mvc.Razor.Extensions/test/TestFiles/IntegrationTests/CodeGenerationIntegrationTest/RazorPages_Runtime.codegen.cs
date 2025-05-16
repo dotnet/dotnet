@@ -190,9 +190,15 @@ Model.Name
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public NewModel Model => ViewData.Model!;
+        public 
+#nullable restore
+#line (3,8)-(3,16) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
+NewModel
+
+#line default
+#line hidden
 #nullable disable
+         Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

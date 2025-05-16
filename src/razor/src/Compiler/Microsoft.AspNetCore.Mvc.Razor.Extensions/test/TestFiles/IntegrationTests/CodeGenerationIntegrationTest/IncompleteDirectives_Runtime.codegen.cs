@@ -81,9 +81,7 @@ MyService<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDir
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives Model => ViewData.Model!;
-#nullable disable
+        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

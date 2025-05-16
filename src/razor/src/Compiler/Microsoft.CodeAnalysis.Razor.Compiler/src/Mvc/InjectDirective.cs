@@ -56,7 +56,7 @@ public static class InjectDirective
 
             var visitor = new Visitor();
             visitor.Visit(documentNode);
-            var modelType = ModelDirective.GetModelType(documentNode);
+            var modelType = ModelDirective.GetModelType(documentNode).Content;
 
             var properties = new HashSet<string>(StringComparer.Ordinal);
 

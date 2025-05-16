@@ -16,7 +16,9 @@ public sealed class PropertyDeclarationIntermediateNode : MemberDeclarationInter
 
     public string PropertyName { get; set; }
 
-    public string PropertyType { get; set; }
+    public IntermediateToken PropertyType { get; set; }
+
+    public string PropertyExpression { get; set; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

@@ -11,6 +11,7 @@
 ###                              ignored for either cleaning or validating.
 ###                              Defaults to eng/allowed-vmr-binaries.txt.
 ###   --log-level <level>        Set the log level for the binary tooling. Defaults to Debug.
+###   --output-dir <dir>         Directory to output the logs. Defaults to $REPO_ROOT/artifacts/log/binary-report.
 ###   --with-packages            Use the specified directory as the packages source feed.
 ###                              Defaults to online dotnet-public and dotnet-libraries feeds.
 ###   --with-sdk                 Use the specified directory as the dotnet SDK.
@@ -34,6 +35,7 @@ defaultAllowedBinariesFile="$REPO_ROOT/eng/allowed-vmr-binaries.txt"
 allowedBinariesFile=$defaultAllowedBinariesFile
 mode='validate'
 logLevel='Debug'
+outputDir="$REPO_ROOT/artifacts/log/binary-report"
 propsDir=''
 packagesDir=''
 restoreSources=''
@@ -59,6 +61,10 @@ while :; do
       ;;
     --log-level)
       logLevel=$2
+      shift
+      ;;
+    --output-dir)
+      outputDir=$2
       shift
       ;;
     --with-packages)
@@ -124,7 +130,6 @@ function ParseBinaryArgs
 function RunBinaryTool
 {
   targetDir="$REPO_ROOT"
-  outputDir="$REPO_ROOT/artifacts/log/binary-report"
   BinaryToolCommand=""$dotnetSdk/dotnet" run --project "$BINARY_TOOL" -c Release --property:RestoreSources="$restoreSources" "$mode" "$targetDir" -o "$outputDir" -ab "$allowedBinariesFile" -l "$logLevel""
 
   if [ -n "$packagesDir" ]; then

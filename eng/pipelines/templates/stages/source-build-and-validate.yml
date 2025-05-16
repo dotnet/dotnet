@@ -5,10 +5,6 @@ parameters:
 - name: pool_LinuxArm64
   type: object
 
-# Scope of jobs which are executed
-- name: scope
-  type: string
-
 - name: useMicrosoftBuildAssetsForTests
   type: boolean
 

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileSystemGlobbing;
+using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
