@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <Target Name="DetectBinaries"
-          BeforeTargets="Build">
+          BeforeTargets="Build"
+          Condition="'$(SkipDetectBinaries)' != 'true'">
     
     <PropertyGroup>
       <DetectBinariesLogLevel Condition="'$(DetectBinariesLogLevel)' == ''">None</DetectBinariesLogLevel>
