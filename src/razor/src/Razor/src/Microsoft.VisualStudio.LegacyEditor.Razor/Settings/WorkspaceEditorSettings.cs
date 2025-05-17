@@ -4,7 +4,7 @@
 using System;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 
@@ -12,9 +12,9 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 internal sealed class WorkspaceEditorSettings : IWorkspaceEditorSettings
 {
     private readonly IClientSettingsManager _clientSettingsManager;
-    private readonly EventHandler<ClientSettingsChangedEventArgs> _onClientSettingsChanged;
+    private readonly EventHandler<EventArgs> _onClientSettingsChanged;
 
-    private EventHandler<ClientSettingsChangedEventArgs>? _changedHandler;
+    private EventHandler<EventArgs>? _changedHandler;
     private int _listenerCount = 0;
 
     [ImportingConstructor]
@@ -26,15 +26,14 @@ internal sealed class WorkspaceEditorSettings : IWorkspaceEditorSettings
 
     public ClientSettings Current => _clientSettingsManager.GetClientSettings();
 
-    private void OnClientSettingsChanged(object sender, ClientSettingsChangedEventArgs e)
+    private void OnClientSettingsChanged(object sender, EventArgs e)
     {
         Assumes.True(_changedHandler is not null, $"{nameof(OnClientSettingsChanged)} should not be invoked when there are no listeners.");
 
-        var args = new ClientSettingsChangedEventArgs(Current);
-        _changedHandler.Invoke(this, args);
+        _changedHandler.Invoke(this, EventArgs.Empty);
     }
 
-    public event EventHandler<ClientSettingsChangedEventArgs> Changed
+    public event EventHandler<EventArgs> Changed
     {
         add
         {

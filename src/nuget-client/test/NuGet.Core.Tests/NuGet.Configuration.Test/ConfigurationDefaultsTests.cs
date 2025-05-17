@@ -176,7 +176,7 @@ namespace NuGet.Configuration
                 File.WriteAllText(nugetConfigFilePath, configurationDefaultsContent);
 
                 ConfigurationDefaults configDefaults = new ConfigurationDefaults(nugetConfigFileFolder, nugetConfigFile);
-                Assert.True(configDefaults.DefaultPackageSources.ToList().Count == 0);
+                Assert.Equal(0, configDefaults.DefaultPackageSources.ToList().Count);
             }
         }
 

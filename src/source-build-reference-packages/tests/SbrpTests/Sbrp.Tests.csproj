@@ -15,12 +15,8 @@
       <Value>$(RepoRoot)</Value>
     </RuntimeHostConfigurationOption>
 
-    <RuntimeHostConfigurationOption Include="SbrpTests.Configuration">
-      <Value>$(Configuration)</Value>
-    </RuntimeHostConfigurationOption>
-
-    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsDir">
-      <Value>$(ArtifactsDir)</Value>
+    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsShippingPackagesDir">
+      <Value>$(ArtifactsShippingPackagesDir)</Value>
     </RuntimeHostConfigurationOption>
   </ItemGroup>
 

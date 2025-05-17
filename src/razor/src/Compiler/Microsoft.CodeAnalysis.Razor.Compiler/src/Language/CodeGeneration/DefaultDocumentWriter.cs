@@ -200,7 +200,7 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
 
         public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
         {
-            CodeWriter.WriteAutoPropertyDeclaration(node.Modifiers, node.PropertyType, node.PropertyName);
+            CodeWriter.WritePropertyDeclaration(node.Modifiers, node.PropertyType, node.PropertyName, node.PropertyExpression, _context);
         }
 
         public override void VisitExtension(ExtensionIntermediateNode node)

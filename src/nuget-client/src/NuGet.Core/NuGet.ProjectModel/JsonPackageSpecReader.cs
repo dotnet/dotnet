@@ -103,8 +103,6 @@ namespace NuGet.ProjectModel
 
             List<CompatibilityProfile> compatibilityProfiles = null;
             List<RuntimeDescription> runtimeDescriptions = null;
-            var wasPackOptionsSet = false;
-            var isMappingsNull = false;
 
             string filePath = name == null ? null : Path.GetFullPath(packageSpecPath);
 
@@ -117,29 +115,6 @@ namespace NuGet.ProjectModel
 
                 switch (propertyName)
                 {
-#pragma warning disable CS0612 // Type or member is obsolete
-                    case "authors":
-                        packageSpec.Authors = ReadStringArray(jsonReader) ?? Array.Empty<string>();
-                        break;
-
-                    case "buildOptions":
-                        ReadBuildOptions(jsonReader, packageSpec);
-                        break;
-
-                    case "contentFiles":
-                        List<string> contentFiles = jsonReader.ReadStringArrayAsList();
-
-                        if (contentFiles != null)
-                        {
-                            packageSpec.ContentFiles = contentFiles;
-                        }
-                        break;
-
-                    case "copyright":
-                        packageSpec.Copyright = jsonReader.ReadNextTokenAsString();
-                        break;
-#pragma warning restore CS0612 // Type or member is obsolete
-
                     case "dependencies":
                         ReadDependencies(
                             jsonReader,
@@ -148,30 +123,9 @@ namespace NuGet.ProjectModel
                             isGacOrFrameworkReference: false);
                         break;
 
-#pragma warning disable CS0612 // Type or member is obsolete
-                    case "description":
-                        packageSpec.Description = jsonReader.ReadNextTokenAsString();
-                        break;
-#pragma warning restore CS0612 // Type or member is obsolete
-
                     case "frameworks":
                         ReadFrameworks(jsonReader, packageSpec);
                         break;
-
-#pragma warning disable CS0612 // Type or member is obsolete
-                    case "language":
-                        packageSpec.Language = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "packInclude":
-                        ReadPackInclude(jsonReader, packageSpec);
-                        break;
-
-                    case "packOptions":
-                        ReadPackOptions(jsonReader, packageSpec, ref isMappingsNull);
-                        wasPackOptionsSet = true;
-                        break;
-#pragma warning restore CS0612 // Type or member is obsolete
 
                     case "restore":
                         ReadMSBuildMetadata(jsonReader, packageSpec, environmentVariableReader);
@@ -181,18 +135,8 @@ namespace NuGet.ProjectModel
                         runtimeDescriptions = ReadRuntimes(jsonReader);
                         break;
 
-#pragma warning disable CS0612 // Type or member is obsolete
-                    case "scripts":
-                        ReadScripts(jsonReader, packageSpec);
-                        break;
-#pragma warning restore CS0612 // Type or member is obsolete
-
                     case "supports":
                         compatibilityProfiles = ReadSupports(jsonReader);
-                        break;
-
-                    case "title":
-                        packageSpec.Title = jsonReader.ReadNextTokenAsString();
                         break;
 
                     case "version":
@@ -202,9 +146,6 @@ namespace NuGet.ProjectModel
                         {
                             try
                             {
-#pragma warning disable CS0612 // Type or member is obsolete
-                                packageSpec.HasVersionSnapshot = PackageSpecUtility.IsSnapshotVersion(version);
-#pragma warning restore CS0612 // Type or member is obsolete
                                 packageSpec.Version = PackageSpecUtility.SpecifySnapshot(version, snapshotValue);
                             }
                             catch (Exception ex)
@@ -218,23 +159,6 @@ namespace NuGet.ProjectModel
 
             packageSpec.Name = name;
             packageSpec.FilePath = name == null ? null : Path.GetFullPath(packageSpecPath);
-
-#pragma warning disable CS0612 // Type or member is obsolete
-            if (!wasPackOptionsSet)
-            {
-                packageSpec.Owners = Array.Empty<string>();
-                packageSpec.PackOptions = new PackOptions()
-                {
-                    PackageType = Array.Empty<PackageType>()
-                };
-                packageSpec.Tags = Array.Empty<string>();
-            }
-
-            if (isMappingsNull)
-            {
-                packageSpec.PackOptions.Mappings = null;
-            }
-#pragma warning restore CS0612 // Type or member is obsolete
 
             packageSpec.RuntimeGraph = new RuntimeGraph(
                 runtimeDescriptions ?? Enumerable.Empty<RuntimeDescription>(),
@@ -261,20 +185,6 @@ namespace NuGet.ProjectModel
             var name = (string)jsonReader.Value;
 
             return new PackageType(name, Packaging.Core.PackageType.EmptyVersion);
-        }
-
-        [Obsolete]
-        private static void ReadBuildOptions(JsonTextReader jsonReader, PackageSpec packageSpec)
-        {
-            packageSpec.BuildOptions = new BuildOptions();
-
-            jsonReader.ReadObject(buildOptionsPropertyName =>
-            {
-                if (buildOptionsPropertyName == "outputName")
-                {
-                    packageSpec.BuildOptions.OutputName = jsonReader.ReadNextTokenAsString();
-                }
-            });
         }
 
         [Obsolete]
@@ -871,91 +781,13 @@ namespace NuGet.ProjectModel
                                 CultureInfo.CurrentCulture,
                                 Strings.Log_InvalidImportFramework,
                                 import,
-                                PackageSpec.PackageSpecFileName),
+                                packageSpec.FilePath),
                             lineNumber,
                             linePosition,
                             packageSpec.FilePath);
                     }
 
                     importFrameworks.Add(framework);
-                }
-            }
-        }
-
-        [Obsolete]
-        private static void ReadMappings(JsonTextReader jsonReader, string mappingKey, IDictionary<string, IncludeExcludeFiles> mappings)
-        {
-            if (jsonReader.ReadNextToken())
-            {
-                switch (jsonReader.TokenType)
-                {
-                    case JsonToken.String:
-                        {
-                            var files = new IncludeExcludeFiles()
-                            {
-                                Include = new[] { (string)jsonReader.Value }
-                            };
-
-                            mappings.Add(mappingKey, files);
-                        }
-                        break;
-
-                    case JsonToken.StartArray:
-                        {
-                            IReadOnlyList<string> include = jsonReader.ReadStringArrayAsReadOnlyListFromArrayStart();
-
-                            var files = new IncludeExcludeFiles()
-                            {
-                                Include = include
-                            };
-
-                            mappings.Add(mappingKey, files);
-                        }
-                        break;
-
-                    case JsonToken.StartObject:
-                        {
-                            IReadOnlyList<string> excludeFiles = null;
-                            IReadOnlyList<string> exclude = null;
-                            IReadOnlyList<string> includeFiles = null;
-                            IReadOnlyList<string> include = null;
-
-                            jsonReader.ReadProperties(filesPropertyName =>
-                            {
-                                switch (filesPropertyName)
-                                {
-                                    case "excludeFiles":
-                                        excludeFiles = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                                        break;
-
-                                    case "exclude":
-                                        exclude = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                                        break;
-
-                                    case "includeFiles":
-                                        includeFiles = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                                        break;
-
-                                    case "include":
-                                        include = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                                        break;
-                                }
-                            });
-
-                            if (include != null || includeFiles != null || exclude != null || excludeFiles != null)
-                            {
-                                var files = new IncludeExcludeFiles()
-                                {
-                                    ExcludeFiles = excludeFiles,
-                                    Exclude = exclude,
-                                    IncludeFiles = includeFiles,
-                                    Include = include
-                                };
-
-                                mappings.Add(mappingKey, files);
-                            }
-                        }
-                        break;
                 }
             }
         }
@@ -1411,211 +1243,6 @@ namespace NuGet.ProjectModel
         }
 
         [Obsolete]
-        private static void ReadPackageTypes(PackageSpec packageSpec, JsonTextReader jsonReader)
-        {
-            var errorLine = 0;
-            var errorColumn = 0;
-
-            IReadOnlyList<PackageType> packageTypes = null;
-            PackageType packageType = null;
-
-            try
-            {
-                if (jsonReader.ReadNextToken())
-                {
-                    errorLine = jsonReader.LineNumber;
-                    errorColumn = jsonReader.LinePosition;
-
-                    switch (jsonReader.TokenType)
-                    {
-                        case JsonToken.String:
-                            packageType = CreatePackageType(jsonReader);
-
-                            packageTypes = new[] { packageType };
-                            break;
-
-                        case JsonToken.StartArray:
-                            var types = new List<PackageType>();
-
-                            while (jsonReader.ReadNextToken() && jsonReader.TokenType != JsonToken.EndArray)
-                            {
-                                if (jsonReader.TokenType != JsonToken.String)
-                                {
-                                    throw FileFormatException.Create(
-                                        string.Format(
-                                            CultureInfo.CurrentCulture,
-                                            Strings.InvalidPackageType,
-                                            PackageSpec.PackageSpecFileName),
-                                        errorLine,
-                                        errorColumn,
-                                        packageSpec.FilePath);
-                                }
-
-                                packageType = CreatePackageType(jsonReader);
-
-                                types.Add(packageType);
-                            }
-
-                            packageTypes = types;
-                            break;
-
-                        case JsonToken.Null:
-                            break;
-
-                        default:
-                            throw new InvalidCastException();
-                    }
-
-#pragma warning disable CS0612 // Type or member is obsolete
-                    if (packageTypes != null)
-                    {
-                        packageSpec.PackOptions.PackageType = packageTypes;
-                    }
-#pragma warning restore CS0612 // Type or member is obsolete
-                }
-            }
-            catch (Exception)
-            {
-                throw FileFormatException.Create(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.InvalidPackageType,
-                        PackageSpec.PackageSpecFileName),
-                    errorLine,
-                    errorColumn,
-                    packageSpec.FilePath);
-            }
-        }
-
-        [Obsolete]
-        private static void ReadPackInclude(JsonTextReader jsonReader, PackageSpec packageSpec)
-        {
-            jsonReader.ReadObject(propertyName =>
-            {
-                string propertyValue = jsonReader.ReadAsString();
-
-                packageSpec.PackInclude.Add(new KeyValuePair<string, string>(propertyName, propertyValue));
-            });
-        }
-
-        [Obsolete]
-        private static void ReadPackOptions(JsonTextReader jsonReader, PackageSpec packageSpec, ref bool isMappingsNull)
-        {
-            var wasMappingsRead = false;
-
-            bool isPackOptionsValueAnObject = jsonReader.ReadObject(propertyName =>
-            {
-                switch (propertyName)
-                {
-                    case "files":
-                        wasMappingsRead = ReadPackOptionsFiles(packageSpec, jsonReader, wasMappingsRead);
-                        break;
-
-                    case "iconUrl":
-                        packageSpec.IconUrl = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "licenseUrl":
-                        packageSpec.LicenseUrl = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "owners":
-                        string[] owners = ReadStringArray(jsonReader);
-
-                        if (owners != null)
-                        {
-                            packageSpec.Owners = owners;
-                        }
-                        break;
-
-                    case "packageType":
-                        ReadPackageTypes(packageSpec, jsonReader);
-                        break;
-
-                    case "projectUrl":
-                        packageSpec.ProjectUrl = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "releaseNotes":
-                        packageSpec.ReleaseNotes = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "requireLicenseAcceptance":
-                        packageSpec.RequireLicenseAcceptance = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
-                        break;
-
-                    case "summary":
-                        packageSpec.Summary = jsonReader.ReadNextTokenAsString();
-                        break;
-
-                    case "tags":
-                        string[] tags = ReadStringArray(jsonReader);
-
-                        if (tags != null)
-                        {
-                            packageSpec.Tags = tags;
-                        }
-                        break;
-                }
-            });
-
-            isMappingsNull = isPackOptionsValueAnObject && !wasMappingsRead;
-        }
-
-        [Obsolete]
-        private static bool ReadPackOptionsFiles(PackageSpec packageSpec, JsonTextReader jsonReader, bool wasMappingsRead)
-        {
-            IReadOnlyList<string> excludeFiles = null;
-            IReadOnlyList<string> exclude = null;
-            IReadOnlyList<string> includeFiles = null;
-            IReadOnlyList<string> include = null;
-
-            jsonReader.ReadObject(filesPropertyName =>
-            {
-                switch (filesPropertyName)
-                {
-                    case "excludeFiles":
-                        excludeFiles = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                        break;
-
-                    case "exclude":
-                        exclude = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                        break;
-
-                    case "includeFiles":
-                        includeFiles = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                        break;
-
-                    case "include":
-                        include = jsonReader.ReadStringOrArrayOfStringsAsReadOnlyList();
-                        break;
-
-                    case "mappings":
-                        jsonReader.ReadObject(mappingsPropertyName =>
-                        {
-                            wasMappingsRead = true;
-
-                            ReadMappings(jsonReader, mappingsPropertyName, packageSpec.PackOptions.Mappings);
-                        });
-                        break;
-                }
-            });
-
-            if (include != null || includeFiles != null || exclude != null || excludeFiles != null)
-            {
-                packageSpec.PackOptions.IncludeExcludeFiles = new IncludeExcludeFiles()
-                {
-                    ExcludeFiles = excludeFiles,
-                    Exclude = exclude,
-                    IncludeFiles = includeFiles,
-                    Include = include
-                };
-            }
-
-            return wasMappingsRead;
-        }
-
-        [Obsolete]
         static RuntimeDependencySet ReadRuntimeDependencySet(JsonTextReader jsonReader, string dependencySetName)
         {
             List<RuntimePackageDependency> dependencies = null;
@@ -1675,48 +1302,6 @@ namespace NuGet.ProjectModel
             });
 
             return runtimeDescriptions;
-        }
-
-        [Obsolete]
-        private static void ReadScripts(JsonTextReader jsonReader, PackageSpec packageSpec)
-        {
-            jsonReader.ReadObject(propertyName =>
-            {
-                if (jsonReader.ReadNextToken())
-                {
-                    if (jsonReader.TokenType == JsonToken.String)
-                    {
-                        packageSpec.Scripts[propertyName] = new string[] { (string)jsonReader.Value };
-                    }
-                    else if (jsonReader.TokenType == JsonToken.StartArray)
-                    {
-                        var list = new List<string>();
-
-                        while (jsonReader.ReadNextToken() && jsonReader.TokenType == JsonToken.String)
-                        {
-                            list.Add((string)jsonReader.Value);
-                        }
-
-                        packageSpec.Scripts[propertyName] = list;
-                    }
-                    else
-                    {
-                        throw FileFormatException.Create(
-                            string.Format(CultureInfo.CurrentCulture, "The value of a script in '{0}' can only be a string or an array of strings", PackageSpec.PackageSpecFileName),
-                            jsonReader.LineNumber,
-                            jsonReader.LinePosition,
-                            packageSpec.FilePath);
-                    }
-                }
-            });
-        }
-
-        [Obsolete]
-        private static string[] ReadStringArray(JsonTextReader jsonReader)
-        {
-            List<string> list = jsonReader.ReadStringArrayAsList();
-
-            return list?.ToArray();
         }
 
         [Obsolete]

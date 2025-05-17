@@ -23,7 +23,7 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Test;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
-using NuGet.VisualStudio;
+using NuGet.VisualStudio.Telemetry;
 using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;

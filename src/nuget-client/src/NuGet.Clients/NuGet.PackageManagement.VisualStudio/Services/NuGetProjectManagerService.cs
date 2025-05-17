@@ -13,7 +13,6 @@ using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.Threading;
-using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.PackageManagement.Telemetry;
 using NuGet.Packaging;
@@ -26,6 +25,7 @@ using NuGet.Shared;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using StreamJsonRpc;
 
 namespace NuGet.PackageManagement.VisualStudio
@@ -38,23 +38,27 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly INuGetProjectManagerServiceState _state;
         private readonly ISharedServiceState _sharedState;
         private AsyncSemaphore.Releaser? _semaphoreReleaser;
+        private readonly INuGetTelemetryProvider _telemetryProvider;
 
         public NuGetProjectManagerService(
             ServiceActivationOptions options,
             IServiceBroker serviceBroker,
             AuthorizationServiceClient authorizationServiceClient,
+            INuGetTelemetryProvider telemetryProvider,
             INuGetProjectManagerServiceState state,
             ISharedServiceState sharedServiceState)
         {
             Assumes.NotNull(serviceBroker);
             Assumes.NotNull(authorizationServiceClient);
             Assumes.NotNull(state);
+            Assumes.NotNull(telemetryProvider);
             Assumes.NotNull(sharedServiceState);
 
             _options = options;
             _serviceBroker = serviceBroker;
             _authorizationServiceClient = authorizationServiceClient;
             _state = state;
+            _telemetryProvider = telemetryProvider;
             _sharedState = sharedServiceState;
         }
 
@@ -155,7 +159,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             if (telemetryEvent is object)
             {
-                TelemetryActivity.EmitTelemetryEvent(telemetryEvent);
+                _telemetryProvider.EmitEvent(telemetryEvent);
             }
 
             return installedPackages;

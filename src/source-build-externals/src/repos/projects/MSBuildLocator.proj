@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)src/MSBuildLocator/bin/$(Configuration)/</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)src/MSBuildLocator/Microsoft.Build.Locator.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:EnablePackageValidation=false</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(MSBuildLocatorReleaseVersion)</BuildCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) build --no-restore /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) pack --no-build /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

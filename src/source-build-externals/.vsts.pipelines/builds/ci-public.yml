@@ -28,12 +28,6 @@ stages:
   jobs:
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
-      enablePublishUsingPipelines: true
-      enablePublishBuildAssets: true
-      artifacts:
-        publish:
-          artifacts: true
-          manifests: true
       jobs:
       - job: SourceBuild_Managed
         displayName: Source-Build (Managed)

@@ -66,7 +66,7 @@ namespace NuGet.Test
 
                     // Assert
                     Assert.True(File.Exists(Path.Combine(packageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName)));
-                    Assert.True(testLogger.Errors == 0);
+                    Assert.Equal(0, testLogger.Errors);
                 }
             }
         }

@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.PooledObjects;
+
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
@@ -27,31 +29,45 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
         }
     }
 
-    public virtual SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
+    public virtual SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list)
+        where TNode : SyntaxNode
     {
-        SyntaxListBuilder alternate = null;
-        for (int i = 0, n = list.Count; i < n; i++)
+        var count = list.Count;
+        if (count == 0)
+        {
+            return list;
+        }
+
+        using PooledArrayBuilder<TNode> builder = [];
+
+        var isUpdating = false;
+
+        for (var i = 0; i < count; i++)
         {
             var item = list[i];
+
             var visited = VisitListElement(item);
-            if (item != visited && alternate == null)
+
+            if (item != visited && !isUpdating)
             {
-                alternate = new SyntaxListBuilder(n);
-                alternate.AddRange(list, 0, i);
+                // The list is being updated, so we need to initialize the builder
+                // add the items we've seen so far.
+                builder.SetCapacityIfLarger(count);
+
+                builder.AddRange(list, index: 0, count: i);
+
+                isUpdating = true;
             }
 
-            if (alternate != null && visited != null)
+            if (isUpdating && visited != null)
             {
-                alternate.Add(visited);
+                builder.Add(visited);
             }
         }
 
-        if (alternate != null)
-        {
-            return alternate.ToList();
-        }
-
-        return list;
+        return isUpdating
+            ? builder.ToList()
+            : list;
     }
 
     public override SyntaxNode VisitToken(SyntaxToken token)

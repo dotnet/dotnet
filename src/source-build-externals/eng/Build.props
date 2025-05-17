@@ -1,10 +1,7 @@
 <Project>
 
   <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)eng\tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\*.csproj">
-      <BuildInParallel>false</BuildInParallel>
-    </ProjectToBuild>
-    <ProjectToBuild Include="$(RepoRoot)repo-projects\*.proj" />
+    <ProjectToBuild Include="$(RepoRoot)src\repos\projects\*.proj" />
   </ItemGroup>
 
 </Project>

@@ -22,6 +22,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)DocumentColor\CohostDocumentColorEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DocumentHighlight\CohostDocumentHighlightEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DocumentSymbol\CohostDocumentSymbolEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostDocumentFormattingEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FindAllReferences\CohostFindAllReferencesEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\SynchronizationResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToDefinitionEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToImplementationEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LinkedEditingRange\CohostLinkedEditingRangeEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostOnTypeFormattingEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostRangeFormattingEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertTriggerCharacterProviders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Rename\CohostRenameEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SignatureHelp\CohostSignatureHelpEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FoldingRange\CohostFoldingRangeEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hover\CohostHoverEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlDocumentSynchronizer.cs" />
@@ -41,8 +53,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)RazorCohostDynamicRegistrationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorLSPConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownStartupOrder.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)SemanticTokens\" />
   </ItemGroup>
 </Project>

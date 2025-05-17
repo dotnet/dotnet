@@ -24,6 +24,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 using ContractsItemFilter = NuGet.VisualStudio.Internal.Contracts.ItemFilter;
 

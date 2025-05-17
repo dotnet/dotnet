@@ -1,30 +1,30 @@
-[submodule "src/application-insights"]
-	path = src/application-insights
+[submodule "application-insights"]
+	path = src/repos/src/application-insights
 	url = https://github.com/microsoft/ApplicationInsights-dotnet
-[submodule "src/cssparser"]
-	path = src/cssparser
+[submodule "cssparser"]
+	path = src/repos/src/cssparser
 	url = https://github.com/dotnet/cssparser
-[submodule "src/humanizer"]
-	path = src/humanizer
+[submodule "humanizer"]
+	path = src/repos/src/humanizer
 	url = https://github.com/Humanizr/Humanizer
-[submodule "src/newtonsoft-json"]
-	path = src/newtonsoft-json
+[submodule "newtonsoft-json"]
+	path = src/repos/src/newtonsoft-json
 	url = https://github.com/JamesNK/Newtonsoft.Json.git
-[submodule "src/MSBuildLocator"]
-	path = src/MSBuildLocator
+[submodule "MSBuildLocator"]
+	path = src/repos/src/MSBuildLocator
 	url = https://github.com/microsoft/MSBuildLocator
-[submodule "src/azure-activedirectory-identitymodel-extensions-for-dotnet"]
-	path = src/azure-activedirectory-identitymodel-extensions-for-dotnet
+[submodule "azure-activedirectory-identitymodel-extensions-for-dotnet"]
+	path = src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet
 	url = https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git
-[submodule "src/docker-creds-provider"]
-	path = src/docker-creds-provider
+[submodule "docker-creds-provider"]
+	path = src/repos/src/docker-creds-provider
 	url = https://github.com/mthalman/docker-creds-provider
 [submodule "xunit"]
-	path = src/xunit
+	path = src/repos/src/xunit
 	url = https://github.com/xunit/xunit
 [submodule "abstractions-xunit"]
-	path = src/abstractions-xunit
+	path = src/repos/src/abstractions-xunit
 	url = https://github.com/xunit/abstractions.xunit
-[submodule "src/vs-solutionpersistence"]
-	path = src/vs-solutionpersistence
+[submodule "vs-solutionpersistence"]
+	path = src/repos/src/vs-solutionpersistence
 	url = https://github.com/microsoft/vs-solutionpersistence.git

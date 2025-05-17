@@ -410,7 +410,7 @@ namespace NuGet.ProjectModel
                                Strings.PackagesLockFile_PackageReferencesHaveChanged,
                                nuGetFramework.GetShortFolderName(),
                                lockFileDependenciesCount > 0 ? string.Join(", ", lockFileDependencies.Select(e => e.Id + ":" + e.RequestedVersion.ToNormalizedString()).OrderBy(dep => dep)) : Strings.None,
-                               newPackageDependenciesCount > 0 ? string.Join(", ", newPackageDependencies.Select(e => e.LibraryRange.Name + ":" + e.LibraryRange.VersionRange.ToNormalizedString()).OrderBy(dep => dep)) : Strings.None)
+                               newPackageDependenciesCount > 0 ? string.Join(", ", newPackageDependencies.Select(e => e.LibraryRange.ToLockFileDependencyGroupString()).OrderBy(dep => dep)) : Strings.None)
                            );
             }
 

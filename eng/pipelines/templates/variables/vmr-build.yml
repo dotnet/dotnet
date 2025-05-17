@@ -31,8 +31,8 @@ variables:
   - name: ibcEnabled
     value: false
 - ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
-  # Enable IBC on the internal project if the, branch is a main or release branch
-  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  # Enable IBC on the internal project if the, branch is a release branch
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: ibcEnabled
       value: true
   # No IBC otherwise.

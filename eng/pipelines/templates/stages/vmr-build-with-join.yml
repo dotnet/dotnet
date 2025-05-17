@@ -10,6 +10,11 @@ parameters:
 - name: finalJoinCondition
   type: boolean
 
+#### repo parameters ####
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -66,8 +71,12 @@ stages:
       - ${{ if ne(stage.templateContext.validationOnly, 'true') }}:
         - ${{ stage.stage }}
     variables:
-    - name: vmrPath
-      value: $(Build.SourcesDirectory)
+    - ${{ if parameters.isBuiltFromVmr }}:
+      - name: vmrPath
+        value: $(Build.SourcesDirectory)
+    - ${{ else }}:
+      - name: vmrPath
+        value: $(Agent.BuildDirectory)/vmr
     - template: ../variables/vmr-build.yml
     jobs:
       - job: FinalJoin
@@ -93,16 +102,20 @@ stages:
             artifact: AssetManifests
             displayName: Publish Merged Manifest
             sbomEnabled: false
+          # Remains a pipeline artifact because the final join will add the asset manifest.
+          # Will be removed altogether with v4 publishing.
           - output: buildArtifacts
             PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/assets
             ArtifactName: BlobArtifacts
             displayName: Publish Blob Artifacts
-            sbomEnabled: false
-          - output: buildArtifacts
-            PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/packages
-            ArtifactName: PackageArtifacts
+          - output: pipelineArtifact
+            path: $(Build.ArtifactStagingDirectory)/artifacts/packages
+            artifact: PackageArtifacts
             displayName: Publish Package Artifacts
-            sbomEnabled: false
+          - output: pipelineArtifact
+            path: $(Build.ArtifactStagingDirectory)/artifacts/PDB
+            artifact: PDBArtifacts
+            displayName: Publish Package Artifacts
           - output: pipelineArtifact
             path: $(Build.ArtifactStagingDirectory)/artifacts/log
             artifact: JoinVerticals_BuildLogs_Attempt$(System.JobAttempt)
@@ -125,6 +138,11 @@ stages:
                   inputs:
                     path: $(Build.ArtifactStagingDirectory)/VerticalArtifacts/${{ vertical.job }}
                     artifactName: ${{ vertical.job }}_Artifacts
+        - ${{ if not(parameters.isBuiltFromVmr) }}:
+          - template: /eng/common/templates/steps/vmr-sync.yml@self
+            parameters:
+              vmrPath: ${{ variables.vmrPath }}
+              targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
         - template: ../steps/vmr-join-verticals.yml
           parameters:
             dotNetBuildPass: final

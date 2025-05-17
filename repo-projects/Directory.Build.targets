@@ -2,12 +2,6 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
-  <PropertyGroup Condition="'$(UseInnerClone)' == 'true'">
-    <CommonArgs>$(CommonArgs) /p:UseInnerClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopySrcInsteadOfClone=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</CommonArgs>
-  </PropertyGroup>
-
   <PropertyGroup>
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
@@ -41,10 +35,9 @@
     <RuntimeOS>$(NETCoreSdkRuntimeIdentifier.Substring(0, $(_platformIndex)))</RuntimeOS>
 
     <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
-    <BaseOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))-$(TargetArchitecture)</BaseOS>
+    <BaseRid>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))-$(TargetArchitecture)</BaseRid>
     <CommonArgs>$(CommonArgs) /p:PortableBuild=$(PortableBuild)</CommonArgs>
-    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:RuntimeOS=$(RuntimeOS)</CommonArgs>
-    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:BaseOS=$(BaseOS)</CommonArgs>
+    <CommonArgs Condition="'$(ShortStack)' != 'true' and '$(TargetOS)' != 'linux-musl'">$(CommonArgs) /p:BaseRid=$(BaseRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
@@ -61,36 +54,6 @@
     <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
-
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReplaceTextInFile" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="AddNoWarns"
-          Condition=" EXISTS('$(ProjectDirectory)Directory.Build.props') OR EXISTS('$(ProjectDirectory)src/Directory.Build.props') "
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)AddNoWarns.complete" >
-
-    <!-- Don't warn on warnings that can be generated in source-build
-         but not necessarily in repo builds.
-         NU1603 - See https://github.com/dotnet/source-build/issues/2766.
-         NU5104 - During preview builds, some packages have pre-release versions.
-                  Some repos with stable versions may need to uptake these packages
-                  with pre-release versions because of PVP when building with
-                  source-build.  -->
-    <PropertyGroup>
-      <OldText><![CDATA[</Project>]]></OldText>
-      <NewText>
-        <![CDATA[  <PropertyGroup>
-    <NoWarn>%24(NoWarn);NU1903;$(RepoNoWarns)</NoWarn>
-  </PropertyGroup>
-</Project>]]>
-      </NewText>
-
-      <DirectoryBuildPropsFile Condition=" EXISTS('$(ProjectDirectory)Directory.Build.props') ">$(ProjectDirectory)Directory.Build.props</DirectoryBuildPropsFile>
-      <DirectoryBuildPropsFile Condition=" '$(DirectoryBuildPropsFile)' == '' AND EXISTS('$(ProjectDirectory)src/Directory.Build.props') ">$(ProjectDirectory)src/Directory.Build.props</DirectoryBuildPropsFile>
-    </PropertyGroup>
-    <ReplaceTextInFile InputFile="$(DirectoryBuildPropsFile)"
-      OldText="$(OldText)"
-      NewText="$(NewText)" />
-  </Target>
 
   <!-- Returns the repository references of this project and all the projects this project references, recursively -->
   <Target Name="GetTransitiveRepositoryReferences" Returns="@(TransitiveRepositoryReference)">
@@ -302,10 +265,11 @@
     </Touch>
   </Target>
 
-  <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
-  <Target Name="UpdateEngCommonFiles" Condition="'$(UseBootstrapArcade)' != 'true'">
+  <!-- Don't update arcade's eng/common layout as that is considered live even though it uses bootstrap Arcade. -->
+  <Target Name="UpdateEngCommonFiles" Condition="'$(RepositoryName)' != 'arcade'">
     <ItemGroup>
-      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" />
+      <InputEngCommonFile Include="$(RepoRoot)eng\common\**\*" Condition="'$(UseBootstrapArcade)' == 'true'" />
+      <InputEngCommonFile Include="$(RepoRoot)src\arcade\eng\common\**\*" Condition="'$(UseBootstrapArcade)' != 'true'" />
     </ItemGroup>
 
     <Copy SourceFiles="@(InputEngCommonFile)"
@@ -353,6 +317,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
+                               IsPreviousPropsFile="true"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
@@ -484,8 +449,23 @@
     </ItemGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReadRepoInfoFromSourceManifest" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="SetRepoOriginalSourceRevisionId" Condition="'$(IsUtilityProject)' != 'true'">
+    <ReadRepoInfoFromSourceManifest SourceManifest="$(SrcDir)source-manifest.json"
+                                    RepositoryName="$(RepositoryName)">
+      <Output TaskParameter="RepoInfo" ItemName="RepoInfo" />
+    </ReadRepoInfoFromSourceManifest>
+
+    <Error Condition="'%(RepoInfo.CommitSha)' == ''"
+           Text="Unable to find the commit SHA for the repository $(RepositoryName) in the source-manifest.json file." />
+
+    <PropertyGroup>
+      <CommonArgs>$(CommonArgs) /p:RepoOriginalSourceRevisionId=%(RepoInfo.CommitSha)</CommonArgs>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="SetBuildProperties"
-          DependsOnTargets="GetTransitiveRepositoryReferences">
+          DependsOnTargets="GetTransitiveRepositoryReferences;SetRepoOriginalSourceRevisionId">
     <PropertyGroup>
       <!-- Infer the projects runtime identifier as the vertical's RID when doing a vertical build
            and filter down RID lists to the target RID in such a scenario. This is necessary when the host (SDK) rid
@@ -503,7 +483,6 @@
           Outputs="$(BaseIntermediateOutputPath)Build.complete"
           Condition="'$(BuildCommand)' != ''"
           DependsOnTargets="BuildRepoReferences;
-                            AddNoWarns;
                             UpdateNuGetConfig;
                             UpdateGlobalJsonVersions;
                             UpdateEngCommonFiles;
@@ -539,7 +518,8 @@
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true">
+          IgnoreStandardErrorWarningFormat="true"
+          YieldDuringToolExecution="true">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
@@ -614,22 +594,6 @@
       <Output TaskParameter="KnownBlobs" ItemName="ProducedAsset" />
     </GetKnownArtifactsFromAssetManifests>
 
-    <!-- Mark the artifacts so that they get binplaced. -->
-    <ItemGroup>
-      <ProducedPackage>
-        <ShippingFolder Condition="%(ProducedPackage.NonShipping) == 'true'">NonShipping</ShippingFolder>
-        <ShippingFolder Condition="%(ProducedPackage.NonShipping) != 'true'">Shipping</ShippingFolder>
-      </ProducedPackage>
-
-      <!--
-        When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages so no need to binplace.
-        In addition, don't binplace any packages or blobs with vertical visibility. These are only used for building other repos within this vertical
-        and shouldn't be staged for upload.
-      -->
-      <BinPlaceFile Include="@(ProducedPackage->'$(ArtifactsPackagesDir)%(ShippingFolder)/$(RepositoryName)/%(Identity).%(Version).nupkg')" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(Visibility)' != 'Vertical'" />
-      <BinPlaceFile Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')" Condition="'%(Visibility)' != 'Vertical'"/>
-    </ItemGroup>
-
     <ItemGroup>
       <ProducedPackage ReferenceOnly="$([MSBuild]::ValueOrDefault('$(ReferenceOnlyRepoArtifacts)', 'false'))" />
     </ItemGroup>
@@ -700,8 +664,7 @@
           Condition="'@(_InnerPackageCacheFiles)' != ''" />
   </Target>
 
-  <Target Name="MoveDotNetBuildLogs"
-        Condition="'$(IsUtilityProject)' != 'true'">
+  <Target Name="MoveDotNetBuildLogs" Condition="'$(IsUtilityProject)' != 'true'">
     <ItemGroup>
       <LogFilesToMove Include="$(RepoArtifactsDir)log\$(Configuration)\**\*" />
     </ItemGroup>
@@ -867,14 +830,10 @@
     </Exec>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Testing $(RepositoryName)...done" />
-
-    <OnError ExecuteTargets="MoveDotNetBuildLogs" />
   </Target>
 
   <Target Name="Test"
-          DependsOnTargets="RepoTest;
-                            MoveDotNetBuildLogs;
-                            CleanupRepo" />
+          DependsOnTargets="RepoTest;CleanupRepo" />
   <Target Name="VSTest" DependsOnTargets="Test" />
 
   <!-- Outputs a dependency graph of the repos, in YAML form, to the console. -->

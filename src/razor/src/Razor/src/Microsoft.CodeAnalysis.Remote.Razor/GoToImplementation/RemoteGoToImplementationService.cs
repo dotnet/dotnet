@@ -26,6 +26,8 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
+
     public ValueTask<RemoteResponse<LspLocation[]?>> GetImplementationAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
@@ -66,11 +68,13 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
             .GetGeneratedDocumentAsync(cancellationToken)
             .ConfigureAwait(false);
 
+        var supportsVisualStudioExtensions = _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions;
+
         var locations = await ExternalHandlers.GoToImplementation
             .FindImplementationsAsync(
                 generatedDocument,
                 positionInfo.Position.ToLinePosition(),
-                supportsVisualStudioExtensions: true,
+                supportsVisualStudioExtensions,
                 cancellationToken)
             .ConfigureAwait(false);
 

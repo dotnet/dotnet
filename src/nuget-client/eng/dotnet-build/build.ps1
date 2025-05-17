@@ -5,6 +5,7 @@ param (
   [string][Alias('v')]$verbosity = "minimal",
   [switch]$ci,
   [switch]$bl,
+  [switch][Alias('pb')]$productBuild
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$AdditionalArgs
 )
@@ -45,9 +46,9 @@ function Exec-Process([string]$command, [string]$commandArgs) {
 
 $dotnet = Join-Path $env:DOTNET_PATH dotnet.exe
 $repoRoot = Resolve-Path "$PSScriptRoot/../../"
-$binLog = Join-Path $repoRoot "artifacts/sb/log/source-inner-build.binlog"
+$binLog = Join-Path $repoRoot "artifacts/log/$configuration/Build.binlog"
 $dotnetTool = "msbuild"
-$nugetPackagesRoot = Join-Path $repoRoot "artifacts/sb/package-cache/"
+$nugetPackagesRoot = Join-Path $repoRoot "artifacts/.packages/"
 $dotnetArguments = @()
 
 # Environment variables
@@ -62,7 +63,7 @@ $dotnetArguments += "-v:$verbosity"
 $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
 # Then remaining arguments.
 $dotnetArguments += "/p:Configuration=$configuration"
-$dotnetArguments += "/p:DotNetBuildRepo=true"
+$dotnetArguments += "/p:DotNetBuild=$productBuild"
 $dotnetArguments += "/p:RepoRoot=$repoRoot"
 if ($bl){
     $dotnetArguments += "/bl:${binLog}"
@@ -70,6 +71,7 @@ if ($bl){
 if ($ci) {
     $dotnetArguments += "/p:ContinuousIntegrationBuild=true"
 }
+
 # Then any pass-through arguments.
 $dotnetArguments += $AdditionalArgs
 
