@@ -187,9 +187,7 @@ Name
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel Model => ViewData.Model!;
-#nullable disable
+        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithoutModel Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

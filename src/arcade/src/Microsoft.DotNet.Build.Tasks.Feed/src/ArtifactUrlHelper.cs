@@ -74,9 +74,22 @@ public class PipelineArtifactDownloadHelper : IArtifactUrlHelper
         {
             throw new ArgumentException("File name cannot be null or empty.", nameof(fileName));
         }
-        // If the file name is 
+
+        // Normalize the file name. There are occasions when the file name has a forward /
+        // prepended, or has multiple // in a row. These get ignored by publishing and so they should be
+        // eliminated.
+
+        string normalizedFileName = fileName.TrimStart('/');
+        string prevFileName;
+        do
+        {
+            prevFileName = normalizedFileName;
+            normalizedFileName = normalizedFileName.Replace("//", "/");
+        }
+        while (prevFileName != normalizedFileName);
+
         var uriBuilder = new UriBuilder(_baseUrl);
-        string subPath = Uri.EscapeDataString("/" + fileName);
+        string subPath = Uri.EscapeDataString("/" + normalizedFileName);
         uriBuilder.Query = $"?format=file&subPath={subPath}";
         return uriBuilder.Uri.ToString();
     }

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <!-- MSBuild dependencies -->
-    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.9.5" />
+    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.10.29" />
 
     <!-- Runtime dependencies -->
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.0" />
@@ -22,7 +22,7 @@
     <PackageVersion Include="Microsoft.NETCore.App.Host.win-arm64" Version="$(BundledNETCoreAppPackageVersion)" />
   </ItemGroup>
 
-  <!-- DotNetBuild overrides needed until https://github.com/dotnet/source-build/issues/4467 is implemented. -->
+  <!-- Overrides needed until https://github.com/dotnet/source-build/issues/4467 is implemented. -->
   <ItemGroup>
     <PackageVersion Update="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Condition="'$(MicrosoftBuildTasksCoreVersion)' != ''" />
     <PackageVersion Update="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" Condition="'$(SystemSecurityCryptographyXmlVersion)' != ''" />
