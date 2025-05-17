@@ -97,10 +97,16 @@ internal sealed class ImportDocumentManager(IFileChangeTrackerFactory fileChange
     private static ImmutableArray<RazorProjectItem> GetPhysicalImportItems(string filePath, ILegacyProjectSnapshot projectSnapshot)
     {
         var projectEngine = projectSnapshot.GetProjectEngine();
-        var documentSnapshot = projectSnapshot.GetDocument(filePath);
-        var projectItem = projectEngine.FileSystem.GetItem(filePath, documentSnapshot?.FileKind);
 
-        return projectEngine.GetImports(projectItem, static i => i.PhysicalPath is not null);
+        // If we can get the document, use it's target path to find the project item
+        // to avoid GetItem(...) throwing an exception if the file path is rooted outside
+        // of the project. If we can't get the document, we'll just go ahead and use
+        // the file path, since it's probably OK.
+        var projectItem = projectSnapshot.GetDocument(filePath) is { } document
+            ? projectEngine.FileSystem.GetItem(document.TargetPath, document.FileKind)
+            : projectEngine.FileSystem.GetItem(filePath, fileKind: null);
+
+        return projectEngine.GetImports(projectItem, static i => i is not DefaultImportProjectItem);
     }
 
     private void FileChangeTracker_Changed(object sender, FileChangeEventArgs args)

@@ -2,9 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 #if !NET8_0_OR_GREATER
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #endif
+
+using System.Runtime.CompilerServices;
 
 namespace System;
 
@@ -61,4 +62,32 @@ internal static class SpanExtensions
         }
 #endif
     }
+
+    /// <summary>
+    /// Determines whether the specified value appears at the start of the span.
+    /// </summary>
+    /// <param name="span">The span to search.</param>
+    /// <param name="value">The value to compare.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool StartsWith<T>(this ReadOnlySpan<T> span, T value)
+        where T : IEquatable<T>? =>
+#if NET9_0_OR_GREATER
+        MemoryExtensions.StartsWith(span, value);
+#else
+        span.Length != 0 && (span[0]?.Equals(value) ?? (object?)value is null);
+#endif
+
+    /// <summary>
+    /// Determines whether the specified value appears at the end of the span.
+    /// </summary>
+    /// <param name="span">The span to search.</param>
+    /// <param name="value">The value to compare.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool EndsWith<T>(this ReadOnlySpan<T> span, T value)
+        where T : IEquatable<T>? =>
+#if NET9_0_OR_GREATER
+        MemoryExtensions.EndsWith(span, value);
+#else
+        span.Length != 0 && (span[^1]?.Equals(value) ?? (object?)value is null);
+#endif
 }

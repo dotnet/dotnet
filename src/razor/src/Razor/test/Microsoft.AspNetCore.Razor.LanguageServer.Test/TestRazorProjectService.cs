@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Moq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -37,13 +39,19 @@ internal class TestRazorProjectService(
         return mock.Object;
     }
 
-    public async Task AddDocumentToPotentialProjectsAsync(string textDocumentPath, CancellationToken cancellationToken)
+    public async Task AddDocumentToPotentialProjectsAsync(string filePath, CancellationToken cancellationToken)
     {
-        var document = new DocumentSnapshotHandle(
-            textDocumentPath, textDocumentPath, FileKinds.GetFileKindFromPath(textDocumentPath));
-
-        foreach (var projectSnapshot in _projectManager.FindPotentialProjects(textDocumentPath))
+        foreach (var projectSnapshot in _projectManager.FindPotentialProjects(filePath))
         {
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
+            var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
+
+            var targetPath = normalizedFilePath.StartsWith(projectDirectory, FilePathComparison.Instance)
+                ? normalizedFilePath[projectDirectory.Length..]
+                : normalizedFilePath;
+
+            var document = new DocumentSnapshotHandle(filePath, targetPath, FileKinds.GetFileKindFromPath(filePath));
+
             var projectInfo = projectSnapshot.ToRazorProjectInfo();
 
             projectInfo = projectInfo with
