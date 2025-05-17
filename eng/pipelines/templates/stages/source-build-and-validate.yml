@@ -90,7 +90,6 @@ stages:
         ${{ else }}:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
-        extraProperties: ${{ leg.officialBuildId }}
         ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
@@ -99,7 +98,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
 
-- ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
@@ -163,7 +162,6 @@ stages:
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >
-            ${{ leg.officialBuildId }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
