@@ -442,6 +442,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
 
