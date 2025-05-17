@@ -10,13 +10,13 @@
   </PropertyGroup>
 
   <!-- Platform is different during restore than during build. Therefore, restore everything when not building the product. -->
-  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.proj' and ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPass)' == '2') ">
+  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.proj' and '$(DotNetBuild)' != 'true'">
     <PackageReference Include="Microsoft.NETCore.App.Host.win-x64" PrivateAssets="all" ExcludeAssets="all" />
     <PackageReference Include="Microsoft.NETCore.App.Host.win-x86" PrivateAssets="all" ExcludeAssets="all" />
     <PackageReference Include="Microsoft.NETCore.App.Host.win-arm64" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.proj' and '$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' != '2' ">
+  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.proj' and '$(DotNetBuild)' == 'true'">
     <PackageReference Include="Microsoft.NETCore.App.Host.win-$(TargetArchitecture)" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
 

@@ -325,7 +325,7 @@ jobs:
   steps:
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
-    - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
+    - template: /eng/common/templates/steps/vmr-sync.yml@self
       parameters:
         vmrPath: $(vmrPath)
         targetRef: $(Build.SourceVersion) # Synchronize the current repo commit

@@ -44,7 +44,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             _linkManager = new AkaMSLinkManager(akaMSClientId, certificate, akaMSTenant, _logger);
         }
 
-        
+
 
         public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(
             HashSet<string> assetsToPublish,
@@ -59,10 +59,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             string feedBaseUrl = ComputeLatestLinkBase(feedConfig);
 
-            _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
             IEnumerable<AkaMSLink> linksToCreate = GetLatestLinksToCreate(assetsToPublish, feedConfig, feedBaseUrl);
 
-            await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
+            if (linksToCreate.Any())
+            {
+                _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
+
+                await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
+            }
         }
 
         public IEnumerable<AkaMSLink> GetLatestLinksToCreate(HashSet<string> assetsToPublish, TargetFeedConfig feedConfig, string feedBaseUrl)
