@@ -81,7 +81,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             string xml = File.ReadAllText(NuGetConfigFile);
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument document = XDocument.Parse(xml);
-            XElement pkgSourcesElement = document.Root.Descendants().FirstOrDefault(e => e.Name == "packageSources");
+            XElement pkgSourcesElement = document.Root.Elements().FirstOrDefault(e => e.Name == "packageSources");
             if (pkgSourcesElement == null)
             {
                 Log.LogMessage(MessageImportance.Low, "Package sources are missing.");
@@ -89,7 +89,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 return true;
             }
 
-            XElement pkgSrcMappingElement = document.Root.Descendants().FirstOrDefault(e => e.Name == "packageSourceMapping");
+            XElement pkgSrcMappingElement = document.Root.Elements().FirstOrDefault(e => e.Name == "packageSourceMapping");
             if (pkgSrcMappingElement == null)
             {
                 pkgSrcMappingElement = new XElement("packageSourceMapping");
@@ -115,7 +115,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             // Remove all packageSourceMappings
             pkgSrcMappingElement.ReplaceNodes(new XElement("clear"));
 
-            XElement pkgSrcMappingClearElement = pkgSrcMappingElement.Descendants().FirstOrDefault(e => e.Name == "clear");
+            XElement pkgSrcMappingClearElement = pkgSrcMappingElement.Elements().FirstOrDefault(e => e.Name == "clear");
 
             // Add package source mappings for local package sources
             foreach (string packageSource in allSourcesPackages.Keys)

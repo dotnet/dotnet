@@ -1,4 +1,4 @@
-using Microsoft.DotNet.ScenarioTests.Common;
+﻿using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,10 +30,10 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
 
-    // Re-enable with https://github.com/dotnet/dotnet/pull/400
-    // [Theory]
+    [Theory]
     [MemberData(nameof(GetLanguages))]
     [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
+    [Trait("SkipIfBuild", "SourceOnlyUnofficialBuild")] // Portable assets are not available for source-only unofficial builds.
     public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
     {
         // This uses the wrong portable RID for non linux platforms when running the tests without supplying
@@ -173,8 +173,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
-    // Re-enable with https://github.com/dotnet/dotnet/pull/400
-    // [InlineData(DotNetLanguage.FSharp)]
+    [InlineData(DotNetLanguage.FSharp)]
     public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -184,8 +183,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Theory]
-    // Re-enable with https://github.com/dotnet/dotnet/pull/400
-    // [InlineData(DotNetLanguage.CSharp)]
+    [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
     public void VerifyWebAPITemplate(DotNetLanguage language)
     {

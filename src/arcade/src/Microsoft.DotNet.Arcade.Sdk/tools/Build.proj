@@ -10,10 +10,10 @@
   Optional parameters:
     Configuration                   Build configuration: "Debug", "Release", etc.
 
-    DotNetBuildRepo                 Build the repo as part of the entire .NET stack.
+    DotNetBuild                     Build the repo as part of the entire .NET stack.
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
-    DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
+    DotNetBuildSourceOnly           Build the repo as as part of the .NET stack in source-only mode, with no external dependencies.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolExpirationInDays    Symbol expiration time in days (defaults to 10 years).
@@ -76,7 +76,7 @@
     Don't do this filtering in non-unified builds to allow repos to define how different build passes are handled
     in their own repo-specific builds.
   -->
-  <ItemGroup Condition="'$(DotNetBuildRepo)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
     <_ProjectToBuildCurrentBuildPass Include="@(ProjectToBuild->WithMetadataValue('DotNetBuildPass', '$(_DotNetBuildPassNormalized)'))" />
     <ProjectToBuild Remove="@(ProjectToBuild)" />
     <ProjectToBuild Include="@(_ProjectToBuildCurrentBuildPass)" />
@@ -120,7 +120,7 @@
       <_CommonProps Include="VersionsPropsPath=$(VersionsPropsPath)"/>
 
       <!--
-        When building in source-only or product scenarios, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
+        In .NET product build mode, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
         NuGet Restore task reports a warning for such projects, which we suppress here.
       -->
       <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
