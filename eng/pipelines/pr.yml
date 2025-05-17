@@ -1,15 +1,25 @@
-# This yml is used by these PR pipelines and triggers:
-# NOTE: the triggers are defined in the Azure DevOps UI as they are too complex
-#
+# This yml is used by these pipelines:
 # - dotnet-unified-build (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=278
-#   - PR: lite build
-#   - CI: release/* only, every batched commit, full build
-#   - Schedule: main only, full build
-#
 # - dotnet-unified-build-full (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=303
 #   Comment trigger only
+
+# Only run daily on schedule to save resources
+trigger: none
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+
+schedules:
+  - cron: "0 1 * * *" # run at 01:00 (UTC)
+    branches:
+      include:
+      - main
+    always: false # run only if there were changes since the last successful scheduled run.
 
 variables:
 - name: isScheduleTrigger
