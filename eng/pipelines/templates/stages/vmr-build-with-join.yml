@@ -139,7 +139,7 @@ stages:
                     path: $(Build.ArtifactStagingDirectory)/VerticalArtifacts/${{ vertical.job }}
                     artifactName: ${{ vertical.job }}_Artifacts
         - ${{ if not(parameters.isBuiltFromVmr) }}:
-          - template: /eng/common/templates/steps/vmr-pull-updates.yml@self
+          - template: /eng/common/templates/steps/vmr-sync.yml@self
             parameters:
               vmrPath: ${{ variables.vmrPath }}
               targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
