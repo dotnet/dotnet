@@ -12,10 +12,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- The DotNetBuild property is set to true if in any kind of .NET product build (orchestrator or repo). -->
-    <DotNetBuild Condition="'$(DotNetBuildRepo)' == 'true' or '$(DotNetBuildOrchestrator)' == 'true'">true</DotNetBuild>
     <!-- TrackPrebuiltUsage is enabled by default when building source-only. -->
-    <TrackPrebuiltUsage Condition="'$(TrackPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildRepo)' == 'true'">true</TrackPrebuiltUsage>
+    <TrackPrebuiltUsage Condition="'$(TrackPrebuiltUsage)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuild)' == 'true'">true</TrackPrebuiltUsage>
   </PropertyGroup>
 
 </Project>
