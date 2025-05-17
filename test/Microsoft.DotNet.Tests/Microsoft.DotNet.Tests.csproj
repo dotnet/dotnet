@@ -15,6 +15,7 @@
     <PackageReference Include="NuGet.ProjectModel" />
     <PackageReference Include="NuGet.Protocol" />
 
+    <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
     <ProjectReference Include="$(RepositoryEngineeringDir)tools/tasks/Microsoft.DotNet.UnifiedBuild.Tasks/Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
   </ItemGroup>
 
@@ -34,6 +35,9 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).PortableRid">
         <Value>$(PortableRid)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).BinariesReportFile">
+        <Value>$(BinariesReportFile)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

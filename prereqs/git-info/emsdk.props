@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>b71a7e2de42aa8486e84ec10765c45e13109ccea</GitCommitHash>
-    <OfficialBuildId>20250508.3</OfficialBuildId>
-    <OutputPackageVersion>10.0.0-preview.5.25258.3</OutputPackageVersion>
+    <GitCommitHash>b01d7473b8d3088bad808f83bf9ed89b4c341563</GitCommitHash>
+    <OfficialBuildId>20250514.1</OfficialBuildId>
+    <OutputPackageVersion>10.0.0-preview.5.25264.1</OutputPackageVersion>
   </PropertyGroup>
 </Project>

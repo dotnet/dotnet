@@ -14,17 +14,15 @@ parameters:
 - name: scope
   type: string
   values:
-  # run 1 leg for smoke tests
-  - ultralite
   # run several legs e.g. win/linux/mac for basic testing
   - lite
   # run everything
   - full
 
-# True when building the VMR in source-only mode
-- name: isSourceOnlyBuild
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
   type: boolean
-  default: false
+  default: true
 
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
@@ -76,15 +74,16 @@ stages:
         parameters:
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           scope: ${{ parameters.scope }}
-          isSourceOnlyBuild: ${{ parameters.isSourceOnlyBuild }}
-    finalJoinCondition: ${{ and(not(parameters.isSourceOnlyBuild), eq(parameters.scope, 'full')) }}
+    finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
+    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     postJoinStages:
-    - ${{ if and(not(parameters.isSourceOnlyBuild), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish_Build_Assets
         displayName: Publish Assets
         jobs:
-        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+        - template: /eng/common/templates-official/job/publish-build-assets.yml
           parameters:
             publishUsingPipelines: true
             publishAssetsImmediately: true
@@ -95,19 +94,14 @@ stages:
         parameters:
           desiredSigning: ${{ parameters.desiredSigning }}
 
-#### SOURCE-ONLY BUILD ####
-- ${{ if parameters.isSourceOnlyBuild }}:
-  # This template call is temporary while we still maintain a separate source-build pipeline
-  - template: source-build-stages.yml
-    parameters:
-      pool_Linux: ${{ parameters.pool_Linux }}
-      pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
-      scope: ${{ parameters.scope }}
+- template: source-build-stages.yml
+  parameters:
+    pool_Linux: ${{ parameters.pool_Linux }}
+    pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
+    scope: ${{ parameters.scope }}
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      # For PR builds, we don't rely on Microsoft build assets for testing because not all of the required assets
+      # are available from the subset of jobs that get build in PRs compared to the full build. Instead, we run
+      # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.
       useMicrosoftBuildAssetsForTests: false
-# Pull requests aren't supported until https://github.com/dotnet/source-build/issues/5061 is fixed
-- ${{ elseif ne(variables['Build.Reason'], 'PullRequest') }}:
-  - template: source-build-stages.yml
-    parameters:
-      pool_Linux: ${{ parameters.pool_Linux }}
-      pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
-      scope: ${{ parameters.scope }}
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}

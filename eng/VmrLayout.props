@@ -35,6 +35,7 @@
     <PreviouslyRestoredPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previouslyRestored'))</PreviouslyRestoredPackagesPath>
     <PreviouslySourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built'))</PreviouslySourceBuiltPackagesPath>
     <PreviouslySourceBuiltPackagesPath Condition="'$(CustomPreviouslySourceBuiltPackagesPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomPreviouslySourceBuiltPackagesPath)'))</PreviouslySourceBuiltPackagesPath>
+    <PreviouslySourceBuiltPackageVersionsPropsFile>$(PreviouslySourceBuiltPackagesPath)PackageVersions.props</PreviouslySourceBuiltPackageVersionsPropsFile>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
@@ -45,6 +46,10 @@
 
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
+
+    <!-- Binary detection -->
+    <BinariesReportDir>$(ArtifactsLogDir)binary-report</BinariesReportDir>
+    <BinariesReportFile>$(BinariesReportDir)/NewBinaries.txt</BinariesReportFile>
   </PropertyGroup>
 
   <!-- Build task assembly paths -->

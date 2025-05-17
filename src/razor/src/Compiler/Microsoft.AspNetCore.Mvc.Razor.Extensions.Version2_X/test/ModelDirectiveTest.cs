@@ -46,7 +46,7 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
 
         // Act
-        var result = ModelDirective.GetModelType(documentNode);
+        var result = ModelDirective.GetModelType(documentNode).Content;
 
         // Assert
         Assert.Equal("Type1", result);
@@ -61,7 +61,7 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
 
         // Act
-        var result = ModelDirective.GetModelType(documentNode);
+        var result = ModelDirective.GetModelType(documentNode).Content;
 
         // Assert
         Assert.Equal("dynamic", result);

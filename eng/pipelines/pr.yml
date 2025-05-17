@@ -1,30 +1,27 @@
-# This yml is used by these PR pipelines and triggers:
-# NOTE: the triggers are defined in the Azure DevOps UI as they are too complex
-#
-# - dotnet-source-build (public)
-#   https://dev.azure.com/dnceng-public/public/_build?definitionId=240
-#   - PR: ultralite build
-#   - CI: release/* only, every batched commit, full build
-#   - Schedule: main only, full build
-#
+# This yml is used by these pipelines:
 # - dotnet-unified-build (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=278
-#   - PR: lite build
-#   - CI: release/* only, every batched commit, full build
-#   - Schedule: main only, full build
-#
 # - dotnet-unified-build-full (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=303
 #   Comment trigger only
 
+# Only run daily on schedule to save resources
+trigger: none
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+
+schedules:
+  - cron: "0 1 * * *" # run at 01:00 (UTC)
+    branches:
+      include:
+      - main
+    always: false # run only if there were changes since the last successful scheduled run.
+
 variables:
-# enable source-only build for pipelines that contain the -source-build string
-- name: isSourceOnlyBuild
-  value: ${{ contains(variables['Build.DefinitionName'], '-source-build') }}
-
-- name: isSourceOnlyBuildLite
-  value: ${{ contains(variables['Build.DefinitionName'], '-source-build-lite') }}
-
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
@@ -43,14 +40,9 @@ variables:
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
-    isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}
     ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
       scope: full
-    ${{ elseif eq(variables.isSourceOnlyBuildLite, 'true') }}:
-      scope: lite
-    ${{ elseif and(eq(variables.isPRTrigger, 'true'), eq(variables.isSourceOnlyBuild, 'true')) }}:
-      scope: ultralite
-    ${{ elseif and(eq(variables.isPRTrigger, 'true'), ne(variables.isSourceOnlyBuild, 'true')) }}:
+    ${{ elseif eq(variables.isPRTrigger, 'true') }}:
       scope: lite
     ${{ else }}:
       scope: full
