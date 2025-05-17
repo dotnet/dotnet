@@ -45,6 +45,7 @@ public class ArtifactUrlHelperTests
     [Theory]
     [InlineData("https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=zip", "file.txt", "https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=file&subPath=%2Ffile.txt")]
     [InlineData("https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=zip", "subdir/file.txt", "https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=file&subPath=%2Fsubdir%2Ffile.txt")]
+    [InlineData("https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=zip", "subdir///file.txt", "https://artprodcus3.artifacts.visualstudio.com/Ab55de4ed-4b5a-4215-a8e4-0a0a5f71e7d8/7ea9116e-9fac-403d-b258-b31fcf1bb293/_apis/artifact/HASH/content?format=file&subPath=%2Fsubdir%2Ffile.txt")]
     public void PipelineArtifactDownloadHelper_ConstructDownloadUrl_ReturnsCorrectUrl(
         string baseUrl, string fileName, string expectedUrl)
     {

@@ -186,6 +186,11 @@ public class IntermediateNodeWriter :
         WriteContentNode(node, node.KeyValueToken?.Content);
     }
 
+    public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
+    {
+        WriteContentNode(node, node.PropertyType.Content, node.PropertyName, node.PropertyExpression);
+    }
+
     void IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>.VisitExtension(RouteAttributeExtensionNode node)
     {
         WriteContentNode(node, node.Template.ToString());

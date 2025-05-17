@@ -17,7 +17,7 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
             return;
         }
 
-        var modelType = ModelDirective.GetModelType(documentNode);
+        var modelType = ModelDirective.GetModelType(documentNode).Content;
         var visitor = new Visitor();
         visitor.Visit(documentNode);
 
