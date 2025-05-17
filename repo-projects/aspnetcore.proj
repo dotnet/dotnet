@@ -54,7 +54,7 @@
     <RepositoryReference Include="efcore" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' == 'true'">
     <!--
       From aspnetcore Versions.props:
           Versions of Microsoft.CodeAnalysis packages referenced by analyzers shipped in the SDK.
@@ -65,6 +65,20 @@
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" />
+  </ItemGroup>
+
+  <!-- For non-official builds, use the Roslyn version contained in the N-1 build because ASP.NET Core needs to build and execute
+      a source generator which must be built targeting a version of Roslyn contained in the executing SDK. Otherwise, because of how
+      Arcade works for non-official builds, M.CA will get an assembly version of 42.42.42.42 and the source generator would target that
+      version leading to an error like the following: 
+        CSC error CS9057: Analyzer assembly '/repos/dotnet/src/aspnetcore/artifacts/bin/Microsoft.AspNetCore.Http.RequestDelegateGenerator/Release/netstandard2.0/Microsoft.AspNetCore.Http.RequestDelegateGenerator.dll' cannot be used because it references version '42.42.42.42' of the compiler, which is newer than the currently running version '5.0.0.0'.
+      By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
+      containing in the executed SDK and avoiding this error.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />
   </ItemGroup>
 
 </Project>
