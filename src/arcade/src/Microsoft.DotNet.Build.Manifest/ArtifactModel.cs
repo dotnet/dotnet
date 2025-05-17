@@ -72,6 +72,24 @@ namespace Microsoft.DotNet.Build.Manifest
             }
         }
 
+        /// <summary>
+        /// Path to the artifact in the pipeline artifact specified by PipelineArtifactName.
+        /// </summary>
+        public string PipelineArtifactPath
+        {
+            get => Attributes.GetOrDefault(nameof(PipelineArtifactPath));
+            set => Attributes[nameof(PipelineArtifactPath)] = value;
+        }
+
+        /// <summary>
+        /// Name of the pipeline artifact
+        /// </summary>
+        public string PipelineArtifactName
+        {
+            get => Attributes.GetOrDefault(nameof(PipelineArtifactName));
+            set => Attributes[nameof(PipelineArtifactName)] = value;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is ArtifactModel other)
