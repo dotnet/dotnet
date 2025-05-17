@@ -260,6 +260,7 @@ steps:
 
 - task: 1ES.PublishPipelineArtifact@1
   displayName: Publish Baseline Files
+  condition: succeededOrFailed()
   continueOnError: true
   inputs:
     path: $(Build.SourcesDirectory)/artifacts/AssetBaselines/

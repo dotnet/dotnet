@@ -293,11 +293,14 @@ public abstract class BuildComparer
             serializer.Serialize(stream, noIssuesReport);
         }
 
+        int errorsCount = assetsWithErrors.Count;
+        int nonBaselinedIssuesCount = issuesReport.AssetsWithIssues.Sum(m => m.Issues.Count);
+
         // Update console output for both reports
         Console.WriteLine($"Issues report saved to {_issuesReportPath}");
         Console.WriteLine($"No-issues report saved to {_noIssuesReportPath}");
-        Console.WriteLine($"Errors: {assetsWithErrors.Count}");
-        Console.WriteLine($"Non-baselined issues: {issuesReport.AssetsWithIssues.Sum(m => m.Issues.Count)}");
+        Console.WriteLine($"Errors: {errorsCount}");
+        Console.WriteLine($"Non-baselined issues: {nonBaselinedIssuesCount}");
         Console.WriteLine($"Baselined issues: {noIssuesReport.AssetsWithIssues.Sum(m => m.Issues.Count)}");
 
         // Print detailed issue counts by type
@@ -321,6 +324,11 @@ public abstract class BuildComparer
             issueCountsByType.TryGetValue(issueType, out int issueCount);
             baselinedIssueCountsByType.TryGetValue(issueType, out int baselinedIssueCount);
             Console.WriteLine($"  {issueType}: Issues w/o Baseline = {issueCount}, Baselined issues = {baselinedIssueCount}");
+        }
+
+        if (nonBaselinedIssuesCount > 0 || errorsCount > 0)
+        {
+            throw new Exception($"Non-baselined issues or errors found in the comparison.");
         }
     }
 
