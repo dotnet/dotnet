@@ -66,6 +66,7 @@ parameters:
     demands: ImageOverride -equals $(poolImage_Linux)
     os: linux
 
+stages:
 - template: vmr-verticals.yml
   parameters:
     desiredSigning: ${{ parameters.desiredSigning }}
