@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@e36e4d1](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCe36e4d1a8f8dfb08d7e3a6041459c9791d732c01)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@45b8786](https://github.com/dotnet/scenario-tests/tree/45b878678cfbde6c460450ed1699de75a20d6e87)*
+*[dotnet/scenario-tests@a11e0d6](https://github.com/dotnet/scenario-tests/tree/a11e0d6f227feb7d0e2b619b48556d041237e59c)*
 - `src/sdk`  
-*[dotnet/sdk@eb26993](https://github.com/dotnet/sdk/tree/eb26993269d62efab361c7436799b91ea2dac4a0)*
+*[dotnet/sdk@40b97d6](https://github.com/dotnet/sdk/tree/40b97d6163b0ff8487216a84d0dcfddf7e517c8e)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -80,7 +80,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@19eb5ea](https://github.com/dotnet/source-build-reference-packages/tree/19eb5ea4e5f9c4e5256843a92805c8c9e942207d)*
+*[dotnet/source-build-reference-packages@2bdf6b6](https://github.com/dotnet/source-build-reference-packages/tree/2bdf6b694572c45f6249c5406ae2303d678cda3f)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@4e17620](https://github.com/dotnet/sourcelink/tree/4e176206614b345352885b55491aeb51bf77526b)*
 - `src/symreader`  
