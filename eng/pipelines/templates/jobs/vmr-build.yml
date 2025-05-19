@@ -318,7 +318,7 @@ jobs:
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - output: buildArtifacts
         PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
-        ArtifactName: VerticalManifests
+        ArtifactName: AssetManifests
         displayName: Publish Vertical Manifest
         sbomEnabled: false
 
@@ -695,5 +695,5 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
-          ArtifactName: VerticalManifests
+          ArtifactName: AssetManifests
         displayName: Publish Vertical Manifest
