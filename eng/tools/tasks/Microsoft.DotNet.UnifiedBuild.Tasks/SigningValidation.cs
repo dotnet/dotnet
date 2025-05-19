@@ -104,7 +104,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
         List<(string artifactName, string fileName)> filesToSignCheck = [];
 
-        foreach (string artifactDirectory in Directory.EnumerateDirectories(ArtifactsDirectory))
+        foreach (string artifactDirectory in Directory.EnumerateDirectories(ArtifactDownloadDirectory))
         {
             foreach (string manifest in Directory.EnumerateFiles(Path.Combine(artifactDirectory, "manifests"), "*.xml", SearchOption.TopDirectoryOnly))
             {
@@ -115,12 +115,12 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
                     // Extract blobs
                     filesToSignCheck.AddRange(doc.Descendants("Blob")
                         .Where(blob => IsReleaseShipping(blob))
-                        .Select(blob => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
+                        .Select(blob => (artifactDirectory, ExtractAttribute(blob, "PipelineArtifactPath"))));
 
                     // Extract packages
                     filesToSignCheck.AddRange(doc.Descendants("Package")
                         .Where(pkg => IsReleaseShipping(pkg))
-                        .Select(blob => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
+                        .Select(pkg => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
                 }
             }
         }
