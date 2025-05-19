@@ -6,7 +6,6 @@
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
 
-    <GitInfoRepoPropsFile>$([MSBuild]::NormalizePath('$(PrereqsDir)', 'git-info', '$(RepositoryName).props'))</GitInfoRepoPropsFile>
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
