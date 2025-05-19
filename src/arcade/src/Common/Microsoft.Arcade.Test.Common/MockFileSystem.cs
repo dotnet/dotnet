@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Arcade.Common;
@@ -20,12 +21,16 @@ namespace Microsoft.Arcade.Test.Common
 
         #endregion
 
+        public string DirectorySeparator { get; }
+
         public MockFileSystem(
             Dictionary<string, string>? files = null,
-            IEnumerable<string>? directories = null)
+            IEnumerable<string>? directories = null,
+            string directorySeparator = "/")
         {
             Directories = new(directories ?? new string[0]);
             Files = files ?? new();
+            DirectorySeparator = directorySeparator;
         }
 
         #region IFileSystem implementation
@@ -50,7 +55,9 @@ namespace Microsoft.Arcade.Test.Common
 
         public string? GetExtension(string? path) => Path.GetExtension(path);
 
-        public string PathCombine(string path1, string path2) => path1 + "/" + path2;
+        public string PathCombine(string path1, string path2) => path1 + DirectorySeparator + path2;
+
+        public string PathCombine(string path1, string path2, string path3) => path1 + DirectorySeparator + path2 + DirectorySeparator + path3;
 
         public void WriteToFile(string path, string content) => Files[path] = content;
 
@@ -69,6 +76,18 @@ namespace Microsoft.Arcade.Test.Common
             }
 
             return  attributes;
+        }
+
+        public string GetFullPath(string path) => path;
+
+        public string GetRelativePath(string basePath, string targetPath)
+        {
+            if (targetPath.IndexOf(basePath) != 0)
+            {
+                throw new ArgumentException("targetPath is not relative to basePath");
+            }
+
+            return targetPath.Replace(basePath, "").TrimStart('/', '\\');
         }
 
         #endregion

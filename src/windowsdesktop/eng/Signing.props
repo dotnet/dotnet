@@ -3,7 +3,7 @@
   <PropertyGroup>
     <UseDotNetCertificate>true</UseDotNetCertificate>
     <!-- Don't sign and publish rid agnostic nuget packages from other builds than win-x64 when not building inside the VMR. -->
-    <EnableDefaultArtifacts Condition="'$(DotNetBuildRepo)' != 'true' and
+    <EnableDefaultArtifacts Condition="'$(DotNetBuild)' != 'true' and
                                        '$(TargetArchitecture)' != 'x64' and
                                        '$(TargetArchitecture)' != ''">false</EnableDefaultArtifacts>
   </PropertyGroup>
