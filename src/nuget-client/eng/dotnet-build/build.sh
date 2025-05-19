@@ -38,11 +38,9 @@ while [[ $# > 0 ]]; do
         --source-build|--sourcebuild|-sb)
             source_build=true
             product_build=true
-            shift
             ;;
         --product-build|--productbuild|-pb)
             product_build=true
-            shift
             ;;
         -*)
             # just eat this so we don't try to pass it along to MSBuild
