@@ -100,9 +100,6 @@ stages:
     pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
     scope: ${{ parameters.scope }}
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      # Temporarily needed to enable SB PR legs from the unified build pipeline
-      # Remove with https://github.com/dotnet/dotnet/pull/400
-      officialBuildId: /p:OfficialBuildId=20991231.99
       # For PR builds, we don't rely on Microsoft build assets for testing because not all of the required assets
       # are available from the subset of jobs that get build in PRs compared to the full build. Instead, we run
       # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.

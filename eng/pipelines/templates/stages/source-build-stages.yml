@@ -24,12 +24,6 @@ parameters:
   type: boolean
   default: true
 
-# Temporarily needed to enable SB PR legs from the unified build pipeline
-# This parameter should be removed with https://github.com/dotnet/dotnet/pull/400
-- name: officialBuildId
-  type: string
-  default: ''
-
 stages:
 - template: source-build-and-validate.yml
   parameters:
@@ -56,7 +50,6 @@ stages:
         runOnline: true                    # ✅
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
-        officialBuildId: ${{ parameters.officialBuildId }}
       
       - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
         distro: centos
@@ -67,7 +60,6 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
-        officialBuildId: ${{ parameters.officialBuildId }}
       
       ### Additional legs for full build ###
       - ${{ if in(parameters.scope, 'full') }}:
@@ -81,7 +73,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_PreviousSourceBuiltSdk'
           distro: centos
@@ -91,7 +82,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: true              # ✅
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_MsftSdk'
           distro: almalinux
@@ -101,7 +91,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_MsftSdk'
           distro: alpine
@@ -111,7 +100,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_MsftSdk'
           distro: centos
@@ -121,7 +109,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Online_PreviousSourceBuiltSdk'
           distro: centos
@@ -131,7 +118,6 @@ stages:
           runOnline: true                    # ✅
           useMonoRuntime: false              # 🚫
           withPreviousSDK: true              # ✅
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Mono_Offline_MsftSdk'
           distro: centos
@@ -141,7 +127,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: true               # ✅
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_MsftSdk'
           distro: fedora
@@ -151,7 +136,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
           distro: ubuntu
@@ -161,7 +145,6 @@ stages:
           runOnline: false                   # 🚫
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
           distro: fedora
@@ -172,7 +155,6 @@ stages:
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
           reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
-          officialBuildId: ${{ parameters.officialBuildId }}
 
         - buildNameFormat: '{0}_Mono_Offline_CurrentSourceBuiltSdk'
           distro: centos
@@ -183,4 +165,3 @@ stages:
           useMonoRuntime: true               # ✅
           withPreviousSDK: false             # 🚫
           reuseBuildArtifactsFrom: '{0}_Mono_Offline_MsftSdk_x64'
-          officialBuildId: ${{ parameters.officialBuildId }}

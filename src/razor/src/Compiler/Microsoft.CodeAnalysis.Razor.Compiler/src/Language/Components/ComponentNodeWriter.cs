@@ -116,7 +116,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         writer.Write(" ");
         writer.Write(node.MethodName);
         writer.Write("<");
-        writer.Write(string.Join(", ", node.Component.Component.GetTypeParameters().Select(a => a.Name)));
+        writer.Write(string.Join(", ", node.Component.Component.GetTypeParameters().Select(serializeTypeParameter)));
         writer.Write(">");
 
         writer.Write("(");
@@ -337,6 +337,16 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             }
 
             writer.WriteLine();
+        }
+
+        static string serializeTypeParameter(BoundAttributeDescriptor attribute)
+        {
+            if (attribute.Metadata.TryGetValue(ComponentMetadata.Component.TypeParameterWithAttributesKey, out var withAttributes))
+            {
+                return withAttributes;
+            }
+
+            return attribute.Name;
         }
     }
 

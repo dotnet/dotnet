@@ -20,6 +20,7 @@ public enum ErrorCode
     ERR_SingleTypeNameNotFound = 246,
     ERR_CantInferMethTypeArgs = 411,
     WRN_UnreferencedFieldAssg = 414,
+    WRN_InvalidAttributeLocation = 658,
     ERR_VariableUsedBeforeDeclaration = 841,
     ERR_SemicolonExpected = 1002,
     ERR_SyntaxError = 1003,
