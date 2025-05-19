@@ -14,8 +14,12 @@
   </PropertyGroup>
   <!--
     When building from source, the Private.SourceBuilt.Artifacts archive will contain the nuget packages, so don't push them where we'll upload from.
+    As we place the packages in a different directory structure than the staging directory,
+    we can't use PublishingVersion 4 as the paths to the packages won't be a subdirectory of the artifacts (which is fine as we don't publish assets for source-only builds).
   -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <PublishingVersion>3</PublishingVersion>
+    <PushToLocalStorage>true</PushToLocalStorage>
     <SourceBuiltShippingPackagesDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/Shipping</SourceBuiltShippingPackagesDir>
     <SourceBuiltNonShippingPackagesDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/NonShipping</SourceBuiltNonShippingPackagesDir>
   </PropertyGroup>
