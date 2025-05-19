@@ -317,7 +317,7 @@ jobs:
     # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - output: buildArtifacts
-        PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+        PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/$(Agent.JobName).xml
         ArtifactName: AssetManifests
         displayName: Publish Vertical Manifest
         sbomEnabled: false
@@ -694,6 +694,6 @@ jobs:
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/$(Agent.JobName).xml
           ArtifactName: AssetManifests
         displayName: Publish Vertical Manifest
