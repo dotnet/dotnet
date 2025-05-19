@@ -224,7 +224,9 @@ public static partial class EditContextDataAnnotationsExtensions
                 string? indexStr = match.Groups[2].Success ? match.Groups[2].Value : null;
 
                 Type currentType = currentObject.GetType();
-                PropertyInfo propertyInfo = currentType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+#pragma warning disable IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+                PropertyInfo propertyInfo = currentType!.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
+#pragma warning restore IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
                 object propertyValue = propertyInfo!.GetValue(currentObject)!;
 
                 if (indexStr != null) // Indexed access
