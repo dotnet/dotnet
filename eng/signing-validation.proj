@@ -22,7 +22,6 @@
         ArtifactDownloadDirectory="$(ArtifactDownloadDirectory)"
         SourceBranch="$(SourceBranch)"
         DotNetRootDirectory="$(DotNetRootDirectory)"
-        MergedManifest="$(MergedManifest)"
         OutputLogsDirectory="$(OutputLogsDirectory)" />
     </Target>
 
