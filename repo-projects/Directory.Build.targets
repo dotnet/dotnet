@@ -90,14 +90,26 @@
         <ShippingPackagesPath>$(ArtifactsShippingPackagesDir)/%(Identity)/</ShippingPackagesPath>
         <NonShippingPackagesPath>$(ArtifactsNonShippingPackagesDir)/%(Identity)/</NonShippingPackagesPath>
       </RepositoryReferenceInfo>
+
+      <!--
+        Previous build passes pull down assets in a slightly different format.
+        Add those locations as well.
+      -->
+      <RepositoryReferenceInfo Include="@(TransitiveRepositoryReference)"
+                               Exclude="source-build-reference-packages">
+        <ShippingSourceName>$(PreviousBuildPassSourceNamePrefix)%(Identity)</ShippingSourceName>
+        <NonShippingSourceName>$(PreviousBuildPassSourceNamePrefix)transport-%(Identity)</NonShippingSourceName>
+        <ShippingPackagesPath>$(PreviousBuildPassShippingPackagesDir)/%(Identity)/</ShippingPackagesPath>
+        <NonShippingPackagesPath>$(PreviousBuildPassNonShippingPackagesDir)/%(Identity)/</NonShippingPackagesPath>
+      </RepositoryReferenceInfo>
     </ItemGroup>
 
     <ItemGroup Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">
       <RepositoryReferenceInfo Include="$(RepositoryName)">
         <ShippingSourceName>$(PreviousBuildPassSourceNamePrefix)$(RepositoryName)</ShippingSourceName>
         <NonShippingSourceName>$(PreviousBuildPassSourceNamePrefix)transport-$(RepositoryName)</NonShippingSourceName>
-        <ShippingPackagesPath>$(ArtifactsShippingPackagesDir)/$(RepositoryName)/</ShippingPackagesPath>
-        <NonShippingPackagesPath>$(ArtifactsNonShippingPackagesDir)/$(RepositoryName)/</NonShippingPackagesPath>
+        <ShippingPackagesPath>$(PreviousBuildPassShippingPackagesDir)/$(RepositoryName)/</ShippingPackagesPath>
+        <NonShippingPackagesPath>$(PreviousBuildPassNonShippingPackagesDir)/$(RepositoryName)/</NonShippingPackagesPath>
       </RepositoryReferenceInfo>
     </ItemGroup>
 
