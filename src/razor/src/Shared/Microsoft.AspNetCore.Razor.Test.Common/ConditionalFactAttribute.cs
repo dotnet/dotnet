@@ -121,6 +121,11 @@ public static class Is
     /// </summary>
     public const string FreeBSD = nameof(FreeBSD);
 
+    /// <summary>
+    ///  Only execute if the current operating system platform is Unix-based.
+    /// </summary>
+    public const string AnyUnix = nameof(AnyUnix);
+
     public static class Not
     {
         /// <summary>
@@ -142,6 +147,12 @@ public static class Is
         ///  Only execute if the current operating system platform is not FreeBSD.
         /// </summary>
         public const string FreeBSD = $"!{nameof(FreeBSD)}";
+
+        /// <summary>
+        ///  Only execute if the current operating system platform is not Unix-based.
+        /// </summary>
+        public const string AnyUnix = $"!{nameof(AnyUnix)}";
+
     }
 }
 
@@ -157,6 +168,9 @@ public static class Conditions
         Add(Is.Linux, static () => PlatformInformation.IsLinux);
         Add(Is.MacOS, static () => PlatformInformation.IsMacOS);
         Add(Is.FreeBSD, static () => PlatformInformation.IsFreeBSD);
+        Add(Is.AnyUnix, static () => PlatformInformation.IsLinux ||
+                                     PlatformInformation.IsMacOS ||
+                                     PlatformInformation.IsFreeBSD);
 
         return map.ToFrozenDictionary();
 
