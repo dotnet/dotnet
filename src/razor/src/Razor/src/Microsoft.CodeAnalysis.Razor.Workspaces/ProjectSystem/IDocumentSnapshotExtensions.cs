@@ -11,14 +11,12 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal static class IDocumentSnapshotExtensions
 {
-    public static async Task<RazorSourceDocument> GetSourceAsync(this IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
+    public static async Task<RazorSourceDocument> GetSourceAsync(
+        this IDocumentSnapshot document,
+        CancellationToken cancellationToken)
     {
-        var projectItem = document is { FilePath: string filePath, FileKind: var fileKind }
-            ? projectEngine.FileSystem.GetItem(filePath, fileKind)
-            : null;
-
         var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-        var properties = RazorSourceDocumentProperties.Create(document.FilePath, projectItem?.RelativePhysicalPath);
+        var properties = RazorSourceDocumentProperties.Create(document.FilePath, document.TargetPath);
         return RazorSourceDocument.Create(text, properties);
     }
 
