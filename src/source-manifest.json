@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25268.1",
-      "barId": 268749,
+      "packageVersion": "10.0.0-preview.5.25269.5",
+      "barId": 268904,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "60d068efed11cd2c0613ca043211257fb57d9f1e"
+      "commitSha": "e26a16c185cf95e3c52b028920aeba6bcea814ce"
     },
     {
       "packageVersion": "0.11.5-alpha.25266.1",
@@ -99,11 +99,11 @@
       "commitSha": "c3c7ad6a866dd0b857ad14ce683987c39d2b8fe0"
     },
     {
-      "packageVersion": "10.0.0-preview.25263.1",
-      "barId": 268093,
+      "packageVersion": "10.0.0-preview.25267.1",
+      "barId": 268740,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "df7fa025647ab226d55b7de67a72ebbfed60f5a0"
+      "commitSha": "5db220ec96a406ab3a095bdf73ffa37fd94a8c9b"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
@@ -201,7 +201,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "90a41521142c978131f38c6da07b4eb96a9f1ff6"
+      "commitSha": "571930618fa96eabcd05b573285edbee9fc13bae"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
