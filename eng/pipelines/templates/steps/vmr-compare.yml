@@ -245,7 +245,6 @@ steps:
 - script: $(InstallDarc.dotnetPath)
     $(Build.SourcesDirectory)/artifacts/bin/BuildComparer/Debug/BuildComparer.dll
     ${{ parameters.command }}
-    -vmrManifestPath "$(Build.ArtifactStagingDirectory)/AssetManifests/MergedManifest.xml"
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
