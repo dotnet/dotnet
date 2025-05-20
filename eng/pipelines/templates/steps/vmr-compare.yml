@@ -186,18 +186,21 @@ steps:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/manifests/**
-        !*Sdk_*Artifacts/**
+        !*Sdk*_Artifacts/**
+        !*BuildLogs*/**
     ${{ elseif eq(parameters.assetType, 'Package') }}:
       itemPattern: |
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
-        !*Sdk_*Artifacts/**
+        !*Sdk*_Artifacts/**
+        !*BuildLogs*/**
     ${{ else }}:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
-        !*Sdk_*Artifacts/**
+        !*Sdk*_Artifacts/**
+        !*BuildLogs*/**
     downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
     continueOnError: ${{ parameters.continueOnError }}
 
