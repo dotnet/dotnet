@@ -26,6 +26,7 @@
     <IntermediateSymbolsRootDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'Symbols'))</IntermediateSymbolsRootDir>
 
     <ArtifactsAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests', '$(Configuration)'))</ArtifactsAssetManifestsDir>
+    <PreviousBuildPassAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests'))</PreviousBuildPassAssetManifestsDir>
     <AssetManifestsIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'manifests', '$(Configuration)'))</AssetManifestsIntermediateDir>
     <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
     <PreviousBuildPassShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'shipping'))</PreviousBuildPassShippingPackagesDir>
