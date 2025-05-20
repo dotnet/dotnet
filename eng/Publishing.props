@@ -19,11 +19,10 @@
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <PublishingVersion>3</PublishingVersion>
     <PushToLocalStorage>true</PushToLocalStorage>
-    <SourceBuiltAssetsDir>$(ArtifactsStagingDir)/assets</SourceBuiltAssetsDir>
-    <SourceBuiltAssetManifestsDir>$(ArtifactsStagingDir)/manifests</SourceBuiltAssetManifestsDir>
-    <SourceBuiltShippingPackagesDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/Shipping</SourceBuiltShippingPackagesDir>
-    <SourceBuiltShippingPackagesDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/Shipping</SourceBuiltShippingPackagesDir>
-    <SourceBuiltNonShippingPackagesDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/NonShipping</SourceBuiltNonShippingPackagesDir>
+    <AssetsLocalStorageDir>$(ArtifactsStagingDir)/artifacts/assets</AssetsLocalStorageDir>
+    <AssetManifestsLocalStorageDir>$(ArtifactsStagingDir)/artifacts/manifests</AssetManifestsLocalStorageDir>
+    <ShippingPackagesLocalStorageDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/Shipping</ShippingPackagesLocalStorageDir>
+    <NonShippingPackagesLocalStorageDir>$(ArtifactsTmpDir)/staging/packages/$(Configuration)/NonShipping</NonShippingPackagesLocalStorageDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PublishingVersion)' == '4'">
