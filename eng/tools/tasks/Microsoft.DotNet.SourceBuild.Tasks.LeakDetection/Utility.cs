@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +33,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
         internal static string MakeRelativePath(string filePath, string relativeTo)
         {
             // Uri.MakeRelativeUri requires the last slash
-            if (!relativeTo.EndsWith("/") && !relativeTo.EndsWith("\\"))
+            if (!relativeTo.EndsWith("/") && !relativeTo.EndsWith("\"))
             {
                 relativeTo += Path.DirectorySeparatorChar;
             }
