@@ -53,7 +53,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private const string MergedManifestFileName = "MergedManifest.xml";
         private const string NoCategory = "NONE";
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private string _gitHubRepository = "";
+        private string _repository = "";
         private string _gitHubBranch = "";
 
         // Set up proxy objects to allow unit test mocking
@@ -171,9 +171,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
 
                     buildData.Dependencies = deps;
-                    LookupForMatchingGitHubRepository(buildModel.Identity);
+                    LookupForMatchingRepository(buildModel.Identity);
                     buildData.GitHubBranch = _gitHubBranch;
-                    buildData.GitHubRepository = _gitHubRepository;
+                    buildData.Repository = _repository;
 
                     ProductConstructionService.Client.Models.Build recordedBuild = await client.Builds.CreateAsync(buildData, cancellationToken);
                     BuildId = recordedBuild.Id;
@@ -381,7 +381,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 Assets = new List<AssetData>(),
                 AzureDevOpsBuildId = buildModel.Identity.AzureDevOpsBuildId,
                 AzureDevOpsBuildDefinitionId = buildModel.Identity.AzureDevOpsBuildDefinitionId,
-                GitHubRepository = buildModel.Identity.Name,
+                Repository = buildModel.Identity.Name,
                 GitHubBranch = buildModel.Identity.Branch,
             };
 
@@ -517,7 +517,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// Azure DevOps to GitHub. If not we continue to work with the original Url.
         /// </summary>
         /// <returns></returns>
-        private void LookupForMatchingGitHubRepository(BuildIdentity buildIdentity)
+        private void LookupForMatchingRepository(BuildIdentity buildIdentity)
         {
             if (buildIdentity == null)
             {
@@ -540,7 +540,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 }
                 else
                 {
-                    repoIdentity = GetGithubRepoName(buildIdentity.AzureDevOpsRepository);
+                    repoIdentity = GetRepoName(buildIdentity.AzureDevOpsRepository);
                 }
 
                 client.BaseAddress = new Uri($"https://api.{gitHubHost}");
@@ -551,7 +551,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 if (response.IsSuccessStatusCode)
                 {
-                    _gitHubRepository = $"https://github.com/{repoIdentity}";
+                    _repository = $"https://github.com/{repoIdentity}";
                     _gitHubBranch = buildIdentity.AzureDevOpsBranch;
                 }
                 else
@@ -564,12 +564,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                     Log.LogMessage(MessageImportance.High,
                         $" Unable to translate AzDO to GitHub URL. HttpResponse: {response.StatusCode} {response.ReasonPhrase} for repoIdentity: {repoIdentity} and commit: {buildIdentity.Commit}.");
-                    _gitHubRepository = null;
+                    _repository = null;
                     _gitHubBranch = null;
                 }
             }
         }
 
+        /// <summary>
+        /// Get repo name from the Azure DevOps repo url
+        /// </summary>
+        /// <param name="repoUrl"></param>
+        /// <returns></returns>
         public static string GetRepoName(string repoUrl)
         {
             // In case the URL comes in ending with a '/', prevent an indexing exception
@@ -583,18 +588,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 repoName = repoName.Remove(repoName.LastIndexOf("-trusted"));
             }
-
-            return repoName;
-        }
-
-        /// <summary>
-        /// Get repo name from the Azure DevOps repo url
-        /// </summary>
-        /// <param name="repoUrl"></param>
-        /// <returns></returns>
-        public static string GetGithubRepoName(string repoUrl)
-        {
-            var repoName = GetRepoName(repoUrl);
 
             StringBuilder builder = new StringBuilder(repoName);
             int index = repoName.IndexOf('-');

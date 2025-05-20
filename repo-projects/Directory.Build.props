@@ -122,7 +122,7 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
-    <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
