@@ -137,6 +137,12 @@ internal static class ComponentMetadata
 
         public const string TypeParameterConstraintsKey = "Component.TypeParameterConstraints";
 
+        /// <summary>
+        /// If there are attributes that should be propagated into type inference method, the value of this metadata is the corresponding code for the type parameter such as
+        /// <c>[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)] T</c>.
+        /// </summary>
+        public const string TypeParameterWithAttributesKey = "Component.TypeParameterWithAttributes";
+
         public const string NameMatchKey = "Components.NameMatch";
 
         public const string HasRenderModeDirectiveKey = "Components.HasRenderModeDirective";
