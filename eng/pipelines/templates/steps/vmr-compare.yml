@@ -180,21 +180,24 @@ steps:
 
 - template: ../steps/vmr-download-artifact.yml
   parameters:
-    displayName: Download Package Artifacts
+    displayName: Download VMR Artifacts
     buildId: $(GetBuildInfo.UnifiedBuildRunId)
     ${{ if eq(parameters.assetType, 'Blob') }}:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/manifests/**
+        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
     ${{ elseif eq(parameters.assetType, 'Package') }}:
       itemPattern: |
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
+        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
     ${{ else }}:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
+        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
     downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
     continueOnError: ${{ parameters.continueOnError }}
 
