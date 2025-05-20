@@ -4,8 +4,8 @@
 
   <PropertyGroup>
     <!-- Packaging properties -->
-    <GitHubRepositoryName>windowsdesktop</GitHubRepositoryName>
-    <RepositoryUrl>https://github.com/dotnet/$(GitHubRepositoryName)</RepositoryUrl>
+    <RepositoryName>windowsdesktop</RepositoryName>
+    <RepositoryUrl>https://github.com/dotnet/$(RepositoryName)</RepositoryUrl>
     <PackageProjectUrl>https://dot.net</PackageProjectUrl>
     <Owners>microsoft,dotnetframework</Owners>
     <IncludeSymbols>true</IncludeSymbols>

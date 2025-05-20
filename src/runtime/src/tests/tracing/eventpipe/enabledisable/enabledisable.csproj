@@ -4,7 +4,7 @@
     <RequiresProcessIsolation>true</RequiresProcessIsolation>
     <TargetFrameworkIdentifier>.NETCoreApp</TargetFrameworkIdentifier>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants Condition="'$(GitHubRepositoryName)' == 'runtime'">$(DefineConstants);DIAGNOSTICS_RUNTIME</DefineConstants>
+    <DefineConstants Condition="'$(RepositoryName)' == 'runtime'">$(DefineConstants);DIAGNOSTICS_RUNTIME</DefineConstants>
     <UnloadabilityIncompatible>true</UnloadabilityIncompatible>
     <!-- Tracing tests routinely time out with jitstress and gcstress -->
     <GCStressIncompatible>true</GCStressIncompatible>
