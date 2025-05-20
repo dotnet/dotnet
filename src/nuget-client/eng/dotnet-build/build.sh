@@ -38,11 +38,9 @@ while [[ $# > 0 ]]; do
         --source-build|--sourcebuild|-sb)
             source_build=true
             product_build=true
-            shift
             ;;
         --product-build|--productbuild|-pb)
             product_build=true
-            shift
             ;;
         -*)
             # just eat this so we don't try to pass it along to MSBuild
@@ -94,7 +92,7 @@ ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
 export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
-properties="$properties /p:DotNetBuildRepo=$product_build"
+properties="$properties /p:DotNetBuild=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
 
 properties="$properties /p:Configuration=$configuration"

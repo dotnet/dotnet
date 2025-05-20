@@ -18,8 +18,8 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
         }
 
         // We only nullable-enable razor page `@model` for RazorLangVersion 9+ to avoid breaking users.
-        var nullableEnabled = codeDocument.ParserOptions.LanguageVersion >= RazorLanguageVersion.Version_9_0 &&
-                              !codeDocument.CodeGenerationOptions.SuppressNullabilityEnforcement;
+        var razor9OrHigher = codeDocument.ParserOptions.LanguageVersion >= RazorLanguageVersion.Version_9_0;
+        var nullableEnabled = razor9OrHigher && !codeDocument.CodeGenerationOptions.SuppressNullabilityEnforcement;
 
         var modelType = ModelDirective.GetModelType(documentNode);
         var visitor = new Visitor();
@@ -27,7 +27,7 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
 
         var @class = visitor.Class;
 
-        var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType}>";
+        var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType.Content}>";
         var vddProperty = new CSharpCodeIntermediateNode();
         vddProperty.Children.Add(new IntermediateToken()
         {
@@ -36,13 +36,26 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
         });
         @class.Children.Add(vddProperty);
 
-        var modelProperty = new CSharpCodeIntermediateNode();
-        modelProperty.Children.Add(new IntermediateToken()
+        if (codeDocument.CodeGenerationOptions.DesignTime || !razor9OrHigher)
         {
-            Kind = TokenKind.CSharp,
-            Content = nullableEnable(nullableEnabled, $"public {modelType} Model => ViewData.Model"),
-        });
-        @class.Children.Add(modelProperty);
+            var modelProperty = new CSharpCodeIntermediateNode();
+            modelProperty.Children.Add(new IntermediateToken()
+            {
+                Kind = TokenKind.CSharp,
+                Content = nullableEnable(nullableEnabled, $"public {modelType.Content} Model => ViewData.Model"),
+            });
+            @class.Children.Add(modelProperty);
+        }
+        else
+        {
+            @class.Children.Add(new PropertyDeclarationIntermediateNode()
+            {
+                Modifiers = { "public" },
+                PropertyName = "Model",
+                PropertyType = modelType,
+                PropertyExpression = "ViewData.Model"
+            });
+        }
 
         static string nullableEnable(bool nullableEnabled, string code)
         {
@@ -51,11 +64,7 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
                 return code + ";";
             }
 
-            return $"""
-                #nullable restore
-                {code}!;
-                #nullable disable
-                """;
+            return $"#nullable restore\r\n{code}!;\r\n#nullable disable";
         }
     }
 
