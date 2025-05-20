@@ -66,7 +66,7 @@
     <!-- This is pinned to an 8.0 version on purpose. It's used in SignTool to detect composite r2r images.
          Signtool also depends on SRM and SCI, which are unified to 8.0.0 versions because it's a build task and 
          needs to be loaded by desktop msbuild. -->
-    <Dependency Name="ILCompiler.Reflection.ReadyToRun.Experimental" Version="8.0.16-servicing.25211.10" Pinned="true">
+    <Dependency Name="ILCompiler.Reflection.ReadyToRun.Experimental" Version="8.0.16-servicing.25211.10">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
