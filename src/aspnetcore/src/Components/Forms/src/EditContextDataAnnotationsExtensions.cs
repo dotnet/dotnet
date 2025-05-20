@@ -199,6 +199,7 @@ public static partial class EditContextDataAnnotationsExtensions
 #pragma warning restore ASP0029 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
         // TODO(OR): Replace this with a more robust implementation or a different approach. Ideally, collect references during the validation process itself.
+        [SuppressMessage("Trimming", "IL2075:'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.", Justification = "Model types are expected to be declared in assemblies that are not trimmed.")]
         private static object GetFieldContainer(object obj, string[] dotSegments)
         {
             // The method does not check nullity and index bounds everywhere as the path is constructed internally and assumed to be correct.
@@ -224,9 +225,7 @@ public static partial class EditContextDataAnnotationsExtensions
                 string? indexStr = match.Groups[2].Success ? match.Groups[2].Value : null;
 
                 Type currentType = currentObject.GetType();
-#pragma warning disable IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
-                PropertyInfo propertyInfo = currentType!.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
-#pragma warning restore IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
+                PropertyInfo propertyInfo = currentType!.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
                 object propertyValue = propertyInfo!.GetValue(currentObject)!;
 
                 if (indexStr != null) // Indexed access
