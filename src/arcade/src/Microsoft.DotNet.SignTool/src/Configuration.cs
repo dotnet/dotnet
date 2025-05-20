@@ -505,7 +505,8 @@ namespace Microsoft.DotNet.SignTool
                     signInfo = signInfo.WithNotarization(macNotarizationAppName, _hashToCollisionIdMap[signedFileContentKey]);
                 }
 
-                if (signInfo.ShouldSign && peInfo != null)
+                // Do not check composite images, since they will have empty copyright info.
+                if (signInfo.ShouldSign && peInfo != null && !peInfo.IsCompositeImage)
                 {
                     bool isMicrosoftLibrary = IsMicrosoftLibrary(peInfo.Copyright);
                     bool isMicrosoftCertificate = !IsThirdPartyCertificate(signInfo.Certificate);
@@ -620,11 +621,11 @@ namespace Microsoft.DotNet.SignTool
                 return new PEInfo(isManaged, GetNativeLegalCopyright(fullPath));
             }
 
-            bool isCrossgened = ContentUtil.IsCrossgened(fullPath);
+            bool isCrossgened = ContentUtil.IsCrossgened(fullPath, out bool isCompositeImage);
             string publicKeyToken = ContentUtil.GetPublicKeyToken(fullPath);
 
             GetManagedTargetFrameworkAndCopyright(fullPath, out string targetFramework, out string copyright);
-            return new PEInfo(isManaged, isCrossgened, copyright, publicKeyToken, targetFramework);
+            return new PEInfo(isManaged, isCrossgened, isCompositeImage, copyright, publicKeyToken, targetFramework);
         }
 
         /// <summary>

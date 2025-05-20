@@ -8,7 +8,8 @@
     <Description>Build artifact signing tool</Description>
     <PackageTags>Arcade Build Tool Signing</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- ILCompiler.Reflection.ReadyToRun.Experimental does not have a strong name. -->
+    <NoWarn>$(NoWarn);NU5128;CS8002</NoWarn>
     <!-- Copy assemblies into lib folder so they can be used as a development dependency -->
     <BuildTaskTargetFolder>lib</BuildTaskTargetFolder>
   </PropertyGroup>
@@ -28,6 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="NuGet.Packaging" />
+    <PackageReference Include="ILCompiler.Reflection.ReadyToRun.Experimental" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">

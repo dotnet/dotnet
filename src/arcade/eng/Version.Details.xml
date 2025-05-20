@@ -63,6 +63,13 @@
       <Uri>https://github.com/dotnet/diagnostics</Uri>
       <Sha>3007744d190d50dc586acdb761c4ce6c0d5bdc15</Sha>
     </Dependency>
+    <!-- This is pinned to an 8.0 version on purpose. It's used in SignTool to detect composite r2r images.
+         Signtool also depends on SRM and SCI, which are unified to 8.0.0 versions because it's a build task and 
+         needs to be loaded by desktop msbuild. -->
+    <Dependency Name="ILCompiler.Reflection.ReadyToRun.Experimental" Version="8.0.16-servicing.25211.10" Pinned="true">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
+    </Dependency>
     <!-- Necessary for source-build. The dependency is loaded in during built-time
          by consumers of NuGetRepack.Tasks, so we cannot use a ref pack for it -->
     <Dependency Name="System.IO.Packaging" Version="9.0.0-rc.2.24473.5">

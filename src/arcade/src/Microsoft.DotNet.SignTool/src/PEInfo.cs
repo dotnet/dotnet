@@ -9,16 +9,18 @@ namespace Microsoft.DotNet.SignTool
     {
         internal bool IsManaged { get; }
         internal bool IsCrossgened { get; }
+        internal bool IsCompositeImage { get; }
         internal string Copyright { get; }
         internal string PublicKeyToken { get; }
         internal string TargetFramework { get; }
 
-        public PEInfo(bool isManaged, string copyright) : this(isManaged, false, copyright, null, null) { }
+        public PEInfo(bool isManaged, string copyright) : this(isManaged, false, false, copyright, null, null) { }
 
-        public PEInfo(bool isManaged, bool isCrossgened, string copyright, string publicKeyToken, string targetFramework)
+        public PEInfo(bool isManaged, bool isCrossgened, bool isCompositeImage, string copyright, string publicKeyToken, string targetFramework)
         {
             IsManaged = isManaged;
             IsCrossgened = isCrossgened;
+            IsCompositeImage = isCompositeImage;
             Copyright = copyright;
             PublicKeyToken = publicKeyToken;
             TargetFramework = targetFramework;

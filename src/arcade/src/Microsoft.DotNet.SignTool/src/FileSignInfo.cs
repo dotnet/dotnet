@@ -76,7 +76,7 @@ namespace Microsoft.DotNet.SignTool
 
         internal bool IsManaged() => ContentUtil.IsManaged(FullPath);
 
-        internal bool IsCrossgened() => ContentUtil.IsCrossgened(FullPath);
+        internal bool IsCrossgened() => ContentUtil.IsCrossgened(FullPath, out var isComposite);
 
         internal bool IsVsix() => IsVsix(FileName);
 
