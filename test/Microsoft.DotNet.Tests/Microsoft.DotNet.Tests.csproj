@@ -36,7 +36,7 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).PortableRid">
         <Value>$(PortableRid)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).BinariesReportFile">
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).BinariesReportFile" Condition="'$(BuildOS)' != 'windows' and '$(DotNetBuildSign)' != 'true'">
         <Value>$(BinariesReportFile)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>

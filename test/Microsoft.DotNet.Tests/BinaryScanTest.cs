@@ -16,7 +16,7 @@ namespace Microsoft.DotNet.Tests
     public class BinaryScanTest
     {
         private ITestOutputHelper OutputHelper { get; }
-        public static bool IncludeBinaryScanTest => !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        public static bool IncludeBinaryScanTest => Config.BinariesReportFile is not null;
 
         public BinaryScanTest(ITestOutputHelper outputHelper)
         {
