@@ -186,18 +186,18 @@ steps:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/manifests/**
-        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
+        !*Sdk_*Artifacts/**
     ${{ elseif eq(parameters.assetType, 'Package') }}:
       itemPattern: |
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
-        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
+        !*Sdk_*Artifacts/**
     ${{ else }}:
       itemPattern: |
         *_Artifacts/assets/**
         *_Artifacts/packages/**
         *_Artifacts/manifests/**
-        !*(Msft|SourceBuilt)Sdk_*Artifacts/**
+        !*Sdk_*Artifacts/**
     downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
     continueOnError: ${{ parameters.continueOnError }}
 
