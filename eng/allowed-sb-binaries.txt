@@ -9,7 +9,6 @@ artifacts/
 .git/
 .packages/
 prereqs/packages/
-MicroBuild/
 
 **/*.bmp
 **/*.doc
