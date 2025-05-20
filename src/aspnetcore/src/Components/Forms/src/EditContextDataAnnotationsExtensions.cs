@@ -225,7 +225,7 @@ public static partial class EditContextDataAnnotationsExtensions
 
                 Type currentType = currentObject.GetType();
 #pragma warning disable IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
-                PropertyInfo propertyInfo = currentType!.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
+                PropertyInfo propertyInfo = currentType!.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
 #pragma warning restore IL2075 // 'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
                 object propertyValue = propertyInfo!.GetValue(currentObject)!;
 
