@@ -52,10 +52,14 @@
     <PropertyGroup>
       <PackageOverridesInputPath>$(MSBuildThisFileDirectory)PackageOverrides.txt</PackageOverridesInputPath>
       <PackageOverridesOutputPath>$(BaseOutputPath)PackageOverrides.txt</PackageOverridesOutputPath>
+
+      <!-- Add the RuntimeWindowsDesktopPackageLibrary item information from the Microsoft.Internal.Runtime.WindowsDesktop.Transport package. -->
+      <RuntimeWindowsDesktopPackageLibraries>@(RuntimeWindowsDesktopPackageLibrary->'%(PackageId)|%(PackageVersion)', '
+')</RuntimeWindowsDesktopPackageLibraries>
     </PropertyGroup>
 
     <ItemGroup>
-      <CreatePackageOverridesTemplateProperty Include="ProductVersion=$(Version)" />
+      <CreatePackageOverridesTemplateProperty Include="RuntimeWindowsDesktopPackageLibraries=$(RuntimeWindowsDesktopPackageLibraries)" />
     </ItemGroup>
 
     <GenerateFileFromTemplate
