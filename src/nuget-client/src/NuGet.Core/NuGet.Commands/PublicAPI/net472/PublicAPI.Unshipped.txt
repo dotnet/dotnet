@@ -12,3 +12,4 @@ NuGet.Commands.Restore.ITargetFramework.GetItems(string! itemType) -> System.Col
 NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string!
 NuGet.Commands.Restore.Utility.PackageSpecFactory
 static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Commands.Restore.IProject! project, NuGet.Configuration.ISettings! settings) -> NuGet.ProjectModel.PackageSpec?
+~static NuGet.Commands.RestoreRunner.RunWithoutCommitAsync(System.Collections.Generic.IEnumerable<NuGet.Commands.RestoreSummaryRequest> restoreRequests, NuGet.Commands.RestoreArgs restoreContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreResultPair>>

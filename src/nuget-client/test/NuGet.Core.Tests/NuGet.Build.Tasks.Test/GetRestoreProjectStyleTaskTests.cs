@@ -129,7 +129,7 @@ namespace NuGet.Build.Tasks.Test
         [Fact]
         public void Execute_WhenUserSuppliedValueOverridesDefault_ReturnsUserSuppliedProjectStyle()
         {
-            var expected = ProjectStyle.Standalone;
+            var expected = ProjectStyle.PackagesConfig;
 
             using (var testDirectory = TestDirectory.Create())
             {
