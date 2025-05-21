@@ -128,10 +128,10 @@
     },
     {
       "packageVersion": "10.0.622801",
-      "barId": 267816,
+      "barId": 268819,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "a4f971d850e3a10462dd8ec2be47c90532e3490e"
+      "commitSha": "6eacb34ddd8376376fa7710ee204bb330b1b5646"
     },
     {
       "packageVersion": "",
@@ -190,11 +190,11 @@
       "commitSha": "d4436f7c38c5f8816957afc78d4cecafb08d2909"
     },
     {
-      "packageVersion": "10.0.0-preview.25262.1",
-      "barId": 267833,
+      "packageVersion": "10.0.0-preview.25269.1",
+      "barId": 268931,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "9c96c93edcbcd43de208ae76ae782b98786da623"
+      "commitSha": "7c4241a4893ba0703dfad18762f217857073b526"
     }
   ],
   "submodules": [
