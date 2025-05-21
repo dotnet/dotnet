@@ -198,7 +198,7 @@ steps:
     downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
     continueOnError: ${{ parameters.continueOnError }}
   
-- script: rm -r $(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts
+- script: rm -r "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts"
   displayName: Remove Source-Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
 
