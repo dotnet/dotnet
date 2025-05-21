@@ -125,6 +125,8 @@
     <!-- TODO: Remove the GitHubRepositoryName switch here after the next re-boostrap that includes the Publish.proj change. -->
     <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
+    <!-- TODO: Remove both properties and replace with '-from-VMR' CLI arg with the next re-bootstrap. -->
+    <CommonArgs>$(CommonArgs) /p:DotNetBuildFromVMR=true</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->

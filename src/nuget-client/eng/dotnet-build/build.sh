@@ -9,6 +9,7 @@ configuration='Release'
 verbosity='minimal'
 source_build=false
 product_build=false
+from_vmr=false
 properties=''
 
 # resolve $SOURCE until the file is no longer a symlink
@@ -41,6 +42,10 @@ while [[ $# > 0 ]]; do
             ;;
         --product-build|--productbuild|-pb)
             product_build=true
+            ;;
+        --from-vmr|--fromvmr)
+            from_vmr=true
+            shift
             ;;
         -*)
             # just eat this so we don't try to pass it along to MSBuild
@@ -94,6 +99,7 @@ export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
 properties="$properties /p:DotNetBuild=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
+properties="$properties /p:DotNetBuildFromVMR=$from_vmr"
 
 properties="$properties /p:Configuration=$configuration"
 properties="$properties /p:RepoRoot=$repo_root"
