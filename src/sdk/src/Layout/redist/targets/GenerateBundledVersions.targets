@@ -15,8 +15,8 @@
       Overwrite="true"
       Encoding="ASCII" />
 
-    <!-- The Version.Details file doesn't contain live information when building the
-         .NET product inside the orchestrator. Therefore don't read from it in that mode. -->
+    <!-- The Version.Details file doesn't contain live information when building
+         inside the VMR. Therefore don't read from it in that mode. -->
     <GetDependencyInfo
       VersionDetailsXmlFile="$(RepositoryEngineeringDir)Version.Details.xml"
       DependencyName="Microsoft.NETCore.App.Ref"

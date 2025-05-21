@@ -39,7 +39,7 @@ The following context controls will be implemented. These controls should be use
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuildFromVMR | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside a VMR build. |
+| DotNetBuildFromVMR | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside a VMR repo build. |
 | DotNetBuild | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing in product build mode. Not "true" for repo builds without the `--source-build` or `--product-build` switch. |
 
 ### Resource Controls
