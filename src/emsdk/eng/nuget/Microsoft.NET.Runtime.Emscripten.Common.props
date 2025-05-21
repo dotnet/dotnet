@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup>
-    <GitHubRepositoryName>emsdk</GitHubRepositoryName>
     <RepositoryUrl>https://github.com/dotnet/emsdk</RepositoryUrl>
     <ProjectUrl>https://github.com/dotnet/emsdk</ProjectUrl>
     <LicenseUrl>https://github.com/dotnet/emsdk/blob/main/LICENSE</LicenseUrl>
