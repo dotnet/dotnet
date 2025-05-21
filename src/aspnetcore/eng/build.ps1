@@ -103,7 +103,7 @@ Key for feed that can be used when downloading .NET runtimes and SDKs
 Build the repository in product mode (short: -pb).
 
 .PARAMETER fromVMR
-Set when building from within the .NET orchestrator.
+Set when building from within the VMR.
 
 .EXAMPLE
 Building both native and managed projects.

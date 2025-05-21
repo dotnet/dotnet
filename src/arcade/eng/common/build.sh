@@ -43,7 +43,7 @@ usage()
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   echo "  --buildCheck <value>     Sets /check msbuild parameter"
-  echo "  --fromVMR                Set when building from within the .NET orchestrator"
+  echo "  --fromVMR                Set when building from within the VMR"
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."

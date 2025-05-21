@@ -135,7 +135,7 @@ function Print-Usage() {
     Write-Host "  -dontUseGlobalNuGetCache      Do not use the global NuGet cache"
     Write-Host "  -noVisualStudio               Only build fsc and fsi as .NET Core applications. No Visual Studio required. '-configuration', '-verbosity', '-norestore', '-rebuild' are supported."
     Write-Host "  -productBuild                 Build the repository in product-build mode."
-    Write-Host "  -fromVMR                      Set when building from within the .NET orchestrator."
+    Write-Host "  -fromVMR                      Set when building from within the VMR."
     Write-Host "  -skipbuild                    Skip building product"
     Write-Host "  -compressAllMetadata          Build product with compressed metadata"
     Write-Host "  -buildnorealsig               Build product with realsig- (default use realsig+, where necessary)"

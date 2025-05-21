@@ -93,7 +93,7 @@ Options:
 
     --sourceBuild|-sb                 Build the repository in source-only mode.
     --productBuild|-pb                Build the repository in product-build mode.
-    --fromVMR                         Set when building from within the .NET orchestrator.
+    --fromVMR                         Set when building from within the VMR.
 
 Description:
     This build script installs required tools and runs an MSBuild command on this repository

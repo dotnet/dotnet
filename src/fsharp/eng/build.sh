@@ -37,7 +37,7 @@ usage()
   echo "  --prepareMachine               Prepare machine for CI run, clean up processes after build"
   echo "  --sourceBuild                  Build the repository in source-only mode."
   echo "  --productBuild                 Build the repository in product-build mode."
-  echo "  --fromVMR                      Set when building from within the .NET orchestrator"
+  echo "  --fromVMR                      Set when building from within the VMR"
   echo "  --buildnorealsig               Build product with realsig- (default use realsig+ where necessary)"
   echo "  --tfm                          Override the default target framework"
   echo ""

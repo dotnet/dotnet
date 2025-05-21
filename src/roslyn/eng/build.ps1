@@ -114,7 +114,7 @@ function Print-Usage() {
   Write-Host "  -useGlobalNuGetCache      Use global NuGet cache."
   Write-Host "  -warnAsError              Treat all warnings as errors"
   Write-Host "  -productBuild             Build the repository in product-build mode"
-  Write-Host "  -fromVMR                  Set when building from within the .NET orchestrator"
+  Write-Host "  -fromVMR                  Set when building from within the VMR"
   Write-Host "  -solution                 Solution to build (default is Roslyn.sln)"
   Write-Host ""
   Write-Host "Official build settings:"

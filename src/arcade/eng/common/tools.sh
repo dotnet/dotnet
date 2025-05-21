@@ -72,7 +72,7 @@ fi
 runtime_source_feed=${runtime_source_feed:-''}
 runtime_source_feed_key=${runtime_source_feed_key:-''}
 
-# True when the build is running within the .NET orchestrator.
+# True when the build is running within the VMR.
 from_vmr=${from_vmr:-false}
 
 # Resolve any symlinks in the given path.
@@ -506,7 +506,7 @@ function MSBuild-Core {
       echo "Build failed with exit code $exit_code. Check errors above."
 
       # When running on Azure Pipelines, override the returned exit code to avoid double logging.
-      # Skip this when the build is a child of the .NET orchestrator build.
+      # Skip this when the build is a child of the VMR build.
       if [[ "$ci" == true && -n ${SYSTEM_TEAMPROJECT:-} && "$from_vmr" != true ]]; then
         Write-PipelineSetResult -result "Failed" -message "msbuild execution failed."
         # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
