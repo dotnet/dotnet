@@ -51,7 +51,7 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildFromVMR)' == 'true' and '$(DotNetBuild)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
