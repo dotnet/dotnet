@@ -318,7 +318,7 @@ function BuildSolution {
     /p:DotNetBuildSourceOnly=$source_build \
     /p:DotNetBuildRepo=$product_build \
     /p:DotNetBuild=$product_build \
-    /p:DotNetBuildFromOrchestrator=$from_orchestrator \
+    /p:DotNetBuildFromVMR=$from_orchestrator \
     $test_runtime \
     $mono_tool \
     $generate_documentation_file \

@@ -248,7 +248,7 @@ function Build {
     /p:Build=$build \
     /p:DotNetBuild=$product_build \
     /p:DotNetBuildSourceOnly=$source_build \
-    /p:DotNetBuildFromOrchestrator=$from_orchestrator \
+    /p:DotNetBuildFromVMR=$from_orchestrator \
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \

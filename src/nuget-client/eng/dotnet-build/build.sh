@@ -99,7 +99,7 @@ export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
 properties="$properties /p:DotNetBuild=$product_build"
 properties="$properties /p:DotNetBuildSourceOnly=$source_build"
-properties="$properties /p:DotNetBuildFromOrchestrator=$from_orchestrator"
+properties="$properties /p:DotNetBuildFromVMR=$from_orchestrator"
 
 properties="$properties /p:Configuration=$configuration"
 properties="$properties /p:RepoRoot=$repo_root"

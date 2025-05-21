@@ -130,7 +130,7 @@ function Build {
     /p:Test=$test `
     /p:Pack=$pack `
     /p:DotNetBuild=$productBuild `
-    /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
+    /p:DotNetBuildFromVMR=$fromOrchestrator `
     /p:IntegrationTest=$integrationTest `
     /p:PerformanceTest=$performanceTest `
     /p:Sign=$sign `

@@ -295,7 +295,7 @@ function BuildSolution {
 
     BuildMessage="Error building tools"
     # TODO: Remove DotNetBuildRepo property when fsharp is on Arcade 10
-    local args=" publish $repo_root/proto.proj $blrestore $bltools /p:Configuration=Proto /p:DotNetBuildRepo=$product_build /p:DotNetBuild=$product_build /p:DotNetBuildSourceOnly=$source_build /p:DotNetBuildFromOrchestrator=$from_orchestrator $properties"
+    local args=" publish $repo_root/proto.proj $blrestore $bltools /p:Configuration=Proto /p:DotNetBuildRepo=$product_build /p:DotNetBuild=$product_build /p:DotNetBuildSourceOnly=$source_build /p:DotNetBuildFromVMR=$from_orchestrator $properties"
     echo $args
     "$DOTNET_INSTALL_DIR/dotnet" $args  #$args || exit $?
   fi
@@ -324,7 +324,7 @@ function BuildSolution {
       /p:DotNetBuildRepo=$product_build \
       /p:DotNetBuild=$product_build \
       /p:DotNetBuildSourceOnly=$source_build \
-      /p:DotNetBuildFromOrchestrator=$from_orchestrator \
+      /p:DotNetBuildFromVMR=$from_orchestrator \
       $properties
   fi
 }

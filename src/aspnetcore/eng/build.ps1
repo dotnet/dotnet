@@ -289,7 +289,7 @@ $MSBuildArguments += "/p:TargetArchitecture=$Architecture"
 $MSBuildArguments += "/p:TargetOsName=win"
 
 if ($ProductBuild) { $MSBuildArguments += "/p:DotNetBuild=$ProductBuild" }
-if ($fromOrchestrator) { $MSBuildArguments += "/p:DotNetBuildFromOrchestrator=$fromOrchestrator" }
+if ($fromOrchestrator) { $MSBuildArguments += "/p:DotNetBuildFromVMR=$fromOrchestrator" }
 
 if (-not $Configuration) {
     $Configuration = if ($CI) { 'Release' } else { 'Debug' }
@@ -306,7 +306,7 @@ if ($RuntimeSourceFeed -or $RuntimeSourceFeedKey) {
     $ToolsetBuildArguments += $runtimeFeedKeyArg
 }
 if ($ProductBuild) { $ToolsetBuildArguments += "/p:DotNetBuild=$ProductBuild" }
-if ($fromOrchestrator) { $ToolsetBuildArguments += "/p:DotNetBuildFromOrchestrator=$fromOrchestrator" }
+if ($fromOrchestrator) { $ToolsetBuildArguments += "/p:DotNetBuildFromVMR=$fromOrchestrator" }
 
 # Split build categories between dotnet msbuild and desktop msbuild. Use desktop msbuild as little as possible.
 [string[]]$dotnetBuildArguments = ''

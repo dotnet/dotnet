@@ -306,7 +306,7 @@ function BuildSolution([string] $solutionName, $packSolution) {
         /p:Build=$build `
         /p:DotNetBuildRepo=$productBuild `
         /p:DotNetBuild=$productBuild `
-        /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
+        /p:DotNetBuildFromVMR=$fromOrchestrator `
         /p:Rebuild=$rebuild `
         /p:Pack=$pack `
         /p:Sign=$sign `

@@ -289,7 +289,7 @@ function BuildSolution() {
       /p:VisualStudioDropAccessToken=$officialVisualStudioDropAccessToken `
       /p:DotNetBuildRepo=$productBuild `
       /p:DotNetBuild=$productBuild `
-      /p:DotNetBuildFromOrchestrator=$fromOrchestrator `
+      /p:DotNetBuildFromVMR=$fromOrchestrator `
       $suppressExtensionDeployment `
       $msbuildWarnAsError `
       $generateDocumentationFile `

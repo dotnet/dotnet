@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
-    <DotNetBuildFromOrchestrator>true</DotNetBuildFromOrchestrator>
+    <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
     <!-- TODO: Remove DotNetBuildOrchestrator legacy switch with the next re-bootstrap. -->
     <DotNetBuildOrchestrator>true</DotNetBuildOrchestrator>
     <RootRepo>dotnet</RootRepo>

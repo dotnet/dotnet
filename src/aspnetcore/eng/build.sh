@@ -323,7 +323,7 @@ fi
 [ ! -z "$build_installers" ] && msbuild_args[${#msbuild_args[*]}]="-p:BuildInstallers=$build_installers"
 [ ! -z "$product_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuild=$product_build"
 [ ! -z "$source_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
-[ ! -z "$from_orchestrator" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildFromOrchestrator=$from_orchestrator"
+[ ! -z "$from_orchestrator" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildFromVMR=$from_orchestrator"
 
 # Run restore by default unless --no-restore or --no-build was specified.
 [ -z "$run_restore" ] && run_restore=true
@@ -362,7 +362,7 @@ if [ ! -z "$runtime_source_feed$runtime_source_feed_key" ]; then
 fi
 [ ! -z "$product_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuild=$product_build"
 [ ! -z "$source_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
-[ ! -z "$from_orchestrator" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildFromOrchestrator=$from_orchestrator"
+[ ! -z "$from_orchestrator" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildFromVMR=$from_orchestrator"
 
 # Initialize global variables need to be set before the import of Arcade is imported
 restore=$run_restore

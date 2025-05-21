@@ -39,7 +39,7 @@ The following context controls will be implemented. These controls should be use
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuildFromOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside a VMR build. |
+| DotNetBuildFromVMR | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside a VMR build. |
 | DotNetBuild | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing in product build mode. Not "true" for repo builds without the `--source-build` or `--product-build` switch. |
 
 ### Resource Controls
@@ -50,7 +50,7 @@ These controls may be used for **infrastructure or product purposes**.
 | -------- | -------- | -------- | -------- |
 | DotNetBuildWithOnlineSources | "true", "false", "" | "false" by default when `SourceOnly` switch is active. | When "true", do not remove non-local input sources. Infrastructure switch only. This switch is only exposed at the orchestrator level.</br>This replaces the existing `DotNetBuildOffline` switch. |
 | DotNetBuildSourceOnly | "true", "false", "" | "" | When "true", build only from source. Online sources may remain unless `DotNetBuildOffline` is set to true. This is both an infrastructure and a product switch. |
-| DotNetBuildTargetRidOnly | "true", "false", "" | "" | When not set, defaults to "true" if the repository build transitively depends on dotnet/runtime and `DotNetBuildFromOrchestrator` == "true"; otherwise "false". When "true", builds projects for the current `TargetRid` instead of using the current runtime identifier. |
+| DotNetBuildTargetRidOnly | "true", "false", "" | "" | When not set, defaults to "true" if the repository build transitively depends on dotnet/runtime and `DotNetBuildFromVMR` == "true"; otherwise "false". When "true", builds projects for the current `TargetRid` instead of using the current runtime identifier. |
 
 ### Output Controls
 
@@ -73,7 +73,7 @@ In addition to these default high level controls, there may be additional compon
 | Configuration | Debug, Release | Release | Defaults produces a shipping product. |
 | DotNetBuildTests | "true", "false", "" | "" is the default. | When "true", the build should include test projects.<br/>Not "true" is essentially the default behavior for source build today. This is essentially equivalent to ExcludeFromBuild being set to true when `DotNetBuildTests` == false and Arcade’s `IsTestProject` or `IsTestUtilityProject`` is true. |
 | ShortStack | "true", "false", "" | "" | If true, the build is a 'short stack' (runtime and its dependencies only). Other repo builds are skipped. |
-| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuildFromOrchestrator` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildFromOrchestrator` == "true".<br/>This control applies to project properties. |
+| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuildFromVMR` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildFromVMR` == "true".<br/>This control applies to project properties. |
 | ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildSourceONly` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
 | PortableBuild | "true", "false", "" | "" | When "false", the build is non-portable. |
 
