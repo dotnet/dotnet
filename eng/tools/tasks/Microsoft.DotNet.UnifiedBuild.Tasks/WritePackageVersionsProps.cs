@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #nullable disable
 
@@ -42,6 +41,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public const string CreationTimePropertyName = "BuildOutputPropsCreationTime";
         public const string VersionPropertySuffix = "Version";
+        private const string PreviousVersionPropertySuffix = "PreviousVersion";
         private const string VersionPropertyAlternateSuffix = "PackageVersion";
         private const string PinnedAttributeName = "Pinned";
         private const string DependencyAttributeName = "Dependency";
@@ -88,6 +88,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// If VersionPropsFlowType is set to DependenciesOnly, should be the path to the Version.Detail.xml file for the repo.
         /// </summary>
         public string VersionDetails { get; set; }
+
+        public bool IsPreviousPropsFile { get; set; }
 
         /// <summary>
         /// Retrieve the set of the dependencies from the repo's Version.Details.Xml file.
@@ -286,11 +288,22 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             {
                 string propertyName = GetPropertyName(package.Name, VersionPropertySuffix);
                 string alternatePropertyName = GetPropertyName(package.Name, VersionPropertyAlternateSuffix);
+                string pkgVersion = package.Version.ToString();
 
-                sw.WriteLine($"    <{propertyName}>{package.Version}</{propertyName}>");
-                sw.WriteLine($"    <{alternatePropertyName}>{package.Version}</{alternatePropertyName}>");
+                WriteProperty(sw, propertyName, pkgVersion);
+                WriteProperty(sw, alternatePropertyName, pkgVersion);
+
+                if (IsPreviousPropsFile)
+                {
+                    WriteProperty(sw, GetPropertyName(package.Name, PreviousVersionPropertySuffix), pkgVersion);
+                }
             }
             sw.WriteLine(@"  </PropertyGroup>");
+        }
+
+        private static void WriteProperty(StreamWriter sw, string propertyName, string value)
+        {
+            sw.WriteLine($"    <{propertyName}>{value}</{propertyName}>");
         }
 
         public static string GetPropertyName(string id, string suffix)

@@ -39,11 +39,9 @@ while [[ $# > 0 ]]; do
         --source-build|--sourcebuild|-sb)
             source_build=true
             product_build=true
-            shift
             ;;
         --product-build|--productbuild|-pb)
             product_build=true
-            shift
             ;;
         --from-orchestrator|--fromOrchestrator)
             from_orchestrator=true

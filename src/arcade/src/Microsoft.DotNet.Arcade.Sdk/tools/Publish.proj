@@ -82,7 +82,7 @@
 
     <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
-    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(GitHubRepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(GitHubRepositoryName)/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(RepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(RepositoryName)/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
 
     <!-- Relative PDB path differentiator to ensure that multiple VMR legs that happen to produce the same PDBs
@@ -431,7 +431,7 @@
       ManifestBranch="$(BUILD_SOURCEBRANCH)"
       ManifestBuildId="$(BUILD_BUILDNUMBER)"
       ManifestCommit="$(BUILD_SOURCEVERSION)"
-      ManifestRepoOrigin="$(GitHubRepositoryName)"
+      ManifestRepoOrigin="$(RepositoryName)"
       IsStableBuild="$(IsStableBuild)"
       PublishingVersion="$(PublishingVersion)"
       AssetManifestPath="$(AssetManifestFilePath)" 
