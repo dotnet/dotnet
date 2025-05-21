@@ -43,7 +43,7 @@ usage()
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   echo "  --buildCheck <value>     Sets /check msbuild parameter"
-  echo "  --fromOrchestrator       Set when building from within the .NET orchestrator"
+  echo "  --fromVMR                Set when building from within the .NET orchestrator"
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."
@@ -65,7 +65,7 @@ restore=false
 build=false
 source_build=false
 product_build=false
-from_orchestrator=false
+from_vmr=false
 rebuild=false
 test=false
 integration_test=false
@@ -144,8 +144,8 @@ while [[ $# > 0 ]]; do
       restore=true
       pack=true
       ;;
-    -fromorchestrator|-from-orchestrator)
-      from_orchestrator=true
+    -fromvmr|-from-vmr)
+      from_vmr=true
       ;;
     -test|-t)
       test=true
@@ -248,7 +248,7 @@ function Build {
     /p:Build=$build \
     /p:DotNetBuild=$product_build \
     /p:DotNetBuildSourceOnly=$source_build \
-    /p:DotNetBuildFromVMR=$from_orchestrator \
+    /p:DotNetBuildFromVMR=$from_vmr \
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \

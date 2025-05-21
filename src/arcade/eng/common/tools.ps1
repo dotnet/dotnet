@@ -66,7 +66,7 @@ $ErrorActionPreference = 'Stop'
 [string]$runtimeSourceFeedKey = if (Test-Path variable:runtimeSourceFeedKey) { $runtimeSourceFeedKey } else { $null }
 
 # True when the build is running within the .NET orchestrator.
-[bool]$fromOrchestrator = if (Test-Path variable:fromOrchestrator) { $fromOrchestrator } else { $false }
+[bool]$fromVMR = if (Test-Path variable:fromVMR) { $fromVMR } else { $false }
 
 function Create-Directory ([string[]] $path) {
     New-Item -Path $path -Force -ItemType 'Directory' | Out-Null
@@ -851,7 +851,7 @@ function MSBuild-Core() {
 
     # When running on Azure Pipelines, override the returned exit code to avoid double logging.
     # Skip this when the build is a child of the .NET orchestrator build.
-    if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and !$fromOrchestrator) {
+    if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and !$fromVMR) {
       Write-PipelineSetResult -Result "Failed" -Message "msbuild execution failed."
       # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
       # The above Write-PipelineSetResult will cause the task to be marked as failure without adding yet another error

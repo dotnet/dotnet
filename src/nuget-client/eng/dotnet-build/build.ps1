@@ -6,7 +6,7 @@ param (
   [switch]$ci,
   [switch]$bl,
   [switch][Alias('pb')]$productBuild
-  [switch]$fromOrchestrator,
+  [switch]$fromVMR,
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$AdditionalArgs
 )
@@ -65,7 +65,7 @@ $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
 # Then remaining arguments.
 $dotnetArguments += "/p:Configuration=$configuration"
 $dotnetArguments += "/p:DotNetBuild=$productBuild"
-$dotnetArguments += "/p:DotNetBuildFromVMR=$fromOrchestrator"
+$dotnetArguments += "/p:DotNetBuildFromVMR=$fromVMR"
 $dotnetArguments += "/p:RepoRoot=$repoRoot"
 if ($bl){
     $dotnetArguments += "/bl:${binLog}"

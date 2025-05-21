@@ -102,7 +102,7 @@ Key for feed that can be used when downloading .NET runtimes and SDKs
 .PARAMETER ProductBuild
 Build the repository in product mode (short: -pb).
 
-.PARAMETER FromOrchestrator
+.PARAMETER fromVMR
 Set when building from within the .NET orchestrator.
 
 .EXAMPLE
@@ -207,7 +207,7 @@ param(
     [switch]$ProductBuild,
 
     # Intentionally lowercase as tools.ps1 depends on it
-    [switch]$fromOrchestrator,
+    [switch]$fromVMR,
 
     # Capture the rest
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -289,7 +289,7 @@ $MSBuildArguments += "/p:TargetArchitecture=$Architecture"
 $MSBuildArguments += "/p:TargetOsName=win"
 
 if ($ProductBuild) { $MSBuildArguments += "/p:DotNetBuild=$ProductBuild" }
-if ($fromOrchestrator) { $MSBuildArguments += "/p:DotNetBuildFromVMR=$fromOrchestrator" }
+if ($fromVMR) { $MSBuildArguments += "/p:DotNetBuildFromVMR=$fromVMR" }
 
 if (-not $Configuration) {
     $Configuration = if ($CI) { 'Release' } else { 'Debug' }
@@ -306,7 +306,7 @@ if ($RuntimeSourceFeed -or $RuntimeSourceFeedKey) {
     $ToolsetBuildArguments += $runtimeFeedKeyArg
 }
 if ($ProductBuild) { $ToolsetBuildArguments += "/p:DotNetBuild=$ProductBuild" }
-if ($fromOrchestrator) { $ToolsetBuildArguments += "/p:DotNetBuildFromVMR=$fromOrchestrator" }
+if ($fromVMR) { $ToolsetBuildArguments += "/p:DotNetBuildFromVMR=$fromVMR" }
 
 # Split build categories between dotnet msbuild and desktop msbuild. Use desktop msbuild as little as possible.
 [string[]]$dotnetBuildArguments = ''

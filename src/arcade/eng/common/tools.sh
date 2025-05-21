@@ -73,7 +73,7 @@ runtime_source_feed=${runtime_source_feed:-''}
 runtime_source_feed_key=${runtime_source_feed_key:-''}
 
 # True when the build is running within the .NET orchestrator.
-from_orchestrator=${from_orchestrator:-false}
+from_vmr=${from_vmr:-false}
 
 # Resolve any symlinks in the given path.
 function ResolvePath {
@@ -507,7 +507,7 @@ function MSBuild-Core {
 
       # When running on Azure Pipelines, override the returned exit code to avoid double logging.
       # Skip this when the build is a child of the .NET orchestrator build.
-      if [[ "$ci" == true && -n ${SYSTEM_TEAMPROJECT:-} && "$from_orchestrator" != true ]]; then
+      if [[ "$ci" == true && -n ${SYSTEM_TEAMPROJECT:-} && "$from_vmr" != true ]]; then
         Write-PipelineSetResult -result "Failed" -message "msbuild execution failed."
         # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
         # The above Write-PipelineSetResult will cause the task to be marked as failure without adding yet another error

@@ -39,7 +39,7 @@ usage()
   echo "  --warnAsError              Treat all warnings as errors"
   echo "  --sourceBuild              Build the repository in source-only mode"
   echo "  --productBuild             Build the repository in product-build mode."
-  echo "  --fromOrchestrator         Build the repository in product-build mode."
+  echo "  --fromVMR                  Build the repository in product-build mode."
   echo "  --solution                 Solution to build (default is Compilers.slnf)"
   echo ""
   echo "Command line arguments starting with '/p:' are passed through to MSBuild."
@@ -83,7 +83,7 @@ warn_as_error=false
 properties=""
 source_build=false
 product_build=false
-from_orchestrator=false
+from_vmr=false
 solution_to_build="Compilers.slnf"
 
 args=""
@@ -184,8 +184,8 @@ while [[ $# > 0 ]]; do
     --productbuild|--product-build|-pb)
       product_build=true
       ;;
-    --fromOrchestrator|--from-orchestrator)
-      from_orchestrator=true
+    --fromvmr|--from-vmr)
+      from_vmr=true
       ;;
     --solution)
       solution_to_build=$2
@@ -318,7 +318,7 @@ function BuildSolution {
     /p:DotNetBuildSourceOnly=$source_build \
     /p:DotNetBuildRepo=$product_build \
     /p:DotNetBuild=$product_build \
-    /p:DotNetBuildFromVMR=$from_orchestrator \
+    /p:DotNetBuildFromVMR=$from_vmr \
     $test_runtime \
     $mono_tool \
     $generate_documentation_file \

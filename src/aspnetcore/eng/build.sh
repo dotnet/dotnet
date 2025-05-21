@@ -37,7 +37,7 @@ runtime_source_feed=''
 runtime_source_feed_key=''
 source_build=''
 product_build=''
-from_orchestrator=''
+from_vmr=''
 
 if [ "$(uname)" = "Darwin" ]; then
     target_os_name='osx'
@@ -93,7 +93,7 @@ Options:
 
     --sourceBuild|-sb                 Build the repository in source-only mode.
     --productBuild|-pb                Build the repository in product-build mode.
-    --fromOrchestrator                Set when building from within the .NET orchestrator.
+    --fromVMR                         Set when building from within the .NET orchestrator.
 
 Description:
     This build script installs required tools and runs an MSBuild command on this repository
@@ -261,8 +261,8 @@ while [[ $# -gt 0 ]]; do
         -productbuild|-product-build|-pb)
             product_build=true
             ;;
-        -fromorchestrator|-from-orchestrator)
-            from_orchestrator=true
+        -fromvmr|-from-vmr)
+            from_vmr=true
             ;;
         *)
             msbuild_args[${#msbuild_args[*]}]="$1"
@@ -323,7 +323,7 @@ fi
 [ ! -z "$build_installers" ] && msbuild_args[${#msbuild_args[*]}]="-p:BuildInstallers=$build_installers"
 [ ! -z "$product_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuild=$product_build"
 [ ! -z "$source_build" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
-[ ! -z "$from_orchestrator" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildFromVMR=$from_orchestrator"
+[ ! -z "$from_vmr" ] && msbuild_args[${#msbuild_args[*]}]="-p:DotNetBuildFromVMR=$from_vmr"
 
 # Run restore by default unless --no-restore or --no-build was specified.
 [ -z "$run_restore" ] && run_restore=true
@@ -362,7 +362,7 @@ if [ ! -z "$runtime_source_feed$runtime_source_feed_key" ]; then
 fi
 [ ! -z "$product_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuild=$product_build"
 [ ! -z "$source_build" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildSourceOnly=$source_build"
-[ ! -z "$from_orchestrator" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildFromVMR=$from_orchestrator"
+[ ! -z "$from_vmr" ] && toolset_build_args[${#toolset_build_args[*]}]="-p:DotNetBuildFromVMR=$from_vmr"
 
 # Initialize global variables need to be set before the import of Arcade is imported
 restore=$run_restore
