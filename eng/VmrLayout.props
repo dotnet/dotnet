@@ -26,11 +26,12 @@
     <IntermediateSymbolsRootDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'Symbols'))</IntermediateSymbolsRootDir>
 
     <ArtifactsAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests', '$(Configuration)'))</ArtifactsAssetManifestsDir>
-    <PreviousBuildPassAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests'))</PreviousBuildPassAssetManifestsDir>
     <AssetManifestsIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'manifests', '$(Configuration)'))</AssetManifestsIntermediateDir>
     <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
+    <PreviousBuildPassAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests'))</PreviousBuildPassAssetManifestsDir>
     <PreviousBuildPassShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'shipping'))</PreviousBuildPassShippingPackagesDir>
     <PreviousBuildPassNonShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'nonshipping'))</PreviousBuildPassNonShippingPackagesDir>
+    <PreviousBuildPassAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets'))</PreviousBuildPassAssetsDir>
 
     <DotNetSdkExtractDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'extracted-dotnet-sdk'))</DotNetSdkExtractDir>
 

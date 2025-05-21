@@ -615,7 +615,7 @@
       <_TransitivelyThisBuildPassReferencedRepo Include="@(TransitiveRepositoryReference->WithMetadataValue('DotNetBuildPass','$(DotNetBuildPass)'))" />
       <_TransitivelyPreviousBuildPassReferencedRepo Include="@(TransitiveRepositoryReference)"
                                                     Exclude="@(_TransitivelyThisBuildPassReferencedRepo)"
-                                                    AdditionalProperties="ArtifactsAssetManifestsDir=$(PreviousBuildPassAssetManifestsDir)" />
+                                                    AdditionalProperties="IsPreviousBuildPassProject=true" />
     </ItemGroup>
     <MSBuild Projects="@(_TransitivelyPreviousBuildPassReferencedRepo->'%(Identity).proj')"
              Targets="GetProducedPackagesFromDependentVerticals"

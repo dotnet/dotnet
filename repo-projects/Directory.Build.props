@@ -253,4 +253,10 @@
     <ExtraPackageVersionPropsPackageInfo Include="VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(IsPreviousBuildPassProject)' == 'true'">
+    <ArtifactsAssetManifestsDir>$(PreviousBuildPassAssetManifestsDir)</ArtifactsAssetManifestsDir>
+    <ArtifactsShippingPackagesDir>$(PreviousBuildPassShippingPackagesDir)</ArtifactsShippingPackagesDir>
+    <ArtifactsNonShippingPackagesDir>$(PreviousBuildPassNonShippingPackagesDir)</ArtifactsNonShippingPackagesDir>
+    <ArtifactsAssetsDir>$(PreviousBuildPassAssetsDir)</ArtifactsAssetsDir>
+  </PropertyGroup>
 </Project>
