@@ -96,7 +96,7 @@
   <!--
     Microsoft.CodeAnalysis.* versions used by the RoslynAnalyzers.
   -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+  <PropertyGroup>
     <!-- Microsoft.CodeAnalysis.* versions. Read this!
         This repo uses a wide variety of M.CA.* package versions. This is an atypical pattern in
         .NET's repositories but a necessary one for roslyn-analyzers.
@@ -122,11 +122,11 @@
 
           Example of surface area usage:
 
-          <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
+          <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers)</MicrosoftCodeAnalysisVersion>
 
           Example of executable usage:
 
-          <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+          <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
     -->
     <!-- Microsoft.CodeAnalysis versions for different purposes. -->
     <!-- Surface area that various projects compile against. These should have source-build reference packages -->
@@ -135,6 +135,7 @@
     <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
     <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
     <MicrosoftCodeAnalysisVersionForResxSourceGenerators>4.0.1</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
+    <MicrosoftCodeAnalysisVersionForNetAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForTextAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForTextAnalyzers>
     <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>3.11.0</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
     <MicrosoftCodeAnalysisVersionForToolsAndUtilities>3.11.0</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
@@ -144,19 +145,6 @@
          area versions. -->
     <MicrosoftCodeAnalysisVersionForTests>4.9.0-3.final</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <MicrosoftCodeAnalysisVersionFromSbrp>4.0.1</MicrosoftCodeAnalysisVersionFromSbrp>
-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForPublicApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForBannedApiAnalyzers>
-    <MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForPerfSensitiveAnalyzers>
-    <MicrosoftCodeAnalysisVersionForResxSourceGenerators>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForResxSourceGenerators>
-    <MicrosoftCodeAnalysisVersionForTextAnalyzers>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForTextAnalyzers>
-    <MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForCodeAnalysisAnalyzers>
-    <MicrosoftCodeAnalysisVersionForToolsAndUtilities>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForToolsAndUtilities>
-    <MicrosoftCodeAnalysisVersionForMetrics>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForMetrics>
-    <MicrosoftCodeAnalysisVersionForTests>$(MicrosoftCodeAnalysisVersionFromSbrp)</MicrosoftCodeAnalysisVersionForTests>
   </PropertyGroup>
   <PropertyGroup>
     <UsingToolVSSDK Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</UsingToolVSSDK>
