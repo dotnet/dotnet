@@ -6,6 +6,7 @@ param (
   [switch]$ci,
   [switch]$bl,
   [switch][Alias('pb')]$productBuild
+  [switch]$fromVMR,
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$AdditionalArgs
 )
@@ -63,7 +64,8 @@ $dotnetArguments += "-v:$verbosity"
 $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
 # Then remaining arguments.
 $dotnetArguments += "/p:Configuration=$configuration"
-$dotnetArguments += "/p:DotNetBuildRepo=$productBuild"
+$dotnetArguments += "/p:DotNetBuild=$productBuild"
+$dotnetArguments += "/p:DotNetBuildFromVMR=$fromVMR"
 $dotnetArguments += "/p:RepoRoot=$repoRoot"
 if ($bl){
     $dotnetArguments += "/bl:${binLog}"

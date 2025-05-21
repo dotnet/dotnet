@@ -14,7 +14,7 @@
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
-    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">true</FlagNetStandard1XDependencies>
+    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">true</FlagNetStandard1XDependencies>
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
@@ -75,7 +75,7 @@
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.24314.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- arcade -->
-    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25267.102</MicrosoftDotNetXliffTasksVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.14.1</HumanizerVersion>

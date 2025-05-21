@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Concurrent;
@@ -44,6 +43,16 @@ public class SymbolsTests : SdkTests
                 OutputHelper);
 
             IList<string> failedFiles = VerifySdkFilesHaveMatchingSymbols(symbolsRoot, Config.DotNetDirectory);
+
+            if (!Config.IsOfficialBuild)
+            {
+                // Ignore some MSBuild ref assemblies due to a bug: https://github.com/dotnet/msbuild/issues/11785
+                failedFiles = failedFiles
+                    .Where(file =>
+                        !file.EndsWith("ref/Microsoft.Build.Framework.dll", StringComparison.OrdinalIgnoreCase) &&
+                        !file.EndsWith("ref/Microsoft.Build.Utilities.Core.dll", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
 
             if (failedFiles.Count > 0)
             {

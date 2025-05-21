@@ -10,6 +10,11 @@ parameters:
 - name: finalJoinCondition
   type: boolean
 
+#### repo parameters ####
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -66,8 +71,12 @@ stages:
       - ${{ if ne(stage.templateContext.validationOnly, 'true') }}:
         - ${{ stage.stage }}
     variables:
-    - name: vmrPath
-      value: $(Build.SourcesDirectory)
+    - ${{ if parameters.isBuiltFromVmr }}:
+      - name: vmrPath
+        value: $(Build.SourcesDirectory)
+    - ${{ else }}:
+      - name: vmrPath
+        value: $(Agent.BuildDirectory)/vmr
     - template: ../variables/vmr-build.yml
     jobs:
       - job: FinalJoin
@@ -129,6 +138,11 @@ stages:
                   inputs:
                     path: $(Build.ArtifactStagingDirectory)/VerticalArtifacts/${{ vertical.job }}
                     artifactName: ${{ vertical.job }}_Artifacts
+        - ${{ if not(parameters.isBuiltFromVmr) }}:
+          - template: /eng/common/templates/steps/vmr-sync.yml@self
+            parameters:
+              vmrPath: ${{ variables.vmrPath }}
+              targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
         - template: ../steps/vmr-join-verticals.yml
           parameters:
             dotNetBuildPass: final

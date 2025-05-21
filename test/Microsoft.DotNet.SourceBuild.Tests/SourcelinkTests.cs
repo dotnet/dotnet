@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Concurrent;
@@ -9,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,12 +27,14 @@ public class SourcelinkTests : SdkTests
 {
     private static string SourcelinkRoot { get; } = Path.Combine(Directory.GetCurrentDirectory(), nameof(SourcelinkTests));
 
+    public static bool IncludeSourceLinkTests => Config.IsOfficialBuild;
+
     public SourcelinkTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
     /// <summary>
     /// Verifies that all symbols have valid sourcelinks.
     /// </summary>
-    [Fact]
+    [ConditionalFact(typeof(SourcelinkTests), nameof(IncludeSourceLinkTests))]
     public void VerifySourcelinks()
     {
         try

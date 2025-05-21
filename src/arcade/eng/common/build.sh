@@ -43,6 +43,7 @@ usage()
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   echo "  --buildCheck <value>     Sets /check msbuild parameter"
+  echo "  --fromVMR                Set when building from within the VMR"
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."
@@ -64,6 +65,7 @@ restore=false
 build=false
 source_build=false
 product_build=false
+from_vmr=false
 rebuild=false
 test=false
 integration_test=false
@@ -129,18 +131,21 @@ while [[ $# > 0 ]]; do
     -pack)
       pack=true
       ;;
-    -sourcebuild|-sb)
+    -sourcebuild|-source-build|-sb)
       build=true
       source_build=true
       product_build=true
       restore=true
       pack=true
       ;;
-    -productbuild|-pb)
+    -productbuild|-product-build|-pb)
       build=true
       product_build=true
       restore=true
       pack=true
+      ;;
+    -fromvmr|-from-vmr)
+      from_vmr=true
       ;;
     -test|-t)
       test=true
@@ -241,8 +246,9 @@ function Build {
     /p:RepoRoot="$repo_root" \
     /p:Restore=$restore \
     /p:Build=$build \
-    /p:DotNetBuildRepo=$product_build \
+    /p:DotNetBuild=$product_build \
     /p:DotNetBuildSourceOnly=$source_build \
+    /p:DotNetBuildFromVMR=$from_vmr \
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \

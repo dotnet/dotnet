@@ -23,6 +23,9 @@ namespace Microsoft.SignCheck.Verification
             => VerifySupportedFileType(path, parent, virtualPath);
 
         protected override bool IsSigned(string path, SignatureVerificationResult svr)
+            => IsSignedAsync(path, svr).GetAwaiter().GetResult();
+
+        private async Task<bool> IsSignedAsync(string path, SignatureVerificationResult svr)
         {
             List<ISignatureVerificationProvider> providers = new()
             {
@@ -34,9 +37,8 @@ namespace Microsoft.SignCheck.Verification
 
             using (var pr = new PackageArchiveReader(path))
             {
-                Task<VerifySignaturesResult> verifySignatureResult = packageSignatureVerifier.VerifySignaturesAsync(pr, verifierSettings, CancellationToken.None);
-
-                return verifySignatureResult.Result.IsValid;
+                VerifySignaturesResult verifySignatureResult = await packageSignatureVerifier.VerifySignaturesAsync(pr, verifierSettings, CancellationToken.None);
+                return verifySignatureResult.IsValid;
             }
         }
     }

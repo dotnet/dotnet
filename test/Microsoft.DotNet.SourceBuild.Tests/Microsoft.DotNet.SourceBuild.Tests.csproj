@@ -81,6 +81,9 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).RestoreAdditionalProjectSources">
         <Value>$(RestoreAdditionalProjectSources)</Value>
       </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).IsOfficialBuild">
+        <Value>$(OfficialBuild)</Value>
+      </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
 

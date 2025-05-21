@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace BinaryToolKit;
@@ -91,13 +91,12 @@ public class BinaryTool
 
     private static void ValidateBinaries(IEnumerable<string> newBinaries, string outputReportDirectory)
     {
+        string newBinariesFile = Path.Combine(outputReportDirectory, "NewBinaries.txt");
+        File.WriteAllLines(newBinariesFile, newBinaries);
+
         if (newBinaries.Any())
         {
-            string newBinariesFile = Path.Combine(outputReportDirectory, "NewBinaries.txt");
-
             Log.LogDebug("New binaries:");
-
-            File.WriteAllLines(newBinariesFile, newBinaries);
 
             foreach (var binary in newBinaries)
             {

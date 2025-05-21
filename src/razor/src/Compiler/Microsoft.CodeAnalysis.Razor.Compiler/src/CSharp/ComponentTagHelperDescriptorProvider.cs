@@ -4,12 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.CSharp;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
@@ -443,6 +445,63 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 if (TryGetWhereClauseText(typeParameter, constraints, out var whereClauseText))
                 {
                     metadataPairs.Add(new(ComponentMetadata.Component.TypeParameterConstraintsKey, whereClauseText));
+                }
+
+                // Collect attributes that should be propagated to the type inference method.
+                using var _2 = StringBuilderPool.GetPooledObject(out var withAttributes);
+                foreach (var attribute in typeParameter.GetAttributes())
+                {
+                    if (attribute.HasFullName("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute"))
+                    {
+                        Debug.Assert(attribute.AttributeClass != null);
+
+                        if (withAttributes.Length > 0)
+                        {
+                            withAttributes.Append(", ");
+                        }
+                        else
+                        {
+                            withAttributes.Append('[');
+                        }
+
+                        withAttributes.Append(attribute.AttributeClass.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                        withAttributes.Append('(');
+
+                        var first = true;
+                        foreach (var arg in attribute.ConstructorArguments)
+                        {
+                            if (first)
+                            {
+                                first = false;
+                            }
+                            else
+                            {
+                                withAttributes.Append(", ");
+                            }
+
+                            if (arg.Kind == TypedConstantKind.Enum)
+                            {
+                                withAttributes.Append("unchecked((");
+                                withAttributes.Append(arg.Type!.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                                withAttributes.Append(')');
+                                withAttributes.Append(CSharp.SymbolDisplay.FormatPrimitive(arg.Value!, quoteStrings: true, useHexadecimalNumbers: true));
+                                withAttributes.Append(')');
+                            }
+                            else
+                            {
+                                Debug.Assert(false, $"Need to add support for '{arg.Kind}' and make sure the output is 'global::' prefixed.");
+                                withAttributes.Append(arg.ToCSharpString());
+                            }
+                        }
+
+                        withAttributes.Append(')');
+                    }
+                }
+                if (withAttributes.Length > 0)
+                {
+                    withAttributes.Append("] ");
+                    withAttributes.Append(typeParameter.Name);
+                    metadataPairs.Add(new(ComponentMetadata.Component.TypeParameterWithAttributesKey, withAttributes.ToString()));
                 }
 
                 pb.SetMetadata(MetadataCollection.Create(metadataPairs));

@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.IO;
@@ -26,6 +25,7 @@ internal static class Config
     public static string? SdkTarballPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(SdkTarballPath))!;
     public static string? SourceBuiltArtifactsPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltArtifactsPath))!;
     public static string? RestoreAdditionalProjectSources => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(RestoreAdditionalProjectSources));
+    public static bool IsOfficialBuild => bool.TryParse((string)AppContext.GetData(ConfigSwitchPrefix + nameof(IsOfficialBuild))!, out bool isOfficialBuild) && isOfficialBuild;
 
     // Indicates whether the tests are being run in the context of a CI pipeline
     public static bool RunningInCI => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_CI")) ||
