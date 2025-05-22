@@ -6,7 +6,7 @@
     <PatchVersion>0</PatchVersion>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>5</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration>6</PreReleaseVersionIteration>
     <EmscriptenSourceVersion>sdk-main</EmscriptenSourceVersion>
     <EmscriptenVersion>3.1.56</EmscriptenVersion>
     <EmscriptenVersionNet9>3.1.56</EmscriptenVersionNet9>
