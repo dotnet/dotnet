@@ -12,7 +12,7 @@
     <!-- Construct a set of properties for the inner build. Only pass properties that have been set.-->
     <ItemGroup>
       <_CommonProperties Include="Configuration=$(Configuration)" />
-      <_CommonProperties Include="DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)" Condition="'$(DotNetBuildOrchestrator)' != ''" />
+      <_CommonProperties Include="DotNetBuildFromVMR=$(DotNetBuildFromVMR)" Condition="'$(DotNetBuildFromVMR)' != ''" />
       <_CommonProperties Include="DotNetBuild=$(DotNetBuild)" Condition="'$(DotNetBuild)' != ''" />
       <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
 
@@ -50,7 +50,7 @@
     <MSBuild Projects="$(ArcadeDir)Publish.proj"
              Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties)"
              Targets="Publish"
-             Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+             Condition="'$(DotNetBuildFromVMR)' == 'true'" />
   </Target>
 
 </Project>
