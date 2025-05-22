@@ -270,6 +270,7 @@ while [[ $# -gt 0 ]]; do
             shift
             [ -z "${1:-}" ] && __error "Missing value for parameter --warnaserror" && __usage
             warn_as_error="${1:-}"
+            ;;
         *)
             msbuild_args[${#msbuild_args[*]}]="$1"
             ;;
