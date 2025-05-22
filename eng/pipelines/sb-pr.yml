@@ -1,13 +1,16 @@
 # This is the non-1ES PR pipeline for dotnet/dotnet
 # https://dev.azure.com/dnceng-public/public/_build?definitionId=240
 
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+    - release/8.0.1xx
+
 pr:
   branches:
     include:
-    - main
-    - release/*
-    - internal/release/*
+    - release/8.0.1xx
 
 stages:
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
