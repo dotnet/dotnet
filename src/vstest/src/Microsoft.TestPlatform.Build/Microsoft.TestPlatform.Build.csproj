@@ -17,8 +17,8 @@
     <!-- This package is included even in source build -->
     <IsPackable>true</IsPackable>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true'">Microsoft.TestPlatform.Build.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'">Microsoft.TestPlatform.Build.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Microsoft.TestPlatform.Build.sourcebuild.product.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">Microsoft.TestPlatform.Build.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Microsoft.TestPlatform.Build.sourcebuild.product.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Build</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
