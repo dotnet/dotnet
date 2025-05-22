@@ -234,34 +234,36 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRefPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
-    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <MicrosoftAspNetCoreAuthenticationFacebookVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAuthenticationFacebookVersion>
-    <MicrosoftAspNetCoreAuthenticationGoogleVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAuthenticationGoogleVersion>
-    <MicrosoftAspNetCoreAuthenticationMicrosoftAccountVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAuthenticationMicrosoftAccountVersion>
-    <MicrosoftAspNetCoreComponentsVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsVersion>
-    <MicrosoftAspNetCoreComponentsAnalyzersVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsAnalyzersVersion>
-    <MicrosoftAspNetCoreComponentsFormsVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsFormsVersion>
-    <MicrosoftAspNetCoreComponentsWebAssemblyVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsWebAssemblyVersion>
-    <MicrosoftAspNetCoreComponentsWebAssemblyServerVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsWebAssemblyServerVersion>
-    <MicrosoftAspNetCoreComponentsWebViewVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsWebViewVersion>
-    <MicrosoftAspNetCoreMetadataVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreMetadataVersion>
-    <MicrosoftAspNetCoreAuthorizationVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreAuthorizationVersion>
-    <MicrosoftAspNetCoreComponentsWebVersion>10.0.0-preview.5.25263.108</MicrosoftAspNetCoreComponentsWebVersion>
-    <MicrosoftJSInteropVersion>10.0.0-preview.5.25263.108</MicrosoftJSInteropVersion>
-    <MicrosoftExtensionsObjectPoolVersion>10.0.0-preview.5.25263.108</MicrosoftExtensionsObjectPoolVersion>
-    <MicrosoftExtensionsFileProvidersEmbeddedVersion>10.0.0-preview.5.25263.108</MicrosoftExtensionsFileProvidersEmbeddedVersion>
-    <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-preview.5.25263.108</MicrosoftDotNetWebItemTemplates100PackageVersion>
-    <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0-preview.5.25263.108</MicrosoftDotNetWebProjectTemplates100PackageVersion>
-    <dotnetdevcertsPackageVersion>10.0.0-preview.5.25263.108</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>10.0.0-preview.5.25263.108</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>10.0.0-preview.5.25263.108</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
+    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreTestHostPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreTestHostPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <MicrosoftAspNetCoreAuthenticationFacebookVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAuthenticationFacebookVersion>
+    <MicrosoftAspNetCoreAuthenticationGoogleVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAuthenticationGoogleVersion>
+    <MicrosoftAspNetCoreAuthenticationMicrosoftAccountVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAuthenticationMicrosoftAccountVersion>
+    <MicrosoftAspNetCoreComponentsVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsVersion>
+    <MicrosoftAspNetCoreComponentsAnalyzersVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsAnalyzersVersion>
+    <MicrosoftAspNetCoreComponentsFormsVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsFormsVersion>
+    <MicrosoftAspNetCoreComponentsWebAssemblyVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsWebAssemblyVersion>
+    <MicrosoftAspNetCoreComponentsWebAssemblyServerVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsWebAssemblyServerVersion>
+    <MicrosoftAspNetCoreComponentsWebViewVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsWebViewVersion>
+    <MicrosoftAspNetCoreMetadataVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreMetadataVersion>
+    <MicrosoftAspNetCoreAuthorizationVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAuthorizationVersion>
+    <MicrosoftAspNetCoreComponentsWebVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreComponentsWebVersion>
+    <MicrosoftJSInteropVersion>10.0.0-preview.5.25265.101</MicrosoftJSInteropVersion>
+    <MicrosoftExtensionsObjectPoolVersion>10.0.0-preview.5.25265.101</MicrosoftExtensionsObjectPoolVersion>
+    <MicrosoftExtensionsFileProvidersEmbeddedVersion>10.0.0-preview.5.25265.101</MicrosoftExtensionsFileProvidersEmbeddedVersion>
+    <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-preview.5.25265.101</MicrosoftDotNetWebItemTemplates100PackageVersion>
+    <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0-preview.5.25265.101</MicrosoftDotNetWebProjectTemplates100PackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25265.101</VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>
+    <dotnetdevcertsPackageVersion>10.0.0-preview.5.25265.101</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>10.0.0-preview.5.25265.101</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>10.0.0-preview.5.25265.101</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/razor -->
