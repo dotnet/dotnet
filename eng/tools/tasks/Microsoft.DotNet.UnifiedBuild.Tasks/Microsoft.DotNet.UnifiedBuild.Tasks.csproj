@@ -10,7 +10,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
     <PackageReference Include="NuGet.Protocol" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
     <PackageReference Include="NuGet.ProjectModel" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
-    <PackageReference Include="System.Text.Json" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
 </Project>
