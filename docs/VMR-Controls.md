@@ -1,27 +1,12 @@
 # The Unified Build Almanac (TUBA) - Unified Build Controls
 
-This document serves a design for a revamp of the current set of source-build controls to support Unified Build.
-
 Note: This document generally focuses on MSBuild properties, as most of our build infrastructure is based in MSBuild. In general, many controls can conceptually be applied to other tooling and build infrastructure, though name adjustments may be necessary.
-
-## Background
-
-Unified Build seeks to bring the way Microsoft builds .NET for its releases closer to the way that our Linux distro partners build. One of the ways that it will achieve this is to use much of the same infrastructure that source build uses, with some tweaks. We can think of Unified Build as:
-
-*The expansion of source build with different rules about allowable inputs based on the requirements of the organization that is building .NET.*
-
-Some organizations will allow pre-built binaries, some will not. These differences in requirements may generate some differences in the produced product and will also influence how the build needs to be run, what can be included, etc. The underlying principles and approach, however, will be the same.
-
-Utilizing the source build infrastructure as it exists today is not desirable. That infrastructure has grown over many years and become tailored to one specific purpose. The switches that drive source build have been used in incorrect contexts and have been used as proxies for other things (e.g. using `DotNetBuildFromSource`` when "Building on Linux" was what was meant). Moreover, the existing meanings of the switches are so intertwined with "Linux source build" that use in other contexts would be confusing.
 
 ## Goals
 
 - Unify Linux distro partner builds and Microsoft builds under a common switch infrastructure.
-- Reduce baggage of existing Linux distro partner build control switches.
 - Increase clarity around which switches may be used in which contexts.
-- Provide an opportunity to re-evaluate current uses of control switches
 - Cover core VMR and repo scenarios.
-- Provide a straightforward way to migrate from the existing control structure to the new one.
 
 ## Scenarios
 
@@ -54,7 +39,7 @@ The following context controls will be implemented. These controls should be use
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside an VMR inner repo build. |
+| DotNetBuildFromVMR | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator and repo build. "True" inside the VMR orchestrator and inside a VMR repo build. |
 | DotNetBuild | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing in product build mode. Not "true" for repo builds without the `--source-build` or `--product-build` switch. |
 
 ### Resource Controls
@@ -65,7 +50,7 @@ These controls may be used for **infrastructure or product purposes**.
 | -------- | -------- | -------- | -------- |
 | DotNetBuildWithOnlineSources | "true", "false", "" | "false" by default when `SourceOnly` switch is active. | When "true", do not remove non-local input sources. Infrastructure switch only. This switch is only exposed at the orchestrator level.</br>This replaces the existing `DotNetBuildOffline` switch. |
 | DotNetBuildSourceOnly | "true", "false", "" | "" | When "true", build only from source. Online sources may remain unless `DotNetBuildOffline` is set to true. This is both an infrastructure and a product switch. |
-| DotNetBuildTargetRidOnly | "true", "false", "" | "" | When not set, defaults to "true" if the repository build transitively depends on dotnet/runtime and `DotNetBuildOrchestrator` == "true"; otherwise "false". When "true", builds projects for the current `TargetRid` instead of using the current runtime identifier. |
+| DotNetBuildTargetRidOnly | "true", "false", "" | "" | When not set, defaults to "true" if the repository build transitively depends on dotnet/runtime and `DotNetBuildFromVMR` == "true"; otherwise "false". When "true", builds projects for the current `TargetRid` instead of using the current runtime identifier. |
 
 ### Output Controls
 
@@ -88,7 +73,7 @@ In addition to these default high level controls, there may be additional compon
 | Configuration | Debug, Release | Release | Defaults produces a shipping product. |
 | DotNetBuildTests | "true", "false", "" | "" is the default. | When "true", the build should include test projects.<br/>Not "true" is essentially the default behavior for source build today. This is essentially equivalent to ExcludeFromBuild being set to true when `DotNetBuildTests` == false and Arcade’s `IsTestProject` or `IsTestUtilityProject`` is true. |
 | ShortStack | "true", "false", "" | "" | If true, the build is a 'short stack' (runtime and its dependencies only). Other repo builds are skipped. |
-| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuildOrchestrator` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildOrchestrator` == "true".<br/>This control applies to project properties. |
+| ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuildFromVMR` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildFromVMR` == "true".<br/>This control applies to project properties. |
 | ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuildSourceONly` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
 | PortableBuild | "true", "false", "" | "" | When "false", the build is non-portable. |
 

@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25270.2",
-      "barId": 269013,
+      "packageVersion": "10.0.0-beta.25271.2",
+      "barId": 269183,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "dbc44140e227eb6d14a29943fb7ea0c7c3c9aca0"
+      "commitSha": "12d3a9f5d6138e22270694574e73e4c58a815795"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -50,11 +50,11 @@
       "commitSha": "ce653def0d1969dca0d518a95559b2acc3c6128c"
     },
     {
-      "packageVersion": "10.0.0-preview.4.25269.1",
-      "barId": 268875,
+      "packageVersion": "10.0.0-preview.4.25270.3",
+      "barId": 269055,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "c281f3cd587cbf8ae5151e50bab74476ba2f574c"
+      "commitSha": "e0e8cf056a9ffb88d531ff1d90ef5e1869b62815"
     },
     {
       "packageVersion": "10.0.0-preview.6.25270.1",
@@ -64,11 +64,11 @@
       "commitSha": "5f075907900e941bba2dce35a483525dce419232"
     },
     {
-      "packageVersion": "10.0.100-beta.25266.3",
-      "barId": 268571,
+      "packageVersion": "10.0.100-beta.25270.2",
+      "barId": 269002,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "665b1f1cdff308582aa1a944aa03c3a62d1fbcd0"
+      "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
     },
     {
       "packageVersion": "17.15.0-preview-25269-12",
@@ -107,10 +107,10 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 268758,
+      "barId": 269061,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "29638e8e84335bc877f064766be3f1b3038da311"
+      "commitSha": "b6838628f6bb43739af5e7437fd59558b42cde57"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
@@ -120,11 +120,11 @@
       "commitSha": "ba23e62da145ef04187aabe1e1fb64029fe2317d"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25265.12",
-      "barId": 268459,
+      "packageVersion": "10.0.100-preview.5.25271.2",
+      "barId": 269153,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9ee9fa825fe1d7cd805c20dd6115a049dd11d8d0"
+      "commitSha": "0fb7ac018963e14db545ec3ed13264858a49834b"
     },
     {
       "packageVersion": "10.0.622801",
@@ -135,17 +135,17 @@
     },
     {
       "packageVersion": "",
-      "barId": 268821,
+      "barId": 269071,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "9c6bd2ceb401e034c27e83288438e2d678443092"
+      "commitSha": "27e01a1a52ddf0684b643866e76d8ece09a59bb0"
     },
     {
-      "packageVersion": "10.0.0-beta.25269.3",
-      "barId": 268926,
+      "packageVersion": "10.0.0-beta.25271.2",
+      "barId": 269208,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "2045f54ea5c64e92934a73f177e64487f2658888"
+      "commitSha": "27a91e1521d7acfaae07a6b0f19790932cc04bd9"
     },
     {
       "packageVersion": "2.2.0-beta.25262.1",
@@ -169,18 +169,18 @@
       "commitSha": "f93fcd2943f39c2cbb65d25e3949e21c3190184c"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25270.5",
-      "barId": 269032,
+      "packageVersion": "10.0.0-preview.6.25270.6",
+      "barId": 269069,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "c5eddc139d2aa3f839454e3362079b9e4905058d"
+      "commitSha": "ed05d7e55f78f3284f82763b063738d6f7449f36"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25269.1",
-      "barId": 268859,
+      "packageVersion": "10.0.0-preview.5.25269.3",
+      "barId": 268949,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "4c32f29dda58d9a821120c2a2c9d8f016e67e4e5"
+      "commitSha": "ee29cfdb3b7e62cae63f3f85b23e214d1f699e78"
     },
     {
       "packageVersion": "10.0.0-preview.5.25268.1",
