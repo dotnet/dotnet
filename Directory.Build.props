@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+    <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
+    <!-- TODO: Remove DotNetBuildOrchestrator legacy switch with the next re-bootstrap. -->
     <DotNetBuildOrchestrator>true</DotNetBuildOrchestrator>
     <RootRepo>dotnet</RootRepo>
     <Nullable>enable</Nullable>
