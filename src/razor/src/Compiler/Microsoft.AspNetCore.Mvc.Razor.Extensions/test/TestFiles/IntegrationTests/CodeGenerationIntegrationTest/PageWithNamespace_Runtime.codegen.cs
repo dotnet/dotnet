@@ -50,9 +50,7 @@ namespace Test.Namespace
         #nullable restore
 public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace>)PageContext?.ViewData!;
 #nullable disable
-        #nullable restore
-public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace Model => ViewData.Model!;
-#nullable disable
+        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace Model => ViewData.Model;
     }
 }
 #pragma warning restore 1591

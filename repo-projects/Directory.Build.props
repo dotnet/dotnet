@@ -15,15 +15,6 @@
     <RunEachTargetSeparately Condition="'$(BuildInParallel)' == 'true' and '$(ContinuousIntegrationBuild)' != 'true'">true</RunEachTargetSeparately>
   </PropertyGroup>
 
-  <!-- TODO: Remove this import and the DisableDevBuildAsDefaultForSourceOnly when dev builds are the default for source only.
-        https://github.com/dotnet/source-build/issues/4922 -->
-  <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true'" />
-
-  <!-- The OfficialBuildId in nuget-client.props isn't parse-able. Replace it with the current datetime value. The OfficialBuildId isn't important for source-only builds. -->
-  <PropertyGroup Condition="Exists('$(GitInfoRepoPropsFile)') and '$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true'">
-    <OfficialBuildId Condition="'$(RepositoryName)' == 'nuget-client'">$([System.DateTime]::Now.ToString("yyyyMMdd")).1</OfficialBuildId>
-  </PropertyGroup>
-
   <PropertyGroup>
     <!-- Fake, to satisfy the SDK. -->
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -84,10 +75,8 @@
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
   </PropertyGroup>
 
-  <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds.
-       This is necessary for source-only builds as well so that the version numbers are identical between the two builds
-       since testing of source-build only requires some packages from the msft build. -->
-  <PropertyGroup Condition="'$(OfficialBuildId)' != '' and ('$(DotNetBuildSourceOnly)' != 'true' or '$(DisableDevBuildAsDefaultForSourceOnly)' != 'true')">
+  <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
+  <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
   </PropertyGroup>
 
@@ -107,10 +96,10 @@
   <!-- Common args used for building and testing. -->
   <PropertyGroup>
     <CommonArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)productBuild</CommonArgs>
+    <!-- TODO: Rename to source-build when the new switch is available everywhere. -->
+    <CommonArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)sourceBuild</CommonArgs>
 
-    <!-- TODO: Remove the DisableDevBuildAsDefaultForSourceOnly condition when dev builds are the default for source only.
-         https://github.com/dotnet/source-build/issues/4922 -->
-    <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true' or ('$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true')">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
+    <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
@@ -126,8 +115,8 @@
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder=$(OfficialBuilder)</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
-    <!-- TODO: Remove when the bootstrap Arcade SDK removed the ArPow build infra: https://github.com/dotnet/source-build/issues/5138 -->
-    <CommonArgs>$(CommonArgs) /p:UseArPowBuildInfra=false</CommonArgs>
+
+    <CommonArgs>$(CommonArgs) /p:DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)</CommonArgs>
 
     <!-- Pass locations for assets -->
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
@@ -150,7 +139,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)sourceBuild</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
@@ -185,10 +173,8 @@
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
-    <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.).
-         TODO: Remove the DisableDevBuildAsDefaultForSourceOnly condition when dev builds are the default for source only.
-         https://github.com/dotnet/source-build/issues/4922 -->
-    <EnvironmentVariables Condition="'$(ContinuousIntegrationBuild)' == 'true' or ('$(DotNetBuildSourceOnly)' == 'true' and '$(DisableDevBuildAsDefaultForSourceOnly)' == 'true')" Include="ContinuousIntegrationBuild=true" />
+    <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.). -->
+    <EnvironmentVariables Condition="'$(ContinuousIntegrationBuild)' == 'true'" Include="ContinuousIntegrationBuild=true" />
 
     <!-- Turn off node reuse for source build because repos use conflicting versions
          of compilers which cause assembly load errors.
@@ -199,9 +185,6 @@
     <EnvironmentVariables Include="DeterministicSourcePaths=false" Condition="'$(DeterministicBuildOptOut)' == 'true'" />
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
-
-    <!-- Need to be passed in as an env var so that custom Exec tasks in the repo's DotNetBuild.props receive this setting. -->
-    <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
 
     <!-- Needed for miscellanous projects in various repos - see https://github.com/dotnet/source-build/issues/4081-->
     <EnvironmentVariables Include="RestoreConfigFile=$(NuGetConfigFile)" Condition="'$(NuGetConfigFile)' != ''" />

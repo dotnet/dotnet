@@ -317,6 +317,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
+                               IsPreviousPropsFile="true"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.

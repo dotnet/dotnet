@@ -13,3 +13,8 @@ Source Location: (79:6,5 [14] TestFiles\IntegrationTests\CodeGenerationIntegrati
 Generated Location: (2328:46,0 [14] )
 |Model?.Address|
 
+Source Location: (36:2,7 [10] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
+|TestModel?|
+Generated Location: (4126:81,0 [10] )
+|TestModel?|
+
