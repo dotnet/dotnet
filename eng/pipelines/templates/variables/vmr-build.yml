@@ -226,7 +226,7 @@ variables:
     value: windows.vs2022preview.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
-    value: NetCore1ESPool-Internal-XL
+    value: NetCore1ESPool-Internal
   - name: shortStackPoolName
     value: NetCore1ESPool-Internal
   - name: poolImage_Linux
