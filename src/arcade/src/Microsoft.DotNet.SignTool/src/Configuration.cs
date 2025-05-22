@@ -528,7 +528,7 @@ namespace Microsoft.DotNet.SignTool
                         // Turn the else into a warning (and hoist into the if above) after issue is complete.
                         if (peInfo.IsManaged)
                         {
-                            LogWarning(code, warning);
+                            _log.LogMessage(MessageImportance.High, warning);
                         }
                         else
                         {
