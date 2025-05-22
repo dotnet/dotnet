@@ -11,7 +11,7 @@
     Configuration                   Build configuration: "Debug", "Release", etc.
 
     DotNetBuild                     Build the repo as part of the entire .NET stack.
-    DotNetBuildOrchestrator         Build the entire .NET stack.
+    DotNetBuildFromVMR              Identifies that the the repo is built from within the VMR.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as as part of the .NET stack in source-only mode, with no external dependencies.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
