@@ -311,8 +311,25 @@ internal sealed partial class ProjectStateUpdater(
                 .ConfigureAwait(false);
             watch.Stop();
 
-            // don't report success if the work was cancelled
+            // Don't report success if the work was cancelled
             cancellationToken.ThrowIfCancellationRequested();
+
+            // Don't report success if the call failed.
+            // If the ImmutableArray that was returned is default, then the call failed.
+
+            if (tagHelpers.IsDefault)
+            {
+                _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
+                new("id", telemetryId),
+                new("result", "error"));
+
+                _logger.LogError($"""
+                    Tag helper discovery failed.
+                    Project: {projectSnapshot.FilePath}
+                    """);
+
+                return (null, configuration);
+            }
 
             _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
                 new("id", telemetryId),
