@@ -4,8 +4,6 @@
 #nullable disable
 
 using Microsoft.Build.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System;
@@ -14,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Task = Microsoft.Build.Utilities.Task;
 
@@ -181,46 +181,94 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                 assetFiles,
                 assetFile =>
                 {
-                    JObject jObj;
+                    JsonDocument jsonDoc;
 
                     using (var file = File.OpenRead(Path.Combine(RootDir, assetFile)))
-                    using (var reader = new StreamReader(file))
-                    using (var jsonReader = new JsonTextReader(reader))
                     {
-                        jObj = (JObject)JToken.ReadFrom(jsonReader);
+                        jsonDoc = JsonDocument.Parse(file);
                     }
 
-                    var properties = new HashSet<string>(
-                        jObj.SelectTokens("$.targets.*").Children()
-                            .Concat(jObj.SelectToken("$.libraries"))
-                            .Select(t => ((JProperty)t).Name)
-                            .Distinct(), 
-                        StringComparer.OrdinalIgnoreCase);
-
-                    var directDependencies = jObj.SelectTokens("$.project.frameworks.*.dependencies").Children().Select(dep =>
-                        new
+                    var root = jsonDoc.RootElement;
+                    
+                    var properties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    
+                    // Get properties from targets
+                    if (root.TryGetProperty("targets", out var targets))
+                    {
+                        foreach (var target in targets.EnumerateObject())
                         {
-                            name = ((JProperty)dep).Name,
-                            target = dep.SelectToken("$..target")?.ToString(),
-                            version = VersionRange.Parse(dep.SelectToken("$..version")?.ToString()),
-                            autoReferenced = dep.SelectToken("$..autoReferenced")?.ToString() == "True",
-                        })
-                        .ToArray();
+                            foreach (var prop in target.Value.EnumerateObject())
+                            {
+                                properties.Add(prop.Name);
+                            }
+                        }
+                    }
+                    
+                    // Get properties from libraries
+                    if (root.TryGetProperty("libraries", out var libraries))
+                    {
+                        foreach (var library in libraries.EnumerateObject())
+                        {
+                            properties.Add(library.Name);
+                        }
+                    }
+
+                    var directDependencies = new List<(string name, string target, VersionRange version, bool autoReferenced)>();
+                    
+                    // Get direct dependencies
+                    if (root.TryGetProperty("project", out var project) &&
+                        project.TryGetProperty("frameworks", out var frameworks))
+                    {
+                        foreach (var framework in frameworks.EnumerateObject())
+                        {
+                            if (framework.Value.TryGetProperty("dependencies", out var dependencies))
+                            {
+                                foreach (var dep in dependencies.EnumerateObject())
+                                {
+                                    string target = null;
+                                    string versionStr = null;
+                                    bool autoReferenced = false;
+                                    
+                                    if (dep.Value.TryGetProperty("target", out var targetProp))
+                                    {
+                                        target = targetProp.GetString();
+                                    }
+                                    
+                                    if (dep.Value.TryGetProperty("version", out var versionProp))
+                                    {
+                                        versionStr = versionProp.GetString();
+                                    }
+                                    
+                                    if (dep.Value.TryGetProperty("autoReferenced", out var autoRefProp))
+                                    {
+                                        autoReferenced = autoRefProp.GetString() == "True";
+                                    }
+                                    
+                                    if (versionStr != null)
+                                    {
+                                        var version = VersionRange.Parse(versionStr);
+                                        directDependencies.Add((dep.Name, target, version, autoReferenced));
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     foreach (var identity in toCheck
                         .Where(id => properties.Contains(id.Id + "/" + id.Version.OriginalVersion)))
                     {
-                        var directDependency =
-                            directDependencies?.FirstOrDefault(
-                                d => d.name == identity.Id && 
-                                     d.version.Satisfies(identity.Version));
+                        var directDependency = directDependencies.FirstOrDefault(
+                            d => d.name == identity.Id && d.version.Satisfies(identity.Version));
+                            
                         usages.Add(Usage.Create(
                             assetFile,
                             identity,
-                            directDependency != null,
-                            directDependency?.autoReferenced == true,
+                            directDependency != default,
+                            directDependency.autoReferenced,
                             possibleRids));
                     }
+                    
+                    jsonDoc.Dispose();
                 });
 
             Log.LogMessage(MessageImportance.Low, "Searching for unused packages...");
@@ -273,11 +321,14 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
         private static string[] ReadRidsFromRuntimeJson(string path)
         {
-            var root = JObject.Parse(File.ReadAllText(path));
-            return root["runtimes"]
-                .Values<JProperty>()
-                .Select(o => o.Name)
-                .ToArray();
+            using var jsonDoc = JsonDocument.Parse(File.ReadAllText(path));
+            if (jsonDoc.RootElement.TryGetProperty("runtimes", out var runtimes))
+            {
+                return runtimes.EnumerateObject()
+                    .Select(p => p.Name)
+                    .ToArray();
+            }
+            return Array.Empty<string>();
         }
     }
 }
