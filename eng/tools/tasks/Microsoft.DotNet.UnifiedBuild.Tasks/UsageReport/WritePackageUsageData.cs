@@ -241,7 +241,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                                     
                                     if (dep.Value.TryGetProperty("autoReferenced", out var autoRefProp))
                                     {
-                                        autoReferenced = autoRefProp.GetString() == "True";
+                                        autoReferenced = autoRefProp.GetBoolean();
                                     }
                                     
                                     if (versionStr != null)
