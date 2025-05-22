@@ -40,7 +40,7 @@
     In VMR copy to local storage, do not push to AzDO.
     Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
   -->
-  <PropertyGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildFromVMR)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
 
@@ -51,7 +51,7 @@
     so we want to inclue them here so they can be in the vertical's final manifest.
     The VMR tooling to produce the final merged manifest for the VMR build as a whole will filter them out.
   -->
-  <ItemGroup Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildFromVMR)' == 'true' and '$(DotNetBuild)' == 'true'">
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
@@ -82,7 +82,7 @@
 
     <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
-    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(GitHubRepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(GitHubRepositoryName)/</SymbolPackageBaseRelativeBlobPath>
+    <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(RepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(RepositoryName)/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
 
     <!-- Relative PDB path differentiator to ensure that multiple VMR legs that happen to produce the same PDBs
@@ -126,8 +126,8 @@
       In the VMR, don't publish packages that didn't match the above conditions externally.
       Instead, add them with Vertical visibility as they still may be needed to build RID-specific packages in other repos.
     -->
-    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
-    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" IsShipping="false" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+    <Artifact Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildFromVMR)' == 'true'" />
+    <Artifact Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" Exclude="@(Artifact)" IsShipping="false" Kind="Package" Visibility="Vertical" Condition="'$(DotNetBuildFromVMR)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true'">
@@ -415,7 +415,7 @@
            Text="Visibility 'Vertical' is not supported for shipping artifacts." />
     <Error Condition="'@(ItemsToPublishToBlobFeed->WithMetadataValue('IsShipping','true')->AnyHaveMetadataValue('Visibility','Internal'))' == 'true'"
            Text="Visibility 'Internal' is not supported for shipping artifacts." />
-    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'"
+    <Error Condition="'@(ItemsToPublishToBlobFeed->AnyHaveMetadataValue('Visibility','Vertical'))' == 'true' and '$(DotNetBuildFromVMR)' != 'true'"
            Text="Visibility 'Vertical' is only supported in vertical builds inside the VMR." />
 
     <!--
@@ -431,7 +431,7 @@
       ManifestBranch="$(BUILD_SOURCEBRANCH)"
       ManifestBuildId="$(BUILD_BUILDNUMBER)"
       ManifestCommit="$(BUILD_SOURCEVERSION)"
-      ManifestRepoOrigin="$(GitHubRepositoryName)"
+      ManifestRepoOrigin="$(RepositoryName)"
       IsStableBuild="$(IsStableBuild)"
       PublishingVersion="$(PublishingVersion)"
       AssetManifestPath="$(AssetManifestFilePath)" 
