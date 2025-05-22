@@ -21,7 +21,7 @@ parameters:
 
 variables:
 # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
-- group: DotNet-Source-Build-Bot-Secrets-MVP
+- group: Dotnet-SourceBuild-Secrets
 - name: installerRoot
   value: '$(Build.SourcesDirectory)/src/installer'
 
