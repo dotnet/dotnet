@@ -5,15 +5,16 @@ parameters:
 - name: pool_LinuxArm64
   type: object
 
-# Scope of jobs which are executed
-- name: scope
-  type: string
-
 - name: useMicrosoftBuildAssetsForTests
   type: boolean
 
 - name: legs
   type: object
+
+# True when build is running from dotnet/dotnet directly
+- name: isBuiltFromVmr
+  type: boolean
+  default: true
 
 stages:
 - stage: VMR_SourceOnly_Build
@@ -83,14 +84,13 @@ stages:
           targetRid: ${{ variables.alpineX64Rid }}
         
         targetArchitecture: ${{ leg.targetArchitecture }}
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
         ${{ else }}:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
-        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, false) }}:
-          extraProperties: "/p:DisableDevBuildAsDefaultForSourceOnly=true"
-        ${{ else }}:
+        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
@@ -98,7 +98,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
 
-- ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
@@ -151,6 +151,7 @@ stages:
             targetRid: ${{ variables.alpineX64Rid }}
 
           targetArchitecture: ${{ leg.targetArchitecture }}
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           ${{ if eq(leg.targetArchitecture, 'arm64') }}:
             pool: ${{ parameters.pool_LinuxArm64 }}
           ${{ else }}:
@@ -205,6 +206,22 @@ stages:
               artifactDescription: Source Build Assets
               downloadFilePatterns: assets/Release/**/*.tar.gz
               copyDestination: $(Build.SourcesDirectory)/artifacts
+              ${{ if eq(leg.distro, 'centos') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'fedora') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'ubuntu') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'almalinux') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_${{ leg.targetArchitecture}}_Artifacts
+              ${{ elseif eq(leg.distro, 'alpine') }}:
+                artifactName: ${{ format(leg.buildNameFormat, variables.alpineName) }}_${{ leg.targetArchitecture}}_Artifacts
+          - template: ../steps/download-artifacts.yml
+            parameters:
+              artifactDescription: Binary Report
+              downloadFilePatterns: BuildLogs/artifacts/log/Release/binary-report/NewBinaries.txt
+              copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
+              flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:

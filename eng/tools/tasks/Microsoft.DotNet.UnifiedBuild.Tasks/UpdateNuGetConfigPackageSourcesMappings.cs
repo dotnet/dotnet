@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #nullable disable
 
@@ -81,7 +80,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             string xml = File.ReadAllText(NuGetConfigFile);
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument document = XDocument.Parse(xml);
-            XElement pkgSourcesElement = document.Root.Descendants().FirstOrDefault(e => e.Name == "packageSources");
+            XElement pkgSourcesElement = document.Root.Elements().FirstOrDefault(e => e.Name == "packageSources");
             if (pkgSourcesElement == null)
             {
                 Log.LogMessage(MessageImportance.Low, "Package sources are missing.");
@@ -89,7 +88,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 return true;
             }
 
-            XElement pkgSrcMappingElement = document.Root.Descendants().FirstOrDefault(e => e.Name == "packageSourceMapping");
+            XElement pkgSrcMappingElement = document.Root.Elements().FirstOrDefault(e => e.Name == "packageSourceMapping");
             if (pkgSrcMappingElement == null)
             {
                 pkgSrcMappingElement = new XElement("packageSourceMapping");
@@ -115,7 +114,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             // Remove all packageSourceMappings
             pkgSrcMappingElement.ReplaceNodes(new XElement("clear"));
 
-            XElement pkgSrcMappingClearElement = pkgSrcMappingElement.Descendants().FirstOrDefault(e => e.Name == "clear");
+            XElement pkgSrcMappingClearElement = pkgSrcMappingElement.Elements().FirstOrDefault(e => e.Name == "clear");
 
             // Add package source mappings for local package sources
             foreach (string packageSource in allSourcesPackages.Keys)
@@ -319,7 +318,15 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     continue;
                 }
 
-                string[] packages = Directory.GetFiles(path, "*.nupkg", SearchOption.AllDirectories);
+                // previously-source-built source contains SBRP packages in a subfolder.
+                // We do not want to enumerate those packages as they already exist in reference packages source.
+                // SBRP folder will be removed with https://github.com/dotnet/source-build/issues/4930
+                SearchOption searchOption =
+                    packageSource.Equals(PreviouslySourceBuiltSourceName)
+                    ? SearchOption.TopDirectoryOnly
+                    : SearchOption.AllDirectories;
+
+                string[] packages = Directory.GetFiles(path, "*.nupkg", searchOption);
                 Array.Sort(packages);
                 foreach (string package in packages)
                 {

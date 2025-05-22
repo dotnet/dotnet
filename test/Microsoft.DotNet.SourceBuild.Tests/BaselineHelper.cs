@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileSystemGlobbing;
+using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -42,7 +42,7 @@ namespace Microsoft.DotNet.SourceBuild.Tests
                 message += $"Extra entries in '{baselineFileName}' baseline: {Environment.NewLine}{string.Join(Environment.NewLine, extraEntries)}{Environment.NewLine}{Environment.NewLine}";
             }
 
-            Assert.Null(message);
+            Assert.True(message == null, message);
         }
 
         public static void CompareBaselineContents(string baselineFileName, string actualContents, ITestOutputHelper outputHelper, string baselineSubDir = "")
@@ -68,7 +68,7 @@ namespace Microsoft.DotNet.SourceBuild.Tests
                     + $"{diff}{Environment.NewLine}";
             }
 
-            Assert.Null(message);
+            Assert.True(message == null, message);
         }
 
         public static string DiffFiles(string file1Path, string file2Path, ITestOutputHelper outputHelper)

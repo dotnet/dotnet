@@ -41,6 +41,8 @@
     <PackageTags>MSBuild</PackageTags>
 
     <TargetMSBuildToolsVersion>Current</TargetMSBuildToolsVersion>
+    <!-- When building the .NET product, there's no need to publish Windows PDBs. Any conversion to Windows PDBs will be done during staging, if necessary. -->
+    <PublishWindowsPdb Condition="'$(DotNetBuild)' == 'true'">false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup>

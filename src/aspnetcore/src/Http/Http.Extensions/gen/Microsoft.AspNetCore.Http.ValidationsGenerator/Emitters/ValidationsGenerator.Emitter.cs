@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.AspNetCore.Http.ValidationsGenerator;
 
@@ -14,6 +15,7 @@ public sealed partial class ValidationsGenerator : IIncrementalGenerator
 {
     public static string GeneratedCodeConstructor => $@"global::System.CodeDom.Compiler.GeneratedCodeAttribute(""{typeof(ValidationsGenerator).Assembly.FullName}"", ""{typeof(ValidationsGenerator).Assembly.GetName().Version}"")";
     public static string GeneratedCodeAttribute => $"[{GeneratedCodeConstructor}]";
+    private static readonly Regex InvalidNameCharsRegex = new("[^0-9A-Za-z_]", RegexOptions.Compiled);
 
     internal static void Emit(SourceProductionContext context, (InterceptableLocation? AddValidation, ImmutableArray<ValidatableType> ValidatableTypes) emitInputs)
     {
@@ -37,6 +39,7 @@ public sealed partial class ValidationsGenerator : IIncrementalGenerator
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
+#pragma warning disable ASP0029
 
 namespace System.Runtime.CompilerServices
 {
@@ -66,6 +69,7 @@ namespace Microsoft.AspNetCore.Http.Validation.Generated
             Name = name;
         }
 
+        [global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties)]
         internal global::System.Type ContainingType { get; }
         internal string Name { get; }
 
@@ -123,10 +127,11 @@ namespace Microsoft.AspNetCore.Http.Validation.Generated
     {{GeneratedCodeAttribute}}
     file static class ValidationAttributeCache
     {
-        private sealed record CacheKey(global::System.Type ContainingType, string PropertyName);
+        private sealed record CacheKey([property: global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties)] global::System.Type ContainingType, string PropertyName);
         private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<CacheKey, global::System.ComponentModel.DataAnnotations.ValidationAttribute[]> _cache = new();
 
         public static global::System.ComponentModel.DataAnnotations.ValidationAttribute[] GetValidationAttributes(
+            [global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties)]
             global::System.Type containingType,
             string propertyName)
         {
@@ -235,12 +240,7 @@ namespace Microsoft.AspNetCore.Http.Validation.Generated
 
     private static string SanitizeTypeName(string typeName)
     {
-        // Replace invalid characters with underscores and remove generic notation
-        return typeName
-            .Replace(".", "_")
-            .Replace("<", "_")
-            .Replace(">", "_")
-            .Replace(",", "_")
-            .Replace(" ", "_");
+        // Replace invalid characters with underscores
+        return InvalidNameCharsRegex.Replace(typeName, "_");
     }
 }

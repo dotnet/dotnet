@@ -9339,6 +9339,214 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeUsage()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent TItem="string" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeUsageWithInference()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent MyItem="1" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentMultipleTypeParamUsage()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @typeparam TItem2
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+
+                [Parameter]
+                public TItem2 MyItem2 { get; set; }
+            }
+
+            <TestComponent TItem2="int" TItem="string" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeParamUsageWithImplicitExpression()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent TItem="@string" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeParamUsageWithImplicitExpression2()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent TItem="@(string)" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeUsageWhitespace()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent TItem="  string  " />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11552")]
+    public void GenericComponentTypeUsageWithGenericType()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TItem
+            @code {
+                [Parameter]
+                public TItem MyItem { get; set; }
+            }
+
+            <TestComponent TItem="TestComponent<string>" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11718")]
+    public void GenericInference_DynamicallyAccessedMembers_01()
+    {
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Forms
+
+            <InputRadioGroup @bind-Value="value1">
+                <InputRadio Value="@("false")" />
+                <InputRadio Value="@("true")" />
+            </InputRadioGroup>
+
+            @code {
+                private string value1 = "true";
+            }
+            """);
+
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+
+        Assert.Contains("DynamicallyAccessedMembers", generated.Code);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/11718")]
+    public void GenericInference_DynamicallyAccessedMembers_02()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            using System;
+            using System.Diagnostics.CodeAnalysis;
+            using DAM = System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;
+            using DAMT = System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+            namespace Test;
+            public class MyComponent<T1,
+                [Attr, DAM(DAMT.PublicMethods | DAMT.PublicFields)] T2,
+                [DAM(DAMT.None)] [x: DAM(DAMT.All)] T3>
+                : ComponentBase
+            {
+                [Parameter] public required T1 P1 { get; set; }
+                [Parameter] public required T2 P2 { get; set; }
+                [Parameter] public required T3 P3 { get; set; }
+            }
+            class Attr : Attribute;
+            """));
+
+        var expectedDiagnostics = new[]
+        {
+            // (9,23): warning CS0658: 'x' is not a recognized attribute location. Valid attribute locations for this declaration are 'typevar'. All attributes in this block will be ignored.
+            //     [DAM(DAMT.None)] [x: DAM(DAMT.All)] T3>
+            Diagnostic(ErrorCode.WRN_InvalidAttributeLocation, "x").WithArguments("x", "typevar").WithLocation(9, 23)
+        };
+
+        var generated = CompileToCSharp("""
+            <MyComponent P1="s" P2="2" P3="s" />
+            @code {
+                private string s = "x";
+            }
+            """, expectedDiagnostics);
+
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, expectedDiagnostics);
+
+        Assert.Contains("DynamicallyAccessedMembers", generated.Code);
+    }
+
     #endregion
 
     #region Key

@@ -12,8 +12,8 @@
     <!-- Construct a set of properties for the build. Only pass properties that have been set.-->
     <ItemGroup>
       <_CommonProperties Include="Configuration=$(Configuration)" />
-      <_CommonProperties Include="DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)" Condition="'$(DotNetBuildOrchestrator)' != ''" />
-      <_CommonProperties Include="DotNetBuildRepo=true" />
+      <_CommonProperties Include="DotNetBuildFromVMR=$(DotNetBuildFromVMR)" Condition="'$(DotNetBuildFromVMR)' != ''" />
+      <_CommonProperties Include="DotNetBuild=$(DotNetBuild)" Condition="'$(DotNetBuild)' != ''" />
       <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
 
       <!-- NuGet uses a pre-release string that is dependent on the build revision. This is normally set via their
@@ -24,7 +24,7 @@
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
          NuGet.client uses package source mapping. If this repo onboards to arcade, this would no longer be needed. -->
     <MSBuild Projects="$(ArcadeDir)/Build.proj"
-             Properties="@(_CommonProperties);Projects=$(MSBuildThisFileDirectory)Noop.proj;_ImportOrUseTooling=false;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false"
+             Properties="@(_CommonProperties);Projects=$(MSBuildThisFileDirectory)Noop.proj;_ImportOrUseTooling=false;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false;RestoreBuildTaskFeed=true"
              Targets="Execute" />
 
     <MSBuild Projects="$(ProjectRoot)build/build.proj"
@@ -50,7 +50,7 @@
     <MSBuild Projects="$(ArcadeDir)Publish.proj"
              Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties)"
              Targets="Publish"
-             Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+             Condition="'$(DotNetBuildFromVMR)' == 'true'" />
   </Target>
 
 </Project>

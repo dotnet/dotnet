@@ -16,8 +16,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Latest shared runtime version updated by darc -->
-    <VSRedistCommonNetCoreSharedFrameworkx64100Version>10.0.0-preview.5.25229.109</VSRedistCommonNetCoreSharedFrameworkx64100Version>
-    <MicrosoftNETCoreAppRuntimewinx64Version>10.0.0-preview.5.25229.109</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftNETCorePlatformsVersion>10.0.0-preview.5.25229.109</MicrosoftNETCorePlatformsVersion>
+    <MicrosoftNETCoreAppRefVersion>10.0.0-preview.5.25229.109</MicrosoftNETCoreAppRefVersion>
     <!-- Latest shared aspnetcore version updated by darc -->
     <MicrosoftAspNetCoreAppRefInternalVersion>10.0.0-preview.5.25229.109</MicrosoftAspNetCoreAppRefInternalVersion>
     <MicrosoftAspNetCoreAppRefVersion>10.0.0-preview.5.25229.109</MicrosoftAspNetCoreAppRefVersion>
@@ -37,7 +37,7 @@
     <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
     <!-- Other libs -->
     <MicrosoftBclAsyncInterfacesVersion>6.0.0</MicrosoftBclAsyncInterfacesVersion>
-    <MicrosoftDiagnosticsRuntimeVersion>4.0.0-beta.25255.1</MicrosoftDiagnosticsRuntimeVersion>
+    <MicrosoftDiagnosticsRuntimeVersion>4.0.0-beta.25261.1</MicrosoftDiagnosticsRuntimeVersion>
     <MicrosoftDiaSymReaderNativeVersion>17.10.0-beta1.24272.1</MicrosoftDiaSymReaderNativeVersion>
     <MicrosoftDiagnosticsTracingTraceEventVersion>3.1.21</MicrosoftDiagnosticsTracingTraceEventVersion>
     <MicrosoftExtensionsLoggingVersion>6.0.0</MicrosoftExtensionsLoggingVersion>
@@ -114,8 +114,8 @@
   </PropertyGroup>
   <ItemGroup Condition="!$(PrivateBuildTesting) AND !$(InternalReleaseTesting)">
     <RuntimeTestVersions Include="Latest">
-      <RuntimeDownload>$(VSRedistCommonNetCoreSharedFrameworkx64100Version)</RuntimeDownload>
-      <Runtime>$(MicrosoftNETCoreAppRuntimewinx64Version)</Runtime>
+      <RuntimeDownload>$(MicrosoftNETCorePlatformsVersion)</RuntimeDownload>
+      <Runtime>$(MicrosoftNETCoreAppRefVersion)</Runtime>
       <AspNetDownload>$(MicrosoftAspNetCoreAppRefInternalVersion)</AspNetDownload>
       <AspNet>$(MicrosoftAspNetCoreAppRefVersion)</AspNet>
       <TargetFramework>net10.0</TargetFramework>
@@ -138,8 +138,8 @@
   <!-- Private build testing -->
   <ItemGroup Condition="$(PrivateBuildTesting)">
     <RuntimeTestVersions Include="Latest">
-      <RuntimeDownload>$(VSRedistCommonNetCoreSharedFrameworkx64100Version)</RuntimeDownload>
-      <Runtime>$(MicrosoftNETCoreAppRuntimewinx64Version)</Runtime>
+      <RuntimeDownload>$(MicrosoftNETCorePlatformsVersion)</RuntimeDownload>
+      <Runtime>$(MicrosoftNETCoreAppRefVersion)</Runtime>
       <AspNetDownload>$(MicrosoftAspNetCoreAppRefInternalVersion)</AspNetDownload>
       <AspNet>$(MicrosoftAspNetCoreAppRefVersion)</AspNet>
       <TargetFramework>net10.0</TargetFramework>

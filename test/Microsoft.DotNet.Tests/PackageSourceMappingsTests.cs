@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -207,6 +206,8 @@ namespace Microsoft.DotNet.Tests
                 // Generate previously-source-built packages
                 GenerateNuGetPackage(PreviouslySourceBuiltSource, "PSB.Package1", "1.0.0");
                 GenerateNuGetPackage(PreviouslySourceBuiltSource, "PSB.Package2", "1.0.0");
+                GenerateNuGetPackage(Path.Combine(PreviouslySourceBuiltSource, "Reference"), "Reference.Package1", "1.0.0");
+                GenerateNuGetPackage(Path.Combine(PreviouslySourceBuiltSource, "Reference"), "Reference.Package2", "1.0.0");
 
                 // Generate reference packages
                 GenerateNuGetPackage(ReferencePackagesSource, "Reference.Package1", "1.0.0");

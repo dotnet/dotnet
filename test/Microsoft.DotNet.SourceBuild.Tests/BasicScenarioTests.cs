@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -33,8 +32,11 @@ public class BasicScenarioTests : SdkTests
         foreach (DotNetLanguage language in Enum.GetValues<DotNetLanguage>())
         {
             yield return new(nameof(BasicScenarioTests), language, DotNetTemplate.Console,
-                // R2R is not supported on Mono (see https://github.com/dotnet/runtime/issues/88419#issuecomment-1623762676)
-                DotNetActions.Build | DotNetActions.Run | (DotNetHelper.ShouldPublishComplex() ? DotNetActions.PublishComplex : DotNetActions.None) | (helper.IsMonoRuntime ? DotNetActions.None : DotNetActions.PublishR2R));
+                DotNetActions.Build |
+                DotNetActions.Run |
+                (DotNetHelper.ShouldPublishComplex() ? DotNetActions.PublishComplex : DotNetActions.None) |
+                // R2R is not supported on Mono (see https://github.com/dotnet/runtime/issues/88419#issuecomment-1623762676) or non-official builds
+                (helper.IsMonoRuntime || !Config.IsOfficialBuild ? DotNetActions.None : DotNetActions.PublishR2R));
             yield return new(nameof(BasicScenarioTests), language, DotNetTemplate.ClassLib, DotNetActions.Build | DotNetActions.Publish);
             yield return new(nameof(BasicScenarioTests), language, DotNetTemplate.XUnit,    DotNetActions.Test);
             yield return new(nameof(BasicScenarioTests), language, DotNetTemplate.NUnit,    DotNetActions.Test);

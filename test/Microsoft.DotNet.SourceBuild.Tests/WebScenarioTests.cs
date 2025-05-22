@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -37,9 +36,14 @@ public class WebScenarioTests : SdkTests
         }
 
         yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.Razor,         DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
-        yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.BlazorWasm,    DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
         yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.WebApp,        DotNetActions.PublishSelfContained, VerifyRuntimePacksForSelfContained);
         yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.Worker);
+
+        // Blazor test is only run on official builds because it requires packages produced by the Microsoft build which are not available.
+        if (Config.IsOfficialBuild)
+        {
+            yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.BlazorWasm,    DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
+        }
     }
 
     private static void VerifyRuntimePacksForSelfContained(string projectPath)

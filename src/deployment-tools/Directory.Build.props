@@ -52,11 +52,6 @@
 
   <!-- Packaging properties -->
   <PropertyGroup>
-    <!--
-      This name is used to create a GIT repository URL https://github.com/dotnet/$(GitHubRepositoryName) used
-      to find source code for debugging. It is also used to name the build output manifest for orchestrated builds.
-    -->
-    <GitHubRepositoryName>deployment-tools</GitHubRepositoryName>
     <RepositoryUrl>https://github.com/dotnet/deployment-tools</RepositoryUrl>
     <ProjectUrl>https://github.com/dotnet/deployment-tools</ProjectUrl>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
@@ -68,6 +63,9 @@
     <!-- Indicates this is not an officially supported release. Release branches should set this to false. -->
     <!-- Keep it in sync with PRERELEASE in eng/native/configureplatform.cmake -->
     <IsPrerelease>true</IsPrerelease>
+
+    <!-- https://github.com/dotnet/source-build/issues/4115 -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
 
   <ItemGroup>

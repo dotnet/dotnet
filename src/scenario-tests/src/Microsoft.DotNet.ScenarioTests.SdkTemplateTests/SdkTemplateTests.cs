@@ -1,4 +1,4 @@
-using Microsoft.DotNet.ScenarioTests.Common;
+﻿using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -33,6 +33,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [MemberData(nameof(GetLanguages))]
     [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
+    [Trait("SkipIfBuild", "SourceOnlyUnofficialBuild")] // Portable assets are not available for source-only unofficial builds.
     public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
     {
         // This uses the wrong portable RID for non linux platforms when running the tests without supplying

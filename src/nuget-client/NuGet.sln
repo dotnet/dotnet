@@ -252,7 +252,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Signing.CrossFramewor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{70336E30-C737-4175-BC69-9015D49E496E}"
 	ProjectSection(SolutionItems) = preProject
-		eng\DotNetBuild.props = eng\DotNetBuild.props
 		eng\SourceBuildPrebuiltBaseline.xml = eng\SourceBuildPrebuiltBaseline.xml
 		eng\Version.Details.xml = eng\Version.Details.xml
 	EndProjectSection

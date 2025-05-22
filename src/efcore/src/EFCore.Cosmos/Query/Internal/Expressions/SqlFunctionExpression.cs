@@ -26,7 +26,7 @@ public class SqlFunctionExpression : SqlExpression
         IEnumerable<Expression> arguments,
         Type type,
         CoreTypeMapping? typeMapping)
-        : this(name, scoringFunction: false, arguments, type, typeMapping)
+        : this(name, isScoringFunction: false, arguments, type, typeMapping)
     {
     }
 
@@ -38,15 +38,15 @@ public class SqlFunctionExpression : SqlExpression
     /// </summary>
     public SqlFunctionExpression(
         string name,
-        bool scoringFunction,
+        bool isScoringFunction,
         IEnumerable<Expression> arguments,
         Type type,
         CoreTypeMapping? typeMapping)
         : base(type, typeMapping)
     {
         Name = name;
-        Arguments = arguments.ToList();
-        IsScoringFunction = scoringFunction;
+        Arguments = [.. arguments];
+        IsScoringFunction = isScoringFunction;
     }
 
     /// <summary>
