@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputArgs>/bl:$(ArtifactsLogRepoDir)build.binlog</OutputArgs>
     <OutputArgs>$(OutputArgs) /v:$(LogVerbosity)</OutputArgs>
-    <OutputArgs>$(OutputArgs) /p:OutputPath=$(OutputPath)$(RepositoryName)/</OutputArgs>
-    <OutputArgs>$(OutputArgs) /p:BaseIntermediateOutputPath=$(IntermediatePath)$(RepositoryName)</OutputArgs>
+    <OutputArgs>$(OutputArgs) /p:OutputPath=$(OutputPath)$(InnerRepoName)/</OutputArgs>
+    <OutputArgs>$(OutputArgs) /p:BaseIntermediateOutputPath=$(IntermediatePath)$(InnerRepoName)</OutputArgs>
     <OutputArgs>$(OutputArgs) $(RedirectRepoOutputToLog)</OutputArgs>
 
     <BuildCommandArgs>pack</BuildCommandArgs>

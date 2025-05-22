@@ -3,7 +3,7 @@
   <ItemGroup>
     <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg"
               Kind="Package">
-      <Visibility Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Vertical</Visibility>
+      <Visibility Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Vertical</Visibility>
     </Artifact>
   </ItemGroup>
 
