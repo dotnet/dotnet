@@ -44,6 +44,8 @@ The general rule we follow is "use Visual Studio defaults".
 
 1. Avoid more than one empty line at any time. For example, do not have two blank lines between members of a type.
 
+1. Avoid lines of code longer than 120 characters.
+
 1. Avoid spurious free spaces. For example avoid `if (someVar == 0)...`, where the dots mark the spurious free spaces. Consider enabling "View White Space (Ctrl+R, Ctrl+W)" or "Edit -> Advanced -> View White Space" if using Visual Studio to aid detection.
 
 1. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member` rather than `_member`), the existing style in that file takes precedence. Changes/refactorings are possible, but depending on the complexity, change frequency of the file, might need to be considered on their own merits in a separate pull request.
@@ -555,7 +557,8 @@ Assert.Equal(
 
 #### Test assertions
 
-Both xunit.net and FluentAssertions are allowed. FluentAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
+Both [xunit.net](https://xunit.net/#documentation) and [AwesomeAssertions](https://awesomeassertions.org/) are allowed.
+AwesomeAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
 Both of these will make the tests a lot more readable and also allow the test runner report the best possible errors. For example, these are bad:
 
 ```cs
@@ -585,7 +588,7 @@ Assert.Equal("abc123", someString);
 Assert.Equal(list1, list2, StringComparer.OrdinalIgnoreCase);
 ```
 
-Some places where FluentAssetion shine are:
+Some places where AwesomeAssertions shine are:
 
 ```cs
 
@@ -594,9 +597,9 @@ RestoreResult restoreResult = await RestoreRunner.RestoreAsync(restoreRequest);
 // xunit assertions
 Assert.True(restoreResult.Success);
 
-// fluent assertions
-
+// AwesomeAssertions
 restoreResult.Success.Should().BeTrue(because: restoreResult.AllOutput);
+
 ```
 
 #### Parallel tests
