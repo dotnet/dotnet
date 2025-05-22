@@ -324,7 +324,6 @@ if [[ "$sourceOnly" == "true" ]]; then
   # Don't use the global nuget cache folder when building source-only which
   # restores prebuilt packages that should never get into the global nuget cache.
   export NUGET_PACKAGES="$scriptroot/.packages/"
-  export RESTORENOHTTPCACHE=true
 
   if [[ "$test" == true ]]; then
     # Use a custom package cache for tests to make prebuilt detection work.
