@@ -60,7 +60,7 @@ variables:
     value: /p:DotNetFinalVersionKind=release
 - ${{ else }}:
   - name: finalVersionKindProperty
-    value: '/p:DotNetFinalVersionKind=INVALID'
+    value: ''
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
