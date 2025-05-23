@@ -557,7 +557,7 @@ namespace NuGet.CommandLine.Test
         /// </summary>
         public static JObject CreateSinglePackageRegistrationBlob(MockServer server, string id, string version)
         {
-            return FeedUtilities.CreatePackageRegistrationBlob(server.Uri, id, new KeyValuePair<string, bool>[] { new KeyValuePair<string, bool>(version, true) });
+            return FeedUtilities.CreatePackageRegistrationBlob(server.Uri, id, new KeyValuePair<string, bool>[] { new KeyValuePair<string, bool>(version, true) }, new HashSet<PackageIdentity>());
         }
 
         public static string CreateProjFileContent(

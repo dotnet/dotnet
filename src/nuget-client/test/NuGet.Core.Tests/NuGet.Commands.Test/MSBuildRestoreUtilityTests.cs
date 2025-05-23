@@ -3936,7 +3936,6 @@ namespace NuGet.Commands.Test
         [InlineData(ProjectStyle.DotnetToolReference)]
         [InlineData(ProjectStyle.PackagesConfig)]
         [InlineData(ProjectStyle.ProjectJson)]
-        [InlineData(ProjectStyle.Standalone)]
         public void MSBuildRestoreUtility_GetPackageSpec_CPVM_OnlyPackageReferenceProjectsWillHaveCPVMEnabled(ProjectStyle projectStyle)
         {
             var projectName = "bcpvm";
