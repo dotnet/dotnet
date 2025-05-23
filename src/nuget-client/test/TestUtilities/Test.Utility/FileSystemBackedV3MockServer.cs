@@ -33,6 +33,8 @@ namespace Test.Utility
 
         public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new();
 
+        public ISet<PackageIdentity> DeprecatedPackages { get; } = new HashSet<PackageIdentity>();
+
         public string ServiceIndexUri => _builder.GetV3Source();
 
         private void InitializeServer()
@@ -139,7 +141,7 @@ namespace Test.Utility
                         {
                             response.ContentType = "text/javascript";
                             var packageToListedMapping = packages.Select(e => new KeyValuePair<PackageIdentity, bool>(e.Identity, !UnlistedPackages.Contains(e.Identity))).ToArray();
-                            MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping);
+                            MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages);
                             SetResponseContent(response, mockResponse.Content);
                         });
                     }

@@ -100,9 +100,20 @@ namespace NuGet.Commands
         /// <summary>
         /// Execute and commit restore requests.
         /// </summary>
-        public static async Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommit(
+        public static Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommit(
             IEnumerable<RestoreSummaryRequest> restoreRequests,
             RestoreArgs restoreContext)
+        {
+            return RunWithoutCommitAsync(restoreRequests, restoreContext, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Execute and commit restore requests.
+        /// </summary>
+        public static async Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommitAsync(
+            IEnumerable<RestoreSummaryRequest> restoreRequests,
+            RestoreArgs restoreContext,
+            CancellationToken cancellationToken)
         {
             var maxTasks = GetMaxTaskCount(restoreContext);
 

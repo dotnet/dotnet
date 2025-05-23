@@ -5,8 +5,8 @@
 
   <PropertyGroup>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
     <!-- This package is included even in source build -->
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
