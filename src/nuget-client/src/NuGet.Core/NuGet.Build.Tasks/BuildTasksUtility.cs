@@ -110,7 +110,6 @@ namespace NuGet.Build.Tasks
         {
             ProjectStyle.DotnetCliTool,
             ProjectStyle.PackageReference,
-            ProjectStyle.Standalone,
             ProjectStyle.ProjectJson
         };
 

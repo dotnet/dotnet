@@ -187,8 +187,7 @@ namespace NuGet.Commands
         public void ApplyStandardProperties(RestoreRequest request)
         {
             if (request.ProjectStyle == ProjectStyle.PackageReference
-                || request.ProjectStyle == ProjectStyle.DotnetToolReference
-                || request.ProjectStyle == ProjectStyle.Standalone)
+                || request.ProjectStyle == ProjectStyle.DotnetToolReference)
             {
                 request.LockFilePath = Path.Combine(request.RestoreOutputPath, LockFileFormat.AssetsFileName);
             }

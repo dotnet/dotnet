@@ -1,0 +1,50 @@
+parameters:
+  isOfficialBuild: false
+  serviceConnectionGuid: ''
+  serviceConnectionName: ''
+  scriptRoot: $(Build.SourcesDirectory)/eng/native/signing
+
+steps:
+- ${{ if and(eq(parameters.isOfficialBuild, true), ne(variables['Build.Reason'], 'PullRequest'), or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/reltest/')), not(endsWith(variables['Build.SourceBranch'], '-staging'))) }}:
+  - task: NuGetCommand@2
+    displayName: Install ESRPClient Tool
+    inputs:
+      command: 'custom'
+      arguments: 'install microsoft.esrpclient
+                -Source https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
+                -DependencyVersion Highest -OutputDirectory $(Build.StagingDirectory)'
+
+  # This is deliberately an azcli task to map in the service connection.
+  - task: AzureCLI@2
+    displayName: 'Setup WIF auth for ESRP client'
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnectionName }}
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        $esrpclient = Get-ChildItem -Path '$(Build.StagingDirectory)\microsoft.esrpclient*' -Filter esrpclient.exe -Recurse | Select-Object -First 1 | select -ExpandProperty FullName
+
+        if ($esrpclient -eq $null) {
+          throw "Failed to find esrpclient.exe in $(Build.StagingDirectory)"
+        }
+
+        $federatedData = @{
+          jobId = "$env:SYSTEM_JOBID";
+          planId = "$env:SYSTEM_PLANID";
+          projectId = "$env:SYSTEM_TEAMPROJECTID";
+          hub = "$env:SYSTEM_HOSTTYPE";
+          uri = "$env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI";
+          serviceConnectionId = "${{ parameters.serviceConnectionGuid }}";
+          systemAccessToken = "ESRP_TOKEN";
+        }
+
+        $authPath = "${{ parameters.scriptRoot }}/auth.json"
+        $authFile = Get-Content -Raw $authPath | ConvertFrom-Json
+        $authFile.FederatedTokenData = $federatedData
+        $authFile | ConvertTo-Json -Depth 6 | Out-File -FilePath $authPath -Encoding utf8
+
+        Write-Host "Using auth file: $(Get-Content -Raw $authPath)"
+
+        $signArgs = "/p:DotNetEsrpToolPath=$esrpclient"
+        echo "##vso[task.setvariable variable=_SignDiagnosticFilesArgs;]$signArgs"
+      workingDirectory: ${{ parameters.scriptRoot }}

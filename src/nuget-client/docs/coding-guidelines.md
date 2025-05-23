@@ -557,7 +557,8 @@ Assert.Equal(
 
 #### Test assertions
 
-Both xunit.net and FluentAssertions are allowed. FluentAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
+Both [xunit.net](https://xunit.net/#documentation) and [AwesomeAssertions](https://awesomeassertions.org/) are allowed.
+AwesomeAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
 Both of these will make the tests a lot more readable and also allow the test runner report the best possible errors. For example, these are bad:
 
 ```cs
@@ -587,7 +588,7 @@ Assert.Equal("abc123", someString);
 Assert.Equal(list1, list2, StringComparer.OrdinalIgnoreCase);
 ```
 
-Some places where FluentAssetion shine are:
+Some places where AwesomeAssertions shine are:
 
 ```cs
 
@@ -596,9 +597,9 @@ RestoreResult restoreResult = await RestoreRunner.RestoreAsync(restoreRequest);
 // xunit assertions
 Assert.True(restoreResult.Success);
 
-// fluent assertions
-
+// AwesomeAssertions
 restoreResult.Success.Should().BeTrue(because: restoreResult.AllOutput);
+
 ```
 
 #### Parallel tests
