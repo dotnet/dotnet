@@ -53,7 +53,6 @@ set(VM_SOURCES_DAC_AND_WKS_COMMON
     assembly.cpp
     assemblybinder.cpp
     binder.cpp
-    bundle.cpp
     castcache.cpp
     callcounting.cpp
     cdacplatformmetadata.cpp
@@ -298,12 +297,14 @@ set(VM_SOURCES_WKS
     assemblyprobeextension.cpp
     assemblyspec.cpp
     baseassemblyspec.cpp
+    bundle.cpp
     ${RUNTIME_DIR}/CachedInterfaceDispatch.cpp
     CachedInterfaceDispatch_Coreclr.cpp
     cachelinealloc.cpp
     callconvbuilder.cpp
     callhelpers.cpp
     callsiteinspect.cpp
+    callstubgenerator.cpp
     clrconfignative.cpp
     clrex.cpp
     clrvarargs.cpp
@@ -449,6 +450,7 @@ set(VM_HEADERS_WKS
     interoputil.inl
     interpexec.h
     interpframeallocator.h
+    callstubgenerator.h
     invokeutil.h
     managedmdimport.hpp
     marshalnative.h

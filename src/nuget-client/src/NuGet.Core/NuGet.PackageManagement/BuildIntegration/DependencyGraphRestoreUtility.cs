@@ -315,8 +315,7 @@ namespace NuGet.PackageManagement
             var specs = await project.GetPackageSpecsAsync(context);
 
             var projectSpec = specs
-                .FirstOrDefault(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.Standalone
-                                     && e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool);
+                .FirstOrDefault(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool);
 
             return projectSpec;
         }
@@ -359,8 +358,7 @@ namespace NuGet.PackageManagement
 
                     if (packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference ||
                         packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.ProjectJson ||
-                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool ||
-                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.Standalone) // Don't add global tools to restore specs for solutions
+                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool) // Don't add global tools to restore specs for solutions
                     {
                         dgSpec.AddRestore(packageSpec.RestoreMetadata.ProjectUniqueName);
 
