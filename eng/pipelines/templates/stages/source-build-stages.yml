@@ -24,6 +24,10 @@ parameters:
   type: boolean
   default: true
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 stages:
 - template: source-build-and-validate.yml
   parameters:

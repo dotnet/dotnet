@@ -148,6 +148,7 @@ extends:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         ${{ if eq(variables.isScheduleTrigger, 'true') }}:
           scope: full
         ${{ elseif eq(variables.isPRTrigger, 'true') }}:
