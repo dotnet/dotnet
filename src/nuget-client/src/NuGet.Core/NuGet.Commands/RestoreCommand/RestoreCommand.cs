@@ -1139,8 +1139,7 @@ namespace NuGet.Commands
             if (string.IsNullOrEmpty(projectLockFilePath))
             {
                 if (_request.ProjectStyle == ProjectStyle.PackageReference
-                    || _request.ProjectStyle == ProjectStyle.DotnetToolReference
-                    || _request.ProjectStyle == ProjectStyle.Standalone)
+                    || _request.ProjectStyle == ProjectStyle.DotnetToolReference)
                 {
                     projectLockFilePath = Path.Combine(_request.RestoreOutputPath, LockFileFormat.AssetsFileName);
                 }
