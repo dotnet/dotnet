@@ -10,6 +10,10 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # Scope of jobs which are executed
 - name: scope
   type: string
