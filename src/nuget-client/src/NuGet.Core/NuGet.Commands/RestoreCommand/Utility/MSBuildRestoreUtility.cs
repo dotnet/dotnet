@@ -105,7 +105,6 @@ namespace NuGet.Commands
                 if (spec.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference
                     || spec.RestoreMetadata.ProjectStyle == ProjectStyle.ProjectJson
                     || spec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool
-                    || spec.RestoreMetadata.ProjectStyle == ProjectStyle.Standalone
                     || spec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetToolReference)
                 {
                     validForRestore.Add(spec.RestoreMetadata.ProjectUniqueName);
@@ -204,7 +203,6 @@ namespace NuGet.Commands
                 AddProjectReferences(result, items);
 
                 if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
                     || restoreType == ProjectStyle.DotnetCliTool
                     || restoreType == ProjectStyle.ProjectJson
                     || restoreType == ProjectStyle.DotnetToolReference
@@ -234,7 +232,6 @@ namespace NuGet.Commands
 
                 // Read package references for netcore, tools, and standalone
                 if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
                     || restoreType == ProjectStyle.DotnetCliTool
                     || restoreType == ProjectStyle.DotnetToolReference)
                 {
@@ -252,7 +249,6 @@ namespace NuGet.Commands
                 }
 
                 if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
                     || restoreType == ProjectStyle.DotnetToolReference)
                 {
                     // Set project version
@@ -485,7 +481,6 @@ namespace NuGet.Commands
                 bool warn = false;
 
                 if (restoreType == ProjectStyle.PackageReference ||
-                    restoreType == ProjectStyle.Standalone ||
                     restoreType == ProjectStyle.DotnetToolReference)
                 {
                     var packageTargetFallback = MSBuildStringUtility.Split(item.GetProperty("PackageTargetFallback"))
