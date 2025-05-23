@@ -5,7 +5,7 @@ param (
   [string][Alias('v')]$verbosity = "minimal",
   [switch]$ci,
   [switch]$bl,
-  [switch][Alias('pb')]$productBuild
+  [switch][Alias('pb')]$productBuild,
   [switch]$fromVMR,
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$AdditionalArgs
