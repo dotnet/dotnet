@@ -10,7 +10,7 @@
     <WorkloadOutputPath>$(ArtifactsBinDir)workloads/</WorkloadOutputPath>
 
     <ManifestsPackageSource>$(ArtifactsShippingPackagesDir)/</ManifestsPackageSource>
-    <ManifestsPackageSource Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '2'">$(SourceBuiltShippingPackagesDir)/</ManifestsPackageSource>
+    <ManifestsPackageSource Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '2'">$(PreviousBuildPassShippingPackagesDir)/</ManifestsPackageSource>
 
     <WorkloadPacksSource>$(WorkloadIntermediateOutputPath)packs</WorkloadPacksSource>
 
