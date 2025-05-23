@@ -32,7 +32,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <GenerateNuspecDependsOn>_LoadPackInputItems; _GetTargetFrameworksOutput; _WalkEachTargetPerFramework; _GetPackageFiles; $(GenerateNuspecDependsOn)</GenerateNuspecDependsOn>
     <PackageDescription Condition="'$(PackageDescription)'==''">$(Description)</PackageDescription>
     <PackageDescription Condition="'$(PackageDescription)'==''">Package Description</PackageDescription>
-    <IsPackable Condition="'$(IsPackable)'=='' AND '$(IsTestProject)'=='true'">false</IsPackable>
+    <IsPackable Condition="'$(IsPackable)'=='' AND ('$(IsTestProject)'=='true' OR '$(IsTestingPlatformApplication)'=='true')">false</IsPackable>
     <IsPackable Condition="'$(IsPackable)'==''">true</IsPackable>
     <IncludeBuildOutput Condition="'$(IncludeBuildOutput)'==''">true</IncludeBuildOutput>
     <BuildOutputTargetFolder Condition="'$(BuildOutputTargetFolder)' == '' AND '$(IsTool)' == 'true'">tools</BuildOutputTargetFolder>
