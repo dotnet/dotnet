@@ -120,11 +120,11 @@
       "commitSha": "ba23e62da145ef04187aabe1e1fb64029fe2317d"
     },
     {
-      "packageVersion": "10.0.100-preview.6.25271.6",
-      "barId": 269197,
+      "packageVersion": "10.0.100-preview.6.25272.9",
+      "barId": 269347,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0e185be17c129e3b3b47fa9688a7a5dd882fca5d"
+      "commitSha": "3c8028693b521eecff36883803ee48b6bd96b8cb"
     },
     {
       "packageVersion": "10.0.622801",
