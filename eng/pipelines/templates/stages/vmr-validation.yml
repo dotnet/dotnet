@@ -6,6 +6,10 @@ parameters:
 - name: desiredIbc
   type: string
   default: ''
+
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
   
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
