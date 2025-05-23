@@ -302,7 +302,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet-build", "dotnet-buil
 	ProjectSection(SolutionItems) = preProject
 		eng\dotnet-build\build.sh = eng\dotnet-build\build.sh
 		eng\dotnet-build\dotnet-build.proj = eng\dotnet-build\dotnet-build.proj
-		eng\dotnet-build\global.json = eng\dotnet-build\global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{EA5A2D72-33C8-442C-AB6D-99EA8739591D}"
