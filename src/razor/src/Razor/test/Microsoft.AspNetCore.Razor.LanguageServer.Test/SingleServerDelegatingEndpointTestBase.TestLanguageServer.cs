@@ -63,6 +63,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 CustomMessageNames.RazorRenameEndpointName => await HandleRenameAsync(@params, cancellationToken),
                 CustomMessageNames.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params, cancellationToken),
                 CustomMessageNames.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params, cancellationToken),
+                CustomMessageNames.RazorDataTipRangeName => await HandleDataTipRangeAsync(@params, cancellationToken),
                 CustomMessageNames.RazorReferencesEndpointName => await HandleReferencesAsync(@params, cancellationToken),
                 CustomMessageNames.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params, cancellationToken),
                 CustomMessageNames.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params, cancellationToken),
@@ -382,6 +383,23 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
 
             return _csharpServer.ExecuteRequestAsync<VSInternalValidateBreakableRangeParams, LspRange>(
                 VSInternalMethods.TextDocumentValidateBreakableRangeName, delegatedRequest, cancellationToken);
+        }
+
+        private Task<VSInternalDataTip> HandleDataTipRangeAsync<T>(T @params, CancellationToken cancellationToken)
+        {
+            var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
+            var delegatedRequest = new TextDocumentPositionParams()
+            {
+                TextDocument = new VSTextDocumentIdentifier()
+                {
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
+                },
+                Position = delegatedParams.ProjectedPosition,
+            };
+
+            return _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, VSInternalDataTip>(
+                VSInternalMethods.TextDocumentDataTipRangeName, delegatedRequest, cancellationToken);
         }
     }
 }
