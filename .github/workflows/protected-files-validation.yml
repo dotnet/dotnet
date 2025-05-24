@@ -1,0 +1,36 @@
+name: 'Check Protected Files for Changes'
+
+on:
+  pull_request:
+    paths:
+      - eng/common/**/*
+      - eng/Version.Details.xml
+      - eng/Versions.props
+
+permissions:
+  pull-requests: read
+
+jobs:
+  protected-files-validation:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch from upstream
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Set up .NET
+        run: |
+          . eng/common/tools.sh
+          InitializeDotNetCli true
+
+      - name: Run protected files validation
+        run: |
+          .dotnet/dotnet build eng/protected-files-validation.proj \
+            /p:PullRequestTargetBranch=origin/${{ github.event.pull_request.base.ref }} \
+            /p:PullRequestTitle="${{ github.event.pull_request.title }}"
