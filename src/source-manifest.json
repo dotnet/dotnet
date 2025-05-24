@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25271.3",
-      "barId": 269184,
+      "packageVersion": "10.0.0-preview.5.25273.2",
+      "barId": 269426,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "16745cfc492e505515d38a9e3eaebe7d852e3629"
+      "commitSha": "9b37e0cc850693aad922756ce1b4ac6b6c815056"
     },
     {
       "packageVersion": "0.11.5-alpha.25266.1",
@@ -57,11 +57,11 @@
       "commitSha": "e1a3dd273c8e7d7926c2d73449d5902ca066338e"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25269.1",
-      "barId": 268866,
+      "packageVersion": "10.0.0-preview.5.25273.4",
+      "barId": 269445,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "3bfc9d79cca95dfa77f3b0539d63ccc1e6ff0b28"
+      "commitSha": "c7ac3a98d4c534c22dccdc0d0b6326c3427f10b2"
     },
     {
       "packageVersion": "10.0.100-beta.25270.2",
@@ -176,11 +176,11 @@
       "commitSha": "374dffa66748e6d80aa43c190d193837533f37a8"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25273.1",
-      "barId": 269410,
+      "packageVersion": "10.0.0-preview.5.25273.2",
+      "barId": 269431,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "bac82c4254c11e0aa5d0f7cf928b5f8a2c61eb9b"
+      "commitSha": "9b0537ab400cca58e4078228ddd033ad732ba13f"
     },
     {
       "packageVersion": "10.0.0-preview.5.25268.1",
