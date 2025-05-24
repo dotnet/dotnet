@@ -96,8 +96,8 @@
   <!-- Common args used for building and testing. -->
   <PropertyGroup>
     <CommonArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)productBuild</CommonArgs>
-    <!-- TODO: Rename to source-build when the new switch is available everywhere. -->
     <CommonArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)sourceBuild</CommonArgs>
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)fromVMR</CommonArgs>
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
@@ -122,12 +122,7 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
-    <!-- TODO: Remove the GitHubRepositoryName switch here after the next re-boostrap that includes the Publish.proj change. -->
-    <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
-    <!-- TODO: Remove both properties and replace with '-from-VMR' CLI arg with the next re-bootstrap. -->
-    <CommonArgs>$(CommonArgs) /p:DotNetBuildFromVMR=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>

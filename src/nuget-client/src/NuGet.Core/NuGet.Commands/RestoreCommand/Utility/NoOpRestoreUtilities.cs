@@ -38,8 +38,7 @@ namespace NuGet.Commands
         {
 
             if (request.ProjectStyle == ProjectStyle.ProjectJson
-                || request.ProjectStyle == ProjectStyle.PackageReference
-                || request.ProjectStyle == ProjectStyle.Standalone)
+                || request.ProjectStyle == ProjectStyle.PackageReference)
             {
                 var cacheRoot = request.MSBuildProjectExtensionsPath ?? request.RestoreOutputPath;
                 return request.Project.RestoreMetadata.CacheFilePath = GetProjectCacheFilePath(cacheRoot);
@@ -104,7 +103,6 @@ namespace NuGet.Commands
             if (string.IsNullOrEmpty(projectCacheFilePath))
             {
                 if (request.ProjectStyle == ProjectStyle.PackageReference
-                    || request.ProjectStyle == ProjectStyle.Standalone
                     || request.ProjectStyle == ProjectStyle.ProjectJson)
                 {
                     projectCacheFilePath = GetBuildIntegratedProjectCacheFilePath(request);
@@ -130,7 +128,7 @@ namespace NuGet.Commands
                 return false;
             }
 
-            if (request.ProjectStyle == ProjectStyle.PackageReference || request.ProjectStyle == ProjectStyle.Standalone)
+            if (request.ProjectStyle == ProjectStyle.PackageReference)
             {
                 var targetsFilePath = BuildAssetsUtils.GetMSBuildFilePath(request.Project, BuildAssetsUtils.TargetsExtension);
                 if (!File.Exists(targetsFilePath))
@@ -219,15 +217,14 @@ namespace NuGet.Commands
         /// <summary>
         /// Gets the path for dgpsec.json.
         /// The project style that support dgpsec.json persistance are
-        /// <see cref="ProjectStyle.PackageReference"/>, <see cref="ProjectStyle.ProjectJson"/>, <see cref="ProjectStyle.Standalone"/>
+        /// <see cref="ProjectStyle.PackageReference"/>, <see cref="ProjectStyle.ProjectJson"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns>The path for the dgspec.json. Null if not appropriate.</returns>
         internal static string GetPersistedDGSpecFilePath(RestoreRequest request)
         {
             if (request.ProjectStyle == ProjectStyle.ProjectJson
-                || request.ProjectStyle == ProjectStyle.PackageReference
-                || request.ProjectStyle == ProjectStyle.Standalone)
+                || request.ProjectStyle == ProjectStyle.PackageReference)
             {
                 var outputRoot = request.MSBuildProjectExtensionsPath ?? request.RestoreOutputPath;
                 var projFileName = Path.GetFileName(request.Project.RestoreMetadata.ProjectPath);
