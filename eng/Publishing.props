@@ -62,6 +62,7 @@
       <ProducedPackage>
         <ShippingFolder Condition="'%(ProducedPackage.NonShipping)' != 'true'">Shipping</ShippingFolder>
         <ShippingFolder Condition="'%(ProducedPackage.NonShipping)' == 'true'">NonShipping</ShippingFolder>
+        <ManifestArtifactData Condition="'%(ProducedPackage.NonShipping)' == 'true'">%(ProducedPackage.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
       </ProducedPackage>
 
       <ReferencePackage Include="@(ProducedPackage->'$(ReferencePackagesDir)%(Identity).%(Version).nupkg')" Condition="'%(RepoOrigin)' == 'source-build-reference-packages'" />
