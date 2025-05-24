@@ -187,18 +187,8 @@ namespace NuGet.Commands
                     return false;
                 }
 
-                if (isRootProject)
+                if (isRootProject) // Don't prune direct PRs
                 {
-                    if (enablePruningWarnings && SdkAnalysisLevelMinimums.IsEnabled(
-                        projectRestoreMetadata.SdkAnalysisLevel,
-                        projectRestoreMetadata.UsingMicrosoftNETSdk,
-                        SdkAnalysisLevelMinimums.PruningWarnings))
-                    {
-                        logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1510, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningDirectPackageReference, dependency.Name),
-                                   dependency.Name,
-                                   targetGraphName));
-                    }
-
                     return false;
                 }
 

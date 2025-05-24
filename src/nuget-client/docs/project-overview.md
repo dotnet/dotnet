@@ -1,5 +1,5 @@
 ---
-date-generated: 2022-11-22T14:33:34
+date-generated: 2025-05-21T13:24:04
 tool: NuGetTasks.GenerateMarkdownDoc
 ---
 
@@ -12,7 +12,7 @@ Below is a list of projects contained in the NuGet.Client repo, organized by pro
 
 All shipped NuGet libraries and clients in `src/` folder.
 
-Projects in section: 37
+Projects in section: 35
 
 ### src\NuGet.Clients
 
@@ -25,13 +25,12 @@ Projects in section: 37
 - [`NuGet.PackageManagement.VisualStudio.csproj`](../src/NuGet.Clients/NuGet.PackageManagement.VisualStudio/NuGet.PackageManagement.VisualStudio.csproj): NuGet's Visual Studio functionalities, integrations and utilities.
 - [`NuGet.SolutionRestoreManager.csproj`](../src/NuGet.Clients/NuGet.SolutionRestoreManager/NuGet.SolutionRestoreManager.csproj): NuGet's Visual Studio Solution Restore Manager.
 - [`NuGet.Tools.csproj`](../src/NuGet.Clients/NuGet.Tools/NuGet.Tools.csproj): NuGet's Visual Studio extension Package.
-- [`NuGet.VisualStudio.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Client/NuGet.VisualStudio.Client.csproj): NuGet Visual Studio extension package project.
+- [`NuGet.VisualStudio.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Client/NuGet.VisualStudio.Client.csproj): Visual Studio Extensibility Package (vsix)
 - [`NuGet.VisualStudio.Common.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Common/NuGet.VisualStudio.Common.csproj): NuGet's Visual Studio common types and interfaces used for both Package Manager UI, Package Manager Console, restore and install functionalities.
 - [`NuGet.VisualStudio.Contracts.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Contracts/NuGet.VisualStudio.Contracts.csproj): RPC contracts for NuGet's Visual Studio Service Broker extensibility APIs.
 - [`NuGet.VisualStudio.Implementation.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Implementation/NuGet.VisualStudio.Implementation.csproj): Implementation of the NuGet.VisualStudio extensibility APIs.
 - [`NuGet.VisualStudio.Internal.Contracts.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Internal.Contracts/NuGet.VisualStudio.Internal.Contracts.csproj): 
 - [`NuGet.VisualStudio.Interop.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Interop/NuGet.VisualStudio.Interop.csproj): NuGet's Visual Studio client Template Wizard interop implementation.
-- [`NuGet.VisualStudio.OnlineEnvironment.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.OnlineEnvironment.Client/NuGet.VisualStudio.OnlineEnvironment.Client.csproj): 
 - [`NuGet.VisualStudio.csproj`](../src/NuGet.Clients/NuGet.VisualStudio/NuGet.VisualStudio.csproj): APIs for invoking NuGet services in Visual Studio.
 
 ### src\NuGet.Core
@@ -50,7 +49,6 @@ Projects in section: 37
 - [`NuGet.LibraryModel.csproj`](../src/NuGet.Core/NuGet.LibraryModel/NuGet.LibraryModel.csproj): NuGet's types and interfaces for understanding dependencies.
 - [`NuGet.Localization.csproj`](../src/NuGet.Core/NuGet.Localization/NuGet.Localization.csproj): NuGet localization package for dotnet CLI.
 - [`NuGet.PackageManagement.csproj`](../src/NuGet.Core/NuGet.PackageManagement/NuGet.PackageManagement.csproj): NuGet Package Management functionality for Visual Studio installation flow.
-- [`NuGet.Packaging.Core.csproj`](../src/NuGet.Core/NuGet.Packaging.Core/NuGet.Packaging.Core.csproj): The (former home to) core data structures for NuGet.Packaging. Contains only the type forwarders to the new assembly.
 - [`NuGet.Packaging.csproj`](../src/NuGet.Core/NuGet.Packaging/NuGet.Packaging.csproj): NuGet's understanding of packages. Reading nuspec, nupkgs and package signing.
 - [`NuGet.ProjectModel.csproj`](../src/NuGet.Core/NuGet.ProjectModel/NuGet.ProjectModel.csproj): NuGet's core types and interfaces for PackageReference-based restore, such as lock files, assets file and internal restore models.
 - [`NuGet.Protocol.csproj`](../src/NuGet.Core/NuGet.Protocol/NuGet.Protocol.csproj): NuGet's implementation for interacting with feeds. Contains functionality for all feed types.

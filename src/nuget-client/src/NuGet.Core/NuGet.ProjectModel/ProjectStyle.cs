@@ -41,6 +41,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// DotnetToolReference project
         /// </summary>
+        [Obsolete("This project style is unsupported. Do not call restore with this project style.")]
         DotnetToolReference = 6
     }
 }

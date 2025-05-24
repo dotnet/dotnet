@@ -202,11 +202,13 @@ namespace NuGet.Common
         /// <summary>
         /// Invalid package types
         /// </summary>
+        [Obsolete]
         NU1204 = 1204,
 
         /// <summary>
         /// Project has an invalid dependency count
         /// </summary>
+        [Obsolete]
         NU1211 = 1211,
 
         /// <summary>

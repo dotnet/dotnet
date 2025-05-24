@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
@@ -10,6 +10,7 @@
     <XPLATProject>true</XPLATProject>
     <NoWarn>$(NoWarn);RS0041</NoWarn>
     <nullable>enable</nullable>
+    <WarningsAsErrors>$(WarningsAsErrors);CA1062</WarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">

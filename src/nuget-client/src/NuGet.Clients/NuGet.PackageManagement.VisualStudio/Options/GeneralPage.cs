@@ -23,15 +23,15 @@ namespace NuGet.PackageManagement.VisualStudio.Options
         private const string MonikerPackagesConfig = "packages-config";
         private const string MonikerShowPackageManagementChooser = "packageManagement.showPackageManagementChooser";
 
-        private PackageRestoreConsent? _packageRestoreConsent;
-        private BindingRedirectBehavior? _bindingRedirectBehavior;
-        private PackageManagementFormat? _packageManagementFormat;
+        internal PackageRestoreConsent? _packageRestoreConsent;
+        internal BindingRedirectBehavior? _bindingRedirectBehavior;
+        internal PackageManagementFormat? _packageManagementFormat;
 
         public GeneralPage(VSSettings vsSettings)
             : base(vsSettings)
         { }
 
-        private BindingRedirectBehavior BindingRedirectBehavior
+        internal BindingRedirectBehavior BindingRedirectBehavior
         {
             get
             {
@@ -44,7 +44,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
-        private PackageRestoreConsent PackageRestoreConsent
+        internal PackageRestoreConsent PackageRestoreConsent
         {
             get
             {
@@ -57,7 +57,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
-        private PackageManagementFormat PackageManagementFormat
+        internal PackageManagementFormat PackageManagementFormat
         {
             get
             {
@@ -68,6 +68,17 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
                 return _packageManagementFormat;
             }
+        }
+
+        /// <summary>
+        /// Reset any cached values for this specific page instance when the settings change.
+        /// </summary>
+        internal override void VsSettings_SettingsChanged(object sender, EventArgs e)
+        {
+            _packageRestoreConsent = null;
+            _bindingRedirectBehavior = null;
+            _packageManagementFormat = null;
+            base.VsSettings_SettingsChanged(sender, e);
         }
 
         public override Task<ExternalSettingOperationResult<T>> GetValueAsync<T>(string moniker, CancellationToken cancellationToken)
