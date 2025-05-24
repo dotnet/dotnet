@@ -13,6 +13,11 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  displayName: Final version kind
+  type: string
+  default: ''
+
 variables:
 - name: _TeamName
   value: DotNetCore
@@ -43,6 +48,20 @@ variables:
   - name: ibcEnabled
     value: false
 
+## Note: The use of if expressons underneath the variable is necessary to get the updated isOfficialBuild value
+- ${{ if eq(parameters.desiredFinalVersionKind, 'Default (repo specifies)') }}:
+  - name: finalVersionKindProperty
+    value: ''
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Preview') }}:
+  - name: finalVersionKindProperty
+    value: /p:DotNetFinalVersionKind=prerelease
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Final') }}:
+  - name: finalVersionKindProperty
+    value: /p:DotNetFinalVersionKind=release
+- ${{ else }}:
+  - name: finalVersionKindProperty
+    value: ''
+
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
 - ${{ if ne(parameters.buildSourceOnly, true) }}:
@@ -54,7 +73,7 @@ variables:
 
 - ${{ if eq(variables['isOfficialBuild'], true) }}:
   - name: officialBuildProperties
-    value: '/p:OfficialBuildId=$(Build.BuildNumber) $(officialBuilderProperty)'
+    value: '/p:OfficialBuildId=$(Build.BuildNumber) $(officialBuilderProperty) $(finalVersionKindProperty)'
 - ${{ else }}:
   - name: officialBuildProperties
     value: ''

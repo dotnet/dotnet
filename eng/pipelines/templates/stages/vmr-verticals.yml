@@ -10,6 +10,10 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -77,6 +81,10 @@ stages:
     dependsOn: []
     variables:
     - template: ../variables/vmr-build.yml
+      parameters:
+        desiredSigning: ${{ parameters.desiredSigning }}
+        desiredIBC: ${{ parameters.desiredIBC }}
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
 
     - template: ../jobs/vmr-build.yml
@@ -110,6 +118,7 @@ stages:
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredIBC: ${{ parameters.desiredIBC }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
 
   - template: ../jobs/vmr-build.yml

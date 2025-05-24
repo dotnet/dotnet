@@ -10,6 +10,10 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -74,6 +78,7 @@ stages:
         parameters:
           desiredSigning: ${{ parameters.desiredSigning }}
           desiredIbc: ${{ parameters.desiredIbc }}
+          desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           scope: ${{ parameters.scope }}
     finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
@@ -105,3 +110,4 @@ stages:
       # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.
       useMicrosoftBuildAssetsForTests: false
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}

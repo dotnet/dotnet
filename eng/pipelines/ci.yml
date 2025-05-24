@@ -29,6 +29,15 @@ parameters:
     - Disabled
     - Default (disabled for non-release branch builds)
 
+- name: desiredFinalVersionKind
+  displayName: 'Final version kind'
+  type: string
+  default: 'Default (repo specifies)'
+  values:
+    - Default (repo specifies)
+    - Stable Preview
+    - Stable Final
+
 variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
@@ -139,6 +148,7 @@ extends:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         ${{ if eq(variables.isScheduleTrigger, 'true') }}:
           scope: full
         ${{ elseif eq(variables.isPRTrigger, 'true') }}:
