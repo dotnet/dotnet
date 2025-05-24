@@ -992,7 +992,7 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, projectStyle);
 
-            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, projectsByTargetFramework.Values);
+            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, projectsByTargetFramework.Values, GetAuditSuppressions(project));
 
             List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
 
@@ -1014,7 +1014,7 @@ namespace NuGet.Build.Tasks.Console
                 restoreMetadata = new ProjectRestoreMetadata
                 {
                     // CrossTargeting is on, even if the TargetFrameworks property has only 1 tfm.
-                    CrossTargeting = (projectStyle == ProjectStyle.PackageReference || projectStyle == ProjectStyle.DotnetToolReference) && (
+                    CrossTargeting = (projectStyle == ProjectStyle.PackageReference) && (
                         projectsByTargetFramework.Count > 1 || !string.IsNullOrWhiteSpace(project.GetProperty("TargetFrameworks"))),
                     FallbackFolders = BuildTasksUtility.GetFallbackFolders(
                         project.GetProperty("MSBuildStartupDirectory"),
@@ -1061,7 +1061,7 @@ namespace NuGet.Build.Tasks.Console
             {
                 ProjectStyle? projectStyleOrNull = BuildTasksUtility.GetProjectRestoreStyleFromProjectProperty(project.GetProperty("RestoreProjectStyle"));
                 bool hasPackageReferenceItems = tfms.Values.Any(p => p.GetItems("PackageReference").Any());
-                (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string PackagesConfigFilePath) projectStyleResult = BuildTasksUtility.GetProjectRestoreStyle(
+                (ProjectStyle ProjectStyle, string PackagesConfigFilePath) projectStyleResult = BuildTasksUtility.GetProjectRestoreStyle(
                     restoreProjectStyle: projectStyleOrNull,
                     hasPackageReferenceItems: hasPackageReferenceItems,
                     projectJsonPath: project.GetProperty("_CurrentProjectJsonPath"),
@@ -1071,6 +1071,14 @@ namespace NuGet.Build.Tasks.Console
 
                 return (projectStyleResult.ProjectStyle, projectStyleResult.PackagesConfigFilePath);
             }
+        }
+
+        private static HashSet<string> GetAuditSuppressions(IMSBuildProject project)
+        {
+            IEnumerable<string> suppressions = GetDistinctItemsOrEmpty(project, "NuGetAuditSuppress")
+                                                    .Select(i => i.Identity);
+
+            return suppressions?.Count() > 0 ? new HashSet<string>(suppressions) : null;
         }
 
         /// <summary>
