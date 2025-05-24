@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25271.5",
-      "barId": 269193,
+      "packageVersion": "10.0.0-preview.6.25272.4",
+      "barId": 269368,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c5d6996bd22e916b04aa792185b2fd2214ae22fe"
+      "commitSha": "5678f227fafa5dcd10b98801d4da54f1add7de6d"
     },
     {
       "packageVersion": "0.11.5-alpha.25266.1",
@@ -99,11 +99,11 @@
       "commitSha": "533fde8c7c7b194b1a6e04f87c5ad8090cbafec6"
     },
     {
-      "packageVersion": "10.0.0-preview.25270.1",
-      "barId": 269074,
+      "packageVersion": "10.0.0-preview.25271.1",
+      "barId": 269218,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "8975a346371feea4d14118805092f07c0fd7920e"
+      "commitSha": "f8a8d38b820c57598d42c6da96f3111b4c4a40ba"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 269071,
+      "barId": 269327,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "27e01a1a52ddf0684b643866e76d8ece09a59bb0"
+      "commitSha": "535899fc5acaacbb54b5e49014d157cf8ac995d4"
     },
     {
       "packageVersion": "10.0.0-beta.25272.1",
@@ -169,11 +169,11 @@
       "commitSha": "e894393f92f748898e4e1ef7608892cb16e00163"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25270.6",
-      "barId": 269069,
+      "packageVersion": "10.0.0-preview.6.25271.3",
+      "barId": 269213,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "ed05d7e55f78f3284f82763b063738d6f7449f36"
+      "commitSha": "e3cc83cc803c608cd9a680353233bbd9805580c0"
     },
     {
       "packageVersion": "10.0.0-preview.6.25271.2",
@@ -183,11 +183,11 @@
       "commitSha": "b0b0e101cb69db4b70f7e3559e30406b210b1f1d"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25271.1",
-      "barId": 269091,
+      "packageVersion": "10.0.0-preview.6.25272.5",
+      "barId": 269385,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "0d13fd56c8d0db15ea6d9d2e4ebc200e7ea48245"
+      "commitSha": "e72585bbad37ee89c620788a8c5e90934b5ca93c"
     },
     {
       "packageVersion": "10.0.0-preview.25269.1",
@@ -201,7 +201,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "571930618fa96eabcd05b573285edbee9fc13bae"
+      "commitSha": "c2ceb2b09bfe6660f08c024cc758e5e9632acc07"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
