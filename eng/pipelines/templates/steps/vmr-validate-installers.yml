@@ -35,6 +35,8 @@ steps:
       --ci \
       -t \
       --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj \
+      /p:BlobArtifactsDir=$(Build.SourcesDirectory)/artifacts/assets/ \
+      /p:PackageArtifactsDir=$(Build.SourcesDirectory)/artifacts/packages/ \
       /p:TestRpmPackages=true \
       /p:TestDebPackages=true
     displayName: Validate installer packages
