@@ -50,11 +50,11 @@
       "commitSha": "ce653def0d1969dca0d518a95559b2acc3c6128c"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25270.7",
-      "barId": 269093,
+      "packageVersion": "10.0.0-preview.5.25274.2",
+      "barId": 269509,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "e1a3dd273c8e7d7926c2d73449d5902ca066338e"
+      "commitSha": "010c87ab6984b8d6319019110605f32e8723609f"
     },
     {
       "packageVersion": "10.0.0-preview.5.25273.4",
