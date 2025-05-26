@@ -3,7 +3,6 @@
   <!-- Default targets and parallelization -->
   <ItemDefinitionGroup>
     <ProjectReference>
-      <Test>false</Test>
       <Publish>false</Publish>
       <BuildInParallel>false</BuildInParallel>
     </ProjectReference>
@@ -31,7 +30,7 @@
   <!-- Test entrypoint -->
   <ItemGroup Condition="'$(IsTestRun)' == 'true'">
     <ProjectReference Remove="@(ProjectReference)" />
-    <ProjectReference Include="$(RepoRoot)test\tests.proj" Test="true" />
+    <ProjectReference Include="$(RepoRoot)test\tests.proj" />
   </ItemGroup>
 
   <Target Name="PrintInfo" BeforeTargets="Build">
