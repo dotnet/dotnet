@@ -42,12 +42,16 @@ usage()
   echo "  --build-repo-tests              Build repository tests"
 
   echo "Advanced settings:"
-  echo "  --projects <value>              Project or solution file to build"
+  echo "  --buildCheck <value>            Sets /check msbuild parameter"
   echo "  --ci                            Set when running on CI server"
   echo "  --clean-while-building          Cleans each repo after building (reduces disk space usage, short: -cwb)"
   echo "  --excludeCIBinarylog            Don't output binary log (short: -nobl)"
+  echo "  --nodeReuse <value>             Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --prepareMachine                Prepare machine for CI run, clean up processes after build"
+  echo "  --projects <value>              Project or solution file to build"
   echo "  --use-mono-runtime              Output uses the mono runtime"
+  echo "  --warnAsError <value>           Sets warnaserror msbuild parameter ('true' or 'false')"
+
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."
@@ -86,10 +90,13 @@ packagesArchiveDir="${packagesDir}archive/"
 packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
 
 # Advanced settings
-projects=''
+build_check=false
 ci=false
 exclude_ci_binary_log=false
+node_reuse=true
 prepare_machine=false
+projects=''
+warn_as_error=true
 
 properties=()
 while [[ $# > 0 ]]; do
@@ -99,8 +106,12 @@ while [[ $# > 0 ]]; do
     -binarylog|-bl)
       binary_log=true
       ;;
+    -buildcheck)
+      build_check=true
+      ;;
     -configuration|-c)
       configuration=$2
+      properties+=( "/p:Configuration=$2" )
       shift
       ;;
     -rid|-target-rid)
@@ -203,11 +214,19 @@ while [[ $# > 0 ]]; do
     -excludecibinarylog|-nobl)
       exclude_ci_binary_log=true
       ;;
+    -nodereuse)
+      node_reuse=$2
+      shift
+      ;;
     -preparemachine)
       prepare_machine=true
       ;;
     -use-mono-runtime)
       properties+=( "/p:DotNetBuildUseMonoRuntime=true" )
+      ;;
+    -warnaserror)
+      warn_as_error=$2
+      shift
       ;;
     *)
       properties+=( "$1" )
@@ -225,11 +244,14 @@ fi
 
 . "$scriptroot/eng/common/tools.sh"
 
-project="$scriptroot/build.proj"
+# Default properties
+properties+=("/p:RepoRoot=$scriptroot/")
+properties+=("/p:DotNetBuild=true")
+properties+=("/p:DotNetBuildFromVMR=true")
+
 actions=( "/p:Restore=true" "/p:Build=true" "/p:Publish=true")
 
 if [[ "$test" == true ]]; then
-  project="$scriptroot/test/tests.proj"
   actions=( "/p:Restore=true" "/p:Build=true" "/p:Test=true" )
   properties+=( "/p:IsTestRun=true" )
 
@@ -239,37 +261,11 @@ if [[ "$test" == true ]]; then
   export MSBUILDDISABLENODEREUSE=1
 fi
 
-# Override project if specified on cmd-line
-if [[ ! -z "$projects" ]]; then
-  project="$projects"
-fi
-
 function Build {
-  if [[ "$sourceOnly" != "true" ]]; then
-
-    InitializeToolset
-
-    local bl=""
-    if [[ "$binary_log" == true ]]; then
-      bl="/bl:\"$log_dir/Build.binlog\""
-    fi
-
-    MSBuild --restore \
-      $_InitializeToolset \
-      "/p:Projects=$project" \
-      $bl \
-      /p:Configuration=$configuration \
-      "/p:RepoRoot=$scriptroot/" \
-      "-tl:off" \
-      "${actions[@]}" \
-      "${properties[@]}"
-
-    ExitWithExitCode 0
-
-  else
-    if [ "$ci" == "true" ]; then
-      properties+=( "/p:ContinuousIntegrationBuild=true" )
-    fi
+  # Source-only toolset prep steps
+  if [[ "$sourceOnly" == "true" ]]; then
+    # Set DOTNET_INSTALL_DIR so that eng/common/tools.sh doesn't attempt to restore the SDK again.
+    DOTNET_INSTALL_DIR="$CLI_ROOT"
 
     initSourceOnlyBinaryLog=""
     if [[ "$binary_log" == true ]]; then
@@ -277,7 +273,7 @@ function Build {
     fi
 
     "$CLI_ROOT/dotnet" build-server shutdown --msbuild
-    "$CLI_ROOT/dotnet" msbuild "$scriptroot/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
+    MSBuild-Core "$scriptroot/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
     # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
     "$CLI_ROOT/dotnet" build-server shutdown --msbuild
 
@@ -287,23 +283,34 @@ function Build {
     # Point MSBuild to the custom SDK resolvers folder, so it will pick up our custom SDK Resolver
     export MSBUILDADDITIONALSDKRESOLVERSFOLDER="$scriptroot/artifacts/toolset/VSSdkResolvers/"
 
-    local bl=""
-    if [[ "$binary_log" == true ]]; then
-      bl="/bl:\"$log_dir/Build.binlog\""
-    fi
-
-    "$CLI_ROOT/dotnet" \
-      msbuild \
-      --restore \
-      "$arcadeBuildStepsDir/Build.proj" \
-      "/p:Projects=$project" \
-      /p:Configuration=$configuration \
-      "/p:RepoRoot=$scriptroot/" \
-      "-tl:off" \
-      $bl \
-      "${actions[@]}" \
-      "${properties[@]}"
+    # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
+    _InitializeToolset="${arcadeBuildStepsDir}/Build.proj"
   fi
+
+  if [[ ! -z "$projects" ]]; then
+    properties+=("/p:Projects=$projects")
+  fi
+
+  local bl=""
+  if [[ "$binary_log" == true ]]; then
+    bl="/bl:\"$log_dir/Build.binlog\""
+  fi
+
+  local check=""
+  if [[ "$build_check" == true ]]; then
+    check="/check"
+  fi
+
+  InitializeToolset
+
+  MSBuild $_InitializeToolset \
+    $bl \
+    $check \
+    "-tl:off" \
+    "${actions[@]}" \
+    "${properties[@]}"
+
+  ExitWithExitCode 0
 }
 
 if [[ "$clean" == true ]]; then
