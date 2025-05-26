@@ -135,10 +135,6 @@ namespace NuGet.Commands
                         ValidateProjectSpecPackageReference(spec, files, logger);
                         break;
 
-                    case ProjectStyle.DotnetToolReference:
-                        ValidateProjectSpecPackageReference(spec, files, logger);
-                        break;
-
                     case ProjectStyle.ProjectJson:
                         ValidateProjectSpecUAP(spec, files, logger);
                         break;

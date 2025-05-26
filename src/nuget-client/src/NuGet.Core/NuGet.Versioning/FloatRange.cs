@@ -202,7 +202,7 @@ namespace NuGet.Versioning
 
             if (!TryParse(versionString, out FloatRange? range))
             {
-                throw new FormatException(string.Format(Resources.InvalidFloatRangeValue, versionString));
+                throw new FormatException(string.Format(CultureInfo.CurrentCulture, Resources.InvalidFloatRangeValue, versionString));
             }
 
             return range;
@@ -393,6 +393,10 @@ namespace NuGet.Versioning
         /// </summary>
         public void ToString(StringBuilder sb)
         {
+            if (sb == null)
+            {
+                throw new ArgumentNullException(nameof(sb));
+            }
             switch (_floatBehavior)
             {
                 case NuGetVersionFloatBehavior.None:
