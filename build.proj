@@ -28,7 +28,7 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)finish-source-only.proj" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
     <!-- Test entrypoint -->
-    <ProjectReference Include="RepoRoot)test\tests.proj" Test="true" Condition="'$(IsTestRun)' == 'true'" />
+    <ProjectReference Include="$(RepoRoot)test\tests.proj" Test="true" Condition="'$(IsTestRun)' == 'true'" />
   </ItemGroup>
 
   <Target Name="PrintInfo" BeforeTargets="Build">
