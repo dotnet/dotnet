@@ -262,18 +262,17 @@ fi
 function Build {
   # Source-only toolset prep steps
   if [[ "$sourceOnly" == "true" ]]; then
-    # Set DOTNET_INSTALL_DIR so that eng/common/tools.sh doesn't attempt to restore the SDK again.
-    DOTNET_INSTALL_DIR="$CLI_ROOT"
+    InitializeBuildTool
 
     initSourceOnlyBinaryLog=""
     if [[ "$binary_log" == true ]]; then
       initSourceOnlyBinaryLog="/bl:\"$log_dir/init-source-only.binlog\""
     fi
 
-    "$CLI_ROOT/dotnet" build-server shutdown --msbuild
+    "$_InitializeBuildTool" build-server shutdown --msbuild
     MSBuild-Core "$scriptroot/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
     # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
-    "$CLI_ROOT/dotnet" build-server shutdown --msbuild
+    "$_InitializeBuildTool" build-server shutdown --msbuild
 
     local bootstrapArcadeDir=$(cat "$scriptroot/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
     local arcadeBuildStepsDir="$bootstrapArcadeDir/tools/"
@@ -420,8 +419,6 @@ if [[ "$sourceOnly" == "true" ]]; then
   if [ -d "$CUSTOM_SDK_DIR" ]; then
     export SDK_VERSION=$("$CUSTOM_SDK_DIR/dotnet" --version)
     export CLI_ROOT="$CUSTOM_SDK_DIR"
-    export _InitializeDotNetCli="$CLI_ROOT/dotnet"
-    export DOTNET_INSTALL_DIR="$CLI_ROOT"
     echo "Using custom bootstrap SDK from '$CLI_ROOT', version '$SDK_VERSION'"
   else
     sdkLine=$(grep -m 1 'dotnet' "$scriptroot/global.json")
@@ -431,6 +428,10 @@ if [[ "$sourceOnly" == "true" ]]; then
       export CLI_ROOT="$scriptroot/.dotnet"
     fi
   fi
+
+  # Set _InitializeDotNetCli & DOTNET_INSTALL_DIR so that eng/common/tools.sh doesn't attempt to restore the SDK.
+  _InitializeDotNetCli="$CLI_ROOT"
+  DOTNET_INSTALL_DIR="$CLI_ROOT"
 
   # Find the Arcade SDK version and set env vars for the msbuild sdk resolver
   packageVersionsPath=''
