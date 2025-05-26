@@ -109,7 +109,6 @@ while [[ $# > 0 ]]; do
       ;;
     -configuration|-c)
       configuration=$2
-      properties+=( "/p:Configuration=$2" )
       shift
       ;;
     -rid|-target-rid)
@@ -246,6 +245,7 @@ fi
 properties+=("/p:RepoRoot=$repo_root/")
 properties+=("/p:DotNetBuild=true")
 properties+=("/p:DotNetBuildFromVMR=true")
+properties+=( "/p:Configuration=$configuration" )
 
 actions=( "/p:Restore=true" "/p:Build=true" "/p:Publish=true")
 
