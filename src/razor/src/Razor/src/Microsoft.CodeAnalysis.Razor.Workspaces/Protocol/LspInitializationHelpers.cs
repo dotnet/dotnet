@@ -82,6 +82,11 @@ internal static class LspInitializationHelpers
         serverCapabilities.BreakableRangeProvider = true;
     }
 
+    public static void EnableDataTipRangeProvider(this VSInternalServerCapabilities serverCapabilities)
+    {
+        serverCapabilities.DataTipRangeProvider = true;
+    }
+
     public static void EnableMapCodeProvider(this VSInternalServerCapabilities serverCapabilities)
     {
         serverCapabilities.MapCodeProvider = true;
