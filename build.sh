@@ -38,11 +38,9 @@ usage()
   echo "  --prep                          Run prep-source-build.sh to download bootstrap binaries before building"
   echo ""
 
-  echo "Non-source-only settings:"
-  echo "  --build-repo-tests              Build repository tests"
-
   echo "Advanced settings:"
   echo "  --buildCheck <value>            Sets /check msbuild parameter"
+  echo "  --build-repo-tests              Build repository tests"
   echo "  --ci                            Set when running on CI server"
   echo "  --clean-while-building          Cleans each repo after building (reduces disk space usage, short: -cwb)"
   echo "  --excludeCIBinarylog            Don't output binary log (short: -nobl)"
