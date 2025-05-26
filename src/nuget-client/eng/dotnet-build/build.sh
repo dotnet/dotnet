@@ -138,4 +138,4 @@ if [[ $warn_as_error == true ]]; then
   warnaserror_switch="/warnaserror"
 fi
 
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci $bl  "${dotnetArguments[@]}" "${args[@]}"
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
