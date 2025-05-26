@@ -243,7 +243,7 @@ fi
 . "$scriptroot/eng/common/tools.sh"
 
 # Default properties
-properties+=("/p:RepoRoot=$scriptroot/")
+properties+=("/p:RepoRoot=$repo_root/")
 properties+=("/p:DotNetBuild=true")
 properties+=("/p:DotNetBuildFromVMR=true")
 
