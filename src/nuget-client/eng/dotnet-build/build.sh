@@ -57,7 +57,6 @@ while [[ $# > 0 ]]; do
       ;;
     --from-vmr|--fromvmr)
       from_vmr=true
-      shift
       ;;
     --warnaserror)
       warn_as_error=$2
