@@ -20,7 +20,7 @@ Param(
   [switch]$ci,
   [switch][Alias('cwb')]$cleanWhileBuilding,
   [switch][Alias('nobl')]$excludeCIBinarylog,
-  [bool]$nodeReuse = $true,
+  [bool]$nodeReuse,
   [switch]$prepareMachine,
   [string]$projects,
   [bool] $warnAsError,

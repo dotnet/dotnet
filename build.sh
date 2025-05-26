@@ -68,7 +68,7 @@ done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
 # Common settings
-binary_log=false
+binary_log=''
 configuration='Release'
 verbosity='minimal'
 
