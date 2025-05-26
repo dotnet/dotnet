@@ -89,12 +89,12 @@ packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
 
 # Advanced settings
 build_check=false
-ci=false
-exclude_ci_binary_log=false
-node_reuse=true
-prepare_machine=false
+ci=''
+exclude_ci_binary_log=''
+node_reuse=''
+prepare_machine=''
 projects=''
-warn_as_error=true
+warn_as_error=''
 
 properties=()
 while [[ $# > 0 ]]; do
