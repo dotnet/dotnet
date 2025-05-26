@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
-<!-- Default targets and parallelization -->
- <ItemDefinitionGroup>
+  <!-- Default targets and parallelization -->
+  <ItemDefinitionGroup>
     <ProjectReference>
       <Test>false</Test>
       <Publish>false</Publish>
@@ -26,9 +26,12 @@
 
     <!-- Post-build: Source-only validation -->
     <ProjectReference Include="$(RepositoryEngineeringDir)finish-source-only.proj" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+  </ItemGroup>
 
-    <!-- Test entrypoint -->
-    <ProjectReference Include="$(RepoRoot)test\tests.proj" Test="true" Condition="'$(IsTestRun)' == 'true'" />
+  <!-- Test entrypoint -->
+  <ItemGroup Condition="'$(IsTestRun)' == 'true'">
+    <ProjectReference Remove="@(ProjectReference)" />
+    <ProjectReference Include="$(RepoRoot)test\tests.proj" Test="true" />
   </ItemGroup>
 
   <Target Name="PrintInfo" BeforeTargets="Build">
