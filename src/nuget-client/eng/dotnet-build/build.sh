@@ -46,7 +46,6 @@ while [[ $# > 0 ]]; do
             ;;
         --from-vmr|--fromvmr)
             from_vmr=true
-            shift
             ;;
         -*)
             # just eat this so we don't try to pass it along to MSBuild
