@@ -50,11 +50,11 @@
       "commitSha": "ce653def0d1969dca0d518a95559b2acc3c6128c"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25270.7",
-      "barId": 269093,
+      "packageVersion": "10.0.0-preview.5.25274.2",
+      "barId": 269509,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "e1a3dd273c8e7d7926c2d73449d5902ca066338e"
+      "commitSha": "010c87ab6984b8d6319019110605f32e8723609f"
     },
     {
       "packageVersion": "10.0.0-preview.5.25273.4",
@@ -71,11 +71,11 @@
       "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
     },
     {
-      "packageVersion": "17.15.0-preview-25271-01",
-      "barId": 269101,
+      "packageVersion": "17.15.0-preview-25273-03",
+      "barId": 269419,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "f88eb76608c0e4417aa066c20e698a9174855df0"
+      "commitSha": "4ad462496537cd497f9c43531acb21f44d58cd67"
     },
     {
       "packageVersion": "6.15.0-preview.1.50",
@@ -183,11 +183,11 @@
       "commitSha": "9b0537ab400cca58e4078228ddd033ad732ba13f"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25268.1",
-      "barId": 268783,
+      "packageVersion": "10.0.0-preview.5.25275.2",
+      "barId": 269552,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "d4436f7c38c5f8816957afc78d4cecafb08d2909"
+      "commitSha": "9eb2c425b945531926dad625d4b5a40d74ef7003"
     },
     {
       "packageVersion": "10.0.0-preview.25269.1",
