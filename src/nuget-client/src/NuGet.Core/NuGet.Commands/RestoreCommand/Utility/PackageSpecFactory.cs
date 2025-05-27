@@ -123,7 +123,7 @@ namespace NuGet.Commands.Restore.Utility
                 restoreMetadata = new ProjectRestoreMetadata
                 {
                     // CrossTargeting is on, even if the TargetFrameworks property has only 1 tfm.
-                    CrossTargeting = (projectStyle == ProjectStyle.PackageReference || projectStyle == ProjectStyle.DotnetToolReference) && (
+                    CrossTargeting = (projectStyle == ProjectStyle.PackageReference) && (
                         project.TargetFrameworks.Count > 1 || !string.IsNullOrWhiteSpace(project.OuterBuild.GetProperty("TargetFrameworks"))),
                     FallbackFolders = GetFallbackFolders(
                         outerBuild.GetProperty("MSBuildStartupDirectory"),
@@ -170,7 +170,7 @@ namespace NuGet.Commands.Restore.Utility
             {
                 ProjectStyle? projectStyleOrNull = GetProjectRestoreStyleFromProjectProperty(project.OuterBuild.GetProperty("RestoreProjectStyle"));
                 bool hasPackageReferenceItems = project.TargetFrameworks.Values.Any(p => p.GetItems("PackageReference").Any());
-                (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string? PackagesConfigFilePath) projectStyleResult =
+                (ProjectStyle ProjectStyle, string? PackagesConfigFilePath) projectStyleResult =
                     GetProjectRestoreStyle(
                         restoreProjectStyle: projectStyleOrNull,
                         hasPackageReferenceItems: hasPackageReferenceItems,
@@ -305,7 +305,7 @@ namespace NuGet.Commands.Restore.Utility
         /// <param name="projectName">The name of the project file.</param>
         /// <returns>A <see cref="Tuple{ProjectStyle, Boolean}"/> containing the project style and a value indicating if the project is using a style that is compatible with PackageReference.
         /// If the value of <paramref name="restoreProjectStyle"/> is not empty and could not be parsed, <code>null</code> is returned.</returns>
-        private static (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string? PackagesConfigFilePath)
+        private static (ProjectStyle ProjectStyle, string? PackagesConfigFilePath)
             GetProjectRestoreStyle(ProjectStyle? restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName)
         {
             ProjectStyle projectStyle;
@@ -337,9 +337,7 @@ namespace NuGet.Commands.Restore.Utility
                 projectStyle = ProjectStyle.Unknown;
             }
 
-            bool isPackageReferenceCompatibleProjectStyle = projectStyle == ProjectStyle.PackageReference || projectStyle == ProjectStyle.DotnetToolReference;
-
-            return (projectStyle, isPackageReferenceCompatibleProjectStyle, packagesConfigFilePath);
+            return (projectStyle, packagesConfigFilePath);
         }
 
         /// <summary>

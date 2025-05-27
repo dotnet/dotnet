@@ -62,8 +62,7 @@ namespace NuGet.Commands
 
             var previousLibraries = previousLockFile?.Libraries.ToDictionary(l => ValueTuple.Create(l.Name, l.Version));
 
-            if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference ||
-                project.RestoreMetadata?.ProjectStyle == ProjectStyle.DotnetToolReference)
+            if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference)
             {
                 AddProjectFileDependenciesForPackageReference(project, lockFile, targetGraphs);
             }
