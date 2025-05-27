@@ -37,7 +37,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             return Task.FromResult(ExternalSettingOperationResult.SuccessResult((IReadOnlyList<EnumChoice>)new List<EnumChoice>().AsReadOnly()));
         }
 
-        protected virtual void VsSettings_SettingsChanged(object sender, EventArgs e)
+        internal virtual void VsSettings_SettingsChanged(object sender, EventArgs e)
         {
             SettingValuesChanged?.Invoke(this, ExternalSettingsChangedEventArgs.SomeOrAll);
         }
