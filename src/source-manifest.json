@@ -71,11 +71,11 @@
       "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
     },
     {
-      "packageVersion": "17.15.0-preview-25271-01",
-      "barId": 269101,
+      "packageVersion": "17.15.0-preview-25273-03",
+      "barId": 269419,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "f88eb76608c0e4417aa066c20e698a9174855df0"
+      "commitSha": "4ad462496537cd497f9c43531acb21f44d58cd67"
     },
     {
       "packageVersion": "6.15.0-preview.1.50",
@@ -169,11 +169,11 @@
       "commitSha": "f93fcd2943f39c2cbb65d25e3949e21c3190184c"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25273.2",
-      "barId": 269429,
+      "packageVersion": "10.0.0-preview.5.25274.3",
+      "barId": 269506,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "949779cb80e44fe180cb98723a7a45905ebac4be"
+      "commitSha": "e508b7856fa9356b92086a869b130dc1fcdef06e"
     },
     {
       "packageVersion": "10.0.0-preview.5.25273.2",
@@ -183,11 +183,11 @@
       "commitSha": "9b0537ab400cca58e4078228ddd033ad732ba13f"
     },
     {
-      "packageVersion": "10.0.0-preview.5.25268.1",
-      "barId": 268783,
+      "packageVersion": "10.0.0-preview.5.25275.2",
+      "barId": 269552,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "d4436f7c38c5f8816957afc78d4cecafb08d2909"
+      "commitSha": "9eb2c425b945531926dad625d4b5a40d74ef7003"
     },
     {
       "packageVersion": "10.0.0-preview.25269.1",
