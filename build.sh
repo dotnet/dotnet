@@ -93,7 +93,6 @@ ci=''
 exclude_ci_binary_log=''
 node_reuse=''
 prepare_machine=''
-projects=''
 warn_as_error=''
 
 properties=()
@@ -199,7 +198,7 @@ while [[ $# > 0 ]]; do
       properties+=( "/p:DotNetBuildTests=true" )
       ;;
     -projects)
-      projects=$2
+      properties+=( "/p:Projects=$2" )
       shift
       ;;
     -ci)
@@ -242,9 +241,9 @@ fi
 . "$scriptroot/eng/common/tools.sh"
 
 # Default properties
-properties+=("/p:RepoRoot=$repo_root")
-properties+=("/p:DotNetBuild=true")
-properties+=("/p:DotNetBuildFromVMR=true")
+properties+=( "/p:RepoRoot=$repo_root" )
+properties+=( "/p:DotNetBuild=true" )
+properties+=( "/p:DotNetBuildFromVMR=true" )
 properties+=( "/p:Configuration=$configuration" )
 
 actions=( "/p:Restore=true" "/p:Build=true" "/p:Publish=true")
@@ -253,7 +252,7 @@ if [[ "$test" == true ]]; then
   actions=( "/p:Restore=true" "/p:Build=true" "/p:Test=true" )
   properties+=( "/p:IsTestRun=true" )
 
-  # Workaround for vstest hangs (https://github.com/microsoft/vstest/issues/5091) [TODO]
+  # Workaround for vstest hangs: https://github.com/microsoft/vstest/issues/10760
   export MSBUILDENSURESTDOUTFORTASKPROCESSES=1
   # Ensure all test projects share stdout (https://github.com/dotnet/source-build/issues/4635#issuecomment-2397464519)
   export MSBUILDDISABLENODEREUSE=1
@@ -282,10 +281,6 @@ function Build {
 
     # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
     _InitializeToolset="${arcadeBuildStepsDir}/Build.proj"
-  fi
-
-  if [[ ! -z "$projects" ]]; then
-    properties+=("/p:Projects=$projects")
   fi
 
   local bl=""
