@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
-    <RootRepo>dotnet</RootRepo>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
