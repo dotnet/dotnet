@@ -64,7 +64,7 @@
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
     <LangVersion>latest</LangVersion>
     <!-- Don't run NuGetAudit on offline builds. -->
-    <NuGetAudit>$(DotNetBuildWithOnlineFeeds)</NuGetAudit>
+    <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
     <!-- Explicitly set NuGetAuditModel level as it's currently disabled in the product. -->
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
