@@ -93,7 +93,6 @@ ci=''
 exclude_ci_binary_log=''
 node_reuse=''
 prepare_machine=''
-projects=''
 warn_as_error=''
 
 properties=()
@@ -199,7 +198,7 @@ while [[ $# > 0 ]]; do
       properties+=( "/p:DotNetBuildTests=true" )
       ;;
     -projects)
-      projects=$2
+      properties+=( "/p:Projects=$2" )
       shift
       ;;
     -ci)
@@ -282,10 +281,6 @@ function Build {
 
     # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
     _InitializeToolset="${arcadeBuildStepsDir}/Build.proj"
-  fi
-
-  if [[ ! -z "$projects" ]]; then
-    properties+=("/p:Projects=$projects")
   fi
 
   local bl=""
