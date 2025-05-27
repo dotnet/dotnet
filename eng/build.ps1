@@ -76,7 +76,6 @@ if ($test) {
 $arguments = @()
 # Default properties
 $arguments += "/p:RepoRoot=$RepoRoot"
-$arguments += "/p:DotNetBuildFromVMR=true"
 $arguments += "/p:Configuration=$configuration"
 
 if ($projects) { $arguments += "/p:Projects=$projects" }

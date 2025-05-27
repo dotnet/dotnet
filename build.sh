@@ -242,7 +242,6 @@ fi
 
 # Default properties
 properties+=( "/p:RepoRoot=$repo_root" )
-properties+=( "/p:DotNetBuildFromVMR=true" )
 properties+=( "/p:Configuration=$configuration" )
 
 actions=( "/p:Restore=true" "/p:Build=true" "/p:Publish=true")
