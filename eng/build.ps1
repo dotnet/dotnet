@@ -112,12 +112,6 @@ try {
     exit 0
   }
 
-  if ($ci) {
-    if (-not $excludeCIBinarylog) {
-      $binaryLog = $true
-    }
-  }
-
   Build
 }
 catch {
