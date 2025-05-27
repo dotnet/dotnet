@@ -19,6 +19,9 @@ namespace NuGet.Versioning
             VersionRange? ideal,
             Func<T, NuGetVersion> selector) where T : class
         {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (selector == null) throw new ArgumentNullException(nameof(selector));
+
             if (ideal == null)
             {
                 return items.FirstOrDefault();
