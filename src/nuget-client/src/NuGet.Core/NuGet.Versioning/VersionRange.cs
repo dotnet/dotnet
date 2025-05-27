@@ -49,7 +49,11 @@ namespace NuGet.Versioning
         /// Clones a version range and applies a new float range.
         /// </summary>
         public VersionRange(VersionRange range, FloatRange floatRange)
-            : this(range.MinVersion, range.IsMinInclusive, range.MaxVersion, range.IsMaxInclusive, floatRange)
+            : this(range == null ? throw new ArgumentNullException(nameof(range)) : range.MinVersion,
+                  range.IsMinInclusive,
+                  range.MaxVersion,
+                  range.IsMaxInclusive,
+                  floatRange)
         {
         }
 

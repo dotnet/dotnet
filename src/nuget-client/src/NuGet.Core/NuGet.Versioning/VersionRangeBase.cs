@@ -23,7 +23,7 @@ namespace NuGet.Versioning
         /// <param name="includeMinVersion">True if minVersion satisfies the condition.</param>
         /// <param name="maxVersion">Upper bound of the version range.</param>
         /// <param name="includeMaxVersion">True if maxVersion satisfies the condition.</param>
-        public VersionRangeBase(
+        protected VersionRangeBase(
             NuGetVersion? minVersion = null,
             bool includeMinVersion = true,
             NuGetVersion? maxVersion = null,
@@ -130,6 +130,11 @@ namespace NuGet.Versioning
             if (version == null)
             {
                 throw new ArgumentNullException(nameof(version));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
             }
 
             // Determine if version is in the given range using the comparer.
@@ -260,15 +265,9 @@ namespace NuGet.Versioning
             }
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            if (target == null)
-            {
-                target = VersionRange.All;
-            }
+            target ??= VersionRange.All;
 
-            if (possibleSubSet == null)
-            {
-                possibleSubSet = VersionRange.All;
-            }
+            possibleSubSet ??= VersionRange.All;
 
             var result = true;
 
