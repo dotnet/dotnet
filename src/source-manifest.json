@@ -71,11 +71,11 @@
       "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
     },
     {
-      "packageVersion": "17.15.0-preview-25273-03",
-      "barId": 269419,
+      "packageVersion": "17.15.0-preview-25276-10",
+      "barId": 269601,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "4ad462496537cd497f9c43531acb21f44d58cd67"
+      "commitSha": "15d19b96cf826b99925c8e5fd75575f46c60dd4a"
     },
     {
       "packageVersion": "6.15.0-preview.1.60",
