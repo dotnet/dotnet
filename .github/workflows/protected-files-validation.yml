@@ -11,9 +11,11 @@ permissions:
   pull-requests: read
 
 jobs:
-  protected-files-validation:
+  setup:
     runs-on: ubuntu-22.04
-
+    outputs:
+      repo-path: ${{ steps.set-repo-path.outputs.repo-path }}
+    if: ${{ github.event.pull_request.title !~ '^(rebootstrap|re-bootstrap|release|\.NET Source-Build .* Updates)' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,8 +31,51 @@ jobs:
           . eng/common/tools.sh
           InitializeDotNetCli true
 
-      - name: Run protected files validation
+      - name: Set repo path
+        id: set-repo-path
+        run: echo "repo-path=$GITHUB_WORKSPACE" >> $GITHUB_OUTPUT
+
+  check-version-details:
+    runs-on: ubuntu-22.04
+    needs: setup
+    if: ${{ github.event.pull_request.title !~ '^(rebootstrap|re-bootstrap|release|\.NET Source-Build .* Updates)' }}
+    steps:
+      - name: Check for Version.Details.xml changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
         run: |
-          .dotnet/dotnet build eng/protected-files-validation.proj \
-            /p:PullRequestTargetBranch=origin/${{ github.event.pull_request.base.ref }} \
-            /p:PullRequestTitle="${{ github.event.pull_request.title }}"
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/Version.Details.xml$' >/dev/null; then
+            echo "Version.Details.xml has changed."
+            exit 1
+          else
+            echo "No changes in Version.Details.xml."
+          fi
+
+  check-versions-props:
+    runs-on: ubuntu-22.04
+    needs: setup
+    if: ${{ github.event.pull_request.title !~ '^(rebootstrap|re-bootstrap|release|\.NET Source-Build .* Updates)' }}
+    steps:
+      - name: Check for Versions.props changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
+        run: |
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/Versions.props$' >/dev/null; then
+            echo "Versions.props has changed."
+            exit 1
+          else
+            echo "No changes in Versions.props."
+          fi
+
+  check-eng-common:
+    runs-on: ubuntu-22.04
+    needs: setup
+    if: ${{ github.event.pull_request.title !~ '^(rebootstrap|re-bootstrap|release|\.NET Source-Build .* Updates)' }}
+    steps:
+      - name: Check for eng/common changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
+        run: |
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/common/' >/dev/null; then
+            echo "Changes detected in eng/common."
+            exit 1
+          else
+            echo "No changes in eng/common."
+          fi
