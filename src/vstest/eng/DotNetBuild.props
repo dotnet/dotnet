@@ -1,10 +1,13 @@
 <!-- When altering this file, please include @dotnet/product-construction as a reviewer. -->
-
 <Project>
 
+  <!-- TODO: Remove this file when vstest upgrades to Arcade 10 -->
   <PropertyGroup>
     <GitHubRepositoryName>vstest</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <ReportPrebuiltUsage Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(DotNetBuildOrchestrator)</ReportPrebuiltUsage>
+    <SetUpSourceBuildIntermediateNupkgCache>false</SetUpSourceBuildIntermediateNupkgCache>
+    <CreateIntermediatePackage>false</CreateIntermediatePackage>
   </PropertyGroup>
 
 </Project>
