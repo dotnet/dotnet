@@ -11,9 +11,9 @@ permissions:
   pull-requests: read
 
 jobs:
-  protected-files-validation:
+  check-version-details:
     runs-on: ubuntu-22.04
-
+    if: ${{ !startsWith(github.event.pull_request.title, 'rebootstrap') && !startsWith(github.event.pull_request.title, 're-bootstrap') && !startsWith(github.event.pull_request.title, 'release') && !startsWith(github.event.pull_request.title, '.NET Source-Build ') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,13 +24,58 @@ jobs:
         run: |
           git fetch origin ${{ github.event.pull_request.base.ref }}
 
-      - name: Set up .NET
+      - name: Check for Version.Details.xml changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
         run: |
-          . eng/common/tools.sh
-          InitializeDotNetCli true
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/Version.Details.xml$' >/dev/null; then
+            echo "Version.Details.xml has changed."
+            exit 1
+          else
+            echo "No changes in Version.Details.xml."
+          fi
 
-      - name: Run protected files validation
+  check-versions-props:
+    runs-on: ubuntu-22.04
+    if: ${{ !startsWith(github.event.pull_request.title, 'rebootstrap') && !startsWith(github.event.pull_request.title, 're-bootstrap') && !startsWith(github.event.pull_request.title, 'release') && !startsWith(github.event.pull_request.title, '.NET Source-Build ') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch from upstream
         run: |
-          .dotnet/dotnet build eng/protected-files-validation.proj \
-            /p:PullRequestTargetBranch=origin/${{ github.event.pull_request.base.ref }} \
-            /p:PullRequestTitle="${{ github.event.pull_request.title }}"
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Check for Versions.props changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
+        run: |
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/Versions.props$' >/dev/null; then
+            echo "Versions.props has changed."
+            exit 1
+          else
+            echo "No changes in Versions.props."
+          fi
+
+  check-eng-common:
+    runs-on: ubuntu-22.04
+    if: ${{ !startsWith(github.event.pull_request.title, 'rebootstrap') && !startsWith(github.event.pull_request.title, 're-bootstrap') && !startsWith(github.event.pull_request.title, 'release') && !startsWith(github.event.pull_request.title, '.NET Source-Build ') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch from upstream
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Check for eng/common changes
+        working-directory: ${{ needs.setup.outputs.repo-path }}
+        run: |
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep '^eng/common/' >/dev/null; then
+            echo "Changes detected in eng/common."
+            exit 1
+          else
+            echo "No changes in eng/common."
+          fi
