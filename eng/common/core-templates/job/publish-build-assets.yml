@@ -32,6 +32,9 @@ parameters:
   # Optional: 🌤️ or not the build has assets it wants to publish to BAR
   isAssetlessBuild: false
 
+  # Optional, publishing version
+  publishingVersion: 3
+
 jobs:
 - job: Asset_Registry_Publish
 
@@ -101,7 +104,19 @@ jobs:
           /p:OfficialBuildId=$(Build.BuildNumber)
       condition: ${{ parameters.condition }}
       continueOnError: ${{ parameters.continueOnError }}
-    
+
+    - ${{ if eq(parameters.publishingVersion, 4) }}:
+      - template: /eng/common/core-templates/steps/publish-build-artifacts.yml
+        parameters:
+          is1ESPipeline: ${{ parameters.is1ESPipeline }}
+          args:
+            pathToPublish: '$(Build.ArtifactStagingDirectory)/MergedManifest.xml'
+            publishLocation: Container
+            artifactName: AssetManifests
+            displayName: 'Publish Merged Manifest'
+            retryCountOnTaskFailure: 10 # for any logs being locked
+            sbomEnabled: false  # we don't need SBOM for logs
+
     - task: powershell@2
       displayName: Create ReleaseConfigs Artifact
       inputs:
