@@ -17,8 +17,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
 {
     public abstract class NuGetExternalSettingsProviderTests<TPage> where TPage : NuGetExternalSettingsProvider
     {
-        private VSSettings _vsSettings;
-        private const string MonikerDoesNotExist = "TESTING!doesNotExist";
+        protected VSSettings _vsSettings;
+        protected const string MonikerDoesNotExist = "TESTING!doesNotExist";
 
         protected abstract TPage CreateInstance(VSSettings? vsSettings);
 

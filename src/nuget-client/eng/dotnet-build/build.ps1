@@ -4,11 +4,12 @@ param (
   [string][Alias('c')]$configuration = "Release",
   [string][Alias('v')]$verbosity = "minimal",
   [switch]$ci,
-  [switch]$bl,
+  [switch][Alias('bl')]$binaryLog,
   [switch][Alias('pb')]$productBuild,
   [switch]$fromVMR,
-  [Parameter(ValueFromRemainingArguments = $true)]
-  [string[]]$AdditionalArgs
+  [bool]$warnAsError = $true,
+  [bool]$nodeReuse = $true,
+  [Parameter(ValueFromRemainingArguments = $true)][string[]]$properties
 )
 
 # This will exec a process using the console and return it's exit code.
@@ -47,38 +48,35 @@ function Exec-Process([string]$command, [string]$commandArgs) {
 
 $dotnet = Join-Path $env:DOTNET_PATH dotnet.exe
 $repoRoot = Resolve-Path "$PSScriptRoot/../../"
-$binLog = Join-Path $repoRoot "artifacts/log/$configuration/Build.binlog"
-$dotnetTool = "msbuild"
 $nugetPackagesRoot = Join-Path $repoRoot "artifacts/.packages/"
-$dotnetArguments = @()
 
 # Environment variables
 $env:NUGET_PACKAGES=$nugetPackagesRoot
 
 # MSBuild arguments
-# Add the dotnet tool...
-$dotnetArguments += $dotnetTool
-# Add the verbosity flag
-$dotnetArguments += "-v:$verbosity"
-# Then project file...
+$dotnetArguments = @()
 $dotnetArguments += "$PSScriptRoot/dotnet-build.proj"
-# Then remaining arguments.
+$dotnetArguments += "/p:RepoRoot=$repoRoot"
 $dotnetArguments += "/p:Configuration=$configuration"
 $dotnetArguments += "/p:DotNetBuild=$productBuild"
 $dotnetArguments += "/p:DotNetBuildFromVMR=$fromVMR"
-$dotnetArguments += "/p:RepoRoot=$repoRoot"
-if ($bl){
-    $dotnetArguments += "/bl:${binLog}"
-}
+
+$bl = if ($binaryLog) { "/bl:" + (Join-Path $repoRoot "artifacts/log/$configuration/Build.binlog") } else { '' }
 if ($ci) {
-    $dotnetArguments += "/p:ContinuousIntegrationBuild=true"
+    $nodeReuse = $false
 }
 
-# Then any pass-through arguments.
-$dotnetArguments += $AdditionalArgs
+$cmdArgs = "$dotnet msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
+
+if ($warnAsError) {
+    $cmdArgs += ' /warnaserror /p:TreatWarningsAsErrors=true'
+}
+else {
+    $cmdArgs += ' /p:TreatWarningsAsErrors=false'
+}
 
 try {
-    $exitCode = Exec-Process $dotnet "$dotnetArguments"
+    $exitCode = Exec-Process $cmdArgs $bl "$dotnetArguments" "$properties"
     if ($exitCode -ne 0) {
         exit $exitCode
     }
