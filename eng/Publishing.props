@@ -74,6 +74,8 @@
       <Artifact Include="@(PackageToPublish);@(ReferencePackage)" />
       <Artifact Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')">
         <Kind>Blob</Kind>
+        <IsShipping Condition="'%(ProducedAsset.NonShipping)' != 'true'">true</IsShipping>
+        <IsShipping Condition="'%(ProducedAsset.NonShipping)' == 'true'">false</IsShipping>
         <RelativeBlobPath>%(ProducedAsset.Identity)</RelativeBlobPath>
         <ManifestArtifactData Condition="'%(ProducedAsset.DotNetReleaseShipping)' != ''">DotNetReleaseShipping=%(ProducedAsset.DotNetReleaseShipping)</ManifestArtifactData>
       </Artifact>
