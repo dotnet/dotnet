@@ -13,7 +13,6 @@
 #
 
 # False positive
-src/arcade/Documentation/UnifiedBuild/VMR-Permissible-Sources.md|free-unknown
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/bundle/bundle.wxs|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.XUnitAssert/src/README.md|free-unknown
 
@@ -245,7 +244,6 @@ src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Resourc
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|ecl-2.0
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|bsd-2-clause-views
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|mpl-2.0
-src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Themes/*.xaml|bsd-2-clause-views
 src/wpf/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/IO/Packaging/CompoundFile/RightsManagementEncryptionTransform.cs|proprietary-license
 
 # Test data
