@@ -41,14 +41,14 @@
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.25269.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>10.0.0-alpha.1.25269.2</runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportVersion>
     <!-- llvm-project -->
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25263.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>19.1.0-alpha.1.25269.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
     <!-- emscripten -->
     <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>10.0.0-alpha.1.25268.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
   </PropertyGroup>
@@ -57,11 +57,11 @@
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksPackagingVersion>10.0.0-beta.25272.109</MicrosoftDotNetBuildTasksPackagingVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.25272.109</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.25272.109</MicrosoftDotNetBuildTasksInstallersVersion>
-    <MicrosoftDotNetBuildTasksWorkloadsVersion>10.0.0-beta.25272.109</MicrosoftDotNetBuildTasksWorkloadsVersion>
-    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25272.109</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetBuildTasksPackagingVersion>10.0.0-beta.25274.104</MicrosoftDotNetBuildTasksPackagingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>10.0.0-beta.25274.104</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>10.0.0-beta.25274.104</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksWorkloadsVersion>10.0.0-beta.25274.104</MicrosoftDotNetBuildTasksWorkloadsVersion>
+    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25274.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
