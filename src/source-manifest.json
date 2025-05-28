@@ -107,10 +107,10 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 269345,
+      "barId": 269708,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "f0b32c11078d9b296fd103aeecd826cd593ec0bc"
+      "commitSha": "dc8fe75845074aa8d50615ebe4d3efdfeedc2950"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
