@@ -582,7 +582,7 @@ export DOTNETSDK_ALLOW_TARGETING_PACK_CACHING=0
 # In *proj files (XML docs), URL-encoded string are rendered in their decoded form.
 cmakeargs="${cmakeargs// /%20}"
 arguments+=("/p:TargetArchitecture=$arch" "/p:BuildArchitecture=$hostArch")
-arguments+=("/p:CMakeArgs=\"$cmakeargs\"" "${extraargs[@]}")
+arguments+=("/p:CMakeArgs=\"$cmakeargs\"" ${extraargs[@]+"${extraargs[@]}"})
 
 if [[ "$bootstrap" == "1" ]]; then
   # Strip build actions other than -restore and -build from the arguments for the bootstrap build.
@@ -598,7 +598,7 @@ if [[ "$bootstrap" == "1" ]]; then
       bootstrapArguments+=("$argument")
     fi
   done
-  "$scriptroot/common/build.sh" "${bootstrapArguments[@]}" /p:Subset=bootstrap -bl:$scriptroot/../artifacts/log/bootstrap.binlog
+  "$scriptroot/common/build.sh" ${bootstrapArguments[@]+"${bootstrapArguments[@]}"} /p:Subset=bootstrap -bl:$scriptroot/../artifacts/log/bootstrap.binlog
 
   # Remove artifacts from the bootstrap build so the product build is a "clean" build.
   echo "Cleaning up artifacts from bootstrap build..."
@@ -608,4 +608,4 @@ if [[ "$bootstrap" == "1" ]]; then
   arguments+=("/p:UseBootstrap=true")
 fi
 
-"$scriptroot/common/build.sh" "${arguments[@]}"
+"$scriptroot/common/build.sh" ${arguments[@]+"${arguments[@]}"}

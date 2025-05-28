@@ -188,7 +188,8 @@ public abstract class BuildComparer
                 if (baseDirectory.EndsWith("scenario-tests")
                     || baseDirectory.EndsWith("source-build-externals")
                     || baseDirectory.EndsWith("source-build-reference-packages")
-                    || baseDirectory.EndsWith("runtime"))
+                    || baseDirectory.EndsWith("runtime")
+                    || baseDirectory.EndsWith("sdk"))
                 {
                     continue;
                 }
