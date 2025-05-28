@@ -14,7 +14,7 @@ permissions:
 jobs:
   check-protect-files:
     runs-on: ubuntu-22.04
-    if: ${{ !startsWith(github.event.pull_request.title, 'rebootstrap') && !startsWith(github.event.pull_request.title, 're-bootstrap') && !startsWith(github.event.pull_request.title, 'release') && !startsWith(github.event.pull_request.title, '.NET Source-Build ') }}
+    if: ${{ github.event.pull_request.user.login != 'dotnet-sb-bot' && github.event.pull_request.user.login != 'dotnet-maestro' }}
     steps:
       - name: Protected File has Changes
         run: |
