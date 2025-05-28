@@ -141,11 +141,11 @@
       "commitSha": "535899fc5acaacbb54b5e49014d157cf8ac995d4"
     },
     {
-      "packageVersion": "10.0.0-beta.25272.1",
-      "barId": 269366,
+      "packageVersion": "10.0.0-beta.25277.2",
+      "barId": 269734,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "3ef121ba5d8c5ac89f34b1cfe257140dcf10e61d"
+      "commitSha": "fa3ad19fe7f6d6565dba740ea152057d96bad5d5"
     },
     {
       "packageVersion": "2.2.0-beta.25262.1",
