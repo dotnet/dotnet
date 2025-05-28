@@ -13,11 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
-    <!--
-      Installer tests require scenario-tests artifacts. Microsoft.DotNet.UnifiedBuild.Tasks project needs to be built
-      before scenario-tests project. Separate traversal project is needed so projects can be built in specific order.
-    -->
-    <ProjectReference Include="installer-tests-prereqs.proj" />
+    <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" AdditionalProperties="SkipScenarioTestsDependencies=true" />
   </ItemGroup>
 
   <Target Name="SetRuntimeConfigOptions"
