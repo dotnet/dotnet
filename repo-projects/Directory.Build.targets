@@ -57,29 +57,20 @@
 
   <!-- Use the P2P protocol for RepositoryReference items. -->
   <ItemGroup>
-    <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" IsRepositoryReference="true" BuildReference="false" />
+    <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" IsRepositoryReference="true" BuildReference="false" ReferenceOutputAssembly="true" />
   </ItemGroup>
 
   <!-- Returns the repository references of this project and all the projects this project references, recursively -->
-  <Target Name="GetTransitiveRepositoryReferences" Returns="@(TransitiveRepositoryReference)">
+  <Target Name="GetTransitiveRepositoryReferences" Returns="@(TransitiveRepositoryReference)" DependsOnTargets="IncludeTransitiveProjectReferences">
     <ItemGroup>
-      <_TransitiveRepositoryReference Include="@(RepositoryReference)" />
-    </ItemGroup>
+      <_projectReferenceWithName Include="@(ProjectReference->Metadata('Filename'))" />
+      <_repositoryReference Include="$(MSBuildThisFileDirectory)*.proj" />
+      <_repositoryReferenceWithName Include="@(_repositoryReference->Metadata('Filename'))" />
 
-    <MSBuild Projects="@(RepositoryReference->'%(Identity).proj')"
-             Targets="GetTransitiveRepositoryReferences"
-             BuildInParallel="true">
-      <Output TaskParameter="TargetOutputs" ItemName="_DependencyTransitiveRepositoryReference" />
-    </MSBuild>
+      <_repositoryReferenceWithNameExcluded Include="@(_repositoryReferenceWithName)" Exclude="@(_projectReferenceWithName)" />
+      <_repositoryReferenceWithNameIncluded Include="@(_repositoryReferenceWithName)" Exclude="@(_repositoryReferenceWithNameExcluded)" />
 
-    <!-- When items are transferred between projects, they get metadata indicating their source (e.g. MSBuildSourceProjectFile).
-         This is problematic because it causes introduces distinctness on the items. For example, an arcade RepositoryReference
-         that comes from both msbuild and source-build-externals will be treated as two separate items. But we only want one arcade
-         reference. To prevent this from happening, we need to remove the extra metadata so the two references can be seen as duplicates. -->
-    <ItemGroup>
-      <_TransitiveRepositoryReference Include="@(_DependencyTransitiveRepositoryReference)"
-                                      RemoveMetadata="MSBuildSourceProjectFile;MSBuildSourceTargetName;OriginalItemSpec;DotNetBuildPass" />
-      <TransitiveRepositoryReference Include="@(_TransitiveRepositoryReference)" KeepDuplicates="false" />
+      <TransitiveRepositoryReference Include="@(_repositoryReferenceWithNameIncluded)" />
     </ItemGroup>
   </Target>
 
