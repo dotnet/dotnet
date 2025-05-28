@@ -14,9 +14,7 @@ using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
-using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
@@ -125,68 +123,6 @@ namespace Dotnet.Integration.Test
             File.Move(
                 Path.Combine(workingDirectory, "template.csproj"),
                 Path.Combine(workingDirectory, projectName + ".csproj"));
-        }
-
-        internal void CreateDotnetToolProject(string solutionRoot, string projectName, string targetFramework, string rid, string packageSources = null, IList<PackageIdentity> packages = null, int timeOut = 60000)
-        {
-            var workingDirectory = Path.Combine(solutionRoot, projectName);
-            if (!Directory.Exists(workingDirectory))
-            {
-                Directory.CreateDirectory(workingDirectory);
-            }
-
-            var projectFileName = Path.Combine(workingDirectory, projectName + ".csproj");
-
-            packageSources ??= string.Empty;
-            var restorePackagesPath = Path.Combine(workingDirectory, "tools", "packages");
-            var restoreSolutionDirectory = workingDirectory;
-            var msbuildProjectExtensionsPath = Path.Combine(workingDirectory);
-            var packageReferences = string.Empty;
-
-            if (packages != null)
-            {
-                packageReferences = string.Join(Environment.NewLine, packages.Select(p => $@"        <PackageReference Include='{p.Id}' Version='{p.Version}'/>"));
-            }
-
-            var projectFile = $@"<Project>
-    <PropertyGroup>
-        <!-- Things that do change and before common props -->
-        <MSBuildProjectExtensionsPath>{msbuildProjectExtensionsPath}</MSBuildProjectExtensionsPath>
-    </PropertyGroup>
-    <!-- Import it via Sdk attribute for local testing -->
-    <Import Sdk='Microsoft.NET.Sdk' Project='Sdk.props'/>
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <RuntimeIdentifier>{rid}</RuntimeIdentifier>
-        <TargetFramework>{targetFramework}</TargetFramework>
-        <RestoreProjectStyle>DotnetToolReference</RestoreProjectStyle>
-        <!-- Things that do change -->
-        <RestoreSources>{packageSources}</RestoreSources>
-        <RestorePackagesPath>{restorePackagesPath}</RestorePackagesPath>
-        <RestoreSolutionDirectory>{restoreSolutionDirectory}</RestoreSolutionDirectory>
-        <!--Things that don't change -->
-        <RestoreAdditionalProjectSources/>
-        <RestoreAdditionalProjectFallbackFolders/>
-        <RestoreAdditionalProjectFallbackFoldersExcludes/>
-        <RestoreFallbackFolders>clear</RestoreFallbackFolders>
-        <CheckEolTargetFramework>false</CheckEolTargetFramework>
-        <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    </PropertyGroup>
-    <ItemGroup>
-{packageReferences}
-    </ItemGroup>
-    <Import Sdk='Microsoft.NET.Sdk' Project='Sdk.targets'/>
-</Project>";
-
-            try
-            {
-                File.WriteAllText(projectFileName, projectFile);
-            }
-            catch
-            {
-                // ignore
-            }
-            Assert.True(File.Exists(projectFileName));
         }
 
         internal CommandRunnerResult RestoreToolProjectExpectFailure(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)

@@ -24,7 +24,11 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="version">Version to clone.</param>
         public SemanticVersion(SemanticVersion version)
-            : this(version.Major, version.Minor, version.Patch, version.ReleaseLabels, version.Metadata)
+            : this(version == null ? throw new ArgumentNullException(nameof(version)) : version.Major,
+                  version.Minor,
+                  version.Patch,
+                  version.ReleaseLabels,
+                  version.Metadata)
         {
         }
 
