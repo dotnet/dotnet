@@ -20,14 +20,6 @@
   </PropertyGroup>
 
   <!--
-    Prevent NuGet from using cached packages
-    Workaround for https://github.com/NuGet/Home/issues/3116
-  -->
-  <PropertyGroup>
-    <RestoreNoHttpCache Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreNoHttpCache>
-  </PropertyGroup>
-
-  <!--
     Arcade SDK features.
   -->
   <PropertyGroup>

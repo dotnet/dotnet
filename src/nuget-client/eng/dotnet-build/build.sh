@@ -5,13 +5,18 @@ git config --global protocol.file.allow always
 
 source="${BASH_SOURCE[0]}"
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
+
 args=()
+
 configuration='Release'
 verbosity='minimal'
 source_build=false
 product_build=false
 from_vmr=false
-properties=()
+ci=false
+warn_as_error=true
+node_reuse=true
+binary_log=false
 
 # resolve $SOURCE until the file is no longer a symlink
 while [[ -h $source ]]; do
@@ -27,35 +32,45 @@ repo_root=`cd -P "$scriptroot/../.." && pwd`
 repo_root="${repo_root}/"
 
 while [[ $# > 0 ]]; do
-    lowerI="$(echo $1 | awk '{print tolower($0)}')"
-    case $lowerI in
-        --verbosity|-v)
-            verbosity=$2
-            shift
-            ;;
-        --configuration|-c)
-            configuration=$2
-            shift
-            ;;
-        --source-build|--sourcebuild|-sb)
-            source_build=true
-            product_build=true
-            ;;
-        --product-build|--productbuild|-pb)
-            product_build=true
-            ;;
-        --from-vmr|--fromvmr)
-            from_vmr=true
-            shift
-            ;;
-        -*)
-            # just eat this so we don't try to pass it along to MSBuild
-            export DOTNET_CORESDK_NOPRETTYPRINT=1
-            ;;
-        *)
-            args+=("$1")
-            ;;
+  lowerI="$(echo $1 | awk '{print tolower($0)}')"
+  case $lowerI in
+    --verbosity|-v)
+      verbosity=$2
+      shift
+      ;;
+    --binarylog|-bl)
+      binary_log=true
+      ;;
+    --ci)
+      ci=true
+      ;;
+    --configuration|-c)
+      configuration=$2
+      shift
+      ;;
+    --source-build|--sourcebuild|-sb)
+      source_build=true
+      product_build=true
+      ;;
+    --product-build|--productbuild|-pb)
+      product_build=true
+      ;;
+    --from-vmr|--fromvmr)
+      from_vmr=true
+      ;;
+    --warnaserror)
+      warn_as_error=$2
+      shift
+      ;;
+    --nodereuse)
+      node_reuse=$2
+      shift
+      ;;
+    *)
+      args+=("$1")
+      ;;
     esac
+
     shift
 done
 
@@ -95,14 +110,32 @@ else
 fi
 
 ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
+
+# Environment variables
 export ARCADE_VERSION=$_ReadGlobalVersion
 export NUGET_PACKAGES=${repo_root}artifacts/.packages/
 
-properties+=("/p:DotNetBuild=$product_build")
-properties+=("/p:DotNetBuildSourceOnly=$source_build")
-properties+=("/p:DotNetBuildFromVMR=$from_vmr")
+# MSBuild arguments
+dotnetArguments=()
+dotnetArguments+=("$scriptroot/dotnet-build.proj")
+dotnetArguments+=("/p:RepoRoot=$repo_root")
+dotnetArguments+=("/p:Configuration=$configuration")
+dotnetArguments+=("/p:DotNetBuild=$product_build")
+dotnetArguments+=("/p:DotNetBuildSourceOnly=$source_build")
+dotnetArguments+=("/p:DotNetBuildFromVMR=$from_vmr")
 
-properties+=("/p:Configuration=$configuration")
-properties+=("/p:RepoRoot=$repo_root")
+local bl=""
+if [[ "$binary_log" == true ]]; then
+  bl="/bl:\"${repo_root}artifacts/log/${configuration}/Build.binlog\""
+fi
 
-"$DOTNET" msbuild -v:$verbosity "$scriptroot/dotnet-build.proj" "/bl:${repo_root}artifacts/log/${configuration}/Build.binlog" "${properties[@]}" "${args[@]}"
+if [[ "$ci" == true ]]; then
+  node_reuse=false
+fi
+
+local warnaserror_switch=""
+if [[ $warn_as_error == true ]]; then
+  warnaserror_switch="/warnaserror"
+fi
+
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
