@@ -23,21 +23,8 @@ ILCompiler.Build.Tasks.dll;; IGNORE-STRONG-NAME, https://github.com/dotnet/sourc
 *.mibc;; IGNORE-STRONG-NAME, .mibc files are not strong-named
 
 ;; ## MACH-O ##
-clang-19;;
 *.dwarf;; Debugging symbols, https://github.com/dotnet/source-build/issues/4994#issuecomment-2768803544
-ilasm;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-ilc;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-ildasm;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
 libbootstrapper*.o;; Not executables, https://github.com/dotnet/runtime/issues/114701#issuecomment-2807546040
-llc;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-llvm-*;;
-Mono;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-mono-aot-cross;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-node;;
-opt;; Signing with hardening for a few mac binaries appears to cause failures, https://github.com/dotnet/runtime/issues/116019
-python3*;;
-wasm2js;;
-wasm-*;;
 
 ;; ## ESRP Signing Issues ##
 *.exe;*.whl;The .whl files are not supported by ESRP, https://github.com/dotnet/emsdk/commit/3ac196ac425223d11490e759c2641256ce746f21
