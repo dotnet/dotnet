@@ -180,17 +180,18 @@ namespace Test.Utility
                 packageIdentities.Select(e =>
                     new KeyValuePair<PackageIdentity, bool>(
                         e,
-                        true)).ToArray());
+                        true)).ToArray(),
+                new HashSet<PackageIdentity>());
         }
 
-        public MockResponse BuildRegistrationIndexResponse(string serverUri, KeyValuePair<PackageIdentity, bool>[] packageIdentityToListed)
+        public MockResponse BuildRegistrationIndexResponse(string serverUri, KeyValuePair<PackageIdentity, bool>[] packageIdentityToListed, ISet<PackageIdentity> deprecatedPackages)
         {
             var id = packageIdentityToListed[0].Key.Id.ToLowerInvariant();
             var versions = packageIdentityToListed.Select(
                 e => new KeyValuePair<string, bool>(
                     e.Key.Version.ToNormalizedString().ToLowerInvariant(),
                     e.Value));
-            var registrationIndex = FeedUtilities.CreatePackageRegistrationBlob(serverUri, id, versions);
+            var registrationIndex = FeedUtilities.CreatePackageRegistrationBlob(serverUri, id, versions, deprecatedPackages);
 
             return new MockResponse
             {

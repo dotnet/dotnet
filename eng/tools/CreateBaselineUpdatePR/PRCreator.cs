@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace CreateBaselineUpdatePR;
@@ -14,7 +14,6 @@ public class PRCreator
     private readonly string _repoOwner;
     private readonly string _repoName;
     private readonly GitHubClient _client;
-    private readonly MiscellaneousRateLimit _rateLimitInfo;
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
@@ -27,10 +26,9 @@ public class PRCreator
         _client.Credentials = authToken;
         _repoOwner = repo.Split('/')[0];
         _repoName = repo.Split('/')[1];
-        _rateLimitInfo = _client.RateLimit.GetRateLimits().Result;
     }
 
-    public async Task<int> ExecuteAsync(
+    public async Task ExecuteAsync(
         string originalFilesDirectory,
         string updatedFilesDirectory,
         int buildId,
@@ -54,8 +52,6 @@ public class PRCreator
         var parentTreeResponse = await CreateParentTreeAsync(testResultsTreeResponse, originalTreeResponse, originalFilesDirectory);
 
         await CreateOrUpdatePullRequestAsync(parentTreeResponse, buildId, title, targetBranch);
-
-        return Log.GetExitCode();
     }
 
     private async Task<List<NewTreeItem>> FetchOriginalTreeItemsAsync(
@@ -273,7 +269,7 @@ public class PRCreator
                 // These items are in the current directory, so add them to the new tree items
                 foreach (var item in group)
                 {
-                    if(item.Type != TreeType.Tree)
+                    if (item.Type != TreeType.Tree)
                     {
                         newTreeItems.Add(new NewTreeItem
                         {
@@ -377,9 +373,7 @@ public class PRCreator
         {
             Base = targetBranch
         };
-        var existingPullRequest = await ApiRequestWithRetries(
-            () => _client.PullRequest.GetAllForRepository(_repoOwner, _repoName, request),
-            _rateLimitInfo.Resources.Search);
+        var existingPullRequest = await ApiRequestWithRetries(() => _client.PullRequest.GetAllForRepository(_repoOwner, _repoName, request));
         return existingPullRequest.FirstOrDefault(pr => pr.Title == title);
     }
 
@@ -445,20 +439,8 @@ public class PRCreator
         await ApiRequestWithRetries(() => _client.Git.Reference.Create(_repoOwner, _repoName, newReference));
     }
 
-    private async Task<T> ApiRequestWithRetries<T>(Func<Task<T>> action, RateLimit? rateLimit = null)
+    private async Task<T> ApiRequestWithRetries<T>(Func<Task<T>> action)
     {
-        int rateLimitAmount;
-        if (rateLimit == null)
-        {
-            // Assume core
-            rateLimitAmount = _rateLimitInfo.Resources.Core.Limit;
-        }
-        else
-        {
-            rateLimitAmount = rateLimit.Limit;
-        }
-        rateLimitAmount = (int)(Math.Max(rateLimitAmount, 1) * 0.8); // Ensure it's at least 1 and reduce by 20%
-
         int attempt = 0;
         int delayMilliseconds = 1000;
         while (true)
@@ -482,11 +464,6 @@ public class PRCreator
                 attempt++;
                 Log.LogWarning($"Attempt {attempt} failed: {ex.Message}. Retrying in {delayMilliseconds}ms...");
                 await Task.Delay(delayMilliseconds * attempt); // Exponential backoff
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"An error occurred: {ex.Message}");
-                throw;
             }
         }
     }

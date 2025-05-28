@@ -114,7 +114,7 @@ namespace NuGet.ProjectModel
 
             var projectStyle = packageSpec?.RestoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
 
-            // Read references from external project - we don't care about dotnettool projects, since they don't have project refs
+            // Read references from external project
             if (projectStyle == ProjectStyle.PackageReference)
             {
                 // NETCore

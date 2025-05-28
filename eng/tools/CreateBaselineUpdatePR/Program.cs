@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -62,8 +62,6 @@ public class Program
         Recursive = true
     };
 
-    public static int ExitCode = 0;
-
     public static async Task<int> Main(string[] args)
     {
         var sdkDiffTestsCommand = CreateCommand("sdk", "Creates a PR that updates baselines and exclusion files published by the sdk diff tests.");
@@ -81,7 +79,7 @@ public class Program
 
         await rootCommand.Parse(args).InvokeAsync();
 
-        return ExitCode;
+        return Log.GetExitCode();
     }
 
     private static Command CreateCommand(string name, string description)
@@ -104,15 +102,22 @@ public class Program
         {
             Log.Level = result.GetValue(Level);
 
-            var creator = new PRCreator(result.GetValue(Repo)!, result.GetValue(GitHubToken)!);
+            try
+            {
+                var creator = new PRCreator(result.GetValue(Repo)!, result.GetValue(GitHubToken)!);
 
-            ExitCode = await creator.ExecuteAsync(
-                result.GetValue(OriginalFilesDirectory)!,
-                result.GetValue(UpdatedFilesDirectory)!,
-                result.GetValue(BuildId)!,
-                result.GetValue(Title)!,
-                result.GetValue(Branch)!,
-                pipeline);
+                await creator.ExecuteAsync(
+                    result.GetValue(OriginalFilesDirectory)!,
+                    result.GetValue(UpdatedFilesDirectory)!,
+                    result.GetValue(BuildId)!,
+                    result.GetValue(Title)!,
+                    result.GetValue(Branch)!,
+                    pipeline);
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+            }
         });
     }
 }
