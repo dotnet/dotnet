@@ -528,5 +528,5 @@
     "issueType": "MissingShipping",
     "idMatch": ".*dotnet-suggest.*",
     "justification": "command-line-api is not built from the VMR"
-  },
+  }
 ]
