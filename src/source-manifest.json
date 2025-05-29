@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25276.4",
-      "barId": 269600,
+      "packageVersion": "10.0.0-preview.6.25277.5",
+      "barId": 269725,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c912eee74669a3673b3150e0f4c2976f4f6de302"
+      "commitSha": "e849f2052624e7fe981c1ab158414014d2339b23"
     },
     {
       "packageVersion": "0.11.5-alpha.25266.1",
@@ -57,11 +57,11 @@
       "commitSha": "7caf11e0d08a61a931dd046900a10ec96a59cfc8"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25276.3",
-      "barId": 269598,
+      "packageVersion": "10.0.0-preview.6.25277.1",
+      "barId": 269650,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "544e53e7509e9f641949b464bed91aa80280f9a8"
+      "commitSha": "80d3bcc1ac4785e6c5e348a9caf6125873ecb30d"
     },
     {
       "packageVersion": "10.0.100-beta.25270.2",
@@ -71,11 +71,11 @@
       "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
     },
     {
-      "packageVersion": "17.15.0-preview-25276-10",
-      "barId": 269601,
+      "packageVersion": "17.15.0-preview-25277-08",
+      "barId": 269692,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "15d19b96cf826b99925c8e5fd75575f46c60dd4a"
+      "commitSha": "3c72a46efb237364e23601459fff7879c42d1aa0"
     },
     {
       "packageVersion": "6.15.0-preview.1.65",
@@ -92,11 +92,11 @@
       "commitSha": "955c6f1d293ecf56ae29c42e4d7fd35aaa7d2d52"
     },
     {
-      "packageVersion": "5.0.0-1.25272.4",
-      "barId": 269369,
+      "packageVersion": "5.0.0-1.25277.7",
+      "barId": 269736,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "533fde8c7c7b194b1a6e04f87c5ad8090cbafec6"
+      "commitSha": "4381944dc18c7def52ee2b690e8ccc4b12fe9ea9"
     },
     {
       "packageVersion": "10.0.0-preview.25276.1",
