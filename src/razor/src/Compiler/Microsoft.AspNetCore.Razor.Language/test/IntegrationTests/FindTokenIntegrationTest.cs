@@ -20,6 +20,6 @@ public class FindTokenIntegrationTest() : IntegrationTestBase(layer: TestProject
 
         var root = codeDocument.GetSyntaxTree().Root;
         var token = root.FindToken(27);
-        AssertEx.Equal("Identifier;[<Missing>];", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("Identifier;[<Missing>];", TestSyntaxSerializer.Serialize(token).Trim());
     }
 }
