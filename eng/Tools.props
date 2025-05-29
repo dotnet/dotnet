@@ -3,7 +3,10 @@
 
   <!-- Override RestoreSources in Source-Build builds so the Arcade SDK restores its packages from offline sources. -->
 
-  <PropertyGroup>
-    <RestoreSources Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsTestRun)' != 'true'">$(PrebuiltPackagesPath);$(PreviouslySourceBuiltPackagesPath)</RestoreSources>
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- Don't run NuGetAudit on SB offline builds. -->
+    <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
+    <!-- Needed to restore packages referenced by Tools.proj from PSB. -->
+    <RestoreSources Condition="'$(IsTestRun)' != 'true'">$(PrebuiltPackagesPath);$(PreviouslySourceBuiltPackagesPath)</RestoreSources>
   </PropertyGroup>
 </Project>
