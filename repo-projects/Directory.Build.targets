@@ -55,6 +55,11 @@
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
+  <!-- Use the P2P protocol for RepositoryReference items. -->
+  <ItemGroup>
+    <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" IsRepositoryReference="true" BuildReference="false" />
+  </ItemGroup>
+
   <!-- Returns the repository references of this project and all the projects this project references, recursively -->
   <Target Name="GetTransitiveRepositoryReferences" Returns="@(TransitiveRepositoryReference)">
     <ItemGroup>
@@ -122,7 +127,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.RemoveInternetSourcesFromNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateNuGetConfigPackageSourcesMappings" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateNuGetConfig"
-          DependsOnTargets="CopyNuGetConfig;GetRepositoryReferenceInfo"
+          DependsOnTargets="ResolveProjectReferences;CopyNuGetConfig;GetRepositoryReferenceInfo"
           Condition="'$(NuGetConfigFile)' != ''"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
@@ -242,6 +247,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateJson" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
           Condition="'$(GlobalJsonFile)' != ''"
+          DependsOnTargets="ResolveProjectReferences"
           Inputs="$(MSBuildProjectFullPath);$(MSBuildThisFileFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
@@ -282,7 +288,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateBuildInputProps"
-          DependsOnTargets="GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses"
+          DependsOnTargets="ResolveProjectReferences;GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete">
 
@@ -450,7 +456,9 @@
   </Target>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.ReadRepoInfoFromSourceManifest" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="SetRepoOriginalSourceRevisionId" Condition="'$(IsUtilityProject)' != 'true'">
+  <Target Name="SetRepoOriginalSourceRevisionId"
+          DependsOnTargets="ResolveProjectReferences"
+          Condition="'$(IsUtilityProject)' != 'true'">
     <ReadRepoInfoFromSourceManifest SourceManifest="$(SrcDir)source-manifest.json"
                                     RepositoryName="$(RepositoryName)">
       <Output TaskParameter="RepoInfo" ItemName="RepoInfo" />
@@ -556,7 +564,9 @@
     </Touch>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GetProducedPackagesFromDependentVerticals"
+          DependsOnTargets="ResolveProjectReferences"
           Condition="'$(IsUtilityProject)' != 'true'"
           Returns="@(ProducedPackageFromDependentVertical)">
     <!-- Add manifests from dependent verticals. -->
@@ -574,8 +584,9 @@
     </ItemGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GetProducedPackages"
-          DependsOnTargets="GetProducedPackagesFromDependentVerticals"
+          DependsOnTargets="ResolveProjectReferences;GetProducedPackagesFromDependentVerticals"
           Condition="'$(IsUtilityProject)' != 'true'"
           Returns="@(ProducedPackage);@(ProducedPackageFromDependentVertical)">
     <ItemGroup>
@@ -792,8 +803,9 @@
   <Target Name="ExtractToolPackage"
           DependsOnTargets="DiscoverToolPackageVersions;ExtractToolPackageCore" />
 
-  <Target Name="Build"
+  <Target Name="AfterBuild"
           DependsOnTargets="
+    ResolveProjectReferences;
     BuildRepoReferences;
     SetBuildProperties;
     RepoBuild;
