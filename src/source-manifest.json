@@ -57,11 +57,11 @@
       "commitSha": "7caf11e0d08a61a931dd046900a10ec96a59cfc8"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25276.3",
-      "barId": 269598,
+      "packageVersion": "10.0.0-preview.6.25277.1",
+      "barId": 269650,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "544e53e7509e9f641949b464bed91aa80280f9a8"
+      "commitSha": "80d3bcc1ac4785e6c5e348a9caf6125873ecb30d"
     },
     {
       "packageVersion": "10.0.100-beta.25270.2",
@@ -92,11 +92,11 @@
       "commitSha": "955c6f1d293ecf56ae29c42e4d7fd35aaa7d2d52"
     },
     {
-      "packageVersion": "5.0.0-1.25272.4",
-      "barId": 269369,
+      "packageVersion": "5.0.0-1.25277.7",
+      "barId": 269736,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "533fde8c7c7b194b1a6e04f87c5ad8090cbafec6"
+      "commitSha": "4381944dc18c7def52ee2b690e8ccc4b12fe9ea9"
     },
     {
       "packageVersion": "10.0.0-preview.25276.1",
