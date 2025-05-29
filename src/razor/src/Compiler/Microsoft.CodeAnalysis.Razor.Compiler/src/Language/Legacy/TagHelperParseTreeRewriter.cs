@@ -36,10 +36,7 @@ internal static class TagHelperParseTreeRewriter
 
         foreach (var descriptor in binder.Descriptors)
         {
-            foreach (var diagnostic in descriptor.GetAllDiagnostics())
-            {
-                builder.Add(diagnostic);
-            }
+            descriptor.AppendAllDiagnostics(ref builder.AsRef());
         }
 
         var diagnostics = builder.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
@@ -162,7 +159,7 @@ internal static class TagHelperParseTreeRewriter
             var body = VisitList(node.Body);
 
             // Visit end tag.
-            var endTag = (MarkupEndTagSyntax)Visit(node.EndTag);
+            var endTag = (MarkupEndTagSyntax?)Visit(node.EndTag);
             if (endTag != null)
             {
                 var tagName = endTag.GetTagNameWithOptionalBang();
