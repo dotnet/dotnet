@@ -10,6 +10,6 @@
 # Exclude the src folder which is team specific
 /src/
 
-# Exclude forward flow file changes to common files to reduce noise.
+# Explicitly exclude source-manifest.json which gets updated with every
+# forward flow PR.
 /src/source-manifest.json
-/prereqs/git-info/
