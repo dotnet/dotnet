@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-reference-packages" Sha="a4d6fdc935d5da12efb00a0b3b693ff1439e0b41" BarId="269082" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-reference-packages" Sha="f5705c8f4c5079bba77bae8698ba1583bde0388c" BarId="269610" />
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25270.108">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25276.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>a4d6fdc935d5da12efb00a0b3b693ff1439e0b41</Sha>
+      <Sha>f5705c8f4c5079bba77bae8698ba1583bde0388c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="10.0.100-preview.5.25270.108">
+    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="10.0.100-preview.6.25276.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>a4d6fdc935d5da12efb00a0b3b693ff1439e0b41</Sha>
+      <Sha>f5705c8f4c5079bba77bae8698ba1583bde0388c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">
       <Uri>https://github.com/dotnet/runtime</Uri>
