@@ -13,7 +13,6 @@
 #
 
 # False positive
-src/arcade/Documentation/UnifiedBuild/VMR-Permissible-Sources.md|free-unknown
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/bundle/bundle.wxs|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.XUnitAssert/src/README.md|free-unknown
 
@@ -145,6 +144,8 @@ src/runtime/src/installer/pkg/LICENSE-MSFT.TXT
 
 # False positive
 src/runtime/src/libraries/System.ComponentModel.TypeConverter/src/System/ComponentModel/LicFileLicenseProvider.cs|proprietary-license
+src/runtime/src/libraries/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Metrics/Base2ExponentialHistogramAggregator.cs|unknown-license-reference
+src/runtime/src/libraries/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Metrics/CircularBufferBuckets.cs|unknown-license-reference
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/Connect.cs|other-permissive
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/SendReceive/SendReceive.cs|other-permissive
 src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/README.md|unknown-license-reference
@@ -245,7 +246,6 @@ src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Resourc
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|ecl-2.0
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|bsd-2-clause-views
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|mpl-2.0
-src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Themes/*.xaml|bsd-2-clause-views
 src/wpf/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/IO/Packaging/CompoundFile/RightsManagementEncryptionTransform.cs|proprietary-license
 
 # Test data

@@ -171,7 +171,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             }
             else if (poisons.Count() > 0)
             {
-                Log.LogWarning($"{poisons.Count()} marked files leaked to output.  See complete report '{PoisonReportOutputFilePath}' for details.");
+                Log.LogMessage($"{poisons.Count()} marked files leaked to output.  See complete report '{PoisonReportOutputFilePath}' for details.");
             }
 
             return !Log.HasLoggedErrors;
