@@ -198,7 +198,7 @@ Alternatively, you can also provide a manifest file where this information can b
 
 Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
-To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace - you will see instructions right after it starts. Alternatively, you can clone the repository locally and use the [vmr-sync.sh](src/sdk/eng/vmr-sync.sh) or [vmr-sync.ps1](src/sdk/eng/vmr-sync.ps1) script to pull your changes in. Please refer to the documentation in the script for more details.
+To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace - you will see instructions right after it starts. Alternatively, you can clone the repository locally and use the [vmr-sync.sh](src/arcade/eng/common/vmr-sync.sh) or [vmr-sync.ps1](src/arcade/eng/common/vmr-sync.ps1) script to pull your changes in. Please refer to the documentation in the script for more details.
 
 ## Filing Issues
 
