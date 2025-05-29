@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <CustomPackageVersionsProps></CustomPackageVersionsProps>
     <OutputType>Exe</OutputType>
+    <!-- TODO: Re-enable NuGet Audit when BinaryToolKit receives expected global properties: https://github.com/dotnet/dotnet/issues/815 -->
+    <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <Target Name="CheckCustomPackageVersionsProps">

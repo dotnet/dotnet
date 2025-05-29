@@ -1,8 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.DotNet.VersionTools.Automation;
-using Microsoft.DotNet.VersionTools.BuildManifest;
+using Microsoft.Arcade.Common;
+using Microsoft.DotNet.Build.Manifest;
 using NuGet.Packaging;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -188,7 +188,8 @@ public abstract class BuildComparer
                 if (baseDirectory.EndsWith("scenario-tests")
                     || baseDirectory.EndsWith("source-build-externals")
                     || baseDirectory.EndsWith("source-build-reference-packages")
-                    || baseDirectory.EndsWith("runtime"))
+                    || baseDirectory.EndsWith("runtime")
+                    || baseDirectory.EndsWith("sdk"))
                 {
                     continue;
                 }
