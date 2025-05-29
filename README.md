@@ -20,7 +20,6 @@ Similarly, VMR's `main` branch will follow default branches of product repositor
 More in-depth documentation about the VMR can be found in [VMR Design And Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#layout).
 See also [dotnet/source-build](https://github.com/dotnet/source-build) for more information about our whole-product source-build.
 
-
 ## Installing the SDK
 
 You can download the .NET SDK either as an installer (MSI, PKG) or as an archive (zip, tar.gz). The .NET SDK contains both the .NET runtimes and CLI tools.
@@ -203,16 +202,17 @@ To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dot
 
 ## Filing Issues
 
-This repo does not currently accept issues. Please file issues to the appropriate development repos.
-For issues with the VMR itself, please use the [source-build repository](https://github.com/dotnet/source-build).
+This repo should contain issues that are tied to the VMR infrastructure and documentation.
+
+For other issues, please open them in the appropriate product repos. We have links to many of them on [our new issue page](https://github.com/dotnet/dotnet/issues/new/choose).
 
 ## Useful Links
 
 - Design documentation for the VMR - a set of documents describing the high-level design and the why's and how's
-  - [Design and Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md)
-  - [Upstream/Downstream Relationships](src/arcade/Documentation/UnifiedBuild/VMR-Upstream-Downstream.md)
-  - [Code and Build Workflow](src/arcade/Documentation/UnifiedBuild/VMR-Code-And-Build-Workflow.md)
-  - [Strategy for Managing External Source Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Strategy-For-External-Source.md)
+  - [Design and Operation](src/docs/VMR-Design-And-Operation.md)
+  - [Upstream/Downstream Relationships](src/docs/VMR-Upstream-Downstream.md)
+  - [Code and Build Workflow](src/docs/VMR-Code-And-Build-Workflow.md)
+  - [Strategy for Managing External Source Dependencies](src/docs/VMR-Strategy-For-External-Source.md)
 - [.NET Source-Build](https://github.com/dotnet/source-build)
 - [What is .NET](https://dotnet.microsoft.com)
 
