@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal abstract class SyntaxList : SyntaxNode
@@ -13,28 +10,17 @@ internal abstract class SyntaxList : SyntaxNode
     {
     }
 
-    internal override string SerializedValue => $"List: {SlotCount} slots";
+    public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor)
+    {
+        return visitor.Visit(this);
+    }
 
-    protected internal override SyntaxNode ReplaceCore<TNode>(
-        IEnumerable<TNode>? nodes = null,
-        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null,
-        IEnumerable<SyntaxToken>? tokens = null,
-        Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken = null)
-        => Assumed.Unreachable<SyntaxNode>();
+    public override void Accept(SyntaxVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 
-    protected internal override SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes)
-        => Assumed.Unreachable<SyntaxNode>();
-
-    protected internal override SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
-        => Assumed.Unreachable<SyntaxNode>();
-
-    protected internal override SyntaxNode ReplaceTokenInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens)
-        => Assumed.Unreachable<SyntaxNode>();
-
-    protected internal override SyntaxNode InsertTokensInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
-        => Assumed.Unreachable<SyntaxNode>();
-
-    internal sealed class WithTwoChildren : SyntaxList
+    internal class WithTwoChildren : SyntaxList
     {
         private SyntaxNode? _child0;
         private SyntaxNode? _child1;
@@ -61,7 +47,7 @@ internal abstract class SyntaxList : SyntaxNode
             };
     }
 
-    internal sealed class WithThreeChildren : SyntaxList
+    internal class WithThreeChildren : SyntaxList
     {
         private SyntaxNode? _child0;
         private SyntaxNode? _child1;
@@ -91,7 +77,7 @@ internal abstract class SyntaxList : SyntaxNode
             };
     }
 
-    internal sealed class WithManyChildren : SyntaxList
+    internal class WithManyChildren : SyntaxList
     {
         private readonly ArrayElement<SyntaxNode?>[] _children;
 

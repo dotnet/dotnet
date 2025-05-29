@@ -42,7 +42,11 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
     public bool ContainsAnnotations => Green.ContainsAnnotations;
 
-    internal abstract string SerializedValue { get; }
+    internal string SerializedValue => SyntaxSerializer.Serialize(this);
+
+    public abstract TResult Accept<TResult>(SyntaxVisitor<TResult> visitor);
+
+    public abstract void Accept(SyntaxVisitor visitor);
 
     internal abstract SyntaxNode? GetNodeSlot(int index);
 
@@ -276,17 +280,23 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
         return DescendantNodesImpl(Span, descendIntoChildren, includeSelf: true).OfType<SyntaxToken>();
     }
 
-    protected internal abstract SyntaxNode ReplaceCore<TNode>(
+    protected internal SyntaxNode ReplaceCore<TNode>(
         IEnumerable<TNode>? nodes = null,
-        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null,
-        IEnumerable<SyntaxToken>? tokens = null,
-        Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken = null)
-        where TNode : SyntaxNode;
+        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null)
+        where TNode : SyntaxNode
+    {
+        return SyntaxReplacer.Replace(this, nodes, computeReplacementNode);
+    }
 
-    protected internal abstract SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes);
-    protected internal abstract SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore);
-    protected internal abstract SyntaxNode ReplaceTokenInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens);
-    protected internal abstract SyntaxNode InsertTokensInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens, bool insertBefore);
+    protected internal SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes)
+    {
+        return SyntaxReplacer.ReplaceNodeInList(this, originalNode, replacementNodes);
+    }
+
+    protected internal SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
+    {
+        return SyntaxReplacer.InsertNodeInList(this, nodeInList, nodesToInsert, insertBefore);
+    }
 
     public RazorDiagnostic[] GetDiagnostics()
     {

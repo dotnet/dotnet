@@ -1,7 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics;
+#nullable disable
+
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -14,18 +16,21 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 internal abstract class SyntaxWalker : SyntaxVisitor
 {
     private int _recursionDepth;
+    private readonly TextSpan? _range;
 
-    public override void Visit(SyntaxNode? node)
+    public SyntaxWalker(TextSpan? range = null)
     {
-        if (node != null)
-        {
-            Debug.Assert(!node.IsToken);
-            Debug.Assert(!node.IsList);
+        _range = range;
+    }
 
+    public override void Visit(SyntaxNode node)
+    {
+        if (node != null && (_range is null || _range.Value.OverlapsWith(node.Span)))
+        {
             _recursionDepth++;
             StackGuard.EnsureSufficientExecutionStack(_recursionDepth);
 
-            ((RazorSyntaxNode)node).Accept(this);
+            node.Accept(this);
 
             _recursionDepth--;
         }
@@ -33,23 +38,15 @@ internal abstract class SyntaxWalker : SyntaxVisitor
 
     public override void DefaultVisit(SyntaxNode node)
     {
-        Debug.Assert(!node.IsToken);
-        Debug.Assert(!node.IsList);
-
-        foreach (var child in node.ChildNodes())
+        var children = node.ChildNodes();
+        for (var i = 0; i < children.Count; i++)
         {
-            if (child is SyntaxToken token)
-            {
-                VisitToken(token);
-            }
-            else
+            var child = children[i];
+
+            if (_range is null || _range.Value.OverlapsWith(node.Span))
             {
                 Visit(child);
             }
         }
-    }
-
-    public virtual void VisitToken(SyntaxToken token)
-    {
     }
 }

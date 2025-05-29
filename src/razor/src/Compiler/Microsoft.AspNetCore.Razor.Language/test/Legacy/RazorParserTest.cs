@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -49,7 +48,7 @@ public class RazorParserTest
         var syntaxTree = parser.Parse(TestRazorSourceDocument.Create("foo @bar baz"));
 
         // Assert
-        var actual = TestSyntaxSerializer.Serialize(syntaxTree.Root, allowSpanEditHandlers: false);
+        var actual = SyntaxNodeSerializer.Serialize(syntaxTree.Root, validateSpanEditHandlers: false);
         Assert.Equal(expected, actual);
     }
 }
