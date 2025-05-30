@@ -14,7 +14,7 @@ permissions:
 jobs:
   check-protect-files:
     runs-on: ubuntu-22.04
-    if: ${{ github.event.pull_request.user.login != 'dotnet-sb-bot' && github.event.pull_request.user.login != 'dotnet-maestro-bot' }}
+    if: ${{ github.event.pull_request.user.login != 'dotnet-sb-bot' && github.event.pull_request.user.login != 'dotnet-maestro[bot]' }}
     steps:
       - name: Protected File has Changes
         run: |
