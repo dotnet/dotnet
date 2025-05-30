@@ -18,5 +18,5 @@ jobs:
     steps:
       - name: Protected File has Changes
         run: |
-          echo "Cannot make changes to 'eng/Version.Details.xml', 'eng/Versions.props', and 'eng/common/' outside of a rebootstrap or .NET Source-Build release PR."
+          echo "${{ github.event.pull_request.user.login }} cannot make changes to 'eng/Version.Details.xml', 'eng/Versions.props', and 'eng/common/'."
           exit 1
