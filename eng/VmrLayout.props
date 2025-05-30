@@ -29,6 +29,12 @@
     <AssetManifestsIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'manifests', '$(Configuration)'))</AssetManifestsIntermediateDir>
     <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
 
+    <!-- Paths that assets built in previous build passes are downloaded to. -->
+    <PreviousBuildPassAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests'))</PreviousBuildPassAssetManifestsDir>
+    <PreviousBuildPassShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'shipping'))</PreviousBuildPassShippingPackagesDir>
+    <PreviousBuildPassNonShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'nonshipping'))</PreviousBuildPassNonShippingPackagesDir>
+    <PreviousBuildPassAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets'))</PreviousBuildPassAssetsDir>
+
     <DotNetSdkExtractDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'extracted-dotnet-sdk'))</DotNetSdkExtractDir>
 
     <PrebuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'prebuilt'))</PrebuiltPackagesPath>
@@ -67,7 +73,6 @@
 
   <PropertyGroup>
     <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
-    <SourceBuiltAssetsDir>$(ArtifactsStagingDir)/assets/$(Configuration)</SourceBuiltAssetsDir>
     <!-- Respect the VerticalName property which is set to a unique identifier in CI.
          Don't use that when building source-only to allow the build to find the previously built manifest file regardless of the vertical name.
          Default to VerticalManifest.xml. -->

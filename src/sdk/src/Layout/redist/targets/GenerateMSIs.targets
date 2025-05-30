@@ -240,7 +240,7 @@
     <PropertyGroup>
       <BuiltinManifestMsiPackageSourceDirectory>$(ArtifactsShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
       <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' != 'true' and '$(BuildWorkloads)' != 'true' and '$(OfficialBuild)' == 'true'">$(ArtifactsDir)downloaded-manifest-msi-packages\PackageArtifacts</BuiltinManifestMsiPackageSourceDirectory>
-      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '3'">$(SourceBuiltShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
+      <BuiltinManifestMsiPackageSourceDirectory Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildPass)' == '3'">$(PreviousBuildPassShippingPackagesDir)</BuiltinManifestMsiPackageSourceDirectory>
     </PropertyGroup>
 
     <ItemGroup>

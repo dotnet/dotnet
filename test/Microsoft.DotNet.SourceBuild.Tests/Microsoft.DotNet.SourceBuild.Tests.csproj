@@ -37,6 +37,7 @@
           BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
     <ItemGroup Condition="'$(SourceBuiltArtifactsPath)' == ''">
       <SourceBuiltArtifactsItem Include="$(ArtifactsAssetsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SourceBuiltArtifactsItem Condition="'@(SourceBuiltArtifactsItem)' == ''" Include="$(PreviousBuildPassAssetsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
     </ItemGroup>
 
     <PropertyGroup>

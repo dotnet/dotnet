@@ -12,5 +12,5 @@ internal static class Config
 {
     private const string ConfigSwitchPrefix = "Microsoft.DotNet.Tests.";
 
-    public static string? BinariesReportFile => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(BinariesReportFile))!;
+    public static string? BinariesReportFile => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(BinariesReportFile))!;
 }

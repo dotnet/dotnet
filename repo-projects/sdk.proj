@@ -18,13 +18,17 @@
 
     <BuildArgs Condition="'$(TargetRid)' == 'linux-x64' or '$(TargetRid)' == 'linux-arm64' ">$(BuildArgs) /p:BuildSdkDeb=true /p:BuildSdkRpm=true</BuildArgs>
 
-    <BuildArgs>$(BuildArgs) /p:PublicBaseURL=file:%2F%2F$(ArtifactsAssetsDir)</BuildArgs>
+    <BaseAssetsPath Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ArtifactsAssetsDir)</BaseAssetsPath>
+    <BaseAssetsPath Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">$(PreviousBuildPassAssetsDir)</BaseAssetsPath>
+    
+    <BuildArgs>$(BuildArgs) /p:PublicBaseURL=file:%2F%2F$(BaseAssetsPath)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:UsePortableLinuxSharedFramework=false</BuildArgs>
 
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PgoInstrument=true</BuildArgs>
     <BuildArgs Condition="'$(EnablePoison)' == 'true' or '$(SkipUsingCrossgen)' == 'true'">$(BuildArgs) /p:SkipUsingCrossgen=true</BuildArgs>
 
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
+    <BuildArgs Condition="'$(BuildWorkloads)' == 'true' or '$(DotNetBuildPass)' == '3'">$(BuildArgs) /p:PreviousBuildPassShippingPackagesDir=$(PreviousBuildPassShippingPackagesDir)/$(RepositoryName)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
