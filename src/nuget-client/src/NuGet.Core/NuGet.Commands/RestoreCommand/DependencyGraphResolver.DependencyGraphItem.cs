@@ -86,6 +86,7 @@ namespace NuGet.Commands
                 IReadOnlyDictionary<string, PrunePackageReference>? packagesToPrune,
                 bool enablePruningWarnings,
                 bool isRootProject,
+                string targetGraphName,
                 ILogger logger)
             {
                 // Call the task to get the library, this may returned a cached result
@@ -106,7 +107,7 @@ namespace NuGet.Commands
                     LibraryDependency dependency = item.Data.Dependencies[i];
 
                     // Skip any packages that should be pruned or will be replaced with a runtime dependency
-                    if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, dependency, item.Key, isRootProject, logger)
+                    if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, dependency, item.Key, isRootProject, targetGraphName, logger)
                         || RuntimeDependencies?.Contains(dependency) == true)
                     {
                         continue;
@@ -120,7 +121,7 @@ namespace NuGet.Commands
                     // Add any runtime dependencies unless they should be pruned
                     foreach (LibraryDependency runtimeDependency in RuntimeDependencies)
                     {
-                        if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, runtimeDependency, item.Key, isRootProject, logger) == true)
+                        if (ShouldPrunePackage(projectRestoreMetadata, packagesToPrune, enablePruningWarnings, runtimeDependency, item.Key, isRootProject, targetGraphName, logger) == true)
                         {
                             continue;
                         }
@@ -160,6 +161,7 @@ namespace NuGet.Commands
                 LibraryDependency dependency,
                 LibraryIdentity parentLibrary,
                 bool isRootProject,
+                string targetGraphName,
                 ILogger logger)
             {
                 if (packagesToPrune?.TryGetValue(dependency.Name, out PrunePackageReference? packageToPrune) != true
@@ -178,22 +180,15 @@ namespace NuGet.Commands
                         projectRestoreMetadata.UsingMicrosoftNETSdk,
                         SdkAnalysisLevelMinimums.PruningWarnings))
                     {
-                        logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1511, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningProjectReference, dependency.Name)));
+                        logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1511, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningProjectReference, dependency.Name), dependency.Name,
+                            targetGraphName));
                     }
 
                     return false;
                 }
 
-                if (isRootProject)
+                if (isRootProject) // Don't prune direct PRs
                 {
-                    if (enablePruningWarnings && SdkAnalysisLevelMinimums.IsEnabled(
-                        projectRestoreMetadata.SdkAnalysisLevel,
-                        projectRestoreMetadata.UsingMicrosoftNETSdk,
-                        SdkAnalysisLevelMinimums.PruningWarnings))
-                    {
-                        logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1510, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningDirectPackageReference, dependency.Name)));
-                    }
-
                     return false;
                 }
 

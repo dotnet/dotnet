@@ -239,6 +239,8 @@ namespace NuGet.Commands
                     packagesLockFile,
                     token);
 
+                AnalyzePruningResults(_request.Project, _logger);
+
                 var graphs = await GenerateRestoreGraphsAsync(telemetry, contextForProject, token);
 
                 bool auditRan = false;
@@ -758,6 +760,130 @@ namespace NuGet.Commands
             }
         }
 
+        internal static void AnalyzePruningResults(PackageSpec project, ILogger logger)
+        {
+            bool enablePruningWarnings =
+                SdkAnalysisLevelMinimums.IsEnabled(
+                    project.RestoreMetadata.SdkAnalysisLevel,
+                    project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.PruningWarnings) &&
+                HasFrameworkNewerThanNET10(project);
+
+            if (!enablePruningWarnings)
+            {
+                return;
+            }
+
+            Dictionary<string, List<string>> prunedDirectPackages = GetPrunableDirectPackages(project);
+
+            if (prunedDirectPackages != null)
+            {
+                RaiseNU1510WarningsIfNeeded(project, logger, prunedDirectPackages);
+            }
+
+            static Dictionary<string, List<string>> GetPrunableDirectPackages(PackageSpec project)
+            {
+                Dictionary<string, List<string>> prunedDirectPackages = null;
+
+                // Calculate direct packages that are in the pruning range.
+                foreach (TargetFrameworkInformation framework in project.TargetFrameworks)
+                {
+                    if (framework.PackagesToPrune != null && framework.PackagesToPrune.Count > 0)
+                    {
+                        foreach (var dependency in framework.Dependencies)
+                        {
+                            if (framework.PackagesToPrune.TryGetValue(dependency.Name, out PrunePackageReference packageToPrune)
+                                && dependency.LibraryRange.VersionRange.Satisfies(packageToPrune.VersionRange.MaxVersion!))
+                            {
+                                prunedDirectPackages ??= new(StringComparer.OrdinalIgnoreCase);
+                                if (!prunedDirectPackages.ContainsKey(dependency.Name))
+                                {
+                                    prunedDirectPackages.Add(dependency.Name, [framework.TargetAlias]);
+                                }
+                                else
+                                {
+                                    prunedDirectPackages[dependency.Name].Add(framework.TargetAlias);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return prunedDirectPackages;
+            }
+
+            static void RaiseNU1510WarningsIfNeeded(PackageSpec project, ILogger logger, Dictionary<string, List<string>> prunedDirectPackages)
+            {
+                Dictionary<string, string> aliasToTargetGraphName = null;
+                foreach (var prunedPackage in prunedDirectPackages)
+                {
+                    // Do not warn if the package exists in any framework.
+                    if (prunedPackage.Value.Count != project.TargetFrameworks.Count)
+                    {
+                        bool doesPackageRemain = false;
+                        foreach (var framework in project.TargetFrameworks)
+                        {
+                            if (!prunedPackage.Value.Contains(framework.TargetAlias))
+                            {
+                                if (ContainsPackage(prunedPackage, framework))
+                                {
+                                    doesPackageRemain = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (doesPackageRemain)
+                        {
+                            continue;
+                        }
+                    }
+
+                    aliasToTargetGraphName ??= InitializeAliasToTargetGraphName(project);
+                    logger.Log(RestoreLogMessage.CreateWarning(
+                        NuGetLogCode.NU1510,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningDirectPackageReference, prunedPackage.Key),
+                        prunedPackage.Key,
+                        prunedPackage.Value.Select(e => aliasToTargetGraphName[e]).ToArray()));
+                }
+            }
+
+            static bool HasFrameworkNewerThanNET10(PackageSpec project)
+            {
+                foreach (var framework in project.TargetFrameworks.NoAllocEnumerate())
+                {
+                    if (StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetCoreApp) &&
+                        framework.FrameworkName.Version.Major >= 10)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            static Dictionary<string, string> InitializeAliasToTargetGraphName(PackageSpec project)
+            {
+                var aliasToTargetGraphName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var framework in project.TargetFrameworks)
+                {
+                    aliasToTargetGraphName.Add(framework.TargetAlias, FrameworkRuntimePair.GetTargetGraphName(framework.FrameworkName, runtimeIdentifier: null));
+                }
+
+                return aliasToTargetGraphName;
+            }
+
+            static bool ContainsPackage(KeyValuePair<string, List<string>> prunedPackage, TargetFrameworkInformation framework)
+            {
+                foreach (var dependency in framework.Dependencies.NoAllocEnumerate())
+                {
+                    if (dependency.Name.Equals(prunedPackage.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         private async Task<bool> AreCentralVersionRequirementsSatisfiedAsync(RestoreRequest restoreRequest, int httpSourcesCount)
         {
             if (restoreRequest?.Project?.RestoreMetadata == null || !restoreRequest.Project.RestoreMetadata.CentralPackageVersionsEnabled)
@@ -1138,9 +1264,7 @@ namespace NuGet.Commands
 
             if (string.IsNullOrEmpty(projectLockFilePath))
             {
-                if (_request.ProjectStyle == ProjectStyle.PackageReference
-                    || _request.ProjectStyle == ProjectStyle.DotnetToolReference
-                    || _request.ProjectStyle == ProjectStyle.Standalone)
+                if (_request.ProjectStyle == ProjectStyle.PackageReference)
                 {
                     projectLockFilePath = Path.Combine(_request.RestoreOutputPath, LockFileFormat.AssetsFileName);
                 }
@@ -1362,39 +1486,31 @@ namespace NuGet.Commands
                 var checker = new CompatibilityChecker(localRepositories, lockFile, validateRuntimeAssets, logger);
                 foreach (var graph in graphs)
                 {
-                    // Don't do compat checks for the ridless graph of DotnetTooReference restore. Everything relevant will be caught in the graph with the rid
-                    if (!(ProjectStyle.DotnetToolReference == project.RestoreMetadata?.ProjectStyle && string.IsNullOrEmpty(graph.RuntimeIdentifier)))
+                    var includeFlags = IncludeFlagUtils.FlattenDependencyTypes(includeFlagGraphs, project, graph);
+
+                    var res = await checker.CheckAsync(graph, includeFlags, project);
+
+                    checkResults.Add(res);
+                    if (res.Success)
                     {
-                        var includeFlags = IncludeFlagUtils.FlattenDependencyTypes(includeFlagGraphs, project, graph);
-
-                        var res = await checker.CheckAsync(graph, includeFlags, project);
-
-                        checkResults.Add(res);
-                        if (res.Success)
-                        {
-                            await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.Name));
-                        }
-                        else
-                        {
-                            // Get error counts on a project vs package basis
-                            var projectCount = res.Issues.Count(issue => issue.Type == CompatibilityIssueType.ProjectIncompatible);
-                            var packageCount = res.Issues.Count(issue => issue.Type != CompatibilityIssueType.ProjectIncompatible);
-
-                            // Log a summary with compatibility error counts
-                            if (projectCount > 0)
-                            {
-                                await logger.LogAsync(LogLevel.Debug, $"Incompatible projects: {projectCount}");
-                            }
-
-                            if (packageCount > 0)
-                            {
-                                await logger.LogAsync(LogLevel.Debug, $"Incompatible packages: {packageCount}");
-                            }
-                        }
+                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.Name));
                     }
                     else
                     {
-                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_SkippingCompatibiilityCheckOnRidlessGraphForDotnetToolReferenceProject, graph.Name));
+                        // Get error counts on a project vs package basis
+                        var projectCount = res.Issues.Count(issue => issue.Type == CompatibilityIssueType.ProjectIncompatible);
+                        var packageCount = res.Issues.Count(issue => issue.Type != CompatibilityIssueType.ProjectIncompatible);
+
+                        // Log a summary with compatibility error counts
+                        if (projectCount > 0)
+                        {
+                            await logger.LogAsync(LogLevel.Debug, $"Incompatible projects: {projectCount}");
+                        }
+
+                        if (packageCount > 0)
+                        {
+                            await logger.LogAsync(LogLevel.Debug, $"Incompatible packages: {packageCount}");
+                        }
                     }
                 }
             }
