@@ -64,11 +64,11 @@
       "commitSha": "80d3bcc1ac4785e6c5e348a9caf6125873ecb30d"
     },
     {
-      "packageVersion": "10.0.100-beta.25270.2",
-      "barId": 269002,
+      "packageVersion": "10.0.100-beta.25278.2",
+      "barId": 269887,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "13ad6469b0354735c5b259f7e8307648ab7a6c50"
+      "commitSha": "79ced2b7b6c4a850507fb6ffdc75ab6ffb5e0146"
     },
     {
       "packageVersion": "17.15.0-preview-25277-08",
