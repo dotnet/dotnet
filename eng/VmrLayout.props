@@ -28,6 +28,8 @@
     <ArtifactsAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests', '$(Configuration)'))</ArtifactsAssetManifestsDir>
     <AssetManifestsIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'manifests', '$(Configuration)'))</AssetManifestsIntermediateDir>
     <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
+
+    <!-- Paths that assets built in previous build passes are downloaded to. -->
     <PreviousBuildPassAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests'))</PreviousBuildPassAssetManifestsDir>
     <PreviousBuildPassShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'shipping'))</PreviousBuildPassShippingPackagesDir>
     <PreviousBuildPassNonShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'packages', 'nonshipping'))</PreviousBuildPassNonShippingPackagesDir>

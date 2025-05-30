@@ -85,6 +85,7 @@ stages:
         publishAssetsImmediately: true
         pool: ${{ parameters.pool_Linux }}
         symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
+        publishingVersion: 4
 
   - template: vmr-validation.yml
     parameters:
