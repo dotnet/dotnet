@@ -216,15 +216,6 @@
     <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>
 
-  <!-- Additional pseudo-versions that **multiple** repos depend on. -->
-  <ItemGroup>
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimewinx64Version" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimewinx64PackageVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimeVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-
-    <ExtraPackageVersionPropsPackageInfo Include="VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
     <!-- Skip the sdk resolver in source-only mode as it already got built in the previous msbuild node execution triggered in build.sh. -->
