@@ -174,34 +174,34 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
 
     public IEnumerable<RazorDiagnostic> GetAllDiagnostics()
     {
+        using var diagnostics = new PooledArrayBuilder<RazorDiagnostic>();
+
+        AppendAllDiagnostics(ref diagnostics.AsRef());
+
+        foreach (var diagnostic in diagnostics)
+        {
+            yield return diagnostic;
+        }
+    }
+
+    internal void AppendAllDiagnostics(ref PooledArrayBuilder<RazorDiagnostic> diagnostics)
+    {
         foreach (var allowedChildTag in AllowedChildTags)
         {
-            foreach (var diagnostic in allowedChildTag.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(allowedChildTag.Diagnostics);
         }
 
         foreach (var boundAttribute in BoundAttributes)
         {
-            foreach (var diagnostic in boundAttribute.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(boundAttribute.Diagnostics);
         }
 
         foreach (var tagMatchingRule in TagMatchingRules)
         {
-            foreach (var diagnostic in tagMatchingRule.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(tagMatchingRule.Diagnostics);
         }
 
-        foreach (var diagnostic in Diagnostics)
-        {
-            yield return diagnostic;
-        }
+        diagnostics.AddRange(Diagnostics);
     }
 
     public override string ToString()
