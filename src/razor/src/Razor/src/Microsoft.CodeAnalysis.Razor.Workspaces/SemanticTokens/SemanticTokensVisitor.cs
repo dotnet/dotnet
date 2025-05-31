@@ -16,16 +16,17 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 {
     private readonly ImmutableArray<SemanticRange>.Builder _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
+    private readonly TextSpan _range;
     private readonly ISemanticTokensLegendService _semanticTokensLegend;
     private readonly bool _colorCodeBackground;
 
     private bool _addRazorCodeModifier;
 
-    private SemanticTokensVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, ISemanticTokensLegendService semanticTokensLegend, bool colorCodeBackground)
-        : base(range)
+    private SemanticTokensVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan range, ISemanticTokensLegendService semanticTokensLegend, bool colorCodeBackground)
     {
         _semanticRanges = semanticRanges;
         _razorCodeDocument = razorCodeDocument;
+        _range = range;
         _semanticTokensLegend = semanticTokensLegend;
         _colorCodeBackground = colorCodeBackground;
     }
@@ -46,6 +47,19 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         for (var i = 0; i < syntaxNodes.Count; i++)
         {
             Visit(syntaxNodes[i]);
+        }
+    }
+
+    private bool IsInRange(TextSpan span)
+    {
+        return _range.OverlapsWith(span);
+    }
+
+    public override void Visit(SyntaxNode? node)
+    {
+        if (node != null && IsInRange(node.Span))
+        {
+            base.Visit(node);
         }
     }
 
@@ -534,6 +548,11 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         {
             // Under no circumstances can we have 0-width spans.
             // This can happen in situations like "@* comment ", where EndCommentStar and EndCommentTransition are empty.
+            return;
+        }
+
+        if (!IsInRange(node.Span))
+        {
             return;
         }
 
