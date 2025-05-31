@@ -621,7 +621,7 @@ internal static class TagHelperBlockRewriter
                 var firstToken = firstChild.GetFirstToken();
                 var newFirstToken = SyntaxFactory.Token(firstToken.Kind, node.Transition.Transition.Content + firstToken.Content).WithAnnotations(firstToken.GetAnnotations());
 
-                var newFirstChild = firstChild.ReplaceNode(firstToken, newFirstToken);
+                var newFirstChild = firstChild.ReplaceToken(firstToken, newFirstToken);
                 builder.AddRange(rewrittenBody.Children.Replace(firstChild, newFirstChild));
 
                 // Since the original transition is part of the body, we need something to take it's place.
