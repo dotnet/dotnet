@@ -1,0 +1,22 @@
+name: 'Check Protected Files for Changes'
+
+on:
+  pull_request:
+    # Update the error message when changing these paths
+    paths:
+      - eng/common/**/*
+      - eng/Version.Details.xml
+      - eng/Versions.props
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check-protect-files:
+    runs-on: ubuntu-22.04
+    if: ${{ github.event.pull_request.user.login != 'dotnet-sb-bot' && github.event.pull_request.user.login != 'dotnet-maestro[bot]' }}
+    steps:
+      - name: Protected File has Changes
+        run: |
+          echo "${{ github.event.pull_request.user.login }} cannot make changes to 'eng/Version.Details.xml', 'eng/Versions.props', and 'eng/common/'."
+          exit 1

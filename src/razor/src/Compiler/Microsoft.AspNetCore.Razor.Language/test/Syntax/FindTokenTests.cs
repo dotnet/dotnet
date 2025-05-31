@@ -39,7 +39,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""EndOfFile;[];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""EndOfFile;[];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7505")]
@@ -54,7 +54,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""EndOfFile;[];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""EndOfFile;[];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9040")]
@@ -67,7 +67,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Theory]
@@ -91,7 +91,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[div];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[div];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7630")]
@@ -113,7 +113,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""EndOfFile;[];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""EndOfFile;[];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7630")]
@@ -124,7 +124,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Transition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Transition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Keyword;[if];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Keyword;[if];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Keyword;[if];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Keyword;[if];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""Whitespace;[ ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Whitespace;[ ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""LeftParenthesis;[(];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""LeftParenthesis;[(];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -214,7 +214,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Keyword;[true];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Keyword;[true];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -229,7 +229,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightParenthesis;[)];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightParenthesis;[)];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightParenthesis;[)];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightParenthesis;[)];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -259,7 +259,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""NewLine;[LF];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""NewLine;[LF];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -274,7 +274,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""LeftBrace;[{];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""LeftBrace;[{];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -290,7 +290,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightBrace;[}];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightBrace;[}];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -305,7 +305,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightBrace;[}];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightBrace;[}];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -318,7 +318,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Transition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Transition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -331,7 +331,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Identifier;[value];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Identifier;[value];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Identifier;[value];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Identifier;[value];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -357,7 +357,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""Whitespace;[ ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Whitespace;[ ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -370,7 +370,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Transition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Transition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -383,7 +383,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""LeftParenthesis;[(];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""LeftParenthesis;[(];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -396,7 +396,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Identifier;[value];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Identifier;[value];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -409,7 +409,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightParenthesis;[)];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightParenthesis;[)];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -422,7 +422,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RightParenthesis;[)];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RightParenthesis;[)];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -435,7 +435,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""Whitespace;[ ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Whitespace;[ ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -451,7 +451,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Theory, WorkItem("https://github.com/dotnet/razor/issues/7630")]
@@ -470,7 +470,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7630")]
@@ -486,7 +486,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7630")]
@@ -502,7 +502,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Theory, WorkItem("https://github.com/dotnet/razor/issues/7505")]
@@ -531,7 +531,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -546,7 +546,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -560,7 +560,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[asdf];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[asdf];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -575,7 +575,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -589,7 +589,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[div];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[div];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -603,7 +603,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[Attribute];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[Attribute];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -617,7 +617,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Equals;[=];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Equals;[=];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -632,7 +632,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleQuote;["];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleQuote;["];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -646,7 +646,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleQuote;["];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleQuote;["];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -660,7 +660,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[value];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[value];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -674,7 +674,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleQuote;["];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleQuote;["];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -688,7 +688,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -703,7 +703,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -717,7 +717,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""OpenAngle;[<];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -731,7 +731,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Bang;[!];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Bang;[!];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -745,7 +745,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleHyphen;[--];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleHyphen;[--];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -759,7 +759,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleHyphen;[--];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleHyphen;[--];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -773,7 +773,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""Whitespace;[ ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Whitespace;[ ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -787,7 +787,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[Comment];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[Comment];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -801,7 +801,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""Text;[Comment];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""Text;[Comment];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -815,7 +815,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""DoubleHyphen;[--];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""DoubleHyphen;[--];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -829,7 +829,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -843,7 +843,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""CloseAngle;[>];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""CloseAngle;[>];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -857,7 +857,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentTransition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentTransition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -871,7 +871,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentStar;[*];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentStar;[*];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -885,7 +885,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -899,7 +899,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position, includeWhitespace: true);
 
-        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -913,7 +913,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -927,7 +927,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentLiteral;[ Comment ];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -941,7 +941,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentStar;[*];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentStar;[*];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -955,7 +955,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentTransition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentTransition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]
@@ -969,7 +969,7 @@ public class FindTokenTests
 
         var token = tree.Root.FindToken(position);
 
-        AssertEx.Equal("""RazorCommentTransition;[@];""", SyntaxSerializer.Serialize(token).Trim());
+        AssertEx.Equal("""RazorCommentTransition;[@];""", TestSyntaxSerializer.Serialize(token).Trim());
     }
 
     [Fact]

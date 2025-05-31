@@ -88,7 +88,7 @@ public abstract class ParserTestBase : IParserTest
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers), _baselineEncoding);
+            File.WriteAllText(baselineFullPath, TestSyntaxSerializer.Serialize(root, _validateSpanEditHandlers), _baselineEncoding);
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -129,7 +129,7 @@ public abstract class ParserTestBase : IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers);
+        var actualSyntaxNodes = TestSyntaxSerializer.Serialize(root, _validateSpanEditHandlers);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics
