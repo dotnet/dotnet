@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.Editor.Razor;
 
@@ -76,6 +77,16 @@ internal abstract class AbstractRazorCompletionFactsService(ImmutableArray<IRazo
         {
             Debug.Assert(previousToken2.Span.End == requestIndex);
             return previousToken2.Parent;
+        }
+
+        // If we have @ transition right in front of an existing equals and caret is after @, e.g.
+        // <button @|="OnClick"></button>
+        // we get entire attribute from FindInnermostNode. We always want the attribute name as the context in such cases,
+        // so we adjust it to be the attrbute name node.
+        if (originalNode is MarkupAttributeBlockSyntax markupAttribute
+            && markupAttribute.EqualsToken.SpanStart == requestIndex)
+        {
+            return markupAttribute.Name;
         }
 
         return originalNode;

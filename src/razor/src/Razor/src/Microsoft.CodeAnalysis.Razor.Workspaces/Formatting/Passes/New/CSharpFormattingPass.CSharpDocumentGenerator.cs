@@ -228,7 +228,7 @@ internal partial class CSharpFormattingPass
                 _builder.AppendLine(additionalLinesBuilder.ToString());
             }
 
-            public override LineInfo Visit(RazorSyntaxNode node)
+            public override LineInfo Visit(RazorSyntaxNode? node)
             {
                 // Sometimes we are in a block where we want to do no formatting at all
                 if (_ignoreUntilLine is not null)
