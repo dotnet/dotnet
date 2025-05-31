@@ -24,6 +24,7 @@ ILCompiler.Build.Tasks.dll;; IGNORE-STRONG-NAME, https://github.com/dotnet/sourc
 
 ;; ## MACH-O ##
 *.dwarf;; Debugging symbols, https://github.com/dotnet/source-build/issues/4994#issuecomment-2768803544
+libbootstrapper*.o;; Not executables, https://github.com/dotnet/runtime/issues/114701#issuecomment-2807546040
 
 ;; ## ESRP Signing Issues ##
 *.exe;*.whl;The .whl files are not supported by ESRP, https://github.com/dotnet/emsdk/commit/3ac196ac425223d11490e759c2641256ce746f21
