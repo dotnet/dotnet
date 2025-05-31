@@ -7,6 +7,8 @@ Param(
   [string][Alias('os')]$targetOS,
   [string][Alias('arch')]$targetArch,
   [string][Alias('v')]$verbosity = "minimal",
+  [Parameter()][ValidateSet("preview", "rtm", "default")]
+  [string]$branding = "default",
 
   # Actions
   [switch]$clean,
@@ -35,6 +37,7 @@ function Get-Usage() {
   Write-Host "  -os, -targetOS <value>      Target operating system: e.g. windows."
   Write-Host "  -arch, -targetArch <value>  Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   Write-Host "  -verbosity <value>          Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  Write-Host "  -branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
   Write-Host ""
 
   Write-Host "Actions:"
@@ -85,6 +88,13 @@ if ($targetArch) { $arguments += "/p:TargetArchitecture=$targetArch" }
 if ($sign) { $arguments += "/p:DotNetBuildSign=true" }
 if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
+if ($branding) {
+    switch ($branding) {
+        "preview" { $arguments += "/p:DotNetFinalVersionKind=prerelease" }
+        "rtm"     { $arguments += "/p:DotNetFinalVersionKind=release" }
+        "default" { $arguments += "" }
+    }
+}
 
 function Build {
   $toolsetBuildProj = InitializeToolset
