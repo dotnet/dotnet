@@ -1,9 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Xunit;
 using Xunit.Abstractions;
@@ -91,5 +94,39 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
             relatedDocumentFilePaths.Sort(),
             path => Assert.Equal(s_documents[0].FilePath, path),
             path => Assert.Equal(s_documents[1].FilePath, path));
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11712")]
+    public async Task GetImportSources_ResultsHaveCorrectFilePaths()
+    {
+        var basePath = TestPathUtilities.CreateRootedPath("my", "project", "path");
+        var hostProject = TestHostProject.Create(Path.Combine(basePath, "project.csproj"));
+
+        var importHostDocument = TestHostDocument.Create(
+            hostProject,
+            Path.Combine(basePath, "_ViewImports.cshtml"));
+
+        var hostDocument = TestHostDocument.Create(
+            hostProject,
+            Path.Combine(basePath, "Products", "Index.cshtml"));
+
+        var state = ProjectState
+            .Create(hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .AddEmptyDocument(importHostDocument)
+            .AddEmptyDocument(hostDocument);
+
+        var project = new ProjectSnapshot(state);
+        var importDocument = project.GetRequiredDocument(importHostDocument.FilePath);
+        var document = project.GetRequiredDocument(hostDocument.FilePath);
+
+        var importSources = await CompilationHelpers.GetImportSourcesAsync(document, project.ProjectEngine, DisposalToken);
+
+        // Note: The only import returned is the one we added. There aren't any default imports
+        // because of the ConfigureProjectEngine override above.
+        var importSource = Assert.Single(importSources);
+
+        // The RazorSourceDocument for the import should use the paths from the document.
+        Assert.Equal(importDocument.FilePath, importSource.FilePath, FilePathComparer.Instance);
+        Assert.Equal(importDocument.TargetPath, importSource.RelativePath, FilePathComparer.Instance);
     }
 }
