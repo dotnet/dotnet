@@ -330,6 +330,11 @@
   },
   {
     "issueType": "MissingNonShipping",
+    "idMatch": ".*Microsoft.DotNet.ApiDiff.Tests.*",
+    "justification": "sdk non-shipping test packages are not published"
+  },
+  {
+    "issueType": "MissingNonShipping",
     "idMatch": ".*Microsoft.DotNet.Cli.Utils.Tests.*",
     "justification": "sdk non-shipping test packages are not published"
   },
@@ -518,5 +523,10 @@
     "idMatch": ".*/dotnet-sdk-pgo-.*.tar.gz",
     "descriptionMatch": ".* is Excluded in the VMR but should be Signed",
     "justification": "The VMR build purposely excludes signing the PGO builds."
+  },
+  {
+    "issueType": "MissingShipping",
+    "idMatch": ".*dotnet-suggest.*",
+    "justification": "command-line-api is not built from the VMR"
   }
 ]
