@@ -63,3 +63,12 @@ steps:
       mergeTestResults: true
       publishRunAttachments: true
       testRunTitle: ScenarioTests_$(Agent.JobName)
+
+  - task: 1ES.PublishPipelineArtifact@1
+    displayName: Publish InstallerTest Logs
+    continueOnError: true
+    inputs:
+      path: $(Build.SourcesDirectory)/artifacts/log/
+      artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+      artifactType: Container
+      parallel: true
