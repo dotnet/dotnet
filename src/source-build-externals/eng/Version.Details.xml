@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-externals" Sha="f5705c8f4c5079bba77bae8698ba1583bde0388c" BarId="269610" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-externals" Sha="1b5819797c01e0898087a34d8a2a7d9b9f55f1ac" BarId="270128" />
   <ToolsetDependencies>
     <Dependency Name="Microsoft.Build" Version="17.14.0-preview-24619-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>e9b99f554a3c298e1106ea171f5a0462780af2c5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25276.103">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25280.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>f5705c8f4c5079bba77bae8698ba1583bde0388c</Sha>
+      <Sha>1b5819797c01e0898087a34d8a2a7d9b9f55f1ac</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
