@@ -422,8 +422,8 @@ if [[ "$sourceOnly" == "true" ]]; then
   fi
 
   # Set _InitializeDotNetCli & DOTNET_INSTALL_DIR so that eng/common/tools.sh doesn't attempt to restore the SDK.
-  _InitializeDotNetCli="$CLI_ROOT"
-  DOTNET_INSTALL_DIR="$CLI_ROOT"
+  export _InitializeDotNetCli="$CLI_ROOT"
+  export DOTNET_INSTALL_DIR="$CLI_ROOT"
 
   # Find the Arcade SDK version and set env vars for the msbuild sdk resolver
   packageVersionsPath=''
