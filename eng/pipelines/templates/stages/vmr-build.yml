@@ -24,6 +24,11 @@ parameters:
   type: boolean
   default: true
 
+# True when building the VMR in source-only mode
+- name: isSourceOnlyBuild
+  type: boolean
+  default: false
+
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
   type: object
@@ -67,32 +72,33 @@ parameters:
     os: linux
 
 stages:
-- template: vmr-build-with-join.yml
-  parameters:
-    verticalsStages:
-      - template: vmr-verticals.yml
-        parameters:
-          desiredSigning: ${{ parameters.desiredSigning }}
-          desiredIbc: ${{ parameters.desiredIbc }}
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          scope: ${{ parameters.scope }}
-    finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
-    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    postJoinStages:
-    - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-      - stage: Publish_Build_Assets
-        displayName: Publish Assets
-        jobs:
-        - template: /eng/common/templates-official/job/publish-build-assets.yml
+- ${{ if eq(parameters.isSourceOnlyBuild, 'false') }}:
+  - template: vmr-build-with-join.yml
+    parameters:
+      verticalsStages:
+        - template: vmr-verticals.yml
           parameters:
-            publishUsingPipelines: true
-            publishAssetsImmediately: true
-            pool: ${{ parameters.pool_Linux }}
-            symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
+            desiredSigning: ${{ parameters.desiredSigning }}
+            desiredIbc: ${{ parameters.desiredIbc }}
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            scope: ${{ parameters.scope }}
+      finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      postJoinStages:
+      - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+        - stage: Publish_Build_Assets
+          displayName: Publish Assets
+          jobs:
+          - template: /eng/common/templates-official/job/publish-build-assets.yml
+            parameters:
+              publishUsingPipelines: true
+              publishAssetsImmediately: true
+              pool: ${{ parameters.pool_Linux }}
+              symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
 
-      - template: vmr-validation.yml
-        parameters:
-          desiredSigning: ${{ parameters.desiredSigning }}
+        - template: vmr-validation.yml
+          parameters:
+            desiredSigning: ${{ parameters.desiredSigning }}
 
 - template: source-build-stages.yml
   parameters:
