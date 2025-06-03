@@ -424,7 +424,8 @@
     <ItemGroup>
       <_SkippedTransitiveRepositoryReference
         Include="@(TransitiveRepositoryReference->WithMetadataValue('BuildReference', 'false')->Metadata('Project'))"
-        AdditionalProperties="GetDependentVerticalAssetsOnly=true" />
+        AdditionalProperties="GetDependentVerticalAssetsOnly=true"
+        GlobalPropertiesToRemove="GetDependentVerticalAssetsOnly" />
     </ItemGroup>
 
     <MSBuild Projects="@(_SkippedTransitiveRepositoryReference)"
