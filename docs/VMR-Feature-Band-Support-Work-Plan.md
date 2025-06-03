@@ -1,0 +1,92 @@
+# Feature Band Support: Work Plan
+
+This document builds on top of [Managing SDK Bands](https://github.com/dotnet/dotnet/blob/main/docs/VMR-Managing-SDK-Bands.md) with a concrete work plan for providing feature band support in the VMR. Please read that doc as a prerequisite.
+
+Document convention:
+* There can be a variable number of feature band releases (e.g. 10.0.1xx, 10.0.2xx, 10.0.3xx, etc). For purposes of this document, we mainly care about the distinction between the 1xx branch and all the other non-1xx feature band branches. For simplicity, 2xx will be used as a notation to mean any non-1xx feature band branch.
+
+## Plan Details
+
+### Branch Management
+
+The 2xx branch sources should accurately reflect what gets produced in the output. Since the shared component are only being produced in the 1xx branch, those associated repos will be excluded from the 2xx branch upon creation.
+
+There should be tooling to help with this exclusion process for the VMR maintainers. Similarly, the associated projects in the `repo-projects` directory should be deleted along with updating the appropriate `RepositoryReference` usages.
+
+### Dependency Flow
+
+Repos in the 2xx branch of the VMR which have dependencies on repos solely defined in the 1xx branch (e.g. `sdk` repo's dependency on `runtime`) will need to have dependency flow that reflects the version of the package produced from the VMR's 1xx branch.
+
+```mermaid
+sequenceDiagram
+    autonumber
+
+    participant runtime as dotnet/runtime<br />release/10.0
+    participant VMR_1xx as VMR<br />release/10.0.1xx
+    participant VMR_2xx as VMR<br />release/10.0.2xx
+    participant VMR_3xx as VMR<br />release/10.0.3xx
+
+    runtime->>VMR_1xx: Flow of runtime change
+    Note over VMR_1xx: 📦 VMR build output packages are built
+    VMR_1xx->>VMR_2xx: Dependency flow <br />(runtime build output packages)
+    VMR_1xx->>VMR_3xx: Dependency flow <br />(runtime build output packages)
+```
+
+This will require changes to Maestro to allow output of the VMR to flow to another branch of the VMR.
+
+### Build
+
+* In addition to NuGet package, we also need to provide a way to have access to the runtime and ASP.NET Core artifacts (e.g. `dotnet-runtime-<version>-linux-x64.tar.gz`) from 2xx branches. This is necessary for the SDK to be able to bundle things together. This should be able to be done using https://ci.dot.net, just as it is done in product repo builds.
+* Since Arcade repo will not be available, all repos will need to use the bootstrap Arcade (`UseBootstrapArcade=true`).
+* While the `scenario-tests` repo doesn't have differing code for each feature band, it will still need to exist in each of the VMR's feature band branches because it is built as part of the pipeline run and used to validate the product. This is ok since it is not part of the shipped binaries.
+
+❓ Open Question:
+There will need to be some way to detect when we are in one of these 2xx branches. What mechanism should be used for that? Maybe checking `packageVersion` of the sdk in `source-manifest.json`?
+
+❓ Open Question:
+How to handle the multi-pass build legs where they are dependent on a shared component (e.g. `Windows_x86_BuildPass2`, `Windows_x64_BuildPass2`, `Windows_Workloads_x64_BuildPass2`)?
+
+#### Source-Only Builds
+
+For source-only builds, you're going to need to build all the source, including the source from the 1xx branch in order to produce a release from a 2xx branch.
+
+There are a variety of scenarios to consider:
+
+* Distro maintainer has not produced any 1xx assets before
+  * Distro maintainer needs to bootstrap 2xx for the first time:
+    * Actions:
+      1. Build 1xx branch using Microsoft artifacts
+      1. Rebuild 1xx branch using output of first build as input
+      1. Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
+      1. Rebuild 2xx branch using output of previous build and source-built 1xx artifacts as input
+* Distro maintainer has produced 1xx assets before
+  * Distro maintainer needs to bootstrap 2xx for the first time:
+    * Actions:
+      1. Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
+      1. Rebuild 2xx branch using output of first build and source-built 1xx artifacts as input
+  * Distro maintainer needs to build 201 branch (after they've already produced a 200 release)
+    * Actions:
+      1. Build 1xx branch using artifacts from 1xx-1 release as input
+      1. Build 201 branch using artifacts from 200 release and 1xx artifacts as input
+
+In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input.
+
+❓ Open Question:
+
+Should a distro maintainer be required to build the *entire* 1xx branch VMR (including the SDK)? That's easier to implement but also potentially wasteful if they're not going to be producing a release for that feature branch. Otherwise, there'd need to be some way to filter which repos get built such that only the repos excluded from the 2xx branch get built.
+
+### UB Pipeline Changes
+
+#### Microsoft Build Legs
+
+Some of the Microsoft build legs will need to be trimmed from the 2xx branch. Specifically, there are short stack and cross-OS DAC builds that only build the runtime repo. These would not be relevant for the 2xx branch and should be excluded in the pipeline.
+
+#### Source-Only Build Legs
+
+Given that the packages outputted from the 1xx branch are needed in order to source build the 2xx branch, changes will be needed to the pipelines.
+
+In order to make the build efficient, we can collect the output of the 1xx branch's official build and feed that in as input to the 2xx branch build. There's no need to build the 1xx branch again from source since it's already been done. This requires publishing source build intermediate packages for each repo in the VMR pipeline. Those packages can then be restored as part of the repos that depend on them within the 2xx branch.
+
+### Source Build Release
+
+The Source Build release pipeline requires updating to handle multiple VMR branches.
