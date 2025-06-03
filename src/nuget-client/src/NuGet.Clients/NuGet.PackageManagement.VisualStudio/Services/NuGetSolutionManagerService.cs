@@ -89,11 +89,6 @@ namespace NuGet.PackageManagement.VisualStudio
             return await SolutionManager.GetSolutionDirectoryAsync();
         }
 
-        private static string CreateProjectActionId()
-        {
-            return Guid.NewGuid().ToString("N", provider: null);
-        }
-
         private void RegisterEventHandlers()
         {
             Assumes.NotNull(SolutionManager);
