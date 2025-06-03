@@ -682,7 +682,7 @@
 
     <!-- Move the build logs -->
     <Move SourceFiles="@(LogFilesToMove)"
-          DestinationFolder="$(ArtifactsLogRepoDir)"
+          DestinationFolder="$(ArtifactsLogRepoDir)%(LogFilesToMove.RecursiveDir)"
           Condition="'@(LogFilesToMove)' != ''" />
   </Target>
 
