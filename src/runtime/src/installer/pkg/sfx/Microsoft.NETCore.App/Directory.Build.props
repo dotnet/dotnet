@@ -4,7 +4,6 @@
 
   <PropertyGroup>
     <SharedFrameworkName>$(MicrosoftNetCoreAppFrameworkName)</SharedFrameworkName>
-    <IsShipping>false</IsShipping>
     <SharedFrameworkFriendlyName>.NET Runtime</SharedFrameworkFriendlyName>
   </PropertyGroup>
 
