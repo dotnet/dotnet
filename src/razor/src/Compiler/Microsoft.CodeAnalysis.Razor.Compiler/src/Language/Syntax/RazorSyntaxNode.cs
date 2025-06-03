@@ -13,7 +13,10 @@ internal abstract partial class RazorSyntaxNode : SyntaxNode
     {
     }
 
-    internal override string SerializedValue => Serializer.Serialize(this);
+    // For debugging
+#pragma warning disable IDE0051 // Remove unused private members
+    private string SerializedValue => SyntaxSerializer.Default.Serialize(this);
+#pragma warning restore IDE0051 // Remove unused private members
 
     public abstract TResult? Accept<TResult>(SyntaxVisitor<TResult> visitor);
 

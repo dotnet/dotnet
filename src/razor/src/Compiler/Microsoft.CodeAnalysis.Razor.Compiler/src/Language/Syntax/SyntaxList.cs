@@ -13,7 +13,11 @@ internal abstract class SyntaxList : SyntaxNode
     {
     }
 
-    internal override string SerializedValue => $"List: {SlotCount} slots";
+
+    // For debugging
+#pragma warning disable IDE0051 // Remove unused private members
+    private string SerializedValue => $"List: {SlotCount} slots";
+#pragma warning restore IDE0051 // Remove unused private members
 
     protected internal override SyntaxNode ReplaceCore<TNode>(
         IEnumerable<TNode>? nodes = null,
