@@ -12,26 +12,18 @@
 
   <PropertyGroup>
     <BinariesMode Condition="'$(BinariesMode)' == ''">Validate</BinariesMode>
-    <AllowedBinariesFile Condition="'$(AllowedBinariesFile)' == ''">$(RepoRoot)eng/allowed-vmr-binaries.txt</AllowedBinariesFile>
+    <AllowedBinariesFile Condition="'$(AllowedBinariesFile)' == ''">$(RepositoryEngineeringDir)allowed-vmr-binaries.txt</AllowedBinariesFile>
   </PropertyGroup>
 
   <Target Name="DetectBinaries"
-          BeforeTargets="Build"
-          Condition="'$(SkipDetectBinaries)' != 'true'">
-
-    <Error
-      Condition="!Exists('$(AllowedBinariesFile)')" 
-      Text="The specified allowed-binaries file does not exist: $(AllowedBinariesFile)" />
-
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Detecting binaries." />
+          DependsOnTargets="ResolveProjectReferences"
+          BeforeTargets="Build">
 
     <BinaryToolTask
       Mode="$(BinariesMode)"
       TargetDirectory="$(RepoRoot)"
       AllowedBinariesFile="$(AllowedBinariesFile)"
       OutputReportDirectory="$(BinariesReportDir)" />
-    
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done detecting binaries." />
   </Target>
 
 </Project>

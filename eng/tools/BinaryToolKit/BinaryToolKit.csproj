@@ -18,7 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
 </Project>
