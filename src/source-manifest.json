@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25271.2",
-      "barId": 269183,
+      "packageVersion": "10.0.0-beta.25279.3",
+      "barId": 270038,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "12d3a9f5d6138e22270694574e73e4c58a815795"
+      "commitSha": "69b86684b43321e96f35fa3ea34c5315836ff858"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -50,11 +50,11 @@
       "commitSha": "8bbc63df036b0c31c865fc1ee0060564caf40f85"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25280.3",
-      "barId": 270138,
+      "packageVersion": "10.0.0-preview.6.25280.4",
+      "barId": 270168,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "0e521aaa48fc835d3fc6454642dc317c04a28ea3"
+      "commitSha": "3223921b175e1e74e78313c535898fa27ced2c2c"
     },
     {
       "packageVersion": "10.0.0-preview.6.25302.1",
@@ -64,11 +64,11 @@
       "commitSha": "ce48310f30082c13121e5699d8f4202af31ec9d7"
     },
     {
-      "packageVersion": "10.0.100-beta.25278.2",
-      "barId": 269887,
+      "packageVersion": "10.0.100-beta.25279.2",
+      "barId": 270008,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "79ced2b7b6c4a850507fb6ffdc75ab6ffb5e0146"
+      "commitSha": "6bf3bd99a595a42fce25b9ce45f13ab2d7546e57"
     },
     {
       "packageVersion": "17.15.0-preview-25279-04",
@@ -92,18 +92,18 @@
       "commitSha": "9a64c285a021ade4c998d85e3888940e3845279b"
     },
     {
-      "packageVersion": "5.0.0-1.25278.4",
-      "barId": 269900,
+      "packageVersion": "5.0.0-1.25280.9",
+      "barId": 270165,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f750f7066588d62bfcf5833555304dd1dc9c5eca"
+      "commitSha": "a528f84b73e94ee595970a2d4b765649104f4b4c"
     },
     {
-      "packageVersion": "10.0.0-preview.25278.1",
-      "barId": 269921,
+      "packageVersion": "10.0.0-preview.25281.1",
+      "barId": 270193,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "f45672f2c7a34c0445c2f51e24500cc266b46941"
+      "commitSha": "e0aa2cf98f21c0f477452e854daf97422ab13347"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
@@ -128,10 +128,10 @@
     },
     {
       "packageVersion": "10.0.622801",
-      "barId": 269843,
+      "barId": 270177,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "21542951d5dba2f477782fe2af2b66a660b019d7"
+      "commitSha": "f97085d17695d128fe8c412f22f16d1e39338283"
     },
     {
       "packageVersion": "",
@@ -141,11 +141,11 @@
       "commitSha": "e3d374adb67d6a8adce2e61f1d6c4c7ec6a77e5f"
     },
     {
-      "packageVersion": "10.0.0-beta.25279.1",
-      "barId": 270057,
+      "packageVersion": "10.0.0-beta.25301.1",
+      "barId": 270214,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "9d5e196f39c04892e6c522b8b6ea5f6168ff70af"
+      "commitSha": "ffc3092f27315f7cf58beb77337d016735fb2ae6"
     },
     {
       "packageVersion": "2.2.0-beta.25262.1",
@@ -169,18 +169,18 @@
       "commitSha": "5a8ada4351983ac154fbaa1bbc1071fdde01dba3"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25278.3",
-      "barId": 269917,
+      "packageVersion": "10.0.0-preview.6.25281.2",
+      "barId": 270191,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "93e9275de21478bdfd241e8639e7ddd5879ea178"
+      "commitSha": "f6399985e1982a753948fd6c3a454aa429a7e84a"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25279.2",
-      "barId": 270034,
+      "packageVersion": "10.0.0-preview.6.25280.1",
+      "barId": 270161,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "2a0c79b592c679ee0a29ca1cf316d98db0149e28"
+      "commitSha": "86f7d0f8dcb8f7f06151758a6e72b57bd0e5f41c"
     },
     {
       "packageVersion": "10.0.0-preview.6.25280.1",
