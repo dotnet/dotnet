@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25280.5",
-      "barId": 270135,
+      "packageVersion": "10.0.0-preview.6.25302.2",
+      "barId": 270277,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "890372187750b6127fd91c61bf41d1d6a1bbedc4"
+      "commitSha": "faf269645b0338a9f4a7ecc88b46053f80f6f602"
     },
     {
       "packageVersion": "0.11.5-alpha.25266.1",
