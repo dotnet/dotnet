@@ -48,7 +48,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             _ => owner.Parent
         };
 
-        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
+        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, out _) &&
             containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
             // Trying to complete the element type

@@ -437,7 +437,6 @@ namespace NuGet.Packaging.Signing
                 }
             }
         }
-#endif
 
         private static CRYPT_ATTRIBUTE GetCryptAttributeForData(byte[] data, string attributeOid, HeapBlockRetainer hb)
         {
@@ -508,6 +507,7 @@ namespace NuGet.Packaging.Signing
             };
             return addAttr;
         }
+#endif
 
         internal byte[] Encode()
         {

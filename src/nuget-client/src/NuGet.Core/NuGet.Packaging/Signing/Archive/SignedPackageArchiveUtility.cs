@@ -671,6 +671,7 @@ namespace NuGet.Packaging.Signing
             return (generalPurposeBitFlags & (1 << 11)) != 0;
         }
 
+#if IS_SIGNING_SUPPORTED
         private static bool CompareHash(byte[] expectedHash, byte[] actualHash)
         {
             if (expectedHash.Length != actualHash.Length)
@@ -687,5 +688,6 @@ namespace NuGet.Packaging.Signing
             }
             return true;
         }
+#endif
     }
 }

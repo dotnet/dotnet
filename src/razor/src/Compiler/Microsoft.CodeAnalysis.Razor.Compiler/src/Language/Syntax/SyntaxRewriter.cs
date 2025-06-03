@@ -85,7 +85,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
         return (TNode?)Visit(node);
     }
 
-    public virtual SyntaxList<SyntaxToken> VisitList(SyntaxList<SyntaxToken> list)
+    public virtual SyntaxTokenList VisitList(SyntaxTokenList list)
     {
         var count = list.Count;
         if (count == 0)
@@ -114,7 +114,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
                 isUpdating = true;
             }
 
-            if (isUpdating && visited != null && visited.Kind != SyntaxKind.None)
+            if (isUpdating && visited.Kind != SyntaxKind.None)
             {
                 builder.Add(visited);
             }
