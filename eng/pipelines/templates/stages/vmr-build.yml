@@ -86,6 +86,9 @@ stages:
         pool: ${{ parameters.pool_Linux }}
         symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
         publishingVersion: 4
+        assetManifestsPattern: |
+          **/manifests/**/*.xml
+          !*Sdk_*_Artifacts/**/*.xml
 
   - template: vmr-validation.yml
     parameters:
