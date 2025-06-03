@@ -374,6 +374,52 @@ namespace Dotnet.Integration.Test
         }
 
         [PlatformTheory(Platform.Windows)]
+        [InlineData("1.0.0", "--highest-patch", "1.0.2")]
+        [InlineData("1.0.0", "--highest-patch --include-prerelease", "1.0.3-beta")]
+        [InlineData("1.0.0", "--highest-minor", "1.1.0")]
+        [InlineData("1.0.0", "--highest-minor --include-prerelease", "1.2.0-beta")]
+        [InlineData("1.0.0", "", "2.0.0")]
+        [InlineData("1.0.0", "--include-prerelease", "3.0.0-beta")]
+        public async Task DotnetListPackage_Outdated_IncludeTransitive_Succeed(string currentVersion, string args, string expectedVersion)
+        {
+            using (var pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                // Arrange
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net472");
+
+                var versions = new List<string> { "1.0.0", "1.0.2", "1.0.3-beta", "1.1.0", "1.2.0-beta", "2.0.0", "3.0.0-beta" };
+                foreach (var version in versions)
+                {
+                    var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX", packageVersion: version);
+                    var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY", packageVersion: version);
+                    packageX.Dependencies.Add(packageY);
+
+                    // Generate Package
+                    await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                        pathContext.PackageSource,
+                        PackageSaveMode.Defaultv3,
+                        packageX, packageY);
+                }
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore",
+                    testOutputHelper: _testOutputHelper);
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
+
+                // Act
+                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"package list --project {projectA.ProjectPath} --outdated --include-transitive {args}", testOutputHelper: _testOutputHelper);
+
+                // Assert
+                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageX{currentVersion}{currentVersion}{expectedVersion}"));
+                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageY{currentVersion}{expectedVersion}"));
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
         [InlineData("", "net48", null)]
         [InlineData("", "net46", null)]
         [InlineData("--framework net46 --framework net48", "net48", null)]
