@@ -70,7 +70,7 @@
 
   <!-- Use the P2P protocol for RepositoryReference items. -->
   <ItemGroup>
-    <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" ReferenceOutputAssembly="true" />
+    <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" />
   </ItemGroup>
 
   <!-- Returns the repository references of this project and all the projects this project references. -->
@@ -412,6 +412,7 @@
 
   <Target Name="LogDependentRepos"
           BeforeTargets="ResolveProjectReferences"
+          DependsOnTargets="PrepareRepositoryReferences"
           Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('BuildReference', 'true'))' == 'true'">
     <Message Importance="High" Text="Building dependencies [@(TransitiveRepositoryReference->WithMetadataValue('BuildReference', 'true'))] needed by '$(RepositoryName)'." />
   </Target>
@@ -419,8 +420,8 @@
   <!-- Repos that are skipped in later build passes and don't build, still need to be called in order to
        extract tool packages (i.e. Arcade.Sdk). This is necessary due to the custom sdk resolver. -->
   <Target Name="ExtractToolPackagesForSkippedRepos"
-          DependsOnTargets="PrepareRepositoryReferences;ResolveProjectReferences"
-          Condition="'@(RepositoryReference)' != ''">
+          DependsOnTargets="PrepareRepositoryReferences"
+          Condition="'@(TransitiveRepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <ItemGroup>
       <_SkippedTransitiveRepositoryReference
         Include="@(TransitiveRepositoryReference->WithMetadataValue('BuildReference', 'false')->Metadata('Project'))"
@@ -430,7 +431,7 @@
 
     <MSBuild Projects="@(_SkippedTransitiveRepositoryReference)"
              Targets="ExtractToolPackage"
-             BuildInParallel="$(BuildInParallel)" />
+             BuildInParallel="true" />
   </Target>
 
   <Target Name="DiscoverBuiltSdkOverrides" DependsOnTargets="GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses">
