@@ -69,9 +69,10 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
             var comment = razorCommentSyntax.Comment;
             if (comment.IsMissing)
             {
-                    // We need to generate a classified span at this position. So insert a marker in its place.
-                    comment = (SyntaxToken)SyntaxFactory.Token(SyntaxKind.Marker, string.Empty).Green.CreateRed(razorCommentSyntax, razorCommentSyntax.StartCommentStar.EndPosition);
+                // We need to generate a classified span at this position. So insert a marker in its place.
+                comment = new(razorCommentSyntax, Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.Marker, string.Empty), razorCommentSyntax.StartCommentStar.EndPosition, index: 0);
             }
+
             WriteSpan(comment, SpanKindInternal.Comment, AcceptedCharactersInternal.Any);
 
             WriteSpan(razorCommentSyntax.EndCommentStar, SpanKindInternal.MetaCode, AcceptedCharactersInternal.None);
@@ -192,7 +193,7 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
     {
         WriteBlock(node, BlockKindInternal.Markup, n =>
         {
-            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken), chunkGenerator: null);
+            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxTokenList(node.EqualsToken), chunkGenerator: null);
             var mergedAttributePrefix = SyntaxUtilities.MergeTextLiterals(node.NamePrefix, node.Name, node.NameSuffix, equalsSyntax, node.ValuePrefix);
             Visit(mergedAttributePrefix);
             Visit(node.Value);
@@ -330,6 +331,29 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
         {
             acceptedCharacters = AcceptedCharactersInternal.Any;
             var context = node.GetEditHandler();
+            if (context != null)
+            {
+                acceptedCharacters = context.AcceptedCharacters;
+            }
+        }
+
+        var span = new ClassifiedSpanInternal(spanSource, blockSource, kind, _currentBlockKind, acceptedCharacters.Value);
+        _spans.Add(span);
+    }
+
+    private void WriteSpan(SyntaxToken token, SpanKindInternal kind, AcceptedCharactersInternal? acceptedCharacters = null)
+    {
+        if (token.IsMissing)
+        {
+            return;
+        }
+
+        var spanSource = token.GetSourceSpan(_source);
+        var blockSource = _currentBlock.GetSourceSpan(_source);
+        if (!acceptedCharacters.HasValue)
+        {
+            acceptedCharacters = AcceptedCharactersInternal.Any;
+            var context = token.GetEditHandler();
             if (context != null)
             {
                 acceptedCharacters = context.AcceptedCharacters;

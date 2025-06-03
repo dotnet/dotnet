@@ -129,9 +129,8 @@ internal partial class CSharpFormattingPass
             private TextLine _currentLine;
             private int _currentFirstNonWhitespacePosition;
 
-            // These are set in GetCSharpDocumentContents so will never be observably null
-            private RazorSyntaxToken _currentToken = null!;
-            private RazorSyntaxToken _previousCurrentToken = null!;
+            private RazorSyntaxToken _currentToken;
+            private RazorSyntaxToken _previousCurrentToken;
 
             /// <summary>
             /// The line number of the last line of the current element, if we're inside one.
@@ -228,7 +227,7 @@ internal partial class CSharpFormattingPass
                 _builder.AppendLine(additionalLinesBuilder.ToString());
             }
 
-            public override LineInfo Visit(RazorSyntaxNode node)
+            public override LineInfo Visit(RazorSyntaxNode? node)
             {
                 // Sometimes we are in a block where we want to do no formatting at all
                 if (_ignoreUntilLine is not null)
@@ -641,7 +640,7 @@ internal partial class CSharpFormattingPass
                 return EmitCurrentLineAsComment();
             }
 
-            private LineInfo VisitCodeOrFunctionsDirective(RazorSyntaxNode openBrace)
+            private LineInfo VisitCodeOrFunctionsDirective(RazorSyntaxToken openBrace)
             {
                 // If the open brace is on the same line as the directive, then we need to ensure the contents are indented
                 if (GetLineNumber(openBrace) == GetLineNumber(_currentToken))
@@ -704,6 +703,9 @@ internal partial class CSharpFormattingPass
 
             private int GetLineNumber(RazorSyntaxNode node)
                 => _sourceText.Lines.GetLineFromPosition(node.Position).LineNumber;
+
+            private int GetLineNumber(RazorSyntaxToken token)
+                => _sourceText.Lines.GetLineFromPosition(token.Position).LineNumber;
 
             private LineInfo EmitCurrentLineAsCSharp()
             {

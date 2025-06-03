@@ -5,6 +5,8 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.Editor.Razor;
 
@@ -60,22 +62,33 @@ internal abstract class AbstractRazorCompletionFactsService(ImmutableArray<IRazo
         if (originalNode.SpanStart == requestIndex
             // allow zero-length tokens for cases when cursor is at EOF,
             // e.g. see https://github.com/dotnet/razor/issues/9955
-            && originalNode.GetFirstToken(includeZeroWidth: true) is { } startToken
-            && startToken.GetPreviousToken() is { } previousToken)
+            && originalNode.TryGetFirstToken(includeZeroWidth: true, out var startToken)
+            && startToken.TryGetPreviousToken(out var previousToken))
         {
             Debug.Assert(previousToken.Span.End == requestIndex);
             Debug.Assert(previousToken.Kind != SyntaxKind.Marker);
-            return previousToken.Parent;
+
+            return previousToken.Parent.AssumeNotNull();
         }
 
         // We also want to walk back for cases like <a hr|/>, which do not involve whitespace at all. For this case, we want
         // to see if we're on the closing slash or angle bracket of a start or end tag
-        if (HtmlFacts.TryGetElementInfo(originalNode, containingTagNameToken: out _, attributeNodes: out _, closingForwardSlashOrCloseAngleToken: out var closingForwardSlashOrCloseAngleToken)
+        if (HtmlFacts.TryGetElementInfo(originalNode, out _, out _, closingForwardSlashOrCloseAngleToken: out var closingForwardSlashOrCloseAngleToken)
             && closingForwardSlashOrCloseAngleToken.SpanStart == requestIndex
-            && closingForwardSlashOrCloseAngleToken.GetPreviousToken() is { } previousToken2)
+            && closingForwardSlashOrCloseAngleToken.TryGetPreviousToken(out var previousToken2))
         {
             Debug.Assert(previousToken2.Span.End == requestIndex);
-            return previousToken2.Parent;
+            return previousToken2.Parent.AssumeNotNull();
+        }
+
+        // If we have @ transition right in front of an existing equals and caret is after @, e.g.
+        // <button @|="OnClick"></button>
+        // we get entire attribute from FindInnermostNode. We always want the attribute name as the context in such cases,
+        // so we adjust it to be the attrbute name node.
+        if (originalNode is MarkupAttributeBlockSyntax markupAttribute
+            && markupAttribute.EqualsToken.SpanStart == requestIndex)
+        {
+            return markupAttribute.Name;
         }
 
         return originalNode;

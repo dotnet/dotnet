@@ -1,323 +1,248 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
-internal class SyntaxSerializer
+internal abstract partial class SyntaxSerializer(StringBuilder builder) : SyntaxWalker
 {
-    internal static string Serialize(SyntaxNode node)
-    {
-        using (var writer = new StringWriter())
-        {
-            var walker = new Walker(writer);
-            walker.Visit(node);
+    protected const int IndentSize = 4;
+    protected const string Separator = " - ";
 
-            return writer.ToString();
+    protected readonly StringBuilder Builder = builder;
+    private bool _visitedRoot;
+
+    private int _depth;
+
+    public sealed override void Visit(SyntaxNode? node)
+    {
+        if (node == null)
+        {
+            return;
         }
+
+        WriteNode(node);
+        Builder.AppendLine();
+
+        IncreaseIndent();
+        base.Visit(node);
+        DecreaseIndent();
     }
 
-    private class Walker : SyntaxWalker
+    public sealed override void VisitToken(SyntaxToken token)
     {
-        private readonly SyntaxWriter _visitor;
-        private readonly TextWriter _writer;
-
-        public Walker(TextWriter writer)
-        {
-            _visitor = new SyntaxWriter(writer);
-            _writer = writer;
-        }
-
-        public TextWriter Writer { get; }
-
-        public override SyntaxNode Visit(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return node;
-            }
-
-            if (node.IsList)
-            {
-                return base.DefaultVisit(node);
-            }
-
-            _visitor.Visit(node);
-            _writer.WriteLine();
-
-            if (!node.IsToken)
-            {
-                _visitor.Depth++;
-                node = base.DefaultVisit(node);
-                _visitor.Depth--;
-            }
-
-            return node;
-        }
+        WriteToken(token);
+        Builder.AppendLine();
     }
 
-    private class SyntaxWalker : SyntaxRewriter
+    private void WriteNode(SyntaxNode node)
     {
-        private readonly List<SyntaxNode> _ancestors = new List<SyntaxNode>();
+        WriteIndent();
+        WriteValue(node.Kind);
+        WriteSeparator();
+        WriteSpan(node.Span);
 
-        protected IReadOnlyList<SyntaxNode> Ancestors => _ancestors;
-
-        protected SyntaxNode Parent => _ancestors.Count > 0 ? _ancestors[0] : null;
-
-        protected override SyntaxNode DefaultVisit(SyntaxNode node)
+        switch (node)
         {
-            _ancestors.Insert(0, node);
-
-            try
-            {
-                for (var i = 0; i < node.SlotCount; i++)
-                {
-                    var child = node.GetNodeSlot(i);
-                    Visit(child);
-                }
-            }
-            finally
-            {
-                _ancestors.RemoveAt(0);
-            }
-
-            return node;
-        }
-    }
-
-    private class SyntaxWriter : SyntaxRewriter
-    {
-        private readonly TextWriter _writer;
-        private bool _visitedRoot;
-
-        public SyntaxWriter(TextWriter writer)
-        {
-            _writer = writer;
-        }
-
-        public int Depth { get; set; }
-
-        public override SyntaxNode Visit(SyntaxNode node)
-        {
-            if (node is SyntaxToken token)
-            {
-                return VisitToken(token);
-            }
-
-            WriteNode(node);
-            return node;
-        }
-
-        public override SyntaxNode VisitToken(SyntaxToken token)
-        {
-            WriteToken(token);
-            return base.VisitToken(token);
-        }
-
-        private void WriteNode(SyntaxNode node)
-        {
-            WriteIndent();
-            Write(node.Kind);
-            WriteSeparator();
-            Write($"[{node.Position}..{node.EndPosition})");
-            WriteSeparator();
-            Write($"Width: {node.Width}");
-
-            if (node is RazorDirectiveSyntax razorDirective)
-            {
+            case RazorDirectiveSyntax razorDirective:
                 WriteRazorDirective(razorDirective);
-            }
-            else if (node is MarkupTagHelperElementSyntax tagHelperElement)
-            {
+                break;
+
+            case MarkupTagHelperElementSyntax tagHelperElement:
                 WriteTagHelperElement(tagHelperElement);
-            }
-            else if (node is MarkupTagHelperAttributeSyntax tagHelperAttribute)
-            {
+                break;
+
+            case MarkupTagHelperAttributeSyntax tagHelperAttribute:
                 WriteTagHelperAttributeInfo(tagHelperAttribute.TagHelperAttributeInfo);
-            }
-            else if (node is MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute)
-            {
+                break;
+
+            case MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute:
                 WriteTagHelperAttributeInfo(minimizedTagHelperAttribute.TagHelperAttributeInfo);
-            }
-            else if (node is MarkupStartTagSyntax startTag)
-            {
+                break;
+
+            case MarkupStartTagSyntax startTag:
                 if (startTag.IsMarkupTransition)
                 {
                     WriteSeparator();
-                    Write("MarkupTransition");
+                    WriteValue("MarkupTransition");
                 }
-            }
-            else if (node is MarkupEndTagSyntax endTag)
-            {
+
+                break;
+
+            case MarkupEndTagSyntax endTag:
                 if (endTag.IsMarkupTransition)
                 {
                     WriteSeparator();
-                    Write("MarkupTransition");
+                    WriteValue("MarkupTransition");
                 }
-            }
 
-            if (ShouldDisplayNodeContent(node))
-            {
-                WriteSeparator();
-                Write($"[{node.GetContent()}]");
-            }
-
-            WriteChunkGenerator(node);
-
-            var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
-            if (annotation != null && annotation.Data is SpanEditHandler handler)
-            {
-                WriteEditHandler(handler);
-            }
-
-            if (!_visitedRoot)
-            {
-                WriteSeparator();
-                Write($"[{node}]");
-                _visitedRoot = true;
-            }
+                break;
         }
 
-        private void WriteRazorDirective(RazorDirectiveSyntax node)
-        {
-            if (node.DirectiveDescriptor == null)
-            {
-                return;
-            }
-
-            var builder = new StringBuilder("Directive:{");
-            builder.Append(node.DirectiveDescriptor.Directive);
-            builder.Append(';');
-            builder.Append(node.DirectiveDescriptor.Kind);
-            builder.Append(';');
-            builder.Append(node.DirectiveDescriptor.Usage);
-            builder.Append('}');
-
-            var diagnostics = node.GetDiagnostics();
-            if (diagnostics.Length > 0)
-            {
-                builder.Append(" [");
-                var ids = string.Join(", ", diagnostics.Select(diagnostic => $"{diagnostic.Id}{diagnostic.Span}"));
-                builder.Append(ids);
-                builder.Append(']');
-            }
-
-            WriteSeparator();
-            Write(builder.ToString());
-        }
-
-        private void WriteTagHelperElement(MarkupTagHelperElementSyntax node)
-        {
-            // Write tag name
-            WriteSeparator();
-            Write($"{node.TagHelperInfo.TagName}[{node.TagHelperInfo.TagMode}]");
-
-            // Write descriptors
-            foreach (var descriptor in node.TagHelperInfo.BindingResult.Descriptors)
-            {
-                WriteSeparator();
-
-                // Get the type name without the namespace.
-                var typeName = descriptor.Name.Substring(descriptor.Name.LastIndexOf('.') + 1);
-                Write(typeName);
-            }
-        }
-
-        private void WriteTagHelperAttributeInfo(TagHelperAttributeInfo info)
-        {
-            // Write attributes
-            WriteSeparator();
-            Write(info.Name);
-            WriteSeparator();
-            Write(info.AttributeStructure);
-            WriteSeparator();
-            Write(info.Bound ? "Bound" : "Unbound");
-        }
-
-        private void WriteToken(SyntaxToken token)
-        {
-            WriteIndent();
-            var content = token.IsMissing ? "<Missing>" : token.Content;
-            var diagnostics = token.GetDiagnostics();
-            var tokenString = $"{token.Kind};[{content}];{string.Join(", ", diagnostics.Select(diagnostic => diagnostic.Id + diagnostic.Span))}";
-            Write(tokenString);
-        }
-
-        private void WriteChunkGenerator(SyntaxNode node)
-        {
-            var generator = node.GetChunkGenerator();
-            if (generator != null)
-            {
-                WriteSeparator();
-                Write($"Gen<{generator}>");
-            }
-        }
-
-        private void WriteEditHandler(SpanEditHandler handler)
+        if (ShouldDisplayNodeContent(node))
         {
             WriteSeparator();
-            Write(handler);
+            WriteValue($"[{node.GetContent()}]");
         }
 
-        protected void WriteIndent()
+        WriteChunkGenerator(node);
+
+        WriteSpanEditHandlers(node);
+
+        if (!_visitedRoot)
         {
-            for (var i = 0; i < Depth; i++)
-            {
-                for (var j = 0; j < 4; j++)
-                {
-                    Write(' ');
-                }
-            }
+            WriteSeparator();
+            WriteValue($"[{node}]");
+            _visitedRoot = true;
         }
+    }
 
-        protected void WriteSeparator()
+    protected virtual void WriteSpan(TextSpan span)
+    {
+        WriteValue($"[{span.Start}..{span.End}{Separator}Width: {span.End - span.Start}");
+    }
+
+    private void WriteRazorDirective(RazorDirectiveSyntax node)
+    {
+        if (node.DirectiveDescriptor is not { } descriptor)
         {
-            Write(" - ");
+            return;
         }
 
-        protected void WriteNewLine()
+        WriteSeparator();
+        WriteValue($"Directive:{{{descriptor.Directive};{descriptor.Kind};{descriptor.Usage}}}");
+
+        if (node.GetDiagnostics() is { Length: > 0} diagnostics)
         {
-            _writer.WriteLine();
+            WriteValue($" [{GetDiagnosticsText(diagnostics)}]");
         }
+    }
 
-        protected void Write(object value)
+    private void WriteTagHelperElement(MarkupTagHelperElementSyntax node)
+    {
+        var tagHelperInfo = node.TagHelperInfo.AssumeNotNull();
+
+        // Write tag name
+        WriteSeparator();
+        WriteValue($"{tagHelperInfo.TagName}[{tagHelperInfo.TagMode}]");
+
+        // Write descriptors
+        foreach (var descriptor in tagHelperInfo.BindingResult.Descriptors)
         {
-            if (value is string stringValue)
-            {
-                stringValue = stringValue.Replace(Environment.NewLine, "LF");
-                _writer.Write(stringValue);
-                return;
-            }
+            WriteSeparator();
 
-            _writer.Write(value);
+            // Get the type name without the namespace.
+            var typeName = descriptor.Name[(descriptor.Name.LastIndexOf('.') + 1)..];
+            WriteValue(typeName);
         }
+    }
 
-        private static bool ShouldDisplayNodeContent(SyntaxNode node)
+    private void WriteTagHelperAttributeInfo(TagHelperAttributeInfo info)
+    {
+        // Write attributes
+        WriteValue($"{Separator}{info.Name}{Separator}{info.AttributeStructure}{Separator}{(info.Bound ? "Bound" : "Unbound")}");
+    }
+
+    private void WriteToken(SyntaxToken token)
+    {
+        WriteIndent();
+
+        var content = token.IsMissing ? "<Missing>" : token.Content;
+        var diagnostics = token.GetDiagnostics().ToArray();
+        var diagnosticsText = GetDiagnosticsText(diagnostics);
+
+        WriteValue($"{token.Kind};[{content}];{diagnosticsText}");
+    }
+
+    private static string GetDiagnosticsText(RazorDiagnostic[] diagnostics)
+    {
+        return diagnostics.Length > 0
+            ? string.Join(", ", diagnostics.Select(diagnostic => $"{diagnostic.Id}{diagnostic.Span}"))
+            : string.Empty;
+    }
+
+    private void WriteChunkGenerator(SyntaxNode node)
+    {
+        if (node.GetChunkGenerator() is { } generator)
         {
-            return node.Kind == SyntaxKind.MarkupTextLiteral ||
-                node.Kind == SyntaxKind.MarkupEphemeralTextLiteral ||
-                node.Kind == SyntaxKind.MarkupStartTag ||
-                node.Kind == SyntaxKind.MarkupEndTag ||
-                node.Kind == SyntaxKind.MarkupTagHelperStartTag ||
-                node.Kind == SyntaxKind.MarkupTagHelperEndTag ||
-                node.Kind == SyntaxKind.MarkupAttributeBlock ||
-                node.Kind == SyntaxKind.MarkupMinimizedAttributeBlock ||
-                node.Kind == SyntaxKind.MarkupTagHelperAttribute ||
-                node.Kind == SyntaxKind.MarkupMinimizedTagHelperAttribute ||
-                node.Kind == SyntaxKind.MarkupLiteralAttributeValue ||
-                node.Kind == SyntaxKind.MarkupDynamicAttributeValue ||
-                node.Kind == SyntaxKind.CSharpStatementLiteral ||
-                node.Kind == SyntaxKind.CSharpExpressionLiteral ||
-                node.Kind == SyntaxKind.CSharpEphemeralTextLiteral ||
-                node.Kind == SyntaxKind.UnclassifiedTextLiteral;
+            WriteSeparator();
+            WriteValue($"Gen<{generator}>");
         }
+    }
+
+    protected virtual void WriteSpanEditHandlers(SyntaxNode node)
+    {
+        var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
+        if (annotation?.Data is SpanEditHandler handler)
+        {
+            WriteSeparator();
+            WriteValue(handler);
+        }
+    }
+
+    protected void IncreaseIndent()
+    {
+        _depth++;
+    }
+
+    protected void DecreaseIndent()
+    {
+        Assumed.True(--_depth >= 0, "Depth can't be less than 0.");
+    }
+
+    protected void WriteIndent()
+    {
+        WriteValue(new string(' ', _depth * IndentSize));
+    }
+
+    protected void WriteSeparator()
+    {
+        WriteValue(Separator);
+    }
+
+    protected virtual void WriteValue(string value)
+    {
+        Builder.Append(value.Replace(Environment.NewLine, "LF"));
+    }
+
+    protected virtual void WriteValue(object? value)
+    {
+        switch (value)
+        {
+            case string s:
+                WriteValue(s);
+                break;
+
+            default:
+                Builder.Append(value);
+                break;
+        }
+    }
+
+    private static bool ShouldDisplayNodeContent(SyntaxNode node)
+    {
+        return node.Kind is
+            SyntaxKind.MarkupTextLiteral or
+            SyntaxKind.MarkupEphemeralTextLiteral or
+            SyntaxKind.MarkupStartTag or
+            SyntaxKind.MarkupEndTag or
+            SyntaxKind.MarkupTagHelperStartTag or
+            SyntaxKind.MarkupTagHelperEndTag or
+            SyntaxKind.MarkupAttributeBlock or
+            SyntaxKind.MarkupMinimizedAttributeBlock or
+            SyntaxKind.MarkupTagHelperAttribute or
+            SyntaxKind.MarkupMinimizedTagHelperAttribute or
+            SyntaxKind.MarkupLiteralAttributeValue or
+            SyntaxKind.MarkupDynamicAttributeValue or
+            SyntaxKind.CSharpStatementLiteral or
+            SyntaxKind.CSharpExpressionLiteral or
+            SyntaxKind.CSharpEphemeralTextLiteral or
+            SyntaxKind.UnclassifiedTextLiteral;
     }
 }
