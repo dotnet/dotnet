@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Configuration;
-using NuGet.PackageManagement;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -30,9 +29,6 @@ namespace NuGetConsole
 
         [Import]
         private Lazy<ISettings> Settings { get; set; }
-
-        [Import]
-        private ISolutionManager SolutionManager { get; set; }
 
         [Import]
         public IPowerConsoleWindow PowerConsoleWindow { get; set; }
