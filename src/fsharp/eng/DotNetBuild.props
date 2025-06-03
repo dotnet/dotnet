@@ -1,9 +1,13 @@
 <!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
 <Project>
 
+  <!-- TODO: Remove this file when fsharp upgrades to Arcade 10 -->
   <PropertyGroup>
     <GitHubRepositoryName>fsharp</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <ReportPrebuiltUsage Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(DotNetBuildOrchestrator)</ReportPrebuiltUsage>
+    <SetUpSourceBuildIntermediateNupkgCache>false</SetUpSourceBuildIntermediateNupkgCache>
+    <CreateIntermediatePackage>false</CreateIntermediatePackage>
   </PropertyGroup>
 
   <!--
@@ -28,7 +32,7 @@
          -bl enables the binlogs for the tools and Proto builds, which make debugging failures here easier
     -->
     <Exec
-      Command="./build.sh --bootstrap --skipBuild -bl $(SourceBuildBootstrapTfmArg) $(SourceBuildBootstrapRestoreConfigFileArg) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime) /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:DotNetBuildRepo=true
+      Command="./build.sh --bootstrap --skipBuild -bl $(SourceBuildBootstrapTfmArg) $(SourceBuildBootstrapRestoreConfigFileArg) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime) /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:DotNetBuildRepo=true"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
