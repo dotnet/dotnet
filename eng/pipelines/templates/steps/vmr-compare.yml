@@ -114,15 +114,6 @@ steps:
   displayName: Download source-manifest
   name: GetSourceManifest
 
-- template: ../steps/vmr-download-artifact.yml
-  parameters:
-    displayName: Download Asset Manifest
-    buildId: $(GetBuildInfo.UnifiedBuildRunId)
-    artifactName: AssetManifests
-    itemPattern: '**/MergedManifest.xml'
-    downloadPath: '$(Build.ArtifactStagingDirectory)/AssetManifests'
-    continueOnError: ${{ parameters.continueOnError }}
-
 - ${{ if eq(parameters.OS, 'Windows_NT')}}:
   - powershell: |
       $(Build.SourcesDirectory)\eng\common\darc-init.ps1 -toolpath $(Build.SourcesDirectory)\artifacts\tools\darc
@@ -187,23 +178,29 @@ steps:
         -assetFilter $assetFilter `
         -nonShipping:$nonShipping
 
-- ${{ if ne(parameters.assetType, 'Blob') }}:
-  - template: ../steps/vmr-download-artifact.yml
-    parameters:
-      displayName: Download Package Artifacts
-      buildId: $(GetBuildInfo.UnifiedBuildRunId)
-      artifactName: PackageArtifacts
-      downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/PackageArtifacts'
-      continueOnError: ${{ parameters.continueOnError }}
+- template: ../steps/vmr-download-artifact.yml
+  parameters:
+    displayName: Download VMR Artifacts
+    buildId: $(GetBuildInfo.UnifiedBuildRunId)
+    ${{ if eq(parameters.assetType, 'Blob') }}:
+      itemPattern: |
+        *_Artifacts/assets/**
+        *_Artifacts/manifests/**
+    ${{ elseif eq(parameters.assetType, 'Package') }}:
+      itemPattern: |
+        *_Artifacts/packages/**
+        *_Artifacts/manifests/**
+    ${{ else }}:
+      itemPattern: |
+        *_Artifacts/assets/**
+        *_Artifacts/packages/**
+        *_Artifacts/manifests/**
+    downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
+    continueOnError: ${{ parameters.continueOnError }}
 
-- ${{ if ne(parameters.assetType, 'Package') }}:
-  - template: ../steps/vmr-download-artifact.yml
-    parameters:
-      displayName: Download Blob Artifacts
-      buildId: $(GetBuildInfo.UnifiedBuildRunId)
-      artifactName: BlobArtifacts
-      downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/BlobArtifacts'
-      continueOnError: ${{ parameters.continueOnError }}
+- powershell: rm -r "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts"
+  displayName: Remove Source-Build Artifacts
+  continueOnError: ${{ parameters.continueOnError }}
 
 - ${{ if eq(parameters.command, 'signing') }}:
   - template: ../steps/vmr-download-artifact.yml
@@ -249,7 +246,6 @@ steps:
 - script: $(InstallDarc.dotnetPath)
     $(Build.SourcesDirectory)/artifacts/bin/BuildComparer/Debug/BuildComparer.dll
     ${{ parameters.command }}
-    -vmrManifestPath "$(Build.ArtifactStagingDirectory)/AssetManifests/MergedManifest.xml"
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"

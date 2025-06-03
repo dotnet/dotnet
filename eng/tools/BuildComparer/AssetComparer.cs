@@ -18,7 +18,6 @@ public class AssetComparer : BuildComparer
     public AssetComparer(
         bool clean,
         AssetType? assetType,
-        string vmrManifestPath,
         string vmrAssetBasePath,
         string baseBuildAssetBasePath,
         string issuesReportPath,
@@ -28,7 +27,6 @@ public class AssetComparer : BuildComparer
         : base(
             clean,
             assetType,
-            vmrManifestPath,
             vmrAssetBasePath,
             baseBuildAssetBasePath,
             issuesReportPath,

@@ -20,11 +20,6 @@ public abstract class BuildComparer
     /// Type of asset being processed in the build comparison tool.
     /// </summary>
     protected AssetType? _assetType;
-
-    /// <summary>
-    /// Path to the VMR manifest file.
-    /// </summary>
-    protected string _vmrManifestPath;
     
     /// <summary>
     /// Base path for VMR build assets.
@@ -79,7 +74,6 @@ public abstract class BuildComparer
     protected BuildComparer(
         bool clean,
         AssetType? assetType,
-        string vmrManifestPath,
         string vmrAssetBasePath,
         string baseBuildAssetBasePath,
         string issuesReportPath,
@@ -90,7 +84,6 @@ public abstract class BuildComparer
     {
         _clean = clean;
         _assetType = assetType;
-        _vmrManifestPath = vmrManifestPath;
         _vmrBuildAssetBasePath = vmrAssetBasePath;
         _baseBuildAssetBasePath = baseBuildAssetBasePath;
         _issuesReportPath = issuesReportPath;
@@ -162,13 +155,16 @@ public abstract class BuildComparer
     /// </remarks>
     protected void GenerateAssetMappings()
     {
-        Console.WriteLine($"Loading VMR manifest from {_vmrManifestPath}");
+        List<XDocument> vmrManifests = [];
 
-        // Load the XML file
-        XDocument vmrMergedManifestContent = XDocument.Load(_vmrManifestPath);
-
-        // Get all files in the assets folder, including subfolders
-        var allFiles = Directory.GetFiles(_baseBuildAssetBasePath, "*", SearchOption.AllDirectories);
+        foreach (var verticalArtifactsDir in Directory.EnumerateDirectories(_vmrBuildAssetBasePath, "*_Artifacts"))
+        {
+            foreach (var manifest in Directory.EnumerateFiles(Path.Combine(verticalArtifactsDir, "manifests"), "*.xml"))
+            {
+                Console.WriteLine($"Loading VMR manifest from {manifest}");
+                vmrManifests.Add(XDocument.Load(manifest));
+            }
+        }
 
         // Walk the top-level directories of the asset base path, and find the MergedManifest under each
         // one. The MergedManifest.xml contains the list of outputs produced by the repo.
@@ -197,10 +193,11 @@ public abstract class BuildComparer
                 throw new FileNotFoundException($"MergedManifest.xml not found in {baseDirectory}");
             }
 
-            _assetMappings.AddRange(MapFilesForManifest(vmrMergedManifestContent,
-                                                       baseDirectory,
-                                                       _vmrBuildAssetBasePath,
-                                                       repoMergedManifestPath));
+            _assetMappings.AddRange(MapFilesForRepoManifest(
+                vmrManifests,
+                baseDirectory,
+                _vmrBuildAssetBasePath,
+                repoMergedManifestPath));
         }
     }
 
@@ -358,16 +355,16 @@ public abstract class BuildComparer
     /// <summary>
     /// Maps files in the base build to the VMR build based on the merged manifest.
     /// </summary>
-    /// <param name="vmrMergedManifestContent">VMR manifest</param>
+    /// <param name="vmrManifests">VMR manifests</param>
     /// <param name="baseDirectory">Base build directory</param>
     /// <param name="diffDirectory">Base VMR build directory</param>
     /// <param name="repoMergedManifestPath">Path to merged manifest for the base build</param>
     /// <returns>List of asset mappings for the baseline manifest.</returns>
-    private List<AssetMapping> MapFilesForManifest(XDocument vmrMergedManifestContent, string baseDirectory, string diffDirectory, string repoMergedManifestPath)
+    private List<AssetMapping> MapFilesForRepoManifest(List<XDocument> vmrManifests, string baseDirectory, string diffDirectory, string repoMergedManifestPath)
     {
         var repoBuildMergeManifestContent = XDocument.Load(repoMergedManifestPath);
 
-        List<AssetMapping> assetMappings = new();
+        List<AssetMapping> assetMappings = [];
         Console.WriteLine($"Mapping base build outputs in {repoMergedManifestPath} to VMR.");
 
         // For each top level element, switch on the name of the element. Could be Blob or Package
@@ -378,13 +375,13 @@ public abstract class BuildComparer
                 case "Blob":
                     if (_assetType is AssetType.Blob or null)
                     {
-                        assetMappings.Add(MapBlob(vmrMergedManifestContent, element, baseDirectory, diffDirectory));
+                        assetMappings.Add(MapBlob(vmrManifests, element, baseDirectory, diffDirectory));
                     }
                     break;
                 case "Package":
                     if (_assetType is AssetType.Package or null)
                     {
-                        assetMappings.Add(MapPackage(vmrMergedManifestContent, element, baseDirectory, diffDirectory));
+                        assetMappings.Add(MapPackage(vmrManifests, element, baseDirectory, diffDirectory));
                     }
                     break;
                 case "Pdb":
@@ -408,7 +405,7 @@ public abstract class BuildComparer
         return assetMappings;
     }
 
-    private AssetMapping MapBlob(XDocument diffMergedManifestContent, XElement baseElement, string basePath, string diffPath)
+    private AssetMapping MapBlob(List<XDocument> diffMergedManifestContent, XElement baseElement, string basePath, string diffPath)
     {
         string baseBlobId = baseElement.Attribute("Id")?.Value;
         string baseBlobFileName = Path.GetFileName(baseBlobId);
@@ -449,7 +446,7 @@ public abstract class BuildComparer
             {
                 string diffBlobId = p.Attribute("Id")?.Value;
                 string diffBlobFileName = Path.GetFileName(diffBlobId);
-                string diffFilePath = Path.Combine(diffPath, "BlobArtifacts", diffBlobFileName);
+                string diffFilePath = GetVmrFilePathForArtifact(diffPath, p);
 
                 // Because the version identifier isn't perfect, we special case a couple artifacts where it's easier to
                 // just open a nupkg and get the version from it.
@@ -476,9 +473,9 @@ public abstract class BuildComparer
             });
 
         string diffFilePath = null;
-        if (diffBlobElement != null)
+        if (diffBlobElement is not null)
         {
-            diffFilePath = Path.Combine(diffPath, "BlobArtifacts", Path.GetFileName(diffBlobElement.Attribute("Id")?.Value));
+            diffFilePath = GetVmrFilePathForArtifact(diffPath, diffBlobElement);
             if (!File.Exists(diffFilePath))
             {
                 diffFilePath = null;
@@ -495,14 +492,16 @@ public abstract class BuildComparer
             AssetType = AssetType.Blob
         };
     }
+    private static string GetVmrFilePathForArtifact(string diffPath, XElement p)
+    {
+        return Path.Combine(diffPath, p.Attribute("PipelineArtifactName")?.Value, p.Attribute("PipelineArtifactPath")?.Value);
+    }
 
-    private AssetMapping MapPackage(XDocument diffMergedManifestContent, XElement baseElement, string basePath, string diffPath)
+    private static AssetMapping MapPackage(List<XDocument> vmrManifests, XElement baseElement, string basePath, string diffPath)
     {
         string packageId = baseElement.Attribute("Id")?.Value;
         string basePackageVersion = baseElement.Attribute("Version")?.Value;
-        bool basePackageIsShipping = baseElement.Attribute("NonShipping")?.Value != "true";
-        string basePackageShippingPathElement = basePackageIsShipping ? "shipping" : "nonshipping";
-        string baseFilePath = Path.Combine(basePath, basePackageShippingPathElement, "packages", $"{packageId}.{basePackageVersion}.nupkg");
+        string baseFilePath = Path.Combine(basePath, CalculateShippingPathElement(baseElement), "packages", $"{packageId}.{basePackageVersion}.nupkg");
 
         if (!File.Exists(baseFilePath))
         {
@@ -510,16 +509,13 @@ public abstract class BuildComparer
             baseFilePath = null;
         }
 
-        var diffPackageElement = diffMergedManifestContent.Descendants("Package")
+        var diffPackageElement = vmrManifests.SelectMany(manifest => manifest.Descendants("Package"))
             .FirstOrDefault(p => p.Attribute("Id")?.Value == packageId);
 
         string diffFilePath = null;
         if (diffPackageElement != null)
         {
-            string diffPackageVersion = diffPackageElement.Attribute("Version")?.Value;
-            bool diffPackageIsShipping = diffPackageElement.Attribute("NonShipping")?.Value != "true";
-            string diffPackageShippingPathElement = diffPackageIsShipping ? "shipping" : "nonshipping";
-            diffFilePath = Path.Combine(diffPath, "PackageArtifacts", $"{packageId}.{diffPackageVersion}.nupkg");
+            diffFilePath = GetVmrFilePathForArtifact(diffPath, diffPackageElement);
             if (!File.Exists(diffFilePath))
             {
                 diffFilePath = null;
