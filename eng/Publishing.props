@@ -5,7 +5,6 @@
   <PropertyGroup>
     <PublishingVersion>4</PublishingVersion>
     <EnableDefaultArtifacts>false</EnableDefaultArtifacts>
-    <PushToLocalStorage>true</PushToLocalStorage>
     <PreserveRepoOrigin>true</PreserveRepoOrigin>
     <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
     <ArtifactsPublishStagingDir>$(ArtifactsStagingDir)/artifacts</ArtifactsPublishStagingDir>
