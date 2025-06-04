@@ -26,9 +26,10 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
     // https://tools.ietf.org/html/rfc3161
     public sealed class TimestampService : HttpResponder
     {
+#if IS_SIGNING_SUPPORTED
         private const string RequestContentType = "application/timestamp-query";
         private const string ResponseContentType = "application/timestamp-response";
-
+#endif
         private readonly TimestampServiceOptions _options;
         private readonly HashSet<BigInteger> _serialNumbers;
         private BigInteger _nextSerialNumber;

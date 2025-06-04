@@ -111,12 +111,6 @@ namespace NuGet.PackageManagement.UI
             await CreateVersionsAsync(cancellationToken);
         }
 
-        private static bool HasId(string id, IEnumerable<PackageIdentity> packages)
-        {
-            return packages.Any(p =>
-                StringComparer.OrdinalIgnoreCase.Equals(p.Id, id));
-        }
-
         public override void CleanUp()
         {
             _solutionManager.ProjectUpdated -= ProjectChanged;
