@@ -26,13 +26,13 @@ namespace NuGetConsole
         private readonly AsyncLazy<IVsOutputWindow> _vsOutputWindow;
 
         [ImportingConstructor]
-        OutputConsoleProvider(
+        internal OutputConsoleProvider(
             [ImportMany]
             IEnumerable<Lazy<IHostProvider, IHostMetadata>> hostProviders)
             : this(AsyncServiceProvider.GlobalProvider, hostProviders)
         { }
 
-        OutputConsoleProvider(
+        internal OutputConsoleProvider(
             IAsyncServiceProvider asyncServiceProvider,
             IEnumerable<Lazy<IHostProvider, IHostMetadata>> hostProviders)
         {

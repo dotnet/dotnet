@@ -26,7 +26,7 @@ internal class SyntaxToken : RazorSyntaxNode
 
     internal override SyntaxNode CreateRed(SyntaxNode parent, int position)
     {
-        return new Syntax.SyntaxToken(this, parent, position);
+        return Assumed.Unreachable<SyntaxNode>();
     }
 
     protected override void WriteTokenTo(TextWriter writer)

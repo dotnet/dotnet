@@ -257,11 +257,14 @@ if [ "$removeBinaries" == true ]; then
     packagesDir=$workingDir
   fi
 
-  "$REPO_ROOT/eng/detect-binaries.sh" \
-  --clean \
-  --allowed-binaries-file "$REPO_ROOT/eng/allowed-sb-binaries.txt" \
-  --with-packages $packagesDir \
-  --with-sdk $dotnetSdk \
+  "$dotnetSdk/dotnet" build \
+    "$REPO_ROOT/eng/init-detect-binaries.proj" \
+    "/p:BinariesMode=Clean" \
+    "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \
+    "/p:BinariesPackagesDir=$packagesDir" \
+    "/bl:artifacts/log/prep-remove-binaries.binlog" \
+    "/fileLoggerParameters:LogFile=artifacts/log/prep-remove-binaries.log" \
+    "${positional_args[@]}"
 
   rm -rf "$workingDir"
 
