@@ -181,13 +181,6 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        private static byte[] GetDefaultSha256Hash()
-        {
-            byte[] data = Encoding.UTF8.GetBytes("peach");
-
-            return Common.HashAlgorithmName.SHA256.ComputeHash(data);
-        }
-
         private static TestTstInfo CreateTestTstInfo(
             TestAccuracy? accuracy = null,
             bool ordering = false,
