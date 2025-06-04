@@ -15,8 +15,10 @@ namespace NuGet.Common
     {
         private const string DotNet = "dotnet";
         private const string DotNetExe = "dotnet.exe";
+#if IS_DESKTOP
         private const string Home = "HOME";
         private const string UserProfile = "USERPROFILE";
+#endif
 #if IS_CORECLR
         private const string DotNetHome = "DOTNET_CLI_HOME";
 #endif
@@ -306,21 +308,7 @@ namespace NuGet.Common
 #endif
         }
 
-        /// <summary>
-        /// Throw a helpful message if the required env vars are not set.
-        /// </summary>
-        private static string GetValueOrThrowMissingEnvVarsDotnet(Func<string> getValue, string home, string dotnetHome)
-        {
-            var value = getValue();
-
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.MissingRequiredEnvVarsDotnet, home, dotnetHome));
-            }
-
-            return value;
-        }
-
+#if IS_DESKTOP
         /// <summary>
         /// Throw a helpful message if a required env var is not set.
         /// </summary>
@@ -335,6 +323,7 @@ namespace NuGet.Common
 
             return value;
         }
+#endif
 
         public static string GetDotNetLocation()
         {
