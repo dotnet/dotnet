@@ -36,11 +36,11 @@
       "commitSha": "e22447d0a07219d3d5ddf7b345b53561e3bde7a9"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25303.1",
-      "barId": 270407,
+      "packageVersion": "9.0.0-preview.1.25303.2",
+      "barId": 270423,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "fffc44a901e07e00fa0dcadb851a995a03741ce2"
+      "commitSha": "5301f0fa3815b133330070e76ec30814f3731304"
     },
     {
       "packageVersion": "9.0.628001",
