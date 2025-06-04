@@ -73,14 +73,16 @@
     <ProjectReference Include="@(RepositoryReference->'%(Identity).proj')" />
   </ItemGroup>
 
-  <!-- Returns the repository references of this project and all the projects this project references. -->
+  <!-- Add the BuildReference="false" metadata to transitives that shouldn't be built in the current build pass and
+      return the repository references (including transitives). -->
   <Target Name="PrepareRepositoryReferences" Returns="@(TransitiveRepositoryReference)" DependsOnTargets="PrepareProjectReferences" BeforeTargets="ResolveProjectReferences">
-    <!-- Add the BuildReference="false" metadata to transitives that shouldn't be built in the current build pass. -->
+    <!-- Read from the 'ExcludedRepositoryReferences' state retrieved by the PrepareProjectReferences target. -->
     <XmlPeek Condition="'%(_MSBuildProjectReferenceExistent.AdditionalPropertiesFromProject)' != ''"
              XmlContent="%(_MSBuildProjectReferenceExistent.AdditionalPropertiesFromProject)" Query="//ExcludedRepositoryReferences/text()">
       <Output TaskParameter="Result" ItemName="_excludedRepositoryReference" />
     </XmlPeek>
 
+    <!-- Unescape and add metadata to make msbuild treat the XmlPeek returned items correctly. -->
     <ItemGroup>
       <_excludedRepositoryReferenceNormalized Include="$([MSBuild]::Unescape('%(_excludedRepositoryReference.Identity)'))" />
       <_excludedRepositoryReferenceNormalized Project="%(Identity).proj" />
@@ -98,9 +100,11 @@
       <!-- Remove transitives that are also direct dependencies. -->
       <_MSBuildProjectReferenceExistentTransitive Remove="@(_MSBuildProjectReferenceExistent)" Condition="'%(_MSBuildProjectReferenceExistent.NuGetPackageId)' == ''" />
 
+      <!-- Find the transitive project references that shouldn't be built in the current build pass. -->
       <_projectReferenceWithBuildReferenceExcluded Include="@(_MSBuildProjectReferenceExistentTransitive)" Exclude="@(_excludedRepositoryReferenceNormalizedWithProject)" />
       <_projectReferenceWithBuildReferenceIncluded Include="@(_MSBuildProjectReferenceExistentTransitive)" Exclude="@(_projectReferenceWithBuildReferenceExcluded)" />
 
+      <!-- Add the BuildReference="false" metadata (via Remove&Include as Update doesn't work in targets) to the transitive project references that shouldn't be built. -->
       <_MSBuildProjectReferenceExistent Remove="@(_projectReferenceWithBuildReferenceIncluded)" />
       <_MSBuildProjectReferenceExistent Include="@(_projectReferenceWithBuildReferenceIncluded)" BuildReference="false" />
     </ItemGroup>
