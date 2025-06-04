@@ -76,22 +76,5 @@ namespace NuGet.Common
         {
             return new PackagingLogMessage(logLevel: LogLevel.Warning, logCode: code, message: message, libraryId: libraryId, framework: framework);
         }
-
-        /// <summary>
-        /// Get default LogCode based on the log level
-        /// </summary>
-        /// <param name="logLevel">The log level</param>
-        private static NuGetLogCode GetDefaultLogCode(LogLevel logLevel)
-        {
-            switch (logLevel)
-            {
-                case LogLevel.Error:
-                    return NuGetLogCode.NU5000;
-                case LogLevel.Warning:
-                    return NuGetLogCode.NU5500;
-                default:
-                    return NuGetLogCode.Undefined;
-            }
-        }
     }
 }
