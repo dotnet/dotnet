@@ -54,7 +54,5 @@ namespace NuGet.PackageManagement.UI.Options
         {
             _configurationFilesControl.Value.InitializeOnActivated();
         }
-
-        private ConfigurationFilesControl ConfigurationFilesControl => _configurationFilesControl.Value;
     }
 }

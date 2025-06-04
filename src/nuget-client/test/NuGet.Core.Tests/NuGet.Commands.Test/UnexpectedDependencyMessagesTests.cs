@@ -888,11 +888,6 @@ namespace NuGet.Commands.Test
             testLogger.LogMessages.Select(e => e.Code).Should().NotContain(NuGetLogCode.NU1603);
         }
 
-        private static List<LibraryDependency> GetDependencyList(LibraryRange range)
-        {
-            return new List<LibraryDependency>() { new LibraryDependency() { LibraryRange = range } };
-        }
-
         private static List<TargetFrameworkInformation> GetTFI(NuGetFramework framework, params LibraryRange[] dependencies)
         {
             return new List<TargetFrameworkInformation>()
