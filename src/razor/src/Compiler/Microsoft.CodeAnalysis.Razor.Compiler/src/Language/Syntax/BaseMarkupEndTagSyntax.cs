@@ -36,17 +36,17 @@ internal abstract partial class BaseMarkupEndTagSyntax
         var editHandler = this.GetEditHandler();
         var chunkGenerator = ChunkGenerator;
 
-        if (OpenAngle is { IsMissing: false } openAngle)
+        if (IsValidToken(OpenAngle, out var openAngle))
         {
             tokens.Add(openAngle);
         }
 
-        if (ForwardSlash is { IsMissing: false } forwardSlash)
+        if (IsValidToken(ForwardSlash, out var forwardSlash))
         {
             tokens.Add(forwardSlash);
         }
 
-        if (Bang is { IsMissing: false } bang)
+        if (IsValidToken(Bang, out var bang))
         {
             SpanEditHandler? acceptsAnyHandler = null;
             SpanEditHandler? acceptsNoneHandler = null;
@@ -64,7 +64,7 @@ internal abstract partial class BaseMarkupEndTagSyntax
             builder.Add(RazorMetaCode(bang, chunkGenerator, acceptsNoneHandler));
         }
 
-        if (Name is { IsMissing: false } name)
+        if (IsValidToken(Name, out var name))
         {
             tokens.Add(name);
         }
@@ -78,7 +78,7 @@ internal abstract partial class BaseMarkupEndTagSyntax
             }
         }
 
-        if (CloseAngle is { IsMissing: false } closeAngle)
+        if (IsValidToken(CloseAngle, out var closeAngle))
         {
             tokens.Add(closeAngle);
         }
@@ -88,9 +88,20 @@ internal abstract partial class BaseMarkupEndTagSyntax
         return builder.ToListNode(parent: this, Position)
             .AssumeNotNull($"ToListNode should not return null since builder was not empty.");
 
+        static bool IsValidToken(SyntaxToken token, out SyntaxToken validToken)
+        {
+            if (token.Kind != SyntaxKind.None && !token.IsMissing)
+            {
+                validToken = token;
+                return true;
+            }
+
+            validToken = default;
+            return false;
+        }
 
         static MarkupTextLiteralSyntax MarkupTextLiteral(
-            SyntaxList<SyntaxToken> tokens, ISpanChunkGenerator? chunkGenerator, SpanEditHandler? editHandler)
+            SyntaxTokenList tokens, ISpanChunkGenerator? chunkGenerator, SpanEditHandler? editHandler)
         {
             var node = SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator);
 
@@ -115,4 +126,6 @@ internal abstract partial class BaseMarkupEndTagSyntax
             return node;
         }
     }
+
+    public abstract BaseMarkupStartTagSyntax? GetStartTag();
 }

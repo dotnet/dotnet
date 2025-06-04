@@ -698,39 +698,5 @@ namespace NuGet.ProjectModel
                 writer.WriteNonEmptyNameArray(name, values);
             }
         }
-
-        private static void SetDictionaryValue(IObjectWriter writer, string name, IDictionary<string, string> values)
-        {
-            if (values != null && values.Count > 0)
-            {
-                writer.WriteObjectStart(name);
-
-                var sortedValues = values.OrderBy(pair => pair.Key, StringComparer.Ordinal);
-
-                foreach (var pair in sortedValues)
-                {
-                    writer.WriteNameValue(pair.Key, pair.Value);
-                }
-
-                writer.WriteObjectEnd();
-            }
-        }
-
-        private static void SetDictionaryValues(IObjectWriter writer, string name, IDictionary<string, IEnumerable<string>> values)
-        {
-            if (values != null && values.Count > 0)
-            {
-                writer.WriteObjectStart(name);
-
-                var sortedValues = values.OrderBy(pair => pair.Key, StringComparer.Ordinal);
-
-                foreach (var pair in sortedValues)
-                {
-                    writer.WriteNameArray(pair.Key, pair.Value);
-                }
-
-                writer.WriteObjectEnd();
-            }
-        }
     }
 }

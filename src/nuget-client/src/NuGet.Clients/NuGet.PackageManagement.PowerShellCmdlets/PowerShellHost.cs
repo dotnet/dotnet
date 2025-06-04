@@ -44,8 +44,6 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         private static bool PowerShellLoaded = false;
 
         private Microsoft.VisualStudio.Threading.AsyncLazy<IVsMonitorSelection> _vsMonitorSelection;
-        private IVsMonitorSelection VsMonitorSelection => ThreadHelper.JoinableTaskFactory.Run(_vsMonitorSelection.GetValueAsync);
-
 #pragma warning disable RS0030 // Do not used banned APIs
         private readonly AsyncSemaphore _initScriptsLock = new AsyncSemaphore(1);
 #pragma warning restore RS0030 // Do not used banned APIs
