@@ -116,12 +116,6 @@
 
       <TransitiveRepositoryReference Include="@(_repositoryReferenceWithNameIncluded)" Project="%(Identity).proj" />
     </ItemGroup>
-
-    <!-- SkipRepoReferences is a developer innerloop switch to skip building repo dependencies. -->
-    <ItemGroup Condition="'$(SkipRepoReferences)' == 'true'">
-      <_MSBuildProjectReferenceExistent Remove="@(TransitiveRepositoryReference->Metadata('Project'))" />
-      <_MSBuildProjectReferenceExistent Include="@(TransitiveRepositoryReference->Metadata('Project'))" BuildReference="false"  />
-    </ItemGroup>
   </Target>
 
   <!-- Wraps the transitive repo references with additional metadata -->
@@ -421,7 +415,7 @@
        extract tool packages (i.e. Arcade.Sdk). This is necessary due to the custom sdk resolver. -->
   <Target Name="ExtractToolPackagesForSkippedRepos"
           DependsOnTargets="PrepareRepositoryReferences"
-          Condition="'@(TransitiveRepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
+          Condition="'@(TransitiveRepositoryReference)' != '' and '$(BuildProjectReferences)' == 'true'">
     <ItemGroup>
       <_SkippedTransitiveRepositoryReference
         Include="@(TransitiveRepositoryReference->WithMetadataValue('BuildReference', 'false')->Metadata('Project'))"
