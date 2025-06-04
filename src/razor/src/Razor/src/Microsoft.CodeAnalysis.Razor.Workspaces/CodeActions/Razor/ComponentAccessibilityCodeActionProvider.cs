@@ -56,7 +56,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         }
 
         // Ignore if start tag has dots, as we only handle short tags
-        if (startTag.Name.Content.Contains("."))
+        if (startTag.Name.Content.Contains('.'))
         {
             return [];
         }

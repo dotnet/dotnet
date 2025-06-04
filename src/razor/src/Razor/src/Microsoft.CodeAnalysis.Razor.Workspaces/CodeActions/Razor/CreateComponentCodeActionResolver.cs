@@ -61,8 +61,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
     {
         var syntaxTree = codeDocument.GetSyntaxTree();
         var namespaceDirective = syntaxTree.Root.DescendantNodes()
-            .Where(n => n.Kind == SyntaxKind.RazorDirective)
-            .Cast<RazorDirectiveSyntax>()
+            .OfType<RazorDirectiveSyntax>()
             .FirstOrDefault(static n => n.DirectiveDescriptor == NamespaceDirective.Directive);
 
         if (namespaceDirective != null)

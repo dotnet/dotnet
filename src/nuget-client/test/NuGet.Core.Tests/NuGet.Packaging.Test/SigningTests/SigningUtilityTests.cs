@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 #if IS_SIGNING_SUPPORTED
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -688,7 +688,7 @@ namespace NuGet.Packaging.Test
                 Common.HashAlgorithmName.SHA256,
                 Common.HashAlgorithmName.SHA256);
         }
-
+#if IS_SIGNING_SUPPORTED
         private static RepositorySignPackageRequest CreateRequestRepository(
             X509Certificate2 certificate,
             Uri v3ServiceIndexUrl,
@@ -701,5 +701,6 @@ namespace NuGet.Packaging.Test
                 v3ServiceIndexUrl,
                 packageOwners);
         }
+#endif
     }
 }
