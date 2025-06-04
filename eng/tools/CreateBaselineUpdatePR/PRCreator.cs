@@ -14,6 +14,7 @@ public class PRCreator
     private readonly string _repoOwner;
     private readonly string _repoName;
     private readonly GitHubClient _client;
+    private readonly List<string> originalLicenseFile = new List<string>();
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
@@ -47,7 +48,7 @@ public class PRCreator
         List<NewTreeItem> originalTreeItems = await FetchOriginalTreeItemsAsync(originalTreeResponse, targetBranch, originalFilesDirectory);
 
         // Update the test results tree based on the pipeline
-        originalTreeItems = await UpdateAllFilesAsync(updatedTestsFiles, originalTreeItems, pipeline);
+        originalTreeItems = await UpdateAllFilesAsync(updatedTestsFiles, originalTreeItems, pipeline, originalFilesDirectory, targetBranch);
         var testResultsTreeResponse = await CreateTreeFromItemsAsync(originalTreeItems);
         var parentTreeResponse = await CreateParentTreeAsync(testResultsTreeResponse, originalTreeResponse, originalFilesDirectory);
 
@@ -115,7 +116,8 @@ public class PRCreator
                 group => new HashSet<string>(group)
             );
 
-    private async Task<List<NewTreeItem>> UpdateAllFilesAsync(Dictionary<string, HashSet<string>> updatedFiles, List<NewTreeItem> tree, Pipelines pipeline)
+    private async Task<List<NewTreeItem>> UpdateAllFilesAsync(Dictionary<string, HashSet<string>> updatedFiles,
+     List<NewTreeItem> tree, Pipelines pipeline, string path, string targetBranch)
     {
         bool isSdkPipeline = pipeline == Pipelines.Sdk;
         string? defaultContent = pipeline == Pipelines.License ? DefaultLicenseBaselineContent : null;
@@ -130,6 +132,7 @@ public class PRCreator
                 tree = await UpdateRegularFilesAsync(updatedFile.Value, tree, defaultContent);
             }
         }
+        tree = await UpdateBaseFileAsync(tree, path, targetBranch, updatedFiles);
         return tree;
     }
 
@@ -241,6 +244,41 @@ public class PRCreator
             // Path in the tree, update the sha and the content
             var blob = await CreateBlobAsync(content);
             originalTreeItem.Sha = blob.Sha;
+        }
+        return tree;
+    }
+
+    private async Task<List<NewTreeItem>> UpdateBaseFileAsync(List<NewTreeItem> tree, string path, string targetBranch, Dictionary<string, HashSet<string>> updatedTestsFiles)
+    {
+        IReadOnlyList<RepositoryContent> originalRepositoryContent = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContentsByRef(_repoOwner, _repoName, path, targetBranch));
+
+        foreach (var item in originalRepositoryContent)
+        {
+            if (item.Type == ContentType.File)
+            {
+                originalLicenseFile.Add(Path.Combine(path,item.Name));
+            }
+        }
+        foreach(var item in updatedTestsFiles)
+        {
+            originalLicenseFile.RemoveAll(file => item.Value.Any(v => v.Contains(Path.GetFileNameWithoutExtension(file))));
+        }
+
+        if (originalLicenseFile.Count > 0)
+        {
+            foreach (var file in originalLicenseFile)
+            {
+
+                IReadOnlyList<RepositoryContent> contents = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContents(_repoOwner, _repoName, file));
+
+                tree.Add(new NewTreeItem
+                {
+                    Path = Path.GetFileName(file),
+                    Mode = FileMode.File,
+                    Type = TreeType.Blob,
+                    Sha = contents.First().Sha
+                });
+            }
         }
         return tree;
     }
