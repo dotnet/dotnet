@@ -37,8 +37,7 @@
     <SdkMSIInstallerFileName>$(ArtifactNameWithVersionSdk)$(InstallerExtension)</SdkMSIInstallerFileName>
     <SdkTemplatesMSIInstallerFileName>dotnet-$(VersionMajor)$(VersionMinor)templates-$(FullNugetVersion)-$(ProductMonikerRid)$(InstallerExtension)</SdkTemplatesMSIInstallerFileName>
 
-    <CombinedFrameworkHostArchiveFileName Condition="'$(PgoInstrument)' != 'true'">dotnet-runtime-$(MicrosoftNETCoreAppRuntimePackageVersion)-$(SharedFrameworkRid)$(ArchiveExtension)</CombinedFrameworkHostArchiveFileName>
-    <CombinedFrameworkHostArchiveFileName Condition="'$(PgoInstrument)' == 'true'">dotnet-runtime-$(MicrosoftNETCorePlatformsPackageVersion)-$(SharedFrameworkRid)$(ArchiveExtension)</CombinedFrameworkHostArchiveFileName>
+    <CombinedFrameworkHostArchiveFileName>dotnet-runtime-$(MicrosoftNETCoreAppRuntimePackageVersion)-$(SharedFrameworkRid)$(ArchiveExtension)</CombinedFrameworkHostArchiveFileName>
     <WinFormsAndWpfSharedFxArchiveFileName>windowsdesktop-runtime-$(MicrosoftWindowsDesktopAppRuntimePackageVersion)-$(SharedFrameworkRid)$(ArchiveExtension)</WinFormsAndWpfSharedFxArchiveFileName>
 
     <AspNetCoreInstallerRid Condition="'$(AspNetCoreInstallerRid)' == ''">$(SharedFrameworkRid)</AspNetCoreInstallerRid>
