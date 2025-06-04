@@ -18,7 +18,8 @@ internal static class SyntaxNodeExtensions
         return (TNode)node.Green.SetAnnotations(annotations).CreateRed(node.Parent, node.Position);
     }
 
-    public static object GetAnnotationValue<TNode>(this TNode node, string key) where TNode : SyntaxNode
+    public static object GetAnnotationValue<TNode>(this TNode node, string key)
+        where TNode : SyntaxNode
     {
         if (!node.ContainsAnnotations)
         {
@@ -26,6 +27,25 @@ internal static class SyntaxNodeExtensions
         }
 
         var annotations = node.GetAnnotations();
+        foreach (var annotation in annotations)
+        {
+            if (annotation.Kind == key)
+            {
+                return annotation.Data;
+            }
+        }
+
+        return null;
+    }
+
+    public static object GetAnnotationValue(this SyntaxToken token, string key)
+    {
+        if (!token.ContainsAnnotations)
+        {
+            return null;
+        }
+
+        var annotations = token.GetAnnotations();
         foreach (var annotation in annotations)
         {
             if (annotation.Kind == key)
@@ -65,6 +85,11 @@ internal static class SyntaxNodeExtensions
         walker.Visit(node);
     }
 
+    public static SourceLocation GetSourceLocation(this SyntaxNodeOrToken nodeOrToken, RazorSourceDocument source)
+        => nodeOrToken.IsToken
+            ? nodeOrToken.AsToken().GetSourceLocation(source)
+            : nodeOrToken.AsNode()?.GetSourceLocation(source) ?? default;
+
     public static SourceLocation GetSourceLocation(this SyntaxNode node, RazorSourceDocument source)
     {
         try
@@ -100,12 +125,55 @@ internal static class SyntaxNodeExtensions
         }
     }
 
+    public static SourceLocation GetSourceLocation(this SyntaxToken token, RazorSourceDocument source)
+    {
+        try
+        {
+            if (source.Text.Length == 0)
+            {
+                // Just a marker symbol
+                return new SourceLocation(source.FilePath, 0, 0, 0);
+            }
+            if (token.Position == source.Text.Length)
+            {
+                // E.g. Marker symbol at the end of the document
+                var lastPosition = source.Text.Length - 1;
+                var endsWithLineBreak = SyntaxFacts.IsNewLine(source.Text[lastPosition]);
+                var lastLocation = source.Text.Lines.GetLinePosition(lastPosition);
+                return new SourceLocation(
+                    source.FilePath, // GetLocation prefers RelativePath but we want FilePath.
+                    lastPosition + 1,
+                    lastLocation.Line + (endsWithLineBreak ? 1 : 0),
+                    endsWithLineBreak ? 0 : lastLocation.Character + 1);
+            }
+
+            var location = source.Text.Lines.GetLinePosition(token.Position);
+            return new SourceLocation(
+                source.FilePath, // GetLocation prefers RelativePath but we want FilePath.
+                token.Position,
+                location);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            Debug.Assert(false, "Node position should stay within document length.");
+            return new SourceLocation(source.FilePath, token.Position, 0, 0);
+        }
+    }
+
     public static SourceSpan GetSourceSpan(this SyntaxNode node, RazorSourceDocument source)
     {
         var location = node.GetSourceLocation(source);
         var endLocation = source.Text.Lines.GetLinePosition(node.EndPosition);
         var lineCount = endLocation.Line - location.LineIndex;
         return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, node.Width, lineCount, endLocation.Character);
+    }
+
+    public static SourceSpan GetSourceSpan(this SyntaxToken token, RazorSourceDocument source)
+    {
+        var location = token.GetSourceLocation(source);
+        var endLocation = source.Text.Lines.GetLinePosition(token.EndPosition);
+        var lineCount = endLocation.Line - location.LineIndex;
+        return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, token.Width, lineCount, endLocation.Character);
     }
 
     /// <summary>

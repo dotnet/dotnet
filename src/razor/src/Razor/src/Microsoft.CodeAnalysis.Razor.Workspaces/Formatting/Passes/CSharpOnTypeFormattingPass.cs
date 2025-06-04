@@ -337,9 +337,9 @@ internal sealed class CSharpOnTypeFormattingPass(
             return;
         }
 
-        if (owner is CSharpStatementLiteralSyntax &&
-            owner.TryGetPreviousSibling(out var prevNode) &&
-            prevNode.FirstAncestorOrSelf<RazorSyntaxNode>(static a => a is CSharpTemplateBlockSyntax) is { } template &&
+        if (owner is CSharpStatementLiteralSyntax literal &&
+            literal.TryGetPreviousSibling(out var prevNode) &&
+            prevNode.FirstAncestorOrSelf<CSharpTemplateBlockSyntax>() is { } template &&
             owner.SpanStart == template.Span.End &&
             IsOnSingleLine(template, text))
         {
@@ -492,8 +492,8 @@ internal sealed class CSharpOnTypeFormattingPass(
         }
 
         if (owner is CSharpStatementLiteralSyntax &&
-            owner.NextSpan() is { } nextNode &&
-            nextNode.FirstAncestorOrSelf<RazorSyntaxNode>(static a => a is CSharpTemplateBlockSyntax) is { } template &&
+            owner.NextSpan() is { } nextSpan &&
+            nextSpan.AsNode().AssumeNotNull().FirstAncestorOrSelf<CSharpTemplateBlockSyntax>() is { } template &&
             template.SpanStart == owner.Span.End &&
             IsOnSingleLine(template, text))
         {

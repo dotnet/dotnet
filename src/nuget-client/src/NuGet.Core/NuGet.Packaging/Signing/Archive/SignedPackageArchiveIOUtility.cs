@@ -758,43 +758,6 @@ namespace NuGet.Packaging.Signing
             ReadAndWriteUntilPosition(reader, writer, reader.BaseStream.Length);
         }
 
-        private static bool CurrentStreamPositionMatchesByteSignature(BinaryReader reader, byte[] byteSignature)
-        {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-
-            if (byteSignature == null || byteSignature.Length == 0)
-            {
-                throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(byteSignature));
-            }
-
-            var stream = reader.BaseStream;
-
-            if (stream.Length < byteSignature.Length)
-            {
-                return false;
-            }
-
-            var startingOffset = stream.Position;
-
-            for (var i = 0; i < byteSignature.Length; ++i)
-            {
-                var b = stream.ReadByte();
-
-                if (b != byteSignature[i])
-                {
-                    stream.Seek(offset: startingOffset, origin: SeekOrigin.Begin);
-                    return false;
-                }
-            }
-
-            stream.Seek(offset: startingOffset, origin: SeekOrigin.Begin);
-
-            return true;
-        }
-
         /// <summary>
         /// Converts a DateTime value into a unit in the MS-DOS date time format.
         /// Reference - https://docs.microsoft.com/en-us/cpp/c-runtime-library/32-bit-windows-time-date-formats

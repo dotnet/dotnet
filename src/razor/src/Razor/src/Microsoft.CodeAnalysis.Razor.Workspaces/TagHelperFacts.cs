@@ -221,17 +221,21 @@ internal static class TagHelperFacts
     {
         foreach (var ancestor in ancestors)
         {
-            if (ancestor is MarkupElementSyntax element)
+            switch (ancestor)
             {
-                // It's possible for start tag to be null in malformed cases.
-                var name = element.StartTag?.Name?.Content ?? string.Empty;
-                return (name, ancestorIsTagHelper: false);
-            }
-            else if (ancestor is MarkupTagHelperElementSyntax tagHelperElement)
-            {
-                // It's possible for start tag to be null in malformed cases.
-                var name = tagHelperElement.StartTag?.Name?.Content ?? string.Empty;
-                return (name, ancestorIsTagHelper: true);
+                case MarkupElementSyntax { StartTag: var startTag }:
+                    {
+                        // It's possible for start tag to be null in malformed cases.
+                        var name = startTag?.Name.Content ?? string.Empty;
+                        return (name, ancestorIsTagHelper: false);
+                    }
+
+                case MarkupTagHelperElementSyntax { StartTag: var startTag }:
+                    {
+                        // It's possible for start tag to be null in malformed cases.
+                        var name = startTag?.Name.Content ?? string.Empty;
+                        return (name, ancestorIsTagHelper: true);
+                    }
             }
         }
 

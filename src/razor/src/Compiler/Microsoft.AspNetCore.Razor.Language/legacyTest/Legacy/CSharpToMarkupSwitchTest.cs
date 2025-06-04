@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Roslyn.Test.Utilities;
@@ -355,12 +356,14 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
             """,
             directives: [ComponentCodeDirective.Directive]);
 
-        var codeBlock = Assert.IsType<CSharpCodeBlockSyntax>(tree1.Root.ChildNodes()[0].ChildNodes()[1]);
+        var markupBlockSyntax = Assert.IsType<MarkupBlockSyntax>(tree1.Root.ChildNodes().First());
+        var codeBlock = Assert.IsType<CSharpCodeBlockSyntax>(markupBlockSyntax.Children[1]);
+
         Assert.Equal(SyntaxKind.CSharpCodeBlock, codeBlock.Kind);
         Assert.Equal(0, codeBlock.Position);
         Assert.Equal(11, codeBlock.Width);
 
-        var children = codeBlock.ChildNodes();
+        var children = codeBlock.Children;
         Assert.Equal(2, children.Count);
 
         var directive = Assert.IsType<RazorDirectiveSyntax>(children[0]);
