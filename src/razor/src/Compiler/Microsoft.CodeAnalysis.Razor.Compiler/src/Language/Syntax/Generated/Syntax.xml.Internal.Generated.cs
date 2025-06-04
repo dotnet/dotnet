@@ -23,8 +23,8 @@ internal abstract partial class RazorBlockSyntax : RazorSyntaxNode
 
 internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
 {
-    private readonly RazorBlockSyntax _document;
-    private readonly SyntaxToken _endOfFile;
+    internal readonly RazorBlockSyntax _document;
+    internal readonly SyntaxToken _endOfFile;
 
     internal RazorDocumentSyntax(SyntaxKind kind, RazorBlockSyntax document, SyntaxToken endOfFile, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -88,11 +88,11 @@ internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
 
 internal sealed partial class RazorCommentBlockSyntax : RazorSyntaxNode
 {
-    private readonly SyntaxToken _startCommentTransition;
-    private readonly SyntaxToken _startCommentStar;
-    private readonly SyntaxToken _comment;
-    private readonly SyntaxToken _endCommentStar;
-    private readonly SyntaxToken _endCommentTransition;
+    internal readonly SyntaxToken _startCommentTransition;
+    internal readonly SyntaxToken _startCommentStar;
+    internal readonly SyntaxToken _comment;
+    internal readonly SyntaxToken _endCommentStar;
+    internal readonly SyntaxToken _endCommentTransition;
 
     internal RazorCommentBlockSyntax(SyntaxKind kind, SyntaxToken startCommentTransition, SyntaxToken startCommentStar, SyntaxToken comment, SyntaxToken endCommentStar, SyntaxToken endCommentTransition, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -174,8 +174,8 @@ internal sealed partial class RazorCommentBlockSyntax : RazorSyntaxNode
 
 internal sealed partial class RazorMetaCodeSyntax : RazorSyntaxNode
 {
-    private readonly GreenNode _metaCode;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _metaCode;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal RazorMetaCodeSyntax(SyntaxKind kind, GreenNode metaCode, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -238,7 +238,7 @@ internal sealed partial class RazorMetaCodeSyntax : RazorSyntaxNode
 
 internal sealed partial class GenericBlockSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal GenericBlockSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -298,8 +298,8 @@ internal sealed partial class GenericBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class UnclassifiedTextLiteralSyntax : RazorSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal UnclassifiedTextLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -375,7 +375,7 @@ internal abstract partial class MarkupSyntaxNode : RazorSyntaxNode
 
 internal sealed partial class MarkupBlockSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal MarkupBlockSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -435,8 +435,8 @@ internal sealed partial class MarkupBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class MarkupTransitionSyntax : MarkupSyntaxNode
 {
-    private readonly GreenNode _transitionTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _transitionTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupTransitionSyntax(SyntaxKind kind, GreenNode transitionTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -499,8 +499,8 @@ internal sealed partial class MarkupTransitionSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupTextLiteralSyntax : MarkupSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupTextLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -563,8 +563,8 @@ internal sealed partial class MarkupTextLiteralSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupEphemeralTextLiteralSyntax : MarkupSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupEphemeralTextLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -627,7 +627,7 @@ internal sealed partial class MarkupEphemeralTextLiteralSyntax : MarkupSyntaxNod
 
 internal sealed partial class MarkupCommentBlockSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal MarkupCommentBlockSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -687,8 +687,8 @@ internal sealed partial class MarkupCommentBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class MarkupMinimizedAttributeBlockSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly MarkupTextLiteralSyntax _name;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly MarkupTextLiteralSyntax _name;
 
     internal MarkupMinimizedAttributeBlockSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, MarkupTextLiteralSyntax name, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -758,13 +758,13 @@ internal sealed partial class MarkupMinimizedAttributeBlockSyntax : MarkupSyntax
 
 internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly MarkupTextLiteralSyntax _name;
-    private readonly MarkupTextLiteralSyntax _nameSuffix;
-    private readonly SyntaxToken _equalsToken;
-    private readonly MarkupTextLiteralSyntax _valuePrefix;
-    private readonly RazorBlockSyntax _value;
-    private readonly MarkupTextLiteralSyntax _valueSuffix;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly MarkupTextLiteralSyntax _name;
+    internal readonly MarkupTextLiteralSyntax _nameSuffix;
+    internal readonly SyntaxToken _equalsToken;
+    internal readonly MarkupTextLiteralSyntax _valuePrefix;
+    internal readonly RazorBlockSyntax _value;
+    internal readonly MarkupTextLiteralSyntax _valueSuffix;
 
     internal MarkupAttributeBlockSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, MarkupTextLiteralSyntax name, MarkupTextLiteralSyntax nameSuffix, SyntaxToken equalsToken, MarkupTextLiteralSyntax valuePrefix, RazorBlockSyntax value, MarkupTextLiteralSyntax valueSuffix, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -888,7 +888,7 @@ internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupMiscAttributeContentSyntax : MarkupSyntaxNode
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal MarkupMiscAttributeContentSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -948,8 +948,8 @@ internal sealed partial class MarkupMiscAttributeContentSyntax : MarkupSyntaxNod
 
 internal sealed partial class MarkupLiteralAttributeValueSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _prefix;
-    private readonly MarkupTextLiteralSyntax _value;
+    internal readonly MarkupTextLiteralSyntax _prefix;
+    internal readonly MarkupTextLiteralSyntax _value;
 
     internal MarkupLiteralAttributeValueSyntax(SyntaxKind kind, MarkupTextLiteralSyntax prefix, MarkupTextLiteralSyntax value, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1025,8 +1025,8 @@ internal sealed partial class MarkupLiteralAttributeValueSyntax : MarkupSyntaxNo
 
 internal sealed partial class MarkupDynamicAttributeValueSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _prefix;
-    private readonly RazorBlockSyntax _value;
+    internal readonly MarkupTextLiteralSyntax _prefix;
+    internal readonly RazorBlockSyntax _value;
 
     internal MarkupDynamicAttributeValueSyntax(SyntaxKind kind, MarkupTextLiteralSyntax prefix, RazorBlockSyntax value, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1150,9 +1150,9 @@ internal abstract partial class BaseMarkupEndTagSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupStartTagSyntax _startTag;
-    private readonly GreenNode _body;
-    private readonly MarkupEndTagSyntax _endTag;
+    internal readonly MarkupStartTagSyntax _startTag;
+    internal readonly GreenNode _body;
+    internal readonly MarkupEndTagSyntax _endTag;
 
     internal MarkupElementSyntax(SyntaxKind kind, MarkupStartTagSyntax startTag, GreenNode body, MarkupEndTagSyntax endTag, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1240,13 +1240,13 @@ internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupStartTagSyntax : BaseMarkupStartTagSyntax
 {
-    private readonly SyntaxToken _openAngle;
-    private readonly SyntaxToken _bang;
-    private readonly SyntaxToken _name;
-    private readonly GreenNode _attributes;
-    private readonly SyntaxToken _forwardSlash;
-    private readonly SyntaxToken _closeAngle;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly SyntaxToken _openAngle;
+    internal readonly SyntaxToken _bang;
+    internal readonly SyntaxToken _name;
+    internal readonly GreenNode _attributes;
+    internal readonly SyntaxToken _forwardSlash;
+    internal readonly SyntaxToken _closeAngle;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupStartTagSyntax(SyntaxKind kind, SyntaxToken openAngle, SyntaxToken bang, SyntaxToken name, GreenNode attributes, SyntaxToken forwardSlash, SyntaxToken closeAngle, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1355,13 +1355,13 @@ internal sealed partial class MarkupStartTagSyntax : BaseMarkupStartTagSyntax
 
 internal sealed partial class MarkupEndTagSyntax : BaseMarkupEndTagSyntax
 {
-    private readonly SyntaxToken _openAngle;
-    private readonly SyntaxToken _forwardSlash;
-    private readonly SyntaxToken _bang;
-    private readonly SyntaxToken _name;
-    private readonly MarkupMiscAttributeContentSyntax _miscAttributeContent;
-    private readonly SyntaxToken _closeAngle;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly SyntaxToken _openAngle;
+    internal readonly SyntaxToken _forwardSlash;
+    internal readonly SyntaxToken _bang;
+    internal readonly SyntaxToken _name;
+    internal readonly MarkupMiscAttributeContentSyntax _miscAttributeContent;
+    internal readonly SyntaxToken _closeAngle;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupEndTagSyntax(SyntaxKind kind, SyntaxToken openAngle, SyntaxToken forwardSlash, SyntaxToken bang, SyntaxToken name, MarkupMiscAttributeContentSyntax miscAttributeContent, SyntaxToken closeAngle, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1464,9 +1464,9 @@ internal sealed partial class MarkupEndTagSyntax : BaseMarkupEndTagSyntax
 
 internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTagHelperStartTagSyntax _startTag;
-    private readonly GreenNode _body;
-    private readonly MarkupTagHelperEndTagSyntax _endTag;
+    internal readonly MarkupTagHelperStartTagSyntax _startTag;
+    internal readonly GreenNode _body;
+    internal readonly MarkupTagHelperEndTagSyntax _endTag;
 
     internal MarkupTagHelperElementSyntax(SyntaxKind kind, MarkupTagHelperStartTagSyntax startTag, GreenNode body, MarkupTagHelperEndTagSyntax endTag, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1548,13 +1548,13 @@ internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupTagHelperStartTagSyntax : BaseMarkupStartTagSyntax
 {
-    private readonly SyntaxToken _openAngle;
-    private readonly SyntaxToken _bang;
-    private readonly SyntaxToken _name;
-    private readonly GreenNode _attributes;
-    private readonly SyntaxToken _forwardSlash;
-    private readonly SyntaxToken _closeAngle;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly SyntaxToken _openAngle;
+    internal readonly SyntaxToken _bang;
+    internal readonly SyntaxToken _name;
+    internal readonly GreenNode _attributes;
+    internal readonly SyntaxToken _forwardSlash;
+    internal readonly SyntaxToken _closeAngle;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupTagHelperStartTagSyntax(SyntaxKind kind, SyntaxToken openAngle, SyntaxToken bang, SyntaxToken name, GreenNode attributes, SyntaxToken forwardSlash, SyntaxToken closeAngle, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1663,13 +1663,13 @@ internal sealed partial class MarkupTagHelperStartTagSyntax : BaseMarkupStartTag
 
 internal sealed partial class MarkupTagHelperEndTagSyntax : BaseMarkupEndTagSyntax
 {
-    private readonly SyntaxToken _openAngle;
-    private readonly SyntaxToken _forwardSlash;
-    private readonly SyntaxToken _bang;
-    private readonly SyntaxToken _name;
-    private readonly MarkupMiscAttributeContentSyntax _miscAttributeContent;
-    private readonly SyntaxToken _closeAngle;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly SyntaxToken _openAngle;
+    internal readonly SyntaxToken _forwardSlash;
+    internal readonly SyntaxToken _bang;
+    internal readonly SyntaxToken _name;
+    internal readonly MarkupMiscAttributeContentSyntax _miscAttributeContent;
+    internal readonly SyntaxToken _closeAngle;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal MarkupTagHelperEndTagSyntax(SyntaxKind kind, SyntaxToken openAngle, SyntaxToken forwardSlash, SyntaxToken bang, SyntaxToken name, MarkupMiscAttributeContentSyntax miscAttributeContent, SyntaxToken closeAngle, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1772,13 +1772,13 @@ internal sealed partial class MarkupTagHelperEndTagSyntax : BaseMarkupEndTagSynt
 
 internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly MarkupTextLiteralSyntax _name;
-    private readonly MarkupTextLiteralSyntax _nameSuffix;
-    private readonly SyntaxToken _equalsToken;
-    private readonly MarkupTextLiteralSyntax _valuePrefix;
-    private readonly MarkupTagHelperAttributeValueSyntax _value;
-    private readonly MarkupTextLiteralSyntax _valueSuffix;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly MarkupTextLiteralSyntax _name;
+    internal readonly MarkupTextLiteralSyntax _nameSuffix;
+    internal readonly SyntaxToken _equalsToken;
+    internal readonly MarkupTextLiteralSyntax _valuePrefix;
+    internal readonly MarkupTagHelperAttributeValueSyntax _value;
+    internal readonly MarkupTextLiteralSyntax _valueSuffix;
 
     internal MarkupTagHelperAttributeSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, MarkupTextLiteralSyntax name, MarkupTextLiteralSyntax nameSuffix, SyntaxToken equalsToken, MarkupTextLiteralSyntax valuePrefix, MarkupTagHelperAttributeValueSyntax value, MarkupTextLiteralSyntax valueSuffix, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1896,8 +1896,8 @@ internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupMinimizedTagHelperAttributeSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly MarkupTextLiteralSyntax _name;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly MarkupTextLiteralSyntax _name;
 
     internal MarkupMinimizedTagHelperAttributeSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, MarkupTextLiteralSyntax name, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -1967,7 +1967,7 @@ internal sealed partial class MarkupMinimizedTagHelperAttributeSyntax : MarkupSy
 
 internal sealed partial class MarkupTagHelperAttributeValueSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal MarkupTagHelperAttributeValueSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2027,16 +2027,16 @@ internal sealed partial class MarkupTagHelperAttributeValueSyntax : RazorBlockSy
 
 internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly RazorMetaCodeSyntax _transition;
-    private readonly MarkupTextLiteralSyntax _name;
-    private readonly RazorMetaCodeSyntax _colon;
-    private readonly MarkupTextLiteralSyntax _parameterName;
-    private readonly MarkupTextLiteralSyntax _nameSuffix;
-    private readonly SyntaxToken _equalsToken;
-    private readonly MarkupTextLiteralSyntax _valuePrefix;
-    private readonly MarkupTagHelperAttributeValueSyntax _value;
-    private readonly MarkupTextLiteralSyntax _valueSuffix;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly RazorMetaCodeSyntax _transition;
+    internal readonly MarkupTextLiteralSyntax _name;
+    internal readonly RazorMetaCodeSyntax _colon;
+    internal readonly MarkupTextLiteralSyntax _parameterName;
+    internal readonly MarkupTextLiteralSyntax _nameSuffix;
+    internal readonly SyntaxToken _equalsToken;
+    internal readonly MarkupTextLiteralSyntax _valuePrefix;
+    internal readonly MarkupTagHelperAttributeValueSyntax _value;
+    internal readonly MarkupTextLiteralSyntax _valueSuffix;
 
     internal MarkupTagHelperDirectiveAttributeSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, RazorMetaCodeSyntax transition, MarkupTextLiteralSyntax name, RazorMetaCodeSyntax colon, MarkupTextLiteralSyntax parameterName, MarkupTextLiteralSyntax nameSuffix, SyntaxToken equalsToken, MarkupTextLiteralSyntax valuePrefix, MarkupTagHelperAttributeValueSyntax value, MarkupTextLiteralSyntax valueSuffix, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2184,11 +2184,11 @@ internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSy
 
 internal sealed partial class MarkupMinimizedTagHelperDirectiveAttributeSyntax : MarkupSyntaxNode
 {
-    private readonly MarkupTextLiteralSyntax _namePrefix;
-    private readonly RazorMetaCodeSyntax _transition;
-    private readonly MarkupTextLiteralSyntax _name;
-    private readonly RazorMetaCodeSyntax _colon;
-    private readonly MarkupTextLiteralSyntax _parameterName;
+    internal readonly MarkupTextLiteralSyntax _namePrefix;
+    internal readonly RazorMetaCodeSyntax _transition;
+    internal readonly MarkupTextLiteralSyntax _name;
+    internal readonly RazorMetaCodeSyntax _colon;
+    internal readonly MarkupTextLiteralSyntax _parameterName;
 
     internal MarkupMinimizedTagHelperDirectiveAttributeSyntax(SyntaxKind kind, MarkupTextLiteralSyntax namePrefix, RazorMetaCodeSyntax transition, MarkupTextLiteralSyntax name, RazorMetaCodeSyntax colon, MarkupTextLiteralSyntax parameterName, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2301,7 +2301,7 @@ internal abstract partial class CSharpSyntaxNode : RazorSyntaxNode
 
 internal sealed partial class CSharpCodeBlockSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal CSharpCodeBlockSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2361,8 +2361,8 @@ internal sealed partial class CSharpCodeBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class CSharpTransitionSyntax : CSharpSyntaxNode
 {
-    private readonly SyntaxToken _transition;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly SyntaxToken _transition;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal CSharpTransitionSyntax(SyntaxKind kind, SyntaxToken transition, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2419,8 +2419,8 @@ internal sealed partial class CSharpTransitionSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpStatementLiteralSyntax : CSharpSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal CSharpStatementLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2483,8 +2483,8 @@ internal sealed partial class CSharpStatementLiteralSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpExpressionLiteralSyntax : CSharpSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal CSharpExpressionLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2547,8 +2547,8 @@ internal sealed partial class CSharpExpressionLiteralSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpEphemeralTextLiteralSyntax : CSharpSyntaxNode
 {
-    private readonly GreenNode _literalTokens;
-    private readonly ISpanChunkGenerator _chunkGenerator;
+    internal readonly GreenNode _literalTokens;
+    internal readonly ISpanChunkGenerator _chunkGenerator;
 
     internal CSharpEphemeralTextLiteralSyntax(SyntaxKind kind, GreenNode literalTokens, ISpanChunkGenerator chunkGenerator, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2611,7 +2611,7 @@ internal sealed partial class CSharpEphemeralTextLiteralSyntax : CSharpSyntaxNod
 
 internal sealed partial class CSharpTemplateBlockSyntax : RazorBlockSyntax
 {
-    private readonly GreenNode _children;
+    internal readonly GreenNode _children;
 
     internal CSharpTemplateBlockSyntax(SyntaxKind kind, GreenNode children, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2688,8 +2688,8 @@ internal abstract partial class CSharpRazorBlockSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpStatementSyntax : CSharpRazorBlockSyntax
 {
-    private readonly CSharpTransitionSyntax _transition;
-    private readonly CSharpSyntaxNode _body;
+    internal readonly CSharpTransitionSyntax _transition;
+    internal readonly CSharpSyntaxNode _body;
 
     internal CSharpStatementSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2753,9 +2753,9 @@ internal sealed partial class CSharpStatementSyntax : CSharpRazorBlockSyntax
 
 internal sealed partial class CSharpStatementBodySyntax : CSharpSyntaxNode
 {
-    private readonly RazorMetaCodeSyntax _openBrace;
-    private readonly CSharpCodeBlockSyntax _csharpCode;
-    private readonly RazorMetaCodeSyntax _closeBrace;
+    internal readonly RazorMetaCodeSyntax _openBrace;
+    internal readonly CSharpCodeBlockSyntax _csharpCode;
+    internal readonly RazorMetaCodeSyntax _closeBrace;
 
     internal CSharpStatementBodySyntax(SyntaxKind kind, RazorMetaCodeSyntax openBrace, CSharpCodeBlockSyntax csharpCode, RazorMetaCodeSyntax closeBrace, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2825,8 +2825,8 @@ internal sealed partial class CSharpStatementBodySyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpExplicitExpressionSyntax : CSharpRazorBlockSyntax
 {
-    private readonly CSharpTransitionSyntax _transition;
-    private readonly CSharpSyntaxNode _body;
+    internal readonly CSharpTransitionSyntax _transition;
+    internal readonly CSharpSyntaxNode _body;
 
     internal CSharpExplicitExpressionSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2890,9 +2890,9 @@ internal sealed partial class CSharpExplicitExpressionSyntax : CSharpRazorBlockS
 
 internal sealed partial class CSharpExplicitExpressionBodySyntax : CSharpSyntaxNode
 {
-    private readonly RazorMetaCodeSyntax _openParen;
-    private readonly CSharpCodeBlockSyntax _csharpCode;
-    private readonly RazorMetaCodeSyntax _closeParen;
+    internal readonly RazorMetaCodeSyntax _openParen;
+    internal readonly CSharpCodeBlockSyntax _csharpCode;
+    internal readonly RazorMetaCodeSyntax _closeParen;
 
     internal CSharpExplicitExpressionBodySyntax(SyntaxKind kind, RazorMetaCodeSyntax openParen, CSharpCodeBlockSyntax csharpCode, RazorMetaCodeSyntax closeParen, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -2962,8 +2962,8 @@ internal sealed partial class CSharpExplicitExpressionBodySyntax : CSharpSyntaxN
 
 internal sealed partial class CSharpImplicitExpressionSyntax : CSharpRazorBlockSyntax
 {
-    private readonly CSharpTransitionSyntax _transition;
-    private readonly CSharpSyntaxNode _body;
+    internal readonly CSharpTransitionSyntax _transition;
+    internal readonly CSharpSyntaxNode _body;
 
     internal CSharpImplicitExpressionSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -3027,7 +3027,7 @@ internal sealed partial class CSharpImplicitExpressionSyntax : CSharpRazorBlockS
 
 internal sealed partial class CSharpImplicitExpressionBodySyntax : CSharpSyntaxNode
 {
-    private readonly CSharpCodeBlockSyntax _csharpCode;
+    internal readonly CSharpCodeBlockSyntax _csharpCode;
 
     internal CSharpImplicitExpressionBodySyntax(SyntaxKind kind, CSharpCodeBlockSyntax csharpCode, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -3081,8 +3081,8 @@ internal sealed partial class CSharpImplicitExpressionBodySyntax : CSharpSyntaxN
 
 internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
 {
-    private readonly CSharpTransitionSyntax _transition;
-    private readonly CSharpSyntaxNode _body;
+    internal readonly CSharpTransitionSyntax _transition;
+    internal readonly CSharpSyntaxNode _body;
 
     internal RazorDirectiveSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
@@ -3146,8 +3146,8 @@ internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
 
 internal sealed partial class RazorDirectiveBodySyntax : CSharpSyntaxNode
 {
-    private readonly RazorSyntaxNode _keyword;
-    private readonly CSharpCodeBlockSyntax _csharpCode;
+    internal readonly RazorSyntaxNode _keyword;
+    internal readonly CSharpCodeBlockSyntax _csharpCode;
 
     internal RazorDirectiveBodySyntax(SyntaxKind kind, RazorSyntaxNode keyword, CSharpCodeBlockSyntax csharpCode, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)

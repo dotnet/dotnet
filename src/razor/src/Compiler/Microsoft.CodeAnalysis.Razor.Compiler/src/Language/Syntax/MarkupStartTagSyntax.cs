@@ -12,12 +12,12 @@ internal partial class MarkupStartTagSyntax
 
     public string GetTagNameWithOptionalBang()
     {
-        return Name.IsMissing ? string.Empty : Bang?.Content + Name.Content;
+        return Name.IsMissing ? string.Empty : Bang.Content + Name.Content;
     }
 
     public bool IsSelfClosing()
     {
-        return ForwardSlash != null &&
+        return ForwardSlash.Kind != SyntaxKind.None &&
             !ForwardSlash.IsMissing &&
             !CloseAngle.IsMissing;
     }

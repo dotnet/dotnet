@@ -41,24 +41,5 @@ namespace NuGet.Packaging.Rules
                 string.Format(CultureInfo.CurrentCulture, MessageFormat, target),
                 NuGetLogCode.NU5101);
         }
-
-        /// <summary>
-        /// Folders that are expected to have .dll and .winmd files
-        /// </summary>
-        private static IEnumerable<string> ValidFolders
-        {
-            get
-            {
-                yield return PackagingConstants.Folders.Lib + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Analyzers + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Ref + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Runtimes + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Native + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Build + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.BuildCrossTargeting + Path.DirectorySeparatorChar;
-                yield return PackagingConstants.Folders.Tools + Path.DirectorySeparatorChar;
-                yield break;
-            }
-        }
     }
 }

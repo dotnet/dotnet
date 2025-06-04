@@ -22,16 +22,6 @@ internal sealed class TestSyntaxSerializer : SyntaxSerializer
 
     public static string Serialize(SyntaxNode node, bool allowSpanEditHandlers = false)
     {
-        return node switch
-        {
-            RazorSyntaxNode syntaxNode => Serialize(syntaxNode, allowSpanEditHandlers),
-            SyntaxToken token => Serialize(token, allowSpanEditHandlers),
-            _ => Assumed.Unreachable<string>()
-        };
-    }
-
-    public static string Serialize(RazorSyntaxNode node, bool allowSpanEditHandlers = false)
-    {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         var serializer = new TestSyntaxSerializer(builder, allowSpanEditHandlers);
         serializer.Visit(node);
