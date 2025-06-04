@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections;
-using System.Collections.Generic;
+using System.CommandLine;
 using System.CommandLine.Completions;
-using System.Linq;
+using System.CommandLine.Help;
 
-namespace System.CommandLine.Help;
+namespace Microsoft.TemplateEngine.Cli.Help;
 
-internal partial class HelpBuilder
+public partial class HelpBuilder
 {
     /// <summary>
     /// Provides default formatting for help output.
@@ -92,41 +92,6 @@ internal partial class HelpBuilder
         public static string GetOptionUsageLabel(Option symbol)
             => GetIdentifierSymbolUsageLabel(symbol, symbol.Aliases);
 
-        private static string GetIdentifierSymbolUsageLabel(Symbol symbol, ICollection<string>? aliasSet)
-        {
-            var aliases =  aliasSet is null
-                ? new [] { symbol.Name }
-                : new [] {symbol.Name}.Concat(aliasSet)
-                                .Select(r => r.SplitPrefix())
-                                .OrderBy(r => r.Prefix, StringComparer.OrdinalIgnoreCase)
-                                .ThenBy(r => r.Alias, StringComparer.OrdinalIgnoreCase)
-                                .GroupBy(t => t.Alias)
-                                .Select(t => t.First())
-                                .Select(t => $"{t.Prefix}{t.Alias}");
-
-            var firstColumnText = string.Join(", ", aliases);
-
-            foreach (var argument in symbol.GetParameters())
-            {
-                if (!argument.Hidden)
-                {
-                    var argumentFirstColumnText = GetArgumentUsageLabel(argument);
-
-                    if (!string.IsNullOrWhiteSpace(argumentFirstColumnText))
-                    {
-                        firstColumnText += $" {argumentFirstColumnText}";
-                    }
-                }
-            }
-
-            if (symbol is Option { Required: true })
-            {
-                firstColumnText += $" {LocalizationResources.HelpOptionsRequiredLabel()}";
-            }
-
-            return firstColumnText;
-        }
-
         /// <summary>
         /// Gets the default sections to be written for command line help.
         /// </summary>
@@ -160,7 +125,7 @@ internal partial class HelpBuilder
                 return true;
             };
 
-        ///  <summary>
+        /// <summary>
         /// Writes a help section describing a command's arguments.
         ///  </summary>
         public static Func<HelpContext, bool> CommandArgumentsSection() =>
@@ -178,13 +143,13 @@ internal partial class HelpBuilder
                 return false;
             };
 
-        ///  <summary>
+        /// <summary>
         /// Writes a help section describing a command's subcommands.
         ///  </summary>
         public static Func<HelpContext, bool> SubcommandsSection() =>
             ctx => ctx.HelpBuilder.WriteSubcommands(ctx);
 
-        ///  <summary>
+        /// <summary>
         /// Writes a help section describing a command's options.
         ///  </summary>
         public static Func<HelpContext, bool> OptionsSection() =>
@@ -243,10 +208,45 @@ internal partial class HelpBuilder
                 return false;
             };
 
-        ///  <summary>
+        /// <summary>
         /// Writes a help section describing a command's additional arguments, typically shown only when <see cref="Command.TreatUnmatchedTokensAsErrors"/> is set to <see langword="true"/>.
         ///  </summary>
         public static Func<HelpContext, bool> AdditionalArgumentsSection() =>
             ctx => ctx.HelpBuilder.WriteAdditionalArguments(ctx);
+
+        private static string GetIdentifierSymbolUsageLabel(Symbol symbol, ICollection<string>? aliasSet)
+        {
+            var aliases = aliasSet is null
+                ? new[] { symbol.Name }
+                : new[] { symbol.Name }.Concat(aliasSet)
+                                .Select(r => r.SplitPrefix())
+                                .OrderBy(r => r.Prefix, StringComparer.OrdinalIgnoreCase)
+                                .ThenBy(r => r.Alias, StringComparer.OrdinalIgnoreCase)
+                                .GroupBy(t => t.Alias)
+                                .Select(t => t.First())
+                                .Select(t => $"{t.Prefix}{t.Alias}");
+
+            var firstColumnText = string.Join(", ", aliases);
+
+            foreach (var argument in symbol.GetParameters())
+            {
+                if (!argument.Hidden)
+                {
+                    var argumentFirstColumnText = GetArgumentUsageLabel(argument);
+
+                    if (!string.IsNullOrWhiteSpace(argumentFirstColumnText))
+                    {
+                        firstColumnText += $" {argumentFirstColumnText}";
+                    }
+                }
+            }
+
+            if (symbol is Option { Required: true })
+            {
+                firstColumnText += $" {LocalizationResources.HelpOptionsRequiredLabel()}";
+            }
+
+            return firstColumnText;
+        }
     }
 }
