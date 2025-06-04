@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
-internal abstract class SyntaxSerializer(StringBuilder builder) : SyntaxWalker
+internal abstract partial class SyntaxSerializer(StringBuilder builder) : SyntaxWalker
 {
     protected const int IndentSize = 4;
     protected const string Separator = " - ";
@@ -154,7 +154,7 @@ internal abstract class SyntaxSerializer(StringBuilder builder) : SyntaxWalker
         WriteIndent();
 
         var content = token.IsMissing ? "<Missing>" : token.Content;
-        var diagnostics = token.GetDiagnostics();
+        var diagnostics = token.GetDiagnostics().ToArray();
         var diagnosticsText = GetDiagnosticsText(diagnostics);
 
         WriteValue($"{token.Kind};[{content}];{diagnosticsText}");

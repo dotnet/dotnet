@@ -27,6 +27,7 @@ using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test.RestoreCommandTests.Utility;
+
 public class AuditUtilityTests
 {
     private static Uri CveUrl = new Uri("https://cve.test/1");

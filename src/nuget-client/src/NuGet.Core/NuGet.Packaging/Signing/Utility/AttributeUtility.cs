@@ -290,30 +290,6 @@ namespace NuGet.Packaging.Signing
         }
 
         /// <summary>
-        /// Throw a signature exception due to an invalid attribute. This is used for unusual situations
-        /// where the format is corrupt.
-        /// </summary>
-        private static void ThrowInvalidAttributeException(CryptographicAttributeObject attribute)
-        {
-            throw new SignatureException(string.Format(CultureInfo.CurrentCulture, Strings.SignatureContainsInvalidAttribute, attribute.Oid.Value));
-        }
-
-        /// <summary>
-        /// Enumerate AsnEncodedDataCollection
-        /// </summary>
-        private static List<AsnEncodedData> ToList(this AsnEncodedDataCollection collection)
-        {
-            var values = new List<AsnEncodedData>();
-
-            foreach (var value in collection)
-            {
-                values.Add(value);
-            }
-
-            return values;
-        }
-
-        /// <summary>
         /// Attribute -> SignatureType values with no validation.
         /// </summary>
         private static IEnumerable<SignatureType> GetCommitmentTypeIndicationRawValues(CryptographicAttributeObject attribute)
