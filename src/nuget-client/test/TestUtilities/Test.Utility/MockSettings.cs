@@ -57,7 +57,7 @@ namespace Test.Utility
             throw new NotImplementedException();
         }
 
-        private void OnSettingsChanged()
+        protected void OnSettingsChanged()
         {
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
