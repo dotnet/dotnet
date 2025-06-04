@@ -15,7 +15,7 @@ There should be tooling to help with this exclusion process for the VMR maintain
 
 ### Dependency Flow
 
-Repos in the 2xx branch of the VMR which have dependencies on repos solely defined in the 1xx branch (e.g. `sdk` repo's dependency on `runtime`) will need to have dependency flow that reflects the version of the package produced from the VMR's 1xx branch.
+Repos in the 2xx+ branches of the VMR which have dependencies on repos solely defined in the 1xx branch (e.g. `sdk` repo's dependency on `runtime`) will need to have some sort of dependency flow that moves the output of the 1xx build to the 2xx++ builds.
 
 ```mermaid
 sequenceDiagram
@@ -32,7 +32,33 @@ sequenceDiagram
     VMR_1xx->>VMR_3xx: Dependency flow <br />(runtime build output packages)
 ```
 
-This will require changes to Maestro to allow output of the VMR to flow to another branch of the VMR.
+This could be done a few different ways, but there are some explicit goals that point in a specific direction:
+- **Repeatability** - The product produced from the 2xx++ branches should not vary in a meaningful way if the source has not changed.
+- **Speed** - The time/number of steps required to build 2xx+ should be minimized.
+- **Distro partner/MSFT build unification** - We should minimize differences between the distro partner and MSFT builds.
+
+To achieve 2xx+ builds, we will use the "classic" dependency flow methodology that .NET has used for many years. The VMR's root `Version.Details.xml`/`Versions.props` files will be updated to include all dependencies used to "bootstrap" the .NET build. This includes 1xx branches. *Note: Despite having a reduced set of repos, 2xx+ branches will not have a "reduced" set of dependencies.* The intention here is that this is essentially a representation of the "previously source-built" concept that is present in source-build. We are just extending this concept to Microsoft's distribution, and making the representation explicit.
+
+When building a repo within the VMR, the following version flow will be applied:
+
+```mermaid
+flowchart TD
+  VerProps[Import Versions.props]
+  ImportPVP[<b>Override with Previous.Versions.Props</b><br/><br/><i>Includes versions of assets from root VMR's Version.Details.xml file that are also present in the repo's Version.Details.xml</i>]
+  ImportCVP[<b>Override with Current.Versions.Props</b><br/><br/><i>Includes versions of assets built during the current VMR build that are also present in the repo's Version.Details.xml</i>]
+  VerProps-->ImportPVP-->ImportCVP
+```
+
+- Import Versions.props
+- Import generated Previous.Versions.props -
+  - Includes versions of assets from root VMR's Version.Details.xml file that are also present in the repo's `Version.Details.xml`
+- Import generated Current.Versions.props - 
+  - Includes versions of assets built during the current VMR build that are also present in the repo's `Version.Details.xml`
+
+**Considerations**
+
+- **Validation of 2xx+ repos** - A repo is validated on backflow based on what it built against. So a 1xx SDK repo branch receives the source changes in the 1xx VMR sdk sources, as well as the outputs of the VMR build, which includes the runtime that the SDK built against in that VMR build. This means that on backflow, the SDK PR is validating the SDK's sources against the updated SDK dependencies. For 2xx+ branches, only a subset of outputs is produced, so a backflow PR would not include all the dependencies that the 2xx SDK needs. To deal with this, we will attempt to use the CoherentParentDependency feature. CoherentParentDependency attributes will be placed on the SDK dependencies that are not produced in the 2xx build, tying them to a dependency produced in the 2xx build. When backflow happens and the dependencies are updated for a repo, the CPDs will resolve to the versions specific in the root VMR Version.Details.xml if they are not produced in the current build.
+- **Distro partner previously-source-built update process** - Right now distro partners will build a given release by taking a set of previously SB artifacts (provided by MS or source-built by the distro partner), and pass these to the build script via --with-packages and --with-sdk. Going forward, this step will either be preceded by an explicit step to update the root `Version.Details.xml` with these packages, or this switch will imply such a step. Therefore, when the build is running, the previously source-built inputs and their versions are specified by the `Version.Details.xml` file, and NuGet will find those packages in the directory passed via --with-packages. Essentially, we are eliminating some implicit behavior.
 
 ### Build
 
