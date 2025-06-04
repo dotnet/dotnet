@@ -564,22 +564,6 @@ namespace NuGet.PackageManagement.UI.Options
             packageSource.IsEnabled = isEnabled;
         }
 
-        private Rectangle GetCheckBoxRectangleForListBoxItem(PackageSourceCheckedListBox currentListBox, int itemIndex)
-        {
-            const int edgeMargin = 8;
-
-            var itemRectangle = currentListBox.GetItemRectangle(itemIndex);
-
-            // this is the bound of the checkbox
-            var checkBoxRectangle = new Rectangle(
-                itemRectangle.Left + edgeMargin + 2,
-                itemRectangle.Top + edgeMargin,
-                currentListBox.CheckBoxSize.Width,
-                currentListBox.CheckBoxSize.Height);
-
-            return checkBoxRectangle;
-        }
-
         private static void CopySelectedItem(PackageSourceContextInfo selectedPackageSource)
         {
             Clipboard.Clear();

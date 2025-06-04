@@ -22,7 +22,9 @@ namespace NuGet.Packaging.FuncTest.SigningTests
     public class SignatureUtilityTests
     {
         private readonly SigningTestFixture _fixture;
+#if IS_DESKTOP
         private const int SHA1HashLength = 20;
+#endif
 
         public SignatureUtilityTests(SigningTestFixture fixture)
         {

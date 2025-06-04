@@ -16,7 +16,7 @@ internal class RazorCSharpStatementKeywordFoldingProvider : AbstractSyntaxNodeFo
         if (node.Children is [_, CSharpStatementLiteralSyntax literal, ..] &&
             literal.LiteralTokens is [var keyword, ..])
         {
-            return $"@{keyword.GetContent()}";
+            return $"@{keyword.Content}";
         }
 
         return "@{...}";
@@ -25,7 +25,7 @@ internal class RazorCSharpStatementKeywordFoldingProvider : AbstractSyntaxNodeFo
     protected override ImmutableArray<CSharpCodeBlockSyntax> GetFoldableNodes(RazorSyntaxTree syntaxTree)
     {
         return syntaxTree.Root
-            .DescendantNodes(node => node is RazorDocumentSyntax or MarkupBlockSyntax or MarkupElementSyntax or CSharpCodeBlockSyntax)
+            .DescendantNodes(static node => node is RazorDocumentSyntax or MarkupBlockSyntax or MarkupElementSyntax or CSharpCodeBlockSyntax)
             .OfType<CSharpStatementLiteralSyntax>()
             .Where(n => n is
             {

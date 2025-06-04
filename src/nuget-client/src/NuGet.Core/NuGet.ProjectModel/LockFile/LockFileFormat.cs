@@ -968,24 +968,9 @@ namespace NuGet.ProjectModel
             return json.Value<string>();
         }
 
-        private static SemanticVersion ReadSemanticVersion(JToken json, string property)
-        {
-            var valueToken = json[property];
-            if (valueToken == null)
-            {
-                throw new Exception(string.Format(CultureInfo.CurrentCulture, "TODO: lock file missing required property {0}", property));
-            }
-            return SemanticVersion.Parse(valueToken.Value<string>());
-        }
-
         private static string GetPathWithForwardSlashes(string path)
         {
             return path.Replace('\\', '/');
-        }
-
-        private static string GetPathWithBackSlashes(string path)
-        {
-            return path.Replace('/', '\\');
         }
 
         private static void WriteCentralTransitiveDependencyGroup(IObjectWriter writer, IList<CentralTransitiveDependencyGroup> centralTransitiveDependencyGroups)
