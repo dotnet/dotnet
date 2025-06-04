@@ -14,7 +14,7 @@ public class PRCreator
     private readonly string _repoOwner;
     private readonly string _repoName;
     private readonly GitHubClient _client;
-    private readonly List<string> originalLicenseFile = new List<string>();
+    private readonly List<string> originalBaselineFile = new List<string>();
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
@@ -256,17 +256,17 @@ public class PRCreator
         {
             if (item.Type == ContentType.File)
             {
-                originalLicenseFile.Add(Path.Combine(path,item.Name));
+                originalBaselineFile.Add(Path.Combine(path,item.Name));
             }
         }
         foreach(var item in updatedTestsFiles)
         {
-            originalLicenseFile.RemoveAll(file => item.Value.Any(v => v.Contains(Path.GetFileNameWithoutExtension(file))));
+            originalBaselineFile.RemoveAll(file => item.Value.Any(v => v.Contains(Path.GetFileNameWithoutExtension(file))));
         }
 
-        if (originalLicenseFile.Count > 0)
+        if (originalBaselineFile.Count > 0)
         {
-            foreach (var file in originalLicenseFile)
+            foreach (var file in originalBaselineFile)
             {
 
                 IReadOnlyList<RepositoryContent> contents = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContents(_repoOwner, _repoName, file));
