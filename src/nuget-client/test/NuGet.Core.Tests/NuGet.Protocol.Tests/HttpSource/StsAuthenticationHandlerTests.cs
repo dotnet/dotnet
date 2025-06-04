@@ -209,13 +209,6 @@ namespace NuGet.Protocol.Tests
                 _ => new HttpResponseMessage(statusCode));
         }
 
-        private static LambdaMessageHandler GetLambdaMessageHandler(params HttpStatusCode[] statusCodes)
-        {
-            var responses = new Queue<HttpStatusCode>(statusCodes);
-            return new LambdaMessageHandler(
-                _ => new HttpResponseMessage(responses.Dequeue()));
-        }
-
         private static async Task<HttpResponseMessage> SendAsync(HttpMessageHandler handler, HttpRequestMessage request = null)
         {
             using (var client = new HttpClient(handler))
