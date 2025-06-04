@@ -83,22 +83,24 @@ For source-only builds, you're going to need to build all the source, including 
 
 There are a variety of scenarios to consider:
 
-* Distro maintainer has not produced any 1xx assets before
-  * Distro maintainer needs to bootstrap 2xx for the first time:
-    * Actions:
-      1. Build 1xx branch using Microsoft artifacts
-      1. Rebuild 1xx branch using output of first build as input
-      1. Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
-      1. Rebuild 2xx branch using output of previous build and source-built 1xx artifacts as input
-* Distro maintainer has produced 1xx assets before
-  * Distro maintainer needs to bootstrap 2xx for the first time:
-    * Actions:
-      1. Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
-      1. Rebuild 2xx branch using output of first build and source-built 1xx artifacts as input
-  * Distro maintainer needs to build 201 branch (after they've already produced a 200 release)
-    * Actions:
-      1. Build 1xx branch using artifacts from 1xx-1 release as input
-      1. Build 201 branch using artifacts from 200 release and 1xx artifacts as input
+1. Has the distro maintainer produced any 1xx assets before from the previous release?
+    * If yes:
+      * Build 1xx branch using artifacts and SDK from previous 1xx release as input
+    * If no:
+      * Build 1xx branch using Microsoft artifacts and SDK
+      * Rebuild 1xx branch using output of first build as input
+1. Is this the initial release of the feature band (e.g. 10.0.200)?
+    * If yes:
+      * Build 2xx branch using output of 1xx artifacts and SDK as input
+    * If no:
+      * Has the distro maintainer produced any 2xx assets before from the previous release?
+        * If yes:
+          * Build 2xx branch using artifacts and SDK from previous 2xx release as input
+        * If no:
+          * Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
+          * Rebuild 2xx branch using output of first build as input
+
+The assertion with these scenarios is that a minimum of 2 and maximum of 4 builds is required to produce source built output for a 2xx feature band. It will never be necessary to depend on any other feature band besides 1xx and the target feature band. For example, it would never be necessary for a distro maintainer to build the 3xx feature band in order to source build the 4xx feature band.
 
 In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input.
 
