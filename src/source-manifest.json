@@ -29,18 +29,18 @@
       "commitSha": "70155a89cb7781f4b7ffe346455939d09a2cd45e"
     },
     {
-      "packageVersion": "0.1.627701",
-      "barId": 269717,
+      "packageVersion": "0.1.627903",
+      "barId": 270045,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "e22447d0a07219d3d5ddf7b345b53561e3bde7a9"
+      "commitSha": "3bbc68e8ee1817bb5463c01f86e58b384ceefbd9"
     },
     {
-      "packageVersion": "9.0.0-preview.1.25303.1",
-      "barId": 270407,
+      "packageVersion": "9.0.0-preview.1.25303.2",
+      "barId": 270423,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "fffc44a901e07e00fa0dcadb851a995a03741ce2"
+      "commitSha": "5301f0fa3815b133330070e76ec30814f3731304"
     },
     {
       "packageVersion": "9.0.628001",
@@ -121,10 +121,10 @@
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 270325,
+      "barId": 270452,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "462536d099bf5b277f09232d3480ab9cde18cdb1"
+      "commitSha": "6d995d4ea93cf2c485d58be30c19fc253687f8f6"
     },
     {
       "packageVersion": "10.0.622801",
