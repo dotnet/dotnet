@@ -80,9 +80,6 @@ A policy is needed which defines what toolset version each feature band branch c
 ❓ Open Question:
 There will need to be some way to detect when we are in one of these 2xx branches. What mechanism should be used for that? Maybe checking `packageVersion` of the sdk in `source-manifest.json`?
 
-❓ Open Question:
-How to handle the multi-pass build legs where they are dependent on a shared component (e.g. `Windows_x86_BuildPass2`, `Windows_x64_BuildPass2`, `Windows_Workloads_x64_BuildPass2`)?
-
 #### Source-Only Builds
 
 For source-only builds, you're going to need to build all the source, including the source from the 1xx branch in order to produce a release from a 2xx branch.
