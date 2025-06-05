@@ -25,7 +25,7 @@ using NuGet.VisualStudio.Contracts;
 namespace NuGet.Tests.Apex
 {
     [Export(typeof(NuGetApexTestService))]
-    public class NuGetApexTestService : VisualStudioTestService<NuGetApexVerifier>
+    public class NuGetApexTestService : VisualStudioTestService<VisualStudioMarshallableProxyVerifier>
     {
         [Import]
         private NuGetApexUITestService NuGetApexUITestService { get; set; }
