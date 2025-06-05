@@ -27,7 +27,7 @@ stages:
     parameters:
       imageOs: linux
       ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        imageName: Build.Ubuntu.1804.Amd64.Open
+        imageName: Build.Ubuntu.2204.Amd64.Open
       ${{ if eq(variables['System.TeamProject'], 'internal') }}:
         imageName: 1es-ubuntu-2204
 # Based on - https://github.com/dotnet/arcade/blob/9b3f304c7bc9fd4d11be9ca0b466b83e98d2a191/Documentation/CorePackages/Publishing.md#moving-away-from-the-legacy-pushtoblobfeed-task
