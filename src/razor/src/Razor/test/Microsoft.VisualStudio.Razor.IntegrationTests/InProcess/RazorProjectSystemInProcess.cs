@@ -19,6 +19,13 @@ namespace Microsoft.VisualStudio.Extensibility.Testing;
 [TestService]
 internal partial class RazorProjectSystemInProcess
 {
+    public async Task<bool> IsCohostingActiveAsync(CancellationToken cancellationToken)
+    {
+        var options = await TestServices.Shell.GetComponentModelServiceAsync<LanguageServerFeatureOptions>(cancellationToken);
+        Assert.NotNull(options);
+        return options.UseRazorCohostServer;
+    }
+
     public async Task WaitForLSPServerActivatedAsync(CancellationToken cancellationToken)
     {
         await WaitForLSPServerActivationStatusAsync(active: true, cancellationToken);
@@ -31,6 +38,11 @@ internal partial class RazorProjectSystemInProcess
 
     private async Task WaitForLSPServerActivationStatusAsync(bool active, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var tracker = await TestServices.Shell.GetComponentModelServiceAsync<ILspServerActivationTracker>(cancellationToken);
         await Helper.RetryAsync(ct =>
         {
@@ -40,6 +52,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
         await Helper.RetryAsync(ct =>
@@ -54,6 +71,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForComponentTagNameAsync(string projectName, string componentName, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var projectFilePath = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
@@ -73,6 +95,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
 
@@ -88,6 +115,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task<ImmutableArray<string>> GetProjectKeyIdsForProjectAsync(string projectFilePath, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            throw new InvalidOperationException("This method makes no sense in cohosting, as there are no project keys.");
+        }
+
         var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
         Assert.NotNull(projectManager);
 
@@ -96,6 +128,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForCSharpVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
 
         var uri = new Uri(razorFilePath, UriKind.Absolute);
@@ -118,6 +155,11 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForCSharpVirtualDocumentUpdateAsync(string projectName, string relativeFilePath, Func<Task> updater, CancellationToken cancellationToken)
     {
+        if (await IsCohostingActiveAsync(cancellationToken))
+        {
+            return;
+        }
+
         var filePath = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(projectName, relativeFilePath, cancellationToken);
 
         var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
