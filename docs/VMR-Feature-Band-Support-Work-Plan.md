@@ -107,15 +107,19 @@ There are a variety of scenarios to consider:
 
 The assertion with these scenarios is that a minimum of 2 and maximum of 4 builds is required to produce source built output for a 2xx feature band. It will never be necessary to depend on any other feature band besides 1xx and the target feature band. For example, it would never be necessary for a distro maintainer to build the 3xx feature band in order to source build the 4xx feature band.
 
-In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input.
+In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input. An alternative to combining artifacts is to have separate tarball inputs. See the implications of this design choice in [poison leak detection](#poison-leak-detection).
 
 ❓ Open Question:
 
-Should a distro maintainer be required to build the *entire* 1xx branch VMR (including the SDK)? That's easier to implement but also potentially wasteful if they're not going to be producing a release for that feature branch. Otherwise, there'd need to be some way to filter which repos get built such that only the repos excluded from the 2xx branch get built.
+Should a distro maintainer be required to build the *entire* 1xx branch VMR (including the SDK)? That's easier to implement but also potentially wasteful if they're not going to be producing a release for that feature branch. Otherwise, there'd need to be some way to filter which repos get built such that only the repos excluded from the 2xx branch get built. Including all packages, including tools, rather than just shared components, has implications for [poison leak detection](#poison-leak-detection) which need to be considered.
 
 ##### Poison Leak Detection
 
-Source build [poison leak detection](https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md) will need to exclude all files that originate from packages produced by the 1xx branch. For example, the `System.Xml.dll` file included in the 2xx SDK originates from the 1xx branch. The intention of poison leak detection is to enforce that all source-built files can be serviceable. In the case of shared components coming from the 1xx branch, it is inherently true that they are serviceable in that branch. And they can then be safely redistributed in the 2xx branch.
+Source build [poison leak detection](https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md) will need to exclude all shared component files that originate from packages produced by the 1xx branch. For example, the `System.Xml.dll` file included in the 2xx SDK originates from the 1xx branch. The intention of poison leak detection is to enforce that all source-built files can be serviceable. In the case of shared components coming from the 1xx branch, it is inherently true that they are serviceable in that branch. And they can then be safely redistributed in the 2xx branch. This is only true for shared component files. Files from tools, such as Roslyn, that originate from the 1xx branch may not be safely redistributed in the 2xx branch because the tools are meant to be produced by the 2xx output; if that were to happen, this should be considered a poison leak.
+
+Poison leak detection influences the design choices around other questions:
+* Whether artifacts provided as input to a 2xx build are separated out between 2xx PSB artifacts and 1xx artifacts or whether they are combined. If the artifact sets are provided as separate inputs, you know which are from 1xx and can designate those appropriately according to the poisoning requirements described in the previous paragraph. If they are combined, you need a way to know which came from 1xx which may require some sort of manifest file.
+* Whether a distro maintainer is required to build the *entire* 1xx branch, including tools such as Roslyn. This files from the tools would be contained in the 1xx artifacts and you'd need a way to distinguish those from the shared components so that you can allow redistribution of the shared components but disallow those from the tools.
 
 ### UB Pipeline Changes
 
