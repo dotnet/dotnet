@@ -118,9 +118,6 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
-    <!-- Force the "base path" for repos built within the VMR to be the repo root so all files can be found within it. -->
-    <CommonArgs>$(CommonArgs) /p:FutureArtifactPublishBasePath=$(RepoRoot)</CommonArgs>
-
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->

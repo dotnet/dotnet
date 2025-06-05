@@ -46,6 +46,9 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>
     <!-- If a repo has no RID-specific artifacts, then we expect the repo to not have any artifacts when only publishing RID-specific artifacts. -->
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
+
+    <!-- Force the "base path" for repos built within the VMR to be the repo root so all files can be found within it. -->
+    <CommonArgs Condition="'$(UseBootstrapArcade)' != 'true'">$(CommonArgs) /p:FutureArtifactPublishBasePath=$(RepoRoot)</CommonArgs>
   </PropertyGroup>
 
   <PropertyGroup>
