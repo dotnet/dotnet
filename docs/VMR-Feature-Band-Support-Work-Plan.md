@@ -14,6 +14,8 @@ The 2xx branch sources should accurately reflect what gets produced in the outpu
 * Avoids the need to determine if or when repo sources should be updated with the latest from the 1xx branch.
 * Avoids any compliance issues with the code getting stale if it hasn't been updated (e.g. CodeQL alerts).
 
+One exception is the Arcade repo which will be present in all branches. It's not technically required to exist in the 2xx branch in all cases. But there have historically been cases where Arcade changes are necessary in order to support new SDK features not in the 1xx branch. To account for those cases, it'll be a smoother process to simply always have Arcade present in those branches. There isn't an impact in the output of the build since Arcade isn't a shipping component.
+
 Rather than deleting the associated projects in the `repo-projects` directory, it may make sense to keep those and trim the dependency graph of `RepositoryReferences` using a condition based on whether it's the 1xx branch or not.
 
 There should be tooling to help with this exclusion process for the VMR maintainers. This can potentially be integrated into the broader workflow that is necessary when branching such as branding updates and pipeline changes. The tooling could potentially make use of the dependency graph described by the `repo-projects` directory to determine which repos need to be removed.
@@ -73,7 +75,6 @@ A policy is needed which defines what toolset version each feature band branch c
 ### Build
 
 * In addition to NuGet package, we also need to provide a way to have access to the runtime and ASP.NET Core artifacts (e.g. `dotnet-runtime-<version>-linux-x64.tar.gz`) from 2xx branches. This is necessary for the SDK to be able to bundle things together. This should be able to be done using https://ci.dot.net, just as it is done in product repo builds.
-* Since Arcade repo will not be available, all repos will need to use the bootstrap Arcade (`UseBootstrapArcade=true`).
 * While the `scenario-tests` repo doesn't have differing code for each feature band, it will still need to exist in each of the VMR's feature band branches because it is built as part of the pipeline run and used to validate the product. This is ok since it is not part of the shipped binaries.
 
 ❓ Open Question:
