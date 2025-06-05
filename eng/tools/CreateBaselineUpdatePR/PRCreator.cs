@@ -270,13 +270,16 @@ public class PRCreator
         {
             IReadOnlyList<RepositoryContent> contents = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContents(_repoOwner, _repoName, file));
 
-            tree.Add(new NewTreeItem
+            if (!tree.Any(item => item.Path == Path.GetFileName(file)))
             {
-                Path = Path.GetFileName(file),
-                Mode = FileMode.File,
-                Type = TreeType.Blob,
-                Sha = contents.First().Sha
-            });
+                tree.Add(new NewTreeItem
+                {
+                    Path = Path.GetFileName(file),
+                    Mode = FileMode.File,
+                    Type = TreeType.Blob,
+                    Sha = contents.First().Sha
+                });
+            }
         }
         return tree;
     }
