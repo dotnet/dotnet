@@ -98,15 +98,15 @@ There are a variety of scenarios to consider:
 1. Is this the initial release of the feature band (e.g. 10.0.200)?
     * If yes:
       * Build 2xx branch using output of 1xx artifacts and SDK as input
-    * If no:
+    * If no (e.g. 10.0.201):
       * Has the distro maintainer produced any 2xx assets before from the previous release?
         * If yes:
-          * Build 2xx branch using artifacts and SDK from previous 2xx release as input
+          * Build 2xx branch using artifacts and SDK from previous 2xx release and the shared component 1xx artifacts as input
         * If no:
-          * Build 2xx branch using Microsoft artifacts and source-built 1xx artifacts as input
+          * Build 2xx branch using Microsoft 2xx artifacts and shared component 1xx artifacts as input
           * Rebuild 2xx branch using output of first build as input
 
-The assertion with these scenarios is that a minimum of 2 and maximum of 4 builds is required to produce source built output for a 2xx feature band. It will never be necessary to depend on any other feature band besides 1xx and the target feature band. For example, it would never be necessary for a distro maintainer to build the 3xx feature band in order to source build the 4xx feature band.
+The assertion with these scenarios is that a minimum of 2 and maximum of 4 builds are required to produce source built output for a 2xx feature band. It will never be necessary to depend on any other feature band besides 1xx and the target feature band. For example, it would never be necessary for a distro maintainer to build the 3xx feature band in order to source build the 4xx feature band.
 
 In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input. An alternative to combining artifacts is to have separate tarball inputs. See the implications of this design choice in [poison leak detection](#poison-leak-detection).
 
