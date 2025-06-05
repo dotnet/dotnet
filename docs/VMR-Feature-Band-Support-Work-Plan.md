@@ -9,9 +9,14 @@ Document convention:
 
 ### Branch Management
 
-The 2xx branch sources should accurately reflect what gets produced in the output. Since the shared component are only being produced in the 1xx branch, those associated repos will be excluded from the 2xx branch upon creation.
+The 2xx branch sources should accurately reflect what gets produced in the output. Since the shared component are only being produced in the 1xx branch, those associated repos will be excluded from the 2xx branch upon creation. The benefits of of removing the source include the following:
+* Avoids confusion about which source is relevant in the production of the build
+* Avoids the need to determine if or when repo sources should be updated with the latest from the 1xx branch.
+* Avoids any compliance issues with the code getting stale if it hasn't been updated (e.g. CodeQL alerts).
 
-There should be tooling to help with this exclusion process for the VMR maintainers. Similarly, the associated projects in the `repo-projects` directory should be deleted along with updating the appropriate `RepositoryReference` usages.
+Rather than deleting the associated projects in the `repo-projects` directory, it may make sense to keep those and trim the dependency graph of `RepositoryReferences` using a condition based on whether it's the 1xx branch or not.
+
+There should be tooling to help with this exclusion process for the VMR maintainers. This can potentially be integrated into the broader workflow that is necessary when branching such as branding updates and pipeline changes. The tooling could potentially make use of the dependency graph described by the `repo-projects` directory to determine which repos need to be removed.
 
 ### Dependency Flow
 
