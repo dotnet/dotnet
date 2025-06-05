@@ -14,7 +14,6 @@ public class PRCreator
     private readonly string _repoOwner;
     private readonly string _repoName;
     private readonly GitHubClient _client;
-    private readonly List<string> originalBaselineFile = new List<string>();
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
@@ -248,8 +247,11 @@ public class PRCreator
         return tree;
     }
 
+    // Make sure that when the updated baseline file does not exist, the corresponding original baseline file has been added to the file tree, 
+    // otherwise it will cause the PR to ignore the baseline file and delete it
     private async Task<List<NewTreeItem>> UpdateBaseFileAsync(List<NewTreeItem> tree, string path, string targetBranch, Dictionary<string, HashSet<string>> updatedTestsFiles)
     {
+        List<string> originalBaselineFile = [];
         IReadOnlyList<RepositoryContent> originalRepositoryContent = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContentsByRef(_repoOwner, _repoName, path, targetBranch));
 
         foreach (var item in originalRepositoryContent)
@@ -264,21 +266,17 @@ public class PRCreator
             originalBaselineFile.RemoveAll(file => item.Value.Any(v => v.Contains(Path.GetFileNameWithoutExtension(file))));
         }
 
-        if (originalBaselineFile.Count > 0)
+        foreach (var file in originalBaselineFile)
         {
-            foreach (var file in originalBaselineFile)
+            IReadOnlyList<RepositoryContent> contents = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContents(_repoOwner, _repoName, file));
+
+            tree.Add(new NewTreeItem
             {
-
-                IReadOnlyList<RepositoryContent> contents = await ApiRequestWithRetries(() => _client.Repository.Content.GetAllContents(_repoOwner, _repoName, file));
-
-                tree.Add(new NewTreeItem
-                {
-                    Path = Path.GetFileName(file),
-                    Mode = FileMode.File,
-                    Type = TreeType.Blob,
-                    Sha = contents.First().Sha
-                });
-            }
+                Path = Path.GetFileName(file),
+                Mode = FileMode.File,
+                Type = TreeType.Blob,
+                Sha = contents.First().Sha
+            });
         }
         return tree;
     }
