@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25303.1",
-      "barId": 270459,
+      "packageVersion": "10.0.0-preview.6.25304.9",
+      "barId": 270583,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "3628f0b643accd0cc9e57fac0373964928197544"
+      "commitSha": "4fccb63f0f015411857be1975afdd4c456e2bca3"
     },
     {
       "packageVersion": "0.11.5-alpha.25302.1",
@@ -57,11 +57,11 @@
       "commitSha": "8fdfbad5a1b76b2aa20abf98c2a83584db517727"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25303.1",
-      "barId": 270363,
+      "packageVersion": "10.0.0-preview.6.25304.3",
+      "barId": 270574,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "28353a8842c5694756651265ab869ed4fd1fbdeb"
+      "commitSha": "9ee2989dcf365fa3c9cd9bdc9ddbb079c064b486"
     },
     {
       "packageVersion": "10.0.100-beta.25279.2",
@@ -71,11 +71,11 @@
       "commitSha": "6bf3bd99a595a42fce25b9ce45f13ab2d7546e57"
     },
     {
-      "packageVersion": "17.15.0-preview-25303-02",
-      "barId": 270431,
+      "packageVersion": "17.15.0-preview-25304-02",
+      "barId": 270499,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "8f55314264235d0dc9bb53662b68d6b444666770"
+      "commitSha": "c74300841d44ab7c3ae814c96a45ac83c5bd456d"
     },
     {
       "packageVersion": "6.15.0-preview.1.70",
@@ -92,11 +92,11 @@
       "commitSha": "80dcfc7f6cf9d561f72d2fc3f539128a3ba2af91"
     },
     {
-      "packageVersion": "5.0.0-1.25302.6",
-      "barId": 270313,
+      "packageVersion": "5.0.0-1.25303.3",
+      "barId": 270461,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f5faea9fa8d7addf5580684fc118aabbf97af060"
+      "commitSha": "29042282fc7df3b3c229a9c8d9090b131096bd3a"
     },
     {
       "packageVersion": "10.0.0-preview.25303.1",
@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 270280,
+      "barId": 270545,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "923128e0c38aed0d1a62eb0cae275b85fe65872d"
+      "commitSha": "9f65308f17fe6db46934a9d3a5a8e7333d64114c"
     },
     {
       "packageVersion": "10.0.0-beta.25302.1",
