@@ -2,14 +2,6 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
   <PropertyGroup>
     <!--
-      If we are stabilizing set the StableVersion property for the packages.
-      Needs to happen in Directory.Build.targets to allow all the pkgproj's to set Version property first.
-    -->
-    <StableVersion Condition="'$(DotNetFinalVersionKind)' == 'release' and
-                              '$(SuppressFinalPackageVersion)' != 'true' and
-                              '$(IsShipping)' == 'true'">$(Version)</StableVersion>
-
-    <!--
       Explicitly re-set the symbol package output path. The pkgproj files here end up importing the targets from
       Microsoft.DotNet.Build.Tasks.Packaging (based on a PackageReference) before importing the Arcade targets hat
       set defaults for project output paths. This means the value set by the packaging targets does not accountfor

@@ -24,7 +24,17 @@
 
     <TargetRuntimePacks Include="@(SupportedRid->'Microsoft.NETCore.App.Runtime.%(Rid)')" />
 
-    <PackageDownload Condition="'$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
+    <PackageDownload Condition="$(DotNetFinalVersionKind) == '' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
+    <!-- If building in the VMR, the runtime packages are coming from the previous pass.
+         We need to know what the versions are. This project is non-shipping, while the
+         targeting packages are shipping. There's not an easy way to get this before Restore
+         (where we could use a target to extract the version).
+         Instead. Manually construct the versions. There was some consideration of having arcade calculate
+         both shipping and non-shipping versions for every project, and choosing between, but it's ugly
+         and seems to be an anti-pattern. -->
+    <PackageDownload Condition="$(DotNetFinalVersionKind) == '' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
+    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'release' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(ProductVersion)]" />
+    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'prerelease' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(VersionPrefix-$(_PreReleaseLabel)$(_BuildNumberLabels))]" />
   </ItemGroup>
 
   <Target Name="BuildCrossOSDacs">
