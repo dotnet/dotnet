@@ -82,6 +82,7 @@
         ItemsToSign="@(ItemsToSign)"
         StrongNameSignInfo="@(StrongNameSignInfo)"
         FileSignInfo="@(FileSignInfo)"
+        ItemsToSkip3rdPartyCheck="@(ItemsToSkip3rdPartyCheck)"
         FileExtensionSignInfo="@(FileExtensionSignInfo)"
         TempDir="$(ArtifactsTmpDir)"
         LogDir="$(ArtifactsLogDir)"

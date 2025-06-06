@@ -90,6 +90,12 @@ namespace Microsoft.DotNet.SignTool
         public ITaskItem[] ItemsToSkipStrongNameCheck { get; set; }
 
         /// <summary>
+        /// List of file names that should be ignored when checking
+        /// for 3rd party signatures on MS copyrighted binaries, or vice versa.
+        /// </summary>
+        public ITaskItem[] ItemsToSkip3rdPartyCheck { get; set; }
+
+        /// <summary>
         /// Mapping relating PublicKeyToken, CertificateName and Strong Name. 
         /// Metadata required: PublicKeyToken, CertificateName and Include (which will be the Strong Name)
         /// During signing Certificate and Strong Name will be looked up here based on PublicKeyToken.
@@ -234,6 +240,7 @@ namespace Microsoft.DotNet.SignTool
             var fileSignInfo = ParseFileSignInfo();
             var extensionSignInfo = ParseFileExtensionSignInfo();
             var dualCertificates = ParseAdditionalCertificateInformation();
+            var filesToSkip3rdPartyCheck = ItemsToSkip3rdPartyCheck?.Select(i => i.ItemSpec).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             if (Log.HasLoggedErrors) return;
 
@@ -252,6 +259,7 @@ namespace Microsoft.DotNet.SignTool
                     fileSignInfo,
                     extensionSignInfo,
                     dualCertificates,
+                    filesToSkip3rdPartyCheck,
                     tarToolPath: TarToolPath,
                     pkgToolPath: PkgToolPath,
                     snPath: SNBinaryPath,
