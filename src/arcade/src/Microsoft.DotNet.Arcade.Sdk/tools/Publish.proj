@@ -55,6 +55,7 @@
     <!-- Default publishing target is 3, but we use 4 in the VMR. -->
     <PublishingVersion>3</PublishingVersion>
     <PublishingVersion Condition="'$(DotNetBuildFromVMR)' == 'true'">4</PublishingVersion>
+    <PushToLocalStorage Condition="'$(DotNetBuildFromVMR)' == 'true'">true</PushToLocalStorage>
     
     <!-- Globally set property. -->
     <IsStableBuild>false</IsStableBuild>
