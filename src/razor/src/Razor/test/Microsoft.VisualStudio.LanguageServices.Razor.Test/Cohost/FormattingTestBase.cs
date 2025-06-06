@@ -44,7 +44,8 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         bool insertSpaces = true,
         int tabSize = 4,
         bool allowDiagnostics = false,
-        bool debugAssertsEnabled = true)
+        bool debugAssertsEnabled = true,
+        Func<SourceText, SourceText>? csharpModifierFunc = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
@@ -62,7 +63,12 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         }
 
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetDebugAssertsEnabled(debugAssertsEnabled);
+        var accessor = formattingService.GetTestAccessor();
+        accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
+        if (csharpModifierFunc is not null)
+        {
+            accessor.SetFormattedCSharpDocumentModifierFunc(csharpModifierFunc);
+        }
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
