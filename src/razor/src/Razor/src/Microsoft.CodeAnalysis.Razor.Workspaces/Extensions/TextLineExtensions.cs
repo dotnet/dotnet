@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.CodeAnalysis.Text;
 
@@ -10,7 +9,9 @@ internal static class TextLineExtensions
 {
     public static string GetLeadingWhitespace(this TextLine line)
     {
-        return line.ToString().GetLeadingWhitespace();
+        return line.GetFirstNonWhitespaceOffset() is int offset
+            ? line.Text.AssumeNotNull().ToString(TextSpan.FromBounds(line.Start, line.Start + offset))
+            : string.Empty;
     }
 
     public static int GetIndentationSize(this TextLine line, long tabSize)
