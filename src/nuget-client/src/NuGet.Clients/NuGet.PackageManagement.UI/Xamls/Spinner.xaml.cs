@@ -24,7 +24,7 @@ namespace NuGet.PackageManagement.UI
         // Added INotifyPropertyChange to avoid memory leak in Spinner control. 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanged != null)
             {

@@ -24,7 +24,6 @@ internal abstract partial class RazorBlockSyntax : RazorSyntaxNode
 internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
 {
     private RazorBlockSyntax _document;
-    private SyntaxToken _endOfFile;
 
     internal RazorDocumentSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
@@ -32,23 +31,11 @@ internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
     }
 
     public RazorBlockSyntax Document  => GetRedAtZero(ref _document);
-    public SyntaxToken EndOfFile  => GetRed(ref _endOfFile, 1);
+    public SyntaxToken EndOfFile => new SyntaxToken(this, ((InternalSyntax.RazorDocumentSyntax)Green)._endOfFile, GetChildPosition(1), GetChildIndex(1));
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _document),
-            1 => GetRed(ref _endOfFile, 1),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._document) : null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._document,
-            1 => this._endOfFile,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._document : null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitRazorDocument(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitRazorDocument(this);
@@ -74,44 +61,20 @@ internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
 
 internal sealed partial class RazorCommentBlockSyntax : RazorSyntaxNode
 {
-    private SyntaxToken _startCommentTransition;
-    private SyntaxToken _startCommentStar;
-    private SyntaxToken _comment;
-    private SyntaxToken _endCommentStar;
-    private SyntaxToken _endCommentTransition;
-
     internal RazorCommentBlockSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxToken StartCommentTransition  => GetRedAtZero(ref _startCommentTransition);
-    public SyntaxToken StartCommentStar  => GetRed(ref _startCommentStar, 1);
-    public SyntaxToken Comment  => GetRed(ref _comment, 2);
-    public SyntaxToken EndCommentStar  => GetRed(ref _endCommentStar, 3);
-    public SyntaxToken EndCommentTransition  => GetRed(ref _endCommentTransition, 4);
+    public SyntaxToken StartCommentTransition => new SyntaxToken(this, ((InternalSyntax.RazorCommentBlockSyntax)Green)._startCommentTransition, Position, 0);
+    public SyntaxToken StartCommentStar => new SyntaxToken(this, ((InternalSyntax.RazorCommentBlockSyntax)Green)._startCommentStar, GetChildPosition(1), GetChildIndex(1));
+    public SyntaxToken Comment => new SyntaxToken(this, ((InternalSyntax.RazorCommentBlockSyntax)Green)._comment, GetChildPosition(2), GetChildIndex(2));
+    public SyntaxToken EndCommentStar => new SyntaxToken(this, ((InternalSyntax.RazorCommentBlockSyntax)Green)._endCommentStar, GetChildPosition(3), GetChildIndex(3));
+    public SyntaxToken EndCommentTransition => new SyntaxToken(this, ((InternalSyntax.RazorCommentBlockSyntax)Green)._endCommentTransition, GetChildPosition(4), GetChildIndex(4));
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _startCommentTransition),
-            1 => GetRed(ref _startCommentStar, 1),
-            2 => GetRed(ref _comment, 2),
-            3 => GetRed(ref _endCommentStar, 3),
-            4 => GetRed(ref _endCommentTransition, 4),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._startCommentTransition,
-            1 => this._startCommentStar,
-            2 => this._comment,
-            3 => this._endCommentStar,
-            4 => this._endCommentTransition,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitRazorCommentBlock(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitRazorCommentBlock(this);
@@ -140,24 +103,29 @@ internal sealed partial class RazorCommentBlockSyntax : RazorSyntaxNode
 
 internal sealed partial class RazorMetaCodeSyntax : RazorSyntaxNode
 {
-    private SyntaxNode _metaCode;
-
     internal RazorMetaCodeSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> MetaCode  => new SyntaxList<SyntaxToken>(GetRed(ref _metaCode, 0));
+    public SyntaxTokenList MetaCode
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.RazorMetaCodeSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._metaCode) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._metaCode : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitRazorMetaCode(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitRazorMetaCode(this);
 
-    public RazorMetaCodeSyntax Update(SyntaxList<SyntaxToken> metaCode, ISpanChunkGenerator chunkGenerator)
+    public RazorMetaCodeSyntax Update(SyntaxTokenList metaCode, ISpanChunkGenerator chunkGenerator)
     {
         if (metaCode != MetaCode || chunkGenerator != ChunkGenerator)
         {
@@ -172,7 +140,7 @@ internal sealed partial class RazorMetaCodeSyntax : RazorSyntaxNode
         return this;
     }
 
-    public RazorMetaCodeSyntax WithMetaCode(SyntaxList<SyntaxToken> metaCode) => Update(metaCode, ChunkGenerator);
+    public RazorMetaCodeSyntax WithMetaCode(SyntaxTokenList metaCode) => Update(metaCode, ChunkGenerator);
     public RazorMetaCodeSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(MetaCode, chunkGenerator);
 
     public RazorMetaCodeSyntax AddMetaCode(params SyntaxToken[] items) => WithMetaCode(this.MetaCode.AddRange(items));
@@ -220,24 +188,29 @@ internal sealed partial class GenericBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class UnclassifiedTextLiteralSyntax : RazorSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal UnclassifiedTextLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.UnclassifiedTextLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitUnclassifiedTextLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitUnclassifiedTextLiteral(this);
 
-    public UnclassifiedTextLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public UnclassifiedTextLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -252,7 +225,7 @@ internal sealed partial class UnclassifiedTextLiteralSyntax : RazorSyntaxNode
         return this;
     }
 
-    public UnclassifiedTextLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public UnclassifiedTextLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public UnclassifiedTextLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public UnclassifiedTextLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));
@@ -308,24 +281,29 @@ internal sealed partial class MarkupBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class MarkupTransitionSyntax : MarkupSyntaxNode
 {
-    private SyntaxNode _transitionTokens;
-
     internal MarkupTransitionSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> TransitionTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _transitionTokens, 0));
+    public SyntaxTokenList TransitionTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupTransitionSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._transitionTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._transitionTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupTransition(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupTransition(this);
 
-    public MarkupTransitionSyntax Update(SyntaxList<SyntaxToken> transitionTokens, ISpanChunkGenerator chunkGenerator)
+    public MarkupTransitionSyntax Update(SyntaxTokenList transitionTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (transitionTokens != TransitionTokens || chunkGenerator != ChunkGenerator)
         {
@@ -340,7 +318,7 @@ internal sealed partial class MarkupTransitionSyntax : MarkupSyntaxNode
         return this;
     }
 
-    public MarkupTransitionSyntax WithTransitionTokens(SyntaxList<SyntaxToken> transitionTokens) => Update(transitionTokens, ChunkGenerator);
+    public MarkupTransitionSyntax WithTransitionTokens(SyntaxTokenList transitionTokens) => Update(transitionTokens, ChunkGenerator);
     public MarkupTransitionSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(TransitionTokens, chunkGenerator);
 
     public MarkupTransitionSyntax AddTransitionTokens(params SyntaxToken[] items) => WithTransitionTokens(this.TransitionTokens.AddRange(items));
@@ -348,24 +326,29 @@ internal sealed partial class MarkupTransitionSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupTextLiteralSyntax : MarkupSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal MarkupTextLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupTextLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupTextLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupTextLiteral(this);
 
-    public MarkupTextLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public MarkupTextLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -380,7 +363,7 @@ internal sealed partial class MarkupTextLiteralSyntax : MarkupSyntaxNode
         return this;
     }
 
-    public MarkupTextLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public MarkupTextLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public MarkupTextLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public MarkupTextLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));
@@ -388,24 +371,29 @@ internal sealed partial class MarkupTextLiteralSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupEphemeralTextLiteralSyntax : MarkupSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal MarkupEphemeralTextLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupEphemeralTextLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupEphemeralTextLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupEphemeralTextLiteral(this);
 
-    public MarkupEphemeralTextLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public MarkupEphemeralTextLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -420,7 +408,7 @@ internal sealed partial class MarkupEphemeralTextLiteralSyntax : MarkupSyntaxNod
         return this;
     }
 
-    public MarkupEphemeralTextLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public MarkupEphemeralTextLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public MarkupEphemeralTextLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public MarkupEphemeralTextLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));
@@ -524,7 +512,6 @@ internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
     private MarkupTextLiteralSyntax _namePrefix;
     private MarkupTextLiteralSyntax _name;
     private MarkupTextLiteralSyntax _nameSuffix;
-    private SyntaxToken _equalsToken;
     private MarkupTextLiteralSyntax _valuePrefix;
     private RazorBlockSyntax _value;
     private MarkupTextLiteralSyntax _valueSuffix;
@@ -537,7 +524,7 @@ internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
     public MarkupTextLiteralSyntax NamePrefix  => GetRedAtZero(ref _namePrefix);
     public MarkupTextLiteralSyntax Name  => GetRed(ref _name, 1);
     public MarkupTextLiteralSyntax NameSuffix  => GetRed(ref _nameSuffix, 2);
-    public SyntaxToken EqualsToken  => GetRed(ref _equalsToken, 3);
+    public SyntaxToken EqualsToken => new SyntaxToken(this, ((InternalSyntax.MarkupAttributeBlockSyntax)Green)._equalsToken, GetChildPosition(3), GetChildIndex(3));
     public MarkupTextLiteralSyntax ValuePrefix  => GetRed(ref _valuePrefix, 4);
     public RazorBlockSyntax Value  => GetRed(ref _value, 5);
     public MarkupTextLiteralSyntax ValueSuffix  => GetRed(ref _valueSuffix, 6);
@@ -548,7 +535,6 @@ internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
             0 => GetRedAtZero(ref _namePrefix),
             1 => GetRed(ref _name, 1),
             2 => GetRed(ref _nameSuffix, 2),
-            3 => GetRed(ref _equalsToken, 3),
             4 => GetRed(ref _valuePrefix, 4),
             5 => GetRed(ref _value, 5),
             6 => GetRed(ref _valueSuffix, 6),
@@ -561,7 +547,6 @@ internal sealed partial class MarkupAttributeBlockSyntax : MarkupSyntaxNode
             0 => this._namePrefix,
             1 => this._name,
             2 => this._nameSuffix,
-            3 => this._equalsToken,
             4 => this._valuePrefix,
             5 => this._value,
             6 => this._valueSuffix,
@@ -871,49 +856,38 @@ internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupStartTagSyntax : BaseMarkupStartTagSyntax
 {
-    private SyntaxToken _openAngle;
-    private SyntaxToken _bang;
-    private SyntaxToken _name;
     private SyntaxNode _attributes;
-    private SyntaxToken _forwardSlash;
-    private SyntaxToken _closeAngle;
 
     internal MarkupStartTagSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public override SyntaxToken OpenAngle  => GetRedAtZero(ref _openAngle);
-    public override SyntaxToken Bang  => GetRed(ref _bang, 1);
-    public override SyntaxToken Name  => GetRed(ref _name, 2);
+    public override SyntaxToken OpenAngle => new SyntaxToken(this, ((InternalSyntax.MarkupStartTagSyntax)Green)._openAngle, Position, 0);
+    public override SyntaxToken Bang
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupStartTagSyntax)Green).Bang;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(1), GetChildIndex(1)) : default;
+        }
+    }
+    public override SyntaxToken Name => new SyntaxToken(this, ((InternalSyntax.MarkupStartTagSyntax)Green)._name, GetChildPosition(2), GetChildIndex(2));
     public override SyntaxList<RazorSyntaxNode> Attributes  => new SyntaxList<RazorSyntaxNode>(GetRed(ref _attributes, 3));
-    public override SyntaxToken ForwardSlash  => GetRed(ref _forwardSlash, 4);
-    public override SyntaxToken CloseAngle  => GetRed(ref _closeAngle, 5);
+    public override SyntaxToken ForwardSlash
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupStartTagSyntax)Green).ForwardSlash;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(4), GetChildIndex(4)) : default;
+        }
+    }
+    public override SyntaxToken CloseAngle => new SyntaxToken(this, ((InternalSyntax.MarkupStartTagSyntax)Green)._closeAngle, GetChildPosition(5), GetChildIndex(5));
     public override ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupStartTagSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _openAngle),
-            1 => GetRed(ref _bang, 1),
-            2 => GetRed(ref _name, 2),
-            3 => GetRed(ref _attributes, 3),
-            4 => GetRed(ref _forwardSlash, 4),
-            5 => GetRed(ref _closeAngle, 5),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => index == 3 ? GetRed(ref this._attributes, 3) : null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._openAngle,
-            1 => this._bang,
-            2 => this._name,
-            3 => this._attributes,
-            4 => this._forwardSlash,
-            5 => this._closeAngle,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => index == 3 ? this._attributes : null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupStartTag(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupStartTag(this);
@@ -953,49 +927,31 @@ internal sealed partial class MarkupStartTagSyntax : BaseMarkupStartTagSyntax
 
 internal sealed partial class MarkupEndTagSyntax : BaseMarkupEndTagSyntax
 {
-    private SyntaxToken _openAngle;
-    private SyntaxToken _forwardSlash;
-    private SyntaxToken _bang;
-    private SyntaxToken _name;
     private MarkupMiscAttributeContentSyntax _miscAttributeContent;
-    private SyntaxToken _closeAngle;
 
     internal MarkupEndTagSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public override SyntaxToken OpenAngle  => GetRedAtZero(ref _openAngle);
-    public override SyntaxToken ForwardSlash  => GetRed(ref _forwardSlash, 1);
-    public override SyntaxToken Bang  => GetRed(ref _bang, 2);
-    public override SyntaxToken Name  => GetRed(ref _name, 3);
+    public override SyntaxToken OpenAngle => new SyntaxToken(this, ((InternalSyntax.MarkupEndTagSyntax)Green)._openAngle, Position, 0);
+    public override SyntaxToken ForwardSlash => new SyntaxToken(this, ((InternalSyntax.MarkupEndTagSyntax)Green)._forwardSlash, GetChildPosition(1), GetChildIndex(1));
+    public override SyntaxToken Bang
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupEndTagSyntax)Green).Bang;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(2), GetChildIndex(2)) : default;
+        }
+    }
+    public override SyntaxToken Name => new SyntaxToken(this, ((InternalSyntax.MarkupEndTagSyntax)Green)._name, GetChildPosition(3), GetChildIndex(3));
     public override MarkupMiscAttributeContentSyntax MiscAttributeContent  => GetRed(ref _miscAttributeContent, 4);
-    public override SyntaxToken CloseAngle  => GetRed(ref _closeAngle, 5);
+    public override SyntaxToken CloseAngle => new SyntaxToken(this, ((InternalSyntax.MarkupEndTagSyntax)Green)._closeAngle, GetChildPosition(5), GetChildIndex(5));
     public override ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupEndTagSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _openAngle),
-            1 => GetRed(ref _forwardSlash, 1),
-            2 => GetRed(ref _bang, 2),
-            3 => GetRed(ref _name, 3),
-            4 => GetRed(ref _miscAttributeContent, 4),
-            5 => GetRed(ref _closeAngle, 5),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => index == 4 ? GetRed(ref this._miscAttributeContent, 4) : null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._openAngle,
-            1 => this._forwardSlash,
-            2 => this._bang,
-            3 => this._name,
-            4 => this._miscAttributeContent,
-            5 => this._closeAngle,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => index == 4 ? this._miscAttributeContent : null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupEndTag(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupEndTag(this);
@@ -1099,49 +1055,38 @@ internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
 
 internal sealed partial class MarkupTagHelperStartTagSyntax : BaseMarkupStartTagSyntax
 {
-    private SyntaxToken _openAngle;
-    private SyntaxToken _bang;
-    private SyntaxToken _name;
     private SyntaxNode _attributes;
-    private SyntaxToken _forwardSlash;
-    private SyntaxToken _closeAngle;
 
     internal MarkupTagHelperStartTagSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public override SyntaxToken OpenAngle  => GetRedAtZero(ref _openAngle);
-    public override SyntaxToken Bang  => GetRed(ref _bang, 1);
-    public override SyntaxToken Name  => GetRed(ref _name, 2);
+    public override SyntaxToken OpenAngle => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green)._openAngle, Position, 0);
+    public override SyntaxToken Bang
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green).Bang;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(1), GetChildIndex(1)) : default;
+        }
+    }
+    public override SyntaxToken Name => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green)._name, GetChildPosition(2), GetChildIndex(2));
     public override SyntaxList<RazorSyntaxNode> Attributes  => new SyntaxList<RazorSyntaxNode>(GetRed(ref _attributes, 3));
-    public override SyntaxToken ForwardSlash  => GetRed(ref _forwardSlash, 4);
-    public override SyntaxToken CloseAngle  => GetRed(ref _closeAngle, 5);
+    public override SyntaxToken ForwardSlash
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green).ForwardSlash;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(4), GetChildIndex(4)) : default;
+        }
+    }
+    public override SyntaxToken CloseAngle => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green)._closeAngle, GetChildPosition(5), GetChildIndex(5));
     public override ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupTagHelperStartTagSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _openAngle),
-            1 => GetRed(ref _bang, 1),
-            2 => GetRed(ref _name, 2),
-            3 => GetRed(ref _attributes, 3),
-            4 => GetRed(ref _forwardSlash, 4),
-            5 => GetRed(ref _closeAngle, 5),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => index == 3 ? GetRed(ref this._attributes, 3) : null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._openAngle,
-            1 => this._bang,
-            2 => this._name,
-            3 => this._attributes,
-            4 => this._forwardSlash,
-            5 => this._closeAngle,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => index == 3 ? this._attributes : null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupTagHelperStartTag(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupTagHelperStartTag(this);
@@ -1181,49 +1126,31 @@ internal sealed partial class MarkupTagHelperStartTagSyntax : BaseMarkupStartTag
 
 internal sealed partial class MarkupTagHelperEndTagSyntax : BaseMarkupEndTagSyntax
 {
-    private SyntaxToken _openAngle;
-    private SyntaxToken _forwardSlash;
-    private SyntaxToken _bang;
-    private SyntaxToken _name;
     private MarkupMiscAttributeContentSyntax _miscAttributeContent;
-    private SyntaxToken _closeAngle;
 
     internal MarkupTagHelperEndTagSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public override SyntaxToken OpenAngle  => GetRedAtZero(ref _openAngle);
-    public override SyntaxToken ForwardSlash  => GetRed(ref _forwardSlash, 1);
-    public override SyntaxToken Bang  => GetRed(ref _bang, 2);
-    public override SyntaxToken Name  => GetRed(ref _name, 3);
+    public override SyntaxToken OpenAngle => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green)._openAngle, Position, 0);
+    public override SyntaxToken ForwardSlash => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green)._forwardSlash, GetChildPosition(1), GetChildIndex(1));
+    public override SyntaxToken Bang
+    {
+        get
+        {
+            var slot = ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green).Bang;
+            return slot != null ? new SyntaxToken(this, slot, GetChildPosition(2), GetChildIndex(2)) : default;
+        }
+    }
+    public override SyntaxToken Name => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green)._name, GetChildPosition(3), GetChildIndex(3));
     public override MarkupMiscAttributeContentSyntax MiscAttributeContent  => GetRed(ref _miscAttributeContent, 4);
-    public override SyntaxToken CloseAngle  => GetRed(ref _closeAngle, 5);
+    public override SyntaxToken CloseAngle => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green)._closeAngle, GetChildPosition(5), GetChildIndex(5));
     public override ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.MarkupTagHelperEndTagSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index)
-        => index switch
-        {
-            0 => GetRedAtZero(ref _openAngle),
-            1 => GetRed(ref _forwardSlash, 1),
-            2 => GetRed(ref _bang, 2),
-            3 => GetRed(ref _name, 3),
-            4 => GetRed(ref _miscAttributeContent, 4),
-            5 => GetRed(ref _closeAngle, 5),
-            _ => null
-        };
+    internal override SyntaxNode GetNodeSlot(int index) => index == 4 ? GetRed(ref this._miscAttributeContent, 4) : null;
 
-    internal override SyntaxNode GetCachedSlot(int index)
-        => index switch
-        {
-            0 => this._openAngle,
-            1 => this._forwardSlash,
-            2 => this._bang,
-            3 => this._name,
-            4 => this._miscAttributeContent,
-            5 => this._closeAngle,
-            _ => null
-        };
+    internal override SyntaxNode GetCachedSlot(int index) => index == 4 ? this._miscAttributeContent : null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupTagHelperEndTag(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupTagHelperEndTag(this);
@@ -1270,7 +1197,6 @@ internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
     private MarkupTextLiteralSyntax _namePrefix;
     private MarkupTextLiteralSyntax _name;
     private MarkupTextLiteralSyntax _nameSuffix;
-    private SyntaxToken _equalsToken;
     private MarkupTextLiteralSyntax _valuePrefix;
     private MarkupTagHelperAttributeValueSyntax _value;
     private MarkupTextLiteralSyntax _valueSuffix;
@@ -1283,7 +1209,7 @@ internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
     public MarkupTextLiteralSyntax NamePrefix  => GetRedAtZero(ref _namePrefix);
     public MarkupTextLiteralSyntax Name  => GetRed(ref _name, 1);
     public MarkupTextLiteralSyntax NameSuffix  => GetRed(ref _nameSuffix, 2);
-    public SyntaxToken EqualsToken  => GetRed(ref _equalsToken, 3);
+    public SyntaxToken EqualsToken => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperAttributeSyntax)Green)._equalsToken, GetChildPosition(3), GetChildIndex(3));
     public MarkupTextLiteralSyntax ValuePrefix  => GetRed(ref _valuePrefix, 4);
     public MarkupTagHelperAttributeValueSyntax Value  => GetRed(ref _value, 5);
     public MarkupTextLiteralSyntax ValueSuffix  => GetRed(ref _valueSuffix, 6);
@@ -1294,7 +1220,6 @@ internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
             0 => GetRedAtZero(ref _namePrefix),
             1 => GetRed(ref _name, 1),
             2 => GetRed(ref _nameSuffix, 2),
-            3 => GetRed(ref _equalsToken, 3),
             4 => GetRed(ref _valuePrefix, 4),
             5 => GetRed(ref _value, 5),
             6 => GetRed(ref _valueSuffix, 6),
@@ -1307,7 +1232,6 @@ internal sealed partial class MarkupTagHelperAttributeSyntax : MarkupSyntaxNode
             0 => this._namePrefix,
             1 => this._name,
             2 => this._nameSuffix,
-            3 => this._equalsToken,
             4 => this._valuePrefix,
             5 => this._value,
             6 => this._valueSuffix,
@@ -1446,7 +1370,6 @@ internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSy
     private RazorMetaCodeSyntax _colon;
     private MarkupTextLiteralSyntax _parameterName;
     private MarkupTextLiteralSyntax _nameSuffix;
-    private SyntaxToken _equalsToken;
     private MarkupTextLiteralSyntax _valuePrefix;
     private MarkupTagHelperAttributeValueSyntax _value;
     private MarkupTextLiteralSyntax _valueSuffix;
@@ -1462,7 +1385,7 @@ internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSy
     public RazorMetaCodeSyntax Colon  => GetRed(ref _colon, 3);
     public MarkupTextLiteralSyntax ParameterName  => GetRed(ref _parameterName, 4);
     public MarkupTextLiteralSyntax NameSuffix  => GetRed(ref _nameSuffix, 5);
-    public SyntaxToken EqualsToken  => GetRed(ref _equalsToken, 6);
+    public SyntaxToken EqualsToken => new SyntaxToken(this, ((InternalSyntax.MarkupTagHelperDirectiveAttributeSyntax)Green)._equalsToken, GetChildPosition(6), GetChildIndex(6));
     public MarkupTextLiteralSyntax ValuePrefix  => GetRed(ref _valuePrefix, 7);
     public MarkupTagHelperAttributeValueSyntax Value  => GetRed(ref _value, 8);
     public MarkupTextLiteralSyntax ValueSuffix  => GetRed(ref _valueSuffix, 9);
@@ -1476,7 +1399,6 @@ internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSy
             3 => GetRed(ref _colon, 3),
             4 => GetRed(ref _parameterName, 4),
             5 => GetRed(ref _nameSuffix, 5),
-            6 => GetRed(ref _equalsToken, 6),
             7 => GetRed(ref _valuePrefix, 7),
             8 => GetRed(ref _value, 8),
             9 => GetRed(ref _valueSuffix, 9),
@@ -1492,7 +1414,6 @@ internal sealed partial class MarkupTagHelperDirectiveAttributeSyntax : MarkupSy
             3 => this._colon,
             4 => this._parameterName,
             5 => this._nameSuffix,
-            6 => this._equalsToken,
             7 => this._valuePrefix,
             8 => this._value,
             9 => this._valueSuffix,
@@ -1655,19 +1576,17 @@ internal sealed partial class CSharpCodeBlockSyntax : RazorBlockSyntax
 
 internal sealed partial class CSharpTransitionSyntax : CSharpSyntaxNode
 {
-    private SyntaxToken _transition;
-
     internal CSharpTransitionSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxToken Transition  => GetRedAtZero(ref _transition);
+    public SyntaxToken Transition => new SyntaxToken(this, ((InternalSyntax.CSharpTransitionSyntax)Green)._transition, Position, 0);
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.CSharpTransitionSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._transition) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._transition : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitCSharpTransition(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitCSharpTransition(this);
@@ -1693,24 +1612,29 @@ internal sealed partial class CSharpTransitionSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpStatementLiteralSyntax : CSharpSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal CSharpStatementLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.CSharpStatementLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitCSharpStatementLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitCSharpStatementLiteral(this);
 
-    public CSharpStatementLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public CSharpStatementLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -1725,7 +1649,7 @@ internal sealed partial class CSharpStatementLiteralSyntax : CSharpSyntaxNode
         return this;
     }
 
-    public CSharpStatementLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public CSharpStatementLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public CSharpStatementLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public CSharpStatementLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));
@@ -1733,24 +1657,29 @@ internal sealed partial class CSharpStatementLiteralSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpExpressionLiteralSyntax : CSharpSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal CSharpExpressionLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.CSharpExpressionLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitCSharpExpressionLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitCSharpExpressionLiteral(this);
 
-    public CSharpExpressionLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public CSharpExpressionLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -1765,7 +1694,7 @@ internal sealed partial class CSharpExpressionLiteralSyntax : CSharpSyntaxNode
         return this;
     }
 
-    public CSharpExpressionLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public CSharpExpressionLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public CSharpExpressionLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public CSharpExpressionLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));
@@ -1773,24 +1702,29 @@ internal sealed partial class CSharpExpressionLiteralSyntax : CSharpSyntaxNode
 
 internal sealed partial class CSharpEphemeralTextLiteralSyntax : CSharpSyntaxNode
 {
-    private SyntaxNode _literalTokens;
-
     internal CSharpEphemeralTextLiteralSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public SyntaxList<SyntaxToken> LiteralTokens  => new SyntaxList<SyntaxToken>(GetRed(ref _literalTokens, 0));
+    public SyntaxTokenList LiteralTokens
+    {
+         get
+        {
+            var slot = Green.GetSlot(0);
+            return slot != null ? new SyntaxTokenList(this, slot, Position, 0) : default;
+        }
+    }
     public ISpanChunkGenerator ChunkGenerator => ((InternalSyntax.CSharpEphemeralTextLiteralSyntax)Green).ChunkGenerator;
 
-    internal override SyntaxNode GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this._literalTokens) : null;
+    internal override SyntaxNode GetNodeSlot(int index) => null;
 
-    internal override SyntaxNode GetCachedSlot(int index) => index == 0 ? this._literalTokens : null;
+    internal override SyntaxNode GetCachedSlot(int index) => null;
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitCSharpEphemeralTextLiteral(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitCSharpEphemeralTextLiteral(this);
 
-    public CSharpEphemeralTextLiteralSyntax Update(SyntaxList<SyntaxToken> literalTokens, ISpanChunkGenerator chunkGenerator)
+    public CSharpEphemeralTextLiteralSyntax Update(SyntaxTokenList literalTokens, ISpanChunkGenerator chunkGenerator)
     {
         if (literalTokens != LiteralTokens || chunkGenerator != ChunkGenerator)
         {
@@ -1805,7 +1739,7 @@ internal sealed partial class CSharpEphemeralTextLiteralSyntax : CSharpSyntaxNod
         return this;
     }
 
-    public CSharpEphemeralTextLiteralSyntax WithLiteralTokens(SyntaxList<SyntaxToken> literalTokens) => Update(literalTokens, ChunkGenerator);
+    public CSharpEphemeralTextLiteralSyntax WithLiteralTokens(SyntaxTokenList literalTokens) => Update(literalTokens, ChunkGenerator);
     public CSharpEphemeralTextLiteralSyntax WithChunkGenerator(ISpanChunkGenerator chunkGenerator) => Update(LiteralTokens, chunkGenerator);
 
     public CSharpEphemeralTextLiteralSyntax AddLiteralTokens(params SyntaxToken[] items) => WithLiteralTokens(this.LiteralTokens.AddRange(items));

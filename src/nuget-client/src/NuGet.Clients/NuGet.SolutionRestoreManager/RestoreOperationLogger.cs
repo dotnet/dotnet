@@ -481,25 +481,6 @@ namespace NuGet.SolutionRestoreManager
             }
         }
 
-        /// <summary>
-        /// MSBuild verbosity -> NuGet LogLevel
-        /// </summary>
-        private static LogLevel GetLogLevel(MSBuildVerbosityLevel level)
-        {
-            switch (level)
-            {
-                case MSBuildVerbosityLevel.Quiet:
-                    return LogLevel.Warning;
-                case MSBuildVerbosityLevel.Minimal:
-                case MSBuildVerbosityLevel.Normal:
-                    return LogLevel.Information;
-                case MSBuildVerbosityLevel.Detailed:
-                    return LogLevel.Verbose;
-                default:
-                    return LogLevel.Debug;
-            }
-        }
-
         internal class StatusBarProgress : RestoreOperationProgressUI
         {
             private static object Icon = (short)Constants.SBAI_General;

@@ -44,7 +44,7 @@ namespace NuGet.ProjectModel
 
             hashCode.AddObject(FrameworkName);
             hashCode.AddStringIgnoreCase(TargetAlias);
-            hashCode.AddSequence(ProjectReferences);
+            hashCode.AddUnorderedSequence(ProjectReferences);
 
             return hashCode.CombinedHash;
         }

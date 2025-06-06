@@ -164,12 +164,9 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
             return false;
         }
 
-        var tokens = target.DescendantNodes().Where(n => n.IsToken).Cast<SyntaxToken>().ToArray();
-        for (var i = 0; i < tokens.Length; i++)
+        foreach (var token in target.DescendantTokens())
         {
-            var token = tokens[i];
-
-            if (token == null)
+            if (token.Kind == SyntaxKind.None)
             {
                 break;
             }
@@ -236,7 +233,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
         var changeStart = change.Span.AbsoluteIndex;
         var changeLength = change.Span.Length;
         var changeEnd = changeStart + changeLength;
-        var tokens = target.DescendantNodes().Where(n => n.IsToken).Cast<SyntaxToken>().ToArray();
+        var tokens = target.DescendantTokens().ToImmutableArray();
         if (!IsInsideParenthesis(changeStart, tokens) || !IsInsideParenthesis(changeEnd, tokens))
         {
             // Either the start or end of the delete does not fall inside of parenthesis, unacceptable inner deletion.
@@ -269,7 +266,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
             return false;
         }
 
-        var tokens = target.DescendantNodes().Where(n => n.IsToken).Cast<SyntaxToken>().ToArray();
+        var tokens = target.DescendantTokens().ToImmutableArray();
         if (IsInsideParenthesis(change.Span.AbsoluteIndex, tokens))
         {
             return true;
@@ -279,7 +276,8 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
     }
 
     // Internal for testing
-    internal static bool IsInsideParenthesis(int position, IReadOnlyList<SyntaxToken> tokens)
+    internal static bool IsInsideParenthesis<TList>(int position, TList tokens)
+        where TList : struct, IReadOnlyList<SyntaxToken>
     {
         var balanceCount = 0;
         var foundInsertionPoint = false;

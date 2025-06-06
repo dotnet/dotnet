@@ -19,6 +19,16 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
         FromRazor = fromRazor;
     }
 
+    public SemanticRange(int kind, LinePositionSpan range, int modifier, bool fromRazor)
+        : this(kind, range.Start, range.End, modifier, fromRazor)
+    {
+    }
+
+    public SemanticRange(int kind, LinePosition start, LinePosition end, int modifier, bool fromRazor)
+        : this(kind, start.Line, start.Character, end.Line, end.Character, modifier, fromRazor)
+    {
+    }
+
     public int Kind { get; }
 
     public int StartLine { get; }

@@ -59,7 +59,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void CalculatedMembers_ForHttpsSource_HasExpectedValues()
+        public void CalculatedMembers_ForHttpsSource_HasExpectedValues()
         {
             // Arrange & Act
             PackageSource source = new("https://my.test/v3.index.json");
@@ -71,7 +71,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void CalculatedMembers_ForHttpSource_HasExpectedValues()
+        public void CalculatedMembers_ForHttpSource_HasExpectedValues()
         {
             // Arrange & Act
             PackageSource source = new("http://my.test/v3.index.json");
@@ -83,7 +83,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void CalculatedMembers_ForLocalSource_HasExpectedValues()
+        public void CalculatedMembers_ForLocalSource_HasExpectedValues()
         {
             // Arrange & Act
             var path = RuntimeEnvironmentHelper.IsWindows

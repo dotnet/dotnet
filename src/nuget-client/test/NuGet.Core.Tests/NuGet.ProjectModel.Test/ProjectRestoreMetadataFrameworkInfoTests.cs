@@ -89,7 +89,7 @@ namespace NuGet.ProjectModel.Test
                 TargetAlias = right
             };
 
-            AssertEquality(expected, leftSide, rightSide);
+            AssertHashCode(expected, leftSide, rightSide);
         }
 
         [Theory]
@@ -108,7 +108,7 @@ namespace NuGet.ProjectModel.Test
                 FrameworkName = NuGetFramework.Parse(right)
             };
 
-            AssertEquality(expected, leftSide, rightSide);
+            AssertHashCode(expected, leftSide, rightSide);
         }
 
         [Theory]
@@ -130,7 +130,7 @@ namespace NuGet.ProjectModel.Test
                 ProjectReferences = right.Split(';').Select(e => new ProjectRestoreReference() { ProjectPath = e }).ToList()
             };
 
-            AssertEquality(expected, leftSide, rightSide);
+            AssertHashCode(expected, leftSide, rightSide);
         }
 
         private static void AssertEquality(bool expected, ProjectRestoreMetadataFrameworkInfo leftSide, ProjectRestoreMetadataFrameworkInfo rightSide)
