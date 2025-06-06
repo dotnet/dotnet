@@ -25,6 +25,7 @@ parameters:
   default: true
 
 # True when building the VMR in source-only mode
+# 'string' type as underlying value is usually set as pipeline's runtime variable
 - name: isSourceOnlyBuild
   type: string
   default: 'false'
