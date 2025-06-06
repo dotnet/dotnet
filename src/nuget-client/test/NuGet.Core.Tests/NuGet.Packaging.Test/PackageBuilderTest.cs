@@ -3314,29 +3314,6 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
             return file.Object;
         }
 
-        private IPackageFile CreatePackageFileOnPath(string path, DateTime lastWriteTime)
-        {
-            string directorypath = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directorypath))
-            {
-                Directory.CreateDirectory(directorypath);
-            }
-
-            File.WriteAllText(path, string.Empty);
-            File.SetLastWriteTime(path, lastWriteTime);
-
-            using (MemoryStream ms = new MemoryStream())
-            using (FileStream fileStream = File.OpenRead(path))
-            {
-                fileStream.CopyTo(ms);
-                var file = new PhysicalPackageFile(ms)
-                {
-                    TargetPath = path
-                };
-                return file;
-            }
-        }
-
         private Stream GetManifestStream(Stream packageStream)
         {
             Stream resultStream = null;

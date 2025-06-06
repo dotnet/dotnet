@@ -341,7 +341,7 @@ internal static class SyntaxReplacer
             return base.VisitToken(token);
         }
 
-        public override SyntaxList<SyntaxToken> VisitList(SyntaxList<SyntaxToken> list)
+        public override SyntaxTokenList VisitList(SyntaxTokenList list)
         {
             var index = list.IndexOf(_originalToken);
             if (index >= 0 && index < list.Count)

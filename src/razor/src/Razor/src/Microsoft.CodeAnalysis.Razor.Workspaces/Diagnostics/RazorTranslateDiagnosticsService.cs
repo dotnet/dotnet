@@ -22,6 +22,7 @@ namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
 using RazorDiagnosticFactory = AspNetCore.Razor.Language.RazorDiagnosticFactory;
 using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using RazorSyntaxNodeOrToken = AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 /// <summary>
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
@@ -303,7 +304,8 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
             var bodyElement = element
                 .ChildNodes()
-                .SingleOrDefault(static c => c is MarkupElementSyntax tag && tag.StartTag?.Name.Content == "body") as MarkupElementSyntax;
+                .OfType<MarkupElementSyntax>()
+                .SingleOrDefault(static element => element.StartTag?.Name.Content == "body");
 
             return bodyElement is not null &&
                    bodyElement.StartTag?.Bang is not null;
@@ -329,7 +331,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 return false;
             }
 
-            var haveBang = startNode.Bang is not null && endNode.Bang is not null;
+            var haveBang = startNode.Bang.IsValid() && endNode.Bang.IsValid();
             var namesEquivalent = startNode.Name.Content == endNode.Name.Content;
 
             return haveBang && namesEquivalent;
@@ -419,13 +421,15 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         static bool CheckIfAttributeContainsNonMarkupNodes(RazorSyntaxNode attributeNode)
         {
             // Only allow markup, generic & (non-razor comment) token nodes
-            var containsNonMarkupNodes = attributeNode.DescendantNodes()
-                .Any(static n => !(n is MarkupBlockSyntax ||
-                    n is MarkupSyntaxNode ||
-                    n is GenericBlockSyntax ||
-                    (n is SyntaxNode sn && sn.IsToken && sn.Kind != SyntaxKind.RazorCommentTransition)));
+            var containsNonMarkupNodes = attributeNode.DescendantNodesAndTokens().Any(IsNotMarkupNodeOrCommentToken);
 
             return containsNonMarkupNodes;
+        }
+
+        static bool IsNotMarkupNodeOrCommentToken(RazorSyntaxNodeOrToken nodeOrToken)
+        {
+            return !(nodeOrToken.IsToken && nodeOrToken.AsToken().Kind == SyntaxKind.RazorCommentTransition) &&
+                   !(nodeOrToken.IsNode && nodeOrToken.AsNode() is MarkupBlockSyntax or MarkupSyntaxNode or GenericBlockSyntax);
         }
     }
 

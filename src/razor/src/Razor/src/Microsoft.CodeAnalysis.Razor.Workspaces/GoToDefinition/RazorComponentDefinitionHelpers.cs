@@ -114,16 +114,16 @@ internal static class RazorComponentDefinitionHelpers
             return node.Kind is RazorSyntaxKind.MarkupTagHelperStartTag or RazorSyntaxKind.MarkupTagHelperEndTag;
         }
 
-        static bool TryGetTagName(RazorSyntaxNode node, [NotNullWhen(true)] out RazorSyntaxToken? tagName)
+        static bool TryGetTagName(RazorSyntaxNode node, out RazorSyntaxToken tagName)
         {
             tagName = node switch
             {
                 MarkupTagHelperStartTagSyntax tagHelperStartTag => tagHelperStartTag.Name,
                 MarkupTagHelperEndTagSyntax tagHelperEndTag => tagHelperEndTag.Name,
-                _ => null
+                _ => default
             };
 
-            return tagName is not null;
+            return tagName != default;
         }
     }
 

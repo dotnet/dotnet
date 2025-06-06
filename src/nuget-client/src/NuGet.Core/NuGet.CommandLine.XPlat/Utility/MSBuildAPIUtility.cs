@@ -664,26 +664,6 @@ namespace NuGet.CommandLine.XPlat
         }
 
         /// <summary>
-        /// Update other metadata for items based on certain flags.
-        /// </summary>
-        /// <param name="libraryDependency">Package Dependency of the package to be added.</param>
-        /// <param name="packageReferenceItem">Item to be modified.</param>
-        private void UpdateExtraMetadata(LibraryDependency libraryDependency, ProjectItem packageReferenceItem)
-        {
-            if (libraryDependency.IncludeType != LibraryIncludeFlags.All)
-            {
-                var includeFlags = MSBuildStringUtility.Convert(LibraryIncludeFlagUtils.GetFlagString(libraryDependency.IncludeType));
-                packageReferenceItem.SetMetadataValue(IncludeAssets, includeFlags);
-            }
-
-            if (libraryDependency.SuppressParent != LibraryIncludeFlagUtils.DefaultSuppressParent)
-            {
-                var suppressParent = MSBuildStringUtility.Convert(LibraryIncludeFlagUtils.GetFlagString(libraryDependency.SuppressParent));
-                packageReferenceItem.SetMetadataValue(PrivateAssets, suppressParent);
-            }
-        }
-
-        /// <summary>
         /// A simple check for some of the evaluated properties to check
         /// if the project is package reference project or not
         /// </summary>

@@ -4,6 +4,7 @@
 
 Imports System.IO
 Imports System.Threading
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
 Imports Microsoft.CodeAnalysis.Editor.Implementation.RenameTracking
@@ -20,7 +21,7 @@ Imports Microsoft.VisualStudio.Text.Tagging
 
 Namespace Microsoft.CodeAnalysis.Editor.UnitTests.Rename
     Friend Module RenameTestHelpers
-        Private ReadOnly s_composition As TestComposition = EditorTestCompositions.EditorFeaturesWpf.AddParts(
+        Private ReadOnly s_composition As TestComposition = EditorTestCompositions.EditorFeatures.AddParts(
             GetType(MockDocumentNavigationServiceFactory),
             GetType(MockPreviewDialogService),
             GetType(TestWorkspaceConfigurationService))

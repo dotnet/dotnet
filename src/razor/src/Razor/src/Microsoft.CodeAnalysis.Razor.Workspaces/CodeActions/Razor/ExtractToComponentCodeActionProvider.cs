@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
 {
@@ -226,8 +227,8 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
         if (commonAncestor != startNode &&
             commonAncestor != endNode)
         {
-            SyntaxNode? modifiedStart = null, modifiedEnd = null;
-            foreach (var child in commonAncestor.ChildNodes())
+            RazorSyntaxNodeOrToken? modifiedStart = null, modifiedEnd = null;
+            foreach (var child in commonAncestor.ChildNodesAndTokens())
             {
                 if (child.Span.Contains(startNode.Span))
                 {
@@ -246,9 +247,9 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
 
             // There's a start and end node that are siblings and will work for start/end
             // of extraction into the new component.
-            if (modifiedStart is not null && modifiedEnd is not null)
+            if (modifiedStart is { } modifiedStartValue && modifiedEnd is { } modifiedEndValue)
             {
-                return TextSpan.FromBounds(modifiedStart.Span.Start, modifiedEnd.Span.End);
+                return TextSpan.FromBounds(modifiedStartValue.Span.Start, modifiedEndValue.Span.End);
             }
         }
 
