@@ -318,6 +318,7 @@
            VMR builds would typically specify these globally. Only used when publishing V4 is active. -->
       <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)_Artifacts</FutureArtifactName>
       <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == ''">$(AssetManifestOS)_$(AssetManifestArch)$(AssetManifestPass)_Artifacts</FutureArtifactName>
+      <FutureArtifactPublishBasePath Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactPublishBasePath)' == ''">$(SourceBuiltArtifactsBasePath)</FutureArtifactPublishBasePath>
       <FutureArtifactPublishBasePath Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactPublishBasePath)' == ''">$(ArtifactsPublishStagingDir)</FutureArtifactPublishBasePath>
     </PropertyGroup>
     
