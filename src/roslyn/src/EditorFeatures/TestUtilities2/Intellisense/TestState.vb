@@ -4,6 +4,7 @@
 
 Imports System.Collections.Immutable
 Imports System.Threading
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Completion
 Imports Microsoft.CodeAnalysis.Editor.CommandHandlers
 Imports Microsoft.CodeAnalysis.Editor.CSharp.CompleteStatement
@@ -38,7 +39,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.IntelliSense
         Protected ReadOnly CompleteStatementCommandHandler As CompleteStatementCommandHandler
         Private ReadOnly FormatCommandHandler As FormatCommandHandler
 
-        Public Shared ReadOnly CompositionWithoutCompletionTestParts As TestComposition = EditorTestCompositions.EditorFeaturesWpf.
+        Public Shared ReadOnly CompositionWithoutCompletionTestParts As TestComposition = EditorTestCompositions.EditorFeatures.
             AddExcludedPartTypes(
                 GetType(IIntelliSensePresenter(Of ISignatureHelpPresenterSession, ISignatureHelpSession)),
                 GetType(FormatCommandHandler)).

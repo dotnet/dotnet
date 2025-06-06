@@ -1771,6 +1771,71 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2471065")]
+    public Task MultipleHtmlElementsInCSharpCode()
+        => RunFormattingTestAsync(
+            input: """
+                <div class="p-3 pb-0" style="min-height:24rem;">
+
+                @if (productsForExport != null)
+                {
+                <label class="section-label">
+                @(!showResult ? "some label" : "another label")
+                </label>
+
+                <div class="row">
+                <div class="col">
+                @if (!showResult)
+                {
+                <label>
+                <input type="checkbox" class="me-2 mt-1" />
+                <span>some label</span>
+                </label>
+                }
+                </div>
+
+                </div>
+                }
+
+                </div>
+
+                @code {
+                bool showResult = false;
+                object? productsForExport = null;
+                }
+                """,
+            expected: """
+                <div class="p-3 pb-0" style="min-height:24rem;">
+
+                    @if (productsForExport != null)
+                    {
+                        <label class="section-label">
+                            @(!showResult ? "some label" : "another label")
+                        </label>
+
+                        <div class="row">
+                            <div class="col">
+                                @if (!showResult)
+                                {
+                                    <label>
+                                        <input type="checkbox" class="me-2 mt-1" />
+                                        <span>some label</span>
+                                    </label>
+                                }
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+                @code {
+                    bool showResult = false;
+                    object? productsForExport = null;
+                }
+                """);
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/29645")]
     public async Task FormatHtmlInIf_Range()
     {

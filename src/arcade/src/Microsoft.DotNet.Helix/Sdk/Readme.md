@@ -38,6 +38,12 @@ BUILD_REASON
 
 Also, make sure your helix project doesn't have `EnableAzurePipelinesReporter` set, or sets it to false, or building locally will fail with an error that looks like `SYSTEM_ACCESSTOKEN is not set`.
 
+When running Helix tests in Azure DevOps pipelines where results need to be published back to Azure DevOps, you'll need to set the environment variable:
+```yaml
+env:
+  SYSTEM_ACCESSTOKEN: $(System.AccessToken) # We need to set this env var to publish helix results to Azure DevOps
+```
+
 Furthermore, when you need to make changes to Helix SDK, there's a way to run it locally with ease to test your changes in a tighter dev loop than having to have to wait for the full PR build.
 
 The repository contains E2E tests that utilize the Helix SDK to send test Helix jobs.

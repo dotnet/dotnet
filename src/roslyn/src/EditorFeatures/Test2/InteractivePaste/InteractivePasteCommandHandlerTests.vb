@@ -4,6 +4,7 @@
 
 Imports System.Text
 Imports System.Windows
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Extensions
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Utilities
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces
@@ -34,7 +35,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.InteractivePaste
                             <Document/>
                         </Project>
                     </Workspace>,
-                    composition:=EditorTestCompositions.EditorFeaturesWpf)
+                    composition:=EditorTestCompositions.EditorFeatures)
 
                 Dim textView = workspace.Documents.Single().GetTextView()
 
@@ -68,7 +69,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.InteractivePaste
                             <Document/>
                         </Project>
                     </Workspace>,
-                    composition:=EditorTestCompositions.EditorFeaturesWpf)
+                    composition:=EditorTestCompositions.EditorFeatures)
 
                 Dim textView = workspace.Documents.Single().GetTextView()
                 Dim editorOperations = workspace.GetService(Of IEditorOperationsFactoryService)().GetEditorOperations(textView)
@@ -104,7 +105,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.InteractivePaste
                             <Document/>
                         </Project>
                     </Workspace>,
-                    composition:=EditorTestCompositions.EditorFeaturesWpf)
+                    composition:=EditorTestCompositions.EditorFeatures)
 
                 Dim textView = workspace.Documents.Single().GetTextView()
                 Dim editorOperations = workspace.GetService(Of IEditorOperationsFactoryService)().GetEditorOperations(textView)
@@ -144,7 +145,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.InteractivePaste
                             <Document/>
                         </Project>
                     </Workspace>,
-                    composition:=EditorTestCompositions.EditorFeaturesWpf)
+                    composition:=EditorTestCompositions.EditorFeatures)
 
                 Dim textView = workspace.Documents.Single().GetTextView()
                 Dim editorOperations = workspace.GetService(Of IEditorOperationsFactoryService)().GetEditorOperations(textView)
@@ -188,7 +189,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.InteractivePaste
                             <Document/>
                         </Project>
                     </Workspace>,
-                    composition:=EditorTestCompositions.EditorFeaturesWpf)
+                    composition:=EditorTestCompositions.EditorFeatures)
 
                 Dim textView = workspace.Documents.Single().GetTextView()
                 Dim editorOperations = workspace.GetService(Of IEditorOperationsFactoryService)().GetEditorOperations(textView)

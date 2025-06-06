@@ -1754,57 +1754,6 @@ namespace NuGet.Commands.Test
             Assert.Equal("False", helperCsItem.Properties["copyToOutput"]);
         }
 
-        private async Task<RestoreResult> SetupWithRuntimes(string framework, NuGet.Common.ILogger logger)
-        {
-            // Arrange
-            using (var workingDir = TestDirectory.Create())
-            {
-                var repository = Path.Combine(workingDir, "repository");
-                Directory.CreateDirectory(repository);
-                var projectDir = Path.Combine(workingDir, "project");
-                Directory.CreateDirectory(projectDir);
-                var packagesDir = Path.Combine(workingDir, "packages");
-                Directory.CreateDirectory(packagesDir);
-
-                // Create a shared content package
-                CreateSharedContentPackage(repository);
-                CreateRuntimesPackage(repository);
-
-                var sources = new List<PackageSource>();
-                sources.Add(new PackageSource(repository));
-
-                var configJson = JObject.Parse(@"{
-                  ""supports"": {
-                      ""net46.app"": {},
-                      ""uwp.10.0.app"": { },
-                      ""dnxcore50.app"": { }
-                    },
-                  ""dependencies"": {
-                    ""packageA"": ""1.0.0"",
-                    ""runtimes"": ""1.0.0""
-                  },
-                  ""frameworks"": {
-                    ""_FRAMEWORK_"": {}
-                  }
-                }".Replace("_FRAMEWORK_", framework));
-
-                var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
-
-                var request = new TestRestoreRequest(spec, sources, packagesDir, logger);
-
-                request.LockFilePath = Path.Combine(projectDir, "project.lock.json");
-
-                var command = new RestoreCommand(request);
-
-                // Act
-                var result = await command.ExecuteAsync();
-                await result.CommitAsync(logger, CancellationToken.None);
-
-                return result;
-            }
-        }
-
         private async Task<RestoreResult> StandardSetup(
             string framework,
             NuGet.Common.ILogger logger)
@@ -1868,27 +1817,6 @@ namespace NuGet.Commands.Test
                 }".Replace("_FRAMEWORK_", framework));
         }
 
-        private static FileInfo CreateRuntimesPackage(string repositoryDir)
-        {
-            var file = new FileInfo(Path.Combine(repositoryDir, "runtimes.1.0.0.nupkg"));
-
-            using (var zip = new ZipArchive(File.Create(file.FullName), ZipArchiveMode.Create))
-            {
-                zip.AddEntry("runtime.json", GetRuntimeJson(), Encoding.UTF8);
-
-                zip.AddEntry("runtimes.nuspec", @"<?xml version=""1.0"" encoding=""utf-8""?>
-                        <package xmlns=""http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd"">
-                        <metadata>
-                        <id>runtimes</id>
-                        <version>1.0.0</version>
-                        <title />
-                        </metadata>
-                        </package>", Encoding.UTF8);
-            }
-
-            return file;
-        }
-
         private static FileInfo CreateSharedContentPackage(string repositoryDir)
         {
             var file = new FileInfo(Path.Combine(repositoryDir, "packageA.1.0.0.nupkg"));
@@ -1949,36 +1877,6 @@ namespace NuGet.Commands.Test
             }
 
             return file;
-        }
-
-        private static string GetRuntimeJson()
-        {
-            return @"{
-                ""supports"": {
-                    ""uwp.10.0.app"": {
-                            ""uap10.0"": [
-                                ""win10-x86"",
-                                ""win10-x86-aot"",
-                                ""win10-x64"",
-                                ""win10-x64-aot"",
-                                ""win10-arm"",
-                                ""win10-arm-aot""
-                        ]
-                    },
-                    ""net46.app"": {
-                        ""net46"": [
-                            ""win-x86"",
-                            ""win-x64""
-                        ]
-                    },
-                    ""dnxcore50.app"": {
-                        ""dnxcore50"": [
-                            ""win7-x86"",
-                            ""win7-x64""
-                        ]
-                    }
-                }
-            }";
         }
     }
 }

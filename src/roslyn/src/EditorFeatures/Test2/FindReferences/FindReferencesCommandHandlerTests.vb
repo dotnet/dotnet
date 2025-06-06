@@ -3,7 +3,9 @@
 ' See the LICENSE file in the project root for more information.
 
 Imports System.Threading
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Editor.Host
+Imports Microsoft.CodeAnalysis.Editor.Shared.Utilities
 Imports Microsoft.CodeAnalysis.FindReferences
 Imports Microsoft.CodeAnalysis.FindUsages
 Imports Microsoft.CodeAnalysis.Shared.TestHooks
@@ -40,9 +42,11 @@ class C
 
                 Dim context = New FindUsagesTestContext()
                 Dim commandHandler = New FindReferencesCommandHandler(
-                    New MockStreamingFindReferencesPresenter(context),
-                    workspace.GlobalOptions,
-                    listenerProvider)
+                    New FindReferencesNavigationService(
+                        workspace.ExportProvider.GetExportedValue(Of IThreadingContext)(),
+                        New MockStreamingFindReferencesPresenter(context),
+                        listenerProvider,
+                        workspace.GlobalOptions))
 
                 Dim document = workspace.CurrentSolution.GetDocument(testDocument.Id)
                 commandHandler.ExecuteCommand(

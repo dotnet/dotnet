@@ -13,9 +13,9 @@ internal class RazorSyntaxNodeList(ChildSyntaxList childSyntaxList) : IEnumerabl
 
     public IEnumerator<RazorSyntaxNode> GetEnumerator()
     {
-        foreach (var node in _childSyntaxList)
+        foreach (var nodeOrToken in _childSyntaxList)
         {
-            yield return new RazorSyntaxNode(node);
+            yield return new RazorSyntaxNode(nodeOrToken);
         }
     }
 

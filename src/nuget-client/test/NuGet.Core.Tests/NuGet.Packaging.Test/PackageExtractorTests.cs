@@ -16,7 +16,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+#if IS_SIGNING_SUPPORTED
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
+#endif
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -39,16 +41,14 @@ namespace NuGet.Packaging.Test
     public class PackageExtractorTests
     {
         private static readonly ClientPolicyContext DefaultContext = ClientPolicyContext.GetClientPolicy(NullSettings.Instance, NullLogger.Instance);
-
-        private const string EmptyTrustedSignersList = "signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.";
-        private const string EmptyRepoAllowList = "This repository indicated that all its packages are repository signed; however, it listed no signing certificates.";
+#if IS_SIGNING_SUPPORTED
         private const string NoMatchInTrustedSignersList = "This package is signed but not by a trusted signer.";
-        private const string NoMatchInRepoAllowList = "This package was not repository signed with a certificate listed by this repository.";
         private const string NotSignedPackageRepo = "This repository indicated that all its packages are repository signed; however, this package is unsigned.";
         private const string NotSignedPackageRequire = "signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.";
         private const string SignatureVerificationEnvironmentVariable = "DOTNET_NUGET_SIGNATURE_VERIFICATION";
         private const string SignatureVerificationEnvironmentVariableTypo = "DOTNET_NUGET_SIGNATURE_VERIFICATIOn";
         private const string UntrustedChainCertError = "The author primary signature's signing certificate is not trusted by the trust provider.";
+#endif
 
         [Fact]
         public async Task InstallFromSourceAsync_StressTestAsync()
@@ -5246,6 +5246,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
+#if IS_SIGNING_SUPPORTED
         private static Tuple<RepositorySignatureInfo, List<CertificateHashAllowListEntry>> CreateTestRepositorySignatureInfoAndExpectedAllowList()
         {
             var target = VerificationTarget.Repository;
@@ -5297,6 +5298,7 @@ namespace NuGet.Packaging.Test
 
             return Tuple.Create(repositorySignatureInfo, expectedAllowList);
         }
+#endif
 
         public static IEnumerable<object[]> KnownClientPoliciesList()
         {

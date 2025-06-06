@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -217,8 +218,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public override void VisitRazorDirective(RazorDirectiveSyntax node)
         {
-            var descendantLiterals = node.DescendantNodes();
-            foreach (var child in descendantLiterals)
+            foreach (var child in node.DescendantNodes())
             {
                 if (child is not CSharpStatementLiteralSyntax literal)
                 {

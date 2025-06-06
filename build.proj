@@ -17,7 +17,7 @@
                       Condition="'$(EnablePoison)' == 'true'"
                       BuildInParallel="true" />
     <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
-                      Condition="'$(BuildOS)' != 'windows'"
+                      Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'"
                       BuildInParallel="true" />
 
     <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />

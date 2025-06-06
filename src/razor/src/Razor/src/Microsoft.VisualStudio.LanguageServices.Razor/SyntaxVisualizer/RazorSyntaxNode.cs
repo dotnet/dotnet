@@ -13,28 +13,28 @@ namespace Microsoft.VisualStudio.Razor.SyntaxVisualizer;
 /// </summary>
 internal class RazorSyntaxNode : IEnumerable<RazorSyntaxNode>
 {
-    private readonly SyntaxNode _node;
+    private readonly SyntaxNodeOrToken _nodeOrToken;
 
-    public int SpanStart => _node.SpanStart;
+    public int SpanStart => _nodeOrToken.SpanStart;
 
-    public int SpanEnd => _node.Span.End;
+    public int SpanEnd => _nodeOrToken.Span.End;
 
-    public int SpanLength => _node.Span.Length;
+    public int SpanLength => _nodeOrToken.Span.Length;
 
-    public string Kind => _node.Kind.ToString();
+    public string Kind => _nodeOrToken.Kind.ToString();
 
     public RazorSyntaxNodeList Children { get; }
 
-    public RazorSyntaxNode(SyntaxNode node)
+    public RazorSyntaxNode(SyntaxNodeOrToken node)
     {
-        _node = node;
-        Children = new RazorSyntaxNodeList(_node.ChildNodes());
+        _nodeOrToken = node;
+        Children = new RazorSyntaxNodeList(_nodeOrToken.ChildNodesAndTokens());
     }
 
     public RazorSyntaxNode(RazorSyntaxTree tree)
     {
-        _node = tree.Root;
-        Children = new RazorSyntaxNodeList(_node.ChildNodes());
+        _nodeOrToken = tree.Root;
+        Children = new RazorSyntaxNodeList(_nodeOrToken.ChildNodesAndTokens());
     }
 
     public IEnumerator<RazorSyntaxNode> GetEnumerator()
@@ -49,6 +49,6 @@ internal class RazorSyntaxNode : IEnumerable<RazorSyntaxNode>
 
     public override string ToString()
     {
-        return _node.ToString();
+        return _nodeOrToken.ToString();
     }
 }

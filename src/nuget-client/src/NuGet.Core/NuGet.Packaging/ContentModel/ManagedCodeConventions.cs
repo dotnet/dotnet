@@ -365,14 +365,6 @@ namespace NuGet.Client
             return 0;
         }
 
-        private static Version NormalizeVersion(Version version)
-        {
-            return new Version(version.Major,
-                version.Minor,
-                Math.Max(version.Build, 0),
-                Math.Max(version.Revision, 0));
-        }
-
         public class ManagedCodeCriteria
         {
             private ManagedCodeConventions _conventions;

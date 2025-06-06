@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-using RazorSyntaxTokenList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxToken>;
+using RazorSyntaxToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxToken;
+using RazorSyntaxTokenList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxTokenList;
 using RazorSyntaxWalker = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxWalker;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -490,12 +491,32 @@ internal class FormattingVisitor : RazorSyntaxWalker
 
         Assumes.NotNull(_currentBlock);
 
-        var spanSource = new TextSpan(node.Position, node.Width);
-        var blockSource = new TextSpan(_currentBlock.Position, _currentBlock.Width);
+        var span = new FormattingSpan(
+            node.Span,
+            _currentBlock.Span,
+            kind,
+            _currentBlockKind,
+            _currentRazorIndentationLevel,
+            _currentHtmlIndentationLevel,
+            isInGlobalNamespace: _inGlobalNamespace,
+            isInClassBody: _isInClassBody,
+            _currentComponentIndentationLevel);
+
+        _spans.Add(span);
+    }
+
+    private void WriteSpan(RazorSyntaxToken token, FormattingSpanKind kind)
+    {
+        if (token.IsMissing)
+        {
+            return;
+        }
+
+        Assumes.NotNull(_currentBlock);
 
         var span = new FormattingSpan(
-            spanSource,
-            blockSource,
+            token.Span,
+            _currentBlock.Span,
             kind,
             _currentBlockKind,
             _currentRazorIndentationLevel,

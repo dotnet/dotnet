@@ -6,6 +6,7 @@ Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis.CodeActions
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.CodeStyle
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Editor.UnitTests
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics
@@ -21,7 +22,7 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.UnitTests.Diagnostics.Genera
 
         ' TODO Requires Wpf due to IInlineRenameService dependency (https: //github.com/dotnet/roslyn/issues/46153)
         Protected Overrides Function GetComposition() As TestComposition
-            Return EditorTestCompositions.EditorFeaturesWpf
+            Return EditorTestCompositions.EditorFeatures
         End Function
 
         Friend Overrides Function CreateDiagnosticProviderAndFixer(workspace As Workspace) As (DiagnosticAnalyzer, CodeFixProvider)

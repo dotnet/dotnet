@@ -79,14 +79,6 @@ namespace NuGet.Build.Tasks
             return true;
         }
 
-        /// <summary>
-        /// Convert empty strings to null
-        /// </summary>
-        private static string GetNullForEmpty(string s)
-        {
-            return string.IsNullOrEmpty(s) ? null : s;
-        }
-
         private static MSBuildTaskItem GetMSBuildItem(ITaskItem item)
         {
             return new MSBuildTaskItem(item);

@@ -36,15 +36,15 @@ internal abstract class SyntaxWalker : SyntaxVisitor
         Debug.Assert(!node.IsToken);
         Debug.Assert(!node.IsList);
 
-        foreach (var child in node.ChildNodes())
+        foreach (var child in node.ChildNodesAndTokens())
         {
-            if (child is SyntaxToken token)
+            if (child.IsToken)
             {
-                VisitToken(token);
+                VisitToken(child.AsToken());
             }
             else
             {
-                Visit(child);
+                Visit(child.AsNode());
             }
         }
     }

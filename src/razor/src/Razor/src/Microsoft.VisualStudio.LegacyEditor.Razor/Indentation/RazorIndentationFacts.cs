@@ -77,13 +77,12 @@ internal static class RazorIndentationFacts
         int? desiredIndentation = null;
         while (owner.Parent is not null)
         {
-            var children = owner.Parent.ChildNodes();
-            for (var i = 0; i < children.Count; i++)
+            foreach (var currentChild in owner.Parent.ChildNodes())
             {
-                var currentChild = children[i];
                 if (IsCSharpOpenCurlyBrace(currentChild))
                 {
-                    var lineText = line.Snapshot.GetLineFromLineNumber(currentChild.GetSourceLocation(syntaxTree.Source).LineIndex).GetText();
+                    var location = currentChild.GetSourceLocation(syntaxTree.Source);
+                    var lineText = line.Snapshot.GetLineFromLineNumber(location.LineIndex).GetText();
                     desiredIndentation = GetIndentLevelOfLine(lineText, tabSize) + indentSize;
                 }
 
@@ -142,10 +141,6 @@ internal static class RazorIndentationFacts
     // Internal for testing
     internal static bool IsCSharpOpenCurlyBrace(SyntaxNode node)
     {
-        var children = node.ChildNodes();
-
-        return children.Count == 1 &&
-            children[0].IsToken &&
-            children[0].Kind == SyntaxKind.LeftBrace;
+        return node.ChildNodesAndTokens() is [{ IsToken: true, Kind: SyntaxKind.LeftBrace }];
     }
 }
