@@ -43,6 +43,8 @@ parameters:
 stages:
 - stage: VMR_Validation
   displayName: VMR Validation
+  dependsOn:
+  - VMR_Vertical_Build
   variables:
   - template: ../variables/vmr-build.yml
     parameters:

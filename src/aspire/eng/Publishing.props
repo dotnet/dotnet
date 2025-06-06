@@ -1,7 +1,6 @@
 <Project>
 
    <PropertyGroup>
-      <PublishingVersion>3</PublishingVersion>
       <!-- we don't need symbol packages for aspire -->
       <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
    </PropertyGroup>
@@ -26,7 +25,7 @@
   </ItemGroup>
 
   <Target Name="_PublishBlobItems">
-    <!-- 
+    <!--
       For blob items for the Dashboard, we want to make sure that the version we get back is not stable, even when the repo is producing stable versions.
       This is because we want to be able to re-spin the build if necessary without hitting issues of blob items clashing with each other. For this reason,
       We will pass SuppressFinalPackageVersion as true when fetching the package version so that we get back a version with a prerelease suffix.

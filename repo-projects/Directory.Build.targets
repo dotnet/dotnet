@@ -26,6 +26,8 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltPdbArtifactsDir=$(RepoArtifactsPdbArtifactsDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
+    <!-- Force the "base path" for repos built within the VMR to be the repo root so all files can be found within it. -->
+    <CommonArgs>$(CommonArgs) /p:SourceBuiltArtifactsBasePath=$(RepoRoot.TrimEnd('\'))</CommonArgs>
 
     <!-- Force the use of the compiler in the .NET SDK compiler to avoid torn state issues in inner repos. -->
     <CommonArgs>$(CommonArgs) /p:UsingToolMicrosoftNetCompilers=false</CommonArgs>
@@ -46,6 +48,7 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>
     <!-- If a repo has no RID-specific artifacts, then we expect the repo to not have any artifacts when only publishing RID-specific artifacts. -->
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
+
   </PropertyGroup>
 
   <PropertyGroup>

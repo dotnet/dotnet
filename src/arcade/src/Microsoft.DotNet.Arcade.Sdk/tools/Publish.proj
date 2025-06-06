@@ -37,14 +37,6 @@
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <!--
-    In VMR copy to local storage, do not push to AzDO.
-    Define this property before importing repo Publishing.props, to have it control any repo-specific publishing.
-  -->
-  <PropertyGroup Condition="'$(DotNetBuildFromVMR)' == 'true'">
-    <PushToLocalStorage>true</PushToLocalStorage>
-  </PropertyGroup>
-
-  <!--
     Inside the VMR, we want to include "Vertical" artifacts as they should be available to other builds within the same
     vertical on the same build machine.
     Inside the VMR, we also want to include "Internal" artifacts in the build manifest, as they are used by other jobs
@@ -60,8 +52,10 @@
   <Import Project="Sign.props" />
 
   <PropertyGroup>
-    <!-- Default publishing target is 3. -->
+    <!-- Default publishing target is 3, but we use 4 in the VMR. -->
     <PublishingVersion>3</PublishingVersion>
+    <PublishingVersion Condition="'$(DotNetBuildFromVMR)' == 'true'">4</PublishingVersion>
+    <PushToLocalStorage Condition="'$(DotNetBuildFromVMR)' == 'true'">true</PushToLocalStorage>
     
     <!-- Globally set property. -->
     <IsStableBuild>false</IsStableBuild>
@@ -325,6 +319,7 @@
            VMR builds would typically specify these globally. Only used when publishing V4 is active. -->
       <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == '' and '$(SYSTEM_PHASENAME)' != ''">$(SYSTEM_PHASENAME)_Artifacts</FutureArtifactName>
       <FutureArtifactName Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactName)' == ''">$(AssetManifestOS)_$(AssetManifestArch)$(AssetManifestPass)_Artifacts</FutureArtifactName>
+      <FutureArtifactPublishBasePath Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactPublishBasePath)' == ''">$(SourceBuiltArtifactsBasePath)</FutureArtifactPublishBasePath>
       <FutureArtifactPublishBasePath Condition="'$(PublishingVersion)' == '4' and '$(FutureArtifactPublishBasePath)' == ''">$(ArtifactsPublishStagingDir)</FutureArtifactPublishBasePath>
     </PropertyGroup>
     

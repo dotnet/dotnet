@@ -67,32 +67,32 @@ parameters:
     os: linux
 
 stages:
-- template: vmr-build-with-join.yml
+- template: vmr-verticals.yml
   parameters:
-    verticalsStages:
-      - template: vmr-verticals.yml
-        parameters:
-          desiredSigning: ${{ parameters.desiredSigning }}
-          desiredIbc: ${{ parameters.desiredIbc }}
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          scope: ${{ parameters.scope }}
-    finalJoinCondition: ${{ eq(parameters.scope, 'full') }}
+    desiredSigning: ${{ parameters.desiredSigning }}
+    desiredIbc: ${{ parameters.desiredIbc }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    postJoinStages:
-    - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-      - stage: Publish_Build_Assets
-        displayName: Publish Assets
-        jobs:
-        - template: /eng/common/templates-official/job/publish-build-assets.yml
-          parameters:
-            publishUsingPipelines: true
-            publishAssetsImmediately: true
-            pool: ${{ parameters.pool_Linux }}
-            symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
+    scope: ${{ parameters.scope }}
 
-      - template: vmr-validation.yml
-        parameters:
-          desiredSigning: ${{ parameters.desiredSigning }}
+- ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  - stage: Publish_Build_Assets
+    displayName: Publish Assets
+    dependsOn: VMR_Vertical_Build
+    jobs:
+    - template: /eng/common/templates-official/job/publish-build-assets.yml
+      parameters:
+        publishUsingPipelines: true
+        publishAssetsImmediately: true
+        pool: ${{ parameters.pool_Linux }}
+        symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
+        publishingVersion: 4
+        assetManifestsPattern: |
+          **/manifests/**/*.xml
+          !*Sdk_*_Artifacts/**/*.xml
+
+  - template: vmr-validation.yml
+    parameters:
+      desiredSigning: ${{ parameters.desiredSigning }}
 
 - template: source-build-stages.yml
   parameters:
