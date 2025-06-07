@@ -50,25 +50,25 @@
       "commitSha": "a083d65b84428784901cf8bacdf8403be18fa78f"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25303.2",
-      "barId": 270492,
+      "packageVersion": "10.0.0-preview.6.25305.14",
+      "barId": 270799,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "8fdfbad5a1b76b2aa20abf98c2a83584db517727"
+      "commitSha": "f251411b761af9a82d96e71f045827602aacd6da"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25304.3",
-      "barId": 270574,
+      "packageVersion": "10.0.0-preview.6.25305.1",
+      "barId": 270692,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "9ee2989dcf365fa3c9cd9bdc9ddbb079c064b486"
+      "commitSha": "2e84b71bab3db3811cccded0468b0d5fcf8f9a6b"
     },
     {
-      "packageVersion": "10.0.100-beta.25279.2",
-      "barId": 270008,
+      "packageVersion": "14.0.100-beta.25305.2",
+      "barId": 270767,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "6bf3bd99a595a42fce25b9ce45f13ab2d7546e57"
+      "commitSha": "7ce7d94f430be5a0f098868f55ebc17439f74ab0"
     },
     {
       "packageVersion": "17.15.0-preview-25305-05",
