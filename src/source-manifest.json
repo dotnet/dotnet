@@ -155,11 +155,11 @@
       "commitSha": "7af3fe9ede611e9f3202b373038ef2400518af5d"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25303.1",
-      "barId": 270409,
+      "packageVersion": "10.0.100-preview.5.25305.1",
+      "barId": 270826,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "08ee8fdfecd657122a5e0e43304a22ee5e1c0a62"
+      "commitSha": "29575925a28c175356cf6ea01b3a36f90c92e845"
     },
     {
       "packageVersion": "17.15.0-preview-25302-03",
