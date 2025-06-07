@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -21,7 +23,8 @@ internal static class TestRazorFormattingService
         RazorCodeDocument? codeDocument = null,
         RazorLSPOptions? razorLSPOptions = null,
         LanguageServerFeatureOptions? languageServerFeatureOptions = null,
-        bool debugAssertsEnabled = false)
+        bool debugAssertsEnabled = false,
+        Func<SourceText, SourceText>? csharpModifierFunc = null)
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
@@ -45,7 +48,13 @@ internal static class TestRazorFormattingService
         var hostServicesProvider = new DefaultHostServicesProvider();
 
         var service = new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
-        service.GetTestAccessor().SetDebugAssertsEnabled(debugAssertsEnabled);
+        var accessor = service.GetTestAccessor();
+        accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
+        if (csharpModifierFunc is not null)
+        {
+            accessor.SetFormattedCSharpDocumentModifierFunc(csharpModifierFunc);
+        }
+
         return service;
     }
 }
