@@ -60,6 +60,12 @@ internal class ExtractToComponentCodeActionResolver(
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
+        if (actionParams.Namespace is not null)
+        {
+            builder.AppendLine($"@namespace {actionParams.Namespace}");
+            builder.AppendLine();
+        }
+
         var syntaxTree = componentDocument.GetSyntaxTree();
 
         // Right now this includes all the usings in the original document.

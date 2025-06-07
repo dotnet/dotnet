@@ -21,6 +21,8 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
 
+    private Func<SourceText, SourceText>? _formattedCSharpDocumentModifierFunc = null;
+
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Process changes from previous passes
@@ -35,6 +37,12 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
         var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options.ToIndentationOptions(), cancellationToken).ConfigureAwait(false);
         _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
+
+        if (_formattedCSharpDocumentModifierFunc is { } func)
+        {
+            formattedCSharpText = func(formattedCSharpText);
+            _logger.LogTestOnly($"Formatted generated C# document (after func):\r\n{formattedCSharpText}");
+        }
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
         // document as they come from very different places. What we want to do is go through each line of the generated document,
@@ -94,16 +102,37 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                         // making it run over two lines, or even "string Prop { get" and making it span three lines.
                         // Since we assume Roslyn won't change anything non-whitespace, we just keep inserting the formatted lines
                         // of C# until we match the original line contents.
+                        // Of course, Roslyn could just as easily remove whitespace, eg making a "class Goo {" into "class Goo\n{",
+                        // so whilst the same theory applies, instead of inserting formatted lines, we eat the original lines.
                         while (!changedText.NonWhitespaceContentEquals(formattedCSharpText, originalStart, originalLine.End, formattedStart, formattedLine.End))
                         {
-                            // Sanity check: Because we're looking ahead through lines until the original line content is fully matches, we could loop forever if there is a bug somewhere
-                            Debug.Assert(
-                                FormattingUtilities.CountNonWhitespaceChars(changedText, originalStart, originalLine.End) >= FormattingUtilities.CountNonWhitespaceChars(formattedCSharpText, formattedStart, formattedLine.End),
-                                "Infinite loop in formatting! A bug in our visitor, or has Roslyn changed a non-whitespace char?");
+                            // If there are more non-whitespace chars in the original line, then its something like "if (true) {" to "if (true)", so keep inserting formatted lines until we're past the brace.
+                            if (FormattingUtilities.CountNonWhitespaceChars(changedText, originalStart, originalLine.End) >= FormattingUtilities.CountNonWhitespaceChars(formattedCSharpText, formattedStart, formattedLine.End))
+                            {
+                                iFormatted++;
+                                if (iFormatted >= formattedCSharpText.Lines.Count)
+                                {
+                                    _logger.LogError($"Ran out of formatted lines while trying to process formatted changes after {iOriginal} lines. Abandoning further formatting to not corrupt the source file, please report this issue.");
+                                    break;
+                                }
 
-                            iFormatted++;
-                            formattedLine = formattedCSharpText.Lines[iFormatted];
-                            formattingChanges.Add(new TextChange(new(originalLine.EndIncludingLineBreak, 0), htmlIndentString + formattedCSharpText.ToString(formattedLine.SpanIncludingLineBreak)));
+                                formattedLine = formattedCSharpText.Lines[iFormatted];
+                                formattingChanges.Add(new TextChange(new(originalLine.EndIncludingLineBreak, 0), htmlIndentString + formattedCSharpText.ToString(formattedLine.SpanIncludingLineBreak)));
+                            }
+                            else
+                            {
+                                // Otherwise, there are more whitespace chars in the formatted line, so "if (true)" to "if (true) {", so we need to remove the original lines until we're past the brace.
+                                var oldEnd = originalLine.End;
+                                iOriginal++;
+                                if (iOriginal >= changedText.Lines.Count)
+                                {
+                                    _logger.LogError("Ran out of lines while trying to process formatted changes. Abandoning further formatting to not corrupt the source file, please report this issue.");
+                                    break;
+                                }
+
+                                originalLine = changedText.Lines[iOriginal];
+                                formattingChanges.Add(new TextChange(TextSpan.FromBounds(oldEnd, originalLine.End), ""));
+                            }
                         }
                     }
                 }
@@ -112,6 +141,17 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             if (lineInfo.SkipNextLine)
             {
                 iFormatted++;
+            }
+            else if (lineInfo.SkipNextLineIfBrace)
+            {
+                // If the next line is a brace, we skip it, otherwise we don't. This is used to skip the opening brace of a class
+                // that we insert, but Roslyn settings might place on the same like as the class declaration.
+                if (iFormatted + 1 < formattedCSharpText.Lines.Count &&
+                    formattedCSharpText.Lines[iFormatted + 1] is { Span.Length: > 0 } nextLine &&
+                    nextLine.CharAt(0) == '{')
+                {
+                    iFormatted++;
+                }
             }
         }
 
@@ -128,11 +168,8 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             // Any C# that is in the middle of a line of Html/Razor will be emitted at the end of the generated document, with a
             // comment above it that encodes where it came from in the original file. We just look for the comment, and then apply
             // the next line as formatted content.
-            var formattedLine = formattedCSharpText.Lines[iFormatted];
-            if (formattedLine.Span.Length > 3 &&
-                formattedLine.ToString() is ['/', '/', ' ', ..] line)
+            if (CSharpDocumentGenerator.TryParseAdditionalLineComment(formattedCSharpText.Lines[iFormatted], out var start, out var length))
             {
-                var (start, length) = CSharpDocumentGenerator.ParseAdditionalLineComment(line);
                 iFormatted++;
 
                 // Skip ahead to where changes are likely to become relevant, to save looping the whole set every time
@@ -182,4 +219,14 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     [Obsolete("Only for the syntax visualizer, do not call")]
     internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument)
         => CSharpDocumentGenerator.Generate(codeDocument, new()).SourceText.ToString();
+
+    internal TestAccessor GetTestAccessor() => new TestAccessor(this);
+
+    internal readonly struct TestAccessor(CSharpFormattingPass instance)
+    {
+        public void SetFormattedCSharpDocumentModifierFunc(Func<SourceText, SourceText> func)
+        {
+            instance._formattedCSharpDocumentModifierFunc = func;
+        }
+    }
 }
