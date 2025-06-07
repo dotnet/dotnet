@@ -172,6 +172,8 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             """;
 
         var expectedRazorComponent = """
+            @namespace MarketApp.Pages.Product.Home
+
             <div>
                 <div>
                     <div>

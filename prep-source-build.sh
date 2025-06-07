@@ -83,6 +83,7 @@ while :; do
       ;;
     --artifacts-rid)
       artifactsRid=$2
+      shift
       ;;
     --bootstrap-rid)
       bootstrap_rid=$2
