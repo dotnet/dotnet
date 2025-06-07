@@ -261,6 +261,6 @@ internal partial class WorkspaceRootPathWatcher : IOnInitialized, IDisposable
             result.AddRange(existingFiles);
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 }

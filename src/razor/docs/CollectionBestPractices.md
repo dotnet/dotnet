@@ -192,7 +192,9 @@ ImmutableList<int> CreateList()
 - `DrainToImmutable()`: This is sort of like a combination of `ToImmutable()` and `MoveToImmutable()`. This operation
   “drains” the builder by checking if the capacity equals the count. If true, it returns a new `ImmutableArray<T>` that
   wraps the internal array buffer. If false, it returns a new `ImmutableArray<T>` that wraps a copy of the filled
-  portion of the internal array buffer. In either case, the internal buffer is set to an empty array.
+  portion of the internal array buffer. In either case, the internal buffer is set to an empty array. Generally,
+  code should be calling ToImmutableAndClear instead of DrainToImmutable, as that better handles interactions with
+  pools in that it doesn't throw away the backing array when the size is not equal to the capacity.
 
 > [!CAUTION]
 > **Immutable collections as static data**
@@ -321,7 +323,7 @@ ImmutableArray<string> BuildStrings()
     using var builder = new PooledArrayBuilder<string>();
     AddElements(ref builder.AsRef());
 
-    return builder.DrainToImmutable();
+    return builder.ToImmutableAndClear();
 }
 
 void AddElements(ref PooledArrayBuilder<string> builder)

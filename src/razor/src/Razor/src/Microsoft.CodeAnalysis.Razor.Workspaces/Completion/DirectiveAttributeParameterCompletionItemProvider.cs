@@ -122,6 +122,6 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 }

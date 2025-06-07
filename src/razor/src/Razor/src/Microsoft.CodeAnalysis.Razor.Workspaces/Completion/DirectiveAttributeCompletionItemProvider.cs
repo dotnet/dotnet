@@ -142,12 +142,12 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 displayText,
                 insertText,
                 descriptionInfo: new([.. attributeDescriptions]),
-                commitCharacters: razorCommitCharacters.DrainToImmutable());
+                commitCharacters: razorCommitCharacters.ToImmutableAndClear());
 
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
 
         bool TryAddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor)
         {

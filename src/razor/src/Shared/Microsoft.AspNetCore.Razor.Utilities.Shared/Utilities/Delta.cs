@@ -48,6 +48,6 @@ internal static class Delta
             }
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 }

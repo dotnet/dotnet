@@ -41,7 +41,7 @@ internal abstract partial class AbstractLoggerFactory : ILoggerFactory
             lazyLoggers.Add(new(provider, categoryName));
         }
 
-        var result = new AggregateLogger(lazyLoggers.DrainToImmutable());
+        var result = new AggregateLogger(lazyLoggers.ToImmutableAndClear());
         return ImmutableInterlocked.AddOrUpdate(ref _loggers, categoryName, result, (k, v) => v);
     }
 

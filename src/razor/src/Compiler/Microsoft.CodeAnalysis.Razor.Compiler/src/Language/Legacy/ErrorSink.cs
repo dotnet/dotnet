@@ -33,7 +33,7 @@ internal sealed class ErrorSink : IDisposable
             return [];
         }
 
-        var result = errors.DrainToImmutable();
+        var result = errors.ToImmutableAndClear();
         ArrayBuilderPool<RazorDiagnostic>.Default.Return(errors);
         _errors = null;
 

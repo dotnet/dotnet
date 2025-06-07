@@ -128,7 +128,7 @@ public sealed class CodeRenderingContext : IDisposable
     }
 
     public ImmutableArray<SourceMapping> GetSourceMappings()
-        => _sourceMappings.DrainToImmutable();
+        => _sourceMappings.ToImmutableAndClear();
 
     public void RenderChildren(IntermediateNode node)
     {
@@ -186,7 +186,7 @@ public sealed class CodeRenderingContext : IDisposable
     }
 
     public ImmutableArray<LinePragma> GetLinePragmas()
-        => _linePragmas.DrainToImmutable();
+        => _linePragmas.ToImmutableAndClear();
 
     public void PushAncestor(IntermediateNode node)
     {

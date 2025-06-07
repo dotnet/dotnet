@@ -41,7 +41,7 @@ internal abstract class AbstractRazorCompletionFactsService(ImmutableArray<IRazo
             completions.AddRange(items);
         }
 
-        return completions.DrainToImmutable();
+        return completions.ToImmutableAndClear();
     }
 
     // Internal for testing

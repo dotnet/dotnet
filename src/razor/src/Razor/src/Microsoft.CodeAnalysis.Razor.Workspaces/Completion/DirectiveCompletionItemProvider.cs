@@ -167,7 +167,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             }
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private static ImmutableArray<RazorCommitCharacter> GetDirectiveCommitCharacters(DirectiveKind directiveKind)

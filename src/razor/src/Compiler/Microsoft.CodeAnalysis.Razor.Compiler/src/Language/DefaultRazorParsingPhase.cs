@@ -21,6 +21,6 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
             importSyntaxTrees.Add(RazorSyntaxTree.Parse(import, options));
         }
 
-        codeDocument.SetImportSyntaxTrees(importSyntaxTrees.DrainToImmutable());
+        codeDocument.SetImportSyntaxTrees(importSyntaxTrees.ToImmutableAndClear());
     }
 }

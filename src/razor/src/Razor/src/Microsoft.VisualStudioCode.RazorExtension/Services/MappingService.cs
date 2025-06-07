@@ -72,7 +72,7 @@ internal sealed class MappingService(IRazorClientLanguageServerManager razorClie
             builder.Add(new RazorMappedSpanResult(filePath, range.ToLinePositionSpan(), span.ToTextSpan()));
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     public async Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)

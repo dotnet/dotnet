@@ -80,7 +80,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingBoundAttributes.DrainToImmutable();
+        return matchingBoundAttributes.ToImmutableAndClear();
     }
 
     public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenTag(
@@ -127,7 +127,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingDescriptors.DrainToImmutable();
+        return matchingDescriptors.ToImmutableAndClear();
     }
 
     public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenParent(TagHelperDocumentContext documentContext, string? parentTag)
@@ -156,7 +156,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingDescriptors.DrainToImmutable();
+        return matchingDescriptors.ToImmutableAndClear();
     }
 
     public static ImmutableArray<KeyValuePair<string, string>> StringifyAttributes(SyntaxList<RazorSyntaxNode> attributes)
@@ -214,7 +214,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return stringifiedAttributes.DrainToImmutable();
+        return stringifiedAttributes.ToImmutableAndClear();
     }
 
     public static (string? ancestorTagName, bool ancestorIsTagHelper) GetNearestAncestorTagInfo(IEnumerable<SyntaxNode> ancestors)

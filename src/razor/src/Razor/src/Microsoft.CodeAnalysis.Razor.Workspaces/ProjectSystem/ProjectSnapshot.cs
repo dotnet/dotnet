@@ -134,7 +134,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
                 }
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 

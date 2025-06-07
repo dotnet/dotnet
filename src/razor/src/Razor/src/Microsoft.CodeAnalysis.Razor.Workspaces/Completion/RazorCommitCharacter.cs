@@ -18,6 +18,6 @@ internal readonly record struct RazorCommitCharacter(string Character, bool Inse
             converted.Add(new(ch, insert));
         }
 
-        return converted.DrainToImmutable();
+        return converted.ToImmutableAndClear();
     }
 }

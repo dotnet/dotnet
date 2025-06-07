@@ -80,6 +80,6 @@ internal static class CompilationHelpers
             }
         }
 
-        return importSources.DrainToImmutable();
+        return importSources.ToImmutableAndClear();
     }
 }

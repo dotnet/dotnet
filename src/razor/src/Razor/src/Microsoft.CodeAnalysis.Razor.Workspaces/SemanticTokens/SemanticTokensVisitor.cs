@@ -39,7 +39,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
         visitor.Visit(razorCodeDocument.GetSyntaxTree().Root);
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private void Visit(SyntaxList<RazorSyntaxNode> syntaxNodes)

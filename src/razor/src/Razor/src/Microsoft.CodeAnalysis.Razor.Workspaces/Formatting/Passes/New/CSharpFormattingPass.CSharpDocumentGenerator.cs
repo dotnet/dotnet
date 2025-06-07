@@ -88,7 +88,7 @@ internal partial class CSharpFormattingPass
 
             var text = SourceText.From(builder.ToString());
 
-            return new(text, lineInfoBuilder.DrainToImmutable());
+            return new(text, lineInfoBuilder.ToImmutableAndClear());
         }
 
         private static string GetAdditionalLineComment(SourceSpan originalSpan)

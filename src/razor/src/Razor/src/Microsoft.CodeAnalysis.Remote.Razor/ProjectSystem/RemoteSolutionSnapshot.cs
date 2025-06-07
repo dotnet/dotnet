@@ -88,6 +88,6 @@ internal sealed class RemoteSolutionSnapshot(Solution solution, RemoteSnapshotMa
             }
         }
 
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 }

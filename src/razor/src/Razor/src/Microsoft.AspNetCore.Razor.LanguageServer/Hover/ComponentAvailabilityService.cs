@@ -31,6 +31,6 @@ internal sealed class ComponentAvailabilityService(ProjectSnapshotManager projec
             }
         }
 
-        return projects.DrainToImmutable();
+        return projects.ToImmutableAndClear();
     }
 }

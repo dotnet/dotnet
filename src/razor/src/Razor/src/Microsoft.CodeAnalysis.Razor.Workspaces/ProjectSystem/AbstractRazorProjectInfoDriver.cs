@@ -168,7 +168,7 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
                 builder.Add(projectInfo);
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 

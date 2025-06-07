@@ -76,6 +76,6 @@ internal sealed class HtmlFormattingPass(ILoggerFactory loggerFactory) : IFormat
             changesToKeep.Add(change);
         }
 
-        return changesToKeep.DrainToImmutable();
+        return changesToKeep.ToImmutableAndClear();
     }
 }

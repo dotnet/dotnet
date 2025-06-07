@@ -71,6 +71,6 @@ internal sealed class LspCSharpSpellCheckRangeProvider(
             }
         }
 
-        return ranges.DrainToImmutable();
+        return ranges.ToImmutableAndClear();
     }
 }

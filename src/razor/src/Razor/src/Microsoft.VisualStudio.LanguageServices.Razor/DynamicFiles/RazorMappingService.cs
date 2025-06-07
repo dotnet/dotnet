@@ -57,7 +57,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
             }
         }
 
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public async Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)

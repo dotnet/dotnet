@@ -159,7 +159,7 @@ internal static class WebTools
                         builder.Add(new TextChange(textChange));
                     }
 
-                    ImmutableInterlocked.InterlockedInitialize(ref _textChanges, builder.DrainToImmutable());
+                    ImmutableInterlocked.InterlockedInitialize(ref _textChanges, builder.ToImmutableAndClear());
                 }
 
                 return _textChanges;

@@ -249,7 +249,7 @@ internal class CodeActionsService(
             codeActions.AddRange(result);
         }
 
-        return codeActions.DrainToImmutableOrderedBy(static r => r.Order);
+        return codeActions.ToImmutableOrderedByAndClear(static r => r.Order);
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()

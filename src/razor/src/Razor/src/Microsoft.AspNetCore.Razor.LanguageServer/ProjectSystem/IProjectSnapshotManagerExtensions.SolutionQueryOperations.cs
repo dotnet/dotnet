@@ -38,7 +38,7 @@ internal static partial class ProjectSnapshotManagerExtensions
                 }
             }
 
-            return projects.DrainToImmutable();
+            return projects.ToImmutableAndClear();
         }
     }
 }

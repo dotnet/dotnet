@@ -133,7 +133,7 @@ internal partial class ProjectSnapshotManager : IDisposable
                 builder.Add(entry.GetSnapshot());
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 
@@ -182,7 +182,7 @@ internal partial class ProjectSnapshotManager : IDisposable
                 }
             }
 
-            return projects.DrainToImmutable();
+            return projects.ToImmutableAndClear();
         }
     }
 

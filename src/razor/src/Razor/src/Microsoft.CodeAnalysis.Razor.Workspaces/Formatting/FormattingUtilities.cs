@@ -317,7 +317,7 @@ internal static class FormattingUtilities
                 end = text.IndexOf('\n', start);
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 

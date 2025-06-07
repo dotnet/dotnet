@@ -501,7 +501,7 @@ public sealed class RazorProjectEngine
             }
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 
     private ImmutableArray<RazorSourceDocument> GetImportSources(RazorProjectItem projectItem, bool designTime)
@@ -543,6 +543,6 @@ public sealed class RazorProjectEngine
             }
         }
 
-        return imports.DrainToImmutable();
+        return imports.ToImmutableAndClear();
     }
 }

@@ -129,7 +129,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
         newList.Sort();
 
-        return newList.DrainToImmutable();
+        return newList.ToImmutableAndClear();
     }
 
     // Virtual for benchmarks
@@ -219,7 +219,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
             previousSemanticRange = semanticRange;
         }
 
-        return razorRanges.DrainToImmutable();
+        return razorRanges.ToImmutableAndClear();
     }
 
     private void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange)
@@ -287,7 +287,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         }
 
         csharpRanges.Sort(CompareLinePositionSpans);
-        ranges = csharpRanges.DrainToImmutable();
+        ranges = csharpRanges.ToImmutableAndClear();
         return true;
     }
 
