@@ -222,8 +222,6 @@ namespace System.Threading.Channels
 
                 head = null;
             }
-
-            return reserved;
         }
 
         /// <summary>Iterates through the linked list, successfully completing each operation that should have already had completion reserved.</summary>
