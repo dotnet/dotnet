@@ -63,7 +63,7 @@
       </ProducedPackage>
 
       <ProducedPackage>
-        <ManifestArtifactData Condition="'%(ProducedPackage.CouldBeStable)' == 'true'">%(ProducedPackage.ManifestArtifactData);CouldBeStable=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ProducedPackage.CouldBeStable)' != ''">%(ProducedPackage.ManifestArtifactData);CouldBeStable=%(ProducedPackage.CouldBeStable)</ManifestArtifactData>
       </ProducedPackage>
 
       <ReferencePackage Include="@(ProducedPackage->'$(ReferencePackagesDir)%(Identity).%(Version).nupkg')" Condition="'%(RepoOrigin)' == 'source-build-reference-packages'" />
