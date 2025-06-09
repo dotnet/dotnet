@@ -8,10 +8,11 @@
   <ItemGroup Condition="'$(PackageReadmeFile)' != ''">
     <None Include="$(PackageReadmeFile)" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <FrameworkReference Update="Microsoft.NETCore.App"
-                        Condition="'$(TargetFramework)' == '$(DefaultNetCoreTargetFramework)'"
+                        Condition="('$(TargetFramework)' == '$(DefaultNetCoreTargetFramework)') AND
+                                   ('$(PackAsTool)' != 'true')"
                         RuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
                         TargetingPackVersion="$(MicrosoftNETCoreAppRefVersion)" />
   </ItemGroup>
