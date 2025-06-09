@@ -33,7 +33,7 @@
     Specifying build output manifest values:
 
     ManifestName - The repository name, listed inside the manifest and used to name the file.
-      If $(GitHubRepositoryName) is defined, its value is used. Default: "anonymous"
+      If $(RepositoryName) is defined, its value is used. Default: "anonymous"
     ManifestBuildId - Build ID listed in the manifest. Default: "no build id provided"
     ManifestBranch - Branch listed in the manifest. Default: none
     ManifestCommit - Commit listed in the manifest. Default: none

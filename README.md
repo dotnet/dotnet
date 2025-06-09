@@ -15,11 +15,10 @@ In the VMR, you can find:
 - *[in future]* E2E tests for the whole .NET product.
 
 Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/10.0.1xx`).
-Similarly, VMR's `main` branch will follow default branches of product repositories (see [Synchronization Based on Declared Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
+Similarly, VMR's `main` branch will follow default branches of product repositories (see [Synchronization Based on Declared Dependencies](docs/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
 
-More in-depth documentation about the VMR can be found in [VMR Design And Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#layout).
+More in-depth documentation about the VMR can be found in [VMR Design And Operation](docs/VMR-Design-And-Operation.md#layout).
 See also [dotnet/source-build](https://github.com/dotnet/source-build) for more information about our whole-product source-build.
-
 
 ## Installing the SDK
 
@@ -32,7 +31,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 - The main purpose of the [dotnet/dotnet](https://github.com/dotnet/dotnet) repository is to have all source code necessary to build the .NET product available in one repository and identified by a single commit.
 - The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
 - Lastly, we hope to solve other problems that the current multi-repo setup brings:
-  - Enable the standard [down-/up-stream open-source model](src/arcade/Documentation/UnifiedBuild/VMR-Upstream-Downstream.md).
+  - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
   - Fulfill requirements of .NET distro builders such as RedHat or Canonical to natively include .NET in their distribution repositories.
   - Simplify scenarios such as client-run testing of bug fixes and improvements. The build should work in an offline environment too for certain platforms.
   - Enable developers to make and test changes spanning multiple repositories.
@@ -199,20 +198,21 @@ Alternatively, you can also provide a manifest file where this information can b
 
 Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
-To do this, you can either start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace - you will see instructions right after it starts. Alternatively, you can clone the repository locally and use the [vmr-sync.sh](src/sdk/eng/vmr-sync.sh) or [vmr-sync.ps1](src/sdk/eng/vmr-sync.ps1) script to pull your changes in. Please refer to the documentation in the script for more details.
+To do this, you need to use the [`darc vmr forwardflow` command](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) which can move your changes from your repository's dev branch into a local VMR one. Please refer to command's documentation (`--help`) for more details.
 
 ## Filing Issues
 
-This repo does not currently accept issues. Please file issues to the appropriate development repos.
-For issues with the VMR itself, please use the [source-build repository](https://github.com/dotnet/source-build).
+This repo should contain issues that are tied to the VMR infrastructure and documentation.
+
+For other issues, please open them in the appropriate product repos. We have links to many of them on [our new issue page](https://github.com/dotnet/dotnet/issues/new/choose).
 
 ## Useful Links
 
 - Design documentation for the VMR - a set of documents describing the high-level design and the why's and how's
-  - [Design and Operation](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md)
-  - [Upstream/Downstream Relationships](src/arcade/Documentation/UnifiedBuild/VMR-Upstream-Downstream.md)
-  - [Code and Build Workflow](src/arcade/Documentation/UnifiedBuild/VMR-Code-And-Build-Workflow.md)
-  - [Strategy for Managing External Source Dependencies](src/arcade/Documentation/UnifiedBuild/VMR-Strategy-For-External-Source.md)
+  - [Design and Operation](docs/VMR-Design-And-Operation.md)
+  - [Upstream/Downstream Relationships](docs/VMR-Upstream-Downstream.md)
+  - [Code and Build Workflow](docs/VMR-Code-And-Build-Workflow.md)
+  - [Strategy for Managing External Source Dependencies](docs/VMR-Strategy-For-External-Source.md)
 - [.NET Source-Build](https://github.com/dotnet/source-build)
 - [What is .NET](https://dotnet.microsoft.com)
 

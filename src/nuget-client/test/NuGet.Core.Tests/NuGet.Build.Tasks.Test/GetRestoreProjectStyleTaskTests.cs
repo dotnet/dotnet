@@ -115,7 +115,7 @@ namespace NuGet.Build.Tasks.Test
                 task.Execute().Should().BeTrue();
 
                 task.ProjectStyle.Should().Be(projectStyle);
-                if (projectStyle == ProjectStyle.PackageReference || projectStyle == ProjectStyle.DotnetToolReference)
+                if (projectStyle == ProjectStyle.PackageReference)
                 {
                     task.IsPackageReferenceCompatibleProjectStyle.Should().BeTrue();
                 }
@@ -129,7 +129,7 @@ namespace NuGet.Build.Tasks.Test
         [Fact]
         public void Execute_WhenUserSuppliedValueOverridesDefault_ReturnsUserSuppliedProjectStyle()
         {
-            var expected = ProjectStyle.Standalone;
+            var expected = ProjectStyle.PackagesConfig;
 
             using (var testDirectory = TestDirectory.Create())
             {

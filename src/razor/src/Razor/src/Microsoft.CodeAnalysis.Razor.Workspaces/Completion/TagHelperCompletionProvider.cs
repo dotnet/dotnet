@@ -48,7 +48,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             _ => owner.Parent
         };
 
-        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
+        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, out _) &&
             containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
             // Trying to complete the element type
@@ -189,7 +189,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private static bool TryResolveInsertText(string baseInsertText, AttributeContext context, bool autoInsertAttributeQuotes, [NotNullWhen(true)] out string? snippetText)
@@ -244,7 +244,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private const string BooleanTypeString = "System.Boolean";

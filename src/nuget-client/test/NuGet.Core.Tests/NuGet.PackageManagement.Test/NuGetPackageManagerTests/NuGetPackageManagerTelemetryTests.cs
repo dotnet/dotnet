@@ -592,21 +592,6 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             Assert.Contains(TelemetryConstants.ResolvedActionsStepName, actual);
         }
 
-        private static void AddToPackagesFolder(PackageIdentity package, string root)
-        {
-            var dir = Path.Combine(root, $"{package.Id}.{package.Version.ToString()}");
-            Directory.CreateDirectory(dir);
-
-            var context = new SimpleTestPackageContext()
-            {
-                Id = package.Id,
-                Version = package.Version.ToString()
-            };
-
-            context.AddFile("lib/net45/a.dll");
-            SimpleTestPackageUtility.CreateOPCPackage(context, dir);
-        }
-
         private SourceRepositoryProvider CreateSource(List<SourcePackageDependencyInfo> packages)
         {
             var resourceProviders = new List<Lazy<INuGetResourceProvider>>();
@@ -619,95 +604,6 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             return new SourceRepositoryProvider(packageSourceProvider, resourceProviders);
         }
 
-        private static void Expected(List<Tuple<PackageIdentity, NuGetProjectActionType>> expected, string id, NuGetVersion oldVersion, NuGetVersion newVersion)
-        {
-            expected.Add(Tuple.Create(new PackageIdentity(id, oldVersion), NuGetProjectActionType.Uninstall));
-            expected.Add(Tuple.Create(new PackageIdentity(id, newVersion), NuGetProjectActionType.Install));
-        }
-
-        private static void Expected(List<Tuple<PackageIdentity, NuGetProjectActionType>> expected, string id, NuGetVersion newVersion)
-        {
-            expected.Add(Tuple.Create(new PackageIdentity(id, newVersion), NuGetProjectActionType.Install));
-        }
-
-        private static bool Compare(
-            IEnumerable<Tuple<PackageIdentity, NuGetProjectActionType>> lhs,
-            IEnumerable<Tuple<PackageIdentity, NuGetProjectActionType>> rhs)
-        {
-            var ok = true;
-            ok &= RhsContainsAllLhs(lhs, rhs);
-            ok &= RhsContainsAllLhs(rhs, lhs);
-            return ok;
-        }
-
-        private static bool RhsContainsAllLhs(
-            IEnumerable<Tuple<PackageIdentity, NuGetProjectActionType>> lhs,
-            IEnumerable<Tuple<PackageIdentity, NuGetProjectActionType>> rhs)
-        {
-            foreach (var item in lhs)
-            {
-                if (!rhs.Contains(item, new ActionComparer()))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private static bool PreviewResultsCompare(
-            IEnumerable<Tuple<TestNuGetProject, PackageIdentity>> lhs,
-            IEnumerable<Tuple<TestNuGetProject, PackageIdentity>> rhs)
-        {
-            var ok = true;
-            ok &= RhsContainsAllLhs(lhs, rhs);
-            ok &= RhsContainsAllLhs(rhs, lhs);
-            return ok;
-        }
-
-        private static bool RhsContainsAllLhs(
-            IEnumerable<Tuple<TestNuGetProject, PackageIdentity>> lhs,
-            IEnumerable<Tuple<TestNuGetProject, PackageIdentity>> rhs)
-        {
-            foreach (var item in lhs)
-            {
-                if (!rhs.Contains(item, new PreviewResultComparer()))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private class ActionComparer : IEqualityComparer<Tuple<PackageIdentity, NuGetProjectActionType>>
-        {
-            public bool Equals(Tuple<PackageIdentity, NuGetProjectActionType> x, Tuple<PackageIdentity, NuGetProjectActionType> y)
-            {
-                var f1 = x.Item1.Equals(y.Item1);
-                var f2 = x.Item2 == y.Item2;
-                return f1 && f2;
-            }
-
-            public int GetHashCode(Tuple<PackageIdentity, NuGetProjectActionType> obj)
-            {
-                return obj.GetHashCode();
-            }
-        }
-
-        private class PreviewResultComparer : IEqualityComparer<Tuple<TestNuGetProject, PackageIdentity>>
-        {
-            public bool Equals(Tuple<TestNuGetProject, PackageIdentity> x, Tuple<TestNuGetProject, PackageIdentity> y)
-            {
-                var f1 = x.Item1.Metadata[NuGetProjectMetadataKeys.Name].ToString().Equals(
-                    y.Item1.Metadata[NuGetProjectMetadataKeys.Name].ToString());
-                var f2 = x.Item2.Equals(y.Item2);
-                return f1 && f2;
-            }
-
-            public int GetHashCode(Tuple<TestNuGetProject, PackageIdentity> obj)
-            {
-                return obj.GetHashCode();
-            }
-        }
         private class TestNuGetVSTelemetryService : NuGetVSTelemetryService
         {
             private ITelemetrySession _telemetrySession;

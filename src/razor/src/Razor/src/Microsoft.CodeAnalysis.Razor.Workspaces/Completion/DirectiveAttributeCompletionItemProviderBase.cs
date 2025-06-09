@@ -120,14 +120,14 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
     {
         if (element is MarkupStartTagSyntax startTag)
         {
-            containingTagName = startTag.Name.GetContent();
+            containingTagName = startTag.Name.Content;
             attributeNames = ExtractAttributeNames(startTag.Attributes);
             return true;
         }
 
         if (element is MarkupTagHelperStartTagSyntax startTagHelper)
         {
-            containingTagName = startTagHelper.Name.GetContent();
+            containingTagName = startTagHelper.Name.Content;
             attributeNames = ExtractAttributeNames(startTagHelper.Attributes);
             return true;
         }
@@ -171,7 +171,7 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
             }
         }
 
-        return attributeNames.DrainToImmutable();
+        return attributeNames.ToImmutableAndClear();
     }
 
     private static void SplitAttributeNameIntoParts(

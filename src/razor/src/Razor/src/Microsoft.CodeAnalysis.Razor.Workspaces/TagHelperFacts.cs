@@ -80,7 +80,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingBoundAttributes.DrainToImmutable();
+        return matchingBoundAttributes.ToImmutableAndClear();
     }
 
     public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenTag(
@@ -127,7 +127,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingDescriptors.DrainToImmutable();
+        return matchingDescriptors.ToImmutableAndClear();
     }
 
     public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenParent(TagHelperDocumentContext documentContext, string? parentTag)
@@ -156,7 +156,7 @@ internal static class TagHelperFacts
             }
         }
 
-        return matchingDescriptors.DrainToImmutable();
+        return matchingDescriptors.ToImmutableAndClear();
     }
 
     public static ImmutableArray<KeyValuePair<string, string>> StringifyAttributes(SyntaxList<RazorSyntaxNode> attributes)
@@ -214,24 +214,28 @@ internal static class TagHelperFacts
             }
         }
 
-        return stringifiedAttributes.DrainToImmutable();
+        return stringifiedAttributes.ToImmutableAndClear();
     }
 
     public static (string? ancestorTagName, bool ancestorIsTagHelper) GetNearestAncestorTagInfo(IEnumerable<SyntaxNode> ancestors)
     {
         foreach (var ancestor in ancestors)
         {
-            if (ancestor is MarkupElementSyntax element)
+            switch (ancestor)
             {
-                // It's possible for start tag to be null in malformed cases.
-                var name = element.StartTag?.Name?.Content ?? string.Empty;
-                return (name, ancestorIsTagHelper: false);
-            }
-            else if (ancestor is MarkupTagHelperElementSyntax tagHelperElement)
-            {
-                // It's possible for start tag to be null in malformed cases.
-                var name = tagHelperElement.StartTag?.Name?.Content ?? string.Empty;
-                return (name, ancestorIsTagHelper: true);
+                case MarkupElementSyntax { StartTag: var startTag }:
+                    {
+                        // It's possible for start tag to be null in malformed cases.
+                        var name = startTag?.Name.Content ?? string.Empty;
+                        return (name, ancestorIsTagHelper: false);
+                    }
+
+                case MarkupTagHelperElementSyntax { StartTag: var startTag }:
+                    {
+                        // It's possible for start tag to be null in malformed cases.
+                        var name = startTag?.Name.Content ?? string.Empty;
+                        return (name, ancestorIsTagHelper: true);
+                    }
             }
         }
 

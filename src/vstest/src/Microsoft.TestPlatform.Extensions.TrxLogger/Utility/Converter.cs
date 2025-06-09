@@ -14,7 +14,6 @@ using Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using TrxLoggerResources = Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.Resources.TrxResource;
 using TrxObjectModel = Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
@@ -75,14 +74,6 @@ internal class Converter
         foreach (int workItem in workItems)
         {
             testElement.WorkItems.Add(workItem);
-        }
-
-        if (!FeatureFlag.Instance.IsSet(nameof(FeatureFlag.VSTEST_DISABLE_TRX_WRITE_PROPERTIES)))
-        {
-            foreach (var trait in rockSteadyTestCase.Traits.Where(t => t.Name is not "Owner" and not "Priority"))
-            {
-                testElement.Traits.Add(new Property(trait.Name, trait.Value));
-            }
         }
 
         return testElement;

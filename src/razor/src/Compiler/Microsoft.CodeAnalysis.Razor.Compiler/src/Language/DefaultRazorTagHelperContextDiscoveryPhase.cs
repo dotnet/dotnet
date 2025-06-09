@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -58,18 +59,18 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
 
-    private static ReadOnlySpan<char> GetSpanWithoutGlobalPrefix(string s)
+    internal static ReadOnlyMemory<char> GetMemoryWithoutGlobalPrefix(string s)
     {
         const string globalPrefix = "global::";
 
-        var span = s.AsSpan();
+        var mem = s.AsMemory();
 
-        if (span.StartsWith(globalPrefix.AsSpan(), StringComparison.Ordinal))
+        if (mem.Span.StartsWith(globalPrefix.AsSpan(), StringComparison.Ordinal))
         {
-            return span[globalPrefix.Length..];
+            return mem[globalPrefix.Length..];
         }
 
-        return span;
+        return mem;
     }
 
     internal abstract class DirectiveVisitor : SyntaxWalker
@@ -217,8 +218,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public override void VisitRazorDirective(RazorDirectiveSyntax node)
         {
-            var descendantLiterals = node.DescendantNodes();
-            foreach (var child in descendantLiterals)
+            foreach (var child in node.DescendantNodes())
             {
                 if (child is not CSharpStatementLiteralSyntax literal)
                 {
@@ -241,7 +241,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                                 continue;
                             }
 
-                            switch (GetSpanWithoutGlobalPrefix(addTagHelper.TypePattern))
+                            switch (GetMemoryWithoutGlobalPrefix(addTagHelper.TypePattern).Span)
                             {
                                 case ['*']:
                                     AddMatches(nonComponentTagHelpers);
@@ -287,7 +287,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                                 continue;
                             }
 
-                            switch (GetSpanWithoutGlobalPrefix(removeTagHelper.TypePattern))
+                            switch (GetMemoryWithoutGlobalPrefix(removeTagHelper.TypePattern).Span)
                             {
                                 case ['*']:
                                     RemoveMatches(nonComponentTagHelpers);
@@ -334,7 +334,9 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
     internal sealed class ComponentDirectiveVisitor : DirectiveVisitor
     {
-        private readonly List<TagHelperDescriptor> _nonFullyQualifiedComponents = [];
+        // The list values in this dictionary are pooled
+        private readonly Dictionary<ReadOnlyMemory<char>, List<TagHelperDescriptor>> _typeNamespaceToNonFullyQualifiedComponents = new Dictionary<ReadOnlyMemory<char>, List<TagHelperDescriptor>>(ReadOnlyMemoryOfCharComparer.Instance);
+        private List<TagHelperDescriptor>? _nonFullyQualifiedComponentsWithEmptyTypeNamespace;
 
         private string? _filePath;
         private RazorSourceDocument? _source;
@@ -347,6 +349,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             Debug.Assert(!IsInitialized);
 
             _filePath = filePath;
+            _nonFullyQualifiedComponentsWithEmptyTypeNamespace = ListPool<TagHelperDescriptor>.Default.Get();
 
             foreach (var tagHelper in tagHelpers.AsEnumerable())
             {
@@ -363,25 +366,31 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                     continue;
                 }
 
-                _nonFullyQualifiedComponents.Add(tagHelper);
+                var tagHelperTypeNamespace = tagHelper.GetTypeNamespace().AsMemory();
+
+                if (tagHelperTypeNamespace.IsEmpty)
+                {
+                    _nonFullyQualifiedComponentsWithEmptyTypeNamespace.Add(tagHelper);
+                }
+                else
+                {
+                    if (!_typeNamespaceToNonFullyQualifiedComponents.TryGetValue(tagHelperTypeNamespace, out var tagHelpersList))
+                    {
+                        tagHelpersList = ListPool<TagHelperDescriptor>.Default.Get();
+                        _typeNamespaceToNonFullyQualifiedComponents.Add(tagHelperTypeNamespace, tagHelpersList);
+                    }
+
+                    tagHelpersList.Add(tagHelper);
+                }
 
                 if (currentNamespace is null)
                 {
                     continue;
                 }
 
-                if (tagHelper.IsChildContentTagHelper)
+                if (IsTypeNamespaceInScope(tagHelperTypeNamespace.Span, currentNamespace))
                 {
-                    // If this is a child content tag helper, we want to add it if it's original type is in scope.
-                    // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in scope.
-                    if (IsTypeInScope(tagHelper, currentNamespace))
-                    {
-                        AddMatch(tagHelper);
-                    }
-                }
-                else if (IsTypeInScope(tagHelper, currentNamespace))
-                {
-                    // Also, if the type is already in scope of the document's namespace, using isn't necessary.
+                    // If the type is already in scope of the document's namespace, using isn't necessary.
                     AddMatch(tagHelper);
                 }
             }
@@ -391,7 +400,18 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public override void Reset()
         {
-            _nonFullyQualifiedComponents.Clear();
+            if (_nonFullyQualifiedComponentsWithEmptyTypeNamespace != null)
+            {
+                ListPool<TagHelperDescriptor>.Default.Return(_nonFullyQualifiedComponentsWithEmptyTypeNamespace);
+                _nonFullyQualifiedComponentsWithEmptyTypeNamespace = null;
+            }
+
+            foreach (var (_, tagHelpers) in _typeNamespaceToNonFullyQualifiedComponents)
+            {
+                ListPool<TagHelperDescriptor>.Default.Return(tagHelpers);
+            }
+
+            _typeNamespaceToNonFullyQualifiedComponents.Clear();
             _filePath = null;
             _source = null;
 
@@ -407,6 +427,8 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public override void VisitRazorDirective(RazorDirectiveSyntax node)
         {
+            var componentsWithEmptyTypeNamespace = _nonFullyQualifiedComponentsWithEmptyTypeNamespace.AssumeNotNull();
+
             var descendantLiterals = node.DescendantNodes();
             foreach (var child in descendantLiterals)
             {
@@ -455,22 +477,30 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                             continue;
                         }
 
-                        foreach (var tagHelper in _nonFullyQualifiedComponents)
+                        if (_typeNamespaceToNonFullyQualifiedComponents.Count == 0 && componentsWithEmptyTypeNamespace.Count == 0)
+                        {
+                            // There aren't any non qualified components to add
+                            continue;
+                        }
+
+                        // Add all tag helpers that have an empty type namespace
+                        foreach (var tagHelper in componentsWithEmptyTypeNamespace)
                         {
                             Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch, "We've already processed these.");
 
-                            if (tagHelper.IsChildContentTagHelper)
+                            AddMatch(tagHelper);
+                        }
+
+                        // Remove global:: prefix from namespace.
+                        var normalizedNamespace = GetMemoryWithoutGlobalPrefix(@namespace);
+
+                        // Add all tag helpers with a matching namespace
+                        if (_typeNamespaceToNonFullyQualifiedComponents.TryGetValue(normalizedNamespace, out var tagHelpers))
+                        {
+                            foreach (var tagHelper in tagHelpers)
                             {
-                                // If this is a child content tag helper, we want to add it if it's original type is in scope of the given namespace.
-                                // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in this namespace.
-                                if (IsTypeInNamespace(tagHelper, @namespace))
-                                {
-                                    AddMatch(tagHelper);
-                                }
-                            }
-                            else if (IsTypeInNamespace(tagHelper, @namespace))
-                            {
-                                // If the type is at the top-level or if the type's namespace matches the using's namespace, add it.
+                                Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch, "We've already processed these.");
+
                                 AddMatch(tagHelper);
                             }
                         }
@@ -480,32 +510,14 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        internal static bool IsTypeInNamespace(TagHelperDescriptor tagHelper, string @namespace)
-        {
-            var typeNamespace = tagHelper.GetTypeNamespace();
-
-            if (typeNamespace.IsNullOrEmpty())
-            {
-                // Either the typeName is not the full type name or this type is at the top level.
-                return true;
-            }
-
-            // Remove global:: prefix from namespace.
-            var normalizedNamespaceSpan = GetSpanWithoutGlobalPrefix(@namespace);
-
-            return normalizedNamespaceSpan.Equals(typeNamespace.AsSpan(), StringComparison.Ordinal);
-        }
-
-        // Check if the given type is already in scope given the namespace of the current document.
+        // Check if a type's namespace is already in scope given the namespace of the current document.
         // E.g,
         // If the namespace of the document is `MyComponents.Components.Shared`,
         // then the types `MyComponents.FooComponent`, `MyComponents.Components.BarComponent`, `MyComponents.Components.Shared.BazComponent` are all in scope.
         // Whereas `MyComponents.SomethingElse.OtherComponent` is not in scope.
-        internal static bool IsTypeInScope(TagHelperDescriptor tagHelper, string @namespace)
+        internal static bool IsTypeNamespaceInScope(ReadOnlySpan<char> typeNamespace, string @namespace)
         {
-            var typeNamespace = tagHelper.GetTypeNamespace();
-
-            if (typeNamespace.IsNullOrEmpty())
+            if (typeNamespace.IsEmpty)
             {
                 // Either the typeName is not the full type name or this type is at the top level.
                 return true;

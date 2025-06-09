@@ -913,10 +913,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.CompatibilityIssue.IncompatiblePackage(NuGet.Packaging.Core.PackageIdentity referenceAssemblyPackage, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageFrameworks) -> NuGet.Commands.CompatibilityIssue
 ~static NuGet.Commands.CompatibilityIssue.IncompatiblePackageWithDotnetTool(NuGet.Packaging.Core.PackageIdentity referenceAssemblyPackage) -> NuGet.Commands.CompatibilityIssue
 ~static NuGet.Commands.CompatibilityIssue.IncompatibleProject(NuGet.Packaging.Core.PackageIdentity project, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> projectFrameworks) -> NuGet.Commands.CompatibilityIssue
-~static NuGet.Commands.CompatibilityIssue.IncompatibleProjectType(NuGet.Packaging.Core.PackageIdentity project) -> NuGet.Commands.CompatibilityIssue
-~static NuGet.Commands.CompatibilityIssue.IncompatibleToolsPackage(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier, System.Collections.Generic.HashSet<NuGet.Frameworks.FrameworkRuntimePair> available) -> NuGet.Commands.CompatibilityIssue
 ~static NuGet.Commands.CompatibilityIssue.ReferenceAssemblyNotImplemented(string assemblyName, NuGet.Packaging.Core.PackageIdentity referenceAssemblyPackage, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> NuGet.Commands.CompatibilityIssue
-~static NuGet.Commands.CompatibilityIssue.ToolsPackageWithExtraPackageTypes(NuGet.Packaging.Core.PackageIdentity referenceAssemblyPackage) -> NuGet.Commands.CompatibilityIssue
 ~static NuGet.Commands.DeleteRunner.Run(NuGet.Configuration.ISettings settings, NuGet.Configuration.IPackageSourceProvider sourceProvider, string packageId, string packageVersion, string source, string apiKey, bool nonInteractive, bool noServiceEndpoint, System.Func<string, bool> confirmFunc, NuGet.Common.ILogger logger) -> System.Threading.Tasks.Task
 ~static NuGet.Commands.DependencyGraphSpecRequestProvider.GetExternalClosure(NuGet.ProjectModel.DependencyGraphSpec dgFile, string projectNameToRestore) -> System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference>
 ~static NuGet.Commands.DiagnosticUtility.FormatDependency(string id, NuGet.Versioning.VersionRange range) -> string
@@ -956,7 +953,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(string includeAssets, string excludeAssets, string privateAssets) -> (NuGet.LibraryModel.LibraryIncludeFlags includeType, NuGet.LibraryModel.LibraryIncludeFlags suppressParent)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
-~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> allItems) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildRestoreUtility.GetSdkAnalysisLevel(string sdkAnalysisLevel) -> NuGet.Versioning.NuGetVersion
 ~static NuGet.Commands.MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(string usingMicrosoftNETSdk) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.GetWarningForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage

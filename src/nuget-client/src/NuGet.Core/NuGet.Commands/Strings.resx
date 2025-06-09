@@ -567,9 +567,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Error_ProjectWithIncorrectDependenciesCount" xml:space="preserve">
     <value>Project {0} must have a single package reference(s).</value>
   </data>
-  <data name="Log_SkippingCompatibiilityCheckOnRidlessGraphForDotnetToolReferenceProject" xml:space="preserve">
-    <value>Skipping compatibility checks of the ridless graph for DotnetToolReference project type. This graph is not used. </value>
-  </data>
   <data name="Error_InvalidProjectPackageCombo" xml:space="preserve">
     <value>Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type</value>
   </data>

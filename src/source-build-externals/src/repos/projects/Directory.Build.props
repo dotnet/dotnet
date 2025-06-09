@@ -4,23 +4,23 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+    <InnerRepoName>$(MSBuildProjectName)</InnerRepoName>
 
     <SrcReposDir>$(SrcDir)repos/</SrcReposDir>
     <KeysDir>$(SrcReposDir)keys/</KeysDir>
     <SubmoduleDirectory>$(SrcReposDir)src/</SubmoduleDirectory>
     <PatchesDir>$(SrcReposDir)patches/</PatchesDir>
-    <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(RepositoryName)'))</OriginalProjectDirectory>
+    <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(InnerRepoName)'))</OriginalProjectDirectory>
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(OriginalProjectDirectory)', 'artifacts', 'clone'))</ProjectDirectory>
-    <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(RepositoryName)'))</ArtifactsLogRepoDir>
+    <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(InnerRepoName)'))</ArtifactsLogRepoDir>
 
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">true</MinimalConsoleLogOutput>
-    <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
+    <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(InnerRepoName).log</RepoConsoleLogFile>
     <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
   </PropertyGroup>
 
   <ItemGroup>
-    <PatchToApply Include="$(PatchesDir)$(RepositoryName)/*.patch" />
+    <PatchToApply Include="$(PatchesDir)$(InnerRepoName)/*.patch" />
   </ItemGroup>
 
   <ItemGroup>

@@ -130,7 +130,7 @@ internal class RenameService(
             }
         }
 
-        return documentSnapshots.DrainToImmutable();
+        return documentSnapshots.ToImmutableAndClear();
     }
 
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
@@ -186,7 +186,6 @@ internal class RenameService(
         var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = uri };
         var tagHelperElements = codeDocument.GetSyntaxTree().Root
             .DescendantNodes()
-            .Where(n => n.Kind == RazorSyntaxKind.MarkupTagHelperElement)
             .OfType<MarkupTagHelperElementSyntax>();
 
         foreach (var originTagHelper in originTagHelpers)

@@ -12,7 +12,7 @@
     <_MicrosoftExtensionsPackageVersion>9.0.0</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
-    <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.187-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
+    <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.785-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
     <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>

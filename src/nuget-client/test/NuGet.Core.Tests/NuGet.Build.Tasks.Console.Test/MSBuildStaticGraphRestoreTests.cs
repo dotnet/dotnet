@@ -776,10 +776,8 @@ namespace NuGet.Build.Tasks.Console.Test
         [Theory]
         [InlineData(true, ProjectStyle.PackageReference)]
         [InlineData(false, ProjectStyle.DotnetCliTool)]
-        [InlineData(false, ProjectStyle.DotnetToolReference)]
         [InlineData(false, ProjectStyle.PackagesConfig)]
         [InlineData(false, ProjectStyle.ProjectJson)]
-        [InlineData(false, ProjectStyle.Standalone)]
         [InlineData(false, ProjectStyle.Unknown)]
         public void IsCentralVersionsManagementEnabled_OnlyPackageReferenceWithProjectCPVMEnabledProperty(bool expected, ProjectStyle projectStyle)
         {

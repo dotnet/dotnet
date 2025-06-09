@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <CustomPackageVersionsProps></CustomPackageVersionsProps>
-    <OutputType>Exe</OutputType>
+    <CustomPackageVersionsProps Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)/PackageVersions.props</CustomPackageVersionsProps>
+    <RestoreSources Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)</RestoreSources>
   </PropertyGroup>
 
   <Target Name="CheckCustomPackageVersionsProps">
@@ -17,9 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
 </Project>

@@ -19,7 +19,7 @@ namespace NuGet.CommandLine.XPlat {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -574,6 +574,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Central Package Management configuration error: Could not find PackageVersion for package {0}.
+        /// </summary>
+        internal static string Error_CouldNotFindPackageVersionForCpmPackage {
+            get {
+                return ResourceManager.GetString("Error_CouldNotFindPackageVersionForCpmPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Error_HttpServerUsage {
@@ -679,6 +688,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Error_NoVersionsAvailable {
             get {
                 return ResourceManager.GetString("Error_NoVersionsAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package {0} is not referenced by project {1}.
+        /// </summary>
+        internal static string Error_PackageNotReferenced {
+            get {
+                return ResourceManager.GetString("Error_PackageNotReferenced", resourceCulture);
             }
         }
         
@@ -1509,6 +1527,33 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preview restore with updated packages was not successful. Force mode is not yet available..
+        /// </summary>
+        internal static string PackageUpdate_PreviewRestoreFailed {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PreviewRestoreFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update referenced packages in a project or solution..
+        /// </summary>
+        internal static string PackageUpdateCommand_Description {
+            get {
+                return ResourceManager.GetString("PackageUpdateCommand_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path to a project or solution file, or a directory..
+        /// </summary>
+        internal static string PackageUpdateCommand_ProjectOptionDescription {
+            get {
+                return ResourceManager.GetString("PackageUpdateCommand_ProjectOptionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Searches one or more package sources for packages that match a search term. If no sources are specified, all sources defined in the NuGet.Config are used..
         /// </summary>
         internal static string pkgSearch_Description {
@@ -2170,6 +2215,51 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unsupported: Updating more than one package is not yet supported.
+        /// </summary>
+        internal static string Unsupported_MoreThanOnePackage {
+            get {
+                return ResourceManager.GetString("Unsupported_MoreThanOnePackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported: Projects using Package Source Mapping are not yet supported.
+        /// </summary>
+        internal static string Unsupported_PackageSourceMapping {
+            get {
+                return ResourceManager.GetString("Unsupported_PackageSourceMapping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1}).
+        /// </summary>
+        internal static string Unsupported_UpdatePackageWithDifferentPerTfmVersions {
+            get {
+                return ResourceManager.GetString("Unsupported_UpdatePackageWithDifferentPerTfmVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported: Updating more than one project is not yet supported.
+        /// </summary>
+        internal static string Unsupported_UpdatingMoreThanOneProject {
+            get {
+                return ResourceManager.GetString("Unsupported_UpdatingMoreThanOneProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported: Upgrading all packages in a project is not yet supported.
+        /// </summary>
+        internal static string Unsupported_UpgradeAllPackages {
+            get {
+                return ResourceManager.GetString("Unsupported_UpgradeAllPackages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update a NuGet source..
         /// </summary>
         internal static string Update_Description {
@@ -2247,6 +2337,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Warn_AddPkgWithoutRestore {
             get {
                 return ResourceManager.GetString("Warn_AddPkgWithoutRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package {0} is already referencing the highest version {1} in project {2}.
+        /// </summary>
+        internal static string Warning_AlreadyHighestVersion {
+            get {
+                return ResourceManager.GetString("Warning_AlreadyHighestVersion", resourceCulture);
             }
         }
         

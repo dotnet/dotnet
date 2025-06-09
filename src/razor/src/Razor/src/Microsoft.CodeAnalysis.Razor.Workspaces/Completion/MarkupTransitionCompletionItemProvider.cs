@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -38,6 +39,8 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
             var previousToken = metaCodeToken.GetPreviousToken();
             owner = previousToken.Parent;
         }
+
+        Assumed.NotNull(owner);
 
         if (!AtMarkupTransitionCompletionPoint(owner))
         {

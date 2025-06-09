@@ -411,14 +411,13 @@ jobs:
 
     - ${{ if eq(parameters.signDac, 'true') }}:
       # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
-      - template: ${{ variables['Build.SourcesDirectory'] }}/src/runtime/eng/pipelines/coreclr/templates/install-diagnostic-certs.yml
+      - template: ../steps/setup-diagnostics-esrp.yml@self
         parameters:
           isOfficialBuild: true
-          certNames:
-          - 'dac-dnceng-ssl-cert'
-          vaultName: 'clrdiag-esrp-pme'
-          azureSubscription: 'diagnostics-esrp-kvcertuser-pme'
-          scriptRoot: '$(Build.SourcesDirectory)/src/runtime'
+          serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
+          serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
+          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
+
 
     - script: build.cmd
         $(baseArguments)
@@ -433,13 +432,8 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-
-    - ${{ if eq(parameters.signDac, 'true') }}:
-      # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
-      - template: ${{ variables['Build.SourcesDirectory'] }}/src/runtime/eng/pipelines/coreclr/templates/remove-diagnostic-certs.yml
-        parameters:
-          isOfficialBuild: true
-          scriptRoot: '$(Build.SourcesDirectory)/src/runtime'
+      env:
+        ESRP_TOKEN: $(System.AccessToken)
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd

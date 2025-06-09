@@ -4,7 +4,9 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+#if IS_SIGNING_SUPPORTED
 using System.Linq;
+#endif
 using System.Text;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
@@ -24,7 +26,7 @@ namespace NuGet.Packaging.Test
     [Collection(SigningTestsCollection.Name)]
     public class SignedPackageArchiveUtilityTests
     {
-        private static readonly byte[] _signatureFileName = Encoding.ASCII.GetBytes(SigningSpecifications.V1.SignaturePath);
+        private static readonly byte[] SignatureFileName = Encoding.ASCII.GetBytes(SigningSpecifications.V1.SignaturePath);
         private readonly CertificatesFixture _fixture;
 
         public SignedPackageArchiveUtilityTests(CertificatesFixture fixture)
@@ -472,6 +474,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
+#if IS_SIGNING_SUPPORTED
         private static DateTimeOffset GetLastModifiedDateTimeOfPackageSignatureFile(MemoryStream package)
         {
             using (var zipArchive = new ZipArchive(package, ZipArchiveMode.Read, leaveOpen: true))
@@ -498,7 +501,7 @@ namespace NuGet.Packaging.Test
 
                 while (Signing.CentralDirectoryHeader.TryRead(reader, out centralDirectoryHeader))
                 {
-                    if (_signatureFileName.SequenceEqual(centralDirectoryHeader.FileName))
+                    if (SignatureFileName.SequenceEqual(centralDirectoryHeader.FileName))
                     {
                         centralDirectoryHeaderOffset = centralDirectoryHeader.OffsetFromStart;
 
@@ -520,6 +523,7 @@ namespace NuGet.Packaging.Test
                 throw new InvalidDataException("Could not find central directory header for the package signature file.");
             }
         }
+#endif
 
         private sealed class Test : IDisposable
         {

@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Configuration;
+using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
@@ -26,6 +27,9 @@ namespace Dotnet.Integration.Test
     public class DotnetListPackageTests
     {
         private static readonly string ProjectName = "test_project_listpkg";
+
+        private static readonly string TransitiveHeading = "   Transitive Package      Resolved   Reason(s)      Alternative";
+        private static readonly string DirectHeading = "   Top-level Package      Requested   Resolved   Reason(s)      Alternative";
 
         private readonly DotnetIntegrationTestFixture _fixture;
         private readonly ITestOutputHelper _testOutputHelper;
@@ -366,6 +370,52 @@ namespace Dotnet.Integration.Test
 
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectB.ProjectName));
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectC.ProjectName));
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("1.0.0", "--highest-patch", "1.0.2")]
+        [InlineData("1.0.0", "--highest-patch --include-prerelease", "1.0.3-beta")]
+        [InlineData("1.0.0", "--highest-minor", "1.1.0")]
+        [InlineData("1.0.0", "--highest-minor --include-prerelease", "1.2.0-beta")]
+        [InlineData("1.0.0", "", "2.0.0")]
+        [InlineData("1.0.0", "--include-prerelease", "3.0.0-beta")]
+        public async Task DotnetListPackage_Outdated_IncludeTransitive_Succeed(string currentVersion, string args, string expectedVersion)
+        {
+            using (var pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                // Arrange
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net472");
+
+                var versions = new List<string> { "1.0.0", "1.0.2", "1.0.3-beta", "1.1.0", "1.2.0-beta", "2.0.0", "3.0.0-beta" };
+                foreach (var version in versions)
+                {
+                    var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX", packageVersion: version);
+                    var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY", packageVersion: version);
+                    packageX.Dependencies.Add(packageY);
+
+                    // Generate Package
+                    await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                        pathContext.PackageSource,
+                        PackageSaveMode.Defaultv3,
+                        packageX, packageY);
+                }
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore",
+                    testOutputHelper: _testOutputHelper);
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
+
+                // Act
+                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"package list --project {projectA.ProjectPath} --outdated --include-transitive {args}", testOutputHelper: _testOutputHelper);
+
+                // Assert
+                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageX{currentVersion}{currentVersion}{expectedVersion}"));
+                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageY{currentVersion}{expectedVersion}"));
             }
         }
 
@@ -814,6 +864,140 @@ namespace Dotnet.Integration.Test
                 Environment.NewLine + string.Join(Environment.NewLine, httpSources.Select(s => s.Name)));
 
             result.AllOutput.Should().Contain(expectedError);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public async Task DeprecatedOption_WithDirectPackageReferenceDeprecated_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472");
+
+            var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            mockServer.DeprecatedPackages.Add(packageA100.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --deprecated", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            string[] lines = result.AllOutput.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            lines.Should().Contain(DirectHeading);
+            var index = Array.IndexOf(lines, DirectHeading) + 1;
+            lines[index].Should().StartWith("   > A                    1.0.0       1.0.0      CriticalBugs");
+            if (lines.Length > index + 1)
+            {
+                lines[index + 1].Should().NotStartWith("   >");
+            }
+            lines.Should().NotContain(TransitiveHeading);
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(" --include-transitive", true)]
+        [InlineData("", false)]
+        public async Task DeprecatedOption_WithTransitivePackageReferenceDeprecated_Succeeds(string additionalOptions, bool shouldReportTransitivePackages)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472");
+
+            var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
+            var packageB100 = new SimpleTestPackageContext("B", "1.0.0");
+            packageA100.Dependencies.Add(packageB100);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            mockServer.DeprecatedPackages.Add(packageB100.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --deprecated {additionalOptions}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            string[] lines = result.AllOutput.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            lines.Should().NotContain(DirectHeading);
+
+            if (shouldReportTransitivePackages)
+            {
+                lines.Should().Contain(TransitiveHeading);
+                var index = Array.IndexOf(lines, TransitiveHeading) + 1;
+                lines[index].Should().StartWith("   > B                     1.0.0      CriticalBugs");
+                if (lines.Length > index + 1)
+                {
+                    lines[index + 1].Should().NotStartWith("   >");
+                }
+            }
+            else
+            {
+                lines.Should().NotContain(TransitiveHeading);
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(" --include-transitive", true)]
+        [InlineData(" --include-transitive --framework net10.0", false)]
+        [InlineData(" --include-transitive --framework net472", true)]
+        [InlineData("", false)]
+        public async Task DeprecatedOption_WithMultiTargetedProjectsAndDeprecatedPackages_Succeeds(string additionalOptions, bool shouldReportTransitivePackages)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472;net10.0");
+
+            var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
+            var packageB100 = new SimpleTestPackageContext("B", "1.0.0");
+            packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net472, [packageB100]);
+            packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net10_0, []);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            mockServer.DeprecatedPackages.Add(packageB100.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --deprecated {additionalOptions}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            string[] lines = result.AllOutput.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            lines.Should().NotContain(DirectHeading);
+
+            if (shouldReportTransitivePackages)
+            {
+                lines.Should().Contain(TransitiveHeading);
+                var index = Array.IndexOf(lines, TransitiveHeading) + 1;
+                lines[index].Should().StartWith("   > B                     1.0.0      CriticalBugs");
+                if (lines.Length > index + 1)
+                {
+                    lines[index + 1].Should().NotStartWith("   >");
+                }
+            }
+            else
+            {
+                lines.Should().NotContain(TransitiveHeading);
+            }
         }
 
         private static string CollapseSpaces(string input)

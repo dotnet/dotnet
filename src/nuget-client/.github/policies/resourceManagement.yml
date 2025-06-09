@@ -172,6 +172,23 @@ configuration:
       description: 'Remind PR author to test accessibility and localizability'
     - if:
       - payloadType: Pull_Request
+      - isAction:
+          action: Opened
+      - filesMatchPattern:
+          pattern: '.*\.yml$'
+          matchAny: true
+      then:
+      - addReply:
+          reply: 'Since this PR is changing CI as it modifies YML files, please verify that you''ve addressed how this change should apply to release branches. Either: 
+          
+          - [ ] Link to equivalent PRs or Issues for each currently [supported branch](https://github.com/NuGet/Client.Engineering/blob/main/docs/HotSeat/NuGet.Client-Branches.md#supported-branches). 
+          
+          **or**
+          
+          - [ ] Explain in the PR description why this change doesn''t apply to release branches.'
+      description: 'Remind PR author to address release branches when making CI changes.'
+    - if:
+      - payloadType: Pull_Request
       - labelAdded:
           label: breaking-change
       then:

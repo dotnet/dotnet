@@ -72,10 +72,10 @@ internal static class EnumerableExtensions
             results.Add(selector(item));
         }
 
-        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using ToImmutableAndClear()
         // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
         // to be the same as the number of items. This is uncommon, but still useful.
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     /// <summary>
@@ -143,15 +143,23 @@ internal static class EnumerableExtensions
             results.Add(selector(item, index++));
         }
 
-        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using ToImmutableAndClear()
         // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
         // to be the same as the number of items. This is uncommon, but still useful.
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public static bool TryGetCount<T>(this IEnumerable<T> sequence, out int count)
     {
 #if NET6_0_OR_GREATER
+        // Note: TryGetNonEnumeratedCount doesn't test for IReadOnlyCollection<T>.
+        // So, it returns false for IReadOnlyList<T>.
+        if (sequence is IReadOnlyCollection<T> collection)
+        {
+            count = collection.Count;
+            return true;
+        }
+
         return Linq.Enumerable.TryGetNonEnumeratedCount(sequence, out count);
 #else
         return TryGetCount<T>((IEnumerable)sequence, out count);

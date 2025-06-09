@@ -12,14 +12,14 @@
     necessary as the output of this leg is used in other CI source build legs. Those could be
     targeting NetCurrent or NetPrevious hence we must produce both.
   -->
-  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true' ">
     <TargetFrameworks>$(NetPrevious);$(NetCurrent)</TargetFrameworks>
   </PropertyGroup>
 
   <!--
     Source build the product: this is the all up build of the product which needs only NetCurrent
   -->
-  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true' ">
     <TargetFrameworks>$(NetCurrent)</TargetFrameworks>
   </PropertyGroup>
 

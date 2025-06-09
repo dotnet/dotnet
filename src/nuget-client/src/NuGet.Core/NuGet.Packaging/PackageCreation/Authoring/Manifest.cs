@@ -240,6 +240,7 @@ namespace NuGet.Packaging
 #endif
         }
 
+#if !IS_CORECLR 
         private static string GetPackageId(XElement metadataElement)
         {
             XName idName = XName.Get("id", metadataElement.Document.Root.Name.NamespaceName);
@@ -260,6 +261,7 @@ namespace NuGet.Packaging
 
             return document.Root.Element(metadataName);
         }
+#endif
 
         public static void Validate(Manifest manifest)
         {

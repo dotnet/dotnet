@@ -431,7 +431,7 @@ namespace NuGet.Packaging.FuncTest
                 primarySignature.Should().NotBeNull();
                 primarySignature.SignedCms.Should().NotBeNull();
                 primarySignature.SignerInfo.Should().NotBeNull();
-                primarySignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterOrEqualTo(1);
+                primarySignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterThanOrEqualTo(1);
 
                 var hasTimestampUnsignedAttribute = false;
                 var timestampCms = new SignedCms();
@@ -480,7 +480,7 @@ namespace NuGet.Packaging.FuncTest
                 // Assert
                 repositoryCountersignature.Should().NotBeNull();
                 repositoryCountersignature.SignerInfo.Should().NotBeNull();
-                repositoryCountersignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterOrEqualTo(1);
+                repositoryCountersignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterThanOrEqualTo(1);
 
                 var hasTimestampUnsignedAttribute = false;
                 var timestampCms = new SignedCms();

@@ -69,7 +69,7 @@ public abstract class LSPDocumentSnapshot
             }
         }
 
-        virtualDocuments = actualVirtualDocuments.DrainToImmutable();
+        virtualDocuments = actualVirtualDocuments.ToImmutableAndClear();
         return virtualDocuments.Length > 0;
     }
 }

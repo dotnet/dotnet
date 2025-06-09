@@ -32,7 +32,7 @@ internal abstract class AbstractComponentAvailabilityService : IComponentAvailab
             result.Add((project, IsAvailable: containsTagHelper));
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 
     protected abstract ImmutableArray<IProjectSnapshot> GetProjectsContainingDocument(string documentFilePath);

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+
 namespace NuGet.ProjectModel
 {
     public enum ProjectStyle : ushort
@@ -28,6 +30,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Non-MSBuild project with no project dependencies.
         /// </summary>
+        [Obsolete("This project style is unsupported. Do not call restore with this project style.")]
         Standalone = 4,
 
         /// <summary>
@@ -38,6 +41,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// DotnetToolReference project
         /// </summary>
+        [Obsolete("This project style is unsupported. Do not call restore with this project style.")]
         DotnetToolReference = 6
     }
 }

@@ -25,6 +25,7 @@
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName main</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialVisualStudioDropAccessToken $(IBCDropAccessToken)</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSkipApplyOptimizationData false</BuildArgs>
+    <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) /p:IgnoreIbcMergeErrors=true</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

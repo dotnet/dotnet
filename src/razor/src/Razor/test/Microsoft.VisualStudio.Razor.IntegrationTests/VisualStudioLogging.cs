@@ -159,8 +159,13 @@ internal static class VisualStudioLogging
         // store things, the following is written to work even if installationId is an empty string. In
         // that case it will fall back to the previous behavior of expecting a single RoslynDev hive to
         // exist, or fail.
-        var directories = Directory.GetDirectories(vsLocalDir, $"17*{installationId}RoslynDev", SearchOption.TopDirectoryOnly);
+        var directories = Directory.GetDirectories(vsLocalDir, $"18*{installationId}RoslynDev", SearchOption.TopDirectoryOnly);
         var hiveDirectories = directories.Where(d => !d.Contains("$")).ToList();
+        if (hiveDirectories.Count == 0)
+        {
+            directories = Directory.GetDirectories(vsLocalDir, $"17*{installationId}RoslynDev", SearchOption.TopDirectoryOnly);
+            hiveDirectories = directories.Where(d => !d.Contains("$")).ToList();
+        }
 
         Assert.True(hiveDirectories.Count == 1, $"Could not find the hive path for InstallationID '{installationId}'. Found instead:{Environment.NewLine}{string.Join(Environment.NewLine, hiveDirectories)}");
 

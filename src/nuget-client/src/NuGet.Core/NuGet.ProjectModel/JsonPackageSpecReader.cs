@@ -15,7 +15,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Packaging.Core;
 using NuGet.RuntimeModel;
 using NuGet.Versioning;
 
@@ -177,14 +176,6 @@ namespace NuGet.ProjectModel
             }
 
             return packageSpec;
-        }
-
-        [Obsolete]
-        private static PackageType CreatePackageType(JsonTextReader jsonReader)
-        {
-            var name = (string)jsonReader.Value;
-
-            return new PackageType(name, Packaging.Core.PackageType.EmptyVersion);
         }
 
         [Obsolete]

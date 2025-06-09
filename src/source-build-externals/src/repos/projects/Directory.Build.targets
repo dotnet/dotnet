@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
-    <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
+    <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(InnerRepoName)'." />
 
     <ItemGroup>
       <_DependentProject Include="@(RepositoryReference -> '%(Identity).proj')" />
@@ -81,7 +81,7 @@
 
     <ItemGroup>
       <_DependentProjectSources Include="@(RepositoryReference -> '%(Identity).proj')">
-        <RepositoryName>%(Identity)</RepositoryName>
+        <InnerRepoName>%(Identity)</InnerRepoName>
       </_DependentProjectSources>
     </ItemGroup>
 
@@ -104,7 +104,7 @@
     <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NewNuGetConfigFile)" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NewNuGetConfigFile)"
-                            SourceName="%(_DependencyProjectsPackagesOutput.RepositoryName)"
+                            SourceName="%(_DependencyProjectsPackagesOutput.InnerRepoName)"
                             SourcePath="%(_DependencyProjectsPackagesOutput.Identity)" />
   </Target>
 
@@ -156,7 +156,7 @@
       <EnvironmentVariables Condition="'$(NUGET_PACKAGES)' != ''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
     </ItemGroup>
 
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'" />
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(InnerRepoName)'" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
     <Message Importance="High" Text="  Using custom build target" Condition="'$(BuildCommand)' == ''" />
@@ -172,7 +172,7 @@
 
     <CallTarget Targets="CustomRepoBuild" Condition="'$(CustomRepoBuild)' == 'true'" />
 
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(RepositoryName)'...done" />
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building '$(InnerRepoName)'...done" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)RepoBuild.complete" AlwaysCreate="true">
@@ -184,7 +184,7 @@
 
   <Target Name="ReportRepoError">
     <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
-    <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
+    <Message Importance="High" Text="'$(InnerRepoName)' failed during build." />
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
   </Target>
 

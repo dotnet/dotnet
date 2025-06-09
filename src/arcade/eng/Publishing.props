@@ -5,4 +5,9 @@
      <Artifact Update="@(Artifact->WithMetadataValue('Kind', 'Package'))" Category="InfrastructurePackage" />
    </ItemGroup>
 
+   <PropertyGroup>
+     <!-- Do not auto-generate symbol packages. Arcade embeds all PDBs so it's just waste of space -->
+     <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
+   </PropertyGroup>
+
 </Project>

@@ -2835,7 +2835,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             // Assert
             result.Success.Should().BeTrue(because: logger.ShowMessages());
             IEnumerable<string> telEventNames = telemetryEvents.Select(e => e.Name);
-            telemetryEvents.Should().HaveCountLessOrEqualTo(3);
+            telemetryEvents.Should().HaveCountLessThanOrEqualTo(3);
             telEventNames.Should().Contain("ProjectRestoreInformation");
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
@@ -3006,7 +3006,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             // Pre-conditions
             result.Success.Should().BeTrue(because: logger.ShowMessages());
             IEnumerable<string> telEventNames = telemetryEvents.Select(e => e.Name);
-            telemetryEvents.Should().HaveCountLessOrEqualTo(3);
+            telemetryEvents.Should().HaveCountLessThanOrEqualTo(3);
             telEventNames.Should().Contain("ProjectRestoreInformation");
 
             while (telemetryEvents.TryDequeue(out _))
@@ -3110,7 +3110,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             // Assert
             result.Success.Should().BeTrue(because: logger.ShowMessages());
             IEnumerable<string> telEventNames = telemetryEvents.Select(e => e.Name);
-            telemetryEvents.Should().HaveCountLessOrEqualTo(3);
+            telemetryEvents.Should().HaveCountLessThanOrEqualTo(3);
             telEventNames.Should().Contain("ProjectRestoreInformation");
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));

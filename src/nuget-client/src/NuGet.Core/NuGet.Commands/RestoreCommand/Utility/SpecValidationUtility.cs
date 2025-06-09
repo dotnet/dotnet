@@ -115,11 +115,7 @@ namespace NuGet.Commands
             // Verify required fields for all specs
             ValidateProjectMetadata(spec, files);
 
-            if (projectStyle == ProjectStyle.Standalone)
-            {
-                ValidateStandaloneSpec(spec, files);
-            }
-            else if (projectStyle == ProjectStyle.DotnetCliTool)
+            if (projectStyle == ProjectStyle.DotnetCliTool)
             {
                 // Verify tool properties
                 ValidateToolSpec(spec, files);
@@ -136,10 +132,6 @@ namespace NuGet.Commands
                 switch (projectStyle)
                 {
                     case ProjectStyle.PackageReference:
-                        ValidateProjectSpecPackageReference(spec, files, logger);
-                        break;
-
-                    case ProjectStyle.DotnetToolReference:
                         ValidateProjectSpecPackageReference(spec, files, logger);
                         break;
 
@@ -279,21 +271,6 @@ namespace NuGet.Commands
                     Strings.MissingRequiredPropertyForProjectType,
                     nameof(spec.RestoreMetadata.ProjectJsonPath),
                     ProjectStyle.ProjectJson.ToString());
-
-                throw RestoreSpecException.Create(message, files);
-            }
-        }
-
-        private static void ValidateStandaloneSpec(PackageSpec spec, IEnumerable<string> files)
-        {
-            // Output path must exist
-            if (string.IsNullOrEmpty(spec.RestoreMetadata.OutputPath))
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Strings.MissingRequiredPropertyForProjectType,
-                    nameof(spec.RestoreMetadata.OutputPath),
-                    ProjectStyle.Standalone.ToString());
 
                 throw RestoreSpecException.Create(message, files);
             }

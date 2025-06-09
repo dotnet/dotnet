@@ -139,9 +139,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
+
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         Assert.Equal("form", tagHelperNodes[0].TagHelperInfo.TagName);
         Assert.Equal("input", tagHelperNodes[1].TagHelperInfo.TagName);
     }
@@ -172,9 +172,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
+
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         Assert.Equal("form", tagHelperNodes[0].TagHelperInfo.TagName);
         Assert.Equal("input", tagHelperNodes[1].TagHelperInfo.TagName);
     }
@@ -210,9 +210,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
+
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         Assert.Equal("form", tagHelperNodes[0].TagHelperInfo.TagName);
         Assert.Equal("input", tagHelperNodes[1].TagHelperInfo.TagName);
     }
@@ -247,9 +247,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
+
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         Assert.Empty(tagHelperNodes);
     }
 
@@ -289,10 +289,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
 
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         var formTagHelper = Assert.Single(tagHelperNodes);
         Assert.Equal("form", formTagHelper.TagHelperInfo.TagName);
         Assert.Equal(2, formTagHelper.TagHelperInfo.BindingResult.GetBoundRules(tagHelper).Length);
@@ -334,10 +333,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
 
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         var formTagHelper = Assert.Single(tagHelperNodes);
         Assert.Equal("form", formTagHelper.TagHelperInfo.TagName);
         Assert.Equal(2, formTagHelper.TagHelperInfo.BindingResult.GetBoundRules(tagHelper).Length);
@@ -375,10 +373,9 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
-        var descendantNodes = rewrittenTree.Root.DescendantNodes();
         Assert.Empty(rewrittenTree.Diagnostics);
-        var tagHelperNodes = descendantNodes.Where(n => n is MarkupTagHelperElementSyntax tagHelper).Cast<MarkupTagHelperElementSyntax>().ToArray();
 
+        var tagHelperNodes = rewrittenTree.Root.DescendantNodes().OfType<MarkupTagHelperElementSyntax>().ToArray();
         var formTagHelper = Assert.Single(tagHelperNodes);
         Assert.Equal("form", formTagHelper.TagHelperInfo.TagName);
     }
@@ -1249,35 +1246,17 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
     [InlineData("", "", true)]
     [InlineData("Foo", "Project", true)]
     [InlineData("Project.Foo", "Project", true)]
-    [InlineData("Project.Foo", "global::Project", true)]
-    [InlineData("Project.Bar.Foo", "Project.Bar", true)]
-    [InlineData("Project.Foo", "Project.Bar", false)]
-    [InlineData("Project.Foo", "global::Project.Bar", false)]
-    [InlineData("Project.Bar.Foo", "Project", false)]
-    [InlineData("Bar.Foo", "Project", false)]
-    public void IsTypeInNamespace_WorksAsExpected(string typeName, string @namespace, bool expected)
-    {
-        // Arrange & Act
-        var descriptor = CreateComponentDescriptor(typeName, typeName, "Test.dll");
-        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeInNamespace(descriptor, @namespace);
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData("", "", true)]
-    [InlineData("Foo", "Project", true)]
-    [InlineData("Project.Foo", "Project", true)]
     [InlineData("Project.Bar.Foo", "Project.Bar", true)]
     [InlineData("Project.Foo", "Project.Bar", true)]
     [InlineData("Project.Bar.Foo", "Project", false)]
     [InlineData("Bar.Foo", "Project", false)]
-    public void IsTypeInScope_WorksAsExpected(string typeName, string currentNamespace, bool expected)
+    public void IsTypeNamespaceInScope_WorksAsExpected(string typeName, string currentNamespace, bool expected)
     {
         // Arrange & Act
         var descriptor = CreateComponentDescriptor(typeName, typeName, "Test.dll");
-        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeInScope(descriptor, currentNamespace);
+        var tagHelperTypeNamespace = descriptor.GetTypeNamespace();
+
+        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeNamespaceInScope(tagHelperTypeNamespace, currentNamespace);
 
         // Assert
         Assert.Equal(expected, result);

@@ -143,6 +143,29 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
     }
 
     [IdeFact]
+    public async Task CompletionCommit_BlazorDirectiveAttribute()
+    {
+        await VerifyTypeAndCommitCompletionAsync(
+            input: """
+                @page "/test"
+
+                <PageTitle>Test</PageTitle>
+
+                <select @=""></select>
+                """,
+            output: """
+                @page "/test"
+                
+                <PageTitle>Test</PageTitle>
+
+                <select @onactivate=""></select>
+                """,
+            search: "<select @",
+            stringsToType: ["o", "n", "a", "c"],
+            expectedSelectedItemLabel: "@onactivate");
+    }
+
+    [IdeFact]
     public async Task CompletionCommit_HtmlTag()
     {
         await VerifyTypeAndCommitCompletionAsync(

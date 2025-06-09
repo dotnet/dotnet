@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Diagnostics;
@@ -113,7 +112,7 @@ internal class DotNetHelper
 
     public void ExecuteBuild(string projectName)
     {
-        string options = GetRestoreAdditionalProjectSourcesPropertyOption();
+        string options = GetRestoreAdditionalProjectSourcesPropertyOption() ?? string.Empty;
         ExecuteCmd($"build {options} {GetBinLogOption(projectName, "build")}", GetProjectDirectory(projectName));
     }
 
@@ -140,7 +139,7 @@ internal class DotNetHelper
 
     public void ExecutePublish(string projectName, DotNetTemplate template, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false)
     {
-        string options = GetRestoreAdditionalProjectSourcesPropertyOption();
+        string options = GetRestoreAdditionalProjectSourcesPropertyOption() ?? string.Empty;
         string binlogDifferentiator = string.Empty;
 
         if (selfContained.HasValue)
@@ -226,8 +225,8 @@ internal class DotNetHelper
         }
     }
 
-    private static string GetRestoreAdditionalProjectSourcesPropertyOption() =>
-        $"/p:RestoreAdditionalProjectSources={Config.RestoreAdditionalProjectSources.Replace(";", "%3B")}";
+    private static string? GetRestoreAdditionalProjectSourcesPropertyOption() =>
+        $"/p:RestoreAdditionalProjectSources={Config.RestoreAdditionalProjectSources?.Replace(";", "%3B")}";
 
     private static string GetBinLogOption(string projectName, string command, string? differentiator = null)
     {

@@ -12,7 +12,16 @@ resources:
   - pipeline: dotnet-unified-build
     source: dotnet-unified-build
     # For releases branches only run on internal/release branches because that's where dependencies flow.
+    # Previews don't have internal/release branches so they must be run from non-internal release branches.
+    trigger:
+      branches:
+        include:
+        - refs/heads/release/*.0.1xx-preview*
+        - refs/heads/internal/release/*.0.1xx*
 
+  - pipeline: dotnet-source-build-pre10.0
+    source: dotnet-source-build-pre10.0
+    # For releases branches only run on internal/release branches because that's where dependencies flow.
     # Previews don't have internal/release branches so they must be run from non-internal release branches.
     trigger:
       branches:
@@ -39,7 +48,7 @@ variables:
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
-- group: DotNet-Source-Build-Bot-Secrets-MVP
+- group: Dotnet-SourceBuild-Secrets
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates

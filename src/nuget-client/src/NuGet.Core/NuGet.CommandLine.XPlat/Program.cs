@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.CommandLineUtils;
+using NuGet.CommandLine.XPlat.Commands.Package.Update;
 using NuGet.Commands;
 using NuGet.Common;
 
@@ -78,9 +79,7 @@ namespace NuGet.CommandLine.XPlat
             //    - https://github.com/NuGet/Home/issues/11996
             //    - https://github.com/NuGet/Home/issues/11997
             //    - https://github.com/NuGet/Home/issues/13089
-            if ((args.Count() >= 2 && args[0] == "package" && args[1] == "search")
-                || (args.Any() && args[0] == "config")
-                || (args.Any() && args[0] == "why"))
+            if (IsSystemCommandLineParsedCommand(args))
             {
                 Func<ILoggerWithColor> getHidePrefixLogger = () =>
                 {
@@ -88,18 +87,24 @@ namespace NuGet.CommandLine.XPlat
                     return log;
                 };
 
-                Command rootCommand;
+                RootCommand rootCommand = new RootCommand();
+
                 if (args[0] == "package")
                 {
-                    rootCommand = new Command("package");
+                    var packageCommand = new Command("package");
+                    rootCommand.Subcommands.Add(packageCommand);
 
-                    PackageSearchCommand.Register(rootCommand, getHidePrefixLogger);
+                    PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
+                    PackageUpdateCommand.Register(packageCommand, getHidePrefixLogger);
                 }
                 else
                 {
-                    rootCommand = new Command("nuget");
+                    var nugetCommand = new Command("nuget");
+                    rootCommand.Subcommands.Add(nugetCommand);
 
+                    ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
+                    Commands.Why.WhyCommand.Register(nugetCommand, getHidePrefixLogger);
                     Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
                 }
 
@@ -221,6 +226,32 @@ namespace NuGet.CommandLine.XPlat
 
             return exitCode;
         }
+
+        private static bool IsSystemCommandLineParsedCommand(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                return false;
+            }
+
+            string arg0 = args[0];
+            if (arg0 == "config" || arg0 == "why")
+            {
+                return true;
+            }
+
+            if (args.Length >= 2 && arg0 == "package")
+            {
+                string arg1 = args[1];
+                if (arg1 == "search" || arg1 == "update")
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         internal static void LogException(Exception e, ILogger log)
         {

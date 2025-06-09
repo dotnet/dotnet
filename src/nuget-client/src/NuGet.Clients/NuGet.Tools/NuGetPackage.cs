@@ -209,7 +209,7 @@ namespace NuGetVSExtension
             VSSettings vsSettings = Settings.Value as VSSettings;
 
             AddService(typeof(GeneralPage),
-                (container, ct, serviceType) => Task.FromResult<object>(new GeneralPage()),
+                (container, ct, serviceType) => Task.FromResult<object>(new GeneralPage(vsSettings)),
                 promote: true);
             AddService(typeof(ConfigurationFilesPage),
                 (container, ct, serviceType) => Task.FromResult<object>(new ConfigurationFilesPage(vsSettings)),

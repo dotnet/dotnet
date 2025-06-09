@@ -339,7 +339,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
@@ -458,9 +458,9 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             //
 
             if (owner.SpanStart == mappingSpan.Start &&
-                owner is CSharpStatementLiteralSyntax &&
-                owner.Parent is CSharpCodeBlockSyntax &&
-                owner.TryGetPreviousSibling(out var transition) && transition is CSharpTransitionSyntax)
+                owner is CSharpStatementLiteralSyntax { Parent: CSharpCodeBlockSyntax } literal &&
+                literal.TryGetPreviousSibling(out var transition) &&
+                transition is CSharpTransitionSyntax)
             {
                 return true;
             }

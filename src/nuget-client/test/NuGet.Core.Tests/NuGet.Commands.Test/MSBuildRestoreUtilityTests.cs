@@ -3933,10 +3933,8 @@ namespace NuGet.Commands.Test
 
         [Theory]
         [InlineData(ProjectStyle.DotnetCliTool)]
-        [InlineData(ProjectStyle.DotnetToolReference)]
         [InlineData(ProjectStyle.PackagesConfig)]
         [InlineData(ProjectStyle.ProjectJson)]
-        [InlineData(ProjectStyle.Standalone)]
         public void MSBuildRestoreUtility_GetPackageSpec_CPVM_OnlyPackageReferenceProjectsWillHaveCPVMEnabled(ProjectStyle projectStyle)
         {
             var projectName = "bcpvm";
@@ -4411,62 +4409,6 @@ namespace NuGet.Commands.Test
                 ArgumentException exception = Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetDependencySpec(wrappedItems));
 
                 Assert.Equal("'invalid' is not a valid version string.", exception.Message);
-            }
-        }
-
-        [Fact]
-        public void GetPackageSpec_DootnetToolReference_WithTargetFrameworkInformation_Succeeds()
-        {
-            using (var workingDir = TestDirectory.Create())
-            {
-                // Arrange
-                var project1Root = Path.Combine(workingDir, "a");
-                var uniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
-                var outputPath = Path.Combine(workingDir, "a", "obj");
-                var atf = FrameworkConstants.CommonFrameworks.Net462;
-                var items = new List<IDictionary<string, string>>();
-                var runtimeIdentifierGraphPath = Path.Combine(workingDir, "sdk", "runtime.json");
-
-                items.Add(new Dictionary<string, string>()
-                {
-                    { "Type", "ProjectSpec" },
-                    { "ProjectName", "a1" },
-                    { "ProjectStyle", "DotnetToolReference" },
-                    { "OutputPath", outputPath },
-                    { "ProjectUniqueName", uniqueName },
-                    { "ProjectPath", project1Root },
-                    { "CrossTargeting", "true" },
-                });
-
-                items.Add(new Dictionary<string, string>()
-                {
-                    { "Type", "TargetFrameworkInformation" },
-                    { "AssetTargetFallback", atf.GetShortFolderName() },
-                    { "PackageTargetFallback", "" },
-                    { "ProjectUniqueName", uniqueName },
-                    { "TargetFramework", "net46" },
-                    { "TargetFrameworkIdentifier", FrameworkConstants.FrameworkIdentifiers.NetCoreApp },
-                    { "TargetFrameworkVersion", "v3.0" },
-                    { "TargetFrameworkMoniker", $"{FrameworkConstants.FrameworkIdentifiers.NetCoreApp},Version=3.0" },
-                    { "TargetPlatformIdentifier", "" },
-                    { "TargetPlatformMoniker", "" },
-                    { "TargetPlatformVersion", "" },
-                    { "RuntimeIdentifierGraphPath", runtimeIdentifierGraphPath }
-                });
-
-                var wrappedItems = items.Select(CreateItems).ToList();
-
-                // Act
-                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
-                var targetFrameworkInformation = dgSpec.Projects.Single().TargetFrameworks.Single();
-
-                // Assert
-                targetFrameworkInformation.FrameworkName.Framework.Should().Be(FrameworkConstants.FrameworkIdentifiers.NetCoreApp);
-                targetFrameworkInformation.AssetTargetFallback.Should().BeTrue();
-                var assetTargetFallbackFramework = targetFrameworkInformation.FrameworkName as AssetTargetFallbackFramework;
-                assetTargetFallbackFramework.Fallback.Should().HaveCount(1);
-                assetTargetFallbackFramework.Fallback.Single().Should().Be(atf);
-                targetFrameworkInformation.RuntimeIdentifierGraphPath.Should().Be(runtimeIdentifierGraphPath);
             }
         }
 
@@ -5124,7 +5066,7 @@ namespace NuGet.Commands.Test
             };
 
             // Act
-            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms);
+            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms, null);
 
             // Assert
             actual.Should().NotBeNull();
@@ -5153,7 +5095,7 @@ namespace NuGet.Commands.Test
             };
 
             // Act
-            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms);
+            var actual = MSBuildRestoreUtility.GetRestoreAuditProperties(project, tfms, null);
 
             // Assert
             actual.Should().NotBeNull();

@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #nullable disable
 
@@ -45,28 +44,20 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         public override bool Execute()
         {
             IList<string> filesWithoutPDBs = GenerateSymbolsLayout(IndexAllSymbols());
-            if (filesWithoutPDBs.Count > 0)
+            foreach (string file in filesWithoutPDBs)
             {
-                LogErrorOrWarning(FailOnMissingPDBs, $"Did not find PDBs for the following SDK files:");
-                foreach (string file in filesWithoutPDBs)
+                string message = "Did not find a PDB for the following SDK file: " + file;
+                if (FailOnMissingPDBs)
                 {
-                    LogErrorOrWarning(FailOnMissingPDBs, file);
+                    Log.LogError(message);
                 }
-           }
+                else
+                {
+                    Log.LogMessage(MessageImportance.High, message);
+                }
+            }
 
             return !Log.HasLoggedErrors;
-        }
-
-        private void LogErrorOrWarning(bool isError, string message)
-        {
-            if (isError)
-            {
-                Log.LogError(message);
-            }
-            else
-            {
-                Log.LogWarning(message);
-            }
         }
 
         private IList<string> GenerateSymbolsLayout(Hashtable allPdbGuids)

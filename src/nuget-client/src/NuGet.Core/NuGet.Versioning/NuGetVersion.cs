@@ -28,7 +28,7 @@ namespace NuGet.Versioning
         /// Creates a NuGetVersion from an existing NuGetVersion
         /// </summary>
         public NuGetVersion(NuGetVersion version)
-            : this(version.Version, version.ReleaseLabels, version.Metadata, version.OriginalVersion)
+            : this(version == null ? throw new ArgumentNullException(nameof(version)) : version.Version, version.ReleaseLabels, version.Metadata, version.OriginalVersion)
         {
         }
 
@@ -39,7 +39,10 @@ namespace NuGet.Versioning
         /// <param name="releaseLabel">Prerelease label</param>
         /// <param name="metadata">Build metadata</param>
         public NuGetVersion(Version version, string? releaseLabel = null, string? metadata = null)
-            : this(version, ParseReleaseLabels(releaseLabel), metadata, GetLegacyString(version, ParseReleaseLabels(releaseLabel), metadata))
+            : this(version ?? throw new ArgumentNullException(nameof(version)),
+                  ParseReleaseLabels(releaseLabel),
+                  metadata,
+                  GetLegacyString(version, ParseReleaseLabels(releaseLabel), metadata))
         {
         }
 
