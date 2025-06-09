@@ -559,7 +559,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.Add(node);
                 }
 
-                result = builder.DrainToImmutable();
+                result = builder.ToImmutableAndClear();
                 return true;
             }
         }
