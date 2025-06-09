@@ -1,10 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,6 +28,82 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
         await RunFormattingTestAsync(
             input: "",
             expected: "");
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task RoslynFormatBracesAsKandR()
+    {
+        // To format code blocks we emit a class so that class members are parsed properly by Roslyn, and ignore
+        // the open brace on the next line. This test validates that that system works when Roslyn is configured
+        // to format braces in K&R style, with the brace on the same line as the declaration.
+
+        await RunFormattingTestAsync(
+            input: """
+                <h1>count is @counter</h1>
+
+                @code {
+                private int counter;
+
+                class Goo
+                {
+                    public void Bar()
+                    {
+                        counter++;
+                    }
+                }
+                }
+                """,
+            expected: """
+                <h1>count is @counter</h1>
+
+                @code {
+                    private int counter;
+
+                    class Goo {
+                        public void Bar() {
+                            counter++;
+                        }
+                    }
+                }
+                """,
+            // I'm so sorry, but I could not find any way to change Roslyn formatting options from our test infra. Forgive my hacky sins
+            csharpModifierFunc: formattedCSharpText => SourceText.From(
+                Regex.Replace(
+                    formattedCSharpText.ToString(),
+                    @"(class|void) ([\S]+)[\s]+{",
+                    "$1 $2 {"
+                )));
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task PropertyShrunkToOneLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    public string Name
+                    {
+                        get;
+                        set;
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    public string Name { get; set; }
+                }
+                """,
+            // I'm so sorry, but I could not find any way to change Roslyn formatting options from our test infra. Forgive my hacky sins
+            csharpModifierFunc: formattedCSharpText => SourceText.From(
+                formattedCSharpText.ToString().Replace(
+                    """
+                    public string Name
+                        {
+                            get;
+                            set;
+                        }
+                    """,
+                    "public string Name { get; set; }")));
     }
 
     [FormattingTestFact]
@@ -1769,6 +1847,71 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                     """);
     }
+
+    [FormattingTestFact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2471065")]
+    public Task MultipleHtmlElementsInCSharpCode()
+        => RunFormattingTestAsync(
+            input: """
+                <div class="p-3 pb-0" style="min-height:24rem;">
+
+                @if (productsForExport != null)
+                {
+                <label class="section-label">
+                @(!showResult ? "some label" : "another label")
+                </label>
+
+                <div class="row">
+                <div class="col">
+                @if (!showResult)
+                {
+                <label>
+                <input type="checkbox" class="me-2 mt-1" />
+                <span>some label</span>
+                </label>
+                }
+                </div>
+
+                </div>
+                }
+
+                </div>
+
+                @code {
+                bool showResult = false;
+                object? productsForExport = null;
+                }
+                """,
+            expected: """
+                <div class="p-3 pb-0" style="min-height:24rem;">
+
+                    @if (productsForExport != null)
+                    {
+                        <label class="section-label">
+                            @(!showResult ? "some label" : "another label")
+                        </label>
+
+                        <div class="row">
+                            <div class="col">
+                                @if (!showResult)
+                                {
+                                    <label>
+                                        <input type="checkbox" class="me-2 mt-1" />
+                                        <span>some label</span>
+                                    </label>
+                                }
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+                @code {
+                    bool showResult = false;
+                    object? productsForExport = null;
+                }
+                """);
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/29645")]
@@ -6115,4 +6258,214 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 """,
             debugAssertsEnabled: false
             );
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/11873")]
+    public Task NestedExplicitExpression1()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    <div class="d-flex">
+                        <div class="d-flex flex-column" style="text-align: end;">
+                            @if (true)
+                            {
+                                <span>
+                                    @((((true) ? 123d : 0d) +
+                                        (true ? 123d : 0d)
+                                        ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                </span>
+                                <hr class="my-1" />
+                                <span>
+                                    @((123d +
+                                        ((true) ? 123d : 0d) +
+                                        (true ? 123d : 0d)
+                                        ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    <div class="d-flex">
+                        <div class="d-flex flex-column" style="text-align: end;">
+                            @if (true)
+                            {
+                                <span>
+                                    @((((true) ? 123d : 0d) +
+                                                (true ? 123d : 0d)
+                                                ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                </span>
+                                <hr class="my-1" />
+                                <span>
+                                    @((123d +
+                                                ((true) ? 123d : 0d) +
+                                                (true ? 123d : 0d)
+                                                ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+                """);
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [WorkItem("https://github.com/dotnet/razor/issues/11873")]
+    public Task NestedExplicitExpression1_Stable()
+    {
+        var code = """
+            @if (true)
+            {
+                <div class="d-flex">
+                    <div class="d-flex flex-column" style="text-align: end;">
+                        @if (true)
+                        {
+                            <span>
+                                @((((true) ? 123d : 0d) +
+                                            (true ? 123d : 0d)
+                                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                            </span>
+                            <hr class="my-1" />
+                            <span>
+                                @((123d +
+                                            ((true) ? 123d : 0d) +
+                                            (true ? 123d : 0d)
+                                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+            """;
+
+        return RunFormattingTestAsync(input: code, expected: code);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11873")]
+    public Task NestedExplicitExpression2()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                    </span>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)) €
+                    </span>
+                }
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11873")]
+    public Task NestedExplicitExpression3()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                        ) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                        ) €
+                    </span>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                            ) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                            ) €
+                    </span>
+                }
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11873")]
+    public Task NestedExplicitExpression4()
+    => RunFormattingTestAsync(
+        input: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                ) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                ) €
+                    </span>
+                }
+                """,
+        expected: """
+                @if (true)
+                {
+                    <span>
+                        @((((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                            ) €
+                    </span>
+                    <hr class="my-1" />
+                    <span>
+                        @((123d +
+                            ((true) ? 123d : 0d) +
+                            (true ? 123d : 0d)
+                            ).ToString("F2", CultureInfo.InvariantCulture)
+                            ) €
+                    </span>
+                }
+                """);
 }

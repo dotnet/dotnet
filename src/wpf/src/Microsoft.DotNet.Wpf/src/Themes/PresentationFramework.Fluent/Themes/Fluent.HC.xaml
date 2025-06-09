@@ -77,10 +77,8 @@
   <Thickness x:Key="TimePickerHostPadding">0,1,0,2</Thickness>
   <Thickness x:Key="DatePickerHostPadding">0,1,0,2</Thickness>
   <Thickness x:Key="DatePickerHostMonthPadding">9,0,0,1</Thickness>
-  <Thickness x:Key="ComboBoxEditableTextPadding">10,0,30,0</Thickness>
   <Thickness x:Key="TextControlErrorBorderPadding">1</Thickness>
   <system:Double x:Key="ComboBoxMinHeight">24</system:Double>
-  <!-- <Thickness x:Key="ComboBoxPadding">12,1,0,3</Thickness> -->
   <system:Double x:Key="NavigationViewItemOnLeftMinHeight">32</system:Double>
   <!--
         Microsoft UI XAML
@@ -263,7 +261,7 @@
   <SolidColorBrush x:Key="CalendarViewSelectedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="CalendarViewTodayBackground" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="CalendarViewTodayForeground" Color="{StaticResource SystemColorHighlightTextColor}" />
-  <SolidColorBrush x:Key="CalendarViewButtonForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="CalendarViewNavigationButtonForeground" Color="{StaticResource SystemColorButtonTextColor}" />
   <!--  Card / CardAction / CardColor / CardExpander  -->
   <SolidColorBrush x:Key="CardBackground" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="CardBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
@@ -326,17 +324,33 @@
   <!--  TODO  -->
   <!--  ComboBox  -->
   <SolidColorBrush x:Key="ComboBoxBackground" Color="{StaticResource SystemColorButtonFaceColor}" />
-  <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="{StaticResource SystemColorHighlightTextColor}" />
-  <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
-  <SolidColorBrush x:Key="ComboBoxBackgroundDisabled" Color="{StaticResource SystemColorWindowColor}" />
+  <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{StaticResource SystemColorWindowColor}" />
+  <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="ComboBoxBackgroundDisabled" Color="{StaticResource SystemColorButtonFaceColor}" />
   <SolidColorBrush x:Key="ComboBoxForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="{StaticResource SystemColorButtonTextColor}" />
   <SolidColorBrush x:Key="ComboBoxForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
-  <!--<SolidColorBrush x:Key="ComboBoxItemBorderBrush" Color="{StaticResource ControlElevationBorderBrush}" />-->
-  <SolidColorBrush x:Key="ComboBoxBorderBrushDisabled" Color="{StaticResource SystemColorWindowColor}" />
+  <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxForegroundFocusedPressed" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="ComboBoxBorderBrushDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocused" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownBackgroundPointerOver" Color="{StaticResource SystemColorWindowColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownBackgroundPointerPressed" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="ComboBoxFocusedDropDownBackgroundPointerPressed" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="ComboBoxEditableDropDownGlyphForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <!-- Deprecated ComboBox brushes -->
   <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="{StaticResource SystemColorHighlightTextColor}" />
-  <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="{StaticResource SystemColorGrayTextColor}" />
-  <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{StaticResource SystemColorWindowColor}" />
-  <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource SystemColorWindowTextColor}" />
+  <!--<SolidColorBrush x:Key="ComboBoxItemBorderBrush" Color="{StaticResource ControlElevationBorderBrush}" />-->
   <SolidColorBrush x:Key="ComboBoxItemPillFillBrush" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="ComboBoxItemForeground" Color="{StaticResource SystemColorButtonTextColor}" />
@@ -353,6 +367,21 @@
   <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="{StaticResource SystemColorWindowTextColor}" />
   <SolidColorBrush x:Key="ContextMenuForeground" Color="{StaticResource SystemColorWindowTextColor}" />
   <!--  DataGrid  -->
+  <SolidColorBrush x:Key="DataGridColumnFloatingHeaderBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderDropSeparatorBackground" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderSeparatorBrush" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="DataGridColumnHeaderBackground" Color="Transparent" />
+  <SolidColorBrush x:Key="DataGridHeaderBackground" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBackgroundPressed" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBackgroundDisabled" Color="{StaticResource SystemColorButtonFaceColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBackgroundSelected" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBorderBrushPointerOver" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBorderBrushPressed" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBorderBrushDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderBorderBrushSelected" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="DataGridHeaderForegroundDisabled" Color="{StaticResource SystemColorGrayTextColor}" />
   <SolidColorBrush x:Key="DataGridRowSelectedBackgroundThemeBrush" Color="{StaticResource SystemColorButtonTextColor}" />
   <SolidColorBrush x:Key="DataGridRowSelectedForegroundThemeBrush" Color="{StaticResource SystemColorButtonFaceColor}" />
   <!--  DatePicker  -->
@@ -360,7 +389,7 @@
   <SolidColorBrush x:Key="DatePickerBackground" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="DatePickerTextBoxForeground" Color="{StaticResource SystemColorButtonTextColor}" />
   <SolidColorBrush x:Key="DatePickerTextBoxCaretBrush" Color="{StaticResource SystemColorButtonTextColor}" />
-  <SolidColorBrush x:Key="DatePickerFocusedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="DatePickerBorderBrushFocused" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="DatePickerBackgroundFocused" Color="{StaticResource SystemColorHighlightTextColor}" />
   <SolidColorBrush x:Key="DatePickerBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
   <SolidColorBrush x:Key="DatePickerPopupBackground" Color="{StaticResource SystemColorWindowColor}" />
@@ -395,6 +424,17 @@
   <SolidColorBrush x:Key="GridsplitterBackgroundPressed" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="GridsplitterBackgroundDisabled" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="GridsplitterForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <!-- GridView -->
+  <SolidColorBrush x:Key="GridViewColumnHeaderGripperThumbFill" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderForeground" Color="{StaticResource SystemColorWindowTextColor}" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBackground" Color="Transparent" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundPressed" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundDisabled" Color="{StaticResource SystemColorWindowColor}" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushPointerOver" Color="Transparent" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushPressed" Color="Transparent" />
+  <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushDisabled" Color="Transparent" />
   <!--  GroupBox  -->
   <SolidColorBrush x:Key="GroupBoxBackground" Color="{StaticResource SystemColorButtonFaceColor}" />
   <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="{StaticResource SystemColorButtonTextColor}" />
@@ -433,7 +473,7 @@
   <SolidColorBrush x:Key="ListBoxItemForeground" Color="{StaticResource SystemColorWindowTextColor}" />
   <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundPointerOverThemeBrush" Color="{StaticResource SystemColorButtonTextColor}" />
-  <SolidColorBrush x:Key="ListBoxItemBackgroundSelectedPressedThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundPressedThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
   <SolidColorBrush x:Key="ListBoxItemSelectedForegroundThemeBrush" Color="{StaticResource SystemColorButtonFaceColor}" />
   <SolidColorBrush x:Key="ListBoxItemUnselectedBackgroundPointerOverThemeBrush" Color="{StaticResource SystemColorHighlightTextColor}" />
   <!--  ListView  -->
@@ -450,7 +490,7 @@
   <SolidColorBrush x:Key="MenuBarForeground" Color="{StaticResource SystemColorWindowTextColor}" />
   <SolidColorBrush x:Key="MenuBarItemBackgroundSelected" Color="{StaticResource SystemColorButtonFaceColor}" />
   <SolidColorBrush x:Key="MenuBarItemBorderBrush" Color="{StaticResource SystemColorWindowColor}" />
-  <SolidColorBrush x:Key="MenuBarItemBackgroundMousePointer" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <SolidColorBrush x:Key="MenuBarItemBackgroundPointerOver" Color="{StaticResource SystemColorHighlightTextColor}" />
   <!--  MessageDialog  -->
   <SolidColorBrush x:Key="MessageBoxBackground" Color="{StaticResource SystemColorWindowColor}" />
   <SolidColorBrush x:Key="MessageBoxForeground" Color="{StaticResource SystemColorWindowTextColor}" />
@@ -736,6 +776,12 @@
   <Color x:Key="SystemFillColorNeutralBackground">#2D3236</Color>
   <Color x:Key="SystemFillColorSolidAttentionBackground">#2D3236</Color>
   <Color x:Key="SystemFillColorSolidNeutralBackground">#FF0000</Color>
+  <!-- #region Brushes Deprecated in .NET 10 -->
+  <SolidColorBrush x:Key="CalendarViewButtonForeground" Color="{StaticResource SystemColorButtonTextColor}" />
+  <SolidColorBrush x:Key="DatePickerFocusedBorderBrush" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="ListBoxItemBackgroundSelectedPressedThemeBrush" Color="{StaticResource SystemColorHighlightColor}" />
+  <SolidColorBrush x:Key="MenuBarItemBackgroundMousePointer" Color="{StaticResource SystemColorHighlightTextColor}" />
+  <!-- #endregion -->
   <Thickness x:Key="ButtonPadding">11,5,11,6</Thickness>
   <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
   <Thickness x:Key="ButtonIconMargin">0,0,8,0</Thickness>
@@ -1044,12 +1090,12 @@
                   <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button x:Name="PART_HeaderButton" Grid.Column="0" Margin="7,6,3,7" Padding="8,7,8,8" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Focusable="True" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource CalendarViewForeground}" />
-                <Button x:Name="PART_PreviousButton" Grid.Column="1" Width="26" Height="26" Margin="7,6,7,7" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Focusable="True" AutomationProperties.Name="Previous" Foreground="{DynamicResource CalendarViewButtonForeground}">
+                <Button x:Name="PART_PreviousButton" Grid.Column="1" Width="26" Height="26" Margin="7,6,7,7" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Focusable="True" AutomationProperties.Name="Previous" Foreground="{DynamicResource CalendarViewNavigationButtonForeground}">
                   <Button.Content>
                     <TextBlock FontSize="8" FontFamily="{DynamicResource SymbolThemeFontFamily}"></TextBlock>
                   </Button.Content>
                 </Button>
-                <Button x:Name="PART_NextButton" Grid.Column="2" Width="26" Height="26" Margin="7,6,7,7" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Focusable="True" AutomationProperties.Name="Next" Foreground="{DynamicResource CalendarViewButtonForeground}">
+                <Button x:Name="PART_NextButton" Grid.Column="2" Width="26" Height="26" Margin="7,6,7,7" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Focusable="True" AutomationProperties.Name="Next" Foreground="{DynamicResource CalendarViewNavigationButtonForeground}">
                   <Button.Content>
                     <TextBlock FontSize="8" FontFamily="{DynamicResource SymbolThemeFontFamily}"></TextBlock>
                   </Button.Content>
@@ -1306,49 +1352,78 @@
   <DataTemplate DataType="{x:Type CollectionViewGroup}">
     <ContentPresenter Content="{Binding Path=Name}" ContentStringFormat="{TemplateBinding ContentStringFormat}" />
   </DataTemplate>
-  <Thickness x:Key="ComboBoxPadding">10,8,10,8</Thickness>
-  <Thickness x:Key="ComboBoxBorderThemeThickness">1,1,1,1</Thickness>
+  <!-- Deprecated .NET 9 Keys -->
   <Thickness x:Key="ComboBoxAccentBorderThemeThickness">0,0,0,2</Thickness>
   <Thickness x:Key="ComboBoxChevronMargin">8,0,10,0</Thickness>
-  <Thickness x:Key="ComboBoxItemMargin">3,2,3,0</Thickness>
-  <Thickness x:Key="ComboBoxItemContentMargin">10,8,8,8</Thickness>
-  <system:Double x:Key="ComboBoxChevronSize">11.0</system:Double>
+  <!-- Redefined in .NET 10 -->
+  <!-- <Thickness x:Key="ComboBoxPadding">10,8,10,8</Thickness>
+            <system:Double x:Key="ComboBoxChevronSize">11</system:Double> -->
+  <Thickness x:Key="ComboBoxPadding">12,5,0,7</Thickness>
+  <Thickness x:Key="ComboBoxEditableTextPadding">11,5,38,6</Thickness>
+  <Thickness x:Key="ComboBoxBorderThemeThickness">1,1,1,1</Thickness>
+  <system:Double x:Key="ComboBoxChevronSize">10</system:Double>
   <system:Double x:Key="ComboBoxPopupMinHeight">32.0</system:Double>
   <system:String x:Key="ComboBoxChevronDownGlyph"></system:String>
+  <CornerRadius x:Key="ComboBoxDropDownButtonBackgroundCornerRadius">4</CornerRadius>
+  <Thickness x:Key="ComboBoxItemMargin">3,2,3,0</Thickness>
+  <Thickness x:Key="ComboBoxItemContentMargin">10,8,8,8</Thickness>
   <Style x:Key="DefaultComboBoxTextBoxStyle" TargetType="{x:Type TextBox}">
-    <!--  Focus by parent element  -->
     <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-    <!--  Focus by parent element  -->
-    <!--  Universal WPF UI ContextMenu  -->
     <Setter Property="ContextMenu" Value="{DynamicResource DefaultControlContextMenu}" />
-    <!--  Universal WPF UI ContextMenu  -->
-    <Setter Property="Foreground" Value="{DynamicResource ComboBoxForeground}" />
-    <Setter Property="CaretBrush" Value="{DynamicResource ComboBoxForeground}" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Visibility" Value="Hidden" />
+    <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource TextControlForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource TextControlElevationBorderBrush}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
     <Setter Property="Cursor" Value="IBeam" />
-    <Setter Property="Margin" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="MinHeight" Value="{DynamicResource TextBoxThemeMinHeight}" />
+    <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}" />
+    <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
+    <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+    <Setter Property="AllowDrop" Value="True" />
+    <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
+    <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="{x:Type TextBox}">
-          <Decorator x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextElement.Foreground="{TemplateBinding Foreground}" />
+        <ControlTemplate TargetType="{x:Type TextBoxBase}">
+          <Grid>
+            <Border x:Name="ContentBorder" MinWidth="{TemplateBinding MinWidth}" MinHeight="{TemplateBinding MinHeight}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Border.CornerRadius}" />
+            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding BorderThickness}" CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" IsTabStop="{TemplateBinding ScrollViewer.IsTabStop}" Padding="{TemplateBinding Padding}" TextElement.Foreground="{TemplateBinding Foreground}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <!-- Disabling this setter as this will be handled by the ComboBox style. -->
+              <!--<Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource TextControlBackgroundPointerOver}" />-->
+              <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushPointerOver}" />
+              <Setter TargetName="PART_ContentHost" Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+              <Setter TargetName="ContentBorder" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
+              <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
+              <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
+              <Setter TargetName="PART_ContentHost" Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
+              <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
+              <Setter TargetName="PART_ContentHost" Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
   </Style>
   <Style x:Key="DefaultComboBoxToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-    <!--  Focus by parent element  -->
     <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-    <!--  Focus by parent element  -->
     <Setter Property="Foreground" Value="{DynamicResource ComboBoxForeground}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Border.CornerRadius" Value="0" />
-    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
     <Setter Property="Template">
       <Setter.Value>
@@ -1398,14 +1473,217 @@
       </Setter.Value>
     </Setter>
   </Style>
+  <ControlTemplate x:Key="DefaultComboBoxTemplate" TargetType="{x:Type ComboBox}">
+    <Grid x:Name="LayoutGrid">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="38" />
+      </Grid.ColumnDefinitions>
+      <Border x:Name="ContentBorder" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Border.CornerRadius}" />
+      <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" Margin="{TemplateBinding Padding}" TextElement.Foreground="{TemplateBinding Foreground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" IsHitTestVisible="False" />
+      <ToggleButton x:Name="ToggleButton" Grid.ColumnSpan="2" Focusable="False" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource DefaultComboBoxToggleButtonStyle}" />
+      <TextBlock x:Name="ChevronIcon" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5" FontFamily="{DynamicResource SymbolThemeFontFamily}" FontSize="{StaticResource ComboBoxChevronSize}" Text="{StaticResource ComboBoxChevronDownGlyph}">
+        <TextBlock.RenderTransform>
+          <RotateTransform Angle="0" />
+        </TextBlock.RenderTransform>
+      </TextBlock>
+      <Popup x:Name="PART_Popup" MinWidth="{TemplateBinding ActualWidth}" AllowsTransparency="True" Focusable="False" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="{TemplateBinding Popup.Placement}" PopupAnimation="{TemplateBinding Popup.PopupAnimation}" VerticalOffset="1">
+        <Border x:Name="DropDownBorder" Padding="0,4,0,6" Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="1.5" CornerRadius="{DynamicResource PopupCornerRadius}" SnapsToDevicePixels="True">
+          <Border.RenderTransform>
+            <TranslateTransform />
+          </Border.RenderTransform>
+          <Grid>
+            <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" TextElement.FontSize="{TemplateBinding FontSize}" TextElement.FontWeight="{TemplateBinding FontWeight}" TextElement.Foreground="{TemplateBinding Foreground}">
+              <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+            </ScrollViewer>
+          </Grid>
+          <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Direction="270" Opacity="0.25" ShadowDepth="6" />
+          </Border.Effect>
+        </Border>
+      </Popup>
+    </Grid>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsDropDownOpen" Value="True">
+        <Trigger.EnterActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="0" To="180" Duration="00:00:00.167" />
+              <DoubleAnimation Storyboard.TargetName="DropDownBorder" Storyboard.TargetProperty="(Border.RenderTransform).(TranslateTransform.Y)" From="-90" To="0" Duration="00:00:00.167">
+                <DoubleAnimation.EasingFunction>
+                  <CircleEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+              </DoubleAnimation>
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.EnterActions>
+        <Trigger.ExitActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="180" To="0" Duration="00:00:00.167" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.ExitActions>
+      </Trigger>
+      <Trigger Property="HasItems" Value="False">
+        <Setter TargetName="DropDownBorder" Property="MinHeight" Value="{StaticResource ComboBoxPopupMinHeight}" />
+      </Trigger>
+      <Trigger SourceName="PART_Popup" Property="Popup.AllowsTransparency" Value="False">
+        <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0" />
+      </Trigger>
+      <Trigger Property="IsGrouping" Value="True">
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+      </Trigger>
+      <!--PointerOver state-->
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
+        <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPointerOver}" />
+        <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPointerOver}" />
+      </Trigger>
+      <!--Pressed state-->
+      <Trigger SourceName="ToggleButton" Property="IsPressed" Value="True">
+        <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundPressed}" />
+        <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPressed}" />
+        <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPressed}" />
+      </Trigger>
+      <!--Focused state-->
+      <Trigger Property="IsFocused" Value="True">
+        <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocused}" />
+      </Trigger>
+      <!--FocusedPressed state-->
+      <MultiTrigger>
+        <MultiTrigger.Conditions>
+          <Condition Property="IsFocused" Value="True" />
+          <Condition SourceName="ToggleButton" Property="IsPressed" Value="True" />
+        </MultiTrigger.Conditions>
+        <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocusedPressed}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocusedPressed}" />
+      </MultiTrigger>
+      <!--Disabled state-->
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
+        <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
+        <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+  <ControlTemplate x:Key="EditableComboBoxTemplate" TargetType="{x:Type ComboBox}">
+    <Grid x:Name="LayoutGrid">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="38" />
+      </Grid.ColumnDefinitions>
+      <Border x:Name="ContentBorder" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Border.CornerRadius}" />
+      <TextBox x:Name="PART_EditableTextBox" Grid.ColumnSpan="2" Padding="11,5,38,6" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" IsReadOnly="{TemplateBinding IsReadOnly}" Style="{StaticResource DefaultComboBoxTextBoxStyle}" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
+      <Border x:Name="DropDownOverlay" Grid.Column="1" Margin="4" Width="30" Background="Transparent" CornerRadius="{StaticResource ComboBoxDropDownButtonBackgroundCornerRadius}" />
+      <ToggleButton x:Name="ToggleButton" Grid.Column="1" Margin="4" Focusable="False" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource DefaultComboBoxToggleButtonStyle}" />
+      <TextBlock x:Name="ChevronIcon" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5" FontFamily="{DynamicResource SymbolThemeFontFamily}" FontSize="{StaticResource ComboBoxChevronSize}" Text="{StaticResource ComboBoxChevronDownGlyph}">
+        <TextBlock.RenderTransform>
+          <RotateTransform Angle="0" />
+        </TextBlock.RenderTransform>
+      </TextBlock>
+      <Popup x:Name="PART_Popup" Focusable="False" AllowsTransparency="True" MinWidth="{TemplateBinding ActualWidth}" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="{TemplateBinding Popup.Placement}" PopupAnimation="{TemplateBinding Popup.PopupAnimation}" VerticalOffset="1">
+        <Border x:Name="DropDownBorder" Padding="0,4,0,6" BorderThickness="1.5" Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" CornerRadius="{DynamicResource PopupCornerRadius}" SnapsToDevicePixels="True">
+          <Border.RenderTransform>
+            <TranslateTransform />
+          </Border.RenderTransform>
+          <Grid>
+            <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" TextElement.FontSize="{TemplateBinding FontSize}" TextElement.FontWeight="{TemplateBinding FontWeight}" TextElement.Foreground="{TemplateBinding Foreground}">
+              <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+            </ScrollViewer>
+          </Grid>
+          <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Direction="270" Opacity="0.25" ShadowDepth="6" />
+          </Border.Effect>
+        </Border>
+      </Popup>
+    </Grid>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsDropDownOpen" Value="True">
+        <Trigger.EnterActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="0" To="180" Duration="00:00:00.167" />
+              <DoubleAnimation Storyboard.TargetName="DropDownBorder" Storyboard.TargetProperty="(Border.RenderTransform).(TranslateTransform.Y)" From="-90" To="0" Duration="00:00:00.167">
+                <DoubleAnimation.EasingFunction>
+                  <CircleEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+              </DoubleAnimation>
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.EnterActions>
+        <Trigger.ExitActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="180" To="0" Duration="00:00:00.167" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.ExitActions>
+      </Trigger>
+      <Trigger Property="HasItems" Value="False">
+        <Setter TargetName="DropDownBorder" Property="MinHeight" Value="{StaticResource ComboBoxPopupMinHeight}" />
+      </Trigger>
+      <Trigger SourceName="PART_Popup" Property="Popup.AllowsTransparency" Value="False">
+        <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0" />
+      </Trigger>
+      <Trigger Property="IsGrouping" Value="True">
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+      </Trigger>
+      <!-- PointerOver state-->
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
+        <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPointerOver}" />
+        <Setter TargetName="PART_EditableTextBox" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPointerOver}" />
+      </Trigger>
+      <!-- Focused / TextBoxFocused -->
+      <Trigger Property="IsFocused" Value="True">
+        <Setter TargetName="PART_EditableTextBox" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+      </Trigger>
+      <!--TextBoxOverlayPointerOver state-->
+      <Trigger SourceName="ToggleButton" Property="IsMouseOver" Value="True">
+        <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
+      </Trigger>
+      <!--TextBoxOverlayPressed-->
+      <Trigger SourceName="ToggleButton" Property="IsPressed" Value="True">
+        <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />
+      </Trigger>
+      <!--TextBoxFocusedOverlayPointerOver state-->
+      <MultiTrigger>
+        <MultiTrigger.Conditions>
+          <Condition Property="IsFocused" Value="True" />
+          <Condition SourceName="ToggleButton" Property="IsMouseOver" Value="True" />
+        </MultiTrigger.Conditions>
+        <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+      </MultiTrigger>
+      <!-- FocusedPressed state / TextBoxFocusedOverlayPressed state -->
+      <MultiTrigger>
+        <MultiTrigger.Conditions>
+          <Condition Property="IsFocused" Value="True" />
+          <Condition SourceName="ToggleButton" Property="IsPressed" Value="True" />
+        </MultiTrigger.Conditions>
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+        <Setter TargetName="PART_EditableTextBox" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocusedPressed}" />
+        <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerPressed}" />
+      </MultiTrigger>
+      <!--Disabled state-->
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
+        <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
+        <Setter TargetName="PART_EditableTextBox" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
+        <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
   <Style x:Key="DefaultComboBoxStyle" TargetType="{x:Type ComboBox}">
-    <!--  Universal WPF UI focus  -->
     <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
-    <!--  Universal WPF UI ContextMenu  -->
     <Setter Property="ContextMenu" Value="{DynamicResource DefaultControlContextMenu}" />
     <Setter Property="Foreground" Value="{DynamicResource ComboBoxForeground}" />
     <Setter Property="Background" Value="{DynamicResource ComboBoxBackground}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrush}" />
     <Setter Property="BorderThickness" Value="{StaticResource ComboBoxBorderThemeThickness}" />
     <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -1420,125 +1698,15 @@
     <Setter Property="Padding" Value="{DynamicResource ComboBoxPadding}" />
     <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
     <Setter Property="Popup.PopupAnimation" Value="None" />
-    <!--  WPF doesn't like centering, the animation is ugly and the mouse button sometimes clicks right away.  -->
     <Setter Property="Popup.Placement" Value="Bottom" />
     <Setter Property="SnapsToDevicePixels" Value="True" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ComboBox}">
-          <Grid>
-            <Border x:Name="ContentBorder" Grid.Row="0" MinWidth="{TemplateBinding MinWidth}" MinHeight="{TemplateBinding MinHeight}" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Border.CornerRadius}">
-              <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                <!--
-                                    Funky grid - because:
-                                    Chevron is over Presenter, ToggleButton is over Chevron, TextBox is over ToggleButton.
-                                    But, TextBox is not over Chevron, so ToggleButton still works.
-                                -->
-                <Grid>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                  <Grid Grid.Column="0" Margin="{TemplateBinding Padding}">
-                    <ContentPresenter Name="PART_ContentPresenter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" IsHitTestVisible="False" TextElement.Foreground="{TemplateBinding Foreground}" />
-                  </Grid>
-                  <Grid Grid.Column="1" Margin="{StaticResource ComboBoxChevronMargin}">
-                    <TextBlock x:Name="ChevronIcon" Margin="0" VerticalAlignment="Center" FontSize="{StaticResource ComboBoxChevronSize}" Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}" RenderTransformOrigin="0.5, 0.5" FontFamily="{DynamicResource SymbolThemeFontFamily}" Text="{StaticResource ComboBoxChevronDownGlyph}">
-                      <TextBlock.RenderTransform>
-                        <RotateTransform Angle="0" />
-                      </TextBlock.RenderTransform>
-                    </TextBlock>
-                  </Grid>
-                  <Grid Grid.Column="0" Grid.ColumnSpan="2" Margin="0">
-                    <ToggleButton Name="ToggleButton" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClickMode="Press" Focusable="False" Foreground="{TemplateBinding Foreground}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource DefaultComboBoxToggleButtonStyle}" />
-                  </Grid>
-                  <Grid Grid.Column="0" Margin="{TemplateBinding Padding}">
-                    <TextBox x:Name="PART_EditableTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}" IsReadOnly="{TemplateBinding IsReadOnly}" Style="{StaticResource DefaultComboBoxTextBoxStyle}" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
-                  </Grid>
-                </Grid>
-                <Popup x:Name="PART_Popup" MinWidth="{TemplateBinding ActualWidth}" VerticalAlignment="Center" AllowsTransparency="True" Focusable="False" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="{TemplateBinding Popup.Placement}" PopupAnimation="{TemplateBinding Popup.PopupAnimation}" VerticalOffset="1">
-                  <Border x:Name="DropDownBorder" Padding="0,4,0,6" Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="1.5" CornerRadius="{DynamicResource PopupCornerRadius}" SnapsToDevicePixels="True">
-                    <!--Will revist this code while doing performance evaluation for dynamic resources.-->
-                    <Border.RenderTransform>
-                      <TranslateTransform />
-                    </Border.RenderTransform>
-                    <Grid>
-                      <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}" Margin="0" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" SnapsToDevicePixels="True" TextElement.FontSize="{TemplateBinding FontSize}" TextElement.FontWeight="{TemplateBinding FontWeight}" TextElement.Foreground="{TemplateBinding Foreground}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" TextElement.FontSize="{TemplateBinding FontSize}" />
-                      </ScrollViewer>
-                    </Grid>
-                    <Border.Effect>
-                      <DropShadowEffect BlurRadius="20" Direction="270" Opacity="0.25" ShadowDepth="6" />
-                    </Border.Effect>
-                  </Border>
-                </Popup>
-              </Grid>
-            </Border>
-            <Border x:Name="AccentBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{DynamicResource ComboBoxBorderBrushFocused}" BorderThickness="{StaticResource ComboBoxAccentBorderThemeThickness}" CornerRadius="{TemplateBinding Border.CornerRadius}" Visibility="Collapsed" />
-          </Grid>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsDropDownOpen" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard>
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="0" To="180" Duration="00:00:00.167" />
-                    <DoubleAnimation Storyboard.TargetName="DropDownBorder" Storyboard.TargetProperty="(Border.RenderTransform).(TranslateTransform.Y)" From="-90" To="0" Duration="00:00:00.167">
-                      <DoubleAnimation.EasingFunction>
-                        <CircleEase EasingMode="EaseOut" />
-                      </DoubleAnimation.EasingFunction>
-                    </DoubleAnimation>
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
-                <BeginStoryboard>
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="ChevronIcon" Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)" From="180" To="0" Duration="00:00:00.167" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.ExitActions>
-            </Trigger>
-            <Trigger Property="HasItems" Value="False">
-              <Setter TargetName="DropDownBorder" Property="MinHeight" Value="{StaticResource ComboBoxPopupMinHeight}" />
-            </Trigger>
-            <Trigger SourceName="PART_Popup" Property="Popup.AllowsTransparency" Value="False">
-              <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0" />
-            </Trigger>
-            <Trigger Property="IsGrouping" Value="True">
-              <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
-            </Trigger>
-            <Trigger Property="IsEditable" Value="True">
-              <Setter Property="IsTabStop" Value="False" />
-              <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
-              <Setter TargetName="PART_ContentPresenter" Property="Visibility" Value="Hidden" />
-            </Trigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsEnabled" Value="True" />
-                <Condition Property="IsKeyboardFocusWithin" Value="True" />
-                <Condition Property="IsEditable" Value="True" />
-              </MultiTrigger.Conditions>
-              <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundFocused}" />
-              <Setter TargetName="AccentBorder" Property="Visibility" Value="Visible" />
-            </MultiTrigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsEnabled" Value="True" />
-                <Condition Property="IsMouseOver" Value="True" />
-                <Condition Property="IsKeyboardFocusWithin" Value="False" />
-              </MultiTrigger.Conditions>
-              <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
-            </MultiTrigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter TargetName="ContentBorder" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
-              <Setter TargetName="ContentBorder" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
-              <Setter Property="Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+    <Setter Property="Template" Value="{StaticResource DefaultComboBoxTemplate}" />
+    <Style.Triggers>
+      <Trigger Property="IsEditable" Value="True">
+        <Setter Property="Template" Value="{StaticResource EditableComboBoxTemplate}" />
+      </Trigger>
+    </Style.Triggers>
   </Style>
   <Style BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="{x:Type ComboBoxItem}" />
   <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="{x:Type ComboBox}" />
@@ -1851,28 +2019,98 @@
       </Setter.Value>
     </Setter>
   </Style>
+  <system:Double x:Key="DataGridColumnHeaderMinHeight">32</system:Double>
+  <CornerRadius x:Key="DataGridHeaderDropSeparatorCornerRadius">2</CornerRadius>
+  <Thickness x:Key="DataGridHeaderDropSeparatorPadding">0,4</Thickness>
+  <Thickness x:Key="DataGridColumnHeaderPadding">4,0</Thickness>
+  <system:Double x:Key="DataGridHeaderDropSeparatorWidth">4</system:Double>
+  <system:Double x:Key="DataGridColumnFloatingHeaderOpacity">0.8</system:Double>
+  <Thickness x:Key="DataGridColumnFloatingHeaderBorderThickness">1</Thickness>
+  <system:Double x:Key="DataGridSortIndicatorIconFontSize">8</system:Double>
+  <Thickness x:Key="DataGridSortIndicatorIconMargin">4,4,2,4</Thickness>
+  <!-- DataGrid Floating Column Header Style -->
+  <Style x:Key="DefaultDataGridColumnFloatingHeaderStyle" TargetType="{x:Type Control}">
+    <Setter Property="Opacity" Value="{DynamicResource DataGridColumnFloatingHeaderOpacity}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DataGridColumnFloatingHeaderBorderBrush}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource DataGridColumnFloatingHeaderBorderThickness}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Control}">
+          <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+            <Grid>
+              <Canvas Name="PART_VisualBrushCanvas" Margin="{TemplateBinding Margin}" />
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- DataGrid Column Header Drop Separator Style -->
+  <Style x:Key="DefaultDataGridHeaderDropSeparatorStyle" TargetType="{x:Type Separator}">
+    <Setter Property="Background" Value="{DynamicResource DataGridHeaderDropSeparatorBackground}" />
+    <Setter Property="Width" Value="{DynamicResource DataGridHeaderDropSeparatorWidth}" />
+    <Setter Property="Padding" Value="{DynamicResource DataGridHeaderDropSeparatorPadding}" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Separator}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Margin="{TemplateBinding Padding}" Width="{TemplateBinding Width}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource DataGridHeaderDropSeparatorCornerRadius}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   <!--  Style and template for the DataGridColumnHeader.  -->
   <Style x:Key="DefaultDataGridColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
-    <Setter Property="Padding" Value="12,0,0,0" />
-    <Setter Property="MinHeight" Value="32" />
-    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Background" Value="{DynamicResource DataGridColumnHeaderBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DataGridHeaderBorderBrush}" />
+    <Setter Property="MinHeight" Value="{StaticResource DataGridColumnHeaderMinHeight}" />
+    <Setter Property="Padding" Value="{DynamicResource DataGridColumnHeaderPadding}" />
+    <Setter Property="SeparatorBrush" Value="{DynamicResource DataGridHeaderSeparatorBrush}" />
+    <Setter Property="SeparatorVisibility" Value="Visible" />
+    <Setter Property="BorderThickness" Value="0 0 0 1" />
+    <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="SeparatorBrush" Value="{DynamicResource ControlFillColorDefault}" />
-    <Setter Property="IsTabStop" Value="False" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
-          <Grid>
-            <Border x:Name="columnHeaderBorder" Padding="3,0,3,0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,1,1">
-              <ContentPresenter RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+          <Grid x:Name="RootGrid">
+            <Border x:Name="SeparatorBorder" Grid.ColumnSpan="2" BorderBrush="{TemplateBinding SeparatorBrush}" Visibility="{TemplateBinding SeparatorVisibility}" BorderThickness="0 0 1 0" />
+            <Border x:Name="HeaderBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                <TextBlock x:Name="SortIndicator" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Margin="{DynamicResource DataGridSortIndicatorIconMargin}" FontFamily="{DynamicResource SymbolThemeFontFamily}" FontSize="{DynamicResource DataGridSortIndicatorIconFontSize}" Text="" />
+                <Thumb x:Name="PART_LeftHeaderGripper" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource ColumnHeaderGripperStyle}" />
+                <Thumb x:Name="PART_RightHeaderGripper" Grid.ColumnSpan="2" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}" />
+              </Grid>
             </Border>
-            <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left" Style="{StaticResource ColumnHeaderGripperStyle}" />
-            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}" />
           </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundPointerOver}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource DataGridHeaderBorderBrushPointerOver}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundPressed}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource DataGridHeaderBorderBrushPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundDisabled}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource DataGridHeaderBorderBrushDisabled}" />
+            </Trigger>
+            <Trigger Property="SortDirection" Value="Ascending">
+              <Setter TargetName="SortIndicator" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SortIndicator" Property="Text" Value="" />
+            </Trigger>
+            <Trigger Property="SortDirection" Value="Descending">
+              <Setter TargetName="SortIndicator" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SortIndicator" Property="Text" Value="" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -1884,7 +2122,7 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type DataGridColumnHeadersPresenter}">
           <Grid>
-            <DataGridColumnHeader x:Name="PART_FillerColumnHeader" IsHitTestVisible="False" SeparatorVisibility="Collapsed" />
+            <DataGridColumnHeader x:Name="PART_FillerColumnHeader" IsHitTestVisible="False" Background="{DynamicResource DataGridHeaderBackground}" SeparatorVisibility="Collapsed" />
             <ItemsPresenter />
           </Grid>
         </ControlTemplate>
@@ -1904,43 +2142,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-  <Style x:Key="DefaultDragIndicatorStyleStyle" TargetType="{x:Type Control}">
-    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <!--  DataGridColumnFloatingHeader  is  internal  -->
-        <ControlTemplate TargetType="Control">
-          <Grid Background="{TemplateBinding Background}">
-            <Grid Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" MinWidth="32" />
-              </Grid.ColumnDefinitions>
-              <!-- <ContentPresenter Content="{TemplateBinding Content}" /> -->
-              <TextBlock x:Name="SortIcon" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Opacity="0" FontFamily="{DynamicResource SymbolThemeFontFamily}" Text="" />
-            </Grid>
-            <VisualStateManager.VisualStateGroups>
-              <VisualStateGroup x:Name="SortStates">
-                <VisualState x:Name="Unsorted" />
-                <VisualState x:Name="SortAscending">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                  </Storyboard>
-                </VisualState>
-                <VisualState x:Name="SortDescending">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                  </Storyboard>
-                </VisualState>
-              </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-          </Grid>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+  <!-- Deprecated in .NET 10. Replaced with DefaultDataGridColumnFloatingHeaderStyle resource -->
+  <Style x:Key="DefaultDragIndicatorStyleStyle" BasedOn="{StaticResource DefaultDataGridColumnFloatingHeaderStyle}" TargetType="{x:Type Control}" />
   <Style x:Key="TextBoxStyle" TargetType="TextBox">
     <Setter Property="Margin" Value="3" />
     <Setter Property="MinWidth" Value="30" />
@@ -1981,7 +2184,8 @@
     <Setter Property="RowHeaderStyle" Value="{StaticResource DefaultDataGridRowHeaderStyle}" />
     <Setter Property="CellStyle" Value="{StaticResource DefaultDataGridCellStyle}" />
     <Setter Property="ColumnHeaderStyle" Value="{StaticResource DefaultDataGridColumnHeaderStyle}" />
-    <Setter Property="DragIndicatorStyle" Value="{StaticResource DefaultDragIndicatorStyleStyle}" />
+    <Setter Property="DropLocationIndicatorStyle" Value="{StaticResource DefaultDataGridHeaderDropSeparatorStyle}" />
+    <Setter Property="DragIndicatorStyle" Value="{StaticResource DefaultDataGridColumnFloatingHeaderStyle}" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
     <Setter Property="Template">
       <Setter.Value>
@@ -2156,7 +2360,14 @@
   <Style x:Key="DataGridCheckBoxEditingElementDefaultStyle" BasedOn="{StaticResource DataGridCheckBoxElementDefaultStyle}" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="True" />
   </Style>
-  <Style BasedOn="{StaticResource DefaultDataGridColumnHeadersPresenterStyle}" TargetType="{x:Type DataGridColumnHeadersPresenter}" />
+  <!-- DataGrid ColumnHeaders Presenter Style -->
+  <Style x:Key="{x:Type DataGridColumnHeadersPresenter}" TargetType="{x:Type DataGridColumnHeadersPresenter}" BasedOn="{StaticResource DefaultDataGridColumnHeadersPresenterStyle}" />
+  <!--DataGrid Column Header Style-->
+  <Style x:Key="{x:Type DataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}" />
+  <!--DataGridColumnHeader Other Styles-->
+  <Style x:Key="{x:Static DataGridColumnHeader.ColumnHeaderDropSeparatorStyleKey}" TargetType="{x:Type Separator}" BasedOn="{StaticResource DefaultDataGridHeaderDropSeparatorStyle}" />
+  <Style x:Key="{x:Static DataGridColumnHeader.ColumnFloatingHeaderStyleKey}" TargetType="{x:Type Control}" BasedOn="{StaticResource DefaultDataGridColumnFloatingHeaderStyle}" />
+  <!-- DataGrid Style -->
   <Style BasedOn="{StaticResource DefaultDataGridStyle}" TargetType="{x:Type DataGrid}" />
   <!-- .NET 9 Keys -->
   <Thickness x:Key="DatePickerBorderThemeThickness">1,1,1,0</Thickness>
@@ -3010,6 +3221,138 @@
     </Setter>
   </Style>
   <Style BasedOn="{StaticResource DefaultGridSplitterStyle}" TargetType="{x:Type GridSplitter}" />
+  <system:Double x:Key="GridViewColumnHeaderMinHeight">32</system:Double>
+  <Style x:Key="DefaultGridViewColumnHeaderGripper" TargetType="Thumb">
+    <Setter Property="Canvas.Right" Value="-4" />
+    <Setter Property="Width" Value="8" />
+    <Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+    <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Thumb">
+          <Border x:Name="RootGrid" Background="Transparent" Padding="{TemplateBinding Padding}">
+            <Rectangle x:Name="PART_Thumb" Width="2" Height="16" HorizontalAlignment="Center" Fill="{DynamicResource GridViewColumnHeaderGripperThumbFill}" RadiusX="1" RadiusY="1" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!--GridView ColumnHeader Style-->
+  <Style x:Key="DefaultGridViewColumnHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+    <Setter Property="Background" Value="{DynamicResource GridViewColumnHeaderBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GridViewColumnHeaderBorderBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource GridViewColumnHeaderForeground}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="BorderThickness" Value="0,2,0,2" />
+    <Setter Property="Padding" Value="12,0" />
+    <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="GridViewColumnHeader">
+          <Grid>
+            <Border x:Name="HeaderBorder" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="4 4 0 0">
+              <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Border>
+            <Canvas>
+              <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource DefaultGridViewColumnHeaderGripper}" />
+            </Canvas>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource GridViewColumnHeaderBackgroundPointerOver}" />
+              <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource GridViewColumnHeaderBorderBrushPointerOver}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="true">
+              <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource GridViewColumnHeaderBackgroundPressed}" />
+              <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource GridViewColumnHeaderBorderBrushPressed}" />
+            </Trigger>
+            <Trigger Property="Height" Value="Auto">
+              <Setter Property="MinHeight" Value="{DynamicResource GridViewColumnHeaderMinHeight}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource GridViewColumnHeaderBackgroundDisabled}" />
+              <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource GridViewColumnHeaderBorderBrushDisabled}" />
+              <Setter Property="Foreground" Value="{DynamicResource GridViewColumnHeaderForegroundDisabled}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="Role" Value="Padding">
+        <Setter Property="BorderThickness" Value="0,2,0,2" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <!-- The same as normal header, just no gripper. -->
+            <ControlTemplate TargetType="GridViewColumnHeader">
+              <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" />
+              <ControlTemplate.Triggers>
+                <Trigger Property="Height" Value="Auto">
+                  <Setter Property="MinHeight" Value="{DynamicResource GridViewColumnHeaderMinHeight}" />
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+      <Trigger Property="Role" Value="Floating">
+        <Setter Property="Opacity" Value="0.6" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="GridViewColumnHeader">
+              <Canvas Name="PART_FloatingHeaderCanvas" />
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="GridViewColumnHeader" />
+  <!--GridView ScrollViewer Style-->
+  <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="ScrollViewer">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ScrollViewer">
+          <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="{TemplateBinding Padding}">
+              <ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="False">
+                <GridViewHeaderRowPresenter Columns="{Binding Path=TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContainerStyle="{Binding Path=TemplatedParent.View.ColumnHeaderContainerStyle, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={StaticResource DefaultGridViewColumnHeaderStyle}}" ColumnHeaderTemplate="{Binding Path=TemplatedParent.View.ColumnHeaderTemplate, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderTemplateSelector="{Binding Path=TemplatedParent.View.ColumnHeaderTemplateSelector, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderStringFormat="{Binding Path=TemplatedParent.View.ColumnHeaderStringFormat, RelativeSource={RelativeSource TemplatedParent}}" AllowsColumnReorder="{Binding Path=TemplatedParent.View.AllowsColumnReorder, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContextMenu="{Binding Path=TemplatedParent.View.ColumnHeaderContextMenu, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderToolTip="{Binding Path=TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+              </ScrollViewer>
+              <ScrollContentPresenter Name="PART_ScrollContentPresenter" KeyboardNavigation.DirectionalNavigation="Local" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" CanContentScroll="{TemplateBinding CanContentScroll}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </DockPanel>
+            <ScrollBar Name="PART_HorizontalScrollBar" Orientation="Horizontal" Grid.Row="1" Minimum="0.0" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}" Value="{TemplateBinding HorizontalOffset}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Cursor="Arrow" />
+            <ScrollBar Name="PART_VerticalScrollBar" Orientation="Vertical" Grid.Column="1" Minimum="0.0" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Value="{TemplateBinding VerticalOffset}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Cursor="Arrow" />
+            <DockPanel Grid.Column="1" Grid.Row="1" Background="{Binding Path=Background, ElementName=PART_VerticalScrollBar}" LastChildFill="false">
+              <Rectangle DockPanel.Dock="Left" Width="1" Fill="Transparent" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
+              <Rectangle DockPanel.Dock="Top" Height="1" Fill="Transparent" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
+            </DockPanel>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- Default GridView ControlTemplate -->
+  <ControlTemplate x:Key="GridViewTemplate" TargetType="{x:Type ListView}">
+    <Border x:Name="RootBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+      <Border.Resources>
+        <Style TargetType="GridViewColumnHeader" BasedOn="{StaticResource DefaultGridViewColumnHeaderStyle}" />
+      </Border.Resources>
+      <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}" Padding="{TemplateBinding Padding}">
+        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+      </ScrollViewer>
+    </Border>
+    <!-- TODO : Is enabled false trigger-->
+  </ControlTemplate>
   <Thickness x:Key="GroupBoxPadding">0,0,0,16</Thickness>
   <system:Double x:Key="GroupBoxHeaderFontSize">20</system:Double>
   <Thickness x:Key="GroupBoxHeaderMargin">0,4,0,12</Thickness>
@@ -3179,7 +3522,30 @@
     </Setter>
   </Style>
   <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="{x:Type ListBoxItem}" />
-  <Style x:Key="DefaultListViewStyle" TargetType="{x:Type ListView}">
+  <fluentcontrols:ViewIsGridViewConverter x:Key="ViewIsGridViewConverter" />
+  <ControlTemplate x:Key="ListViewTemplate" TargetType="{x:Type ListView}">
+    <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+      <Grid>
+        <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+          <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+        </ScrollViewer>
+        <Rectangle x:Name="PART_DisabledVisual" Opacity="0" RadiusX="2" RadiusY="2" Stretch="Fill" Stroke="Transparent" StrokeThickness="0" Visibility="Collapsed">
+          <Rectangle.Fill>
+            <SolidColorBrush Color="{DynamicResource ControlFillColorDefault}" />
+          </Rectangle.Fill>
+        </Rectangle>
+      </Grid>
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsGrouping" Value="True">
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter TargetName="PART_DisabledVisual" Property="Visibility" Value="Visible" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+  <Style x:Key="BaseListViewStyle" TargetType="{x:Type ListView}">
     <Setter Property="Margin" Value="0" />
     <Setter Property="Padding" Value="0" />
     <Setter Property="Background" Value="{DynamicResource ListViewBackground}" />
@@ -3200,34 +3566,23 @@
         </ItemsPanelTemplate>
       </Setter.Value>
     </Setter>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ListView}">
-          <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-            <Grid>
-              <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-              </ScrollViewer>
-              <Rectangle x:Name="PART_DisabledVisual" Opacity="0" RadiusX="2" RadiusY="2" Stretch="Fill" Stroke="Transparent" StrokeThickness="0" Visibility="Collapsed">
-                <Rectangle.Fill>
-                  <SolidColorBrush Color="{DynamicResource ControlFillColorDefault}" />
-                </Rectangle.Fill>
-              </Rectangle>
-            </Grid>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsGrouping" Value="True">
-              <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter TargetName="PART_DisabledVisual" Property="Visibility" Value="Visible" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+  </Style>
+  <Style x:Key="DefaultListViewStyle" TargetType="{x:Type ListView}" BasedOn="{StaticResource BaseListViewStyle}">
+    <Setter Property="Template" Value="{StaticResource ListViewTemplate}" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource Self}, Converter={StaticResource ViewIsGridViewConverter}}" Value="True">
+        <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+        <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
+      </DataTrigger>
+    </Style.Triggers>
   </Style>
   <Style BasedOn="{StaticResource DefaultListViewStyle}" TargetType="{x:Type ListView}" />
+  <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
+    <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+    <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
+    <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
+  </Style>
   <system:Double x:Key="ListViewItemMinHeight">40</system:Double>
   <system:Double x:Key="ListViewItemMinWidth">88</system:Double>
   <Thickness x:Key="ListViewItemPadding">16,0,12,0</Thickness>
@@ -3265,6 +3620,42 @@
             <Trigger Property="IsSelected" Value="True">
               <Setter TargetName="ActiveRectangle" Property="Visibility" Value="Visible" />
               <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+    <Setter Property="Padding" Value="6,0,6,0" />
+    <Setter Property="MinHeight" Value="{DynamicResource GridViewItemContainerMinHeight}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListViewItem">
+          <Border x:Name="RootBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Border.CornerRadius}" SnapsToDevicePixels="True">
+            <Grid x:Name="ContentGrid">
+              <!-- remove the HorizontalAlignment due to HeaderRowPresenter does not have the ability to align to center or right -->
+              <GridViewRowPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+              <Rectangle x:Name="ActiveRectangle" Width="3" Height="18" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Fill="{DynamicResource ListViewItemPillFillBrush}" RadiusX="2" RadiusY="2" Visibility="Collapsed" />
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+              <Setter TargetName="ActiveRectangle" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="IsSelected" Value="True" />
+                <Condition Property="IsMouseOver" Value="True" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
+            </MultiTrigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="RootBorder" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

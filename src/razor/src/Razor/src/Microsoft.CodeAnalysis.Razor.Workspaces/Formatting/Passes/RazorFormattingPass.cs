@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -419,8 +418,15 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             {
                 var openBraceLineNumber = openBraceNode.GetLinePositionSpan(source).Start.Line;
                 var openBraceLine = source.Text.Lines[openBraceLineNumber];
-                Debug.Assert(openBraceLine.GetFirstNonWhitespacePosition().HasValue);
-                additionalIndentation = source.Text.GetSubTextString(TextSpan.FromBounds(openBraceLine.Start, openBraceLine.GetFirstNonWhitespacePosition().GetValueOrDefault()));
+
+                // The open brace node might actually start with a newline on the line before, which could be blank,
+                // so make sure we find some actual content.
+                while (!openBraceLine.GetFirstNonWhitespacePosition().HasValue)
+                {
+                    openBraceLine = source.Text.Lines[++openBraceLineNumber];
+                }
+
+                additionalIndentation = openBraceLine.GetLeadingWhitespace();
             }
         }
 
