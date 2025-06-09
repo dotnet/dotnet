@@ -207,15 +207,15 @@ stages:
               downloadFilePatterns: assets/Release/**/*.tar.gz
               copyDestination: $(Build.SourcesDirectory)/artifacts
               ${{ if eq(leg.distro, 'centos') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_BuildLogs_Attempt1
+                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_BuildLogs_Attempt1
+                artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'ubuntu') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_${{ leg.targetArchitecture}}_BuildLogs_Attempt1
+                artifactName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'almalinux') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_${{ leg.targetArchitecture}}_BuildLogs_Attempt1
+                artifactName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'alpine') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.alpineName) }}_${{ leg.targetArchitecture}}_BuildLogs_Attempt1
+                artifactName: ${{ format(leg.buildNameFormat, variables.alpineName) }}_${{ leg.targetArchitecture}}_Artifacts
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Binary Report
