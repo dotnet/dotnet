@@ -62,6 +62,10 @@
         <ManifestArtifactData Condition="'%(ProducedPackage.NonShipping)' == 'true'">%(ProducedPackage.ManifestArtifactData);NonShipping=true</ManifestArtifactData>
       </ProducedPackage>
 
+      <ProducedPackage>
+        <ManifestArtifactData Condition="'%(ProducedPackage.CouldBeStable)' == 'true'">%(ProducedPackage.ManifestArtifactData);CouldBeStable=true</ManifestArtifactData>
+      </ProducedPackage>
+
       <ReferencePackage Include="@(ProducedPackage->'$(ReferencePackagesDir)%(Identity).%(Version).nupkg')" Condition="'%(RepoOrigin)' == 'source-build-reference-packages'" />
       <PackageToPublish Include="@(ProducedPackage->'$(ArtifactsPackagesDir)%(ShippingFolder)/%(RepoOrigin)/%(Identity).%(Version).nupkg')" Condition="'%(RepoOrigin)' != 'source-build-reference-packages'" />
     </ItemGroup>
