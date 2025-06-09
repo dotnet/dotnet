@@ -37,11 +37,6 @@ public class RCLStressTests(ITestOutputHelper testOutputHelper) : AbstractStress
 
             await TestServices.Editor.WaitForActiveWindowByFileAsync("Component.razor", cancellationToken);
 
-            await TestServices.Editor.PlaceCaretAsync("<h1", charsOffset: -1, cancellationToken);
-
-            // TODO: Remove once https://github.com/dotnet/razor/issues/11478 is fixed
-            await TestServices.Editor.InsertTextAsync($"@namespace MyCoolNamespace{Environment.NewLine}{Environment.NewLine}", cancellationToken);
-
             var componentFileName = (await TestServices.Editor.GetActiveTextViewAsync(cancellationToken)).TextBuffer.GetFileName();
 
             await TestServices.Editor.CloseCurrentlyFocusedWindowAsync(cancellationToken, save: true);
