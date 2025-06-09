@@ -8,6 +8,13 @@
   <ItemGroup Condition="'$(PackageReadmeFile)' != ''">
     <None Include="$(PackageReadmeFile)" Pack="true" PackagePath="\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Update="Microsoft.NETCore.App"
+                        Condition="'$(TargetFramework)' == '$(DefaultNetCoreTargetFramework)'"
+                        RuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
+                        TargetingPackVersion="$(MicrosoftNETCoreAppRefVersion)" />
+  </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
   <Import Project="eng\testing\linker\trimmingTests.targets" Condition="'$(IsPublishedAppTestProject)' == 'true'" />
