@@ -43,7 +43,7 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             builder.Add(new RazorExtension(extensionName));
         }
 
-        var extensions = builder.DrainToImmutable();
+        var extensions = builder.ToImmutableAndClear();
 
         var languageVersion = RazorLanguageVersion.TryParse(languageVersionText, out var version)
             ? version
