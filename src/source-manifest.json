@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25263.2",
+      "packageVersion": "9.0.0-beta.25302.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ac63dcf2791c32bf2102fd2b5ebb46479bd48a83"
+      "commitSha": "0d52a8b262d35fa2fde84e398cb2e791b8454bd2"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -67,10 +67,10 @@
       "commitSha": "13c590f8d138d6a30b899a5172cc6ec494db930b"
     },
     {
-      "packageVersion": "6.12.4-rc.1",
+      "packageVersion": "6.12.4-rc.9",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "95a470a557091cdbdc9f68a178b60bd19329942c"
+      "commitSha": "42bfb4554167e1d2fc2b950728d9bd8164f806c1"
     },
     {
       "packageVersion": "9.0.0-preview.25256.3",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "38e51fe4e1fa36644ea66191001e82078989f051"
+      "commitSha": "3f1d7f785f33a1cc90052806ff35e9c503781cc0"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",

@@ -5,9 +5,9 @@
 
 parameters:
   PackageVersion: 7.0.0
-  BuildDropPath: '$(Build.SourcesDirectory)/artifacts'
+  BuildDropPath: '$(Build.SourcesDirectory)\artifacts'
   PackageName: '.NET'
-  ManifestDirPath: $(Build.ArtifactStagingDirectory)/sbom
+  ManifestDirPath: '$(Build.SourcesDirectory)\artifacts'
   sbomContinueOnError: true
 
 steps:

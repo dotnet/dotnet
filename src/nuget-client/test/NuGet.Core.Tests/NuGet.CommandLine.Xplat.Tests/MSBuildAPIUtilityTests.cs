@@ -586,6 +586,14 @@ namespace NuGet.CommandLine.Xplat.Tests
 </Project>";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"), BuildPropsFile);
 
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"),
+                @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>");
+
             var project = Project.FromFile(projectA.ProjectPath, projectOptions);
             var lockFile = new LockFile
             {
@@ -652,6 +660,9 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             var PackagePropsFile =
 @$"<Project>
+    <PropertyGroup>
+      <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
     <GlobalPackageReference Include=""myPackage"" Version=""1.1.1"" />
   </ItemGroup>
