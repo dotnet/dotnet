@@ -5,7 +5,7 @@
           Outputs="%(TestToRun.ResultsStdOutPath)"
           Condition="'$(SkipTests)' != 'true' and '@(TestToRun)' != ''">
 
-    <Error Text="UseVSTest shouldn't be used when using Microsoft.Testing.Platform" Condition="'$(EnableMSTestRunner)' == 'true' OR '$(EnableNUnitRunner)' == 'true' OR '$(UseMicrosoftTestingPlatformRunner)' == 'true'" File="VSTest" />
+    <Error Text="UseVSTestRunner property shouldn't be used when using Microsoft.Testing.Platform" Condition="'$(EnableMSTestRunner)' == 'true' OR '$(EnableNUnitRunner)' == 'true' OR '$(UseMicrosoftTestingPlatformRunner)' == 'true'" File="VSTest" />
 
     <PropertyGroup>
       <_TestEnvironment>%(TestToRun.EnvironmentDisplay)</_TestEnvironment>
