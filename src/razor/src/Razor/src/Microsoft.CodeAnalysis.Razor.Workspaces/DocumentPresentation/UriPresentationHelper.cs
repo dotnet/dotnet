@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentPresentation;
@@ -19,7 +20,7 @@ internal static class UriPresentationHelper
         }
 
         var razorFileUri = uris.Where(
-            x => Path.GetFileName(x.GetAbsoluteOrUNCPath()).EndsWith(".razor", FilePathComparison.Instance)).FirstOrDefault();
+            x => Path.GetFileName(x.GetAbsoluteOrUNCPath()).EndsWith(".razor", PathUtilities.OSSpecificPathComparison)).FirstOrDefault();
 
         // We only want to handle requests for a single .razor file, but when there are files nested under a .razor
         // file (for example, Goo.razor.css, Goo.razor.cs etc.) then we'll get all of those files as well, when the user
@@ -31,7 +32,7 @@ internal static class UriPresentationHelper
         }
 
         var fileName = Path.GetFileName(razorFileUri.GetAbsoluteOrUNCPath());
-        if (uris.Any(uri => !Path.GetFileName(uri.GetAbsoluteOrUNCPath()).StartsWith(fileName, FilePathComparison.Instance)))
+        if (uris.Any(uri => !Path.GetFileName(uri.GetAbsoluteOrUNCPath()).StartsWith(fileName, PathUtilities.OSSpecificPathComparison)))
         {
             logger.LogDebug($"One or more URIs were not a child file of the main .razor file.");
             return null;
