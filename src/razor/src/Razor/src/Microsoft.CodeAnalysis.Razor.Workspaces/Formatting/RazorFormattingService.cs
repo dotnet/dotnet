@@ -373,7 +373,7 @@ internal class RazorFormattingService : IRazorFormattingService
             changes.Add(new(change.Span, newText.Replace(toFind, replacement)));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

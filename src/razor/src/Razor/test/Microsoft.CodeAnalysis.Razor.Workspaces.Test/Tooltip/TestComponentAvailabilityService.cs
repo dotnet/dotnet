@@ -23,7 +23,7 @@ internal sealed class TestComponentAvailabilityService(ProjectSnapshotManager pr
             }
         }
 
-        return projects.DrainToImmutable();
+        return projects.ToImmutableAndClear();
     }
 }
 

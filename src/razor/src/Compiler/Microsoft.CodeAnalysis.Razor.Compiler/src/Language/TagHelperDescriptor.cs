@@ -167,7 +167,7 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
                     }
                 }
 
-                return results.DrainToImmutable();
+                return results.ToImmutableAndClear();
             }
         }
     }
