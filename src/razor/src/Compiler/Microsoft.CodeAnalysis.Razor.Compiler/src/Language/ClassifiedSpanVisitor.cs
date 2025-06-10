@@ -56,7 +56,7 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
         var visitor = new ClassifiedSpanVisitor(syntaxTree.Source, builder);
         visitor.Visit(syntaxTree.Root);
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)

@@ -76,6 +76,6 @@ public sealed partial class TagHelperObjectBuilderCollection<TObject, TBuilder> 
             }
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 }

@@ -279,7 +279,7 @@ internal class DefaultWindowsRazorProjectHost(
             }
         }
 
-        extensions = builder.DrainToImmutable();
+        extensions = builder.ToImmutableAndClear();
         return true;
     }
 

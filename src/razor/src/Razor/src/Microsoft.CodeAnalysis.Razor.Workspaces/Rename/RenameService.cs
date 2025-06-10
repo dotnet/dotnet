@@ -130,7 +130,7 @@ internal class RenameService(
             }
         }
 
-        return documentSnapshots.DrainToImmutable();
+        return documentSnapshots.ToImmutableAndClear();
     }
 
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
