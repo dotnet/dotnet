@@ -199,3 +199,6 @@ type internal HashMultiMap<'Key, 'Value when 'Key: not null>(size: int, comparer
         member _.IsReadOnly = false
 
         member s.Count = s.Count
+
+    interface IReadOnlyCollection<KeyValuePair<'Key, 'Value>>
+    interface IReadOnlyDictionary<'Key, 'Value>
