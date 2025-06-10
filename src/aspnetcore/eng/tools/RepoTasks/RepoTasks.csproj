@@ -13,6 +13,7 @@
     <TargetLatestDotNetRuntime>false</TargetLatestDotNetRuntime>
     <!-- No need to track public APIs of these MSBuild tasks. -->
     <AddPublicApiAnalyzers>false</AddPublicApiAnalyzers>
+    <SkipImportingGenerateFilesBuildTargets>true</SkipImportingGenerateFilesBuildTargets>
   </PropertyGroup>
 
   <ItemGroup>

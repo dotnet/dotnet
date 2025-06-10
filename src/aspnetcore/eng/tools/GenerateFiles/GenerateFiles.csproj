@@ -5,6 +5,7 @@
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
 
     <ConfigDirectory>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.config'))</ConfigDirectory>
+    <SkipImportingGenerateFilesBuildTargets>true</SkipImportingGenerateFilesBuildTargets>
   </PropertyGroup>
 
   <ItemGroup>
