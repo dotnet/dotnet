@@ -178,14 +178,14 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
+    msbuildArguments: "/property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
 
 - task: MSBuild@1
   displayName: "Generate VSMAN file for Build Tools VSIX"
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
+    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
 
 - task: MSBuild@1
   displayName: "Create EndToEnd Test Package"
