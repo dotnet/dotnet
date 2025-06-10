@@ -38,7 +38,7 @@ stages:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
           ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-            artifactsRid: ${{ variables.centOSStreamX64Rid }}
+            artifactsRid: ${{ variables.centOSStreamX64RidOld }}
         # Fedora
         ${{ elseif eq(leg.distro, 'fedora') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}

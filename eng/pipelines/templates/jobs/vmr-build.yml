@@ -467,6 +467,7 @@ jobs:
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
             # Source-built artifacts are from CentOS 9 Stream. We want to download them without
             # downloading portable versions from the internet.
+            # Update previous comment on next rebootstrap or release - https://github.com/dotnet/source-build/issues/5238
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
