@@ -25,45 +25,45 @@
       <Uri>https://github.com/dotnet/binaryen</Uri>
       <Sha>76b0b32ccb18b0e930687cff7606708632804e74</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25112.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25218.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>c0ff788990c0c99a4559639849ff3dd304781c9e</Sha>
+      <Sha>5c2cce919b9ee6057e4d00d8698b658aecdeffb5</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25112.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25218.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>c0ff788990c0c99a4559639849ff3dd304781c9e</Sha>
+      <Sha>5c2cce919b9ee6057e4d00d8698b658aecdeffb5</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25112.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25218.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>c0ff788990c0c99a4559639849ff3dd304781c9e</Sha>
+      <Sha>5c2cce919b9ee6057e4d00d8698b658aecdeffb5</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25112.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="8.0.0-rtm.25218.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>c0ff788990c0c99a4559639849ff3dd304781c9e</Sha>
+      <Sha>5c2cce919b9ee6057e4d00d8698b658aecdeffb5</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25209.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="8.0.0-rtm.25222.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>13639638de0a37fdea7d7208fb811904d8a0a000</Sha>
+      <Sha>fa103e006bc32493e3dfa661bfffd1bb17d02979</Sha>
     </Dependency>
     <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="16.0.5-alpha.1.24362.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
@@ -215,30 +215,30 @@
       <Uri>https://github.com/dotnet/llvm-project</Uri>
       <Sha>0eac01ff3c4a8d1dbe6452dd2d8b75395bbf2b3d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="8.0.0-beta.25208.7">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="8.0.0-beta.25230.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>c7a36e53f91e41943746f97a8c183549364c5092</Sha>
+      <Sha>4246a31e5de9de87f760218c4f588cebf4661f45</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23475.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
