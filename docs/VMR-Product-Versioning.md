@@ -7,7 +7,7 @@ This document details how the product is versioned over a given major version li
 ## Terminology
 
 This document uses the following terminology:
-- **Branding** - Refers to the variosu product version information. Typically MAJOR.MINOR.PATCH, pre-release and build-varying versioning information if present.
+- **Branding** - Refers to the various product version information. Typically MAJOR.MINOR.PATCH, pre-release and build-varying versioning information if present.
 - **Stable Branding** - Branding that does not include build-varying information in the version numbers for shipping components. A stable branded component may still have pre-release information. Examples:
   - 10.0.0 - Stable
   - 10.0.25172 (patch varies build to build based on date+revision) - Non-Stable
