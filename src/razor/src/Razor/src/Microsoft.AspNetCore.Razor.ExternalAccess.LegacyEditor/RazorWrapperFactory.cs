@@ -55,7 +55,7 @@ internal static partial class RazorWrapperFactory
             builder.Add(createWrapper(item));
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IEnumerable<TInner> items, Func<TInner, TResult> createWrapper)
@@ -69,7 +69,7 @@ internal static partial class RazorWrapperFactory
             builder.Add(createWrapper(item));
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private static ImmutableArray<TResult> InitializeArrayWithWrappedItems<TInner, TResult>(

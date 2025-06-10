@@ -1,16 +1,30 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.CodeAnalysis.Text;
 
 internal static class TextLineExtensions
 {
+    public static char CharAt(this TextLine line, int offset)
+    {
+        ArgHelper.ThrowIfNegative(offset);
+        ArgHelper.ThrowIfGreaterThanOrEqual(offset, line.SpanIncludingLineBreak.Length);
+
+        var text = line.Text.AssumeNotNull();
+        var index = line.Start + offset;
+        Debug.Assert(index < text.Length, "This should be impossible as we validated offset against the line length above.");
+
+        return text[index];
+    }
+
     public static string GetLeadingWhitespace(this TextLine line)
     {
-        return line.ToString().GetLeadingWhitespace();
+        return line.GetFirstNonWhitespaceOffset() is int offset
+            ? line.Text.AssumeNotNull().ToString(TextSpan.FromBounds(line.Start, line.Start + offset))
+            : string.Empty;
     }
 
     public static int GetIndentationSize(this TextLine line, long tabSize)
