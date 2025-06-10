@@ -164,9 +164,9 @@ set -e
 highlight 'Installing .NET, preparing the tooling..'
 source "./eng/common/tools.sh"
 InitializeDotNetCli true
-GetDarc
 dotnetDir=$( cd ./.dotnet/; pwd -P )
 dotnet=$dotnetDir/dotnet
+"$dotnet" tool restore
 
 highlight "Starting the synchronization of VMR.."
 set +e
@@ -186,9 +186,7 @@ fi
 
 # Synchronize the VMR
 
-export DOTNET_ROOT="$dotnetDir"
-
-"$darc_tool" vmr forwardflow \
+"$dotnet" darc vmr forwardflow \
   --tmp "$tmp_dir"             \
   $azdev_pat                   \
   --$verbosity                 \

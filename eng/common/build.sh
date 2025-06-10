@@ -43,7 +43,6 @@ usage()
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   echo "  --buildCheck <value>     Sets /check msbuild parameter"
-  echo "  --fromVMR                Set when building from within the VMR"
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."
@@ -65,7 +64,6 @@ restore=false
 build=false
 source_build=false
 product_build=false
-from_vmr=false
 rebuild=false
 test=false
 integration_test=false
@@ -91,7 +89,7 @@ verbosity='minimal'
 runtime_source_feed=''
 runtime_source_feed_key=''
 
-properties=()
+properties=''
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | tr "[:upper:]" "[:lower:]")"
   case "$opt" in
@@ -144,9 +142,6 @@ while [[ $# > 0 ]]; do
       restore=true
       pack=true
       ;;
-    -fromvmr|-from-vmr)
-      from_vmr=true
-      ;;
     -test|-t)
       test=true
       ;;
@@ -192,7 +187,7 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     *)
-      properties+=("$1")
+      properties="$properties $1"
       ;;
   esac
 
@@ -226,7 +221,7 @@ function Build {
   InitializeCustomToolset
 
   if [[ ! -z "$projects" ]]; then
-    properties+=("/p:Projects=$projects")
+    properties="$properties /p:Projects=$projects"
   fi
 
   local bl=""
@@ -248,7 +243,6 @@ function Build {
     /p:Build=$build \
     /p:DotNetBuild=$product_build \
     /p:DotNetBuildSourceOnly=$source_build \
-    /p:DotNetBuildFromVMR=$from_vmr \
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \
@@ -257,7 +251,7 @@ function Build {
     /p:Sign=$sign \
     /p:Publish=$publish \
     /p:RestoreStaticGraphEnableBinaryLogger=$binary_log \
-    ${properties[@]+"${properties[@]}"}
+    $properties
 
   ExitWithExitCode 0
 }
