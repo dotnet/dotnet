@@ -26,7 +26,7 @@ internal class TagHelperSpanVisitor : SyntaxWalker
         var visitor = new TagHelperSpanVisitor(syntaxTree.Source, builder);
         visitor.Visit(syntaxTree.Root);
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     public override void VisitMarkupTagHelperElement(MarkupTagHelperElementSyntax node)

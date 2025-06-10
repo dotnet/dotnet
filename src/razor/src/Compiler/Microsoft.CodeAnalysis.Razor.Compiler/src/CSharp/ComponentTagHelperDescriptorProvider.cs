@@ -721,7 +721,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             }
             while (currentType != null);
 
-            return results.DrainToImmutable();
+            return results.ToImmutableAndClear();
 
             static bool IsEnum(IPropertySymbol property)
             {

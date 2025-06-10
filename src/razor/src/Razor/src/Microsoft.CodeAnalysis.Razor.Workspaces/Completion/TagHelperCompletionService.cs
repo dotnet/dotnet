@@ -370,6 +370,6 @@ internal class TagHelperCompletionService : ITagHelperCompletionService
             }
         }
 
-        return filteredList.DrainToImmutable();
+        return filteredList.ToImmutableAndClear();
     }
 }

@@ -38,7 +38,7 @@ internal static partial class ProjectSnapshotManagerExtensions
             }
         }
 
-        return projects.DrainToImmutable();
+        return projects.ToImmutableAndClear();
     }
 
     public static bool TryResolveAllProjects(
@@ -65,7 +65,7 @@ internal static partial class ProjectSnapshotManagerExtensions
             builder.Add(miscProject);
         }
 
-        projects = builder.DrainToImmutable();
+        projects = builder.ToImmutableAndClear();
         return projects.Length > 0;
     }
 
