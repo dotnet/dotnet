@@ -37,7 +37,7 @@ internal abstract class AbstractSyntaxNodeFoldingProvider<TNode> : IRazorFolding
             builder.Add(foldingRange);
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     protected abstract ImmutableArray<TNode> GetFoldableNodes(RazorSyntaxTree syntaxTree);
