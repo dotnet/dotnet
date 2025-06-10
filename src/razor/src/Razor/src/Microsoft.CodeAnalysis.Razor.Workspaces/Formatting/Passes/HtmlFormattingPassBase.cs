@@ -67,7 +67,7 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
             changesToKeep.Add(change);
         }
 
-        return changesToKeep.DrainToImmutable();
+        return changesToKeep.ToImmutableAndClear();
     }
 
     private static ImmutableArray<TextChange> AdjustRazorIndentation(FormattingContext context)
@@ -184,7 +184,7 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
             }
         }
 
-        return editsToApply.DrainToImmutable();
+        return editsToApply.ToImmutableAndClear();
     }
 
     private static bool IsPartOfHtmlTag(FormattingContext context, int position)

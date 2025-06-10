@@ -437,7 +437,7 @@ internal static class TagHelperParseTreeRewriter
                 attributeValueBuilder.Clear();
             }
 
-            return attributes.DrainToImmutable();
+            return attributes.ToImmutableAndClear();
         }
 
         private void ValidateParentAllowsTagHelper(string tagName, MarkupStartTagSyntax tagBlock)
@@ -766,7 +766,7 @@ internal static class TagHelperParseTreeRewriter
                     }
                 }
 
-                return (result.DrainToImmutable(), distinctSet);
+                return (result.ToImmutableAndClear(), distinctSet);
             }
 
             private HashSet<string> CreatePrefixedAllowedChildren()
